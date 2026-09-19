@@ -2,11 +2,22 @@ export const SCHEMA_VERSION = 1;
 const notation = /([\u3400-\u4dbf\u4e00-\u9fff々]+)【([^】]+)】/g;
 const escapeHtml = value => value.replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
 
+export function normalizeFurigana(value = "") {
+  let out = "", offset = 0;
+  for (const match of value.matchAll(notation)) {
+    out += value.slice(offset, match.index).replace(/【[^】]+】/g, "");
+    out += match[0];
+    offset = match.index + match[0].length;
+  }
+  return out + value.slice(offset).replace(/【[^】]+】/g, "");
+}
+
 export function stripFurigana(value = "") {
   return value.replace(/【[^】]+】/g, "");
 }
 
 export function rubyHtml(value = "") {
+  value = normalizeFurigana(value);
   let out = "", offset = 0;
   for (const match of value.matchAll(notation)) {
     out += escapeHtml(value.slice(offset, match.index));
@@ -17,7 +28,7 @@ export function rubyHtml(value = "") {
 }
 
 export function validateTranslation(result) {
-  const japanese = String(result?.japanese || "").trim();
+  const japanese = normalizeFurigana(String(result?.japanese || "").trim());
   if (!japanese || !/[\u3040-\u30ff\u3400-\u9fff]/.test(japanese)) throw new Error("DeepSeek did not return a Japanese sentence.");
   return japanese;
 }

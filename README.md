@@ -17,7 +17,8 @@ it through a listen–imitate shadowing loop.
 The browser primitives in core.js implement JP Core's canonical furigana
 notation, safe ruby rendering, sentence schema, and merge rules. Change these
 rules in JP Core first and synchronize this browser distribution in the same
-change.
+change. The synchronized JP Core revision is
+`c49ce2134ae8eb226819d63835e9394a6b6e11b0`.
 
 ## Development
 
