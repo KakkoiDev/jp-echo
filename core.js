@@ -22,8 +22,16 @@ export function validateTranslation(result) {
   return japanese;
 }
 
+export function validateTranslations(result) {
+  const casualJapanese = validateTranslation({japanese:result?.casualJapanese || result?.japanese});
+  const politeJapanese = validateTranslation({japanese:result?.politeJapanese || result?.japanese || result?.casualJapanese});
+  return {casualJapanese,politeJapanese};
+}
+
 export function createSentence(english, japanese, now = new Date(), id = crypto.randomUUID()) {
-  return {id,english:english.trim(),japanese:japanese.trim(),plainJapanese:stripFurigana(japanese).trim(),echoCount:0,createdAt:now.toISOString(),updatedAt:now.toISOString(),translationProvider:"deepseek",schemaVersion:SCHEMA_VERSION};
+  const forms=typeof japanese==="string"?{casualJapanese:japanese,politeJapanese:japanese}:japanese;
+  const casualJapanese=forms.casualJapanese.trim(),politeJapanese=forms.politeJapanese.trim();
+  return {id,english:english.trim(),japanese:casualJapanese,plainJapanese:stripFurigana(casualJapanese).trim(),casualJapanese,plainCasualJapanese:stripFurigana(casualJapanese).trim(),politeJapanese,plainPoliteJapanese:stripFurigana(politeJapanese).trim(),echoCount:0,createdAt:now.toISOString(),updatedAt:now.toISOString(),translationProvider:"deepseek",schemaVersion:SCHEMA_VERSION};
 }
 
 export function mergeSentences(current, incoming) {
