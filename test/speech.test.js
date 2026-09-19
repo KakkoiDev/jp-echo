@@ -11,6 +11,11 @@ globalThis.speechSynthesis = {
   speak: utterance => spoken.push(utterance),
   cancel() {}, pause() {}, resume() {}, getVoices: () => [],
 };
+globalThis.window = {
+  setTimeout: globalThis.setTimeout.bind(globalThis),
+  clearTimeout: globalThis.clearTimeout.bind(globalThis),
+  performance: globalThis.performance,
+};
 
 const {ShadowLoop} = await import("../speech.js");
 
@@ -37,4 +42,15 @@ test("a stale cancellation cannot stop a new loop", () => {
   staleError({error:"canceled"});
   assert.equal(loop.running,true);
   assert.equal(spoken.at(-1).text,"second");
+});
+
+test("default browser timers keep their Window receiver", () => {
+  spoken.length = 0;
+  const originalClear = window.clearTimeout;
+  let receiver;
+  window.clearTimeout = function(timer){receiver=this;return originalClear(timer)};
+  const loop = new ShadowLoop({onEcho:()=>{},onState:()=>{}});
+  loop.stop(false);
+  assert.equal(receiver,window);
+  window.clearTimeout = originalClear;
 });

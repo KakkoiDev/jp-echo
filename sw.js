@@ -1,5 +1,5 @@
-const CACHE="jp-echo-v5";
-const ASSETS=["./","./index.html","./styles.css","./updates.css","./app.js","./core.js","./db.js","./api.js","./speech.js","./manifest.webmanifest","./icon.svg"];
+const CACHE="jp-echo-v6";
+const ASSETS=["./","./index.html","./styles.css","./updates.css","./app.js","./core.js","./db.js","./api.js","./speech.js","./manifest.webmanifest","./icon.svg","./icon-192.png","./icon-512.png"];
 
 self.addEventListener("install",event=>event.waitUntil(
   caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting())
