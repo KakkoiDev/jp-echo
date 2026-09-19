@@ -1,0 +1,1 @@
+{"name":"jp-echo","version":"0.1.0","private":true,"type":"module","scripts":{"test":"node --test","check":"node --check app.js && node --check core.js && node --check db.js && node --check api.js && node --check speech.js && node --check sw.js"}}
