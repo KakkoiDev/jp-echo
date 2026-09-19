@@ -1,0 +1,3 @@
+.dialog-title{display:flex;align-items:center;justify-content:space-between}
+.dialog-title h2{margin:0}
+.dialog-title .icon-button{font-size:1.6rem;line-height:1}
