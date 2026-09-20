@@ -310,6 +310,7 @@ dialog::backdrop{background:rgba(28,26,23,.34)}
 .install-panel div{display:flex;flex-direction:column;gap:3px}
 .install-panel strong{font-family:var(--display);font-weight:400;font-size:17px}
 .install-panel button{height:44px;flex-shrink:0;padding:0 18px;background:transparent;font-size:14px;letter-spacing:.04em}
+#install-status{margin:8px 22px 0}
 .dialog-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:26px;padding:18px 22px calc(22px + env(safe-area-inset-bottom));border-top:1px solid var(--hairline);background:var(--panel-soft)}
 .dialog-actions button{min-height:54px;font-size:16px}
 
