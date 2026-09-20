@@ -7,4 +7,4 @@ export class ShadowLoop{
   stop(notify=true){this.running=false;this.paused=false;this.phase="stopped";this.cycle++;this.clearTimer(this.timer);this.timer=null;this.timerCallback=null;this.remaining=0;if(this.utterance){this.utterance.onstart=null;this.utterance.onend=null;this.utterance.onerror=null;this.utterance=null}speechSynthesis.cancel();if(notify)this.onState("stopped")}
 }
 export function japaneseVoices(){return speechSynthesis.getVoices().filter(voice=>voice.lang.toLowerCase().startsWith("ja"))}
-export function recognitionFactory(){const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Recognition)return null;const recognition=new Recognition();recognition.lang="en-US";recognition.interimResults=false;recognition.maxAlternatives=1;return recognition}
+export function recognitionFactory(lang="en-US"){const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Recognition)return null;const recognition=new Recognition();recognition.lang=lang;recognition.interimResults=false;recognition.maxAlternatives=1;return recognition}
