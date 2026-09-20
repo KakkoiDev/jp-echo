@@ -1,4 +1,4 @@
-const CACHE="jp-echo-v15";
+const CACHE="jp-echo-v16";
 const ASSETS=["./","./index.html","./styles.css","./app.js","./anki-export.js","./srs.js","./vendor/sql-wasm.wasm","./core.js","./diff.js","./db.js","./api.js","./speech.js","./manifest.webmanifest","./icon.svg","./icon-192.png","./icon-512.png"];
 
 self.addEventListener("install",event=>event.waitUntil(
