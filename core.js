@@ -58,6 +58,6 @@ export function mergeSentences(current, incoming) {
 }
 
 export function exportBackup(sentences, preferences = {}) {
-  const {apiKey, ...safe} = preferences;
+  const {apiKey, providerKeys, ...safe} = preferences;
   return {schemaVersion:SCHEMA_VERSION,exportedAt:new Date().toISOString(),sentences,preferences:safe};
 }

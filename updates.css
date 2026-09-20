@@ -1,4 +1,5 @@
 .dialog-title{display:flex;align-items:center;justify-content:space-between}
+header{z-index:10}
 [hidden]{display:none!important}
 .dialog-title h2{margin:0}
 .dialog-title .icon-button{font-size:1.6rem;line-height:1}
@@ -48,3 +49,14 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 #review-progress{margin-left:auto;color:#686c65;font-size:.88rem}
 #review-complete button{margin-top:1rem}
 @media(max-width:430px){main{padding-inline:.75rem}.input-row{grid-template-columns:minmax(0,1fr) 46px auto;gap:.4rem}.input-row .primary{padding-inline:.75rem}.toggles{justify-content:center}.anki-export{grid-template-columns:1fr}.anki-export .hint{grid-column:1}}
+.provider-config{display:grid;gap:.75rem;margin-top:.75rem;padding:.85rem;border:1px solid var(--line);border-radius:12px}
+.provider-config[hidden]{display:none}
+.provider-config .hint{margin:0}
+html[data-theme="dark"]{--ink:#edf1ea;--paper:#181b17;--line:#3a4038;--green:#78a285;color-scheme:dark;background:#10120f}
+html[data-theme="dark"] body{background:#10120f;color:var(--ink)}
+html[data-theme="dark"] input,html[data-theme="dark"] textarea,html[data-theme="dark"] select,html[data-theme="dark"] dialog,html[data-theme="dark"] .composer,html[data-theme="dark"] .review-card{background:#181b17;color:var(--ink)}
+html[data-theme="dark"] .review-actions{background:rgba(16,18,15,.96)}
+html[data-theme="dark"] .welcome,html[data-theme="dark"] .hint,html[data-theme="dark"] .history-tools label,html[data-theme="dark"] .backup summary,html[data-theme="dark"] .review-loop-status,html[data-theme="dark"] #review-progress{color:#aab2a7}
+html[data-theme="dark"] .review-entry strong{background:#edf1ea;color:#355c40}
+@media(prefers-color-scheme:dark){html[data-theme="system"]{--ink:#edf1ea;--paper:#181b17;--line:#3a4038;--green:#78a285;color-scheme:dark;background:#10120f}html[data-theme="system"] body{background:#10120f;color:var(--ink)}html[data-theme="system"] input,html[data-theme="system"] textarea,html[data-theme="system"] select,html[data-theme="system"] dialog,html[data-theme="system"] .composer,html[data-theme="system"] .review-card{background:#181b17;color:var(--ink)}html[data-theme="system"] .review-actions{background:rgba(16,18,15,.96)}html[data-theme="system"] .welcome,html[data-theme="system"] .hint,html[data-theme="system"] .history-tools label,html[data-theme="system"] .backup summary,html[data-theme="system"] .review-loop-status,html[data-theme="system"] #review-progress{color:#aab2a7}html[data-theme="system"] .review-entry strong{background:#edf1ea;color:#355c40}}
+@media(min-width:540px){.history-tools{grid-template-columns:minmax(14rem,2fr) repeat(3,minmax(8rem,1fr))}.history-tools .history-search{grid-column:auto}}
