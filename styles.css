@@ -195,6 +195,46 @@ ul{list-style:none;margin:0;padding:0}
 #review-complete .controls{margin-top:24px;width:100%}
 .stamp{width:78px;height:78px;display:flex;align-items:center;justify-content:center;border-radius:5px;background:var(--seal);color:var(--seal-on);font-family:var(--display);font-size:42px;line-height:1}
 
+/* Sentence detail */
+#sentence-view{display:flex;flex-direction:column;min-height:calc(100dvh - 40px)}
+#sentence-view .session-bar{border-bottom:1px solid var(--hairline);margin-bottom:24px}
+#sentence-added{flex-grow:1;letter-spacing:.18em}
+#sentence-japanese{margin:0;font-family:var(--display);font-weight:500;font-size:30px;line-height:2;letter-spacing:.01em;overflow-wrap:anywhere}
+#sentence-english{margin:14px 0 0;padding-left:13px;border-left:2px solid var(--hairline);font-size:15px;line-height:1.6;color:var(--ink-soft);overflow-wrap:anywhere}
+.sentence-controls{display:flex;gap:10px;margin-top:22px}
+.sentence-controls .primary{flex-grow:1;min-height:52px}
+.icon-button.square{width:52px;height:52px;border-color:var(--sumi)}
+#sentence-editor{display:flex;flex-direction:column;gap:10px;margin-top:22px}
+#sentence-editor .answer-box{border-color:var(--hairline)}
+#sentence-editor textarea{font-size:20px;line-height:1.9}
+.editor-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px}
+.editor-actions button{min-height:52px;font-size:16px}
+.stats{display:flex;align-items:stretch;margin-top:24px;padding:16px 0;border-top:1px solid var(--hairline);border-bottom:1px solid var(--hairline)}
+.stats>span{flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:4px}
+.stats strong{font-family:var(--display);font-weight:600;font-size:24px}
+.stats>span>span:last-child{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-muted)}
+.stats .divider{flex:0 0 1px;padding:0;background:var(--rule)}
+.rule-heading{display:flex;align-items:center;gap:12px;margin:24px 0 0;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.2em;color:var(--seal-deep)}
+.rule-heading::after{content:"";flex-grow:1;height:1px;background:var(--hairline)}
+#sentence-history{margin-top:10px}
+#sentence-history li{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--rule)}
+#sentence-history .when{font-size:14px;color:var(--ink-soft)}
+#sentence-history .detail{display:flex;align-items:center;gap:9px}
+#sentence-history .echoes{font-size:12px;color:var(--ink-muted)}
+.rating-chip{padding:3px 9px;border:1px solid var(--chip-rev-bd);border-radius:2px;color:var(--ink-soft);font-size:11px}
+.rating-chip.again{border-color:var(--seal-edge);background:var(--seal-tint);color:var(--seal-deep)}
+.rating-chip.first{border-color:var(--chip-new-bd);color:var(--chip-new-fg)}
+#sentence-history-note{margin-top:14px}
+.sentence-danger{margin-top:auto;padding:18px 0 30px;border-top:1px solid var(--hairline)}
+.danger{width:100%;min-height:50px;background:transparent;border-color:var(--seal-edge);color:var(--seal-deep);letter-spacing:.04em}
+.sheet-dialog{position:fixed;width:100%;max-width:none;margin:auto auto 0;padding:28px 22px calc(32px + env(safe-area-inset-bottom));border:0;border-top:2px solid var(--seal);border-radius:8px 8px 0 0;background:var(--panel);box-shadow:0 -14px 40px rgba(28,26,23,.18)}
+.sheet-dialog h2{margin:0;font-size:26px;line-height:1.35}
+.danger-mark{width:44px;height:44px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;border:1px solid var(--seal-edge);border-radius:4px;background:var(--seal-tint);color:var(--seal-deep)}
+#delete-quote{margin:14px 0 0;padding:12px 14px;border-left:2px solid var(--hairline);background:var(--washi);font-family:var(--display);font-size:18px;line-height:1.6;color:var(--ink-soft);overflow-wrap:anywhere}
+#delete-copy{margin:14px 0 0;font-size:14px;line-height:1.65;color:var(--ink-soft);text-wrap:pretty}
+.sheet-dialog .dialog-actions{margin-top:18px;padding:0;border-top:0;background:transparent}
+.sheet-dialog .dialog-actions button{min-height:56px}
+
 /* Settings */
 dialog{width:min(94vw,520px);max-height:calc(100dvh - 2rem);margin:auto;padding:0;overflow:auto;background:var(--washi);color:var(--sumi);border:1px solid var(--hairline);border-radius:6px}
 dialog::backdrop{background:rgba(28,26,23,.34)}
