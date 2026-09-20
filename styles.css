@@ -201,7 +201,11 @@ ul{list-style:none;margin:0;padding:0}
 .notice-actions button{min-height:36px;height:36px;padding:0 14px;border-radius:3px;font-size:13px;letter-spacing:normal}
 .notice.alert .notice-actions button{border-color:var(--seal-deep);color:var(--seal-deep)}
 .notice.alert .notice-actions button.outline{border-color:var(--seal-edge)}
-.notice-link{align-self:flex-start;margin-top:2px;font-size:13px;font-weight:500;letter-spacing:.02em;background:none;border:0;padding:0;min-height:0;color:var(--seal);text-decoration:underline}
+/* The action that clears a blocked state has to be tappable, but the banner was
+   drawn around 13px text. The box stays text-sized in flow and a transparent
+   pseudo-element carries the touch target out to 44px, so nothing shifts. */
+.notice-link{position:relative;align-self:flex-start;margin-top:2px;font-size:13px;font-weight:500;letter-spacing:.02em;background:none;border:0;padding:0;min-height:0;color:var(--seal);text-decoration:underline}
+.notice-link::after{content:"";position:absolute;left:0;right:0;top:50%;height:44px;transform:translateY(-50%)}
 .dock{position:fixed;z-index:3;left:50%;bottom:calc(72px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(760px,100%)}
 #practice-notices:not(:empty){padding:0 22px 14px}
 .empty-panel{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:24px;padding:20px 18px;border:1px solid var(--hairline);border-radius:4px;background:var(--panel);text-align:center}
