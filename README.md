@@ -42,7 +42,7 @@ notation, safe ruby rendering, sentence schema, and merge rules. diff.js reads
 that notation through core.js rather than reimplementing it. Change these
 rules in JP Core first and synchronize this browser distribution in the same
 change. The synchronized JP Core revision is
-`c49ce2134ae8eb226819d63835e9394a6b6e11b0`.
+`9fd8ca4aee604338abc98ffa1b2890728c3d4ab5`.
 
 ## Layout
 

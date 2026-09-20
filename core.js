@@ -1,19 +1,25 @@
 export const SCHEMA_VERSION = 1;
-const notation = /([\u3400-\u4dbf\u4e00-\u9fff々]+)【([^】]+)】/g;
+const notation = /([\u3400-\u4dbf\u4e00-\u9fff々]+)【(?!\s*】)([^】]+)】/g;
 const escapeHtml = value => value.replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+
+// Anything in brackets that is not a reading for a kanji run is dropped,
+// including an empty 【】 — models emit those when they decline to supply a
+// reading, and they must never reach the screen or the voice.
+// Synchronized with JP Core's jp_core.furigana and browser/jp-core.js.
+const stray = /【[^】]*】/g;
 
 export function normalizeFurigana(value = "") {
   let out = "", offset = 0;
   for (const match of value.matchAll(notation)) {
-    out += value.slice(offset, match.index).replace(/【[^】]+】/g, "");
+    out += value.slice(offset, match.index).replace(stray, "");
     out += match[0];
     offset = match.index + match[0].length;
   }
-  return out + value.slice(offset).replace(/【[^】]+】/g, "");
+  return out + value.slice(offset).replace(stray, "");
 }
 
 export function stripFurigana(value = "") {
-  return value.replace(/【[^】]+】/g, "");
+  return value.replace(stray, "");
 }
 
 export function rubySegments(value = "") {

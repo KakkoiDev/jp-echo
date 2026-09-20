@@ -9,7 +9,7 @@ import {DEFAULT_TIME,REMINDER_TAG,reminderText,shouldRemind} from "./reminders.j
 const $=selector=>document.querySelector(selector);
 const settings=JSON.parse(localStorage.getItem("jp-echo-settings")||"{}");
 let current=null,detail=null,translationFailure=null,echoesAtCardStart=0,voices=[],installPrompt=null,reviewQueue=[],reviewIndex=0,reviewRevealed=false,reviewRecognition=null,reviewListening=false;
-const loop=new ShadowLoop({onEcho:async()=>{const reviewing=!$("#review-view").hidden,viewingDetail=!$("#sentence-view").hidden,target=reviewing?reviewQueue[reviewIndex]:viewingDetail?detail:current;if(!target)return;target.echoCount=(Number(target.echoCount)||0)+1;target.updatedAt=new Date().toISOString();await saveSentence(target);if(reviewing){reviewQueue[reviewIndex]=target;tickCount($("#review-echo-count"),target.echoCount)}if(viewingDetail)tickCount($("#stat-echoes"),target.echoCount);if(current?.id===target.id){current=target;renderCount()}},onState:state=>{const label=({speaking:"Listen…",imitate:"Your turn—echo it.",paused:"Paused",stopped:"Ready",error:"Speech could not be played."})[state]||state,playing=state!=="stopped"&&state!=="error",text=state==="paused"?"Play":playing?"Pause":"Play";$("#review-loop-state").textContent=label;$("#sentence-loop-state").textContent=label;const active=playing&&state!=="paused";$("#practice").classList.toggle("playing",active);$("#review-panel").classList.toggle("playing",active);$("#loop-state").textContent=label;$("#play-pause").textContent=text;$("#play-pause").setAttribute("aria-pressed",String(playing));$("#review-audio").textContent=state==="paused"||!playing?"Play the loop":"Pause the loop";$("#review-audio").setAttribute("aria-pressed",String(playing));
+const loop=new ShadowLoop({onEcho:async()=>{const reviewing=!$("#review-view").hidden,viewingDetail=!$("#sentence-view").hidden,target=reviewing?reviewQueue[reviewIndex]:viewingDetail?detail:current;if(!target)return;target.echoCount=(Number(target.echoCount)||0)+1;target.updatedAt=new Date().toISOString();await saveSentence(target);if(reviewing){reviewQueue[reviewIndex]=target;tickCount($("#review-echo-count"),target.echoCount)}if(viewingDetail)tickCount($("#stat-echoes"),target.echoCount);if(current?.id===target.id){current=target;renderCount()}},onState:state=>{const label=({speaking:"Playing — say it with the voice",imitate:"Your turn — echo it",paused:"Paused",stopped:"Ready",error:"That voice could not play"})[state]||state,playing=state!=="stopped"&&state!=="error",text=state==="paused"?"Play":playing?"Pause":"Play";$("#review-loop-state").textContent=label;$("#sentence-loop-state").textContent=label;const active=playing&&state!=="paused";$("#practice").classList.toggle("playing",active);$("#review-panel").classList.toggle("playing",active);$("#loop-state").textContent=label;$("#play-pause").textContent=text;$("#play-pause").setAttribute("aria-pressed",String(playing));$("#review-audio").textContent=state==="paused"||!playing?"Play the loop":"Pause the loop";$("#review-audio").setAttribute("aria-pressed",String(playing));
   $("#sentence-play").setAttribute("aria-pressed",String(playing));$("#sentence-play").lastChild.textContent=state==="paused"||!playing?"Play the loop":"Pause the loop";$("#sentence-view").classList.toggle("playing",active)}});
 function applyTheme(theme=settings.theme||"system"){document.documentElement.dataset.theme=theme;const dark=theme==="dark"||(theme==="system"&&matchMedia("(prefers-color-scheme: dark)").matches);const metas=document.querySelectorAll('meta[name="theme-color"]');
   // Two metas let the system default follow prefers-color-scheme; an explicit
@@ -217,7 +217,23 @@ async function performTranslation(){const english=$("#english-input").value.trim
     setStatus("");renderPracticeNotices()}finally{button.disabled=false;button.textContent=label;button.removeAttribute("aria-busy")}}
 function setStatus(message,error=false){$("#status").textContent=message;$("#status").classList.toggle("error",error)}
 function populateVoices(){voices=japaneseVoices();const select=$("#voice"),previous=settings.voice;select.replaceChildren(...voices.map((voice,index)=>{const option=new Option(voice.name+" ("+voice.lang+")",String(index));option.selected=previous===String(index);return option}));$("#voice-warning").hidden=voices.length>0;$("#play-pause").disabled=voices.length===0||!current;if(!$("#main-view").hidden)renderPracticeNotices()}
-function setupRecognition(){const recognition=recognitionFactory(),mic=$("#microphone");if(!recognition){mic.disabled=true;$("#voice-input-status").textContent="Voice input is unavailable in this browser. You can still type.";return}mic.onclick=()=>{$("#voice-input-status").textContent="Listening…";mic.classList.add("listening");try{recognition.start()}catch{}};recognition.onresult=event=>{$("#english-input").value=event.results[0][0].transcript;$("#voice-input-status").textContent="Transcript ready—check it, then translate."};recognition.onerror=event=>{const messages={"not-allowed":"Microphone permission is blocked. Enable it in your browser settings.","no-speech":"No speech was detected. Try again or type your sentence.","audio-capture":"No microphone is available."};$("#voice-input-status").textContent=messages[event.error]||"Voice input failed: "+event.error+"."};recognition.onend=()=>mic.classList.remove("listening")}
+const DICTATION={
+  listening:"Listening — keep going",
+  unavailable:"Dictation isn't available in this browser — type it instead.",
+  "not-allowed":"Microphone blocked — type it instead.",
+  "no-speech":"Nothing heard — tap the mic or type it.",
+  "audio-capture":"No microphone available — type it instead.",
+  failed:"Dictation failed — type it instead."};
+const dictationError=error=>DICTATION[error]||DICTATION.failed;
+// Append rather than replace, so a second burst adds to what you already said
+// instead of throwing it away.
+const appendHeard=(field,heard)=>{field.value=(field.value?field.value.trimEnd()+" "+heard:heard).trim()};
+function setupRecognition(){const recognition=recognitionFactory(),mic=$("#microphone"),status=$("#voice-input-status");
+  if(!recognition){mic.disabled=true;status.textContent=DICTATION.unavailable;return}
+  mic.onclick=()=>{status.textContent=DICTATION.listening;mic.classList.add("listening");try{recognition.start()}catch{}};
+  recognition.onresult=event=>{appendHeard($("#english-input"),event.results[0][0].transcript);status.textContent="Edit anything it mishears before you translate."};
+  recognition.onerror=event=>{status.textContent=dictationError(event.error)};
+  recognition.onend=()=>{mic.classList.remove("listening");if(status.textContent===DICTATION.listening)status.textContent=""}}
 async function startReview(){const items=await listSentences(),scheduled=items.map(item=>ensureSchedule(item));await Promise.all(scheduled.filter((item,index)=>item!==items[index]).map(saveSentence));reviewQueue=dueSentences(scheduled);reviewIndex=0;if(!reviewQueue.length)return showView("review");showView("session");renderReview()}
 function reviewJapanese(sentence){return settings.showPolite?(sentence.politeJapanese||sentence.japanese):(sentence.casualJapanese||sentence.japanese)}
 function reviewPlainJapanese(sentence){return settings.showPolite?(sentence.plainPoliteJapanese||sentence.plainJapanese):(sentence.plainCasualJapanese||sentence.plainJapanese)}
@@ -255,12 +271,12 @@ function revealReview(){const sentence=reviewQueue[reviewIndex];if(!sentence||re
 function reviewRecognitionLang(){return "ja-JP"}
 function startReviewListening(){if(reviewListening)return;
   if(!reviewRecognition){reviewRecognition=recognitionFactory(reviewRecognitionLang());
-    if(!reviewRecognition){$("#review-mic").disabled=true;$("#review-listen-state").textContent="";$("#review-answer").focus();return}
-    reviewRecognition.onresult=event=>{const heard=event.results[0][0].transcript;$("#review-answer").value=($("#review-answer").value+heard).trim();updateCheckButton()};
-    reviewRecognition.onerror=event=>{const messages={"not-allowed":"Microphone blocked — type it instead.","no-speech":"Nothing heard — tap the mic or type it.","audio-capture":"No microphone available — type it instead."};$("#review-listen-state").textContent=messages[event.error]||"Dictation failed — type it instead."};
-    reviewRecognition.onend=()=>{reviewListening=false;$("#review-mic").setAttribute("aria-pressed","false");$("#review-mic").setAttribute("aria-label","Start listening");$("#review-panel").classList.remove("listening");if($("#review-listen-state").textContent==="Listening — keep going")$("#review-listen-state").textContent=""}}
+    if(!reviewRecognition){$("#review-mic").disabled=true;$("#review-listen-state").textContent=DICTATION.unavailable;$("#review-answer").focus();return}
+    reviewRecognition.onresult=event=>{appendHeard($("#review-answer"),event.results[0][0].transcript);updateCheckButton()};
+    reviewRecognition.onerror=event=>{$("#review-listen-state").textContent=dictationError(event.error)};
+    reviewRecognition.onend=()=>{reviewListening=false;$("#review-mic").setAttribute("aria-pressed","false");$("#review-mic").setAttribute("aria-label","Start listening");$("#review-panel").classList.remove("listening");if($("#review-listen-state").textContent===DICTATION.listening)$("#review-listen-state").textContent=""}}
   try{reviewRecognition.start()}catch{return}
-  reviewListening=true;$("#review-mic").setAttribute("aria-pressed","true");$("#review-mic").setAttribute("aria-label","Stop listening");$("#review-panel").classList.add("listening");$("#review-listen-state").textContent="Listening — keep going"}
+  reviewListening=true;$("#review-mic").setAttribute("aria-pressed","true");$("#review-mic").setAttribute("aria-label","Stop listening");$("#review-panel").classList.add("listening");$("#review-listen-state").textContent=DICTATION.listening}
 function stopReviewListening(){if(!reviewListening||!reviewRecognition)return;reviewListening=false;try{reviewRecognition.stop()}catch{}$("#review-mic").setAttribute("aria-pressed","false");$("#review-panel").classList.remove("listening")}
 function toggleReviewListening(){reviewListening?stopReviewListening():startReviewListening()}
 function skipReview(){reviewIndex++;renderReview()}
