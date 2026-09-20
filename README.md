@@ -9,6 +9,7 @@ it through a listen–imitate shadowing loop.
 - History lives in IndexedDB and can be exported/imported as JSON.
 - The learner's voice is never recorded.
 - Device speech synthesis produces audio on demand; no audio file is stored.
+- History can be exported on-device as a standard `JP Echo.apkg` Anki deck.
 - A configurable proxy is supported for browsers where DeepSeek blocks direct
   cross-origin requests. Proxy implementation and hosting remain external.
 

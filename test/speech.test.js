@@ -54,3 +54,19 @@ test("default browser timers keep their Window receiver", () => {
   assert.equal(receiver,window);
   window.clearTimeout = originalClear;
 });
+
+test("pause also suspends the silent imitation interval", () => {
+  spoken.length = 0;
+  const timers = [];
+  const cleared = [];
+  let now = 1000;
+  const loop = new ShadowLoop({onEcho:()=>{},onState:()=>{},setTimer:(fn,delay)=>{timers.push({fn,delay});return timers.length},clearTimer:id=>cleared.push(id),now:()=>now});
+  loop.play("test",{rate:1});
+  spoken[0].onend();
+  now = 1200;
+  assert.equal(loop.togglePause(),true);
+  assert.deepEqual(cleared,[null,1]);
+  assert.equal(loop.togglePause(),false);
+  assert.equal(timers.length,2);
+  assert.ok(timers[1].delay<timers[0].delay);
+});
