@@ -30,6 +30,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 #review-english{font-size:1.15rem;padding-top:1rem;border-top:1px solid var(--line)}
 #review-hint{color:#73776f;font-weight:400}
 #review-audio{margin:0 1rem 1rem}
+.review-loop-status{display:flex;justify-content:space-between;gap:1rem;padding:0 1rem;color:#686c65;font-size:.88rem}
 .review-actions{position:fixed;z-index:4;left:50%;bottom:0;transform:translateX(-50%);width:min(720px,100%);display:grid;grid-template-columns:1fr 1fr;gap:.75rem;padding:1rem max(1rem,env(safe-area-inset-right)) calc(1rem + env(safe-area-inset-bottom)) max(1rem,env(safe-area-inset-left));background:rgba(242,240,233,.96);backdrop-filter:blur(12px)}
 .review-actions button{min-height:56px;color:#fff;font-weight:750;border:0}
 .review-actions .again{background:#a83a3a}.review-actions .ok{background:#377148}
