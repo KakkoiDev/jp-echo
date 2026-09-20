@@ -15,6 +15,11 @@ it through a listen–imitate shadowing loop.
 - Device speech synthesis produces audio on demand; no audio file is stored.
 - History can be exported on-device as a standard `JP Echo.apkg` Anki deck.
 - Every translated sentence enters an offline FSRS review queue immediately.
+- Reminders are optional, at most one a day, and only when something is due.
+  Echo has no server, so nothing is pushed: where the browser supports Periodic
+  Background Sync the worker is woken to check, and everywhere else the check
+  runs when the app is opened. Settings says which applies on the device in
+  front of you rather than promising either.
 - A review shows the English, takes the Japanese you say back, marks the
   difference, and then grades on Again or OK (Anki Good).
 - Anki exports include JP Echo's repetitions, lapses, interval, and due date.
