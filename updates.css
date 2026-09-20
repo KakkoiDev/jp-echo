@@ -21,4 +21,18 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .backup summary{cursor:pointer;padding:.65rem 0;color:#686c65}
 .backup>div{display:flex;gap:.5rem;flex-wrap:wrap}
 .backup button{flex:1 1 9rem}
+.review-entry{width:100%;display:flex;justify-content:space-between;align-items:center;margin:1rem 0}
+.review-entry strong{display:grid;place-items:center;min-width:2rem;height:2rem;padding:0 .45rem;border-radius:999px;background:#fff;color:var(--green)}
+#review-view{min-height:calc(100dvh - 96px);padding-bottom:calc(6.5rem + env(safe-area-inset-bottom))}
+#review-panel{display:grid;gap:.75rem;padding:0;overflow:hidden}
+.review-card{border:0;border-radius:0;min-height:48dvh;padding:2rem;display:grid;place-content:center;gap:1.5rem;background:var(--paper)}
+#review-japanese{font-size:clamp(1.8rem,8vw,3.2rem);line-height:1.9}
+#review-english{font-size:1.15rem;padding-top:1rem;border-top:1px solid var(--line)}
+#review-hint{color:#73776f;font-weight:400}
+#review-audio{margin:0 1rem 1rem}
+.review-actions{position:fixed;z-index:4;left:50%;bottom:0;transform:translateX(-50%);width:min(720px,100%);display:grid;grid-template-columns:1fr 1fr;gap:.75rem;padding:1rem max(1rem,env(safe-area-inset-right)) calc(1rem + env(safe-area-inset-bottom)) max(1rem,env(safe-area-inset-left));background:rgba(242,240,233,.96);backdrop-filter:blur(12px)}
+.review-actions button{min-height:56px;color:#fff;font-weight:750;border:0}
+.review-actions .again{background:#a83a3a}.review-actions .ok{background:#377148}
+#review-progress{margin-left:auto;color:#686c65;font-size:.88rem}
+#review-complete button{margin-top:1rem}
 @media(max-width:430px){main{padding-inline:.75rem}.input-row{grid-template-columns:minmax(0,1fr) 46px auto;gap:.4rem}.input-row .primary{padding-inline:.75rem}.toggles{justify-content:center}.speech-settings label{grid-template-columns:54px minmax(0,1fr) auto}.anki-export{grid-template-columns:1fr}.anki-export .hint{grid-column:1}}

@@ -10,6 +10,9 @@ it through a listen–imitate shadowing loop.
 - The learner's voice is never recorded.
 - Device speech synthesis produces audio on demand; no audio file is stored.
 - History can be exported on-device as a standard `JP Echo.apkg` Anki deck.
+- Every translated sentence enters an offline FSRS review queue immediately.
+- Reviews use a focused two-grade interface: Again and OK (Anki Good).
+- Anki exports include JP Echo's repetitions, lapses, interval, and due date.
 - A configurable proxy is supported for browsers where DeepSeek blocks direct
   cross-origin requests. Proxy implementation and hosting remain external.
 
