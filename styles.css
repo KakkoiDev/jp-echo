@@ -188,7 +188,7 @@ ul{list-style:none;margin:0;padding:0}
 .review-actions{position:fixed;z-index:4;left:50%;bottom:0;transform:translateX(-50%);width:min(760px,100%);display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px max(22px,env(safe-area-inset-right)) calc(16px + env(safe-area-inset-bottom)) max(22px,env(safe-area-inset-left));border-top:1px solid var(--hairline);background:var(--panel-soft);backdrop-filter:blur(12px)}
 .review-actions button{min-height:58px;font-size:16px;font-weight:500}
 .review-actions .again{border-color:var(--quiet-edge);color:var(--ink-soft)}
-#review-view{padding-bottom:calc(6.5rem + env(safe-area-inset-bottom))}
+#review-view{display:flex;flex-direction:column;min-height:calc(100dvh - 40px)}
 #review-complete{align-items:center;text-align:center;min-height:56dvh}
 #review-complete strong{font-family:var(--display);font-weight:600;font-size:32px;letter-spacing:.01em}
 #review-complete .lede{max-width:280px;text-align:center}
@@ -200,6 +200,10 @@ dialog{width:min(94vw,520px);max-height:calc(100dvh - 2rem);margin:auto;padding:
 dialog::backdrop{background:rgba(28,26,23,.34)}
 .dialog-title{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 22px 14px;border-bottom:1px solid var(--hairline)}
 .settings-section{display:flex;flex-direction:column;gap:12px;padding:0 22px;margin-top:26px}
+.switch{display:flex;align-items:center;gap:14px;cursor:pointer}
+.switch-copy{flex-grow:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.switch-copy>span:first-child{font-size:14px;color:var(--sumi)}
+.switch input{flex-shrink:0;width:22px}
 .settings-section h3{display:flex;align-items:center;gap:12px;margin:0;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.2em;color:var(--seal-deep)}
 .settings-section h3::after{content:"";flex-grow:1;height:1px;background:var(--hairline)}
 .rate-setting{display:grid;gap:9px}
@@ -239,10 +243,50 @@ dialog::backdrop{background:rgba(28,26,23,.34)}
 .breakdown strong{font-family:var(--display);font-weight:600;font-size:22px}
 .breakdown>span>span{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-muted)}
 .breakdown .divider{width:1px;padding:0;background:var(--hairline)}
+#review-prompt-actions{margin-top:auto}
+#review-prompt-actions .primary{min-height:60px}
+#review-prompt-actions .plain{min-height:46px}
 .sheet{display:flex;flex-direction:column;gap:10px;margin:0 -22px;padding:18px 22px 20px;border-top:1px solid var(--hairline);background:var(--panel-soft)}
 .sheet>button{min-height:56px;font-size:16px}
 .sheet .primary{min-height:58px;font-size:17px}
 .sheet .hint{text-align:center}
+
+/* Review prompt and answer */
+#review-panel{display:flex;flex-direction:column;padding-top:24px}
+#review-stage{align-self:flex-start}
+#review-prompt{margin:22px 0 0;font-family:var(--display);font-weight:500;font-size:28px;line-height:1.5;letter-spacing:-.01em;text-wrap:pretty}
+#review-capture>.overline{display:block;margin:26px 0 9px}
+.answer-box{display:flex;flex-direction:column;gap:12px;padding:14px 14px 12px;border:1px solid var(--seal-edge);border-radius:5px;background:var(--panel)}
+.answer-box textarea{min-height:0;padding:0;border:0;border-radius:0;background:transparent;font-family:var(--display);font-size:23px;line-height:1.7}
+.answer-box:has(textarea:focus-visible){outline:2px solid var(--seal);outline-offset:3px}
+.answer-box textarea:focus-visible{outline:none}
+.answer-tools{display:flex;align-items:center;gap:12px;padding-top:10px;border-top:1px solid var(--rule)}
+.mic-round{width:46px;height:46px;min-height:46px;flex-shrink:0;padding:0;background:var(--panel);border:1px solid var(--sumi);border-radius:50%}
+.mic-round[aria-pressed="true"]{background:var(--seal);border-color:var(--seal);color:var(--seal-on)}
+.mic-round[aria-pressed="true"] svg{animation:pulse 1.4s ease-in-out infinite}
+.answer-copy{flex-grow:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+#review-listen-state{font-size:13px;letter-spacing:.02em;color:var(--seal-deep)}
+#review-listen-state:empty{display:none}
+.answer-copy .hint{font-size:11px;line-height:1.5}
+.arcs.small{flex-shrink:0;display:flex;opacity:0}
+.arcs.small svg{opacity:.5}
+.listening .arcs.small{opacity:1;animation:arcs 1.6s ease-in-out infinite}
+#review-check svg{flex-shrink:0}
+
+/* Review answer */
+#review-result{display:flex;flex-direction:column;padding-top:22px}
+#review-prompt-echo{margin:0;font-size:13px;line-height:1.6;color:var(--ink-muted)}
+#review-result .overline{margin:18px 0 7px}
+#review-result .overline.target{margin-top:20px;color:var(--seal-deep)}
+#review-attempt{margin:0;font-family:var(--display);font-size:22px;line-height:1.7;color:var(--ink-soft);overflow-wrap:anywhere}
+#review-attempt mark{background:transparent;color:var(--seal-deep);text-decoration:underline wavy var(--diff-wave);text-underline-offset:6px}
+#review-japanese{margin:0;font-family:var(--display);font-weight:500;font-size:28px;line-height:1.95;letter-spacing:.01em;overflow-wrap:anywhere}
+#review-japanese mark{background:var(--diff-target-bg);color:var(--seal-deep)}
+#review-result .arcs{margin-top:20px}
+#review-result .counter{margin-top:2px}
+#review-result .controls{margin-top:16px}
+#review-result .controls button{min-height:50px;font-size:15px;font-weight:500}
+#review-empty-answer{margin:18px 0 0}
 
 /* Review session */
 .session-bar{display:flex;align-items:center;gap:12px;padding:calc(24px + env(safe-area-inset-top)) 0 14px}

@@ -1,5 +1,5 @@
-const CACHE="jp-echo-v14";
-const ASSETS=["./","./index.html","./styles.css","./app.js","./anki-export.js","./srs.js","./vendor/sql-wasm.wasm","./core.js","./db.js","./api.js","./speech.js","./manifest.webmanifest","./icon.svg","./icon-192.png","./icon-512.png"];
+const CACHE="jp-echo-v15";
+const ASSETS=["./","./index.html","./styles.css","./app.js","./anki-export.js","./srs.js","./vendor/sql-wasm.wasm","./core.js","./diff.js","./db.js","./api.js","./speech.js","./manifest.webmanifest","./icon.svg","./icon-192.png","./icon-512.png"];
 
 self.addEventListener("install",event=>event.waitUntil(
   caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting())

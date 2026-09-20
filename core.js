@@ -16,15 +16,27 @@ export function stripFurigana(value = "") {
   return value.replace(/【[^】]+】/g, "");
 }
 
-export function rubyHtml(value = "") {
+export function rubySegments(value = "") {
   value = normalizeFurigana(value);
-  let out = "", offset = 0;
+  const segments = [];
+  let offset = 0;
   for (const match of value.matchAll(notation)) {
-    out += escapeHtml(value.slice(offset, match.index));
-    out += "<ruby>" + escapeHtml(match[1]) + "<rt>" + escapeHtml(match[2]) + "</rt></ruby>";
+    if (match.index > offset) segments.push({text: value.slice(offset, match.index)});
+    segments.push({text: match[1], reading: match[2]});
     offset = match.index + match[0].length;
   }
-  return out + escapeHtml(value.slice(offset));
+  if (offset < value.length) segments.push({text: value.slice(offset)});
+  return segments;
+}
+
+export function segmentHtml(segment) {
+  return segment.reading
+    ? "<ruby>" + escapeHtml(segment.text) + "<rt>" + escapeHtml(segment.reading) + "</rt></ruby>"
+    : escapeHtml(segment.text);
+}
+
+export function rubyHtml(value = "") {
+  return rubySegments(value).map(segmentHtml).join("");
 }
 
 export function validateTranslation(result) {
