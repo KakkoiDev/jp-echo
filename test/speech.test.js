@@ -70,3 +70,53 @@ test("pause also suspends the silent imitation interval", () => {
   assert.equal(timers.length,2);
   assert.ok(timers[1].delay<timers[0].delay);
 });
+
+test("the loop shows it is playing without waiting for the engine", () => {
+  spoken.length = 0;
+  const states = [];
+  const loop = new ShadowLoop({onEcho:()=>{},onState:s=>states.push(s),setWatchdogTimer:()=>1,clearWatchdogTimer:()=>{}});
+  loop.play("これはテストです",{rate:1});
+  // No onstart yet — the press alone puts the screen in the playing state, so
+  // the arcs and the loop dot move the moment the user asks for them.
+  assert.deepEqual(states,["speaking"]);
+  spoken[0].onstart();
+  assert.deepEqual(states,["speaking","speaking"]);
+});
+
+test("a voice that never starts gives up instead of hanging", () => {
+  spoken.length = 0;
+  const states = [];
+  let fire = null;
+  const loop = new ShadowLoop({onEcho:()=>{},onState:s=>states.push(s),setWatchdogTimer:fn=>{fire=fn;return 1},clearWatchdogTimer:()=>{}});
+  loop.play("これはテストです",{rate:1});
+  assert.equal(loop.running,true);
+  fire();
+  assert.deepEqual(states,["speaking","error"]);
+  // Left running, the next press would only reach togglePause and report
+  // "Paused" for a loop that never played.
+  assert.equal(loop.running,false);
+});
+
+test("a voice that starts cancels the watchdog", () => {
+  spoken.length = 0;
+  const cleared = [];
+  let fire = null;
+  const loop = new ShadowLoop({onEcho:()=>{},onState:()=>{},setWatchdogTimer:fn=>{fire=fn;return 7},clearWatchdogTimer:id=>cleared.push(id)});
+  loop.play("これはテストです",{rate:1});
+  spoken[0].onstart();
+  assert.deepEqual(cleared,[7]);
+  fire();
+  assert.equal(loop.running,true);
+});
+
+test("a synthesiser that throws reports the failure", () => {
+  spoken.length = 0;
+  const states = [];
+  const speak = globalThis.speechSynthesis.speak;
+  globalThis.speechSynthesis.speak = () => {throw new Error("no voice")};
+  const loop = new ShadowLoop({onEcho:()=>{},onState:s=>states.push(s),setWatchdogTimer:()=>1,clearWatchdogTimer:()=>{}});
+  loop.play("これはテストです",{rate:1});
+  globalThis.speechSynthesis.speak = speak;
+  assert.deepEqual(states,["speaking","error"]);
+  assert.equal(loop.running,false);
+});
