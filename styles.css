@@ -122,7 +122,12 @@ rt{font-size:.38em;font-weight:400;color:var(--ink-muted);letter-spacing:.04em}
 /* The Practice artboard sets the loop button 18px below the state line. .controls
    carries no margin of its own, so the button sat flush against "READY". */
 #practice .controls{margin-top:18px}
-.arcs svg{opacity:.45;animation:arcs 1.6s ease-in-out infinite}
+/* The arcs share the ripple's clock: 2.4s, with the ripple's rings staggered
+   every 0.6s inside it, so the two motions land on one grid instead of drifting
+   against each other. The swing is narrowed too — the ripple peaks at .144
+   once its .16 container is applied, so the board's .25-.8 arcs read about five
+   times heavier and made the pair look like two different languages. */
+.arcs svg{opacity:.45;animation:arcs 2.4s ease-in-out infinite}
 #loop-state,#review-loop-state{display:flex;align-items:center;justify-content:center;gap:8px;margin:16px 0 0;font-size:12px;text-transform:uppercase;letter-spacing:.18em;color:var(--ink-soft)}
 #loop-state::before,#review-loop-state::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--hairline)}
 .playing #loop-state::before,.playing #review-loop-state::before{background:var(--seal)}
@@ -454,7 +459,7 @@ kbd{padding:2px 7px;border:1px solid var(--chip-rev-bd);border-radius:3px;backgr
 
 /* Motion */
 @keyframes rip{0%{transform:scale(.24);opacity:.9}65%{opacity:.3}100%{transform:scale(1);opacity:0}}
-@keyframes arcs{0%,100%{opacity:.25}50%{opacity:.8}}
+@keyframes arcs{0%,100%{opacity:.3}50%{opacity:.62}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 @keyframes tick{from{transform:translateY(6px);opacity:0}to{transform:translateY(0);opacity:1}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
