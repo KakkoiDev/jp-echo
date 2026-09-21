@@ -3,8 +3,8 @@
 An offline-first PWA for turning an English sentence into Japanese and learning
 it through a listen–imitate shadowing loop.
 
-**[Open the app](https://kakkoidev.github.io/jp-echo/)** ·
-[About Echo](https://kakkoidev.github.io/jp-echo/docs/)
+**[Open the app](https://echo.kakkoi.dev/)** ·
+[About Echo](https://echo.kakkoi.dev/docs/)
 
 | Practice | Review | The difference |
 |---|---|---|
