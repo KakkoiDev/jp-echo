@@ -59,8 +59,19 @@ a:hover{color:var(--seal-deep)}
 
 /* Header */
 header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:calc(24px + env(safe-area-inset-top)) 18px 14px;border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:10;background:var(--washi)}
-.brand{display:flex;align-items:center;gap:9px}
-.seal{width:26px;height:26px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-radius:3px;background:var(--seal);color:var(--seal-on);font-family:var(--display);font-size:15px;line-height:1}
+.brand{position:relative;display:flex;align-items:center;gap:9px}
+/* A ring leaves the seal on each pass of the loop (Motion: 2.4s ease-out, three
+   rings staggered 0.8s, scale .24 -> 1, opacity .9 -> 0). The box is sized so
+   scale .24 puts the first ring exactly on the seal's edge, which is what makes
+   the ring look like it leaves the mark rather than appearing around it. */
+.seal-wrap{position:relative;display:flex;flex-shrink:0}
+.seal-ripple{position:absolute;z-index:0;left:50%;top:50%;width:108px;height:108px;transform:translate(-50%,-50%);pointer-events:none;color:var(--seal)}
+.seal-ripple svg{width:100%;height:100%}
+.seal-ripple circle{opacity:0;transform-origin:60px 60px}
+body.looping .seal-ripple circle{animation:rip 2.4s ease-out infinite}
+body.looping .seal-ripple circle:nth-child(2){animation-delay:.8s}
+body.looping .seal-ripple circle:nth-child(3){animation-delay:1.6s}
+.seal{position:relative;z-index:1;width:26px;height:26px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-radius:3px;background:var(--seal);color:var(--seal-on);font-family:var(--display);font-size:15px;line-height:1}
 h1{margin:0;font-family:var(--display);font-weight:400;font-size:19px;letter-spacing:.08em}
 h2{margin:0;font-family:var(--display);font-weight:600;font-size:23px;letter-spacing:.04em}
 .icon-button{width:44px;height:44px;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:0;background:var(--panel);border:1px solid var(--hairline);border-radius:4px;color:var(--sumi);cursor:pointer}
@@ -435,6 +446,7 @@ dialog::backdrop{background:rgba(28,26,23,.34)}
 kbd{padding:2px 7px;border:1px solid var(--chip-rev-bd);border-radius:3px;background:var(--panel);font-family:var(--display);font-size:12px;color:var(--ink-soft)}
 
 /* Motion */
+@keyframes rip{0%{transform:scale(.24);opacity:.9}65%{opacity:.3}100%{transform:scale(1);opacity:0}}
 @keyframes arcs{0%,100%{opacity:.25}50%{opacity:.8}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 @keyframes tick{from{transform:translateY(6px);opacity:0}to{transform:translateY(0);opacity:1}}
@@ -454,8 +466,9 @@ kbd{padding:2px 7px;border:1px solid var(--chip-rev-bd);border-radius:3px;backgr
   body[data-view="session"] main{padding-bottom:7rem}
   .tabs{grid-column:1;grid-row:1/3;position:sticky;top:0;left:auto;right:auto;bottom:auto;align-self:start;height:100dvh;flex-direction:column;justify-content:flex-start;gap:3px;padding:34px 24px;border-top:0;border-right:1px solid var(--hairline);background:rgba(237,233,221,.6)}
   [data-theme="dark"] .tabs{background:rgba(28,25,20,.6)}
-  .tabs>.nav-brand{display:flex;align-items:center;gap:11px;padding:0 0 28px;margin-bottom:22px;border-bottom:1px solid var(--hairline)}
+  .tabs>.nav-brand{position:relative;display:flex;align-items:center;gap:11px;padding:0 0 28px;margin-bottom:22px;border-bottom:1px solid var(--hairline)}
   .nav-brand .seal{width:30px;height:30px;font-size:17px}
+  .nav-brand .seal-ripple{width:125px;height:125px}
   .nav-wordmark{font-family:var(--display);font-size:21px;letter-spacing:.08em}
   .tab{flex:0 0 auto;height:46px;flex-direction:row;justify-content:flex-start;gap:12px;padding:0 13px;border-top:0;border-radius:4px;margin-top:0;font-size:15px;letter-spacing:normal}
   .tab.current{background:var(--panel);border:1px solid var(--hairline);color:var(--sumi)}
