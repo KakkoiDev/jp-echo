@@ -140,6 +140,17 @@ rt{font-size:.38em;font-weight:400;color:var(--ink-muted);letter-spacing:.04em}
 .mic.listening{background:var(--seal);border-color:var(--seal);border-radius:50%;color:var(--seal-on)}
 .mic.listening svg{animation:pulse 1.4s ease-in-out infinite}
 .input-row .primary{height:54px;flex-shrink:0;padding:0 16px}
+/* On a phone the word costs the field most of a sentence: "Enter an English
+   sentence" wrapped mid-placeholder. The arrow carries it instead — the same
+   icon-only button the canvas already draws for the no-key composer — and the
+   button keeps its aria-label, so the word is still there for a screen reader. */
+@media(max-width:599px){#translate{width:54px;padding:0}#translate .label{display:none}
+/* Two composers, as the canvas draws them. On the welcome screen the field gets
+   its own row and two lines to sit in (Main); once a sentence is loaded it
+   shrinks back to a single row beside the buttons (Practice). Held together in
+   one row on a phone, the placeholder wrapped and was clipped mid-word. */
+body:not(.has-sentence) .input-row{flex-wrap:wrap;justify-content:flex-end}
+body:not(.has-sentence) .input-row textarea{flex-basis:100%;height:76px}}
 .hint,#status{margin:0;font-size:12px;line-height:1.6;color:var(--ink-muted);text-wrap:pretty}
 .hint:empty,#status:empty{display:none}
 .error{color:var(--seal-deep)!important}
