@@ -141,6 +141,15 @@ rt{font-size:.38em;font-weight:400;color:var(--ink-muted);letter-spacing:.04em}
 .ripple circle:nth-child(2){animation-delay:.6s}
 .ripple circle:nth-child(3){animation-delay:1.2s}
 .ripple circle:nth-child(4){animation-delay:1.8s}
+/* A moving ring is only at its peak for an instant and spends most of the cycle
+   fading, so the .16 the canvas draws reads far lighter in motion than it does
+   standing still. The container lifts only where the rings actually animate —
+   under prefers-reduced-motion they stay at the drawn .16, which is what the
+   Motion board asks for. */
+@media not (prefers-reduced-motion:reduce){
+  .ripple{opacity:.26}
+  .ring-stage.resting .ripple{opacity:.13}
+}
 #welcome{padding-inline:4px}
 .welcome{display:flex;flex-direction:column;justify-content:center;min-height:52dvh;position:relative}
 .welcome strong{font-family:var(--display);font-weight:600;font-size:44px;line-height:1.18;letter-spacing:-.012em}
