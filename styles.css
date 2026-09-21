@@ -119,6 +119,9 @@ rt{font-size:.38em;font-weight:400;color:var(--ink-muted);letter-spacing:.04em}
 .ticked{animation:tick .28s ease-out}
 .counter span{font-size:11px;text-transform:uppercase;letter-spacing:.2em;color:var(--ink-muted)}
 .arcs{display:flex;justify-content:center;margin-top:26px;color:var(--seal)}
+/* The Practice artboard sets the loop button 18px below the state line. .controls
+   carries no margin of its own, so the button sat flush against "READY". */
+#practice .controls{margin-top:18px}
 .arcs svg{opacity:.45}
 .playing .arcs svg{animation:arcs 1.6s ease-in-out infinite}
 #loop-state,#review-loop-state{display:flex;align-items:center;justify-content:center;gap:8px;margin:16px 0 0;font-size:12px;text-transform:uppercase;letter-spacing:.18em;color:var(--ink-soft)}
