@@ -57,7 +57,21 @@ export function validateTranslations(result) {
   return {casualJapanese,politeJapanese};
 }
 
-export function createSentence(english, japanese, now = new Date(), id = crypto.randomUUID()) {
+// crypto.randomUUID is secure-context only, so it is simply missing over
+// plain http — a custom domain before its certificate lands, a LAN address,
+// a file:// open. getRandomValues has no such restriction, so the id comes
+// from there and randomUUID is only a shortcut when it exists.
+export function newId(){
+  if(typeof crypto!=="undefined"&&crypto.randomUUID)return crypto.randomUUID();
+  const bytes=new Uint8Array(16);
+  if(typeof crypto!=="undefined"&&crypto.getRandomValues)crypto.getRandomValues(bytes);
+  else for(let i=0;i<16;i++)bytes[i]=Math.floor(Math.random()*256);
+  bytes[6]=(bytes[6]&0x0f)|0x40;bytes[8]=(bytes[8]&0x3f)|0x80;
+  const hex=[...bytes].map(b=>b.toString(16).padStart(2,"0")).join("");
+  return `${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20)}`;
+}
+
+export function createSentence(english, japanese, now = new Date(), id = newId()) {
   const forms=typeof japanese==="string"?{casualJapanese:japanese,politeJapanese:japanese}:japanese;
   const casualJapanese=forms.casualJapanese.trim(),politeJapanese=forms.politeJapanese.trim();
   return {id,english:english.trim(),japanese:casualJapanese,plainJapanese:stripFurigana(casualJapanese).trim(),casualJapanese,plainCasualJapanese:stripFurigana(casualJapanese).trim(),politeJapanese,plainPoliteJapanese:stripFurigana(politeJapanese).trim(),echoCount:0,createdAt:now.toISOString(),updatedAt:now.toISOString(),translationProvider:"deepseek",schemaVersion:SCHEMA_VERSION};
