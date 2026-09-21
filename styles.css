@@ -122,8 +122,7 @@ rt{font-size:.38em;font-weight:400;color:var(--ink-muted);letter-spacing:.04em}
 /* The Practice artboard sets the loop button 18px below the state line. .controls
    carries no margin of its own, so the button sat flush against "READY". */
 #practice .controls{margin-top:18px}
-.arcs svg{opacity:.45}
-.playing .arcs svg{animation:arcs 1.6s ease-in-out infinite}
+.arcs svg{opacity:.45;animation:arcs 1.6s ease-in-out infinite}
 #loop-state,#review-loop-state{display:flex;align-items:center;justify-content:center;gap:8px;margin:16px 0 0;font-size:12px;text-transform:uppercase;letter-spacing:.18em;color:var(--ink-soft)}
 #loop-state::before,#review-loop-state::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--hairline)}
 .playing #loop-state::before,.playing #review-loop-state::before{background:var(--seal)}
@@ -363,7 +362,14 @@ dialog::backdrop{background:rgba(28,26,23,.34)}
 /* Review home */
 #review-home{display:flex;flex-direction:column;min-height:calc(100dvh - 160px)}
 .ring-stage{flex-grow:1;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;text-align:center;padding:24px 4px}
-.ring-stage .ripple{top:0;left:50%;transform:translateX(-50%)}
+/* The rings are concentric with the count, not with the stage: the artboard
+   puts the ripple's top exactly one count-height (112px) above it, which leaves
+   the outermost ring tucked 22px clear of the breakdown bar. Anchored to the
+   stage instead, the ripple drifted against the centred content as the viewport
+   grew or shrank, and on a short screen its bottom swept down through the
+   breakdown. */
+.ring-core{position:relative;display:flex;flex-direction:column;align-items:center}
+.ring-stage .ripple{top:-112px;left:50%;transform:translateX(-50%)}
 .ring-stage.resting .ripple{color:var(--sumi);opacity:.08}
 #review-due-block,#review-rest-block{position:relative;display:flex;flex-direction:column;align-items:center}
 #due-count{font-family:var(--display);font-weight:600;font-size:112px;line-height:1;color:var(--seal)}
