@@ -11,6 +11,11 @@
   --chip-rev-bd:#C8C0AE;--chip-rev-bg:#F1EDE2;--chip-rev-fg:#55504A;
   --diff-wave:#B8342A;--diff-target-bg:#FAEDE9;
   --texture:rgba(28,26,23,.022);--texture-soft:rgba(28,26,23,.014);
+  /* Theme-dependent values that are not plain colours. As tokens they follow
+     the palette; as their own [data-theme="dark"] rules they missed the
+     default theme, "system", which flips the palette but keeps that name. */
+  --nav-bg:rgba(237,233,221,.6);--primary-weight:500;--quiet-title:#8C867C;
+  --chevron:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'><path d='M1 1l4 4 4-4' stroke='%2355504A' stroke-width='1.4' fill='none' stroke-linecap='round'/></svg>");
   --display:'Shippori Mincho','Hiragino Mincho ProN','Yu Mincho',Georgia,serif;
   --ui:'Zen Kaku Gothic New','Hiragino Sans','Yu Gothic',system-ui,sans-serif;
   color-scheme:light;
@@ -26,6 +31,8 @@
   --chip-rev-bd:#4A443A;--chip-rev-bg:#221F19;--chip-rev-fg:#C4BCAC;
   --diff-wave:#F5A691;--diff-target-bg:#3A241F;
   --texture:rgba(242,238,227,.022);--texture-soft:rgba(242,238,227,.014);
+  --nav-bg:rgba(28,25,20,.6);--primary-weight:700;--quiet-title:#A49B8C;
+  --chevron:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'><path d='M1 1l4 4 4-4' stroke='%23C4BCAC' stroke-width='1.4' fill='none' stroke-linecap='round'/></svg>");
   color-scheme:dark;
 }
 @media(prefers-color-scheme:dark){
@@ -40,6 +47,8 @@
     --chip-rev-bd:#4A443A;--chip-rev-bg:#221F19;--chip-rev-fg:#C4BCAC;
     --diff-wave:#F5A691;--diff-target-bg:#3A241F;
     --texture:rgba(242,238,227,.022);--texture-soft:rgba(242,238,227,.014);
+  --nav-bg:rgba(28,25,20,.6);--primary-weight:700;--quiet-title:#A49B8C;
+  --chevron:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'><path d='M1 1l4 4 4-4' stroke='%23C4BCAC' stroke-width='1.4' fill='none' stroke-linecap='round'/></svg>");
     color-scheme:dark;
   }
 }
@@ -74,8 +83,7 @@ body[data-view="session"] main{padding-bottom:calc(7rem + env(safe-area-inset-bo
 /* Buttons */
 button{min-height:44px;touch-action:manipulation;cursor:pointer;font-family:inherit}
 button,.button{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:0 20px;background:var(--panel);color:var(--sumi);border:1px solid var(--sumi);border-radius:4px;font-size:15px;letter-spacing:.06em;text-decoration:none}
-.primary{background:var(--seal);color:var(--seal-on);border-color:var(--seal);font-weight:500}
-[data-theme="dark"] .primary{font-weight:700}
+.primary{background:var(--seal);color:var(--seal-on);border-color:var(--seal);font-weight:var(--primary-weight)}
 .quiet{border-color:var(--quiet-edge);color:var(--ink-soft)}
 .plain{background:transparent;border-color:transparent;color:var(--ink-muted);letter-spacing:.04em}
 button:disabled{background:var(--disabled-bg);color:var(--disabled-fg);border-color:transparent;cursor:default}
@@ -91,8 +99,7 @@ textarea{padding:13px 14px;line-height:1.5;resize:none}
 input[type=checkbox]{width:22px;height:22px;min-height:0;padding:0;accent-color:var(--seal)}
 input[type=range]{min-height:0;padding:0;border:0;background:transparent;accent-color:var(--seal)}
 input:disabled,textarea:disabled{background:var(--field-off);color:var(--disabled-fg);border-color:var(--disabled-bg)}
-select{appearance:none;-webkit-appearance:none;padding-right:34px;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'><path d='M1 1l4 4 4-4' stroke='%2355504A' stroke-width='1.4' fill='none' stroke-linecap='round'/></svg>");background-repeat:no-repeat;background-position:right 13px center}
-[data-theme="dark"] select{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'><path d='M1 1l4 4 4-4' stroke='%23C4BCAC' stroke-width='1.4' fill='none' stroke-linecap='round'/></svg>")}
+select{appearance:none;-webkit-appearance:none;padding-right:34px;background-image:var(--chevron);background-repeat:no-repeat;background-position:right 13px center}
 
 /* Chips */
 .toggles{display:flex;flex-wrap:wrap;gap:8px}
@@ -229,10 +236,9 @@ ul{list-style:none;margin:0;padding:0}
 .empty-panel button{min-height:38px;height:38px;margin-top:4px;padding:0 16px;border-radius:3px;font-size:13px;letter-spacing:normal;background:transparent}
 
 /* No translator connected */
-body.no-key #welcome strong,body.no-key #welcome strong em{color:#8C867C}
+body.no-key #welcome strong,body.no-key #welcome strong em{color:var(--quiet-title)}
 body.no-key #translate{width:52px;padding:0}
 body.no-key #translate .label{display:none}
-[data-theme="dark"] body.no-key #welcome strong,[data-theme="dark"] body.no-key #welcome strong em{color:var(--ink-muted)}
 body.no-key #welcome .stroke{background:var(--chip-rev-bd)}
 body.no-key #welcome .lede{color:var(--ink-muted)}
 body.no-key .ripple{stroke-opacity:.12}
@@ -457,8 +463,7 @@ kbd{padding:2px 7px;border:1px solid var(--chip-rev-bd);border-radius:3px;backgr
   main{grid-column:2;grid-row:1/3;max-width:880px;margin:0;padding:36px 56px calc(40px + env(safe-area-inset-bottom))}
   #main-view{padding-bottom:13rem}
   body[data-view="session"] main{padding-bottom:7rem}
-  .tabs{grid-column:1;grid-row:1/3;position:sticky;top:0;left:auto;right:auto;bottom:auto;align-self:start;height:100dvh;flex-direction:column;justify-content:flex-start;gap:3px;padding:34px 24px;border-top:0;border-right:1px solid var(--hairline);background:rgba(237,233,221,.6)}
-  [data-theme="dark"] .tabs{background:rgba(28,25,20,.6)}
+  .tabs{grid-column:1;grid-row:1/3;position:sticky;top:0;left:auto;right:auto;bottom:auto;align-self:start;height:100dvh;flex-direction:column;justify-content:flex-start;gap:3px;padding:34px 24px;border-top:0;border-right:1px solid var(--hairline);background:var(--nav-bg)}
   .tabs>.nav-brand{display:flex;align-items:center;gap:11px;padding:0 0 28px;margin-bottom:22px;border-bottom:1px solid var(--hairline)}
   .nav-brand .seal{width:30px;height:30px;font-size:17px}
   .nav-wordmark{font-family:var(--display);font-size:21px;letter-spacing:.08em}
