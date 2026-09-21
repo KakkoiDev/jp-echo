@@ -116,7 +116,6 @@ rt{font-size:.38em;font-weight:400;color:var(--ink-muted);letter-spacing:.04em}
 #japanese{margin:24px 0 0}
 .counter{display:flex;align-items:baseline;justify-content:center;gap:10px;margin-top:2px}
 .counter strong{font-family:var(--display);font-weight:600;font-size:34px;line-height:1}
-.ticked{animation:tick .28s ease-out}
 .counter span{font-size:11px;text-transform:uppercase;letter-spacing:.2em;color:var(--ink-muted)}
 .arcs{display:flex;justify-content:center;margin-top:26px;color:var(--seal)}
 /* The Practice artboard sets the loop button 18px below the state line. .controls
@@ -127,29 +126,10 @@ rt{font-size:.38em;font-weight:400;color:var(--ink-muted);letter-spacing:.04em}
    against each other. The swing is narrowed too — the ripple peaks at .144
    once its .16 container is applied, so the board's .25-.8 arcs read about five
    times heavier and made the pair look like two different languages. */
-.arcs svg{opacity:.45;animation:arcs 2.4s ease-in-out infinite}
 #loop-state,#review-loop-state{display:flex;align-items:center;justify-content:center;gap:8px;margin:16px 0 0;font-size:12px;text-transform:uppercase;letter-spacing:.18em;color:var(--ink-soft)}
 #loop-state::before,#review-loop-state::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--hairline)}
 .playing #loop-state::before,.playing #review-loop-state::before{background:var(--seal)}
-.ripple{position:absolute;inset:auto;pointer-events:none;color:var(--seal);opacity:.16}
-/* The ripple moves, per Motion: 2.4s ease-out, rings staggered, scale .24 -> 1,
-   opacity .9 -> 0. fill-box scales each ring about its own centre, so one rule
-   serves all three ripples wherever they are drawn. Under prefers-reduced-motion
-   the global rule stops them and they stand still at the radii the canvas draws,
-   which is what the Motion board asks for. */
-.ripple circle{transform-box:fill-box;transform-origin:center;animation:rip 2.4s ease-out infinite}
-.ripple circle:nth-child(2){animation-delay:.6s}
-.ripple circle:nth-child(3){animation-delay:1.2s}
-.ripple circle:nth-child(4){animation-delay:1.8s}
-/* A moving ring is only at its peak for an instant and spends most of the cycle
-   fading, so the .16 the canvas draws reads far lighter in motion than it does
-   standing still. The container lifts only where the rings actually animate —
-   under prefers-reduced-motion they stay at the drawn .16, which is what the
-   Motion board asks for. */
-@media not (prefers-reduced-motion:reduce){
-  .ripple{opacity:.26}
-  .ring-stage.resting .ripple{opacity:.13}
-}
+.ripple{position:absolute;inset:auto;pointer-events:none;color:var(--seal)}
 #welcome{padding-inline:4px}
 .welcome{display:flex;flex-direction:column;justify-content:center;min-height:52dvh;position:relative}
 .welcome strong{font-family:var(--display);font-weight:600;font-size:44px;line-height:1.18;letter-spacing:-.012em}
@@ -162,8 +142,7 @@ rt{font-size:.38em;font-weight:400;color:var(--ink-muted);letter-spacing:.04em}
 .input-row{display:flex;gap:10px;align-items:stretch}
 .input-row textarea{flex-grow:1;min-width:0;height:54px}
 .mic{width:54px;height:54px;flex-shrink:0;padding:0;background:var(--panel);border:1px solid var(--sumi);border-radius:4px}
-.mic.listening{background:var(--seal);border-color:var(--seal);border-radius:50%;color:var(--seal-on)}
-.mic.listening svg{animation:pulse 1.4s ease-in-out infinite}
+.mic.is-listening{background:var(--seal);border-color:var(--seal);border-radius:50%;color:var(--seal-on)}
 .input-row .primary{height:54px;flex-shrink:0;padding:0 16px}
 /* On a phone the word costs the field most of a sentence: "Enter an English
    sentence" wrapped mid-placeholder. The arrow carries it instead — the same
@@ -256,14 +235,14 @@ body.no-key #translate .label{display:none}
 [data-theme="dark"] body.no-key #welcome strong,[data-theme="dark"] body.no-key #welcome strong em{color:var(--ink-muted)}
 body.no-key #welcome .stroke{background:var(--chip-rev-bd)}
 body.no-key #welcome .lede{color:var(--ink-muted)}
-body.no-key .ripple{opacity:.12}
+body.no-key .ripple{stroke-opacity:.12}
 body.no-key .composer label{color:var(--disabled-fg)}
 body.no-key .mic{display:none}
 
 /* First run */
 #onboard-view,#setup-view{display:flex;flex-direction:column;min-height:calc(100dvh - 40px);padding-top:8px}
 .onboard-stage{flex-grow:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;position:relative;text-align:center;padding:24px 12px}
-.onboard-stage .ripple{top:0;left:50%;transform:translateX(-50%);opacity:.14}
+.onboard-stage .ripple{top:-60px;left:50%;transform:translateX(-50%);stroke-opacity:.14}
 .seal.big{position:relative;width:92px;height:92px;border-radius:6px;font-size:52px}
 .onboard-title{position:relative;margin:32px 0 0;font-family:var(--display);font-weight:600;font-size:46px;letter-spacing:.04em}
 .onboard-stage .lede{position:relative;margin:18px 0 0;max-width:280px;font-size:16px;line-height:1.75;color:var(--ink-soft);text-wrap:pretty}
@@ -383,8 +362,8 @@ dialog::backdrop{background:rgba(28,26,23,.34)}
    grew or shrank, and on a short screen its bottom swept down through the
    breakdown. */
 .ring-core{position:relative;display:flex;flex-direction:column;align-items:center}
-.ring-stage .ripple{top:-112px;left:50%;transform:translateX(-50%)}
-.ring-stage.resting .ripple{color:var(--sumi);opacity:.08}
+.ring-stage .ripple{top:-142px;left:50%;transform:translateX(-50%)}
+.ring-stage.resting .ripple{color:var(--sumi);stroke-opacity:.08}
 #review-due-block,#review-rest-block{position:relative;display:flex;flex-direction:column;align-items:center}
 #due-count{font-family:var(--display);font-weight:600;font-size:112px;line-height:1;color:var(--seal)}
 #review-due-block .overline{margin-top:10px;letter-spacing:.22em}
@@ -416,14 +395,12 @@ dialog::backdrop{background:rgba(28,26,23,.34)}
 .answer-tools{display:flex;align-items:center;gap:12px;padding-top:10px;border-top:1px solid var(--rule)}
 .mic-round{width:46px;height:46px;min-height:46px;flex-shrink:0;padding:0;background:var(--panel);border:1px solid var(--sumi);border-radius:50%}
 .mic-round[aria-pressed="true"]{background:var(--seal);border-color:var(--seal);color:var(--seal-on)}
-.mic-round[aria-pressed="true"] svg{animation:pulse 1.4s ease-in-out infinite}
 .answer-copy{flex-grow:1;min-width:0;display:flex;flex-direction:column;gap:3px}
 #review-listen-state{font-size:13px;letter-spacing:.02em;color:var(--seal-deep)}
 #review-listen-state:empty{display:none}
 .answer-copy .hint{font-size:11px;line-height:1.5}
 .arcs.small{flex-shrink:0;display:flex;opacity:0}
-.arcs.small svg{opacity:.5}
-.listening .arcs.small{opacity:1;animation:arcs 1.6s ease-in-out infinite}
+.is-listening .arcs.small{opacity:1}
 #review-check svg{flex-shrink:0}
 
 /* Review answer */
@@ -467,11 +444,6 @@ dialog::backdrop{background:rgba(28,26,23,.34)}
 kbd{padding:2px 7px;border:1px solid var(--chip-rev-bd);border-radius:3px;background:var(--panel);font-family:var(--display);font-size:12px;color:var(--ink-soft)}
 
 /* Motion */
-@keyframes rip{0%{transform:scale(.24);opacity:.9}65%{opacity:.3}100%{transform:scale(1);opacity:0}}
-@keyframes arcs{0%,100%{opacity:.3}50%{opacity:.62}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-@keyframes tick{from{transform:translateY(6px);opacity:0}to{transform:translateY(0);opacity:1}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 
 @media(min-width:700px){
   header{padding-inline:32px}
@@ -519,3 +491,173 @@ kbd{padding:2px 7px;border:1px solid var(--chip-rev-bd);border-radius:3px;backgr
   body[data-view="sentence"] .session-bar .icon-button{display:none}
   #history-list li.selected{margin-inline:-10px;padding-inline:7px 10px;border-left:3px solid var(--seal);background:var(--seal-tint)}
 }
+
+/* Echo — the echo animation. Copy this file verbatim into styles.css.
+ *
+ * This is the spec, not an illustration of it. Every number here was
+ * measured on the canvas; do not re-derive them from prose.
+ *
+ * ── The whole idea ──────────────────────────────────────────────────
+ * The resting state IS the drawn ripple: rings sitting at their final
+ * radii, exactly as every artboard draws them. Playing does not add a
+ * new graphic — it animates the one already there. So "not playing",
+ * "paused" and "reduced motion" are all the same state, for free, and
+ * there is no second thing to keep in sync.
+ *
+ * Movement means one thing: audio is playing right now. Nothing else
+ * in the app moves.
+ */
+
+/* ── 1. The container ──────────────────────────────────────────────
+ * One element wraps the rings. Its stroke-opacity is the ripple's
+ * weight, and it is NOT the same still and moving: a ring is at full
+ * strength for an instant and spends most of its cycle fading, so
+ * .16 measures as an effective .144 in motion. Lift it while playing.
+ * (Element opacity in the keyframes multiplies with this: .234 × .9
+ * = .21 at the peak.)
+ */
+.echo {
+  stroke-opacity: 0.16;
+}
+.echo.is-playing {
+  stroke-opacity: 0.234;
+}
+
+/* ── 2. Resting: the drawn ripple ───────────────────────────────────
+ * Four rings at .34 / .55 / .78 / 1 of the outer radius — the ratios
+ * the artboards use. Author every ring at the OUTER radius in the
+ * markup and scale it down here, so one animation can drive all four.
+ *
+ * transform-origin is the trap. SVG's default puts it at the corner of
+ * the coordinate system, not the middle of the shape, and it is NOT
+ * inherited — setting it on the parent <g> does nothing. Both the
+ * design and the build shipped rings flying out of the top-left before
+ * catching this. It must sit on the animated element itself.
+ */
+.echo-ring {
+  transform-box: view-box;
+  transform-origin: center;
+}
+.echo-ring:nth-of-type(1) { transform: scale(0.34); }
+.echo-ring:nth-of-type(2) { transform: scale(0.55); }
+.echo-ring:nth-of-type(3) { transform: scale(0.78); }
+.echo-ring:nth-of-type(4) { transform: scale(1); }
+
+/* ── 3. Playing: one ring leaves the centre per pass ────────────────
+ * 2.4s ÷ 4 rings = 0.6s stagger, so the cadence is even. 0.8s across
+ * four rings leaves a 0.8s hole in every cycle — that was the first
+ * build's bug, and it is why the number is 0.6 and not 0.8.
+ */
+@keyframes echo-emanate {
+  0%   { transform: scale(0.24); opacity: 0.9; }
+  65%  {                         opacity: 0.3; }
+  100% { transform: scale(1);    opacity: 0;   }
+}
+
+.echo.is-playing .echo-ring {
+  animation: echo-emanate 2.4s ease-out infinite;
+}
+.echo.is-playing .echo-ring:nth-of-type(2) { animation-delay: 0.6s; }
+.echo.is-playing .echo-ring:nth-of-type(3) { animation-delay: 1.2s; }
+.echo.is-playing .echo-ring:nth-of-type(4) { animation-delay: 1.8s; }
+
+/* ── 4. The arc pair — same motion, compact form ────────────────────
+ * Used inline, beside the echo count. Three copies of ONE arc pair,
+ * not three arcs at different radii: author all three at the outer
+ * radius, rest them at .24 / .6 / 1, animate the same keyframes.
+ * Stagger 0.8s (2.4 ÷ 3).
+ *
+ * The arcs must be arcs of circles centred on the middle of their
+ * viewBox — then `transform-origin: center` is the right point and the
+ * rule above serves them too.
+ */
+.echo-arc {
+  transform-box: view-box;
+  transform-origin: center;
+}
+.echo-arc:nth-of-type(1) { transform: scale(0.24); }
+.echo-arc:nth-of-type(2) { transform: scale(0.6); }
+.echo-arc:nth-of-type(3) { transform: scale(1); }
+
+.echo.is-playing .echo-arc {
+  animation: echo-emanate 2.4s ease-out infinite;
+}
+.echo.is-playing .echo-arc:nth-of-type(2) { animation-delay: 0.8s; }
+.echo.is-playing .echo-arc:nth-of-type(3) { animation-delay: 1.6s; }
+
+/* ── 5. Listening ──────────────────────────────────────────────────
+ * The mic GLYPH fades; the button itself never moves or resizes.
+ */
+@keyframes echo-listening {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.4; }
+}
+.is-listening .mic-glyph {
+  animation: echo-listening 1.4s ease-in-out infinite;
+}
+
+/* ── 6. The count going up ─────────────────────────────────────────
+ * Add .just-ticked when the number changes, remove it on animationend.
+ * Rises and fades in. No bounce, no colour flash, no scale.
+ */
+@keyframes echo-tick {
+  from { transform: translateY(6px); opacity: 0; }
+  to   { transform: translateY(0);   opacity: 1; }
+}
+.echo-count.just-ticked {
+  animation: echo-tick 280ms ease-out;
+}
+
+/* ── 7. Motion off ─────────────────────────────────────────────────
+ * Everything falls back to section 2 — the drawn ripple — because that
+ * is the base state. Nothing disappears, nothing collapses into a
+ * single overlapping ring.
+ *
+ * Do not add a reduced-motion "alternative" animation. A still Echo is
+ * a complete Echo: playback is announced by the seal-red dot, the word
+ * Playing, and the Pause label. Movement is the fourth, redundant
+ * carrier — which is also the answer to Android rendering no CSS
+ * animation at all.
+ *
+ * .motion-off is the Settings → Appearance → Motion = Off class, set on
+ * <html>. "Always on" omits both and wins over the device preference.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .echo.is-playing { stroke-opacity: 0.16; }
+  .echo.is-playing .echo-ring,
+  .echo.is-playing .echo-arc,
+  .is-listening .mic-glyph,
+  .echo-count.just-ticked { animation: none; }
+}
+html.motion-off .echo.is-playing { stroke-opacity: 0.16; }
+html.motion-off .echo.is-playing .echo-ring,
+html.motion-off .echo.is-playing .echo-arc,
+html.motion-off .is-listening .mic-glyph,
+html.motion-off .echo-count.just-ticked { animation: none; }
+
+/* ── Integration ────────────────────────────────────────────────────
+ * Not part of motion.css; the rules above are verbatim and unedited.
+ *
+ * Appearance > Motion = "Always on" has to beat the device preference,
+ * and a media query cannot be talked out of applying — so html.motion-on
+ * re-states the animations at a higher specificity than section 7's
+ * block. "Follow my device" sets neither class.
+ *
+ * The review progress bar is the app's only other moving thing; it stops
+ * with everything else, which the blanket rule used to do for it.
+ */
+html.motion-on .echo.is-playing { stroke-opacity: 0.234; }
+html.motion-on .echo.is-playing .echo-ring,
+html.motion-on .echo.is-playing .echo-arc { animation: echo-emanate 2.4s ease-out infinite; }
+html.motion-on .echo.is-playing .echo-ring:nth-of-type(2) { animation-delay: 0.6s; }
+html.motion-on .echo.is-playing .echo-ring:nth-of-type(3) { animation-delay: 1.2s; }
+html.motion-on .echo.is-playing .echo-ring:nth-of-type(4) { animation-delay: 1.8s; }
+html.motion-on .echo.is-playing .echo-arc:nth-of-type(2) { animation-delay: 0.8s; }
+html.motion-on .echo.is-playing .echo-arc:nth-of-type(3) { animation-delay: 1.6s; }
+html.motion-on .is-listening .mic-glyph { animation: echo-listening 1.4s ease-in-out infinite; }
+html.motion-on .echo-count.just-ticked { animation: echo-tick 280ms ease-out; }
+@media (prefers-reduced-motion: reduce) {
+  html:not(.motion-on) #review-progress-bar { transition: none; }
+}
+html.motion-off #review-progress-bar { transition: none; }
+
