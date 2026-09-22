@@ -405,6 +405,9 @@ dialog::backdrop{background:rgba(28,26,23,.34)}
 #review-listen-state{font-size:13px;letter-spacing:.02em;color:var(--seal-deep)}
 #review-listen-state:empty{display:none}
 .answer-copy .hint{font-size:11px;line-height:1.5}
+.voice-help{margin-top:2px;font-size:13px;color:var(--ink-soft)}
+.voice-help summary{cursor:pointer;color:var(--seal);text-decoration:underline;min-height:44px;display:flex;align-items:center}
+.voice-help ol{margin:0 0 8px;padding-left:20px;display:flex;flex-direction:column;gap:6px;line-height:1.55}
 .arcs.small{flex-shrink:0;display:flex;opacity:0}
 .is-listening .arcs.small{opacity:1}
 #review-check svg{flex-shrink:0}

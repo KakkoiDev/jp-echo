@@ -26,7 +26,7 @@ function applyTheme(theme=settings.theme||"system"){document.documentElement.dat
   else for(const meta of metas)meta.content=dark?"#191712":"#F3F0E7"}
 function showProviderConfig(){const provider=$("#provider").value;document.querySelectorAll(".provider-config").forEach(node=>node.hidden=node.dataset.provider!==provider)}
 function saveSettings(){settings.provider=$("#provider").value;settings.providerKeys={deepseek:$("#deepseek-key").value.trim(),google:$("#google-key").value.trim(),openai:$("#openai-key").value.trim(),anthropic:$("#anthropic-key").value.trim()};settings.providerModels={deepseek:$("#deepseek-model").value.trim(),google:$("#google-model").value.trim(),openai:$("#openai-model").value.trim(),anthropic:$("#anthropic-model").value.trim(),local:$("#local-model").value.trim()};settings.localEndpoint=$("#local-endpoint").value.trim();settings.proxyUrl=$("#proxy-url").value.trim();settings.theme=$("#theme").value;settings.motion=$("#motion").value;settings.voice=$("#voice").value;settings.rate=Number($("#rate").value);settings.showEnglish=$("#show-english").checked;settings.showFurigana=$("#show-furigana").checked;settings.showPolite=$("#show-polite").checked;settings.autoListen=$("#autolisten").checked;settings.remindTime=$("#remind-time").value;localStorage.setItem("jp-echo-settings",JSON.stringify(settings));applyTheme();applyMotion()}
-function resetSettingsForm(){const keys=settings.providerKeys||{},models=settings.providerModels||{};$("#provider").value=settings.provider||"deepseek";$("#deepseek-key").value=keys.deepseek||settings.apiKey||"";$("#google-key").value=keys.google||"";$("#openai-key").value=keys.openai||"";$("#anthropic-key").value=keys.anthropic||"";for(const provider of Object.keys(PROVIDER_DEFAULTS))$("#"+provider+"-model").value=models[provider]||PROVIDER_DEFAULTS[provider];$("#local-endpoint").value=settings.localEndpoint||"http://localhost:11434/v1/chat/completions";$("#proxy-url").value=settings.proxyUrl||"";$("#theme").value=settings.theme||"system";$("#motion").value=settings.motion||"system";$("#autolisten").checked=settings.autoListen!==false;$("#remind").checked=!!settings.remind;$("#remind-time").value=settings.remindTime||DEFAULT_TIME;$("#remind-reach").textContent=settings.remind?reminderReach():"";$("#voice").value=settings.voice||"0";$("#rate").value=settings.rate||1;$("#rate-value").textContent=Number($("#rate").value).toFixed(1)+"×";showProviderConfig()}
+function resetSettingsForm(){const keys=settings.providerKeys||{},models=settings.providerModels||{};$("#provider").value=settings.provider||"google";$("#deepseek-key").value=keys.deepseek||settings.apiKey||"";$("#google-key").value=keys.google||"";$("#openai-key").value=keys.openai||"";$("#anthropic-key").value=keys.anthropic||"";for(const provider of Object.keys(PROVIDER_DEFAULTS))$("#"+provider+"-model").value=models[provider]||PROVIDER_DEFAULTS[provider];$("#local-endpoint").value=settings.localEndpoint||"http://localhost:11434/v1/chat/completions";$("#proxy-url").value=settings.proxyUrl||"";$("#theme").value=settings.theme||"system";$("#motion").value=settings.motion||"system";$("#autolisten").checked=settings.autoListen!==false;$("#remind").checked=!!settings.remind;$("#remind-time").value=settings.remindTime||DEFAULT_TIME;$("#remind-reach").textContent=settings.remind?reminderReach():"";$("#voice").value=settings.voice||"0";$("#rate").value=settings.rate||1;$("#rate-value").textContent=Number($("#rate").value).toFixed(1)+"×";showProviderConfig()}
 function openSettings(){resetSettingsForm();updateInstallUI();$("#settings-dialog").showModal()}
 function cancelSettings(){settings.remind=!!JSON.parse(localStorage.getItem("jp-echo-settings")||"{}").remind;resetSettingsForm();applyTheme();applyMotion();$("#settings-dialog").close()}
 function isInstalled(){return window.matchMedia("(display-mode: standalone)").matches||window.navigator.standalone===true}
@@ -78,6 +78,9 @@ async function remindOnOpen(){
     await registration.showNotification("Echo",{body:reminderText(due),tag:REMINDER_TAG,icon:"./icon-192.png",badge:"./icon-192.png",data:{view:"review"}});
     settings.remindLastShownAt=Date.now();localStorage.setItem("jp-echo-settings",JSON.stringify(settings));writeReminderPrefs()}catch{}}
 const PROVIDER_NAMES={deepseek:"DeepSeek",google:"Gemini",openai:"OpenAI",anthropic:"Anthropic",local:"your local model"};
+// The page that actually mints the key, not the marketing front door.
+const PROVIDER_KEY_URLS={google:"https://aistudio.google.com/apikey",deepseek:"https://platform.deepseek.com/api_keys",
+  openai:"https://platform.openai.com/api-keys",anthropic:"https://console.anthropic.com/settings/keys"};
 const ICONS={
   alert:'<svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><circle cx="9" cy="9" r="7.6" stroke="currentColor" stroke-width="1.4"/><path d="M9 5v5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="9" cy="12.6" r="1" fill="currentColor"/></svg>',
   failed:'<svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M9 1.6 16.8 15H1.2L9 1.6Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M9 6.6v3.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="9" cy="12.6" r="1" fill="currentColor"/></svg>',
@@ -216,16 +219,22 @@ async function confirmDelete(){if(!detail)return;const id=detail.id;$("#delete-d
   await deleteSentence(id);if(current?.id===id){current=null;renderSentence()}
   reviewQueue=reviewQueue.filter(item=>item.id!==id);detail=null;refreshDueBadge();showView("library")}
 const capitalise=value=>value.charAt(0).toUpperCase()+value.slice(1);
-function resetSetupForm(){const provider=settings.provider||"deepseek";$("#setup-provider").value=provider;showSetupFields()}
-function showSetupFields(){const local=$("#setup-provider").value==="local";$("#setup-key-field").hidden=local;$("#setup-endpoint-field").hidden=!local;
-  $("#setup-hint").textContent=local?"Echo talks to an OpenAI-compatible server — Ollama or LM Studio — running on your machine.":"Your service gives you a key in its own dashboard, usually under API keys."}
+function resetSetupForm(){const provider=settings.provider||"google";$("#setup-provider").value=provider;showSetupFields()}
+function showSetupFields(){const provider=$("#setup-provider").value,local=provider==="local";
+  $("#setup-key-field").hidden=local;$("#setup-endpoint-field").hidden=!local;
+  $("#setup-hint").textContent=local?"Echo talks to an OpenAI-compatible server — Ollama or LM Studio — running on your machine."
+    :provider==="google"?"Google AI Studio gives you a key with your Google account, on a free tier. No card, no billing account."
+    :"Your service gives you a key in its own dashboard, usually under API keys.";
+  const link=$("#setup-key-link"),url=PROVIDER_KEY_URLS[provider];
+  link.hidden=!url;if(url){link.href=url;link.textContent="Create a "+PROVIDER_NAMES[provider]+" key"}
+  link.parentElement.hidden=!url}
 function saveSetup(){const provider=$("#setup-provider").value;
   settings.provider=provider;
   if(provider==="local")settings.localEndpoint=$("#setup-endpoint").value.trim();
   else settings.providerKeys={...(settings.providerKeys||{}),[provider]:$("#setup-key").value.trim()};
   finishOnboarding()}
 function finishOnboarding(){settings.onboarded=true;localStorage.setItem("jp-echo-settings",JSON.stringify(settings));resetSettingsForm();showView("practice")}
-async function performTranslation(){const english=$("#english-input").value.trim();if(!english)return setStatus("Enter an English sentence.",true);const provider=settings.provider||"deepseek";if(!hasTranslator())return showView("setup");
+async function performTranslation(){const english=$("#english-input").value.trim();if(!english)return setStatus("Enter an English sentence.",true);const provider=settings.provider||"google";if(!hasTranslator())return showView("setup");
   // Swap the label's text, not the button's: textContent would take the arrow
   // icon and the .label span with it, and they never came back — after one
   // translation the button was bare text that no longer answered the rule
@@ -235,6 +244,23 @@ async function performTranslation(){const english=$("#english-input").value.trim
       copy:(error.message||"The request did not get through.")+" Your sentence is still in the box."};
     setStatus("");renderPracticeNotices()}finally{button.disabled=false;label.textContent=previous;button.removeAttribute("aria-busy")}}
 function setStatus(message,error=false){$("#status").textContent=message;$("#status").classList.toggle("error",error)}
+// Voices come from the operating system, not the browser — there is no
+// download link inside Chromium to point at. So the help is per platform,
+// picked from the user agent, with the generic list as the fallback.
+const VOICE_HELP=[
+  [/android/i,["Open Settings, then Accessibility.","Choose Text-to-speech output, then the gear beside your engine (usually Speech Recognition &amp; Synthesis).","Tap Install voice data and pick the language you want."]],
+  [/iphone|ipad|ipod/i,["Open Settings, then Accessibility.","Choose Spoken Content, then Voices.","Pick the language and tap a voice to download it."]],
+  [/mac os x|macintosh/i,["Open System Settings, then Accessibility.","Choose Spoken Content, then the ⓘ beside System Speech Language.","Click Manage Voices and download the one you want."]],
+  [/cros/i,["Open Settings, then Accessibility.","Choose Text-to-Speech.","Under Speech engines, open the engine's settings and add the language."]],
+  [/windows/i,["Open Settings, then Time &amp; language.","Choose Speech, then Manage voices.","Click Add voices, pick the language, and add it."]]];
+const VOICE_HELP_FALLBACK=["Voices are installed by your operating system, not by Echo.","Look for Text-to-speech or Spoken Content in your system settings and add the language you want.","Restart the browser afterwards so it picks the new voice up."];
+function renderVoiceHelp(){const ua=navigator.userAgent;
+  const steps=(VOICE_HELP.find(([test])=>test.test(ua))||[null,VOICE_HELP_FALLBACK])[1];
+  const list=document.createElement("ol");
+  for(const step of steps){const item=document.createElement("li");item.innerHTML=step;list.append(item)}
+  const note=document.createElement("p");note.className="hint";
+  note.textContent="Echo speaks with whatever voices your device has. Reload this page once a voice is installed.";
+  $("#voice-help-body").replaceChildren(list,note)}
 function populateVoices(){voices=japaneseVoices();const select=$("#voice"),previous=settings.voice;select.replaceChildren(...voices.map((voice,index)=>{const option=new Option(voice.name+" ("+voice.lang+")",String(index));option.selected=previous===String(index);return option}));$("#voice-warning").hidden=voices.length>0;$("#play-pause").disabled=!current;if(!$("#main-view").hidden)renderPracticeNotices()}
 const DICTATION={
   listening:"Listening — keep going",
@@ -334,7 +360,7 @@ addEventListener("keydown",event=>{
 $("#start-review").onclick=startReview;$("#review-practice").onclick=()=>showView("practice");$("#review-back").onclick=()=>{stopReviewListening();showView("review")};$("#review-done").onclick=()=>showView("practice");$("#review-home-link").onclick=()=>showView("review");$("#review-check").onclick=revealReview;$("#review-skip").onclick=skipReview;$("#review-mic").onclick=toggleReviewListening;$("#review-answer").oninput=updateCheckButton;$("#review-audio").onclick=playReviewAudio;$("#review-again").onclick=()=>rateReview("again");$("#review-ok").onclick=()=>rateReview("ok");
 $("#settings-button").onclick=openSettings;$("#settings-nav").onclick=openSettings;$("#dismiss-settings").onclick=cancelSettings;$("#cancel-settings").onclick=cancelSettings;$("#install-app").onclick=installApp;$("#settings-dialog").addEventListener("cancel",event=>{event.preventDefault();cancelSettings()});$("#settings-dialog").onclick=event=>{if(event.target===$("#settings-dialog"))cancelSettings()};$("#voice").onchange=resetSession;$("#provider").onchange=showProviderConfig;$("#theme").onchange=()=>applyTheme($("#theme").value);$("#motion").onchange=()=>applyMotion($("#motion").value);window.addEventListener("beforeinstallprompt",event=>{event.preventDefault();installPrompt=event;updateInstallUI()});window.addEventListener("appinstalled",()=>{installPrompt=null;updateInstallUI()});
 $("#history-search").oninput=()=>{$("#clear-history-search").hidden=!$("#history-search").value;renderHistory()};$("#clear-history-search").onclick=()=>{$("#history-search").value="";$("#clear-history-search").hidden=true;$("#history-search").focus();renderHistory()};for(const id of ["#history-filter","#history-order","#history-direction"]){$(id).onchange=()=>{settings.historyFilter=$("#history-filter").value;settings.historyOrder=$("#history-order").value;settings.historyDirection=$("#history-direction").value;localStorage.setItem("jp-echo-settings",JSON.stringify(settings));renderHistory()}}
-const legacyOrders={newest:["created","desc"],oldest:["created","asc"],echoes:["echoes","desc"],due:["due","asc"]},legacy=legacyOrders[settings.historyOrder];if(legacy){settings.historyOrder=legacy[0];settings.historyDirection=settings.historyDirection||legacy[1]}resetSettingsForm();applyTheme();applyMotion();$("#show-english").checked=settings.showEnglish??false;$("#show-furigana").checked=settings.showFurigana??true;$("#show-polite").checked=settings.showPolite??false;$("#history-filter").value=settings.historyFilter||"all";$("#history-order").value=settings.historyOrder||"created";$("#history-direction").value=settings.historyDirection||"desc";speechSynthesis.onvoiceschanged=populateVoices;populateVoices();
+const legacyOrders={newest:["created","desc"],oldest:["created","asc"],echoes:["echoes","desc"],due:["due","asc"]},legacy=legacyOrders[settings.historyOrder];if(legacy){settings.historyOrder=legacy[0];settings.historyDirection=settings.historyDirection||legacy[1]}resetSettingsForm();applyTheme();applyMotion();$("#show-english").checked=settings.showEnglish??false;$("#show-furigana").checked=settings.showFurigana??true;$("#show-polite").checked=settings.showPolite??false;$("#history-filter").value=settings.historyFilter||"all";$("#history-order").value=settings.historyOrder||"created";$("#history-direction").value=settings.historyDirection||"desc";speechSynthesis.onvoiceschanged=populateVoices;populateVoices();renderVoiceHelp();
 // Android fills the voice list after the page has settled and does not always
 // fire voiceschanged, so the select is rebuilt a few times before giving up.
 for(const delay of [400,1200,3000])setTimeout(populateVoices,delay);
