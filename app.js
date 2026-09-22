@@ -41,6 +41,9 @@ function fillLanguageSelect(select,selected){
 }
 // Furigana and the casual/polite pair only mean something in Japanese.
 function applyLanguageUI(){
+  const swap=$("#swap-langs");
+  const label="Swap to "+languageName(targetLang())+" \u2192 "+languageName(sourceLang());
+  swap.title=label;swap.setAttribute("aria-label",label);
   const target=targetLang(),registers=hasRegisters(target),furigana=hasFurigana(target);
   $("#show-furigana").closest("label").hidden=!furigana;
   $("#show-polite").closest("label").hidden=!registers;
@@ -200,13 +203,13 @@ async function renderSidePanel(){
   $("#side-start-review").disabled=due.length===0;
   $("#due-empty").hidden=due.length>0;
   $("#due-list").replaceChildren(...due.slice(0,8).map(item=>{const li=document.createElement("li");
-    li.innerHTML='<button type="button"><span lang="'+itemTarget(item)+'">'+escapeText(item.plainTarget||stripFurigana(item.target))+'</span><span class="en">'+escapeText(item.source)+"</span></button>";
+    li.innerHTML='<button type="button"><span lang="'+itemTarget(item)+'">'+escapeText(item.plainTarget||stripFurigana(item.target))+'</span><span class="source-line">'+escapeText(item.source)+"</span></button>";
     li.querySelector("button").onclick=()=>openDetail(item.id);
     return li}));}
 function renderQueuePanel(){
   $("#queue-list").replaceChildren(...reviewQueue.map((item,index)=>{const li=document.createElement("li");
     li.className=index===reviewIndex?"now":index<reviewIndex?"done":"";
-    li.innerHTML='<span class="dot" aria-hidden="true"></span><span class="en">'+escapeText(item.source)+"</span>";
+    li.innerHTML='<span class="dot" aria-hidden="true"></span><span class="source-line">'+escapeText(item.source)+"</span>";
     return li}));
   const left=Math.max(0,reviewQueue.length-reviewIndex),done=reviewIndex;
   $("#queue-note").textContent=left?(done?spell(done)+" done. ":"")+"About "+spell(Math.max(1,Math.round(left*.55)))+" minutes left at your pace.":"All said.";}
@@ -215,7 +218,7 @@ const CARD_STATES={due:"Due now",new:"New",learning:"Learning",review:"Review"};
 const ORDER_LABELS={"created-desc":"Newest first","created-asc":"Oldest first","echoes-desc":"Most echoes","echoes-asc":"Fewest echoes","due-desc":"Furthest away","due-asc":"Due soonest","english-desc":"English Z–A","english-asc":"English A–Z","japanese-desc":"Japanese Z–A","japanese-asc":"Japanese A–Z"};
 function cardState(item,now=Date.now()){const state=item.srs?.state??0;if(!item.srs?.due||Date.parse(item.srs.due)<=now)return "due";if(state===0)return "new";if(state===1||state===3)return "learning";return "review"}
 async function renderHistory(){const all=await listSentences(),list=$("#history-list"),due=dueSentences(all),query=$("#history-search").value.trim().toLocaleLowerCase(),filter=$("#history-filter").value,order=$("#history-order").value,direction=$("#history-direction").value,now=Date.now();let items=all.filter(item=>{const haystack=[item.source,item.target,item.plainTarget,item.casualTarget,item.politeTarget].filter(Boolean).join(" ").toLocaleLowerCase();if(query&&!haystack.includes(query))return false;const state=item.srs?.state??0;if(filter==="due")return !item.srs?.due||Date.parse(item.srs.due)<=now;if(filter==="new")return state===0;if(filter==="learning")return state===1||state===3;if(filter==="review")return state===2;return true});const comparators={created:(a,b)=>a.createdAt.localeCompare(b.createdAt),echoes:(a,b)=>(Number(a.echoCount)||0)-(Number(b.echoCount)||0),due:(a,b)=>Date.parse(a.srs?.due||a.createdAt)-Date.parse(b.srs?.due||b.createdAt),english:(a,b)=>a.source.localeCompare(b.source),japanese:(a,b)=>(a.plainTarget||a.target).localeCompare(b.plainTarget||b.target,itemTarget(a))},factor=direction==="asc"?1:-1;items.sort((a,b)=>factor*(comparators[order]||comparators.created)(a,b));list.replaceChildren();$("#empty-history").hidden=all.length>0;$("#empty-results").hidden=all.length===0||items.length>0;$("#empty-results-count").textContent=all.length===1?"One is in your library.":capitalise(spell(all.length))+" are in your library.";updateDueBadge(due.length);$("#library-count").textContent=items.length===1?"1 sentence":items.length+" sentences";$("#library-order-label").textContent=ORDER_LABELS[order+"-"+direction]||"";$(".list-head").hidden=items.length===0;if(isWide()&&!detail&&items.length)return openDetail(items[0].id);
-  for(const item of items){const li=document.createElement("li");li.dataset.id=item.id;const state=cardState(item,now);li.innerHTML='<button class="history-open" type="button"><span class="lines"><span lang="'+itemTarget(item)+'">'+rubyHtml(item.target)+'</span><span class="en">'+escapeText(item.source)+'</span><span class="status-chip '+state+'">'+CARD_STATES[state]+'</span></span><span class="tally"><strong>'+(Number(item.echoCount)||0)+'</strong><span>echoes</span></span></button>';li.querySelector(".history-open").onclick=()=>openDetail(item.id);list.append(li)}markSelectedRow()}
+  for(const item of items){const li=document.createElement("li");li.dataset.id=item.id;const state=cardState(item,now);li.innerHTML='<button class="history-open" type="button"><span class="lines"><span lang="'+itemTarget(item)+'">'+rubyHtml(item.target)+'</span><span class="source-line">'+escapeText(item.source)+'</span><span class="status-chip '+state+'">'+CARD_STATES[state]+'</span></span><span class="tally"><strong>'+(Number(item.echoCount)||0)+'</strong><span>echoes</span></span></button>';li.querySelector(".history-open").onclick=()=>openDetail(item.id);list.append(li)}markSelectedRow()}
 const formatDate=value=>new Intl.DateTimeFormat(undefined,{day:"numeric",month:"long"}).format(new Date(value));
 const RATING_LABELS={again:"Again",ok:"OK"};
 function untilDue(sentence,now=Date.now()){const due=Date.parse(sentence.srs?.due||"");if(!Number.isFinite(due)||due<=now)return "Now";
@@ -403,6 +406,7 @@ $("#settings-button").onclick=openSettings;$("#settings-nav").onclick=openSettin
 $("#target-lang").onchange=()=>setPair(sourceLang(),$("#target-lang").value);
 $("#welcome-source").onchange=()=>setPair($("#welcome-source").value,targetLang());
 $("#welcome-target").onchange=()=>setPair(sourceLang(),$("#welcome-target").value);
+$("#swap-langs").onclick=()=>setPair(targetLang(),sourceLang());
 $("#theme").onchange=()=>applyTheme($("#theme").value);$("#motion").onchange=()=>applyMotion($("#motion").value);window.addEventListener("beforeinstallprompt",event=>{event.preventDefault();installPrompt=event;updateInstallUI()});window.addEventListener("appinstalled",()=>{installPrompt=null;updateInstallUI()});
 $("#history-search").oninput=()=>{$("#clear-history-search").hidden=!$("#history-search").value;renderHistory()};$("#clear-history-search").onclick=()=>{$("#history-search").value="";$("#clear-history-search").hidden=true;$("#history-search").focus();renderHistory()};for(const id of ["#history-filter","#history-order","#history-direction"]){$(id).onchange=()=>{settings.historyFilter=$("#history-filter").value;settings.historyOrder=$("#history-order").value;settings.historyDirection=$("#history-direction").value;localStorage.setItem("jp-echo-settings",JSON.stringify(settings));renderHistory()}}
 const legacyOrders={newest:["created","desc"],oldest:["created","asc"],echoes:["echoes","desc"],due:["due","asc"]},legacy=legacyOrders[settings.historyOrder];if(legacy){settings.historyOrder=legacy[0];settings.historyDirection=settings.historyDirection||legacy[1]}resetSettingsForm();applyTheme();applyMotion();syncLanguageSelects();applyLanguageUI();$("#show-english").checked=settings.showEnglish??false;$("#show-furigana").checked=settings.showFurigana??true;$("#show-polite").checked=settings.showPolite??false;$("#history-filter").value=settings.historyFilter||"all";$("#history-order").value=settings.historyOrder||"created";$("#history-direction").value=settings.historyDirection||"desc";speechSynthesis.onvoiceschanged=populateVoices;populateVoices();renderVoiceHelp();
