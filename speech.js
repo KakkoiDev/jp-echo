@@ -13,5 +13,8 @@ export class ShadowLoop{
   togglePause(){if(!this.running)return false;if(this.paused){this.paused=false;if(this.utterance)speechSynthesis.resume();else if(this.timerCallback)this.schedule(this.timerCallback,this.remaining);this.onState(this.phase==="imitate"?"imitate":"speaking")}else{this.paused=true;if(this.utterance)speechSynthesis.pause();if(this.timer){this.remaining=Math.max(0,this.remaining-(this.now()-this.timerStarted));this.clearTimer(this.timer);this.timer=null}this.onState("paused")}return this.paused}
   stop(notify=true){this.running=false;this.paused=false;this.phase="stopped";this.cycle++;this.clearWatchdog();this.clearTimer(this.timer);this.timer=null;this.timerCallback=null;this.remaining=0;if(this.utterance){this.utterance.onstart=null;this.utterance.onend=null;this.utterance.onerror=null;this.utterance=null}speechSynthesis.cancel();if(notify)this.onState("stopped")}
 }
-export function japaneseVoices(){return speechSynthesis.getVoices().filter(voice=>voice.lang.toLowerCase().startsWith("ja"))}
+// Android reports ja_JP, desktop ja-JP, some engines just ja — so the match is
+// on the leading subtag, not the whole string.
+export function japaneseVoices(code="ja"){const want=String(code).toLowerCase();
+  return speechSynthesis.getVoices().filter(voice=>String(voice.lang||"").toLowerCase().replace("_","-").split("-")[0]===want)}
 export function recognitionFactory(lang="en-US"){const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Recognition)return null;const recognition=new Recognition();recognition.lang=lang;recognition.interimResults=false;recognition.maxAlternatives=1;return recognition}
