@@ -33,8 +33,8 @@ function setPair(source,target){
   syncLanguageSelects();applyLanguageUI();populateVoices();setupRecognition();
 }
 function syncLanguageSelects(){
-  for(const id of ["#source-lang","#welcome-source"])fillLanguageSelect($(id),sourceLang());
-  for(const id of ["#target-lang","#welcome-target"])fillLanguageSelect($(id),targetLang());
+  for(const id of ["#source-lang","#setup-source"])fillLanguageSelect($(id),sourceLang());
+  for(const id of ["#target-lang","#setup-target"])fillLanguageSelect($(id),targetLang());
 }
 function fillLanguageSelect(select,selected){
   select.replaceChildren(...LANGUAGES.map(([code,name])=>{const o=new Option(name,code);o.selected=code===selected;return o}));
@@ -262,7 +262,7 @@ async function confirmDelete(){if(!detail)return;const id=detail.id;$("#delete-d
   await deleteSentence(id);if(current?.id===id){current=null;renderSentence()}
   reviewQueue=reviewQueue.filter(item=>item.id!==id);detail=null;refreshDueBadge();showView("library")}
 const capitalise=value=>value.charAt(0).toUpperCase()+value.slice(1);
-function resetSetupForm(){const provider=defaultProvider();$("#setup-provider").value=provider;showSetupFields()}
+function resetSetupForm(){const provider=defaultProvider();$("#setup-provider").value=provider;showSetupFields();syncLanguageSelects();showSetupStep(1)}
 function showSetupFields(){const provider=$("#setup-provider").value,local=provider==="local";
   $("#setup-key-field").hidden=local;$("#setup-endpoint-field").hidden=!local;
   $("#setup-hint").textContent=local?"Echo talks to an OpenAI-compatible server — Ollama or LM Studio — running on your machine."
@@ -271,11 +271,23 @@ function showSetupFields(){const provider=$("#setup-provider").value,local=provi
   const link=$("#setup-key-link"),url=PROVIDER_KEY_URLS[provider];
   link.hidden=!url;if(url){link.href=url;link.textContent="Create a "+PROVIDER_NAMES[provider]+" key"}
   link.parentElement.hidden=!url}
-function saveSetup(){const provider=$("#setup-provider").value;
+// Two steps: the translator, then the pair. The pair is the second because it
+// means nothing until there is something to translate with.
+let setupStep=1;
+function showSetupStep(step){setupStep=step;
+  $("#setup-step-1").hidden=step!==1;$("#setup-step-2").hidden=step!==2;
+  $("#setup-step-label").textContent="Step "+step+" of 2";
+  $("#setup-title").textContent=step===1?"One thing first":"Which languages?";
+  $("#setup-copy").textContent=step===1
+    ?"Echo needs a translator. Pick a service you have an account with and paste its key — it is saved on this device and goes nowhere else."
+    :"What you write in, and what Echo translates into. Both can change later.";
+  $("#setup-next").hidden=step!==1;$("#setup-save").hidden=step!==2;
+  $("#setup-skip").hidden=step!==1;}
+function storeTranslator(){const provider=$("#setup-provider").value;
   settings.provider=provider;
   if(provider==="local")settings.localEndpoint=$("#setup-endpoint").value.trim();
-  else settings.providerKeys={...(settings.providerKeys||{}),[provider]:$("#setup-key").value.trim()};
-  finishOnboarding()}
+  else settings.providerKeys={...(settings.providerKeys||{}),[provider]:$("#setup-key").value.trim()};}
+function saveSetup(){storeTranslator();finishOnboarding()}
 function finishOnboarding(){settings.onboarded=true;localStorage.setItem("jp-echo-settings",JSON.stringify(settings));resetSettingsForm();showView("practice")}
 async function performTranslation(){const english=$("#english-input").value.trim();if(!english)return setStatus("Enter an English sentence.",true);const provider=defaultProvider();if(!hasTranslator())return showView("setup");
   // Swap the label's text, not the button's: textContent would take the arrow
@@ -382,7 +394,8 @@ $("#remind").onchange=async()=>{const wanted=$("#remind").checked;
   $("#remind-hint").textContent="Your device asks permission the first time you turn this on.";$("#remind-hint").classList.remove("error");
   settings.remind=wanted;$("#remind-reach").textContent=wanted?reminderReach():""};$("#export-anki").onclick=()=>exportAnki($("#export-anki"));$("#open-anki").onclick=()=>openAnki();$("#export").onclick=exportHistory;$("#import").onclick=()=>$("#import-file").click();$("#import-file").onchange=event=>importHistory(event.target.files[0]);
 $("#onboard-start").onclick=()=>showView("setup");$("#onboard-restore").onclick=()=>{finishOnboarding();showView("library");$("#import-file").click()};
-$("#setup-back").onclick=()=>showView(settings.onboarded?"practice":"onboard");$("#setup-provider").onchange=showSetupFields;$("#setup-save").onclick=saveSetup;$("#setup-skip").onclick=finishOnboarding;
+$("#setup-next").onclick=()=>{storeTranslator();showSetupStep(2)};
+$("#setup-back").onclick=()=>{if(setupStep===2)return showSetupStep(1);showView(settings.onboarded?"practice":"onboard")};$("#setup-provider").onchange=showSetupFields;$("#setup-save").onclick=saveSetup;$("#setup-skip").onclick=finishOnboarding;
 $("#clear-filters").onclick=()=>{$("#history-search").value="";$("#clear-history-search").hidden=true;$("#history-filter").value="all";settings.historyFilter="all";localStorage.setItem("jp-echo-settings",JSON.stringify(settings));renderHistory()};
 addEventListener("online",renderPracticeNotices);addEventListener("offline",renderPracticeNotices);
 $("#sentence-back").onclick=()=>{detail=null;showView("library")};$("#sentence-play").onclick=playDetail;$("#sentence-edit").onclick=openEditor;$("#sentence-cancel").onclick=closeEditor;$("#sentence-editor").onsubmit=saveEdit;
@@ -404,8 +417,8 @@ addEventListener("keydown",event=>{
 $("#start-review").onclick=startReview;$("#review-practice").onclick=()=>showView("practice");$("#review-back").onclick=()=>{stopReviewListening();showView("review")};$("#review-done").onclick=()=>showView("practice");$("#review-home-link").onclick=()=>showView("review");$("#review-check").onclick=revealReview;$("#review-skip").onclick=skipReview;$("#review-mic").onclick=toggleReviewListening;$("#review-answer").oninput=updateCheckButton;$("#review-audio").onclick=playReviewAudio;$("#review-again").onclick=()=>rateReview("again");$("#review-ok").onclick=()=>rateReview("ok");
 $("#settings-button").onclick=openSettings;$("#settings-nav").onclick=openSettings;$("#dismiss-settings").onclick=cancelSettings;$("#cancel-settings").onclick=cancelSettings;$("#install-app").onclick=installApp;$("#settings-dialog").addEventListener("cancel",event=>{event.preventDefault();cancelSettings()});$("#settings-dialog").onclick=event=>{if(event.target===$("#settings-dialog"))cancelSettings()};$("#voice").onchange=resetSession;$("#provider").onchange=showProviderConfig;$("#source-lang").onchange=()=>setPair($("#source-lang").value,targetLang());
 $("#target-lang").onchange=()=>setPair(sourceLang(),$("#target-lang").value);
-$("#welcome-source").onchange=()=>setPair($("#welcome-source").value,targetLang());
-$("#welcome-target").onchange=()=>setPair(sourceLang(),$("#welcome-target").value);
+$("#setup-source").onchange=()=>setPair($("#setup-source").value,targetLang());
+$("#setup-target").onchange=()=>setPair(sourceLang(),$("#setup-target").value);
 $("#swap-langs").onclick=()=>setPair(targetLang(),sourceLang());
 $("#theme").onchange=()=>applyTheme($("#theme").value);$("#motion").onchange=()=>applyMotion($("#motion").value);window.addEventListener("beforeinstallprompt",event=>{event.preventDefault();installPrompt=event;updateInstallUI()});window.addEventListener("appinstalled",()=>{installPrompt=null;updateInstallUI()});
 $("#history-search").oninput=()=>{$("#clear-history-search").hidden=!$("#history-search").value;renderHistory()};$("#clear-history-search").onclick=()=>{$("#history-search").value="";$("#clear-history-search").hidden=true;$("#history-search").focus();renderHistory()};for(const id of ["#history-filter","#history-order","#history-direction"]){$(id).onchange=()=>{settings.historyFilter=$("#history-filter").value;settings.historyOrder=$("#history-order").value;settings.historyDirection=$("#history-direction").value;localStorage.setItem("jp-echo-settings",JSON.stringify(settings));renderHistory()}}
