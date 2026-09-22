@@ -1,4 +1,27 @@
+// Synchronized with JP Core's browser/jp-core.js. Everything below the
+// language list is a verbatim copy: change these rules in JP Core first and
+// bring the copy over in the same change. The list itself is ours — which
+// languages the dropdown offers is an application choice, not a Japanese one.
+// The browser distribution of JP Core's Japanese primitives: the 漢字【かんじ】
+// notation, its renderers, reading alignment, and the sentence schema.
+//
+// This file is the canonical source for consumers that cannot run Python — a
+// static PWA, a service worker, an extension. It mirrors jp_core.furigana,
+// jp_core.reading, and jp_core.corpus, and every rule here is decided there
+// first. A consumer copies this file; it does not fork it.
 export const SCHEMA_VERSION = 2;
+
+// The lookahead rejects an annotation with nothing in it; `stray` then removes
+// it. A model emits 【】 when it declines to supply a reading, and letting it
+// through puts literal brackets on screen and reads them aloud.
+const notation = /([㐀-䶿一-鿿々]+)【(?!\s*】)([^】]+)】/g;
+const stray = /【[^】]*】/g;
+// The same class `notation` accepts, for code that has to recognise a base run
+// before there is a reading on it. If these two drift, a run one brackets is a
+// run the other drops as a stray, and the reading disappears with no error.
+export const KANJI = /[㐀-䶿一-鿿々]/;
+const KANA = /^[ぁ-ゟー]+$/;
+const escapeHtml = value => value.replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
 
 // A working set rather than every ISO code: a 200-entry dropdown is unusable,
 // and a device only ever has voices for a handful of these. Codes are the ones
@@ -19,17 +42,11 @@ const LANGUAGE_NAMES = new Map(LANGUAGES);
 export function languageName(code){return LANGUAGE_NAMES.get(code)||code}
 // Furigana and the casual/polite pair are Japanese-only. Every other target
 // gets one plain translation, and the toggles that drive them hide themselves.
+// Furigana and the casual/polite pair are Japanese-only. Every other target
+// gets one plain translation.
 export function hasRegisters(code){return code==="ja"}
 export function hasFurigana(code){return code==="ja"}
 export const DEFAULT_PAIR = {sourceLang:"en",targetLang:"ja"};
-const notation = /([\u3400-\u4dbf\u4e00-\u9fff々]+)【(?!\s*】)([^】]+)】/g;
-const escapeHtml = value => value.replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
-
-// Anything in brackets that is not a reading for a kanji run is dropped,
-// including an empty 【】 — models emit those when they decline to supply a
-// reading, and they must never reach the screen or the voice.
-// Synchronized with JP Core's jp_core.furigana and browser/jp-core.js.
-const stray = /【[^】]*】/g;
 
 export function normalizeFurigana(value = "") {
   let out = "", offset = 0;
@@ -68,12 +85,118 @@ export function rubyHtml(value = "") {
   return rubySegments(value).map(segmentHtml).join("");
 }
 
+// --- reading generation ------------------------------------------------------
+// The browser twin of jp_core.reading. A reading is a dictionary lookup, not a
+// generation task, so these place a reading an analyser supplied and never
+// invent one: anything that does not line up is emitted bare.
+
+// ァ..ヴ only. ヵ and ヶ sit at the top of the katakana block but have no
+// hiragana anyone writes, and 一ヶ月 would come back as 一ゖ月.
+export function toHiragana(value = "") {
+  return value.replace(/[ァ-ヴ]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0x60));
+}
+
+// Compounds an analyser gets wrong because it segments them, and segmenting
+// loses the sound change that only exists across the seam. Kept in step with
+// jp_core.reading.PRONUNCIATION_OVERRIDES; 十分 is absent from both because it
+// is じゅっぷん as a duration and じゅうぶん as "enough".
+export const PRONUNCIATION_OVERRIDES = {
+  "一回":"いっかい","一階":"いっかい","一個":"いっこ","一冊":"いっさつ","一歳":"いっさい",
+  "一足":"いっそく","一点":"いってん","一杯":"いっぱい","一匹":"いっぴき","一分":"いっぷん",
+  "一本":"いっぽん","一泊":"いっぱく","一枚":"いちまい","一週間":"いっしゅうかん",
+  "一生":"いっしょう","一緒":"いっしょ",
+  "六回":"ろっかい","六階":"ろっかい","六個":"ろっこ","六本":"ろっぽん","六匹":"ろっぴき",
+  "六杯":"ろっぱい","六分":"ろっぷん",
+  "八回":"はっかい","八階":"はっかい","八個":"はっこ","八本":"はっぽん","八匹":"はっぴき",
+  "八杯":"はっぱい","八分":"はっぷん","八冊":"はっさつ",
+  "十回":"じゅっかい","十階":"じゅっかい","十個":"じゅっこ","十本":"じゅっぽん",
+  "十匹":"じゅっぴき","十杯":"じゅっぱい","十冊":"じゅっさつ","十歳":"じゅっさい",
+  "三本":"さんぼん","三匹":"さんびき","三杯":"さんばい","三階":"さんがい","三分":"さんぷん",
+  "三百":"さんびゃく","三千":"さんぜん",
+  "何本":"なんぼん","何匹":"なんびき","何杯":"なんばい","何階":"なんがい","何分":"なんぷん",
+  "何回":"なんかい",
+  "日本":"にほん"
+};
+
+// Walk base and reading in step, handing each kanji run whatever lies between
+// the kana runs that bracket it: 話し合う / はなしあう pins し at index 2 and
+// う at 4, which leaves はな for 話 and あ for 合. Returns null when the two do
+// not line up rather than splitting the difference.
+export function alignReading(base, reading) {
+  if (!base || !reading || !KANA.test(reading)) return null;
+  const runs = [];
+  for (const ch of base) {
+    const kanji = KANJI.test(ch);
+    const last = runs[runs.length - 1];
+    if (last && last.kanji === kanji) last.text += ch;
+    else runs.push({kanji, text: ch});
+  }
+  if (!runs.some(run => run.kanji)) return [{text: base}];
+  const segments = [];
+  let pos = 0;
+  for (let i = 0; i < runs.length; i++) {
+    const run = runs[i];
+    if (!run.kanji) {
+      if (!reading.startsWith(run.text, pos)) return null;
+      segments.push({text: run.text});
+      pos += run.text.length;
+      continue;
+    }
+    const next = runs[i + 1];
+    // Every kanji run needs at least one kana of its own, hence pos + 1.
+    const end = next ? reading.indexOf(next.text, pos + 1) : reading.length;
+    if (end < 0 || end <= pos) return null;
+    segments.push({text: run.text, reading: reading.slice(pos, end)});
+    pos = end;
+  }
+  return pos === reading.length ? segments : null;
+}
+
+// The inverse of rubySegments: tokens back out as notation.
+export function segmentsToNotation(segments = []) {
+  return segments.map(part => part.reading ? `${part.text}【${part.reading}】` : part.text).join("");
+}
+
+// Merge adjacent tokens whose joined surface has a known reading, so an
+// override can repair a compound the analyser split.
+function applyOverrides(tokens, overrides) {
+  const keys = Object.keys(overrides);
+  if (!keys.length) return tokens;
+  const longest = Math.max(...keys.map(key => key.length));
+  const out = [];
+  for (let i = 0; i < tokens.length; i++) {
+    let joined = "", match = null;
+    for (let span = i; span < tokens.length; span++) {
+      joined += tokens[span][0];
+      if (joined.length > longest) break;
+      if (overrides[joined]) match = [span, joined, overrides[joined]];
+    }
+    if (match) { out.push([match[1], match[2]]); i = match[0]; }
+    else out.push(tokens[i]);
+  }
+  return out;
+}
+
+// tokens: [[surface, reading], ...] from a morphological analyser, the reading
+// in kana or empty. Returns canonical notation.
+export function readingsToNotation(tokens, overrides = {}) {
+  let out = "";
+  for (const [surface, reading] of applyOverrides([...tokens], {...PRONUNCIATION_OVERRIDES, ...overrides})) {
+    const kana = reading && reading !== "*" ? toHiragana(reading) : "";
+    const segments = kana ? alignReading(surface, kana) : null;
+    out += segments ? segmentsToNotation(segments) : surface;
+  }
+  return out;
+}
+
+// --- sentences ---------------------------------------------------------------
+
 export function validateTranslation(result, targetLang = "ja") {
   const japanese = normalizeFurigana(String(result?.japanese || "").trim());
   // Only Japanese can be script-checked this cheaply. For everything else a
   // non-empty answer is all we can honestly assert.
   if (!japanese) throw new Error("The translator returned nothing.");
-  if (targetLang === "ja" && !/[\u3040-\u30ff\u3400-\u9fff]/.test(japanese)) throw new Error("The translator did not return a Japanese sentence.");
+  if (targetLang === "ja" && !/[぀-ヿ㐀-鿿]/.test(japanese)) throw new Error("The translator did not return a Japanese sentence.");
   return japanese;
 }
 
@@ -128,14 +251,13 @@ export function migrateSentence(record) {
 
 export function mergeSentences(current, incoming) {
   const merged = new Map(current.map(migrateSentence).map(item => [item.id, item]));
-  for (const candidate of incoming) {
-    const item = migrateSentence(candidate);
-    if (!item?.id || !item.source || !item.target) continue;
-    const candidate2 = item;
-    const old = merged.get(candidate2.id);
-    if (!old) { merged.set(candidate2.id, candidate2); continue; }
-    const newest = Date.parse(candidate2.updatedAt) > Date.parse(old.updatedAt) ? candidate2 : old;
-    merged.set(candidate2.id, {...newest,echoCount:Math.max(Number(old.echoCount)||0,Number(candidate2.echoCount)||0),createdAt:Date.parse(old.createdAt)<=Date.parse(candidate2.createdAt)?old.createdAt:candidate2.createdAt});
+  for (const record of incoming) {
+    const candidate = migrateSentence(record);
+    if (!candidate?.id || !candidate.source || !candidate.target) continue;
+    const old = merged.get(candidate.id);
+    if (!old) { merged.set(candidate.id, candidate); continue; }
+    const newest = Date.parse(candidate.updatedAt) > Date.parse(old.updatedAt) ? candidate : old;
+    merged.set(candidate.id, {...newest,echoCount:Math.max(Number(old.echoCount)||0,Number(candidate.echoCount)||0),createdAt:Date.parse(old.createdAt)<=Date.parse(candidate.createdAt)?old.createdAt:candidate.createdAt});
   }
   return [...merged.values()];
 }
