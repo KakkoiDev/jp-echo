@@ -152,3 +152,31 @@ test("a synthesiser that throws reports the failure", () => {
   assert.deepEqual(states,["speaking","error"]);
   assert.equal(loop.running,false);
 });
+
+test("speaks in the language being learnt, not always Japanese", () => {
+  spoken.length = 0;
+  const loop = new ShadowLoop({onEcho:()=>{},onState:()=>{}});
+  loop.play("¿Dónde está la estación?", {voice:null, lang:"es"});
+  assert.equal(spoken.at(-1).lang, "es");
+  loop.stop(false);
+});
+
+test("a pause and a play stay in that language", () => {
+  spoken.length = 0;
+  const loop = new ShadowLoop({onEcho:()=>{},onState:()=>{}});
+  loop.play("Wo ist der Bahnhof?", {voice:null, lang:"de"});
+  loop.togglePause();
+  loop.togglePause();
+  assert.equal(spoken.length, 2);
+  assert.equal(spoken.at(-1).lang, "de");
+  assert.equal(spoken.at(-1).text, "Wo ist der Bahnhof?");
+  loop.stop(false);
+});
+
+test("an unnamed language still gets one, rather than undefined", () => {
+  spoken.length = 0;
+  const loop = new ShadowLoop({onEcho:()=>{},onState:()=>{}});
+  loop.play("駅はどこですか。", {voice:null});
+  assert.equal(spoken.at(-1).lang, "ja");
+  loop.stop(false);
+});
