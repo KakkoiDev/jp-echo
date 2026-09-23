@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {flipSentence, isReversed, repairPair} from "../repair.js";
+import {earliestPair, flipSentence, isReversed, pairLooksSwapped, repairPair} from "../repair.js";
 
 test("a pair left swapped is restored from the direction that was chosen", () => {
   const settings = {sourceLang:"ja", targetLang:"en", basePair:{sourceLang:"en", targetLang:"ja"}};
@@ -64,4 +64,31 @@ test("flipping is its own inverse", () => {
   assert.equal(back.source, card.source);
   assert.equal(back.target, card.target);
   assert.equal(back.sourceLang, card.sourceLang);
+});
+
+// The oldest card as evidence, for devices the basePair repair could not reach
+// because they were swapped before that field existed.
+const card = (id, createdAt, sourceLang, targetLang) => ({id, createdAt, sourceLang, targetLang});
+
+test("the oldest card names the direction that was chosen", () => {
+  const items = [
+    card("c", "2026-09-22T00:00:00Z", "ja", "en"),
+    card("a", "2026-09-01T00:00:00Z", "en", "ja"),
+    card("b", "2026-09-10T00:00:00Z", "en", "ja"),
+  ];
+  assert.deepEqual(earliestPair(items), {sourceLang:"en", targetLang:"ja"},
+    "order in the array does not matter, createdAt does");
+});
+
+test("no cards means no evidence", () => {
+  assert.equal(earliestPair([]), null);
+  assert.equal(earliestPair([{id:"x"}]), null, "a card with no pair on it proves nothing");
+});
+
+test("only the exact reverse counts as swapped", () => {
+  assert.equal(pairLooksSwapped({sourceLang:"ja",targetLang:"en"}, {sourceLang:"en",targetLang:"ja"}), true);
+  assert.equal(pairLooksSwapped({sourceLang:"en",targetLang:"ja"}, {sourceLang:"en",targetLang:"ja"}), false);
+  assert.equal(pairLooksSwapped({sourceLang:"es",targetLang:"fr"}, {sourceLang:"en",targetLang:"ja"}), false,
+    "a different pair is someone learning something else");
+  assert.equal(pairLooksSwapped({sourceLang:"en",targetLang:"ja"}, null), false);
 });

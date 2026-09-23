@@ -1,4 +1,4 @@
-import {flipSentence,isReversed,repairPair} from "./repair.js";
+import {earliestPair,flipSentence,isReversed,pairLooksSwapped,repairPair} from "./repair.js";
 import {DEFAULT_PAIR,LANGUAGES,createSentence,exportBackup,hasFurigana,hasRegisters,languageName,mergeSentences,normalizeFurigana,rubyHtml,stripFurigana} from "./core.js";
 import {isExactMatch,markAttempt,markTarget} from "./diff.js";
 import {deleteSentence,getSentence,listSentences,migrateStore,replaceAll,saveSentence} from "./db.js";
@@ -432,13 +432,28 @@ function openAnki(automatic=false){const android=/android/i.test(navigator.userA
 // today's is indistinguishable from someone who simply changed what they are
 // learning — flipping that would be the same bug pointed the other way.
 async function repairReversedCards(){
-  if(!pairWasRepaired)return;
+  const items=await listSentences();
+  // basePair was seeded on first load of the build that added it, which is
+  // after the swap button had already shipped — so a device swapped before
+  // that recorded its reversed pair as the baseline and the check above sees
+  // nothing wrong. The oldest card predates all of it.
+  let repaired=pairWasRepaired;
+  if(!repaired&&!settings.directionChecked){
+    const chosen=earliestPair(items);
+    if(pairLooksSwapped(settings,chosen)){
+      setPair(chosen.sourceLang,chosen.targetLang);
+      repaired=true;
+      toast("Put you back to learning "+languageName(chosen.targetLang)+" from "+languageName(chosen.sourceLang),6000);
+    }
+  }
+  if(!settings.directionChecked){settings.directionChecked=true;localStorage.setItem("jp-echo-settings",JSON.stringify(settings))}
+  if(!repaired)return;
   const pair={sourceLang:sourceLang(),targetLang:targetLang()};
-  const broken=(await listSentences()).filter(item=>isReversed(item,pair));
+  const broken=items.filter(item=>isReversed(item,pair));
   if(!broken.length)return;
   await Promise.all(broken.map(item=>saveSentence(flipSentence(item))));
   renderHistory();refreshDueBadge();
-  toast(broken.length===1?"Put 1 sentence the right way round":"Put "+broken.length+" sentences the right way round",5000);
+  toast(broken.length===1?"Put 1 sentence the right way round":"Put "+broken.length+" sentences the right way round",6000);
 }
 async function importHistory(file){if(!file)return;try{const backup=JSON.parse(await file.text());if(backup.schemaVersion!==1||!Array.isArray(backup.sentences))throw new Error("Unsupported backup.");const merged=mergeSentences(await listSentences(),backup.sentences);await replaceAll(merged);setStatus("Imported "+backup.sentences.length+" sentence(s).");renderHistory()}catch(error){setStatus(error.message||"Import failed.",true)}}
 for(const tab of document.querySelectorAll(".tab[data-view]"))tab.onclick=()=>showView(tab.dataset.view);$("#translate").onclick=performTranslation;$("#english-input").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")performTranslation()};$("#play-pause").onclick=()=>{if(!current)return;if(loop.running){loop.togglePause();return}const voice=voices[Number($("#voice").value)]||voices[0]||null;loop.play(selectedPlainJapanese(),{voice,rate:Number($("#rate").value)})};$("#show-english").onchange=()=>{saveSettings();renderSentence()};$("#show-furigana").onchange=()=>{saveSettings();renderSentence()};$("#show-polite").onchange=()=>{resetSession();saveSettings();renderSentence()};$("#rate").oninput=()=>{const rate=Number($("#rate").value);$("#rate-value").textContent=rate.toFixed(1)+"×";resetSession();loop.setRate(rate)};$("#settings-button").onclick=()=>$("#settings-dialog").showModal();$("#close-settings").onclick=()=>{saveSettings();$("#settings-dialog").close();renderPracticeNotices();writeReminderPrefs();syncReminderSchedule()};
