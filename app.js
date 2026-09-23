@@ -1,3 +1,4 @@
+import {flipSentence,isReversed,repairPair} from "./repair.js";
 import {DEFAULT_PAIR,LANGUAGES,createSentence,exportBackup,hasFurigana,hasRegisters,languageName,mergeSentences,normalizeFurigana,rubyHtml,stripFurigana} from "./core.js";
 import {isExactMatch,markAttempt,markTarget} from "./diff.js";
 import {deleteSentence,getSentence,listSentences,migrateStore,replaceAll,saveSentence} from "./db.js";
@@ -8,6 +9,12 @@ import {dueSentences,ensureSchedule,isDue,reviewSentence} from "./srs.js";
 import {DEFAULT_TIME,REMINDER_TAG,reminderText,shouldRemind} from "./reminders.js";
 const $=selector=>document.querySelector(selector);
 const settings=JSON.parse(localStorage.getItem("jp-echo-settings")||"{}");
+// Before anything reads the pair: a build shipped a swap button that reversed
+// the stored pair rather than the input language, so a device left swapped
+// reopens typing the language it is learning. Consumes its own evidence, so
+// it runs once and then never again.
+const pairWasRepaired=repairPair(settings);
+if(pairWasRepaired||settings.basePair===undefined)localStorage.setItem("jp-echo-settings",JSON.stringify(settings));
 let current=null,detail=null,translationFailure=null,voiceFailed=false,echoesAtCardStart=0,voices=[],installPrompt=null,reviewQueue=[],reviewIndex=0,reviewRevealed=false,reviewRecognition=null,reviewListening=false;
 const loop=new ShadowLoop({onEcho:async()=>{const reviewing=!$("#review-view").hidden,viewingDetail=!$("#sentence-view").hidden,target=reviewing?reviewQueue[reviewIndex]:viewingDetail?detail:current;if(!target)return;target.echoCount=(Number(target.echoCount)||0)+1;target.updatedAt=new Date().toISOString();await saveSentence(target);if(reviewing){reviewQueue[reviewIndex]=target;tickCount($("#review-echo-count"),target.echoCount)}if(viewingDetail)tickCount($("#stat-echoes"),target.echoCount);if(current?.id===target.id){current=target;renderCount()}},onState:state=>{const label=({speaking:"Playing — say it with the voice",imitate:"Your turn — echo it",paused:"Paused",stopped:"Ready",error:"That voice could not play"})[state]||state,playing=state!=="stopped"&&state!=="error",text=state==="paused"?"Play":playing?"Pause":"Play";$("#review-loop-state").textContent=label;$("#sentence-loop-state").textContent=label;const active=playing&&state!=="paused";for(const echo of document.querySelectorAll(".arcs:not(.small)>.echo"))echo.classList.toggle("is-playing",active);$("#practice").classList.toggle("playing",active);$("#review-panel").classList.toggle("playing",active);$("#loop-state").textContent=label;$("#play-pause").textContent=text;$("#play-pause").setAttribute("aria-pressed",String(playing));$("#review-audio").textContent=state==="paused"||!playing?"Play the loop":"Pause the loop";$("#review-audio").setAttribute("aria-pressed",String(playing));
   $("#sentence-play").setAttribute("aria-pressed",String(playing));$("#sentence-play").lastChild.textContent=state==="paused"||!playing?"Play the loop":"Pause the loop";$("#sentence-view").classList.toggle("playing",active);
@@ -407,6 +414,20 @@ async function rateReview(rating){const sentence=reviewQueue[reviewIndex];if(!se
 async function exportHistory(){const data=exportBackup(await listSentences(),settings),url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"})),link=Object.assign(document.createElement("a"),{href:url,download:"jp-echo-backup.json"});link.click();URL.revokeObjectURL(url)}
 async function exportAnki(button=$("#export-anki")){const items=await listSentences();const label=button.textContent;button.disabled=true;button.textContent="Building deck…";$("#anki-status").textContent="Creating JP Echo.apkg on this device…";try{await downloadAnkiDeck(items);$("#open-anki").hidden=false;const launched=openAnki(true);$("#anki-status").textContent=launched?"JP Echo.apkg downloaded. Opening Anki… If it stays here, tap Open Anki.":"JP Echo.apkg downloaded. Open it from Downloads to import it into Anki."}catch(error){$("#anki-status").textContent=error.message||"Anki export failed."}finally{button.disabled=false;button.textContent=label}}
 function openAnki(automatic=false){const android=/android/i.test(navigator.userAgent),ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(android){window.location.href="intent:#Intent;package=com.ichi2.anki;end";return true}if(ios){window.location.href="anki://";return true}if(!automatic)$("#anki-status").textContent="Open JP Echo.apkg from your Downloads folder to import it into Anki.";return false}
+// Cards filed while the pair was reversed. Only run when the pair itself was
+// found reversed at startup: that is the evidence the device was sitting in
+// the broken state, and without it a card whose pair is the exact reverse of
+// today's is indistinguishable from someone who simply changed what they are
+// learning — flipping that would be the same bug pointed the other way.
+async function repairReversedCards(){
+  if(!pairWasRepaired)return;
+  const pair={sourceLang:sourceLang(),targetLang:targetLang()};
+  const broken=(await listSentences()).filter(item=>isReversed(item,pair));
+  if(!broken.length)return;
+  await Promise.all(broken.map(item=>saveSentence(flipSentence(item))));
+  renderHistory();refreshDueBadge();
+  toast(broken.length===1?"Put 1 sentence the right way round":"Put "+broken.length+" sentences the right way round",5000);
+}
 async function importHistory(file){if(!file)return;try{const backup=JSON.parse(await file.text());if(backup.schemaVersion!==1||!Array.isArray(backup.sentences))throw new Error("Unsupported backup.");const merged=mergeSentences(await listSentences(),backup.sentences);await replaceAll(merged);setStatus("Imported "+backup.sentences.length+" sentence(s).");renderHistory()}catch(error){setStatus(error.message||"Import failed.",true)}}
 for(const tab of document.querySelectorAll(".tab[data-view]"))tab.onclick=()=>showView(tab.dataset.view);$("#translate").onclick=performTranslation;$("#english-input").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")performTranslation()};$("#play-pause").onclick=()=>{if(!current)return;if(loop.running){loop.togglePause();return}const voice=voices[Number($("#voice").value)]||voices[0]||null;loop.play(selectedPlainJapanese(),{voice,rate:Number($("#rate").value)})};$("#show-english").onchange=()=>{saveSettings();renderSentence()};$("#show-furigana").onchange=()=>{saveSettings();renderSentence()};$("#show-polite").onchange=()=>{resetSession();saveSettings();renderSentence()};$("#rate").oninput=()=>{const rate=Number($("#rate").value);$("#rate-value").textContent=rate.toFixed(1)+"×";resetSession();loop.setRate(rate)};$("#settings-button").onclick=()=>$("#settings-dialog").showModal();$("#close-settings").onclick=()=>{saveSettings();$("#settings-dialog").close();renderPracticeNotices();writeReminderPrefs();syncReminderSchedule()};
 $("#remind").onchange=async()=>{const wanted=$("#remind").checked;
@@ -446,5 +467,5 @@ const legacyOrders={newest:["created","desc"],oldest:["created","asc"],echoes:["
 // Android fills the voice list after the page has settled and does not always
 // fire voiceschanged, so the select is rebuilt a few times before giving up.
 for(const delay of [400,1200,3000])setTimeout(populateVoices,delay);
-showView(settings.onboarded||hasTranslator()?"practice":"onboard");migrateStore().catch(()=>{});refreshDueBadge();setupRecognition();updateInstallUI();if(new URLSearchParams(location.search).get("view")==="review")showView("review");
+showView(settings.onboarded||hasTranslator()?"practice":"onboard");migrateStore().then(repairReversedCards).catch(()=>{});refreshDueBadge();setupRecognition();updateInstallUI();if(new URLSearchParams(location.search).get("view")==="review")showView("review");
 if("serviceWorker"in navigator){navigator.serviceWorker.register("./sw.js");writeReminderPrefs();syncReminderSchedule();remindOnOpen()}
