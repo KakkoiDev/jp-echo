@@ -1,3 +1,4 @@
+import {applyI18n,setDictionary,t} from "./i18n.js";
 import {earliestPair,flipSentence,isReversed,pairLooksSwapped,repairPair} from "./repair.js";
 import {DEFAULT_PAIR,LANGUAGES,createSentence,exportBackup,hasFurigana,hasRegisters,languageName,mergeSentences,normalizeFurigana,rubyHtml,stripFurigana} from "./core.js";
 import {isExactMatch,markAttempt,markTarget} from "./diff.js";
@@ -39,7 +40,7 @@ function setPair(source,target){
   settings.sourceLang=source;settings.targetLang=target;
   localStorage.setItem("jp-echo-settings",JSON.stringify(settings));
   inputLang=source;
-  syncLanguageSelects();applyLanguageUI();populateVoices();setupRecognition();
+  syncLanguageSelects();applyLanguageUI();populateVoices();setupRecognition();applyLanguage();
 }
 // Which language you are typing, which is not which language you are learning.
 // The pair is fixed: you learn from the one you know towards the one you do
@@ -51,6 +52,16 @@ function setPair(source,target){
 let inputLang=settings.sourceLang||DEFAULT_PAIR.sourceLang;
 const enteringTarget=()=>inputLang===targetLang();
 function setInputLang(code){inputLang=code;applyLanguageUI();setupRecognition()}
+// The interface follows the language you write in, because that is the one
+// you know. English is the language the strings are written in, so it needs no
+// catalogue and no fetch.
+async function applyLanguage(){
+  const code=sourceLang();
+  if(code==="en"){setDictionary(null);applyI18n();return}
+  try{const module=await import(`./i18n/${code}.js`);setDictionary(module.default)}
+  catch{setDictionary(null)}  // no catalogue for that language yet: stay in English
+  applyI18n();
+}
 function syncLanguageSelects(){
   for(const id of ["#source-lang","#setup-source"])fillLanguageSelect($(id),sourceLang());
   for(const id of ["#target-lang","#setup-target"])fillLanguageSelect($(id),targetLang());
@@ -61,7 +72,7 @@ function fillLanguageSelect(select,selected){
 // Furigana and the casual/polite pair only mean something in Japanese.
 function applyLanguageUI(){
   const swap=$("#swap-langs");
-  const label="Type in "+languageName(enteringTarget()?sourceLang():targetLang())+" instead";
+  const label=t("Type in {language} instead",{language:t(languageName(enteringTarget()?sourceLang():targetLang()))});
   swap.title=label;swap.setAttribute("aria-label",label);
   swap.classList.toggle("is-swapped",enteringTarget());
   swap.setAttribute("aria-pressed",String(enteringTarget()));
@@ -69,7 +80,7 @@ function applyLanguageUI(){
   $("#show-furigana").closest("label").hidden=!furigana;
   $("#show-polite").closest("label").hidden=!registers;
   $("#voice-label").textContent=languageName(target)+" voice";
-  $("#english-input").placeholder="Enter a sentence in "+languageName(inputLang);
+  $("#english-input").placeholder=t("Enter a sentence in {language}",{language:t(languageName(inputLang))});
   $("#voice-warning").textContent="No "+languageName(target)+" voice is installed on this device.";
 }
 function applyTheme(theme=settings.theme||"system"){document.documentElement.dataset.theme=theme;const dark=theme==="dark"||(theme==="system"&&matchMedia("(prefers-color-scheme: dark)").matches);const metas=document.querySelectorAll('meta[name="theme-color"]');
@@ -168,7 +179,7 @@ function providerKey(provider=settings.provider||"deepseek"){return settings.pro
 function hasTranslator(){const provider=settings.provider||"deepseek";return provider==="local"?!!settings.localEndpoint:!!providerKey(provider)}
 function renderPracticeNotices(){const host=$("#practice-notices"),connected=hasTranslator();
   document.body.classList.toggle("no-key",!connected);
-  $("#welcome-lede").textContent=connected?"Enter one "+languageName(sourceLang())+" sentence below to start a shadowing loop.":"Add a translator and this starts working.";
+  $("#welcome-lede").textContent=connected?t("Enter one {language} sentence below to start a shadowing loop.",{language:t(languageName(sourceLang()))}):t("Add a translator and this starts working.");
   $("#english-input").disabled=!connected;$("#translate").disabled=!connected;$("#microphone").disabled=!connected;
   host.replaceChildren();
   if(!connected)host.append(notice({icon:"alert",alert:true,title:"No translator connected",
@@ -310,7 +321,7 @@ function storeTranslator(){const provider=$("#setup-provider").value;
   else settings.providerKeys={...(settings.providerKeys||{}),[provider]:$("#setup-key").value.trim()};}
 function saveSetup(){storeTranslator();finishOnboarding()}
 function finishOnboarding(){settings.onboarded=true;localStorage.setItem("jp-echo-settings",JSON.stringify(settings));resetSettingsForm();showView("practice")}
-async function performTranslation(){const english=$("#english-input").value.trim();if(!english)return setStatus("Enter a sentence in "+languageName(inputLang)+".",true);const provider=defaultProvider();if(!hasTranslator())return showView("setup");
+async function performTranslation(){const english=$("#english-input").value.trim();if(!english)return setStatus(t("Enter a sentence in {language}.",{language:t(languageName(inputLang))}),true);const provider=defaultProvider();if(!hasTranslator())return showView("setup");
   // Swap the label's text, not the button's: textContent would take the arrow
   // icon and the .label span with it, and they never came back — after one
   // translation the button was bare text that no longer answered the rule
@@ -494,5 +505,5 @@ const legacyOrders={newest:["created","desc"],oldest:["created","asc"],echoes:["
 // Android fills the voice list after the page has settled and does not always
 // fire voiceschanged, so the select is rebuilt a few times before giving up.
 for(const delay of [400,1200,3000])setTimeout(populateVoices,delay);
-showView(settings.onboarded||hasTranslator()?"practice":"onboard");migrateStore().then(repairReversedCards).catch(()=>{});refreshDueBadge();setupRecognition();updateInstallUI();if(new URLSearchParams(location.search).get("view")==="review")showView("review");
+applyLanguage();showView(settings.onboarded||hasTranslator()?"practice":"onboard");migrateStore().then(repairReversedCards).catch(()=>{});refreshDueBadge();setupRecognition();updateInstallUI();if(new URLSearchParams(location.search).get("view")==="review")showView("review");
 if("serviceWorker"in navigator){navigator.serviceWorker.register("./sw.js");writeReminderPrefs();syncReminderSchedule();remindOnOpen()}
