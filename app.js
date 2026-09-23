@@ -69,18 +69,6 @@ function applyLanguageUI(){
   $("#show-polite").closest("label").hidden=!registers;
   $("#voice-label").textContent=languageName(target)+" voice";
   $("#english-input").placeholder="Enter a sentence in "+languageName(inputLang);
-  // Named on screen because it was reversed once and nothing anywhere said
-  // so, which is how it went unnoticed for days. Built from nodes rather
-  // than innerHTML: escapeText is declared further down the module, so
-  // calling it from here depends on which path runs first.
-  const known=languageName(sourceLang()),learning=languageName(targetLang());
-  const bold=text=>{const b=document.createElement("b");b.textContent=text;return b};
-  const line=[document.createTextNode("Learning "),bold(learning),document.createTextNode(" from "),bold(known)];
-  if(enteringTarget()){
-    const typing=document.createElement("span");typing.className="from";typing.textContent=learning;
-    line.push(document.createTextNode(" \u00b7 typing "),typing);
-  }
-  $("#direction").replaceChildren(...line);
   $("#voice-warning").textContent="No "+languageName(target)+" voice is installed on this device.";
 }
 function applyTheme(theme=settings.theme||"system"){document.documentElement.dataset.theme=theme;const dark=theme==="dark"||(theme==="system"&&matchMedia("(prefers-color-scheme: dark)").matches);const metas=document.querySelectorAll('meta[name="theme-color"]');
