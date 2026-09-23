@@ -41,3 +41,26 @@ export function flipSentence(record) {
     casualTarget: target, plainCasualTarget: plain,
     politeTarget: target, plainPoliteTarget: plain};
 }
+
+// The pair the oldest card was written with.
+//
+// Setup writes a pair before any card exists, and the swap button that
+// reversed it shipped two releases later, so the earliest card is a record of
+// the direction that was actually chosen — made before anything could reverse
+// it. basePair was the intended evidence and it was seeded too late to be
+// worth anything; this was here the whole time.
+export function earliestPair(items = []) {
+  const dated = items.filter(item => item && item.sourceLang && item.targetLang && item.createdAt);
+  if (!dated.length) return null;
+  const first = dated.reduce((oldest, item) => item.createdAt < oldest.createdAt ? item : oldest);
+  return {sourceLang: first.sourceLang, targetLang: first.targetLang};
+}
+
+// Only the exact reverse counts. A pair that differs some other way is
+// someone learning something else, not a device left swapped.
+export function pairLooksSwapped(settings, evidence) {
+  return !!evidence
+    && evidence.sourceLang === settings.targetLang
+    && evidence.targetLang === settings.sourceLang
+    && evidence.sourceLang !== evidence.targetLang;
+}
