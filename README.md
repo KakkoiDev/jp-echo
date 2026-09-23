@@ -37,12 +37,16 @@ More screens, including dark and desktop, are in [`docs/screenshots`](docs/scree
 
 ## JP Core
 
-The browser primitives in core.js implement JP Core's canonical furigana
-notation, safe ruby rendering, sentence schema, and merge rules. diff.js reads
-that notation through core.js rather than reimplementing it. Change these
-rules in JP Core first and synchronize this browser distribution in the same
-change. The synchronized JP Core revision is
-`9fd8ca4aee604338abc98ffa1b2890728c3d4ab5`.
+core.js is JP Core's `browser/jp-core.js`, copied: the furigana notation, safe
+ruby rendering, reading alignment, the sentence schema, and the merge rules.
+Everything below the language list is verbatim, and the list itself is the one
+local addition — which languages the dropdown offers is an application choice,
+not a Japanese one. diff.js and the rest read the notation through core.js
+rather than reimplementing it.
+
+Change these rules in JP Core first and bring the copy over in the same change.
+The synchronized JP Core revision is
+`c84048782e545420dd7b7b62d2556789cd8d6f98`.
 
 ## Layout
 
