@@ -46,7 +46,7 @@ rather than reimplementing it.
 
 Change these rules in JP Core first and bring the copy over in the same change.
 The synchronized JP Core revision is
-`423cc8d`.
+`c84048782e545420dd7b7b62d2556789cd8d6f98`.
 
 ## Layout
 
