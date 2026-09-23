@@ -39,7 +39,7 @@ function setPair(source,target){
   settings.sourceLang=source;settings.targetLang=target;
   localStorage.setItem("jp-echo-settings",JSON.stringify(settings));
   inputLang=source;
-  syncLanguageSelects();applyLanguageUI();populateVoices();setupRecognition();
+  syncLanguageSelects();applyLanguageUI();populateVoices();setupRecognition();applyLanguage();
 }
 // Which language you are typing, which is not which language you are learning.
 // The pair is fixed: you learn from the one you know towards the one you do
@@ -51,6 +51,16 @@ function setPair(source,target){
 let inputLang=settings.sourceLang||DEFAULT_PAIR.sourceLang;
 const enteringTarget=()=>inputLang===targetLang();
 function setInputLang(code){inputLang=code;applyLanguageUI();setupRecognition()}
+// The interface follows the language you write in, because that is the one
+// you know. English is the language the strings are written in, so it needs no
+// catalogue and no fetch.
+async function applyLanguage(){
+  const code=sourceLang();
+  if(code==="en"){setDictionary(null);applyI18n();return}
+  try{const module=await import(`./i18n/${code}.js`);setDictionary(module.default)}
+  catch{setDictionary(null)}  // no catalogue for that language yet: stay in English
+  applyI18n();
+}
 function syncLanguageSelects(){
   for(const id of ["#source-lang","#setup-source"])fillLanguageSelect($(id),sourceLang());
   for(const id of ["#target-lang","#setup-target"])fillLanguageSelect($(id),targetLang());
@@ -494,5 +504,5 @@ const legacyOrders={newest:["created","desc"],oldest:["created","asc"],echoes:["
 // Android fills the voice list after the page has settled and does not always
 // fire voiceschanged, so the select is rebuilt a few times before giving up.
 for(const delay of [400,1200,3000])setTimeout(populateVoices,delay);
-showView(settings.onboarded||hasTranslator()?"practice":"onboard");migrateStore().then(repairReversedCards).catch(()=>{});refreshDueBadge();setupRecognition();updateInstallUI();if(new URLSearchParams(location.search).get("view")==="review")showView("review");
+applyLanguage();showView(settings.onboarded||hasTranslator()?"practice":"onboard");migrateStore().then(repairReversedCards).catch(()=>{});refreshDueBadge();setupRecognition();updateInstallUI();if(new URLSearchParams(location.search).get("view")==="review")showView("review");
 if("serviceWorker"in navigator){navigator.serviceWorker.register("./sw.js");writeReminderPrefs();syncReminderSchedule();remindOnOpen()}
