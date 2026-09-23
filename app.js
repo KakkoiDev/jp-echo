@@ -22,7 +22,7 @@ const loop=new ShadowLoop({onEcho:async()=>{const reviewing=!$("#review-view").h
   $("#sentence-play").setAttribute("aria-pressed",String(playing));const showPlay=state==="paused"||!playing;$("#sentence-play").lastChild.textContent=showPlay?"Play the loop":"Pause the loop";$("#sentence-play").querySelector("path").setAttribute("d",showPlay?PLAY_ICON:PAUSE_ICON);$("#sentence-view").classList.toggle("playing",active);
   // The voice notice follows what playback actually did, so it appears for a
   // device that truly cannot speak and clears the moment one does.
-  if(state==="error"||state==="speaking"){const failed=state==="error";if(failed!==voiceFailed){voiceFailed=failed;if(!$("#main-view").hidden)renderPracticeNotices()}}}});
+  if(state==="error"||state==="speaking"){const failed=state==="error";if(failed!==voiceFailed){voiceFailed=failed;if(!$("#main-view").hidden)renderPracticeNotices();renderVoiceNotices()}}}});
 // Appearance > Motion. "system" sets no class and lets the device decide;
 // "on" and "off" say so outright, which is the only way to keep the motion
 // on a phone whose battery saver has switched the whole OS to reduced.
@@ -193,9 +193,15 @@ function renderPracticeNotices(){const host=$("#practice-notices"),connected=has
   // not proof the device has none: Android fills it in late, and browsers with
   // fingerprinting protection hand back an empty list on purpose. Echo names the
   // language it wants and lets the platform choose, rather than refusing to try.
-  else if(voiceFailed)host.append(notice({icon:"voice",alert:true,title:t("That voice could not play"),
-    copy:t("Echo speaks with your device's own voices, and this one has no {language} voice to speak with. Add one in your system settings, then come back.",{language:t(languageName(targetLang()))}),
-    link:{label:t("How do I add a voice?"),onClick:()=>{openSettings();$("#voice-help").open=true;$("#voice-help").scrollIntoView({block:"center"})}}}))}
+  else if(voiceFailed)host.append(voiceNotice())}
+function voiceNotice(){return notice({icon:"voice",alert:true,title:t("That voice could not play"),
+  copy:t("Echo speaks with your device's own voices, and this one has no {language} voice to speak with. Add one in your system settings, then come back.",{language:t(languageName(targetLang()))}),
+  link:{label:t("How do I add a voice?"),onClick:()=>{openSettings();$("#voice-help").open=true;$("#voice-help").scrollIntoView({block:"center"})}}})}
+// The detail and review screens report the loop through an sr-only line, so a
+// failure there was silent: the icon flicked back to a triangle and nothing
+// else happened, which reads as a dead button. They get the notice too.
+function renderVoiceNotices(){for(const id of ["#sentence-notices","#review-notices"]){const host=$(id);if(!host)continue;
+  host.replaceChildren();if(voiceFailed)host.append(voiceNotice())}}
 const wide=matchMedia("(min-width:1024px)");
 const isWide=()=>wide.matches;
 const VIEW_TITLES={review:"Review",library:"Library"};
