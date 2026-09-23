@@ -17,7 +17,7 @@ const settings=JSON.parse(localStorage.getItem("jp-echo-settings")||"{}");
 const pairWasRepaired=repairPair(settings);
 if(pairWasRepaired||settings.basePair===undefined)localStorage.setItem("jp-echo-settings",JSON.stringify(settings));
 const PLAY_ICON="M2 1.4 12 8 2 14.6V1.4Z",PAUSE_ICON="M2.5 1.5h3v13h-3zM7.5 1.5h3v13h-3z";
-let current=null,detail=null,translationFailure=null,voiceFailed=false,echoesAtCardStart=0,voices=[],installPrompt=null,reviewQueue=[],reviewIndex=0,reviewRevealed=false,reviewRecognition=null,reviewListening=false;
+let current=null,detail=null,translationFailure=null,voiceFailed=false,dictationReady=false,echoesAtCardStart=0,voices=[],installPrompt=null,reviewQueue=[],reviewIndex=0,reviewRevealed=false,reviewRecognition=null,reviewListening=false;
 const loop=new ShadowLoop({onEcho:async()=>{const reviewing=!$("#review-view").hidden,viewingDetail=!$("#sentence-view").hidden,target=reviewing?reviewQueue[reviewIndex]:viewingDetail?detail:current;if(!target)return;target.echoCount=(Number(target.echoCount)||0)+1;target.updatedAt=new Date().toISOString();await saveSentence(target);if(reviewing){reviewQueue[reviewIndex]=target;tickCount($("#review-echo-count"),target.echoCount)}if(viewingDetail)tickCount($("#stat-echoes"),target.echoCount);if(current?.id===target.id){current=target;renderCount()}},onState:state=>{const label=({speaking:"Playing — say it with the voice",imitate:"Your turn — echo it",paused:"Paused",stopped:"Ready",error:"That voice could not play"})[state]||state,playing=state!=="stopped"&&state!=="error",text=state==="paused"?"Play":playing?"Pause":"Play";$("#review-loop-state").textContent=label;$("#sentence-loop-state").textContent=label;const active=playing&&state!=="paused";for(const echo of document.querySelectorAll(".arcs:not(.small)>.echo"))echo.classList.toggle("is-playing",active);$("#practice").classList.toggle("playing",active);$("#review-panel").classList.toggle("playing",active);$("#loop-state").textContent=label;$("#play-pause").textContent=text;$("#play-pause").setAttribute("aria-pressed",String(playing));$("#review-audio").textContent=state==="paused"||!playing?"Play the loop":"Pause the loop";$("#review-audio").setAttribute("aria-pressed",String(playing));
   $("#sentence-play").setAttribute("aria-pressed",String(playing));const showPlay=state==="paused"||!playing;$("#sentence-play").lastChild.textContent=showPlay?"Play the loop":"Pause the loop";$("#sentence-play").querySelector("path").setAttribute("d",showPlay?PLAY_ICON:PAUSE_ICON);$("#sentence-view").classList.toggle("playing",active);
   // The voice notice follows what playback actually did, so it appears for a
@@ -180,7 +180,7 @@ function hasTranslator(){const provider=settings.provider||"deepseek";return pro
 function renderPracticeNotices(){const host=$("#practice-notices"),connected=hasTranslator();
   document.body.classList.toggle("no-key",!connected);
   $("#welcome-lede").textContent=connected?t("Enter one {language} sentence below to start a shadowing loop.",{language:t(languageName(sourceLang()))}):t("Add a translator and this starts working.");
-  $("#english-input").disabled=!connected;$("#translate").disabled=!connected;$("#microphone").disabled=!connected;
+  $("#english-input").disabled=!connected;$("#translate").disabled=!connected;$("#microphone").disabled=!connected||!dictationReady;
   host.replaceChildren();
   if(!connected)host.append(notice({icon:"alert",alert:true,title:"No translator connected",
     copy:"Echo can play and review what you already have, but it cannot make new sentences yet.",
@@ -191,10 +191,11 @@ function renderPracticeNotices(){const host=$("#practice-notices"),connected=has
     copy:"Practising and reviewing carry on as normal. New translations will wait until you're back."}));
   // Only after a playback attempt actually failed. An empty getVoices() list is
   // not proof the device has none: Android fills it in late, and browsers with
-  // fingerprinting protection hand back an empty list on purpose. Echo asks the
-  // platform for ja-JP and lets it choose, rather than refusing to try.
-  else if(voiceFailed)host.append(notice({icon:"voice",title:"That voice could not play",
-    copy:"Echo speaks with your device's own voices. If nothing is heard, add a Japanese voice in your system settings, then come back."}))}
+  // fingerprinting protection hand back an empty list on purpose. Echo names the
+  // language it wants and lets the platform choose, rather than refusing to try.
+  else if(voiceFailed)host.append(notice({icon:"voice",alert:true,title:t("That voice could not play"),
+    copy:t("Echo speaks with your device's own voices, and this one has no {language} voice to speak with. Add one in your system settings, then come back.",{language:t(languageName(targetLang()))}),
+    link:{label:t("How do I add a voice?"),onClick:()=>{openSettings();$("#voice-help").open=true;$("#voice-help").scrollIntoView({block:"center"})}}}))}
 const wide=matchMedia("(min-width:1024px)");
 const isWide=()=>wide.matches;
 const VIEW_TITLES={review:"Review",library:"Library"};
@@ -282,7 +283,7 @@ async function saveEdit(event){event.preventDefault();if(!detail)return;
   detail={...detail,target:japanese,plainTarget:plain,casualTarget:japanese,plainCasualTarget:plain,politeTarget:japanese,plainPoliteTarget:plain,updatedAt:new Date().toISOString()};
   await saveSentence(detail);if(current?.id===detail.id){current=detail;renderSentence()}renderDetail()}
 function playDetail(){if(!detail)return;if(loop.running){loop.togglePause();return}
-  const voice=voices[Number($("#voice").value)]||voices[0]||null;loop.play(detail.plainTarget||stripFurigana(detail.target),{voice,rate:Number($("#rate").value)})}
+  const voice=voices[Number($("#voice").value)]||voices[0]||null;loop.play(detail.plainTarget||stripFurigana(detail.target),{voice,rate:Number($("#rate").value),lang:targetLang()})}
 function askDelete(){if(!detail)return;
   $("#delete-quote").innerHTML=rubyHtml(detail.target);
   const echoes=Number(detail.echoCount)||0,reviews=Array.isArray(detail.reviews)?detail.reviews.length:0;
@@ -373,13 +374,19 @@ const DICTATION={
   "not-allowed":"Microphone blocked — type it instead.",
   "no-speech":"Nothing heard — tap the mic or type it.",
   "audio-capture":"No microphone available — type it instead.",
+  // Firefox has no recogniser at all; Brave ships the API without the service
+  // behind it, so start() resolves straight into one of these two.
+  network:"Dictation needs a connection your browser will not make — type it instead.",
+  "service-not-allowed":"Your browser blocks its speech service — type it instead.",
   failed:"Dictation failed — type it instead."};
 const dictationError=error=>DICTATION[error]||DICTATION.failed;
 // Append rather than replace, so a second burst adds to what you already said
 // instead of throwing it away.
 const appendHeard=(field,heard)=>{field.value=(field.value?field.value.trimEnd()+" "+heard:heard).trim()};
 function setupRecognition(){const recognition=recognitionFactory(inputLang),mic=$("#microphone"),status=$("#voice-input-status");
-  if(!recognition){mic.disabled=true;status.textContent=DICTATION.unavailable;return}
+  dictationReady=!!recognition;
+  if(!recognition){mic.disabled=true;mic.onclick=null;status.textContent=DICTATION.unavailable;return}
+  mic.disabled=!hasTranslator();if(status.textContent===DICTATION.unavailable)status.textContent="";
   mic.onclick=()=>{status.textContent=DICTATION.listening;mic.classList.add("is-listening");try{recognition.start()}catch{}};
   recognition.onresult=event=>{appendHeard($("#english-input"),event.results[0][0].transcript);status.textContent="Edit anything it mishears before you translate."};
   recognition.onerror=event=>{status.textContent=dictationError(event.error)};
@@ -390,7 +397,7 @@ function reviewPlainJapanese(sentence){return settings.showPolite&&hasRegisters(
 const STAGE_LABELS={0:"New",1:"Learning",2:"Review",3:"Relearning"};
 function stageLabel(sentence){const state=sentence.srs?.state??0,reps=Number(sentence.srs?.reps)||0;return STAGE_LABELS[state]+(reps?" · seen "+reps+(reps===1?" time":" times"):"")}
 function stageClass(sentence){const state=sentence.srs?.state??0;return state===0?"new":state===2?"review":"learning"}
-function renderReview(){resetSession();stopReviewListening();const sentence=reviewQueue[reviewIndex],complete=!sentence;
+function renderReview(){resetSession();stopReviewListening();$("#review-mic").disabled=!dictationReady;const sentence=reviewQueue[reviewIndex],complete=!sentence;
   $("#review-panel").hidden=complete;$("#review-prompt-actions").hidden=complete;$("#review-actions").hidden=true;$("#review-complete").hidden=!complete;
   $("#review-progress").textContent=complete?`${reviewQueue.length} / ${reviewQueue.length}`:`${reviewIndex+1} / ${reviewQueue.length}`;
   renderSidePanel();$("#review-progress-bar").style.width=(reviewQueue.length?Math.round((complete?reviewQueue.length:reviewIndex)/reviewQueue.length*100):0)+"%";
@@ -431,7 +438,7 @@ function startReviewListening(){if(reviewListening)return;
 function stopReviewListening(){if(!reviewListening||!reviewRecognition)return;reviewListening=false;try{reviewRecognition.stop()}catch{}$("#review-mic").setAttribute("aria-pressed","false");$("#review-panel").classList.remove("is-listening")}
 function toggleReviewListening(){reviewListening?stopReviewListening():startReviewListening()}
 function skipReview(){reviewIndex++;renderReview()}
-function playReviewAudio(){const sentence=reviewQueue[reviewIndex];if(!sentence)return;if(loop.running){loop.togglePause();return}const voice=voices[Number($("#voice").value)]||voices[0]||null;loop.play(reviewPlainJapanese(sentence)||reviewJapanese(sentence).replace(/【[^】]+】/g,""),{voice,rate:Number($("#rate").value)})}
+function playReviewAudio(){const sentence=reviewQueue[reviewIndex];if(!sentence)return;if(loop.running){loop.togglePause();return}const voice=voices[Number($("#voice").value)]||voices[0]||null;loop.play(reviewPlainJapanese(sentence)||reviewJapanese(sentence).replace(/【[^】]+】/g,""),{voice,rate:Number($("#rate").value),lang:targetLang()})}
 async function rateReview(rating){const sentence=reviewQueue[reviewIndex];if(!sentence||!reviewRevealed)return;resetSession();const graded=reviewSentence(sentence,rating);
   const updated={...graded,reviews:[...(Array.isArray(sentence.reviews)?sentence.reviews:[]),{at:new Date().toISOString(),rating,echoes:Math.max(0,(Number(sentence.echoCount)||0)-echoesAtCardStart)}]};await saveSentence(updated);if(current?.id===updated.id)current=updated;reviewQueue[reviewIndex]=updated;reviewIndex++;renderReview()}
 async function exportHistory(){const data=exportBackup(await listSentences(),settings),url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"})),link=Object.assign(document.createElement("a"),{href:url,download:"jp-echo-backup.json"});link.click();URL.revokeObjectURL(url)}
@@ -467,7 +474,7 @@ async function repairReversedCards(){
   toast(broken.length===1?"Put 1 sentence the right way round":"Put "+broken.length+" sentences the right way round",6000);
 }
 async function importHistory(file){if(!file)return;try{const backup=JSON.parse(await file.text());if(backup.schemaVersion!==1||!Array.isArray(backup.sentences))throw new Error("Unsupported backup.");const merged=mergeSentences(await listSentences(),backup.sentences);await replaceAll(merged);setStatus("Imported "+backup.sentences.length+" sentence(s).");renderHistory()}catch(error){setStatus(error.message||"Import failed.",true)}}
-for(const tab of document.querySelectorAll(".tab[data-view]"))tab.onclick=()=>showView(tab.dataset.view);$("#translate").onclick=performTranslation;$("#english-input").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")performTranslation()};$("#play-pause").onclick=()=>{if(!current)return;if(loop.running){loop.togglePause();return}const voice=voices[Number($("#voice").value)]||voices[0]||null;loop.play(selectedPlainJapanese(),{voice,rate:Number($("#rate").value)})};$("#show-english").onchange=()=>{saveSettings();renderSentence()};$("#show-furigana").onchange=()=>{saveSettings();renderSentence()};$("#show-polite").onchange=()=>{resetSession();saveSettings();renderSentence()};$("#rate").oninput=()=>{const rate=Number($("#rate").value);$("#rate-value").textContent=rate.toFixed(1)+"×";resetSession();loop.setRate(rate)};$("#settings-button").onclick=()=>$("#settings-dialog").showModal();$("#close-settings").onclick=()=>{saveSettings();$("#settings-dialog").close();renderPracticeNotices();writeReminderPrefs();syncReminderSchedule()};
+for(const tab of document.querySelectorAll(".tab[data-view]"))tab.onclick=()=>showView(tab.dataset.view);$("#translate").onclick=performTranslation;$("#english-input").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")performTranslation()};$("#play-pause").onclick=()=>{if(!current)return;if(loop.running){loop.togglePause();return}const voice=voices[Number($("#voice").value)]||voices[0]||null;loop.play(selectedPlainJapanese(),{voice,rate:Number($("#rate").value),lang:targetLang()})};$("#show-english").onchange=()=>{saveSettings();renderSentence()};$("#show-furigana").onchange=()=>{saveSettings();renderSentence()};$("#show-polite").onchange=()=>{resetSession();saveSettings();renderSentence()};$("#rate").oninput=()=>{const rate=Number($("#rate").value);$("#rate-value").textContent=rate.toFixed(1)+"×";resetSession();loop.setRate(rate)};$("#settings-button").onclick=()=>$("#settings-dialog").showModal();$("#close-settings").onclick=()=>{saveSettings();$("#settings-dialog").close();renderPracticeNotices();writeReminderPrefs();syncReminderSchedule()};
 $("#remind").onchange=async()=>{const wanted=$("#remind").checked;
   if(wanted&&!await enableReminders()){$("#remind").checked=false;$("#remind-hint").textContent="Notifications are blocked for Echo. Allow them in your browser settings, then turn this on again.";$("#remind-hint").classList.add("error");$("#remind-reach").textContent="";return}
   $("#remind-hint").textContent="Your device asks permission the first time you turn this on.";$("#remind-hint").classList.remove("error");
