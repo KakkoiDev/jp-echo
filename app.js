@@ -1,3 +1,4 @@
+import {flipSentence,isReversed,repairPair} from "./repair.js";
 import {DEFAULT_PAIR,LANGUAGES,createSentence,exportBackup,hasFurigana,hasRegisters,languageName,mergeSentences,normalizeFurigana,rubyHtml,stripFurigana} from "./core.js";
 import {isExactMatch,markAttempt,markTarget} from "./diff.js";
 import {deleteSentence,getSentence,listSentences,migrateStore,replaceAll,saveSentence} from "./db.js";
@@ -8,10 +9,12 @@ import {dueSentences,ensureSchedule,isDue,reviewSentence} from "./srs.js";
 import {DEFAULT_TIME,REMINDER_TAG,reminderText,shouldRemind} from "./reminders.js";
 const $=selector=>document.querySelector(selector);
 const settings=JSON.parse(localStorage.getItem("jp-echo-settings")||"{}");
-// Seeded on load rather than only when a select changes: someone who accepts
-// the defaults in Setup never fires a change event, so without this their
-// basePair stays undefined and the swap button can never light.
-if(!settings.basePair)settings.basePair={sourceLang:settings.sourceLang||DEFAULT_PAIR.sourceLang,targetLang:settings.targetLang||DEFAULT_PAIR.targetLang};
+// Before anything reads the pair: a build shipped a swap button that reversed
+// the stored pair rather than the input language, so a device left swapped
+// reopens typing the language it is learning. Consumes its own evidence, so
+// it runs once and then never again.
+const pairWasRepaired=repairPair(settings);
+if(pairWasRepaired||settings.basePair===undefined)localStorage.setItem("jp-echo-settings",JSON.stringify(settings));
 let current=null,detail=null,translationFailure=null,voiceFailed=false,echoesAtCardStart=0,voices=[],installPrompt=null,reviewQueue=[],reviewIndex=0,reviewRevealed=false,reviewRecognition=null,reviewListening=false;
 const loop=new ShadowLoop({onEcho:async()=>{const reviewing=!$("#review-view").hidden,viewingDetail=!$("#sentence-view").hidden,target=reviewing?reviewQueue[reviewIndex]:viewingDetail?detail:current;if(!target)return;target.echoCount=(Number(target.echoCount)||0)+1;target.updatedAt=new Date().toISOString();await saveSentence(target);if(reviewing){reviewQueue[reviewIndex]=target;tickCount($("#review-echo-count"),target.echoCount)}if(viewingDetail)tickCount($("#stat-echoes"),target.echoCount);if(current?.id===target.id){current=target;renderCount()}},onState:state=>{const label=({speaking:"Playing — say it with the voice",imitate:"Your turn — echo it",paused:"Paused",stopped:"Ready",error:"That voice could not play"})[state]||state,playing=state!=="stopped"&&state!=="error",text=state==="paused"?"Play":playing?"Pause":"Play";$("#review-loop-state").textContent=label;$("#sentence-loop-state").textContent=label;const active=playing&&state!=="paused";for(const echo of document.querySelectorAll(".arcs:not(.small)>.echo"))echo.classList.toggle("is-playing",active);$("#practice").classList.toggle("playing",active);$("#review-panel").classList.toggle("playing",active);$("#loop-state").textContent=label;$("#play-pause").textContent=text;$("#play-pause").setAttribute("aria-pressed",String(playing));$("#review-audio").textContent=state==="paused"||!playing?"Play the loop":"Pause the loop";$("#review-audio").setAttribute("aria-pressed",String(playing));
   $("#sentence-play").setAttribute("aria-pressed",String(playing));$("#sentence-play").lastChild.textContent=state==="paused"||!playing?"Play the loop":"Pause the loop";$("#sentence-view").classList.toggle("playing",active);
@@ -28,20 +31,25 @@ const targetLang=()=>settings.targetLang||DEFAULT_PAIR.targetLang;
 // A sentence carries the pair it was made with, so an old card keeps rendering
 // the way it was made even after the setting moves on.
 const itemTarget=item=>item.targetLang||DEFAULT_PAIR.targetLang;
-function setPair(source,target,{chosen=true}={}){
+function setPair(source,target){
   // A pair with the same language on both sides would ask the model to
   // translate a sentence into itself, so the other side steps aside.
   if(source===target)source=source===DEFAULT_PAIR.targetLang?DEFAULT_PAIR.sourceLang:DEFAULT_PAIR.targetLang;
   settings.sourceLang=source;settings.targetLang=target;
-  // Picking languages in Setup or Settings sets the direction the swap button
-  // is lit against; swapping only reverses it. Without a remembered baseline
-  // "swapped" has nothing to be swapped from — es→fr is no more reversed than
-  // fr→es — and the button could only ever report the pair it already shows.
-  if(chosen)settings.basePair={sourceLang:source,targetLang:target};
   localStorage.setItem("jp-echo-settings",JSON.stringify(settings));
+  inputLang=source;
   syncLanguageSelects();applyLanguageUI();populateVoices();setupRecognition();
 }
-function isSwapped(){const base=settings.basePair;return !!base&&base.sourceLang===targetLang()&&base.targetLang===sourceLang()}
+// Which language you are typing, which is not which language you are learning.
+// The pair is fixed: you learn from the one you know towards the one you do
+// not, and a card always comes out that way round. This only moves the input
+// side, for repeating a word or letting a native speak into the box.
+//
+// Deliberately not persisted. Every launch starts on the language you know,
+// because that is what the app is for; the other direction is the errand.
+let inputLang=settings.sourceLang||DEFAULT_PAIR.sourceLang;
+const enteringTarget=()=>inputLang===targetLang();
+function setInputLang(code){inputLang=code;applyLanguageUI();setupRecognition()}
 function syncLanguageSelects(){
   for(const id of ["#source-lang","#setup-source"])fillLanguageSelect($(id),sourceLang());
   for(const id of ["#target-lang","#setup-target"])fillLanguageSelect($(id),targetLang());
@@ -52,15 +60,15 @@ function fillLanguageSelect(select,selected){
 // Furigana and the casual/polite pair only mean something in Japanese.
 function applyLanguageUI(){
   const swap=$("#swap-langs");
-  const label="Swap to "+languageName(targetLang())+" \u2192 "+languageName(sourceLang());
+  const label="Type in "+languageName(enteringTarget()?sourceLang():targetLang())+" instead";
   swap.title=label;swap.setAttribute("aria-label",label);
-  swap.classList.toggle("is-swapped",isSwapped());
-  swap.setAttribute("aria-pressed",String(isSwapped()));
+  swap.classList.toggle("is-swapped",enteringTarget());
+  swap.setAttribute("aria-pressed",String(enteringTarget()));
   const target=targetLang(),registers=hasRegisters(target),furigana=hasFurigana(target);
   $("#show-furigana").closest("label").hidden=!furigana;
   $("#show-polite").closest("label").hidden=!registers;
   $("#voice-label").textContent=languageName(target)+" voice";
-  $("#english-input").placeholder="Enter a sentence in "+languageName(sourceLang());
+  $("#english-input").placeholder="Enter a sentence in "+languageName(inputLang);
   $("#voice-warning").textContent="No "+languageName(target)+" voice is installed on this device.";
 }
 function applyTheme(theme=settings.theme||"system"){document.documentElement.dataset.theme=theme;const dark=theme==="dark"||(theme==="system"&&matchMedia("(prefers-color-scheme: dark)").matches);const metas=document.querySelectorAll('meta[name="theme-color"]');
@@ -84,7 +92,7 @@ function selectedJapanese(){const polite=$("#show-polite").checked&&hasRegisters
 function selectedPlainJapanese(){const polite=$("#show-polite").checked&&hasRegisters(itemTarget(current));return polite?(current.plainPoliteTarget||current.plainTarget):(current.plainCasualTarget||current.plainTarget)}
 function resetSession(){loop.stop()}
 function renderSentence(){const panel=$("#practice");panel.hidden=!current;$("#welcome").hidden=!!current;document.body.classList.toggle("has-sentence",!!current);if(!current)return;$("#japanese").innerHTML=rubyHtml(selectedJapanese());$("#english-display").textContent=current.source;$("#english-display").hidden=!$("#show-english").checked;panel.classList.toggle("hide-furigana",!$("#show-furigana").checked);renderCount();populateVoices()}
-function openSentence(sentence){resetSession();current=sentence;$("#english-input").value=sentence.source;showView("practice");renderSentence()}
+function openSentence(sentence){resetSession();current=sentence;$("#english-input").value=sentence.source;if(enteringTarget())setInputLang(sourceLang());showView("practice");renderSentence()}
 const PREFS_CACHE="jp-echo-prefs",PREFS_KEY="./reminder";
 const isStandalone=()=>matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
 const canSyncInBackground=()=>"serviceWorker" in navigator&&"PeriodicSyncManager" in window;
@@ -301,12 +309,12 @@ function storeTranslator(){const provider=$("#setup-provider").value;
   else settings.providerKeys={...(settings.providerKeys||{}),[provider]:$("#setup-key").value.trim()};}
 function saveSetup(){storeTranslator();finishOnboarding()}
 function finishOnboarding(){settings.onboarded=true;localStorage.setItem("jp-echo-settings",JSON.stringify(settings));resetSettingsForm();showView("practice")}
-async function performTranslation(){const english=$("#english-input").value.trim();if(!english)return setStatus("Enter an English sentence.",true);const provider=defaultProvider();if(!hasTranslator())return showView("setup");
+async function performTranslation(){const english=$("#english-input").value.trim();if(!english)return setStatus("Enter a sentence in "+languageName(inputLang)+".",true);const provider=defaultProvider();if(!hasTranslator())return showView("setup");
   // Swap the label's text, not the button's: textContent would take the arrow
   // icon and the .label span with it, and they never came back — after one
   // translation the button was bare text that no longer answered the rule
   // hiding the word on a phone.
-  const button=$("#translate"),label=button.querySelector(".label"),previous=label.textContent;button.disabled=true;label.textContent="Translating…";button.setAttribute("aria-busy","true");setStatus("Translating…");try{translationFailure=null;const japanese=await translate(english,settings);resetSession();current=ensureSchedule(createSentence(english,japanese,new Date(),undefined,{sourceLang:sourceLang(),targetLang:targetLang()}));current.translationProvider=provider;await saveSentence(current);renderSentence();refreshDueBadge();clearComposer();setStatus("Ready to practice.")}catch(error){const name=PROVIDER_NAMES[provider]||provider;
+  const button=$("#translate"),label=button.querySelector(".label"),previous=label.textContent;button.disabled=true;label.textContent="Translating…";button.setAttribute("aria-busy","true");setStatus("Translating…");try{translationFailure=null;const card=await translate(english,{...settings,inputLang});resetSession();current=ensureSchedule(createSentence(card.source,card,new Date(),undefined,{sourceLang:sourceLang(),targetLang:targetLang()}));current.translationProvider=provider;await saveSentence(current);renderSentence();refreshDueBadge();clearComposer();setStatus("Ready to practice.")}catch(error){const name=PROVIDER_NAMES[provider]||provider;
     translationFailure={title:/\b(401|403|402|key|credit|quota)\b/i.test(error.message||"")?name+" turned the request down":"Translation failed",
       copy:(error.message||"The request did not get through.")+" Your sentence is still in the box."};
     setStatus("");renderPracticeNotices()}finally{button.disabled=false;label.textContent=previous;button.removeAttribute("aria-busy")}}
@@ -347,7 +355,7 @@ const dictationError=error=>DICTATION[error]||DICTATION.failed;
 // Append rather than replace, so a second burst adds to what you already said
 // instead of throwing it away.
 const appendHeard=(field,heard)=>{field.value=(field.value?field.value.trimEnd()+" "+heard:heard).trim()};
-function setupRecognition(){const recognition=recognitionFactory(sourceLang()),mic=$("#microphone"),status=$("#voice-input-status");
+function setupRecognition(){const recognition=recognitionFactory(inputLang),mic=$("#microphone"),status=$("#voice-input-status");
   if(!recognition){mic.disabled=true;status.textContent=DICTATION.unavailable;return}
   mic.onclick=()=>{status.textContent=DICTATION.listening;mic.classList.add("is-listening");try{recognition.start()}catch{}};
   recognition.onresult=event=>{appendHeard($("#english-input"),event.results[0][0].transcript);status.textContent="Edit anything it mishears before you translate."};
@@ -406,6 +414,20 @@ async function rateReview(rating){const sentence=reviewQueue[reviewIndex];if(!se
 async function exportHistory(){const data=exportBackup(await listSentences(),settings),url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"})),link=Object.assign(document.createElement("a"),{href:url,download:"jp-echo-backup.json"});link.click();URL.revokeObjectURL(url)}
 async function exportAnki(button=$("#export-anki")){const items=await listSentences();const label=button.textContent;button.disabled=true;button.textContent="Building deck…";$("#anki-status").textContent="Creating JP Echo.apkg on this device…";try{await downloadAnkiDeck(items);$("#open-anki").hidden=false;const launched=openAnki(true);$("#anki-status").textContent=launched?"JP Echo.apkg downloaded. Opening Anki… If it stays here, tap Open Anki.":"JP Echo.apkg downloaded. Open it from Downloads to import it into Anki."}catch(error){$("#anki-status").textContent=error.message||"Anki export failed."}finally{button.disabled=false;button.textContent=label}}
 function openAnki(automatic=false){const android=/android/i.test(navigator.userAgent),ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(android){window.location.href="intent:#Intent;package=com.ichi2.anki;end";return true}if(ios){window.location.href="anki://";return true}if(!automatic)$("#anki-status").textContent="Open JP Echo.apkg from your Downloads folder to import it into Anki.";return false}
+// Cards filed while the pair was reversed. Only run when the pair itself was
+// found reversed at startup: that is the evidence the device was sitting in
+// the broken state, and without it a card whose pair is the exact reverse of
+// today's is indistinguishable from someone who simply changed what they are
+// learning — flipping that would be the same bug pointed the other way.
+async function repairReversedCards(){
+  if(!pairWasRepaired)return;
+  const pair={sourceLang:sourceLang(),targetLang:targetLang()};
+  const broken=(await listSentences()).filter(item=>isReversed(item,pair));
+  if(!broken.length)return;
+  await Promise.all(broken.map(item=>saveSentence(flipSentence(item))));
+  renderHistory();refreshDueBadge();
+  toast(broken.length===1?"Put 1 sentence the right way round":"Put "+broken.length+" sentences the right way round",5000);
+}
 async function importHistory(file){if(!file)return;try{const backup=JSON.parse(await file.text());if(backup.schemaVersion!==1||!Array.isArray(backup.sentences))throw new Error("Unsupported backup.");const merged=mergeSentences(await listSentences(),backup.sentences);await replaceAll(merged);setStatus("Imported "+backup.sentences.length+" sentence(s).");renderHistory()}catch(error){setStatus(error.message||"Import failed.",true)}}
 for(const tab of document.querySelectorAll(".tab[data-view]"))tab.onclick=()=>showView(tab.dataset.view);$("#translate").onclick=performTranslation;$("#english-input").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")performTranslation()};$("#play-pause").onclick=()=>{if(!current)return;if(loop.running){loop.togglePause();return}const voice=voices[Number($("#voice").value)]||voices[0]||null;loop.play(selectedPlainJapanese(),{voice,rate:Number($("#rate").value)})};$("#show-english").onchange=()=>{saveSettings();renderSentence()};$("#show-furigana").onchange=()=>{saveSettings();renderSentence()};$("#show-polite").onchange=()=>{resetSession();saveSettings();renderSentence()};$("#rate").oninput=()=>{const rate=Number($("#rate").value);$("#rate-value").textContent=rate.toFixed(1)+"×";resetSession();loop.setRate(rate)};$("#settings-button").onclick=()=>$("#settings-dialog").showModal();$("#close-settings").onclick=()=>{saveSettings();$("#settings-dialog").close();renderPracticeNotices();writeReminderPrefs();syncReminderSchedule()};
 $("#remind").onchange=async()=>{const wanted=$("#remind").checked;
@@ -438,12 +460,12 @@ $("#settings-button").onclick=openSettings;$("#settings-nav").onclick=openSettin
 $("#target-lang").onchange=()=>setPair(sourceLang(),$("#target-lang").value);
 $("#setup-source").onchange=()=>setPair($("#setup-source").value,targetLang());
 $("#setup-target").onchange=()=>setPair(sourceLang(),$("#setup-target").value);
-$("#swap-langs").onclick=()=>{setPair(targetLang(),sourceLang(),{chosen:false});toast(languageName(sourceLang())+" \u2192 "+languageName(targetLang()))};
+$("#swap-langs").onclick=()=>{setInputLang(enteringTarget()?sourceLang():targetLang());toast("Typing in "+languageName(inputLang))};
 $("#theme").onchange=()=>applyTheme($("#theme").value);$("#motion").onchange=()=>applyMotion($("#motion").value);window.addEventListener("beforeinstallprompt",event=>{event.preventDefault();installPrompt=event;updateInstallUI()});window.addEventListener("appinstalled",()=>{installPrompt=null;updateInstallUI()});
 $("#history-search").oninput=()=>{$("#clear-history-search").hidden=!$("#history-search").value;renderHistory()};$("#clear-history-search").onclick=()=>{$("#history-search").value="";$("#clear-history-search").hidden=true;$("#history-search").focus();renderHistory()};for(const id of ["#history-filter","#history-order","#history-direction"]){$(id).onchange=()=>{settings.historyFilter=$("#history-filter").value;settings.historyOrder=$("#history-order").value;settings.historyDirection=$("#history-direction").value;localStorage.setItem("jp-echo-settings",JSON.stringify(settings));renderHistory()}}
 const legacyOrders={newest:["created","desc"],oldest:["created","asc"],echoes:["echoes","desc"],due:["due","asc"]},legacy=legacyOrders[settings.historyOrder];if(legacy){settings.historyOrder=legacy[0];settings.historyDirection=settings.historyDirection||legacy[1]}resetSettingsForm();applyTheme();applyMotion();syncLanguageSelects();applyLanguageUI();$("#show-english").checked=settings.showEnglish??false;$("#show-furigana").checked=settings.showFurigana??true;$("#show-polite").checked=settings.showPolite??false;$("#history-filter").value=settings.historyFilter||"all";$("#history-order").value=settings.historyOrder||"created";$("#history-direction").value=settings.historyDirection||"desc";speechSynthesis.onvoiceschanged=populateVoices;populateVoices();renderVoiceHelp();
 // Android fills the voice list after the page has settled and does not always
 // fire voiceschanged, so the select is rebuilt a few times before giving up.
 for(const delay of [400,1200,3000])setTimeout(populateVoices,delay);
-showView(settings.onboarded||hasTranslator()?"practice":"onboard");migrateStore().catch(()=>{});refreshDueBadge();setupRecognition();updateInstallUI();if(new URLSearchParams(location.search).get("view")==="review")showView("review");
+showView(settings.onboarded||hasTranslator()?"practice":"onboard");migrateStore().then(repairReversedCards).catch(()=>{});refreshDueBadge();setupRecognition();updateInstallUI();if(new URLSearchParams(location.search).get("view")==="review")showView("review");
 if("serviceWorker"in navigator){navigator.serviceWorker.register("./sw.js");writeReminderPrefs();syncReminderSchedule();remindOnOpen()}
