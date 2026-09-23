@@ -55,20 +55,52 @@ test("default browser timers keep their Window receiver", () => {
   window.clearTimeout = originalClear;
 });
 
-test("pause also suspends the silent imitation interval", () => {
+test("pausing in the silence stops the timer, and play starts the sentence again", () => {
   spoken.length = 0;
   const timers = [];
   const cleared = [];
   let now = 1000;
   const loop = new ShadowLoop({onEcho:()=>{},onState:()=>{},setTimer:(fn,delay)=>{timers.push({fn,delay});return timers.length},clearTimer:id=>cleared.push(id),now:()=>now});
   loop.play("test",{rate:1});
-  spoken[0].onend();
+  assert.equal(spoken.length,1);
+  spoken[0].onend();                       // now in the gap where you repeat
   now = 1200;
   assert.equal(loop.togglePause(),true);
-  assert.deepEqual(cleared,[null,1]);
+  assert.deepEqual(cleared,[null,1],"the pending interval is cleared");
+
+  // The press has to produce a sound. Resuming the interval instead meant
+  // waiting out the rest of it in silence, which is indistinguishable from a
+  // button that does nothing.
   assert.equal(loop.togglePause(),false);
-  assert.equal(timers.length,2);
-  assert.ok(timers[1].delay<timers[0].delay);
+  assert.equal(spoken.length,2,"it speaks again immediately");
+  assert.equal(spoken[1].text,"test","and from the start of the same sentence");
+});
+
+test("play restarts mid-sentence too, rather than resuming the engine", () => {
+  spoken.length = 0;
+  let resumed = false;
+  const previous = global.speechSynthesis.resume;
+  global.speechSynthesis.resume = () => { resumed = true; };
+  const loop = new ShadowLoop({onEcho:()=>{},onState:()=>{},setWatchdogTimer:()=>1,clearWatchdogTimer:()=>{}});
+  loop.play("駅はどこですか",{rate:1});
+  spoken[0].onstart();
+  assert.equal(loop.togglePause(),true);
+  assert.equal(loop.togglePause(),false);
+  assert.equal(spoken.length,2,"a second utterance, not a resumed one");
+  assert.equal(spoken[1].text,"駅はどこですか");
+  assert.equal(resumed,false,"speechSynthesis.resume is never used — a paused engine is the one that stops speaking on Android");
+  global.speechSynthesis.resume = previous;
+});
+
+test("the voice and rate survive a pause", () => {
+  spoken.length = 0;
+  const voice = {name:"Kyoko",lang:"ja-JP"};
+  const loop = new ShadowLoop({onEcho:()=>{},onState:()=>{},setWatchdogTimer:()=>1,clearWatchdogTimer:()=>{}});
+  loop.play("テスト",{voice,rate:1.3});
+  loop.togglePause();
+  loop.togglePause();
+  assert.equal(spoken[1].voice,voice);
+  assert.equal(spoken[1].rate,1.3);
 });
 
 test("the loop shows it is playing without waiting for the engine", () => {
