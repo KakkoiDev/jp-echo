@@ -27,7 +27,6 @@ export default {
   "Translate.": "訳す。",
   "Listen.": "聴く。",
   "Echo.": "繰り返す。",
-  "Enter one English sentence below to start a shadowing loop.": "下に英語の文をひとつ入れると、シャドーイングのループが始まります。",
   "Say what you mean in Japanese — then drill it out loud until your mouth knows it.": "言いたいことを日本語で言う。そして口が覚えるまで声に出して繰り返す。",
   "Write one English sentence": "英語の文をひとつ書く",
   "Echo the Japanese back, on a loop": "日本語をループで繰り返す",
@@ -52,11 +51,16 @@ export default {
 
   // 練習
   "What do you want to say?": "何を言いたいですか？",
-  "Enter a sentence in English": "英語で文を入力",
+  // Parameterised: the catalogue cannot hold one entry per language, and the
+  // language name is translated separately before it is filled in.
+  "Enter a sentence in {language}": "{language}で文を入力",
+  "Enter a sentence in {language}.": "{language}で文を入力してください。",
+  "Enter one {language} sentence below to start a shadowing loop.": "下に{language}の文をひとつ入れると、シャドーイングのループが始まります。",
+  "Type in {language} instead": "{language}で入力する",
+  "Add a translator and this starts working.": "翻訳サービスを追加すると使えるようになります。",
   "Speak, or type it here": "話すか、ここに入力",
   "Translate": "翻訳",
   "Start listening": "聞き取りを開始",
-  "Type in Japanese instead": "日本語で入力する",
   "Furigana": "ふりがな",
   "English": "英語",
   "Polite": "丁寧",

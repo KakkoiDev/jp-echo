@@ -72,7 +72,7 @@ function fillLanguageSelect(select,selected){
 // Furigana and the casual/polite pair only mean something in Japanese.
 function applyLanguageUI(){
   const swap=$("#swap-langs");
-  const label="Type in "+languageName(enteringTarget()?sourceLang():targetLang())+" instead";
+  const label=t("Type in {language} instead",{language:t(languageName(enteringTarget()?sourceLang():targetLang()))});
   swap.title=label;swap.setAttribute("aria-label",label);
   swap.classList.toggle("is-swapped",enteringTarget());
   swap.setAttribute("aria-pressed",String(enteringTarget()));
@@ -80,7 +80,7 @@ function applyLanguageUI(){
   $("#show-furigana").closest("label").hidden=!furigana;
   $("#show-polite").closest("label").hidden=!registers;
   $("#voice-label").textContent=languageName(target)+" voice";
-  $("#english-input").placeholder="Enter a sentence in "+languageName(inputLang);
+  $("#english-input").placeholder=t("Enter a sentence in {language}",{language:t(languageName(inputLang))});
   $("#voice-warning").textContent="No "+languageName(target)+" voice is installed on this device.";
 }
 function applyTheme(theme=settings.theme||"system"){document.documentElement.dataset.theme=theme;const dark=theme==="dark"||(theme==="system"&&matchMedia("(prefers-color-scheme: dark)").matches);const metas=document.querySelectorAll('meta[name="theme-color"]');
@@ -179,7 +179,7 @@ function providerKey(provider=settings.provider||"deepseek"){return settings.pro
 function hasTranslator(){const provider=settings.provider||"deepseek";return provider==="local"?!!settings.localEndpoint:!!providerKey(provider)}
 function renderPracticeNotices(){const host=$("#practice-notices"),connected=hasTranslator();
   document.body.classList.toggle("no-key",!connected);
-  $("#welcome-lede").textContent=connected?"Enter one "+languageName(sourceLang())+" sentence below to start a shadowing loop.":"Add a translator and this starts working.";
+  $("#welcome-lede").textContent=connected?t("Enter one {language} sentence below to start a shadowing loop.",{language:t(languageName(sourceLang()))}):t("Add a translator and this starts working.");
   $("#english-input").disabled=!connected;$("#translate").disabled=!connected;$("#microphone").disabled=!connected;
   host.replaceChildren();
   if(!connected)host.append(notice({icon:"alert",alert:true,title:"No translator connected",
@@ -321,7 +321,7 @@ function storeTranslator(){const provider=$("#setup-provider").value;
   else settings.providerKeys={...(settings.providerKeys||{}),[provider]:$("#setup-key").value.trim()};}
 function saveSetup(){storeTranslator();finishOnboarding()}
 function finishOnboarding(){settings.onboarded=true;localStorage.setItem("jp-echo-settings",JSON.stringify(settings));resetSettingsForm();showView("practice")}
-async function performTranslation(){const english=$("#english-input").value.trim();if(!english)return setStatus("Enter a sentence in "+languageName(inputLang)+".",true);const provider=defaultProvider();if(!hasTranslator())return showView("setup");
+async function performTranslation(){const english=$("#english-input").value.trim();if(!english)return setStatus(t("Enter a sentence in {language}.",{language:t(languageName(inputLang))}),true);const provider=defaultProvider();if(!hasTranslator())return showView("setup");
   // Swap the label's text, not the button's: textContent would take the arrow
   // icon and the .label span with it, and they never came back — after one
   // translation the button was bare text that no longer answered the rule
