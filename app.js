@@ -8,6 +8,10 @@ import {dueSentences,ensureSchedule,isDue,reviewSentence} from "./srs.js";
 import {DEFAULT_TIME,REMINDER_TAG,reminderText,shouldRemind} from "./reminders.js";
 const $=selector=>document.querySelector(selector);
 const settings=JSON.parse(localStorage.getItem("jp-echo-settings")||"{}");
+// Seeded on load rather than only when a select changes: someone who accepts
+// the defaults in Setup never fires a change event, so without this their
+// basePair stays undefined and the swap button can never light.
+if(!settings.basePair)settings.basePair={sourceLang:settings.sourceLang||DEFAULT_PAIR.sourceLang,targetLang:settings.targetLang||DEFAULT_PAIR.targetLang};
 let current=null,detail=null,translationFailure=null,voiceFailed=false,echoesAtCardStart=0,voices=[],installPrompt=null,reviewQueue=[],reviewIndex=0,reviewRevealed=false,reviewRecognition=null,reviewListening=false;
 const loop=new ShadowLoop({onEcho:async()=>{const reviewing=!$("#review-view").hidden,viewingDetail=!$("#sentence-view").hidden,target=reviewing?reviewQueue[reviewIndex]:viewingDetail?detail:current;if(!target)return;target.echoCount=(Number(target.echoCount)||0)+1;target.updatedAt=new Date().toISOString();await saveSentence(target);if(reviewing){reviewQueue[reviewIndex]=target;tickCount($("#review-echo-count"),target.echoCount)}if(viewingDetail)tickCount($("#stat-echoes"),target.echoCount);if(current?.id===target.id){current=target;renderCount()}},onState:state=>{const label=({speaking:"Playing — say it with the voice",imitate:"Your turn — echo it",paused:"Paused",stopped:"Ready",error:"That voice could not play"})[state]||state,playing=state!=="stopped"&&state!=="error",text=state==="paused"?"Play":playing?"Pause":"Play";$("#review-loop-state").textContent=label;$("#sentence-loop-state").textContent=label;const active=playing&&state!=="paused";for(const echo of document.querySelectorAll(".arcs:not(.small)>.echo"))echo.classList.toggle("is-playing",active);$("#practice").classList.toggle("playing",active);$("#review-panel").classList.toggle("playing",active);$("#loop-state").textContent=label;$("#play-pause").textContent=text;$("#play-pause").setAttribute("aria-pressed",String(playing));$("#review-audio").textContent=state==="paused"||!playing?"Play the loop":"Pause the loop";$("#review-audio").setAttribute("aria-pressed",String(playing));
   $("#sentence-play").setAttribute("aria-pressed",String(playing));$("#sentence-play").lastChild.textContent=state==="paused"||!playing?"Play the loop":"Pause the loop";$("#sentence-view").classList.toggle("playing",active);
@@ -24,14 +28,20 @@ const targetLang=()=>settings.targetLang||DEFAULT_PAIR.targetLang;
 // A sentence carries the pair it was made with, so an old card keeps rendering
 // the way it was made even after the setting moves on.
 const itemTarget=item=>item.targetLang||DEFAULT_PAIR.targetLang;
-function setPair(source,target){
+function setPair(source,target,{chosen=true}={}){
   // A pair with the same language on both sides would ask the model to
   // translate a sentence into itself, so the other side steps aside.
   if(source===target)source=source===DEFAULT_PAIR.targetLang?DEFAULT_PAIR.sourceLang:DEFAULT_PAIR.targetLang;
   settings.sourceLang=source;settings.targetLang=target;
+  // Picking languages in Setup or Settings sets the direction the swap button
+  // is lit against; swapping only reverses it. Without a remembered baseline
+  // "swapped" has nothing to be swapped from — es→fr is no more reversed than
+  // fr→es — and the button could only ever report the pair it already shows.
+  if(chosen)settings.basePair={sourceLang:source,targetLang:target};
   localStorage.setItem("jp-echo-settings",JSON.stringify(settings));
   syncLanguageSelects();applyLanguageUI();populateVoices();setupRecognition();
 }
+function isSwapped(){const base=settings.basePair;return !!base&&base.sourceLang===targetLang()&&base.targetLang===sourceLang()}
 function syncLanguageSelects(){
   for(const id of ["#source-lang","#setup-source"])fillLanguageSelect($(id),sourceLang());
   for(const id of ["#target-lang","#setup-target"])fillLanguageSelect($(id),targetLang());
@@ -44,6 +54,8 @@ function applyLanguageUI(){
   const swap=$("#swap-langs");
   const label="Swap to "+languageName(targetLang())+" \u2192 "+languageName(sourceLang());
   swap.title=label;swap.setAttribute("aria-label",label);
+  swap.classList.toggle("is-swapped",isSwapped());
+  swap.setAttribute("aria-pressed",String(isSwapped()));
   const target=targetLang(),registers=hasRegisters(target),furigana=hasFurigana(target);
   $("#show-furigana").closest("label").hidden=!furigana;
   $("#show-polite").closest("label").hidden=!registers;
@@ -294,11 +306,18 @@ async function performTranslation(){const english=$("#english-input").value.trim
   // icon and the .label span with it, and they never came back — after one
   // translation the button was bare text that no longer answered the rule
   // hiding the word on a phone.
-  const button=$("#translate"),label=button.querySelector(".label"),previous=label.textContent;button.disabled=true;label.textContent="Translating…";button.setAttribute("aria-busy","true");setStatus("Translating…");try{translationFailure=null;const japanese=await translate(english,settings);resetSession();current=ensureSchedule(createSentence(english,japanese,new Date(),undefined,{sourceLang:sourceLang(),targetLang:targetLang()}));current.translationProvider=provider;await saveSentence(current);renderSentence();refreshDueBadge();setStatus("Ready to practice.")}catch(error){const name=PROVIDER_NAMES[provider]||provider;
+  const button=$("#translate"),label=button.querySelector(".label"),previous=label.textContent;button.disabled=true;label.textContent="Translating…";button.setAttribute("aria-busy","true");setStatus("Translating…");try{translationFailure=null;const japanese=await translate(english,settings);resetSession();current=ensureSchedule(createSentence(english,japanese,new Date(),undefined,{sourceLang:sourceLang(),targetLang:targetLang()}));current.translationProvider=provider;await saveSentence(current);renderSentence();refreshDueBadge();clearComposer();setStatus("Ready to practice.")}catch(error){const name=PROVIDER_NAMES[provider]||provider;
     translationFailure={title:/\b(401|403|402|key|credit|quota)\b/i.test(error.message||"")?name+" turned the request down":"Translation failed",
       copy:(error.message||"The request did not get through.")+" Your sentence is still in the box."};
     setStatus("");renderPracticeNotices()}finally{button.disabled=false;label.textContent=previous;button.removeAttribute("aria-busy")}}
+function clearComposer(){$("#english-input").value="";$("#voice-input-status").textContent=""}
 function setStatus(message,error=false){$("#status").textContent=message;$("#status").classList.toggle("error",error)}
+// A confirmation that does not belong in #status, which reports on the
+// translation and gets overwritten by it. Re-announcing means clearing the
+// live region first: setting textContent to the same string it already holds
+// is not a change, and a screen reader says nothing.
+let toastTimer=null;
+function toast(message,ms=2600){const node=$("#toast");if(toastTimer)clearTimeout(toastTimer);node.hidden=true;node.textContent="";requestAnimationFrame(()=>{node.textContent=message;node.hidden=false});toastTimer=setTimeout(()=>{node.hidden=true;node.textContent="";toastTimer=null},ms)}
 // Voices come from the operating system, not the browser — there is no
 // download link inside Chromium to point at. So the help is per platform,
 // picked from the user agent, with the generic list as the fallback.
@@ -419,7 +438,7 @@ $("#settings-button").onclick=openSettings;$("#settings-nav").onclick=openSettin
 $("#target-lang").onchange=()=>setPair(sourceLang(),$("#target-lang").value);
 $("#setup-source").onchange=()=>setPair($("#setup-source").value,targetLang());
 $("#setup-target").onchange=()=>setPair(sourceLang(),$("#setup-target").value);
-$("#swap-langs").onclick=()=>setPair(targetLang(),sourceLang());
+$("#swap-langs").onclick=()=>{setPair(targetLang(),sourceLang(),{chosen:false});toast(languageName(sourceLang())+" \u2192 "+languageName(targetLang()))};
 $("#theme").onchange=()=>applyTheme($("#theme").value);$("#motion").onchange=()=>applyMotion($("#motion").value);window.addEventListener("beforeinstallprompt",event=>{event.preventDefault();installPrompt=event;updateInstallUI()});window.addEventListener("appinstalled",()=>{installPrompt=null;updateInstallUI()});
 $("#history-search").oninput=()=>{$("#clear-history-search").hidden=!$("#history-search").value;renderHistory()};$("#clear-history-search").onclick=()=>{$("#history-search").value="";$("#clear-history-search").hidden=true;$("#history-search").focus();renderHistory()};for(const id of ["#history-filter","#history-order","#history-direction"]){$(id).onchange=()=>{settings.historyFilter=$("#history-filter").value;settings.historyOrder=$("#history-order").value;settings.historyDirection=$("#history-direction").value;localStorage.setItem("jp-echo-settings",JSON.stringify(settings));renderHistory()}}
 const legacyOrders={newest:["created","desc"],oldest:["created","asc"],echoes:["echoes","desc"],due:["due","asc"]},legacy=legacyOrders[settings.historyOrder];if(legacy){settings.historyOrder=legacy[0];settings.historyDirection=settings.historyDirection||legacy[1]}resetSettingsForm();applyTheme();applyMotion();syncLanguageSelects();applyLanguageUI();$("#show-english").checked=settings.showEnglish??false;$("#show-furigana").checked=settings.showFurigana??true;$("#show-polite").checked=settings.showPolite??false;$("#history-filter").value=settings.historyFilter||"all";$("#history-order").value=settings.historyOrder||"created";$("#history-direction").value=settings.historyDirection||"desc";speechSynthesis.onvoiceschanged=populateVoices;populateVoices();renderVoiceHelp();

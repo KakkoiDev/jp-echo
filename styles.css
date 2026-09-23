@@ -244,6 +244,14 @@ ul{list-style:none;margin:0;padding:0}
    pseudo-element carries the touch target out to 44px, so nothing shifts. */
 .notice-link{position:relative;align-self:flex-start;margin-top:2px;font-size:13px;font-weight:500;letter-spacing:.02em;background:none;border:0;padding:0;min-height:0;color:var(--seal);text-decoration:underline}
 .notice-link::after{content:"";position:absolute;left:0;right:0;top:50%;height:44px;transform:translateY(-50%)}
+/* Follows .dock's offset so it clears the tab bar, and the same override at
+   desktop width where .tabs becomes a sidebar instead. */
+.toast{position:fixed;z-index:6;left:50%;bottom:calc(72px + env(safe-area-inset-bottom) + 12px);transform:translateX(-50%);max-width:min(420px,calc(100vw - 32px));padding:11px 16px;border-radius:999px;border:1px solid var(--hairline);background:var(--panel);color:var(--sumi);box-shadow:0 6px 22px rgba(28,26,23,.16);font-size:.9rem;text-align:center}
+html.motion-on .toast{animation:toast-in .18s ease-out}
+@keyframes toast-in{from{opacity:0;transform:translate(-50%,6px)}to{opacity:1;transform:translate(-50%,0)}}
+/* The swap button stays lit while the pair is reversed from the one chosen in
+   Settings, so the flipped state is visible without reading the placeholder. */
+.mic.swap.is-swapped{border-color:var(--seal);background:var(--seal-tint);color:var(--seal)}
 .dock{position:fixed;z-index:3;left:50%;bottom:calc(72px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(760px,100%)}
 #practice-notices:not(:empty){padding:0 22px 14px}
 .empty-panel{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:24px;padding:20px 18px;border:1px solid var(--hairline);border-radius:4px;background:var(--panel);text-align:center}
@@ -492,6 +500,7 @@ kbd{padding:2px 7px;border:1px solid var(--chip-rev-bd);border-radius:3px;backgr
   .tab-badge{position:static;margin-left:auto;min-width:24px;height:22px;font-size:12px}
   .tabs>.nav-settings{display:flex}
   .dock{left:264px;right:340px;bottom:0;transform:none;width:auto}
+  .toast{bottom:calc(env(safe-area-inset-bottom) + 18px)}
   #practice-notices:not(:empty){padding-inline:56px}
   .composer{padding-inline:56px}
   .review-actions{left:264px;right:300px;transform:none;width:auto;padding-inline:56px}
