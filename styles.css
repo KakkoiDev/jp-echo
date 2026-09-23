@@ -246,12 +246,6 @@ ul{list-style:none;margin:0;padding:0}
 .notice-link::after{content:"";position:absolute;left:0;right:0;top:50%;height:44px;transform:translateY(-50%)}
 /* Follows .dock's offset so it clears the tab bar, and the same override at
    desktop width where .tabs becomes a sidebar instead. */
-/* The learning direction, said out loud on the screen it applies to. It got
-   silently reversed once and nothing anywhere named it, which is how it went
-   unnoticed for days. */
-.direction{margin:-2px 0 10px;font-size:12px;letter-spacing:.04em;color:var(--ink-muted)}
-.direction b{font-weight:600;color:var(--ink-soft)}
-.direction .from{color:var(--seal)}
 .toast{position:fixed;z-index:6;left:50%;bottom:calc(72px + env(safe-area-inset-bottom) + 12px);transform:translateX(-50%);max-width:min(420px,calc(100vw - 32px));padding:11px 16px;border-radius:999px;border:1px solid var(--hairline);background:var(--panel);color:var(--sumi);box-shadow:0 6px 22px rgba(28,26,23,.16);font-size:.9rem;text-align:center}
 html.motion-on .toast{animation:toast-in .18s ease-out}
 @keyframes toast-in{from{opacity:0;transform:translate(-50%,6px)}to{opacity:1;transform:translate(-50%,0)}}

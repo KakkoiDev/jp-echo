@@ -69,18 +69,6 @@ function applyLanguageUI(){
   $("#show-polite").closest("label").hidden=!registers;
   $("#voice-label").textContent=languageName(target)+" voice";
   $("#english-input").placeholder="Enter a sentence in "+languageName(inputLang);
-  // Named on screen because it was reversed once and nothing anywhere said
-  // so, which is how it went unnoticed for days. Built from nodes rather
-  // than innerHTML: escapeText is declared further down the module, so
-  // calling it from here depends on which path runs first.
-  const known=languageName(sourceLang()),learning=languageName(targetLang());
-  const bold=text=>{const b=document.createElement("b");b.textContent=text;return b};
-  const line=[document.createTextNode("Learning "),bold(learning),document.createTextNode(" from "),bold(known)];
-  if(enteringTarget()){
-    const typing=document.createElement("span");typing.className="from";typing.textContent=learning;
-    line.push(document.createTextNode(" \u00b7 typing "),typing);
-  }
-  $("#direction").replaceChildren(...line);
   $("#voice-warning").textContent="No "+languageName(target)+" voice is installed on this device.";
 }
 function applyTheme(theme=settings.theme||"system"){document.documentElement.dataset.theme=theme;const dark=theme==="dark"||(theme==="system"&&matchMedia("(prefers-color-scheme: dark)").matches);const metas=document.querySelectorAll('meta[name="theme-color"]');
@@ -327,9 +315,20 @@ async function performTranslation(){const english=$("#english-input").value.trim
   // translation the button was bare text that no longer answered the rule
   // hiding the word on a phone.
   const button=$("#translate"),label=button.querySelector(".label"),previous=label.textContent;button.disabled=true;label.textContent="Translating…";button.setAttribute("aria-busy","true");setStatus("Translating…");try{translationFailure=null;const card=await translate(english,{...settings,inputLang});resetSession();current=ensureSchedule(createSentence(card.source,card,new Date(),undefined,{sourceLang:sourceLang(),targetLang:targetLang()}));current.translationProvider=provider;await saveSentence(current);renderSentence();refreshDueBadge();clearComposer();setStatus("Ready to practice.")}catch(error){const name=PROVIDER_NAMES[provider]||provider;
-    translationFailure={title:/\b(401|403|402|key|credit|quota)\b/i.test(error.message||"")?name+" turned the request down":"Translation failed",
-      copy:(error.message||"The request did not get through.")+" Your sentence is still in the box."};
-    setStatus("");renderPracticeNotices()}finally{button.disabled=false;label.textContent=previous;button.removeAttribute("aria-busy")}}
+    const refused=/\b(401|403|402|key|credit|quota)\b/i.test(error.message||"");
+    // A failed fetch is a TypeError and its message is "Failed to fetch",
+    // which tells you nothing you did not already suspect.
+    const offline=error instanceof TypeError;
+    translationFailure={title:refused?name+" turned the request down":"Translation failed",
+      copy:(offline?"No connection, so the request never reached "+name+".":(error.message||"The request did not get through."))+" Your sentence is still in the box."};
+    // Put the sentence back if anything took it, and say so beside the button
+    // rather than only in the notice above: the notice can be off-screen on a
+    // phone, where the composer is docked to the bottom and is what you are
+    // looking at. Never overwrite something typed while the request was in
+    // flight.
+    if(!$("#english-input").value.trim())$("#english-input").value=english;
+    setStatus(offline?"No connection — your sentence is still here.":refused?name+" turned the request down.":"Translation failed — your sentence is still here.",true);
+    renderPracticeNotices()}finally{button.disabled=false;label.textContent=previous;button.removeAttribute("aria-busy")}}
 function clearComposer(){$("#english-input").value="";$("#voice-input-status").textContent=""}
 function setStatus(message,error=false){$("#status").textContent=message;$("#status").classList.toggle("error",error)}
 // A confirmation that does not belong in #status, which reports on the
