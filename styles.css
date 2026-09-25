@@ -729,3 +729,21 @@ html.motion-off #review-progress-bar { transition: none; }
   .kanji-grid{grid-template-columns:repeat(auto-fill,minmax(34px,1fr));gap:5px}
   .kanji-cell{font-size:19px}
 }
+
+/* The kanji sheet. A dialog rather than a view: the wall is 2,136 cells long
+   and tapping one near the bottom should not cost you your place on it. */
+#kanji-dialog{max-width:32rem}
+#kanji-character{font-family:var(--display);font-size:3.2rem;line-height:1;margin:0}
+#kanji-meta{margin:.1rem 0 1rem}
+.kanji-sentences{list-style:none;margin:0 0 4px;padding:0;display:flex;flex-direction:column;gap:2px}
+.kanji-sentences li{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--rule)}
+.kanji-sentences li:first-child{border-top:0}
+.kanji-sentence-text{flex:1 1 auto;min-width:0}
+.kanji-sentence-text b{display:block;font-family:var(--display);font-size:1.05rem;font-weight:400}
+.kanji-sentence-text span{display:block;font-size:.8rem;color:var(--ink-muted);margin-top:2px}
+.kanji-sentences .is-playing b{color:var(--seal)}
+.kanji-play{flex:0 0 auto;width:38px;height:38px;display:grid;place-items:center;padding:0;border-radius:3px}
+/* One action, and it names a character — it gets the width rather than the
+   three wrapped lines the shared two-button row left it with. */
+#kanji-dialog .dialog-actions{display:block}
+#kanji-compose{width:100%}

@@ -1,4 +1,4 @@
-import {DEFAULT_PAIR,hasFurigana,hasRegisters,languageName,normalizeFurigana,validateTranslation,validateTranslations} from "./core.js";
+import {DEFAULT_PAIR,hasFurigana,hasRegisters,languageName,normalizeFurigana,stripFurigana,validateTranslation,validateTranslations} from "./core.js";
 
 // The prompt is built from the pair. Only Japanese asks for furigana and the
 // two registers; every other target gets one plain sentence, because neither
@@ -19,6 +19,23 @@ function reversePrompt(sourceLang,targetLang){
   if(hasFurigana(targetLang))return `The sentence is in ${learning}. Return JSON only: {"translation":"...","target":"..."}. "translation" is what it means in natural ${known}. "target" is the same ${learning} sentence, unchanged except that a reading is added after every kanji run using this exact notation: 漢字【かんじ】. Do not reword it, do not change its register, and do not add readings to hiragana or katakana. No romaji, explanations, alternatives, or markdown.`;
   return `The sentence is in ${learning}. Return JSON only: {"translation":"..."}, what it means in natural ${known}. Do not add transliteration, explanations, alternatives, or markdown.`;
 }
+// Asking for a sentence that must contain something is not translating: there
+// is no input to translate. Forcing a required kanji into a sentence someone
+// typed gives nonsense ("I like cats" has no room for 駅), so the sentence is
+// chosen to fit the kanji instead of the other way round, and the model writes
+// both halves.
+function composePrompt(sourceLang,targetLang,required,known){
+  const from=languageName(sourceLang),to=languageName(targetLang);
+  const shape=hasRegisters(targetLang)
+    ? `Return JSON only: {"source":"...","casual":"...","polite":"..."}. "source" is what the sentence means in natural ${from}. "casual" and "polite" are the same sentence in those two registers, each with a reading after every kanji run in this exact notation: 漢字【かんじ】. Do not add readings to hiragana or katakana.`
+    : `Return JSON only: {"source":"...","translation":"..."}. "source" is what the sentence means in natural ${from}; "translation" is the ${to}.`;
+  // Stated twice and given a reason, because a single polite mention is the
+  // instruction models drop first. It is checked afterwards regardless.
+  const must=`The sentence MUST contain the character ${required}. That is the entire point of this request — a sentence without ${required} is useless and will be thrown away. Do not substitute a synonym, a different word, or write it in kana.`;
+  const prefer=known?` Where the rest of the sentence is a free choice, prefer these characters, so it does not introduce more than it teaches: ${known}.` : "";
+  return `Write one short, natural, everyday ${to} sentence a learner could say out loud. ${must}${prefer} ${shape} No romaji, explanations, alternatives, or markdown.`;
+}
+
 export const PROVIDER_DEFAULTS={deepseek:"deepseek-chat",google:"gemini-2.5-flash",openai:"gpt-4.1-mini",anthropic:"claude-sonnet-4-5",local:"qwen3:4b"};
 
 function jsonText(value){const text=String(value||"").trim().replace(/^```(?:json)?\s*/i,"").replace(/\s*```$/i,"");return JSON.parse(text||"{}")}
@@ -27,6 +44,56 @@ async function openAICompatible(provider,english,key,model,endpoint,system){cons
 async function gemini(english,key,model,system){const payload=await fetchJson(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(key)}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({systemInstruction:{parts:[{text:system}]},contents:[{role:"user",parts:[{text:english}]}],generationConfig:{responseMimeType:"application/json"}})});return jsonText(payload.candidates?.[0]?.content?.parts?.map(part=>part.text).join(""))}
 async function anthropicRequest(english,key,model,system){const payload=await fetchJson("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":key,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model,max_tokens:700,system,messages:[{role:"user",content:english}]})});return jsonText(payload.content?.filter(part=>part.type==="text").map(part=>part.text).join(""))}
 async function proxyRequest(url,english,provider,model,key,pair){const payload=await fetchJson(url,{method:"POST",headers:{"Content-Type":"application/json",...(key?{Authorization:"Bearer "+key}:{})},body:JSON.stringify({english,provider,model,...pair})});return (payload.casual||payload.casualJapanese||payload.translation)?payload:jsonText(payload.choices?.[0]?.message?.content)}
+
+// Which provider, which key, which model — the same decision for anything
+// that talks to a model, so it is made once.
+function chosenProvider(settings){
+  const keys=settings.providerKeys||{};
+  const provider=settings.provider||["google","deepseek","openai","anthropic"].find(name=>keys[name])||(settings.apiKey?"deepseek":"google");
+  const key=keys[provider]||(provider==="deepseek"?settings.apiKey:"")||"";
+  const model=settings.providerModels?.[provider]||PROVIDER_DEFAULTS[provider];
+  if(provider!=="local"&&!key)throw new Error(`Add your ${provider==="google"?"Gemini":provider[0].toUpperCase()+provider.slice(1)} API key in Settings.`);
+  if(provider==="local"&&!settings.localEndpoint)throw new Error("Add your Ollama or LM Studio endpoint in Settings.");
+  return {provider,key,model};
+}
+function ask(text,system,{provider,key,model},settings){
+  if(provider==="google")return gemini(text,key,model,system);
+  if(provider==="anthropic")return anthropicRequest(text,key,model,system);
+  return openAICompatible(provider,text,key,model,provider==="local"?settings.localEndpoint:undefined,system);
+}
+
+function shapeComposed(raw,pair){
+  const source=String(raw?.source||raw?.english||raw?.meaning||"").trim();
+  if(!source)throw new Error("The model did not say what the sentence means.");
+  return {source,...validateTranslations(raw,pair.targetLang)};
+}
+// The check the prompt cannot do. An instruction is a request, not a promise,
+// and a sentence that quietly left the character out teaches nothing about it.
+export function carries(card,required){
+  return (stripFurigana(card?.casual||"")+stripFurigana(card?.polite||"")).includes(required);
+}
+// A known set beyond this is not worth spending prompt on: someone who has met
+// that many kanji is not going to be tripped by whichever the model picks.
+const KNOWN_LIMIT=500;
+
+export async function compose({kanji,known=""},settings={}){
+  if(!kanji)throw new Error("Nothing was asked for.");
+  const pair={sourceLang:settings.sourceLang||DEFAULT_PAIR.sourceLang,targetLang:settings.targetLang||DEFAULT_PAIR.targetLang};
+  const chosen=chosenProvider(settings);
+  let hint=[...String(known)].filter(character=>character!==kanji);
+  const system=composePrompt(pair.sourceLang,pair.targetLang,kanji,hint.length&&hint.length<=KNOWN_LIMIT?hint.join(""):"");
+  let text=kanji,last=null;
+  // One retry, naming what went wrong. A second failure is the model refusing
+  // the constraint, not misreading it, and another round costs a request for
+  // nothing.
+  for(let attempt=0;attempt<2;attempt++){
+    const card=shapeComposed(await ask(text,system,chosen,settings),pair);
+    if(carries(card,kanji))return card;
+    last=stripFurigana(card.casual||"");
+    text=`${kanji}\n\nYour previous answer was ${JSON.stringify(last)}, which does not contain ${kanji}. Write a different sentence that does.`;
+  }
+  throw new Error(`The model kept writing sentences without ${kanji}.`);
+}
 
 export async function translate(english,settings={}){const pair={sourceLang:settings.sourceLang||DEFAULT_PAIR.sourceLang,targetLang:settings.targetLang||DEFAULT_PAIR.targetLang};const reverse=(settings.inputLang||pair.sourceLang)===pair.targetLang;const system=reverse?reversePrompt(pair.sourceLang,pair.targetLang):systemPrompt(pair.sourceLang,pair.targetLang);const keys=settings.providerKeys||{};const provider=settings.provider||["google","deepseek","openai","anthropic"].find(name=>keys[name])||(settings.apiKey?"deepseek":"google"),key=keys[provider]||(provider==="deepseek"?settings.apiKey:"")||"",model=settings.providerModels?.[provider]||PROVIDER_DEFAULTS[provider];if(provider!=="local"&&!key)throw new Error(`Add your ${provider==="google"?"Gemini":provider[0].toUpperCase()+provider.slice(1)} API key in Settings.`);if(provider==="local"&&!settings.localEndpoint)throw new Error("Add your Ollama or LM Studio endpoint in Settings.");try{let raw;if(provider==="google")raw=await gemini(english,key,model,system);else if(provider==="anthropic")raw=await anthropicRequest(english,key,model,system);else raw=await openAICompatible(provider,english,key,model,provider==="local"?settings.localEndpoint:undefined,system);return shape(raw,english,pair,reverse)}catch(error){if(!settings.proxyUrl||!(error instanceof TypeError))throw error;return shape(await proxyRequest(settings.proxyUrl,english,provider,model,key,{...pair,inputLang:settings.inputLang}),english,pair,reverse)}}
 

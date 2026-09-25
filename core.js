@@ -14,12 +14,15 @@ export const SCHEMA_VERSION = 2;
 // The lookahead rejects an annotation with nothing in it; `stray` then removes
 // it. A model emits 【】 when it declines to supply a reading, and letting it
 // through puts literal brackets on screen and reads them aloud.
-const notation = /([㐀-䶿一-鿿々]+)【(?!\s*】)([^】]+)】/g;
+const notation = /([㐀-䶿一-鿿々\u{20000}-\u{3134F}]+)【(?!\s*】)([^】]+)】/gu;
 const stray = /【[^】]*】/g;
 // The same class `notation` accepts, for code that has to recognise a base run
 // before there is a reading on it. If these two drift, a run one brackets is a
 // run the other drops as a stray, and the reading disappears with no error.
-export const KANJI = /[㐀-䶿一-鿿々]/;
+//
+// The supplementary span is ext-B through ext-G. 𠮟 (U+20B9F) is joyo and lives
+// there, and a class stopping at U+9FFF dropped its reading exactly that way.
+export const KANJI = /[㐀-䶿一-鿿々\u{20000}-\u{3134F}]/u;
 const KANA = /^[ぁ-ゟー]+$/;
 const escapeHtml = value => value.replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
 
