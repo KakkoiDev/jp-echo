@@ -5,6 +5,7 @@ import {isExactMatch,markAttempt,markTarget} from "./diff.js";
 import {deleteSentence,getSentence,listSentences,migrateStore,replaceAll,saveSentence} from "./db.js";
 import {PROVIDER_DEFAULTS,translate} from "./api.js";
 import {japaneseVoices,recognitionFactory,ShadowLoop} from "./speech.js";
+import {bands as kanjiBands,coverage as kanjiCoverage,learned as kanjiLearned,summarise as kanjiSummarise,TOTAL as KANJI_TOTAL} from "./kanji.js";
 import {downloadAnkiDeck} from "./anki-export.js";
 import {dueSentences,ensureSchedule,isDue,reviewSentence} from "./srs.js";
 import {DEFAULT_TIME,REMINDER_TAG,reminderText,shouldRemind} from "./reminders.js";
@@ -204,14 +205,48 @@ function renderVoiceNotices(){for(const id of ["#sentence-notices","#review-noti
   host.replaceChildren();if(voiceFailed)host.append(voiceNotice())}}
 const wide=matchMedia("(min-width:1024px)");
 const isWide=()=>wide.matches;
-const VIEW_TITLES={review:"Review",library:"Library"};
+const VIEW_TITLES={review:"Review",library:"Library",map:"Map"};
 function showView(name){if(name!=="practice")resetSession();speechSynthesis.cancel();
-  $("#main-view").hidden=name!=="practice";$("#review-home").hidden=name!=="review";$("#history-view").hidden=!(name==="library"||(name==="sentence"&&isWide()));$("#review-view").hidden=name!=="session";$("#sentence-view").hidden=name!=="sentence";$("#onboard-view").hidden=name!=="onboard";$("#setup-view").hidden=name!=="setup";
+  $("#main-view").hidden=name!=="practice";$("#review-home").hidden=name!=="review";$("#history-view").hidden=!(name==="library"||(name==="sentence"&&isWide()));$("#review-view").hidden=name!=="session";$("#sentence-view").hidden=name!=="sentence";$("#onboard-view").hidden=name!=="onboard";$("#setup-view").hidden=name!=="setup";$("#map-view").hidden=name!=="map";
   const solo=name==="onboard"||name==="setup"||((name==="session"||name==="sentence")&&!isWide());document.querySelector("header").hidden=solo;$("#tabs").hidden=solo;
   $("#view-title").textContent=VIEW_TITLES[name]||"";$("#view-title").hidden=!VIEW_TITLES[name];document.querySelector(".brand").hidden=!!VIEW_TITLES[name];
   for(const tab of document.querySelectorAll(".tab[data-view]")){const on=tab.dataset.view===name||(name==="session"&&tab.dataset.view==="review")||(name==="sentence"&&tab.dataset.view==="library");tab.classList.toggle("current",on);tab.setAttribute("aria-current",on?"page":"false")}
   document.body.dataset.view=name;scrollTo(0,0);renderSidePanel();
-  if(name==="library"||(name==="sentence"&&isWide()))renderHistory();else if(name==="review")renderReviewHome();else if(name==="practice")renderPracticeNotices();else if(name==="setup")resetSetupForm()}
+  if(name==="library"||(name==="sentence"&&isWide()))renderHistory();else if(name==="map")renderMap();else if(name==="review")renderReviewHome();else if(name==="practice")renderPracticeNotices();else if(name==="setup")resetSetupForm()}
+// The wall. Every cell is a joyo kanji; its state is read off your library,
+// so this is a picture of your own Japanese rather than a syllabus.
+const BAND_LABELS={grade1:"Grade 1",grade2:"Grade 2",grade3:"Grade 3",grade4:"Grade 4",grade5:"Grade 5",grade6:"Grade 6",secondary:"Secondary school"};
+async function renderMap(){
+  const sentences=await listSentences(),cover=kanjiCoverage(sentences),known=kanjiLearned(sentences);
+  const {met}=kanjiSummarise(cover);
+  $("#map-summary").textContent=t("{met} of {total} met",{met:met.toLocaleString(),total:KANJI_TOTAL.toLocaleString()});
+  $("#map-note").textContent=met
+    ?t("A kanji lights up when one of your sentences uses it, and fills in once you have learned that sentence.")
+    :t("Add a sentence and the kanji it uses will light up here.");
+  const host=$("#map-bands");host.replaceChildren();
+  const legend=document.createElement("p");legend.className="map-legend";
+  for(const [cls,label] of [["","not met"],["met","in your sentences"],["known","learned"]]){
+    const span=document.createElement("span");if(cls)span.className=cls;
+    const swatch=document.createElement("i");span.append(swatch,t(label));legend.append(span)}
+  host.append(legend);
+  for(const band of kanjiBands()){
+    const section=document.createElement("section");section.className="kanji-band";
+    const head=document.createElement("div");head.className="kanji-band-head";
+    const name=document.createElement("b");name.textContent=t(BAND_LABELS[band.key]||band.key);
+    const tally=document.createElement("span");
+    const {met:bandMet}=kanjiSummarise(cover,band.chars);
+    tally.textContent=bandMet.toLocaleString()+" / "+band.chars.length.toLocaleString();
+    head.append(name,tally);
+    const grid=document.createElement("div");grid.className="kanji-grid";
+    for(const character of band.chars){
+      const cell=document.createElement("button");cell.type="button";cell.className="kanji-cell";
+      cell.textContent=character;cell.dataset.kanji=character;
+      const seen=cover.get(character);
+      if(seen)cell.classList.add(known.has(character)?"known":"met");
+      cell.setAttribute("aria-label",character+(seen?" — "+(seen.length===1?t("1 sentence"):t("{n} sentences",{n:seen.length})):" — "+t("not met")));
+      grid.append(cell)}
+    section.append(head,grid);host.append(section)}
+}
 const NUMBER_WORDS=["no","one","two","three","four","five","six","seven","eight","nine","ten"];
 const spell=count=>NUMBER_WORDS[count]||String(count);
 function describeGap(ms){const minutes=Math.round(ms/60000);if(minutes<60)return spell(Math.max(1,minutes))+(minutes===1?" minute":" minutes");const hours=Math.round(minutes/60);if(hours<24)return spell(hours)+(hours===1?" hour":" hours");const days=Math.round(hours/24);return spell(days)+(days===1?" day":" days")}
