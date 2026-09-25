@@ -24,6 +24,11 @@ More screens, including dark and desktop, are in [`docs/screenshots`](docs/scree
 - Device speech synthesis produces audio on demand; no audio file is stored.
 - History can be exported on-device as a standard `JP Echo.apkg` Anki deck.
 - Every translated sentence enters an offline FSRS review queue immediately.
+- Map counts the 2,136 joyo kanji against your own library. It is derived on
+  the device from the sentences you already have, each time the view opens, so
+  nothing about it is stored, scheduled or sent. Only sentences are reviewed.
+  The character list and grade bands come from `joyo-kanji` and `kyoiku-kanji`,
+  both MIT; `tools/build-kanji-data.mjs` regenerates `kanji-data.js` from them.
 - Reminders are optional, at most one a day, and only when something is due.
   Echo has no server, so nothing is pushed: where the browser supports Periodic
   Background Sync the worker is woken to check, and everywhere else the check

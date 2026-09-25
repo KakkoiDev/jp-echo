@@ -1,0 +1,95 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import {bands, coverage, isJoyo, kanjiIn, learned, sentenceKanji, summarise, TOTAL} from "../kanji.js";
+
+const sentence = (id, plainTarget, createdAt) =>
+  ({id, plainTarget, target: plainTarget, createdAt});
+
+test("counts joyo kanji and nothing else", () => {
+  const found = kanjiIn("駅はどこですか。");
+  assert.deepEqual([...found], ["駅"]);
+  // kana, punctuation and the repeater are not kanji
+  assert.equal(kanjiIn("どこですか。々").size, 0);
+  // a kanji outside the list is real Japanese but not on the wall
+  assert.equal(isJoyo("綺"), false);
+  assert.equal(kanjiIn("綺麗").size, 1, "麗 is joyo, 綺 is not");
+});
+
+test("reads every register, so both writings count", () => {
+  const found = sentenceKanji({plainCasualTarget: "駅はどこ？", plainPoliteTarget: "駅前を歩く"});
+  assert.deepEqual([...found].sort(), ["前", "歩", "駅"].sort());
+});
+
+test("falls back to stripping the notation when no plain form was stored", () => {
+  assert.deepEqual([...sentenceKanji({target: "駅【えき】はどこですか。"})], ["駅"]);
+});
+
+test("the reading in the notation never counts as a sighting", () => {
+  // えき is kana, so it cannot smuggle a kanji in; the bracket content is
+  // stripped anyway, and this pins that it stays that way.
+  const found = sentenceKanji({target: "山【やま】"});
+  assert.deepEqual([...found], ["山"]);
+});
+
+test("coverage maps each kanji to the sentences that carry it, oldest first", () => {
+  const cover = coverage([
+    sentence("b", "駅前", "2026-02-01T00:00:00.000Z"),
+    sentence("a", "駅はどこ", "2026-01-01T00:00:00.000Z"),
+  ]);
+  assert.deepEqual(cover.get("駅"), ["a", "b"], "oldest sighting leads");
+  assert.deepEqual(cover.get("前"), ["b"]);
+  assert.equal(cover.has("山"), false);
+});
+
+test("a sentence with no id is skipped rather than poisoning the map", () => {
+  const cover = coverage([{plainTarget: "駅", createdAt: "2026-01-01T00:00:00.000Z"}]);
+  assert.equal(cover.size, 0);
+});
+
+test("the bands partition the joyo list exactly", () => {
+  const all = bands().flatMap(band => band.chars);
+  assert.equal(all.length, TOTAL);
+  assert.equal(TOTAL, 2136);
+  assert.equal(new Set(all).size, TOTAL, "no kanji appears in two bands");
+});
+
+test("grade bands hold the 1,006 kyoiku kanji as published before 2017", () => {
+  const graded = bands().filter(band => band.level !== null);
+  assert.deepEqual(graded.map(band => band.chars.length), [80, 160, 200, 200, 185, 181]);
+  assert.equal(graded.reduce((n, band) => n + band.chars.length, 0), 1006);
+});
+
+test("the twenty prefecture kanji sit in the last band, not in a guessed grade", () => {
+  const secondary = bands().find(band => band.level === null);
+  // 沖 and 阪 became kyoiku in 2020; no source we have says which grade, so
+  // they wait here rather than being placed by guesswork.
+  for (const character of "沖阪茨栃") assert.ok(secondary.chars.includes(character), character);
+});
+
+test("summarise counts against whichever band it is given", () => {
+  const cover = coverage([sentence("a", "一二三", "2026-01-01T00:00:00.000Z")]);
+  assert.deepEqual(summarise(cover, "一二三四"), {met: 3, total: 4});
+  assert.equal(summarise(cover).total, 2136);
+  assert.equal(summarise(cover).met, 3);
+});
+
+test("𠮟 is counted once, not twice", () => {
+  // The only joyo kanji outside the BMP. String.length calls it two
+  // characters, which would make every total in the app one too many.
+  assert.equal(TOTAL, 2136);
+  assert.equal(isJoyo("𠮟"), true);
+  assert.deepEqual([...kanjiIn("𠮟る")], ["𠮟"]);
+  const cover = coverage([sentence("a", "𠮟る", "2026-01-01T00:00:00.000Z")]);
+  assert.deepEqual(summarise(cover, "𠮟"), {met: 1, total: 1});
+});
+
+test("a kanji counts as known once a sentence carrying it reaches review", () => {
+  const learnt = learned([
+    {id: "a", plainTarget: "駅はどこ", srs: {state: 2}},
+    {id: "b", plainTarget: "山が高い", srs: {state: 0}},
+    {id: "c", plainTarget: "川を見る"},
+  ]);
+  assert.ok(learnt.has("駅"));
+  assert.equal(learnt.has("山"), false, "still new, so met but not known");
+  assert.equal(learnt.has("川"), false, "never scheduled at all");
+});

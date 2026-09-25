@@ -701,3 +701,31 @@ html.motion-on .echo-count.just-ticked { animation: echo-tick 280ms ease-out; }
 }
 html.motion-off #review-progress-bar { transition: none; }
 
+
+/* Map — the wall of joyo kanji, and how much of it your sentences have met.
+   Nothing here is scheduled: a cell's state is read off the library every
+   time the view opens, so adding or deleting a sentence moves it at once. */
+.map-head{margin:0 0 18px}
+.map-summary{font-family:var(--display);font-size:1.45rem;margin:.15rem 0 .3rem;font-variant-numeric:tabular-nums}
+#map-view{padding-bottom:24px}
+.kanji-band{margin:0 0 22px}
+.kanji-band-head{display:flex;justify-content:space-between;align-items:baseline;
+  border-bottom:1px solid var(--rule);padding-bottom:6px;margin-bottom:10px}
+.kanji-band-head b{font-weight:600;font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--quiet-title)}
+.kanji-band-head span{font-size:.75rem;color:var(--ink-muted);font-variant-numeric:tabular-nums}
+.kanji-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(30px,1fr));gap:4px}
+.kanji-cell{aspect-ratio:1;display:grid;place-items:center;padding:0;
+  font-family:var(--display);font-size:17px;line-height:1;border-radius:3px;
+  border:1px solid transparent;background:var(--field-off);color:var(--quiet-edge)}
+.kanji-cell.met{background:var(--chip-learn-bg);border-color:var(--chip-learn-bd);color:var(--chip-learn-fg)}
+.kanji-cell.known{background:var(--seal);border-color:var(--seal-deep);color:var(--seal-on)}
+.kanji-cell:focus-visible{outline:2px solid var(--seal);outline-offset:2px}
+.map-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.74rem;color:var(--ink-muted);margin:0 0 18px}
+.map-legend i{display:inline-block;width:11px;height:11px;border-radius:2px;
+  vertical-align:-1px;margin-right:6px;border:1px solid var(--hairline);background:var(--field-off)}
+.map-legend .met i{background:var(--chip-learn-bg);border-color:var(--chip-learn-bd)}
+.map-legend .known i{background:var(--seal);border-color:var(--seal-deep)}
+@media(min-width:1024px){
+  .kanji-grid{grid-template-columns:repeat(auto-fill,minmax(34px,1fr));gap:5px}
+  .kanji-cell{font-size:19px}
+}
