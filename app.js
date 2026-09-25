@@ -18,11 +18,11 @@ const settings=JSON.parse(localStorage.getItem("jp-echo-settings")||"{}");
 const pairWasRepaired=repairPair(settings);
 if(pairWasRepaired||settings.basePair===undefined)localStorage.setItem("jp-echo-settings",JSON.stringify(settings));
 const PLAY_ICON="M2 1.4 12 8 2 14.6V1.4Z",PAUSE_ICON="M2.5 1.5h3v13h-3zM7.5 1.5h3v13h-3z";
-let current=null,detail=null,translationFailure=null,voiceFailed=false,dictationReady=false,echoesAtCardStart=0,voices=[],installPrompt=null,reviewQueue=[],reviewIndex=0,reviewRevealed=false,reviewRecognition=null,reviewListening=false;
-const loop=new ShadowLoop({onEcho:async()=>{const reviewing=!$("#review-view").hidden,viewingDetail=!$("#sentence-view").hidden,target=reviewing?reviewQueue[reviewIndex]:viewingDetail?detail:current;if(!target)return;target.echoCount=(Number(target.echoCount)||0)+1;target.updatedAt=new Date().toISOString();await saveSentence(target);if(reviewing){reviewQueue[reviewIndex]=target;tickCount($("#review-echo-count"),target.echoCount)}if(viewingDetail)tickCount($("#stat-echoes"),target.echoCount);if(current?.id===target.id){current=target;renderCount()}},onState:state=>{const label=({speaking:"Playing — say it with the voice",imitate:"Your turn — echo it",paused:"Paused",stopped:"Ready",error:"That voice could not play"})[state]||state,playing=state!=="stopped"&&state!=="error",text=state==="paused"?"Play":playing?"Pause":"Play";$("#review-loop-state").textContent=label;$("#sentence-loop-state").textContent=label;const active=playing&&state!=="paused";for(const echo of document.querySelectorAll(".arcs:not(.small)>.echo"))echo.classList.toggle("is-playing",active);$("#practice").classList.toggle("playing",active);$("#review-panel").classList.toggle("playing",active);$("#loop-state").textContent=label;$("#play-pause").textContent=text;$("#play-pause").setAttribute("aria-pressed",String(playing));$("#review-audio").textContent=state==="paused"||!playing?"Play the loop":"Pause the loop";$("#review-audio").setAttribute("aria-pressed",String(playing));
+let current=null,detail=null,kanjiPlaying=null,translationFailure=null,voiceFailed=false,dictationReady=false,echoesAtCardStart=0,voices=[],installPrompt=null,reviewQueue=[],reviewIndex=0,reviewRevealed=false,reviewRecognition=null,reviewListening=false;
+const loop=new ShadowLoop({onEcho:async()=>{const sheet=$("#kanji-dialog").open&&kanjiPlaying,reviewing=!$("#review-view").hidden,viewingDetail=!$("#sentence-view").hidden,target=sheet?kanjiPlaying:reviewing?reviewQueue[reviewIndex]:viewingDetail?detail:current;if(!target)return;target.echoCount=(Number(target.echoCount)||0)+1;target.updatedAt=new Date().toISOString();await saveSentence(target);if(reviewing){reviewQueue[reviewIndex]=target;tickCount($("#review-echo-count"),target.echoCount)}if(viewingDetail)tickCount($("#stat-echoes"),target.echoCount);if(current?.id===target.id){current=target;renderCount()}},onState:state=>{const label=({speaking:"Playing — say it with the voice",imitate:"Your turn — echo it",paused:"Paused",stopped:"Ready",error:"That voice could not play"})[state]||state,playing=state!=="stopped"&&state!=="error",text=state==="paused"?"Play":playing?"Pause":"Play";$("#review-loop-state").textContent=label;$("#sentence-loop-state").textContent=label;const active=playing&&state!=="paused";for(const echo of document.querySelectorAll(".arcs:not(.small)>.echo"))echo.classList.toggle("is-playing",active);$("#practice").classList.toggle("playing",active);$("#review-panel").classList.toggle("playing",active);$("#loop-state").textContent=label;$("#play-pause").textContent=text;$("#play-pause").setAttribute("aria-pressed",String(playing));$("#review-audio").textContent=state==="paused"||!playing?"Play the loop":"Pause the loop";$("#review-audio").setAttribute("aria-pressed",String(playing));
   $("#sentence-play").setAttribute("aria-pressed",String(playing));const showPlay=state==="paused"||!playing;$("#sentence-play").lastChild.textContent=showPlay?"Play the loop":"Pause the loop";$("#sentence-play").querySelector("path").setAttribute("d",showPlay?PLAY_ICON:PAUSE_ICON);$("#sentence-view").classList.toggle("playing",active);
   if($("#kanji-dialog").open){$("#kanji-loop-state").textContent=playing?label:"";
-    for(const row of document.querySelectorAll("#kanji-sentences li"))row.classList.toggle("is-playing",active&&row.dataset.id===kanjiPlaying)}
+    for(const row of document.querySelectorAll("#kanji-sentences li"))row.classList.toggle("is-playing",active&&row.dataset.id===kanjiPlaying?.id)}
   // The voice notice follows what playback actually did, so it appears for a
   // device that truly cannot speak and clears the moment one does.
   if(state==="error"||state==="speaking"){const failed=state==="error";if(failed!==voiceFailed){voiceFailed=failed;if(!$("#main-view").hidden)renderPracticeNotices();renderVoiceNotices()}}}});
@@ -44,6 +44,7 @@ function setPair(source,target){
   localStorage.setItem("jp-echo-settings",JSON.stringify(settings));
   inputLang=source;
   syncLanguageSelects();applyLanguageUI();populateVoices();setupRecognition();applyLanguage();
+  if(!hasFurigana(target)&&document.body.dataset.view==="map")showView("practice");
 }
 // Which language you are typing, which is not which language you are learning.
 // The pair is fixed: you learn from the one you know towards the one you do
@@ -82,6 +83,7 @@ function applyLanguageUI(){
   const target=targetLang(),registers=hasRegisters(target),furigana=hasFurigana(target);
   $("#show-furigana").closest("label").hidden=!furigana;
   $("#show-polite").closest("label").hidden=!registers;
+  document.querySelector('.tab[data-view="map"]').hidden=!furigana;
   $("#voice-label").textContent=languageName(target)+" voice";
   $("#english-input").placeholder=t("Enter a sentence in {language}",{language:t(languageName(inputLang))});
   $("#voice-warning").textContent="No "+languageName(target)+" voice is installed on this device.";
@@ -246,15 +248,15 @@ async function renderMap(){
       const seen=cover.get(character);
       if(seen)cell.classList.add(known.has(character)?"known":"met");
       cell.setAttribute("aria-label",character+(seen?" — "+(seen.length===1?t("1 sentence"):t("{n} sentences",{n:seen.length})):" — "+t("not met")));
-      cell.onclick=()=>openKanji(character,cover,known);
+      cell.onclick=()=>openKanji(character,cover);
       grid.append(cell)}
     section.append(head,grid);host.append(section)}
 }
 // Which sentence the loop is currently speaking, so the row can say so. The
 // loop is the one the rest of the app uses; nothing here owns a second one.
-let kanjiPlaying=null,kanjiOpen=null;
-async function openKanji(character,cover,known){
-  kanjiOpen={character,known};
+let kanjiOpen=null;
+async function openKanji(character,cover){
+  kanjiOpen={character};
   const ids=cover.get(character)||[];
   $("#kanji-character").textContent=character;
   $("#kanji-meta").textContent=ids.length
@@ -283,8 +285,8 @@ function renderKanjiSentences(sentences){
     row.append(text,play);list.append(row)}
 }
 function playKanjiSentence(sentence){
-  if(loop.running&&kanjiPlaying===sentence.id){loop.togglePause();return}
-  kanjiPlaying=sentence.id;
+  if(loop.running&&kanjiPlaying?.id===sentence.id){loop.togglePause();return}
+  kanjiPlaying=sentence;
   const voice=voices[Number($("#voice").value)]||voices[0]||null;
   loop.play(sentence.plainTarget||stripFurigana(sentence.target),{voice,rate:Number($("#rate").value),lang:targetLang()});
 }
@@ -303,11 +305,17 @@ async function composeForKanji(){
     await saveSentence(made);
     refreshDueBadge();
     const fresh=await listSentences(),cover=kanjiCoverage(fresh);
-    await openKanji(target.character,cover,kanjiLearned(fresh));
+    await openKanji(target.character,cover);
     $("#kanji-status").textContent=t("Saved to your library.");
     renderMap();
   }catch(error){
-    $("#kanji-status").textContent=error.message||t("That did not work.");
+    const provider=defaultProvider(),name=PROVIDER_NAMES[provider]||provider;
+    const refused=/\b(401|403|402|key|credit|quota)\b/i.test(error.message||""),offline=error instanceof TypeError;
+    $("#kanji-status").textContent=offline
+      ?(settings.proxyUrl?t("{name} blocks direct requests from this browser, and the proxy only translates.",{name})
+                         :t("No connection, so the request never reached {name}.",{name}))
+      :refused?t("{name} turned the request down.",{name})
+      :(error.message||t("That did not work."));
   }finally{button.disabled=!hasTranslator();button.textContent=previous}
 }
 const NUMBER_WORDS=["no","one","two","three","four","five","six","seven","eight","nine","ten"];
