@@ -93,3 +93,33 @@ test("a kanji counts as known once a sentence carrying it reaches review", () =>
   assert.equal(learnt.has("山"), false, "still new, so met but not known");
   assert.equal(learnt.has("川"), false, "never scheduled at all");
 });
+
+import {nextUnmet, ORDER, unmetCount} from "../kanji.js";
+
+test("the walk goes through the wall in band order, skipping what you have met", () => {
+  const order = ["一", "二", "三", "四"];
+  const cover = new Map([["二", ["a"]]]);
+  assert.equal(nextUnmet(cover, null, 1, {order}), "一", "starts at the top");
+  assert.equal(nextUnmet(cover, "一", 1, {order}), "三", "二 is met, so it is skipped");
+  assert.equal(nextUnmet(cover, "三", 1, {order}), "四");
+  assert.equal(nextUnmet(cover, "四", 1, {order}), null, "nothing after the last");
+  assert.equal(nextUnmet(cover, "四", -1, {order}), "三", "and backwards");
+  assert.equal(nextUnmet(cover, "三", -1, {order}), "一", "skipping 二 that way too");
+});
+
+test("resuming shows the one you stopped on, unless you have met it since", () => {
+  const order = ["一", "二", "三"];
+  assert.equal(nextUnmet(new Map(), "二", 1, {inclusive: true, order}), "二");
+  assert.equal(nextUnmet(new Map([["二", ["a"]]]), "二", 1, {inclusive: true, order}), "三");
+});
+
+test("the real order is grade 1 first and every joyo kanji once", () => {
+  assert.equal(ORDER[0], "一");
+  assert.equal(ORDER.length, 2136);
+  assert.equal(new Set(ORDER).size, 2136);
+});
+
+test("what is left is the list minus what you have met", () => {
+  assert.equal(unmetCount(new Map()), 2136);
+  assert.equal(unmetCount(new Map([["駅", ["a"]], ["山", ["b"]]])), 2134);
+});

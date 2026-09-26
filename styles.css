@@ -774,3 +774,11 @@ html.motion-off #review-progress-bar { transition: none; }
 .kanji-say textarea{min-height:52px}
 #kanji-dialog .dialog-actions{margin-top:6px}
 #kanji-compose{width:100%}
+
+/* Learn */
+.map-summary-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.map-summary-row .map-summary{margin:.15rem 0}
+#map-learn{flex:0 0 auto}
+.kanji-learn-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px;padding-bottom:12px;border-bottom:1px solid var(--rule)}
+.kanji-learn-nav span{font-size:.78rem;color:var(--ink-muted);font-variant-numeric:tabular-nums;text-align:center;flex:1 1 auto}
+.kanji-learn-nav button{flex:0 0 auto}

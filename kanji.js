@@ -80,3 +80,19 @@ export function summarise(cover, chars = JOYO) {
 }
 
 export const TOTAL = count(JOYO);
+
+// Learn walks the wall in band order — grade 1 first, the secondary band
+// last — and shows only what you have not met. `from` is where you stopped;
+// with `inclusive` the character you stopped on is shown again if it is still
+// unmet, so closing and reopening picks up where you were rather than one on.
+export const ORDER = bands().flatMap(band => band.chars);
+export function nextUnmet(cover, from = null, direction = 1, {inclusive = false, order = ORDER} = {}) {
+  const at = from ? order.indexOf(from) : -1;
+  if (direction > 0) {
+    for (let i = at < 0 ? 0 : (inclusive ? at : at + 1); i < order.length; i++) if (!cover.has(order[i])) return order[i];
+  } else {
+    for (let i = at < 0 ? order.length - 1 : (inclusive ? at : at - 1); i >= 0; i--) if (!cover.has(order[i])) return order[i];
+  }
+  return null;
+}
+export const unmetCount = cover => TOTAL - cover.size;
