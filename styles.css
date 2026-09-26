@@ -782,3 +782,21 @@ html.motion-off #review-progress-bar { transition: none; }
 .kanji-learn-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px;padding-bottom:12px;border-bottom:1px solid var(--rule)}
 .kanji-learn-nav span{font-size:.78rem;color:var(--ink-muted);font-variant-numeric:tabular-nums;text-align:center;flex:1 1 auto}
 .kanji-learn-nav button{flex:0 0 auto}
+
+/* The Map's two faces */
+.map-toggle{display:inline-flex;gap:2px;padding:3px;margin:0 0 16px;border:1px solid var(--hairline);border-radius:4px;background:var(--field-off)}
+.map-toggle button{padding:6px 14px;border:0;border-radius:3px;background:transparent;color:var(--ink-muted);font-size:.85rem}
+.map-toggle button.on{background:var(--panel);color:var(--sumi);box-shadow:0 1px 0 var(--hairline)}
+.grammar-points{display:flex;flex-direction:column;gap:2px}
+.grammar-point{display:grid;grid-template-columns:auto 1fr auto;align-items:baseline;gap:10px;width:100%;padding:9px 10px;
+  text-align:left;border:1px solid transparent;border-radius:3px;background:var(--field-off);color:var(--quiet-edge)}
+.grammar-point b{font-family:var(--display);font-weight:400;font-size:1.02rem;color:inherit}
+.grammar-point span{font-size:.78rem;color:var(--ink-muted);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.grammar-point i{font-style:normal;font-size:.75rem;font-variant-numeric:tabular-nums;color:var(--ink-muted)}
+.grammar-point.met{background:var(--chip-learn-bg);border-color:var(--chip-learn-bd);color:var(--chip-learn-fg)}
+.grammar-point.met i{color:var(--chip-learn-fg);font-weight:600}
+.grammar-point:focus-visible{outline:2px solid var(--seal);outline-offset:2px}
+#grammar-dialog{max-width:32rem}
+#grammar-title{font-family:var(--display);font-size:2rem;line-height:1.1;margin:0;font-weight:400}
+#grammar-compose{width:100%}
+#grammar-dialog .dialog-actions{display:block;margin-top:6px}
