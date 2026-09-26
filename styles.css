@@ -874,7 +874,12 @@ html.motion-off #review-progress-bar { transition: none; }
 .tool-sheet .kanji-say .input-row{flex-wrap:nowrap}
 .tool-sheet .kanji-say .input-row textarea{flex-basis:auto;height:auto}
 .kanji-say textarea{height:auto;min-height:65px;background:var(--washi)}
-.kanji-say .mic{width:48px;height:auto}
+.kanji-say .mic{width:48px;height:auto;position:relative}
+/* On the sheet the mic is as tall as the box beside it, so a 50% radius would
+   make an egg. Listening keeps the box and lights a round seal behind the glyph. */
+.tool-sheet .kanji-say .mic.is-listening{background:var(--panel);border-color:var(--sumi);border-radius:4px;color:var(--seal-on)}
+.tool-sheet .kanji-say .mic.is-listening::before{content:"";position:absolute;left:50%;top:50%;width:40px;height:40px;transform:translate(-50%,-50%);border-radius:50%;background:var(--seal)}
+.tool-sheet .kanji-say .mic .mic-glyph{position:relative}
 .say-row{display:flex;align-items:center;gap:12px;margin-top:9px}
 .say-row .outlined{height:44px;min-height:44px;padding:0 22px;flex-shrink:0}
 .say-row .hint{font-size:11px}
