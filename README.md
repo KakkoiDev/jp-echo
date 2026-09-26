@@ -32,15 +32,11 @@ More screens, including dark and desktop, are in [`docs/screenshots`](docs/scree
   Readings, meanings and the current school grade for each come from
   `kanji-readings.js`, derived from KANJIDIC2 (© EDRDG, CC BY-SA 4.0); that
   licence is that file's, and `tools/build-kanji-readings.mjs` regenerates it.
-- WaniKani meanings, readings, mnemonics and example sentences are optional and
-  fetched with your own read-only token, into this browser, into a database of
-  their own. Nothing of WaniKani's is bundled or redistributed. The token is
-  stored outside the settings object, so it cannot appear in a backup, and the
-  mnemonics are passed through a small word list on the way in (`SCRUB` in
-  `wanikani.js`) that replaces a few exclamations.
-  To rework them rather than read them, `tools/wanikani-pull.mjs` writes the
-  same subjects to `data/wanikani/subjects.json` with `WANIKANI_TOKEN` from the
-  environment — official API, one page at a time, scrubbed the same way. That
+- Nothing of WaniKani's is bundled, redistributed, or shown in the app. It is
+  a reference you rework from, once, on your own machine:
+  `tools/wanikani-pull.mjs` writes your subjects to `data/wanikani/subjects.json`
+  with `WANIKANI_TOKEN` from the environment — official API, one page at a
+  time, passed through a small word list (`SCRUB` in `wanikani.js`). That
   directory is gitignored: it is the reference you rewrite from, not something
   this public repository carries. What you write from it is yours.
 - `tools/rewrite-stories.mjs` is the writing. Given the facts — meanings and
