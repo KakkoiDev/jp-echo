@@ -469,7 +469,8 @@ async function learnStep(direction){
   await openKanji(character,cover,{learn:kanjiOpen.learn});
   $("#kanji-dialog").scrollTop=0;
 }
-async function deleteFromSheet(sentence){
+const deleteFromSheet=sentence=>askDelete(sentence,removeFromSheet);
+async function removeFromSheet(sentence){
   if(!kanjiOpen)return;
   if(loop.running&&kanjiPlaying?.id===sentence.id)loop.stop();
   await deleteSentence(sentence.id);
@@ -786,7 +787,8 @@ async function saveGrammarSentence(card,point){
   await saveSentence(made);refreshDueBadge();
   await openGrammar(point,grammarCoverage(await listSentences()),{learn:grammarOpen?.learn||null});renderMap();
 }
-async function deleteFromGrammarSheet(sentence){
+const deleteFromGrammarSheet=sentence=>askDelete(sentence,removeFromGrammarSheet);
+async function removeFromGrammarSheet(sentence){
   if(!grammarOpen)return;
   if(loop.running&&kanjiPlaying?.id===sentence.id)loop.stop();
   await deleteSentence(sentence.id);
@@ -884,15 +886,21 @@ async function saveEdit(event){event.preventDefault();if(!detail)return;
   await saveSentence(detail);if(current?.id===detail.id){current=detail;renderSentence()}renderDetail()}
 function playDetail(){if(!detail)return;if(loop.running){loop.togglePause();return}
   const voice=voices[Number($("#voice").value)]||voices[0]||null;loop.play(detail.plainTarget||stripFurigana(detail.target),{voice,rate:Number($("#rate").value),lang:targetLang()})}
-async function askDelete(){if(!detail)return;
-  $("#delete-quote").innerHTML=rubyHtml(detail.target);
-  await renderDeleteConsequence(detail);
-  const echoes=Number(detail.echoCount)||0,reviews=Array.isArray(detail.reviews)?detail.reviews.length:0;
+// One confirm sheet for every delete — the detail page and the rows on the
+// kanji and grammar sheets — so a slip of the thumb costs a second tap, and
+// the consequence line is read the same way everywhere.
+let pendingDelete=null;
+async function askDelete(sentence=detail,onConfirm=confirmDetailDelete){if(!sentence)return;
+  pendingDelete={sentence,onConfirm};
+  $("#delete-quote").innerHTML=rubyHtml(sentence.target);
+  await renderDeleteConsequence(sentence);
+  const echoes=Number(sentence.echoCount)||0,reviews=Array.isArray(sentence.reviews)?sentence.reviews.length:0;
   const say=echoes<=10&&reviews<=10?spell:String;
   $("#delete-copy").textContent="It leaves your library, its place in the review queue, and every export from here on. "+
     (echoes||reviews?capitalise(say(echoes))+(echoes===1?" echo":" echoes")+" and "+say(reviews)+(reviews===1?" review":" reviews")+" go with it. ":"")+"There is no undo.";
   $("#delete-dialog").showModal()}
-async function confirmDelete(){if(!detail)return;const id=detail.id;$("#delete-dialog").close();resetSession();
+async function confirmDelete(){const pending=pendingDelete;pendingDelete=null;$("#delete-dialog").close();if(pending)await pending.onConfirm(pending.sentence)}
+async function confirmDetailDelete(){if(!detail)return;const id=detail.id;resetSession();
   await deleteSentence(id);if(current?.id===id){current=null;renderSentence()}
   reviewQueue=reviewQueue.filter(item=>item.id!==id);detail=null;refreshDueBadge();showView("library")}
 const capitalise=value=>value.charAt(0).toUpperCase()+value.slice(1);
@@ -1105,7 +1113,7 @@ $("#setup-back").onclick=()=>{if(setupStep===2)return showSetupStep(1);showView(
 $("#clear-filters").onclick=()=>{$("#history-search").value="";$("#clear-history-search").hidden=true;$("#history-filter").value="all";settings.historyFilter="all";localStorage.setItem("jp-echo-settings",JSON.stringify(settings));renderHistory()};
 addEventListener("online",renderPracticeNotices);addEventListener("offline",renderPracticeNotices);
 $("#kanji-close").onclick=()=>{loop.stop();$("#kanji-dialog").close()};$("#kanji-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;kanjiOpen=null});$("#kanji-compose").onclick=composeForKanji;$("#kanji-say-go").onclick=sayForKanji;$("#library-tool").onclick=()=>showView("map");$("#map-back").onclick=()=>showView("library");for(const button of document.querySelectorAll("#map-toggle [role=tab]"))button.onclick=()=>{settings.mapView=button.dataset.map;localStorage.setItem("jp-echo-settings",JSON.stringify(settings));tool.open=null;tool.chip="all";renderMap()};$("#map-toggle").addEventListener("keydown",event=>{if(event.key!=="ArrowLeft"&&event.key!=="ArrowRight")return;const other=document.querySelector("#map-toggle [role=tab][aria-selected=false]");if(other){other.click();other.focus()}});let lookupTimer=0;$("#map-search").oninput=()=>{clearTimeout(lookupTimer);lookupTimer=setTimeout(renderMap,150)};$("#map-search").onkeydown=event=>{if(event.key==="Escape"&&$("#map-search").value){$("#map-search").value="";renderMap()}};$("#map-search-clear").onclick=()=>{$("#map-search").value="";$("#map-search").focus();renderMap()};$("#grammar-prev").onclick=()=>grammarStep(-1);$("#grammar-next").onclick=()=>grammarStep(1);$("#grammar-close").onclick=()=>{loop.stop();$("#grammar-dialog").close()};$("#grammar-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;grammarOpen=null});$("#grammar-say-go").onclick=sayForGrammar;$("#grammar-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForGrammar()};$("#grammar-compose").onclick=composeForGrammar;$("#kanji-prev").onclick=()=>learnStep(-1);$("#kanji-next").onclick=()=>learnStep(1);$("#kanji-dialog").addEventListener("keydown",event=>{if(!kanjiOpen?.learn||event.target.tagName==="TEXTAREA")return;if(event.key==="ArrowRight")learnStep(1);else if(event.key==="ArrowLeft")learnStep(-1)});$("#kanji-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForKanji()};$("#wanikani-sync").onclick=runWaniKaniSync;$("#wanikani-forget").onclick=async()=>{await forgetWaniKani();$("#wanikani-progress").textContent=t("Forgotten.");renderWaniKaniStatus();if(kanjiOpen)renderKanjiInfo(kanjiOpen.character)};$("#sentence-back").onclick=()=>{detail=null;showView("library")};$("#sentence-play").onclick=playDetail;$("#sentence-edit").onclick=openEditor;$("#sentence-cancel").onclick=closeEditor;$("#sentence-editor").onsubmit=saveEdit;
-$("#sentence-delete").onclick=askDelete;$("#delete-cancel").onclick=()=>$("#delete-dialog").close();$("#delete-confirm").onclick=confirmDelete;$("#delete-dialog").onclick=event=>{if(event.target===$("#delete-dialog"))$("#delete-dialog").close()};
+$("#sentence-delete").onclick=()=>askDelete();$("#delete-cancel").onclick=()=>$("#delete-dialog").close();$("#delete-confirm").onclick=confirmDelete;$("#delete-dialog").onclick=event=>{if(event.target===$("#delete-dialog"))$("#delete-dialog").close()};
 $("#side-start-review").onclick=startReview;$("#side-export-anki").onclick=()=>exportAnki($("#side-export-anki"));
 wide.addEventListener("change",()=>showView(document.body.dataset.view||"practice"));
 // Desktop keys, as the sidebar legend promises. Typing must stay typing, so
