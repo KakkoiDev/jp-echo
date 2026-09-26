@@ -18,8 +18,10 @@ export const isTagged = sentence => Array.isArray(sentence?.grammar);
 export const untagged = (sentences = []) => sentences.filter(s => s?.id && !isTagged(s));
 
 // Only ids that are on the list survive. The model is told the list, but a
-// model is told many things.
-export const cleanTags = tags => [...new Set((Array.isArray(tags) ? tags : []).filter(isPoint))];
+// model is told many things. An id that arrived URL-encoded — the form the
+// index used before ids were made readable — is read as its decoded self.
+const readable = id => { try { return typeof id === "string" && id.includes("%") ? decodeURIComponent(id) : id; } catch { return id; } };
+export const cleanTags = tags => [...new Set((Array.isArray(tags) ? tags : []).map(readable).filter(isPoint))];
 
 // point id -> the ids of your sentences that use it, oldest first.
 export function coverage(sentences = []) {

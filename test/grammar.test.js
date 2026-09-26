@@ -1,11 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {cleanTags, coverage, isTagged, summarise, untagged} from "../grammar.js";
+import {cleanTags, coverage, isTagged, POINTS, summarise, untagged} from "../grammar.js";
 
-// grammar-data.js is a placeholder in the repo, so the list is empty here and
-// every id is unknown. That is the case the code must survive, and it is also
-// the case that makes these tests honest: nothing passes because a fixture
-// happened to match.
+// These tests use ids that are on no list ("unknown", "x") so they hold
+// whatever grammar-data.js carries — the placeholder or the real index.
 
 test("an untagged sentence is work to do; an empty tag list is an answer", () => {
   assert.equal(isTagged({}), false);
@@ -23,5 +21,13 @@ test("tags the list does not know are dropped, and duplicates collapse", () => {
 test("coverage counts nothing off-list, and never a sentence with no id", () => {
   const cover = coverage([{id: "a", grammar: ["unknown"], createdAt: "2026-01-01"}, {grammar: ["unknown"]}]);
   assert.equal(cover.size, 0);
-  assert.deepEqual(summarise(cover), {met: 0, total: 0});
+  assert.deepEqual(summarise(cover, []), {met: 0, total: 0});
+  assert.deepEqual(summarise(cover), {met: 0, total: POINTS.length}, "the total is the list, met is none of it");
+});
+
+test("a tag that arrived URL-encoded is read as the readable id", () => {
+  if (!POINTS.length) return;
+  const first = POINTS[0].id;
+  assert.deepEqual(cleanTags([encodeURIComponent(first), first]), [first], "decoded, then collapsed with its twin");
+  assert.deepEqual(cleanTags(["%E0%A4%A"]), [], "a broken encoding is not a crash, just not a point");
 });

@@ -11,6 +11,9 @@ test("a list of names and levels builds, deduplicated and in level order", () =>
   assert.deepEqual(points.map(p => p.level), ["N5", "N4", "N4", "N3", "N2", "N1"]);
   assert.deepEqual(byLevel, {N5: 1, N4: 2, N3: 1, N2: 1, N1: 1});
   assert.deepEqual(points.find(p => p.id === "nagara"), {id: "nagara", title: "〜ながら", level: "N4", order: 6, hint: "while"});
+  const {points: decoded} = build([...full, {slug: "%E3%81%A0", title: "だ", level: "N5"}, {slug: "だ", title: "だ again", level: "N5"}]);
+  assert.equal(decoded.filter(p => p.id === "だ").length, 1, "an encoded slug is decoded to a readable id, and its decoded twin is a duplicate");
+  assert.equal(decoded.find(p => p.id === "だ").title, "だ");
 });
 
 test("anything beyond a name, a level and a gloss is refused", () => {

@@ -16,6 +16,11 @@ import {pathToFileURL} from "node:url";
 export const LEVELS = ["N5", "N4", "N3", "N2", "N1"];
 const ALLOWED = new Set(["slug", "title", "level", "order", "hint"]);
 
+// A slug read off the page is URL-encoded ("%E3%81%A0" for だ). The id is the
+// readable form: the model is asked to answer with ids, and it can copy だ
+// where it would mangle a hex string.
+export function idFromSlug(slug) { try { return decodeURIComponent(slug); } catch { return slug; } }
+
 export function build(raw) {
   if (!Array.isArray(raw) || !raw.length) throw new Error("the grammar list is not a non-empty array");
   const seen = new Set(), points = [];
@@ -27,9 +32,10 @@ export function build(raw) {
     if (typeof p.title !== "string" || p.title.length > 80) throw new Error(`entry ${i} title is not a short string`);
     if (p.hint && (typeof p.hint !== "string" || p.hint.length > 80)) throw new Error(`entry ${i} hint is not a short string`);
     if (p.order !== undefined && !Number.isInteger(p.order)) throw new Error(`entry ${i} order is not an integer`);
-    if (seen.has(p.slug)) continue;
-    seen.add(p.slug);
-    points.push({id: p.slug, title: p.title.trim(), level: p.level, order: Number.isInteger(p.order) ? p.order : i, hint: (p.hint || "").trim()});
+    const id = idFromSlug(p.slug);
+    if (seen.has(id)) continue;
+    seen.add(id);
+    points.push({id, title: p.title.trim(), level: p.level, order: Number.isInteger(p.order) ? p.order : i, hint: (p.hint || "").trim()});
   }
   const byLevel = Object.fromEntries(LEVELS.map(l => [l, points.filter(p => p.level === l).length]));
   for (const l of LEVELS) if (!byLevel[l]) throw new Error(`no ${l} points at all — the extractor probably missed a heading`);

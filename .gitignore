@@ -1,3 +1,5 @@
 node_modules/
 # WaniKani reference, pulled with your own token, for reworking. Never committed.
 data/wanikani/
+# Tokens and keys for the tools. Never committed.
+.env
