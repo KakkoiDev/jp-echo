@@ -41,3 +41,21 @@ test("grammar by name, by romaji, by gloss", () => {
   assert.equal(question.how, "mean"); assert.ok(question.points.some(p => p.title === "か"), "question is in か's gloss");
   assert.equal(searchGrammar(""), null);
 });
+
+test("a word by reading, by romaji, by its kanji, or by its English", async () => {
+  const {searchWords} = await import("../lookup.js");
+  assert.equal(searchWords("たべる").words[0].w, "食べる");
+  assert.equal(searchWords("taberu").how, "read");
+  assert.equal(searchWords("taberu").words[0].w, "食べる");
+  assert.equal(searchWords("タベル").key, "たべる");
+  const kanji = searchWords("食");
+  assert.equal(kanji.how, "are"); assert.ok(kanji.words.some(w => w.w === "食べる")); assert.ok(kanji.total >= kanji.words.length);
+  const eat = searchWords("eat");
+  assert.equal(eat.how, "mean"); assert.equal(eat.words[0].w, "食べる", "a whole gloss beats a gloss that merely contains the word");
+  assert.equal(searchWords("to eat").words[0].w, "食べる");
+  assert.ok(searchWords("cat").words[0].w === "猫");
+  assert.ok(searchWords("ねこ").words[0].w === "猫", "an exact reading comes before the readings that start with it");
+  assert.equal(searchWords(" "), null);
+  assert.deepEqual(searchWords("ぬぬぬ"), {how: "read", key: "ぬぬぬ", words: [], total: 0});
+  assert.ok(searchWords("の").words.length <= 60, "a long list is cut");
+});

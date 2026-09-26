@@ -36,3 +36,10 @@ test("Echo's note is whole, two examples, and to the rules", () => {
   assert.throws(() => shapeNotes({...good, breath: "Gee, attach it."}), /rules/);
   assert.throws(() => shapeNotes({...good, breath: "<b>Attach</b> it."}), /rules/);
 });
+
+test("a word note is one field, refused if it breaks a rule", async () => {
+  const {shapeWordNote} = await import("../api.js");
+  assert.deepEqual(shapeWordNote({remember: "食べる: ta-BE-ru — a table you eat at."}), {remember: "食べる: ta-BE-ru — a table you eat at."});
+  assert.throws(() => shapeWordNote({remember: ""}), /did not write/);
+  assert.throws(() => shapeWordNote({remember: "Gee, it sticks."}), /rules/);
+});
