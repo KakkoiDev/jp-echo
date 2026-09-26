@@ -65,3 +65,36 @@ test("a non-joyo character is skipped, and the module renders in joyo order", as
   assert.match(src, /2 of 2136/);
   assert.match(src, /^export const STORIES = \{/m);
 });
+
+test("progress is saved every N stories and at the end, so a dead run keeps its work", async () => {
+  const saves = [];
+  const ask = async () => good;
+  const {made} = await rewrite({select: [..."亜哀挨愛曖"], stories: {}, ask, saveEvery: 2, save: async s => saves.push(Object.keys(s).length)});
+  assert.equal(made, 5);
+  assert.deepEqual(saves, [2, 4, 5], "after the 2nd, the 4th, and once more at the end");
+});
+
+test("a failed request costs one kanji a retry after a backoff, never the run", async () => {
+  let calls = 0; const waits = [];
+  const ask = async () => { calls++; if (calls <= 2) throw new Error("429 Too Many Requests"); return good; };
+  const log = [];
+  const {stories, made, failed} = await rewrite({select: [..."亜哀"], stories: {}, ask, backoff: async a => waits.push(a), log: m => log.push(m)});
+  assert.equal(made, 1, "the second kanji was written after the first gave up");
+  assert.equal(failed, 1);
+  assert.deepEqual(waits, [0, 1], "backed off after each failed attempt");
+  assert.match(log[0], /亜: request failed \(429 Too Many Requests\), skipped/);
+  assert.ok(stories["哀"] && !stories["亜"]);
+});
+
+test("workers share the selection, run in parallel, and --limit still holds", async () => {
+  let inFlight = 0, peak = 0;
+  const ask = async () => { inFlight++; peak = Math.max(peak, inFlight); await new Promise(r => setTimeout(r, 5)); inFlight--; return good; };
+  const r = await rewrite({select: [..."亜哀挨愛曖悪握圧"], stories: {}, ask, workers: 3});
+  assert.equal(r.made, 8, "every kanji written once");
+  assert.equal(Object.keys(r.stories).length, 8);
+  assert.equal(peak, 3, "three requests in flight at once, never more");
+  const l = await rewrite({select: [..."亜哀挨愛曖悪握圧"], stories: {}, ask, workers: 3, limit: 4});
+  assert.equal(l.made, 4, "the limit counts what is in flight, so workers cannot overshoot it");
+  const s = await rewrite({select: [..."亜哀挨愛曖悪握圧"], stories: {"亜": good, "哀": good}, ask, workers: 3});
+  assert.equal(s.skipped, 2); assert.equal(s.made, 6);
+});

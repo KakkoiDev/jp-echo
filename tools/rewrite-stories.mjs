@@ -3,6 +3,7 @@
 //   ECHO_PROVIDER=google ECHO_API_KEY=... node tools/rewrite-stories.mjs --level 1
 //   node tools/rewrite-stories.mjs --only 駅山川 --fresh
 //   node tools/rewrite-stories.mjs --dry --only 駅        # print the request, call nothing
+//   node tools/rewrite-stories.mjs --workers 8           # more requests in flight (default 4)
 //
 // The model is given facts — the character, its meanings and readings from
 // KANJIDIC2, and the names of the parts it is made of from your WaniKani pull
@@ -36,32 +37,58 @@ export function request(character, facts, parts, reference, {fresh = false} = {}
 
 const FORBIDDEN = /\b(god|jesus|christ|lord|allah|buddha|damn|hell)\b/i;
 
-export async function rewrite({select, subjects = null, stories = {}, fresh = false, redo = false, limit = Infinity, dry = false, ask = askModel, settings = {}, pause = async () => {}, log = () => {}, now = () => new Date().toISOString()}) {
+export async function rewrite({select, subjects = null, stories = {}, fresh = false, redo = false, limit = Infinity, dry = false, ask = askModel, settings = {}, pause = async () => {}, log = () => {}, now = () => new Date().toISOString(), save = async () => {}, saveEvery = 10, backoff = async () => {}, workers = 1}) {
   const byChar = new Map((subjects?.kanji || []).map(k => [k.characters, k]));
   const radical = new Map((subjects?.radicals || []).map(r => [r.id, r]));
   const out = {...stories};
-  let made = 0, skipped = 0, failed = 0;
-  for (const character of select) {
-    if (made >= limit) break;
-    if (out[character] && !redo) { skipped++; continue; }
+  let made = 0, skipped = 0, failed = 0, next = 0, inFlight = 0, saving = Promise.resolve();
+  // Saves are queued one after another, so two workers reaching a multiple
+  // of saveEvery at once never write the file over each other.
+  const persist = () => (saving = saving.then(() => save(out)));
+
+  async function one(character) {
     const facts = READINGS[character];
-    if (!facts) { log(`${character}: not joyo, skipped`); skipped++; continue; }
+    if (!facts) { log(`${character}: not joyo, skipped`); skipped++; return; }
     const wk = byChar.get(character) || null;
     const parts = (wk?.components || []).map(id => radical.get(id)).filter(Boolean);
     const text = request(character, facts, parts, wk, {fresh});
-    if (dry) { log(`--- ${character} ---\n${text}`); continue; }
-    let story = null;
-    for (let attempt = 0; attempt < 2 && !story; attempt++) {
-      const raw = await ask(attempt ? text + "\n\nYour previous answer broke a rule. Write it again, with no religious reference and no swearing." : text, SYSTEM, settings);
-      const meaning = String(raw?.meaning || "").trim(), reading = String(raw?.reading || "").trim();
-      if (meaning && reading && !FORBIDDEN.test(meaning + " " + reading)) story = {meaning, reading};
-    }
-    if (!story) { log(`${character}: the model could not keep to the rules, skipped`); failed++; continue; }
-    out[character] = {...story, made: now(), fresh: fresh || !wk};
-    made++;
-    log(`${character}: written (${made})`);
+    if (dry) { log(`--- ${character} ---\n${text}`); return; }
+    // A request that fails — a rate limit, a dropped connection — costs this
+    // kanji one retry after a pause, never the run: what was written stays
+    // written, and the next run picks up what is missing.
+    let story = null, broke = false, error = null;
+    inFlight++;
+    try {
+      for (let attempt = 0; attempt < 2 && !story; attempt++) {
+        let raw;
+        try { raw = await ask(broke ? text + "\n\nYour previous answer broke a rule. Write it again, with no religious reference and no swearing." : text, SYSTEM, settings); }
+        catch (e) { error = e; await backoff(attempt); continue; }
+        const meaning = String(raw?.meaning || "").trim(), reading = String(raw?.reading || "").trim();
+        if (meaning && reading && !FORBIDDEN.test(meaning + " " + reading)) story = {meaning, reading}; else broke = true;
+      }
+      if (!story) { log(`${character}: ${error ? "request failed (" + (error.message || error) + ")" : "the model could not keep to the rules"}, skipped`); failed++; return; }
+      out[character] = {...story, made: now(), fresh: fresh || !wk};
+      made++;
+      log(`${character}: written (${made})`);
+      if (made % saveEvery === 0) persist();
+    } finally { inFlight--; }
     await pause();
   }
+
+  // Workers share one cursor over the selection; each takes the next
+  // character the moment it is free. --limit counts what is written or in
+  // flight, so no worker starts a story that would overshoot it.
+  async function worker() {
+    while (next < select.length) {
+      if (made + inFlight >= limit) return;
+      const character = select[next++];
+      if (out[character] && !redo) { skipped++; continue; }
+      await one(character);
+    }
+  }
+  await Promise.all(Array.from({length: Math.max(1, Math.min(workers, select.length || 1))}, worker));
+  if (made) persist();
+  await saving;
   return {stories: out, made, skipped, failed};
 }
 
@@ -87,10 +114,13 @@ if (process.argv[1]?.endsWith("rewrite-stories.mjs")) {
   const provider = process.env.ECHO_PROVIDER || "google", key = process.env.ECHO_API_KEY || "";
   const settings = {provider, providerKeys: {[provider]: key}, providerModels: process.env.ECHO_MODEL ? {[provider]: process.env.ECHO_MODEL} : {}, localEndpoint: process.env.ECHO_ENDPOINT};
   const {STORIES} = await import("../stories.js");
+  const target = new URL("../stories.js", import.meta.url), wait = ms => new Promise(r => setTimeout(r, ms));
   const result = await rewrite({select, subjects, stories: STORIES, fresh: flag("--fresh"), redo: flag("--redo"), dry: flag("--dry"),
-    limit: val("--limit") ? Number(val("--limit")) : Infinity, settings, pause: () => new Promise(r => setTimeout(r, 300)), log: console.log});
+    limit: val("--limit") ? Number(val("--limit")) : Infinity, settings, pause: () => wait(300), log: console.log,
+    save: stories => writeFileSync(target, render(stories)),  // every ten, so a dead run keeps its work
+    backoff: attempt => wait(attempt ? 30000 : 10000),  // a rate limit wants a real pause, not 300ms
+    workers: val("--workers") ? Number(val("--workers")) : 4});  // requests in flight at once
   if (!flag("--dry")) {
-    writeFileSync(new URL("../stories.js", import.meta.url), render(result.stories));
     console.log(`stories.js: ${Object.keys(result.stories).length} stories — ${result.made} written, ${result.skipped} kept, ${result.failed} failed`);
   }
 }
