@@ -70,7 +70,7 @@ test("teaching order survives: grade 1 still opens with the numerals", () => {
 });
 
 test("every kanji has readings and meanings without any account", () => {
-  assert.deepEqual(facts("駅"), {on: ["エキ"], kun: [], en: ["station"], grade: 3});
+  assert.deepEqual(facts("駅"), {on: ["エキ"], kun: [], en: ["station"], grade: 3, jlpt: "N4", freq: 724});
   assert.equal(facts("𠮟").on[0], "シツ");
   assert.equal(facts("沖").grade, 4);
   assert.equal(facts("猫")?.en?.[0], "cat");
@@ -133,4 +133,19 @@ test("the real order is grade 1 first and every joyo kanji once", () => {
 test("what is left is the list minus what you have met", () => {
   assert.equal(unmetCount(new Map()), 2136);
   assert.equal(unmetCount(new Map([["駅", ["a"]], ["山", ["b"]]])), 2134);
+});
+
+test("JLPT bands: every joyo kanji in exactly one, N5 first, taught order within", async () => {
+  const {jlptBands, LEVELS, levelOf, TOTAL} = await import("../kanji.js");
+  const bands = jlptBands();
+  assert.deepEqual(bands.map(b => b.level), LEVELS);
+  let total = 0; for (const b of bands) { let n = 0; for (const _ of b.chars) n++; total += n; }
+  assert.equal(total, TOTAL, "the bands add up to the joyo list");
+  const sizes = bands.map(b => { let n = 0; for (const _ of b.chars) n++; return n; });
+  assert.deepEqual(sizes, [79, 166, 367, 367, 1157], "the counts the data carries, by code point");
+  const n5 = bands[0].chars;
+  assert.ok(n5.indexOf("一") < n5.indexOf("学"), "the commoner grade-1 kanji comes first");
+  assert.ok(n5.indexOf("学") < n5.findIndex(c => facts(c).grade === 2), "grade 1 before grade 2 within a band");
+  assert.equal(levelOf("学"), "N5"); assert.equal(levelOf("鬱"), "N1"); assert.equal(levelOf("𠮟"), "N1");
+  assert.ok(bands.every(b => b.label.length > 0), "every band has a label");
 });

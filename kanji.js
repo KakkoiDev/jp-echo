@@ -62,6 +62,23 @@ export function bands() {
   out.push({key: "secondary", level: null, chars: [...JOYO].filter(c => !placed.has(c))});
   return out;
 }
+// The JLPT bands, N5 first. The label is what the level is for, in the words
+// the study tool uses; the counts are whatever the data carries.
+export const LEVELS = ["N5", "N4", "N3", "N2", "N1"];
+export const LEVEL_LABELS = {N5: "Getting around", N4: "Everyday reading", N3: "Newspapers, forms", N2: "Work and study", N1: "The long tail"};
+
+// The same wall banded by JLPT level. Within a band the order is the one you
+// would be taught in: school grade first, then how common the kanji is in
+// print, then joyo order for the rest. That is the order Practise walks.
+export function jlptBands() {
+  const index = new Map([...JOYO].map((c, i) => [c, i]));
+  const rank = c => { const r = READINGS[c] || {}; return [r.grade ?? 9, r.freq ?? Infinity, index.get(c)]; };
+  const cmp = (a, b) => { const x = rank(a), y = rank(b); return x[0] - y[0] || x[1] - y[1] || x[2] - y[2]; };
+  return LEVELS.map(level => ({key: level, level, label: LEVEL_LABELS[level],
+    chars: [...JOYO].filter(c => (READINGS[c]?.jlpt || "N1") === level).sort(cmp)}));
+}
+export const levelOf = character => READINGS[character]?.jlpt || null;
+
 // What is known about a character without any account at all.
 export const facts = character => READINGS[character] || null;
 
