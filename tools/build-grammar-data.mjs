@@ -35,7 +35,10 @@ export function build(raw) {
     const id = idFromSlug(p.slug);
     if (seen.has(id)) continue;
     seen.add(id);
-    points.push({id, title: p.title.trim(), level: p.level, order: Number.isInteger(p.order) ? p.order : i, hint: (p.hint || "").trim()});
+    // Where the index had no gloss the snippet caught the level badge instead;
+    // a "hint" that is just a level says nothing, so it is dropped here.
+    const hint = (p.hint || "").trim();
+    points.push({id, title: p.title.trim(), level: p.level, order: Number.isInteger(p.order) ? p.order : i, hint: LEVELS.includes(hint) ? "" : hint});
   }
   const byLevel = Object.fromEntries(LEVELS.map(l => [l, points.filter(p => p.level === l).length]));
   for (const l of LEVELS) if (!byLevel[l]) throw new Error(`no ${l} points at all — the extractor probably missed a heading`);
