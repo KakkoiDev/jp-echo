@@ -105,6 +105,7 @@ test("faults: forbidden words, markup, jargon, and the kanji's own meaning as th
   assert.deepEqual(faults({meaning: "Gee, a <radical>horse</radical> radical stands at the station, waiting for the train to come.", reading: good.reading}), ["forbidden: gee", "markup", "says radical"]);
   assert.deepEqual(faults({meaning: "A god watches over the shrine gate, and that is what this kanji means: a god, a spirit.", reading: good.reading}, {en: ["gods", "mind", "soul"]}), [], "god is 神's own meaning");
   assert.deepEqual(faults({meaning: "A god watches over the shrine gate, and that is what this kanji means: a god, a spirit.", reading: good.reading}, {en: ["station"]}), ["forbidden: god"]);
+  assert.deepEqual(faults({meaning: "A retainer kneels before his lord, the subject who serves: that is what this kanji means, a retainer.", reading: good.reading}, {en: ["retainer", "subject"]}), [], "a retainer serves a lord, so 臣 may say so");
   assert.deepEqual(faults(undefined), ["missing"]);
   assert.deepEqual(lint(["駅", "山"], {"駅": good}), {"山": ["missing"]});
 });

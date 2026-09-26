@@ -23,7 +23,7 @@ import {JOYO} from "../kanji-data.js";
 import {READINGS} from "../kanji-readings.js";
 import {askModel} from "../api.js";
 
-export const SYSTEM = `You write mnemonic stories for Echo, an app for learning Japanese. A story helps someone remember one kanji: what it means, and how it is read. Write in plain, vivid, everyday English. Two short paragraphs. The first ties the kanji's parts to its meaning; the second ties the meaning to its reading, using an English word or phrase that sounds like the reading, and writes the reading itself in kana once. Call the pieces of a kanji its parts, never radicals. Never mention any religion, deity, or holy figure, and never swear or use a euphemism for swearing; the sound ジ is written jee, never gee. If the kanji's own meaning is such a word — god, lord — use it once, plainly, as the dictionary word it is, and build the story on something else. Plain text only: no HTML, no angle-bracket tags, no markdown. Return JSON only: {"meaning":"...","reading":"..."}.`;
+export const SYSTEM = `You write mnemonic stories for Echo, an app for learning Japanese. A story helps someone remember one kanji: what it means, and how it is read. Write in plain, vivid, everyday English. Two short paragraphs. The first ties the kanji's parts to its meaning; the second ties the meaning to its reading, using an English word or phrase that sounds like the reading, and writes the reading itself in kana once. Call the pieces of a kanji its parts, never radicals. Never mention any religion, deity, or holy figure, and never swear or use a euphemism for swearing; the sound ジ is written jee, never gee. If the kanji's own meaning is such a word — god, lord — use it once, plainly, as the dictionary word it is, and build the story on something else; a retainer may serve a lord in the same plain way. Plain text only: no HTML, no angle-bracket tags, no markdown. Return JSON only: {"meaning":"...","reading":"..."}.`;
 
 export function request(character, facts, parts, reference, {fresh = false} = {}) {
   const lines = [
@@ -41,6 +41,10 @@ const FORBIDDEN = /\b(god|gods|jesus|christ|lord|allah|buddha|damn|hell|gee)\b/i
 const MARKUP = /<\/?[a-z][^>]*>/i;
 const JARGON = /\bradicals?\b/i;
 
+// A meaning that cannot be told without a forbidden word: a retainer serves
+// a lord, and there is no other way to say what 臣 is.
+const IMPLIED = {retainer: ["lord"], vassal: ["lord"], subject: ["lord"]};
+
 // What is wrong with a story, if anything. A forbidden word that is the
 // kanji's own meaning (神 is god, 主 is lord) is not a fault: the prompt asks
 // for it once, as the dictionary word it is.
@@ -48,6 +52,7 @@ export function faults(story, facts = {en: []}) {
   if (!story || !story.meaning || !story.reading) return ["missing"];
   const stem = w => w.toLowerCase().replace(/s$/, "");
   const text = story.meaning + " " + story.reading, own = new Set(facts.en.flatMap(m => m.split(/\W+/).map(stem)));
+  for (const w of [...own]) for (const implied of IMPLIED[w] || []) own.add(implied);
   const out = [];
   const words = [...text.matchAll(new RegExp(FORBIDDEN.source, "gi"))].map(m => m[1].toLowerCase()).filter(w => !own.has(stem(w)));
   if (words.length) out.push("forbidden: " + [...new Set(words)].join(", "));
