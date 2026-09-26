@@ -14,6 +14,8 @@ test("a list of names and levels builds, deduplicated and in level order", () =>
   const {points: decoded} = build([...full, {slug: "%E3%81%A0", title: "だ", level: "N5"}, {slug: "だ", title: "だ again", level: "N5"}]);
   assert.equal(decoded.filter(p => p.id === "だ").length, 1, "an encoded slug is decoded to a readable id, and its decoded twin is a duplicate");
   assert.equal(decoded.find(p => p.id === "だ").title, "だ");
+  const {points: badged} = build([...full, {slug: "ii", title: "いい", level: "N5", hint: "N5"}]);
+  assert.equal(badged.find(p => p.id === "ii").hint, "", "a hint that is only the level badge is dropped");
 });
 
 test("anything beyond a name, a level and a gloss is refused", () => {
