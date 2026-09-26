@@ -1,10 +1,10 @@
 import {applyI18n,setDictionary,t} from "./i18n.js";
 import {earliestPair,flipSentence,isReversed,pairLooksSwapped,repairPair} from "./repair.js";
-import {DEFAULT_PAIR,LANGUAGES,createSentence,exportBackup,hasFurigana,hasRegisters,languageName,mergeSentences,normalizeFurigana,rubyHtml,SCHEMA_VERSION,stripFurigana} from "./core.js";
+import {DEFAULT_PAIR,LANGUAGES,createSentence,exportBackup,forAnki,hasFurigana,hasRegisters,languageName,mergeSentences,normalizeFurigana,rubyHtml,SCHEMA_VERSION,stripFurigana} from "./core.js";
 import {isExactMatch,markAttempt,markTarget} from "./diff.js";
 import {deleteSentence,getSentence,listSentences,migrateStore,replaceAll,saveSentence} from "./db.js";
 import {adjustNote,carries,compose,PROVIDER_DEFAULTS,tagGrammar,translate,writeNotes} from "./api.js";
-import {byLevel as grammarByLevel,cleanTags as grammarTags,coverage as grammarCoverage,hasGrammar,learned as grammarLearned,LEVELS as GRAMMAR_LEVELS,point as grammarPoint,POINTS as GRAMMAR_POINTS,summarise as grammarSummarise,untagged as untaggedSentences} from "./grammar.js";
+import {byLevel as grammarByLevel,cleanTags as grammarTags,coverage as grammarCoverage,hasGrammar,isTagged,learned as grammarLearned,LEVELS as GRAMMAR_LEVELS,point as grammarPoint,POINTS as GRAMMAR_POINTS,summarise as grammarSummarise,untagged as untaggedSentences} from "./grammar.js";
 import {japaneseVoices,recognitionFactory,ShadowLoop} from "./speech.js";
 import {forgetWaniKani,kanjiInfo,mnemonicHtml,syncWaniKani,waniKaniStatus} from "./wanikani.js";
 import {STORIES} from "./stories.js";
@@ -89,6 +89,7 @@ function applyLanguageUI(){
   $("#show-furigana").closest("label").hidden=!furigana;
   $("#show-polite").closest("label").hidden=!registers;
   if(document.body.dataset.view==="map"&&!furigana)showView("library");
+  $("#grammar-settings").hidden=!(furigana&&hasGrammar());
   $("#voice-label").textContent=languageName(target)+" voice";
   $("#english-input").placeholder=t("Enter a sentence in {language}",{language:t(languageName(inputLang))});
   $("#voice-warning").textContent="No "+languageName(target)+" voice is installed on this device.";
@@ -101,8 +102,8 @@ function applyTheme(theme=settings.theme||"system"){document.documentElement.dat
 function showProviderConfig(){const provider=$("#provider").value;document.querySelectorAll(".provider-config").forEach(node=>node.hidden=node.dataset.provider!==provider)}
 const WANIKANI_TOKEN="jp-echo-wanikani-token";
 const waniKaniToken=()=>localStorage.getItem(WANIKANI_TOKEN)||"";
-function saveSettings(){const token=$("#wanikani-token").value.trim();if(token)localStorage.setItem(WANIKANI_TOKEN,token);else localStorage.removeItem(WANIKANI_TOKEN);settings.provider=$("#provider").value;settings.providerKeys={deepseek:$("#deepseek-key").value.trim(),google:$("#google-key").value.trim(),openai:$("#openai-key").value.trim(),anthropic:$("#anthropic-key").value.trim()};settings.providerModels={deepseek:$("#deepseek-model").value.trim(),google:$("#google-model").value.trim(),openai:$("#openai-model").value.trim(),anthropic:$("#anthropic-model").value.trim(),local:$("#local-model").value.trim()};settings.localEndpoint=$("#local-endpoint").value.trim();settings.proxyUrl=$("#proxy-url").value.trim();settings.theme=$("#theme").value;settings.motion=$("#motion").value;settings.voice=$("#voice").value;settings.rate=Number($("#rate").value);settings.showEnglish=$("#show-english").checked;settings.showFurigana=$("#show-furigana").checked;settings.showPolite=$("#show-polite").checked;settings.autoListen=$("#autolisten").checked;settings.remindTime=$("#remind-time").value;localStorage.setItem("jp-echo-settings",JSON.stringify(settings));applyTheme();applyMotion()}
-function resetSettingsForm(){$("#wanikani-token").value=waniKaniToken();renderWaniKaniStatus();const keys=settings.providerKeys||{},models=settings.providerModels||{};$("#provider").value=defaultProvider();$("#deepseek-key").value=keys.deepseek||settings.apiKey||"";$("#google-key").value=keys.google||"";$("#openai-key").value=keys.openai||"";$("#anthropic-key").value=keys.anthropic||"";for(const provider of Object.keys(PROVIDER_DEFAULTS))$("#"+provider+"-model").value=models[provider]||PROVIDER_DEFAULTS[provider];$("#local-endpoint").value=settings.localEndpoint||"http://localhost:11434/v1/chat/completions";$("#proxy-url").value=settings.proxyUrl||"";$("#theme").value=settings.theme||"system";$("#motion").value=settings.motion||"system";$("#autolisten").checked=settings.autoListen!==false;$("#remind").checked=!!settings.remind;$("#remind-time").value=settings.remindTime||DEFAULT_TIME;$("#remind-reach").textContent=settings.remind?reminderReach():"";$("#voice").value=settings.voice||"0";$("#rate").value=settings.rate||1;$("#rate-value").textContent=Number($("#rate").value).toFixed(1)+"×";showProviderConfig()}
+function saveSettings(){const token=$("#wanikani-token").value.trim();if(token)localStorage.setItem(WANIKANI_TOKEN,token);else localStorage.removeItem(WANIKANI_TOKEN);settings.provider=$("#provider").value;settings.providerKeys={deepseek:$("#deepseek-key").value.trim(),google:$("#google-key").value.trim(),openai:$("#openai-key").value.trim(),anthropic:$("#anthropic-key").value.trim()};settings.providerModels={deepseek:$("#deepseek-model").value.trim(),google:$("#google-model").value.trim(),openai:$("#openai-model").value.trim(),anthropic:$("#anthropic-model").value.trim(),local:$("#local-model").value.trim()};settings.localEndpoint=$("#local-endpoint").value.trim();settings.proxyUrl=$("#proxy-url").value.trim();settings.theme=$("#theme").value;settings.motion=$("#motion").value;settings.voice=$("#voice").value;settings.rate=Number($("#rate").value);settings.showEnglish=$("#show-english").checked;settings.showFurigana=$("#show-furigana").checked;settings.showPolite=$("#show-polite").checked;settings.autoListen=$("#autolisten").checked;settings.autoTag=$("#autotag").checked;settings.remindTime=$("#remind-time").value;localStorage.setItem("jp-echo-settings",JSON.stringify(settings));applyTheme();applyMotion()}
+function resetSettingsForm(){$("#wanikani-token").value=waniKaniToken();renderWaniKaniStatus();const keys=settings.providerKeys||{},models=settings.providerModels||{};$("#provider").value=defaultProvider();$("#deepseek-key").value=keys.deepseek||settings.apiKey||"";$("#google-key").value=keys.google||"";$("#openai-key").value=keys.openai||"";$("#anthropic-key").value=keys.anthropic||"";for(const provider of Object.keys(PROVIDER_DEFAULTS))$("#"+provider+"-model").value=models[provider]||PROVIDER_DEFAULTS[provider];$("#local-endpoint").value=settings.localEndpoint||"http://localhost:11434/v1/chat/completions";$("#proxy-url").value=settings.proxyUrl||"";$("#theme").value=settings.theme||"system";$("#motion").value=settings.motion||"system";$("#autolisten").checked=settings.autoListen!==false;$("#autotag").checked=!!settings.autoTag;$("#remind").checked=!!settings.remind;$("#remind-time").value=settings.remindTime||DEFAULT_TIME;$("#remind-reach").textContent=settings.remind?reminderReach():"";$("#voice").value=settings.voice||"0";$("#rate").value=settings.rate||1;$("#rate-value").textContent=Number($("#rate").value).toFixed(1)+"×";showProviderConfig()}
 function openSettings(){resetSettingsForm();updateInstallUI();$("#settings-dialog").showModal()}
 function cancelSettings(){settings.remind=!!JSON.parse(localStorage.getItem("jp-echo-settings")||"{}").remind;resetSettingsForm();applyTheme();applyMotion();$("#settings-dialog").close()}
 function isInstalled(){return window.matchMedia("(display-mode: standalone)").matches||window.navigator.standalone===true}
@@ -496,7 +497,7 @@ async function sayForKanji(){
       status.textContent=t("That sentence does not use {kanji} — try one that does.",{kanji:target.character});
       field.focus();return}
     const made=ensureSchedule(createSentence(card.source,card,new Date(),undefined,{sourceLang:sourceLang(),targetLang:targetLang()}));
-    made.translationProvider=defaultProvider();await saveSentence(made);refreshDueBadge();
+    made.translationProvider=defaultProvider();await saveSentence(made);autoTag(made);refreshDueBadge();
     field.value="";
     const fresh=await listSentences();await openKanji(target.character,kanjiCoverage(fresh),{learn:target.learn});
     status.textContent=t("Saved to your library.");renderMap();
@@ -518,7 +519,7 @@ async function composeForKanji(){
     const card=await compose({kanji:target.character,known},{...settings,sourceLang:sourceLang(),targetLang:targetLang()});
     const made=ensureSchedule(createSentence(card.source,card,new Date(),undefined,{sourceLang:sourceLang(),targetLang:targetLang()}));
     made.translationProvider=defaultProvider();
-    await saveSentence(made);
+    await saveSentence(made);autoTag(made);
     refreshDueBadge();
     const fresh=await listSentences(),cover=kanjiCoverage(fresh);
     await openKanji(target.character,cover,{learn:target.learn});
@@ -583,6 +584,20 @@ function renderGrammarBand(band,cover,known){
     foot.append(go,el("p","hint",t("Opens each one in turn, in the order Bunpro teaches them. Say your own sentence with it, or let Echo write one.")))}
   else foot.append(el("p","hint",t("You have used every point in this band.")));
   body.append(foot);section.append(body);return section}
+// With the setting on, a sentence is read for grammar the moment it is
+// saved — one request, on your key — so the wall never undercounts. It runs
+// behind the save and never blocks it; a failure just leaves the sentence
+// for the manual read. Off by default, because the cost is real.
+async function autoTag(sentence){
+  if(!settings.autoTag||!hasGrammar()||targetLang()!=="ja"||!hasTranslator()||!sentence?.id||isTagged(sentence))return;
+  try{
+    const tags=await tagGrammar([sentence],GRAMMAR_POINTS,{...settings,targetLang:targetLang()}),got=tags.get(sentence.id);
+    if(!got)return;
+    const fresh=await getSentence(sentence.id);if(!fresh)return;
+    await saveSentence({...fresh,grammar:got,updatedAt:new Date().toISOString()});
+    if(document.body.dataset.view==="map")renderMap();
+  }catch{}
+}
 // Tagging is explicit: each batch is a request, and the line beside the button
 // says what it will cost before it is pressed.
 async function tagUntagged(){
@@ -915,7 +930,7 @@ async function performTranslation(){const english=$("#english-input").value.trim
   // icon and the .label span with it, and they never came back — after one
   // translation the button was bare text that no longer answered the rule
   // hiding the word on a phone.
-  const button=$("#translate"),label=button.querySelector(".label"),previous=label.textContent;button.disabled=true;label.textContent="Translating…";button.setAttribute("aria-busy","true");setStatus("Translating…");try{translationFailure=null;const card=await translate(english,{...settings,inputLang});resetSession();current=ensureSchedule(createSentence(card.source,card,new Date(),undefined,{sourceLang:sourceLang(),targetLang:targetLang()}));current.translationProvider=provider;await saveSentence(current);renderSentence();refreshDueBadge();clearComposer();setStatus("Ready to practice.")}catch(error){const name=PROVIDER_NAMES[provider]||provider;
+  const button=$("#translate"),label=button.querySelector(".label"),previous=label.textContent;button.disabled=true;label.textContent="Translating…";button.setAttribute("aria-busy","true");setStatus("Translating…");try{translationFailure=null;const card=await translate(english,{...settings,inputLang});resetSession();current=ensureSchedule(createSentence(card.source,card,new Date(),undefined,{sourceLang:sourceLang(),targetLang:targetLang()}));current.translationProvider=provider;await saveSentence(current);autoTag(current);renderSentence();refreshDueBadge();clearComposer();setStatus("Ready to practice.")}catch(error){const name=PROVIDER_NAMES[provider]||provider;
     const refused=/\b(401|403|402|key|credit|quota)\b/i.test(error.message||"");
     // A failed fetch is a TypeError and its message is "Failed to fetch",
     // which tells you nothing you did not already suspect.
@@ -1034,8 +1049,8 @@ function playReviewAudio(){const sentence=reviewQueue[reviewIndex];if(!sentence)
 async function rateReview(rating){const sentence=reviewQueue[reviewIndex];if(!sentence||!reviewRevealed)return;resetSession();const graded=reviewSentence(sentence,rating);
   const updated={...graded,reviews:[...(Array.isArray(sentence.reviews)?sentence.reviews:[]),{at:new Date().toISOString(),rating,echoes:Math.max(0,(Number(sentence.echoCount)||0)-echoesAtCardStart)}]};await saveSentence(updated);if(current?.id===updated.id)current=updated;reviewQueue[reviewIndex]=updated;reviewIndex++;renderReview()}
 async function exportHistory(){const data=exportBackup(await listSentences(),settings,forBackup(await listNotes().catch(()=>[]))),url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"})),link=Object.assign(document.createElement("a"),{href:url,download:"jp-echo-backup.json"});link.click();URL.revokeObjectURL(url)}
-async function exportAnki(button=$("#export-anki")){const items=await listSentences();const label=button.textContent;button.disabled=true;button.textContent="Building deck…";$("#anki-status").textContent="Creating JP Echo.apkg on this device…";try{await downloadAnkiDeck(items);$("#open-anki").hidden=false;const launched=openAnki(true);$("#anki-status").textContent=launched?"JP Echo.apkg downloaded. Opening Anki… If it stays here, tap Open Anki.":"JP Echo.apkg downloaded. Open it from Downloads to import it into Anki."}catch(error){$("#anki-status").textContent=error.message||"Anki export failed."}finally{button.disabled=false;button.textContent=label}}
-function openAnki(automatic=false){const android=/android/i.test(navigator.userAgent),ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(android){window.location.href="intent:#Intent;package=com.ichi2.anki;end";return true}if(ios){window.location.href="anki://";return true}if(!automatic)$("#anki-status").textContent="Open JP Echo.apkg from your Downloads folder to import it into Anki.";return false}
+async function exportAnki(button=$("#export-anki")){const items=await listSentences();const label=button.textContent;button.disabled=true;button.textContent="Building deck…";$("#anki-status").textContent="Creating Echo.apkg on this device…";try{await downloadAnkiDeck(items.map(forAnki));$("#open-anki").hidden=false;const launched=openAnki(true);$("#anki-status").textContent=launched?"Echo.apkg downloaded. Opening Anki… If it stays here, tap Open Anki.":"Echo.apkg downloaded. Open it from Downloads to import it into Anki."}catch(error){$("#anki-status").textContent=error.message||"Anki export failed."}finally{button.disabled=false;button.textContent=label}}
+function openAnki(automatic=false){const android=/android/i.test(navigator.userAgent),ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(android){window.location.href="intent:#Intent;package=com.ichi2.anki;end";return true}if(ios){window.location.href="anki://";return true}if(!automatic)$("#anki-status").textContent="Open Echo.apkg from your Downloads folder to import it into Anki.";return false}
 // Cards filed while the pair was reversed. Only run when the pair itself was
 // found reversed at startup: that is the evidence the device was sitting in
 // the broken state, and without it a card whose pair is the exact reverse of

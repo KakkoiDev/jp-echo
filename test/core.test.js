@@ -83,3 +83,11 @@ test("a sentence carries the pair it was made with", () => {
   assert.equal(item.schemaVersion,2);
   assert.ok(LANGUAGES.some(([code])=>code==="fr"));
 });
+
+test("the Anki export reads the fields the app writes today, and the old names still work", async () => {
+  const {forAnki} = await import("../core.js");
+  const now = forAnki({source: "Where is the station?", target: "駅【えき】はどこ？", casualTarget: "駅【えき】はどこ？", politeTarget: "駅【えき】はどこですか。", echoCount: 3});
+  assert.equal(now.english, "Where is the station?"); assert.equal(now.casualJapanese, "駅【えき】はどこ？"); assert.equal(now.politeJapanese, "駅【えき】はどこですか。"); assert.equal(now.echoCount, 3);
+  const old = forAnki({english: "Hi", japanese: "やあ", casualJapanese: "やあ", politeJapanese: "こんにちは"});
+  assert.equal(old.casualJapanese, "やあ"); assert.equal(old.politeJapanese, "こんにちは"); assert.equal(old.english, "Hi");
+});

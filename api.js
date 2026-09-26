@@ -45,7 +45,9 @@ function composePrompt(sourceLang,targetLang,required,known){
 // only those ids; what comes back is filtered to them anyway.
 function tagPrompt(targetLang,points){
   const to=languageName(targetLang);
-  const list=points.map(p=>p.id+" = "+p.title+(p.hint?" ("+p.hint+")":"")).join("\n");
+  // Ids and titles only: the gloss doubled the prompt and the model never
+  // needed it to recognise a pattern it was already given by name.
+  const list=points.map(p=>p.id+" = "+p.title).join("\n");
   return `You will be given numbered ${to} sentences. For each, list the ids of the grammar points it uses, from this list and no other:\n${list}\n\nReturn JSON only: {"tags":{"<number>":["id","id"],...}}. A sentence that uses none of them gets an empty array. Do not invent ids. No explanations or markdown.`;
 }
 export const TAG_BATCH=30;
