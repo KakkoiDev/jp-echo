@@ -899,6 +899,10 @@ html.motion-off #review-progress-bar { transition: none; }
 .wk-row .kanji-sentences{margin-bottom:8px}
 .wk-parts{font-family:var(--display);color:var(--sumi);margin-left:6px}
 .wk-section .hint{margin-top:8px;font-size:11px}
+.wk-invite{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+.wk-invite-copy{margin:0;font-size:13px;line-height:1.6;color:var(--ink-soft);text-wrap:pretty}
+.wk-invite-copy:empty{display:none}
+.wk-invite .outlined{align-self:flex-start}
 .wk-kanji{color:var(--seal);font-weight:600}
 .wk-radical{color:var(--indigo);font-weight:600}
 .wk-vocabulary{color:var(--chip-learn-fg);font-weight:600}
