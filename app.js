@@ -3,7 +3,8 @@ import {earliestPair,flipSentence,isReversed,pairLooksSwapped,repairPair} from "
 import {DEFAULT_PAIR,LANGUAGES,createSentence,exportBackup,hasFurigana,hasRegisters,languageName,mergeSentences,normalizeFurigana,rubyHtml,stripFurigana} from "./core.js";
 import {isExactMatch,markAttempt,markTarget} from "./diff.js";
 import {deleteSentence,getSentence,listSentences,migrateStore,replaceAll,saveSentence} from "./db.js";
-import {carries,compose,PROVIDER_DEFAULTS,translate} from "./api.js";
+import {carries,compose,PROVIDER_DEFAULTS,tagGrammar,translate} from "./api.js";
+import {byLevel as grammarByLevel,coverage as grammarCoverage,hasGrammar,LEVELS as GRAMMAR_LEVELS,POINTS as GRAMMAR_POINTS,summarise as grammarSummarise,untagged as untaggedSentences} from "./grammar.js";
 import {japaneseVoices,recognitionFactory,ShadowLoop} from "./speech.js";
 import {forgetWaniKani,kanjiInfo,mnemonicHtml,syncWaniKani,waniKaniStatus} from "./wanikani.js";
 import {bands as kanjiBands,coverage as kanjiCoverage,learned as kanjiLearned,nextUnmet,summarise as kanjiSummarise,TOTAL as KANJI_TOTAL,unmetCount} from "./kanji.js";
@@ -20,10 +21,10 @@ const pairWasRepaired=repairPair(settings);
 if(pairWasRepaired||settings.basePair===undefined)localStorage.setItem("jp-echo-settings",JSON.stringify(settings));
 const PLAY_ICON="M2 1.4 12 8 2 14.6V1.4Z",PAUSE_ICON="M2.5 1.5h3v13h-3zM7.5 1.5h3v13h-3z";
 let current=null,detail=null,kanjiPlaying=null,translationFailure=null,voiceFailed=false,dictationReady=false,echoesAtCardStart=0,voices=[],installPrompt=null,reviewQueue=[],reviewIndex=0,reviewRevealed=false,reviewRecognition=null,reviewListening=false;
-const loop=new ShadowLoop({onEcho:async()=>{const sheet=$("#kanji-dialog").open&&kanjiPlaying,reviewing=!$("#review-view").hidden,viewingDetail=!$("#sentence-view").hidden,target=sheet?kanjiPlaying:reviewing?reviewQueue[reviewIndex]:viewingDetail?detail:current;if(!target||target.transient)return;target.echoCount=(Number(target.echoCount)||0)+1;target.updatedAt=new Date().toISOString();await saveSentence(target);if(reviewing){reviewQueue[reviewIndex]=target;tickCount($("#review-echo-count"),target.echoCount)}if(viewingDetail)tickCount($("#stat-echoes"),target.echoCount);if(current?.id===target.id){current=target;renderCount()}},onState:state=>{const label=({speaking:"Playing — say it with the voice",imitate:"Your turn — echo it",paused:"Paused",stopped:"Ready",error:"That voice could not play"})[state]||state,playing=state!=="stopped"&&state!=="error",text=state==="paused"?"Play":playing?"Pause":"Play";$("#review-loop-state").textContent=label;$("#sentence-loop-state").textContent=label;const active=playing&&state!=="paused";for(const echo of document.querySelectorAll(".arcs:not(.small)>.echo"))echo.classList.toggle("is-playing",active);$("#practice").classList.toggle("playing",active);$("#review-panel").classList.toggle("playing",active);$("#loop-state").textContent=label;$("#play-pause").textContent=text;$("#play-pause").setAttribute("aria-pressed",String(playing));$("#review-audio").textContent=state==="paused"||!playing?"Play the loop":"Pause the loop";$("#review-audio").setAttribute("aria-pressed",String(playing));
+const loop=new ShadowLoop({onEcho:async()=>{const sheet=($("#kanji-dialog").open||$("#grammar-dialog").open)&&kanjiPlaying,reviewing=!$("#review-view").hidden,viewingDetail=!$("#sentence-view").hidden,target=sheet?kanjiPlaying:reviewing?reviewQueue[reviewIndex]:viewingDetail?detail:current;if(!target||target.transient)return;target.echoCount=(Number(target.echoCount)||0)+1;target.updatedAt=new Date().toISOString();await saveSentence(target);if(reviewing){reviewQueue[reviewIndex]=target;tickCount($("#review-echo-count"),target.echoCount)}if(viewingDetail)tickCount($("#stat-echoes"),target.echoCount);if(current?.id===target.id){current=target;renderCount()}},onState:state=>{const label=({speaking:"Playing — say it with the voice",imitate:"Your turn — echo it",paused:"Paused",stopped:"Ready",error:"That voice could not play"})[state]||state,playing=state!=="stopped"&&state!=="error",text=state==="paused"?"Play":playing?"Pause":"Play";$("#review-loop-state").textContent=label;$("#sentence-loop-state").textContent=label;const active=playing&&state!=="paused";for(const echo of document.querySelectorAll(".arcs:not(.small)>.echo"))echo.classList.toggle("is-playing",active);$("#practice").classList.toggle("playing",active);$("#review-panel").classList.toggle("playing",active);$("#loop-state").textContent=label;$("#play-pause").textContent=text;$("#play-pause").setAttribute("aria-pressed",String(playing));$("#review-audio").textContent=state==="paused"||!playing?"Play the loop":"Pause the loop";$("#review-audio").setAttribute("aria-pressed",String(playing));
   $("#sentence-play").setAttribute("aria-pressed",String(playing));const showPlay=state==="paused"||!playing;$("#sentence-play").lastChild.textContent=showPlay?"Play the loop":"Pause the loop";$("#sentence-play").querySelector("path").setAttribute("d",showPlay?PLAY_ICON:PAUSE_ICON);$("#sentence-view").classList.toggle("playing",active);
-  if($("#kanji-dialog").open){$("#kanji-loop-state").textContent=playing?label:"";
-    for(const row of document.querySelectorAll("#kanji-sentences li"))row.classList.toggle("is-playing",active&&row.dataset.id===kanjiPlaying?.id)}
+  for(const [dialog,state] of [["#kanji-dialog","#kanji-loop-state"],["#grammar-dialog","#grammar-loop-state"]])if($(dialog).open){$(state).textContent=playing?label:"";
+    for(const row of document.querySelectorAll(dialog+" .kanji-sentences li"))row.classList.toggle("is-playing",active&&row.dataset.id===kanjiPlaying?.id)}
   // The voice notice follows what playback actually did, so it appears for a
   // device that truly cannot speak and clears the moment one does.
   if(state==="error"||state==="speaking"){const failed=state==="error";if(failed!==voiceFailed){voiceFailed=failed;if(!$("#main-view").hidden)renderPracticeNotices();renderVoiceNotices()}}}});
@@ -224,6 +225,11 @@ function showView(name){if(name!=="practice")resetSession();speechSynthesis.canc
 // so this is a picture of your own Japanese rather than a syllabus.
 const BAND_LABELS={grade1:"Grade 1",grade2:"Grade 2",grade3:"Grade 3",grade4:"Grade 4",grade5:"Grade 5",grade6:"Grade 6",secondary:"Secondary school"};
 async function renderMap(){
+  const view=hasGrammar()&&settings.mapView==="grammar"?"grammar":"kanji";
+  $("#map-toggle").hidden=!hasGrammar();
+  for(const button of document.querySelectorAll("#map-toggle button")){const on=button.dataset.map===view;button.classList.toggle("on",on);button.setAttribute("aria-selected",String(on))}
+  $("#map-head").hidden=view!=="kanji";$("#map-bands").hidden=view!=="kanji";$("#map-grammar").hidden=view!=="grammar";
+  if(view==="grammar")return renderGrammar();
   const sentences=await listSentences(),cover=kanjiCoverage(sentences),known=kanjiLearned(sentences);
   const {met}=kanjiSummarise(cover);
   $("#map-summary").textContent=t("{met} of {total} met",{met:met.toLocaleString(),total:KANJI_TOTAL.toLocaleString()});
@@ -275,7 +281,7 @@ async function openKanji(character,cover,{learn=false}={}){
   $("#kanji-status").textContent=hasTranslator()?"":t("Add a translator and this starts working.");
   $("#kanji-loop-state").textContent="";
   const all=await listSentences(),byId=new Map(all.map(item=>[item.id,item])),mine=ids.map(id=>byId.get(id)).filter(Boolean);
-  renderKanjiSentences($("#kanji-sentences"),mine,{deletable:true});
+  renderSheetSentences($("#kanji-sentences"),mine,{deletable:true,onDelete:deleteFromSheet});
   $("#kanji-mine-head").hidden=!mine.length;
   await renderKanjiInfo(character);
   if(!$("#kanji-dialog").open)$("#kanji-dialog").showModal();
@@ -300,10 +306,10 @@ async function renderKanjiInfo(character){
   // One sentence per word is plenty on a phone; the word itself leads.
   const sentences=record.words.flatMap(word=>word.sentences.slice(0,1).map((s,i)=>({id:"wk:"+word.id+":"+i,transient:true,
     source:s.en,target:s.ja,plainTarget:s.ja,word:word.characters,reading:word.readings[0]||""})));
-  renderKanjiSentences(list,sentences,{deletable:false});
+  renderSheetSentences(list,sentences,{deletable:false});
   head.hidden=!sentences.length;
 }
-function renderKanjiSentences(list,sentences,{deletable}){
+function renderSheetSentences(list,sentences,{deletable,onDelete}){
   list.replaceChildren();
   for(const sentence of sentences){
     const row=document.createElement("li");row.dataset.id=sentence.id;
@@ -315,7 +321,7 @@ function renderKanjiSentences(list,sentences,{deletable}){
     if(deletable){const del=document.createElement("button");del.type="button";del.className="icon-button kanji-delete";
       del.setAttribute("aria-label",t("Delete this sentence"));
       del.innerHTML='<svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="m1 1 12 12M13 1 1 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
-      del.onclick=()=>deleteFromSheet(sentence);row.append(del)}
+      del.onclick=()=>onDelete(sentence);row.append(del)}
     const play=document.createElement("button");play.type="button";play.className="icon-button kanji-play";
     play.setAttribute("aria-label",t("Play the loop"));
     play.innerHTML='<svg width="12" height="15" viewBox="0 0 13 16" fill="none" aria-hidden="true"><path d="'+PLAY_ICON+'" fill="currentColor"/></svg>';
@@ -433,6 +439,109 @@ async function composeForKanji(){
       :refused?t("{name} turned the request down.",{name})
       :(error.message||t("That did not work."));
   }finally{button.disabled=!hasTranslator();button.textContent=previous}
+}
+async function renderGrammar(){
+  const sentences=await listSentences(),cover=grammarCoverage(sentences),todo=untaggedSentences(sentences);
+  const {met,total}=grammarSummarise(cover);
+  $("#grammar-summary").textContent=t("{met} of {total} points used",{met:met.toLocaleString(),total:total.toLocaleString()});
+  const tag=$("#grammar-tag");tag.hidden=!todo.length;
+  tag.textContent=todo.length===1?t("Tag 1 sentence"):t("Tag {n} sentences",{n:todo.length.toLocaleString()});tag.disabled=!hasTranslator();
+  const host=$("#grammar-levels");host.replaceChildren();
+  const levels=grammarByLevel();
+  for(const level of GRAMMAR_LEVELS){
+    const points=levels[level];if(!points.length)continue;
+    const section=document.createElement("section");section.className="kanji-band";
+    const head=document.createElement("div");head.className="kanji-band-head";
+    const name=document.createElement("b");name.textContent=level;
+    const tally=document.createElement("span");const s=grammarSummarise(cover,points);tally.textContent=s.met.toLocaleString()+" / "+s.total.toLocaleString();
+    head.append(name,tally);
+    const list=document.createElement("div");list.className="grammar-points";
+    for(const point of points){
+      const row=document.createElement("button");row.type="button";row.className="grammar-point";row.dataset.id=point.id;
+      const n=(cover.get(point.id)||[]).length;if(n)row.classList.add("met");
+      const title=document.createElement("b");title.lang=targetLang();title.textContent=point.title;
+      const hint=document.createElement("span");hint.textContent=point.hint||"";
+      const count=document.createElement("i");count.textContent=n?String(n):"";
+      row.append(title,hint,count);row.onclick=()=>openGrammar(point,cover);list.append(row)}
+    section.append(head,list);host.append(section)}
+}
+// Tagging is explicit: each batch is a request, and the count on the button
+// says what it will cost before it is pressed.
+async function tagUntagged(){
+  const status=$("#grammar-tag-status"),button=$("#grammar-tag");
+  const todo=untaggedSentences(await listSentences());if(!todo.length)return;
+  button.disabled=true;status.textContent=t("Tagging…");
+  try{
+    const tags=await tagGrammar(todo,GRAMMAR_POINTS,{...settings,targetLang:targetLang()});
+    let done=0;
+    for(const sentence of todo){const got=tags.get(sentence.id);if(!got)continue;await saveSentence({...sentence,grammar:got,updatedAt:new Date().toISOString()});done++}
+    status.textContent=done===1?t("Tagged 1 sentence."):t("Tagged {n} sentences.",{n:done.toLocaleString()});
+  }catch(error){status.textContent=sheetError(error)}
+  finally{button.disabled=!hasTranslator();renderGrammar()}
+}
+let grammarOpen=null;
+async function openGrammar(point,cover){
+  grammarOpen={point};
+  const ids=cover.get(point.id)||[];
+  $("#grammar-title").textContent=point.title;
+  $("#grammar-meta").textContent=[point.hint,point.level,ids.length?(ids.length===1?t("In 1 of your sentences"):t("In {n} of your sentences",{n:ids.length})):t("Not in any of your sentences yet")].filter(Boolean).join(" · ");
+  $("#grammar-say-label").textContent=t("Say a sentence using {point}",{point:point.title});
+  $("#grammar-say-go").disabled=!hasTranslator();$("#grammar-say").disabled=!hasTranslator();$("#grammar-mic").disabled=!hasTranslator()||!dictationReady;
+  $("#grammar-say-status").textContent="";$("#grammar-status").textContent="";$("#grammar-loop-state").textContent="";
+  $("#grammar-compose").textContent=t("Let the AI write one with {point}",{point:point.title});$("#grammar-compose").disabled=!hasTranslator();
+  const all=await listSentences(),byId=new Map(all.map(s=>[s.id,s])),mine=ids.map(id=>byId.get(id)).filter(Boolean);
+  renderSheetSentences($("#grammar-sentences"),mine,{deletable:true,onDelete:deleteFromGrammarSheet});
+  $("#grammar-mine-head").hidden=!mine.length;
+  if(!$("#grammar-dialog").open)$("#grammar-dialog").showModal();
+}
+// Whether a sentence uses a point is the model's own report, asked the same
+// way tagging asks. It catches a sentence that plainly does not; it cannot
+// catch the model agreeing with itself. The sentence stays in the box either
+// way, and you decide.
+async function sayForGrammar(){
+  const target=grammarOpen;if(!target)return;
+  const field=$("#grammar-say"),text=field.value.trim(),status=$("#grammar-say-status"),button=$("#grammar-say-go");
+  if(!text){status.textContent=t("Say or type a sentence first.");field.focus();return}
+  button.disabled=true;status.textContent=t("Translating…");
+  try{
+    const card=await translate(text,{...settings,inputLang,sourceLang:sourceLang(),targetLang:targetLang()});
+    const tags=await tagGrammar([{id:"new",plainTarget:stripFurigana(card.casual||card.polite||"")}],[target.point],{...settings,targetLang:targetLang()});
+    if(!(tags.get("new")||[]).includes(target.point.id)){
+      status.textContent=t("That sentence does not use {point} — try one that does.",{point:target.point.title});field.focus();return}
+    await saveGrammarSentence(card,target.point);field.value="";status.textContent=t("Saved to your library.");
+  }catch(error){status.textContent=sheetError(error)}
+  finally{button.disabled=!hasTranslator()}
+}
+async function composeForGrammar(){
+  const target=grammarOpen;if(!target)return;
+  const button=$("#grammar-compose"),previous=button.textContent;button.disabled=true;button.textContent=t("Writing…");$("#grammar-status").textContent="";
+  try{
+    const card=await compose({grammar:target.point},{...settings,sourceLang:sourceLang(),targetLang:targetLang()});
+    await saveGrammarSentence(card,target.point);$("#grammar-status").textContent=t("Saved to your library.");
+  }catch(error){$("#grammar-status").textContent=sheetError(error)}
+  finally{button.disabled=!hasTranslator();button.textContent=previous}
+}
+async function saveGrammarSentence(card,point){
+  const made=ensureSchedule(createSentence(card.source,card,new Date(),undefined,{sourceLang:sourceLang(),targetLang:targetLang()}));
+  made.translationProvider=defaultProvider();made.grammar=[...new Set([...(card.grammar||[]),point.id])];
+  await saveSentence(made);refreshDueBadge();
+  await openGrammar(point,grammarCoverage(await listSentences()));renderGrammar();
+}
+async function deleteFromGrammarSheet(sentence){
+  if(!grammarOpen)return;
+  if(loop.running&&kanjiPlaying?.id===sentence.id)loop.stop();
+  await deleteSentence(sentence.id);
+  if(current?.id===sentence.id){current=null;renderSentence()}
+  if(detail?.id===sentence.id)detail=null;
+  refreshDueBadge();
+  await openGrammar(grammarOpen.point,grammarCoverage(await listSentences()));
+  $("#grammar-status").textContent=t("Deleted.");renderGrammar();
+}
+function sheetError(error){
+  const provider=defaultProvider(),name=PROVIDER_NAMES[provider]||provider;
+  const refused=/\b(401|403|402|key|credit|quota)\b/i.test(error.message||""),offline=error instanceof TypeError;
+  return offline?(settings.proxyUrl?t("{name} blocks direct requests from this browser, and the proxy only translates.",{name}):t("No connection, so the request never reached {name}.",{name}))
+    :refused?t("{name} turned the request down.",{name}):(error.message||t("That did not work."));
 }
 const NUMBER_WORDS=["no","one","two","three","four","five","six","seven","eight","nine","ten"];
 const spell=count=>NUMBER_WORDS[count]||String(count);
@@ -621,7 +730,8 @@ function bindDictation(mic,field,status){const recognition=recognitionFactory(in
   return true}
 function setupRecognition(){
   dictationReady=bindDictation($("#microphone"),$("#english-input"),$("#voice-input-status"));
-  bindDictation($("#kanji-mic"),$("#kanji-say"),$("#kanji-say-status"))}
+  bindDictation($("#kanji-mic"),$("#kanji-say"),$("#kanji-say-status"));
+  bindDictation($("#grammar-mic"),$("#grammar-say"),$("#grammar-say-status"))}
 async function startReview(){const items=await listSentences(),scheduled=items.map(item=>ensureSchedule(item));await Promise.all(scheduled.filter((item,index)=>item!==items[index]).map(saveSentence));reviewQueue=dueSentences(scheduled);reviewIndex=0;if(!reviewQueue.length)return showView("review");showView("session");renderReview()}
 function reviewJapanese(sentence){return settings.showPolite&&hasRegisters(itemTarget(sentence))?(sentence.politeTarget||sentence.target):(sentence.casualTarget||sentence.target)}
 function reviewPlainJapanese(sentence){return settings.showPolite&&hasRegisters(itemTarget(sentence))?(sentence.plainPoliteTarget||sentence.plainTarget):(sentence.plainCasualTarget||sentence.plainTarget)}
@@ -715,7 +825,7 @@ $("#setup-next").onclick=()=>{storeTranslator();showSetupStep(2)};
 $("#setup-back").onclick=()=>{if(setupStep===2)return showSetupStep(1);showView(settings.onboarded?"practice":"onboard")};$("#setup-provider").onchange=showSetupFields;$("#setup-save").onclick=saveSetup;$("#setup-skip").onclick=finishOnboarding;
 $("#clear-filters").onclick=()=>{$("#history-search").value="";$("#clear-history-search").hidden=true;$("#history-filter").value="all";settings.historyFilter="all";localStorage.setItem("jp-echo-settings",JSON.stringify(settings));renderHistory()};
 addEventListener("online",renderPracticeNotices);addEventListener("offline",renderPracticeNotices);
-$("#kanji-close").onclick=()=>{loop.stop();$("#kanji-dialog").close()};$("#kanji-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;kanjiOpen=null});$("#kanji-compose").onclick=composeForKanji;$("#kanji-say-go").onclick=sayForKanji;$("#map-learn").onclick=startLearn;$("#kanji-prev").onclick=()=>learnStep(-1);$("#kanji-next").onclick=()=>learnStep(1);$("#kanji-dialog").addEventListener("keydown",event=>{if(!kanjiOpen?.learn||event.target.tagName==="TEXTAREA")return;if(event.key==="ArrowRight")learnStep(1);else if(event.key==="ArrowLeft")learnStep(-1)});$("#kanji-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForKanji()};$("#wanikani-sync").onclick=runWaniKaniSync;$("#wanikani-forget").onclick=async()=>{await forgetWaniKani();$("#wanikani-progress").textContent=t("Forgotten.");renderWaniKaniStatus();if(kanjiOpen)renderKanjiInfo(kanjiOpen.character)};$("#sentence-back").onclick=()=>{detail=null;showView("library")};$("#sentence-play").onclick=playDetail;$("#sentence-edit").onclick=openEditor;$("#sentence-cancel").onclick=closeEditor;$("#sentence-editor").onsubmit=saveEdit;
+$("#kanji-close").onclick=()=>{loop.stop();$("#kanji-dialog").close()};$("#kanji-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;kanjiOpen=null});$("#kanji-compose").onclick=composeForKanji;$("#kanji-say-go").onclick=sayForKanji;$("#map-learn").onclick=startLearn;for(const button of document.querySelectorAll("#map-toggle button"))button.onclick=()=>{settings.mapView=button.dataset.map;localStorage.setItem("jp-echo-settings",JSON.stringify(settings));renderMap()};$("#grammar-tag").onclick=tagUntagged;$("#grammar-close").onclick=()=>{loop.stop();$("#grammar-dialog").close()};$("#grammar-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;grammarOpen=null});$("#grammar-say-go").onclick=sayForGrammar;$("#grammar-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForGrammar()};$("#grammar-compose").onclick=composeForGrammar;$("#kanji-prev").onclick=()=>learnStep(-1);$("#kanji-next").onclick=()=>learnStep(1);$("#kanji-dialog").addEventListener("keydown",event=>{if(!kanjiOpen?.learn||event.target.tagName==="TEXTAREA")return;if(event.key==="ArrowRight")learnStep(1);else if(event.key==="ArrowLeft")learnStep(-1)});$("#kanji-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForKanji()};$("#wanikani-sync").onclick=runWaniKaniSync;$("#wanikani-forget").onclick=async()=>{await forgetWaniKani();$("#wanikani-progress").textContent=t("Forgotten.");renderWaniKaniStatus();if(kanjiOpen)renderKanjiInfo(kanjiOpen.character)};$("#sentence-back").onclick=()=>{detail=null;showView("library")};$("#sentence-play").onclick=playDetail;$("#sentence-edit").onclick=openEditor;$("#sentence-cancel").onclick=closeEditor;$("#sentence-editor").onsubmit=saveEdit;
 $("#sentence-delete").onclick=askDelete;$("#delete-cancel").onclick=()=>$("#delete-dialog").close();$("#delete-confirm").onclick=confirmDelete;$("#delete-dialog").onclick=event=>{if(event.target===$("#delete-dialog"))$("#delete-dialog").close()};
 $("#side-start-review").onclick=startReview;$("#side-export-anki").onclick=()=>exportAnki($("#side-export-anki"));
 wide.addEventListener("change",()=>showView(document.body.dataset.view||"practice"));

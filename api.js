@@ -26,14 +26,41 @@ function reversePrompt(sourceLang,targetLang){
 // both halves.
 function composePrompt(sourceLang,targetLang,required,known){
   const from=languageName(sourceLang),to=languageName(targetLang);
+  const want=typeof required==="string"?`the character ${required}`:`the grammar point ${required.title}${required.hint?" ("+required.hint+")":""}`;
   const shape=hasRegisters(targetLang)
     ? `Return JSON only: {"source":"...","casual":"...","polite":"..."}. "source" is what the sentence means in natural ${from}. "casual" and "polite" are the same sentence in those two registers, each with a reading after every kanji run in this exact notation: 漢字【かんじ】. Do not add readings to hiragana or katakana.`
     : `Return JSON only: {"source":"...","translation":"..."}. "source" is what the sentence means in natural ${from}; "translation" is the ${to}.`;
   // Stated twice and given a reason, because a single polite mention is the
   // instruction models drop first. It is checked afterwards regardless.
-  const must=`The sentence MUST contain the character ${required}. That is the entire point of this request — a sentence without ${required} is useless and will be thrown away. Do not substitute a synonym, a different word, or write it in kana.`;
+  const must=typeof required==="string"
+    ?`The sentence MUST contain the character ${required}. That is the entire point of this request — a sentence without ${required} is useless and will be thrown away. Do not substitute a synonym, a different word, or write it in kana.`
+    :`The sentence MUST use ${want}. That is the entire point of this request — a sentence that does not use it is useless and will be thrown away. Do not substitute a related construction.`;
   const prefer=known?` Where the rest of the sentence is a free choice, prefer these characters, so it does not introduce more than it teaches: ${known}.` : "";
   return `Write one short, natural, everyday ${to} sentence a learner could say out loud. ${must}${prefer} ${shape} No romaji, explanations, alternatives, or markdown.`;
+}
+
+// Which grammar points a sentence uses is not something a regex can tell —
+// 〜ておく, 〜といた and 〜とく are one point with three surfaces — so the
+// model is asked, in batches, against a closed list of ids. It is told to use
+// only those ids; what comes back is filtered to them anyway.
+function tagPrompt(targetLang,points){
+  const to=languageName(targetLang);
+  const list=points.map(p=>p.id+" = "+p.title+(p.hint?" ("+p.hint+")":"")).join("\n");
+  return `You will be given numbered ${to} sentences. For each, list the ids of the grammar points it uses, from this list and no other:\n${list}\n\nReturn JSON only: {"tags":{"<number>":["id","id"],...}}. A sentence that uses none of them gets an empty array. Do not invent ids. No explanations or markdown.`;
+}
+export const TAG_BATCH=30;
+export async function tagGrammar(sentences,points,settings={}){
+  if(!points.length||!sentences.length)return new Map();
+  const pair={targetLang:settings.targetLang||DEFAULT_PAIR.targetLang};
+  const chosen=chosenProvider(settings),known=new Set(points.map(p=>p.id)),out=new Map();
+  for(let i=0;i<sentences.length;i+=TAG_BATCH){
+    const batch=sentences.slice(i,i+TAG_BATCH);
+    const text=batch.map((s,n)=>(n+1)+". "+stripFurigana(s.plainTarget||s.target||"")).join("\n");
+    const raw=await ask(text,tagPrompt(pair.targetLang,points),chosen,settings);
+    const tags=raw?.tags||{};
+    batch.forEach((s,n)=>{const got=tags[String(n+1)];out.set(s.id,[...new Set((Array.isArray(got)?got:[]).filter(id=>known.has(id)))])});
+  }
+  return out;
 }
 
 export const PROVIDER_DEFAULTS={deepseek:"deepseek-chat",google:"gemini-2.5-flash",openai:"gpt-4.1-mini",anthropic:"claude-sonnet-4-5",local:"qwen3:4b"};
@@ -76,7 +103,8 @@ export function carries(card,required){
 // that many kanji is not going to be tripped by whichever the model picks.
 const KNOWN_LIMIT=500;
 
-export async function compose({kanji,known=""},settings={}){
+export async function compose({kanji,grammar,known=""},settings={}){
+  if(grammar)return composeGrammar(grammar,settings);
   if(!kanji)throw new Error("Nothing was asked for.");
   const pair={sourceLang:settings.sourceLang||DEFAULT_PAIR.sourceLang,targetLang:settings.targetLang||DEFAULT_PAIR.targetLang};
   const chosen=chosenProvider(settings);
@@ -93,6 +121,20 @@ export async function compose({kanji,known=""},settings={}){
     text=`${kanji}\n\nYour previous answer was ${JSON.stringify(last)}, which does not contain ${kanji}. Write a different sentence that does.`;
   }
   throw new Error(`The model kept writing sentences without ${kanji}.`);
+}
+
+async function composeGrammar(point,settings){
+  const pair={sourceLang:settings.sourceLang||DEFAULT_PAIR.sourceLang,targetLang:settings.targetLang||DEFAULT_PAIR.targetLang};
+  const chosen=chosenProvider(settings),system=composePrompt(pair.sourceLang,pair.targetLang,point,"");
+  let text=point.title,last=null;
+  for(let attempt=0;attempt<2;attempt++){
+    const card=shapeComposed(await ask(text,system,chosen,settings),pair);
+    const tags=await tagGrammar([{id:"x",plainTarget:stripFurigana(card.casual||card.polite||"")}],[point],settings);
+    if((tags.get("x")||[]).includes(point.id))return {...card,grammar:[point.id]};
+    last=stripFurigana(card.casual||"");
+    text=`${point.title}\n\nYour previous answer was ${JSON.stringify(last)}, which does not use ${point.title}. Write a different sentence that does.`;
+  }
+  throw new Error(`The model kept writing sentences without ${point.title}.`);
 }
 
 export async function translate(english,settings={}){const pair={sourceLang:settings.sourceLang||DEFAULT_PAIR.sourceLang,targetLang:settings.targetLang||DEFAULT_PAIR.targetLang};const reverse=(settings.inputLang||pair.sourceLang)===pair.targetLang;const system=reverse?reversePrompt(pair.sourceLang,pair.targetLang):systemPrompt(pair.sourceLang,pair.targetLang);const keys=settings.providerKeys||{};const provider=settings.provider||["google","deepseek","openai","anthropic"].find(name=>keys[name])||(settings.apiKey?"deepseek":"google"),key=keys[provider]||(provider==="deepseek"?settings.apiKey:"")||"",model=settings.providerModels?.[provider]||PROVIDER_DEFAULTS[provider];if(provider!=="local"&&!key)throw new Error(`Add your ${provider==="google"?"Gemini":provider[0].toUpperCase()+provider.slice(1)} API key in Settings.`);if(provider==="local"&&!settings.localEndpoint)throw new Error("Add your Ollama or LM Studio endpoint in Settings.");try{let raw;if(provider==="google")raw=await gemini(english,key,model,system);else if(provider==="anthropic")raw=await anthropicRequest(english,key,model,system);else raw=await openAICompatible(provider,english,key,model,provider==="local"?settings.localEndpoint:undefined,system);return shape(raw,english,pair,reverse)}catch(error){if(!settings.proxyUrl||!(error instanceof TypeError))throw error;return shape(await proxyRequest(settings.proxyUrl,english,provider,model,key,{...pair,inputLang:settings.inputLang}),english,pair,reverse)}}

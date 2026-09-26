@@ -87,3 +87,62 @@ test("asking for nothing is refused before a request is made", async () => {
   await assert.rejects(() => compose({kanji: ""}, settings), /Nothing was asked for/);
   assert.equal(called, false);
 });
+
+import {tagGrammar, TAG_BATCH} from "../api.js";
+
+const shimau = {id: "te-shimau", title: "〜てしまう", level: "N4", hint: "completely; regret"};
+const nagara = {id: "nagara", title: "〜ながら", level: "N4", hint: "while"};
+
+test("tagging sends a closed list and keeps only ids from it", async () => {
+  const seen = record({tags: {"1": ["te-shimau", "made-up"], "2": []}});
+  const tags = await tagGrammar([{id: "a", plainTarget: "食べてしまった"}, {id: "b", plainTarget: "猫だ"}], [shimau, nagara], settings);
+  assert.deepEqual(tags.get("a"), ["te-shimau"], "the invented id is dropped");
+  assert.deepEqual(tags.get("b"), []);
+  assert.match(seen[0].system, /te-shimau = 〜てしまう \(completely; regret\)/);
+  assert.match(seen[0].system, /from this list and no other/);
+  assert.match(seen[0].user, /^1\. 食べてしまった\n2\. 猫だ$/);
+});
+
+test("tagging batches, so a big library is a few requests, not hundreds", async () => {
+  const many = Array.from({length: TAG_BATCH + 1}, (_, i) => ({id: "s" + i, plainTarget: "文" + i}));
+  const seen = record({tags: {}});
+  const tags = await tagGrammar(many, [shimau], settings);
+  assert.equal(seen.length, 2);
+  assert.equal(tags.size, TAG_BATCH + 1, "every sentence gets an answer, even an empty one");
+});
+
+test("nothing to tag, or nothing to tag against, makes no request", async () => {
+  let called = false;
+  global.fetch = async () => { called = true; return reply({tags: {}}); };
+  assert.equal((await tagGrammar([], [shimau], settings)).size, 0);
+  assert.equal((await tagGrammar([{id: "a", plainTarget: "x"}], [], settings)).size, 0);
+  assert.equal(called, false);
+});
+
+test("composing for a grammar point asks, then checks by asking again", async () => {
+  // request 1: the sentence; request 2: the tag check, which reports the point
+  const seen = record(
+    {source: "I ate it all.", casual: "全部食べてしまった", polite: "全部食べてしまいました"},
+    {tags: {"1": ["te-shimau"]}},
+  );
+  const card = await compose({grammar: shimau}, settings);
+  assert.equal(card.casual, "全部食べてしまった");
+  assert.deepEqual(card.grammar, ["te-shimau"], "the card arrives already tagged");
+  assert.equal(seen.length, 2);
+  assert.match(seen[0].system, /MUST use the grammar point 〜てしまう \(completely; regret\)/);
+  assert.match(seen[1].system, /from this list and no other/);
+});
+
+test("a sentence the model itself does not tag with the point is retried, then refused", async () => {
+  const seen = record(
+    {source: "I ate.", casual: "食べた", polite: "食べました"},
+    {tags: {"1": []}},                                                       // check: not there
+    {source: "I ate it all.", casual: "全部食べてしまった", polite: "全部食べてしまいました"},
+    {tags: {"1": ["te-shimau"]}},                                            // check: there
+  );
+  const card = await compose({grammar: shimau}, settings);
+  assert.equal(card.casual, "全部食べてしまった");
+  assert.equal(seen.length, 4);
+  assert.match(seen[2].user, /does not use 〜てしまう/);
+  assert.match(seen[2].user, /食べた/, "the rejected sentence is quoted back");
+});
