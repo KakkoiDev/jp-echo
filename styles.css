@@ -767,3 +767,10 @@ html.motion-off #review-progress-bar { transition: none; }
 .wk-reading{font-weight:600;border-bottom:1px dotted var(--quiet-edge)}
 .wk-meaning{font-weight:600}
 .wk-ja{font-family:var(--display)}
+
+/* Your own sentence on the sheet. The row is the composer's row. */
+.kanji-say{margin:14px 0 2px}
+.kanji-say .overline{display:block;margin-bottom:6px}
+.kanji-say textarea{min-height:52px}
+#kanji-dialog .dialog-actions{margin-top:6px}
+#kanji-compose{width:100%}
