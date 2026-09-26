@@ -98,3 +98,28 @@ test("workers share the selection, run in parallel, and --limit still holds", as
   const s = await rewrite({select: [..."亜哀挨愛曖悪握圧"], stories: {"亜": good, "哀": good}, ask, workers: 3});
   assert.equal(s.skipped, 2); assert.equal(s.made, 6);
 });
+
+test("faults: forbidden words, markup, jargon, and the kanji's own meaning as the exception", async () => {
+  const {faults, lint} = await import("../tools/rewrite-stories.mjs");
+  assert.deepEqual(faults(good), []);
+  assert.deepEqual(faults({meaning: "Gee, a <radical>horse</radical> radical stands at the station, waiting for the train to come.", reading: good.reading}), ["forbidden: gee", "markup", "says radical"]);
+  assert.deepEqual(faults({meaning: "A god watches over the shrine gate, and that is what this kanji means: a god, a spirit.", reading: good.reading}, {en: ["gods", "mind", "soul"]}), [], "god is 神's own meaning");
+  assert.deepEqual(faults({meaning: "A god watches over the shrine gate, and that is what this kanji means: a god, a spirit.", reading: good.reading}, {en: ["station"]}), ["forbidden: god"]);
+  assert.deepEqual(faults({meaning: "A retainer kneels before his lord, the subject who serves: that is what this kanji means, a retainer.", reading: good.reading}, {en: ["retainer", "subject"]}), [], "a retainer serves a lord, so 臣 may say so");
+  assert.deepEqual(faults(undefined), ["missing"]);
+  assert.deepEqual(lint(["駅", "山"], {"駅": good}), {"山": ["missing"]});
+});
+
+test("a story that leaks markup or says gee is asked for again, and the retry names the rules", async () => {
+  const asked = [];
+  const ask = async text => { asked.push(text); return asked.length === 1 ? {meaning: "Gee, a <radical>horse</radical> stands on the platform of the station, waiting.", reading: good.reading} : good; };
+  const r = await rewrite({select: ["駅"], subjects, stories: {}, ask});
+  assert.equal(r.made, 1);
+  assert.match(asked[1], /no gee, no tags, and call the pieces parts/);
+});
+
+test("神 may say god: the run accepts the story its own meaning needs", async () => {
+  const ask = async () => ({meaning: "The kanji for god shows an altar on the left and a sign from above on the right: a god, a spirit that is shown to people.", reading: "Shin. The altar and the sign are seen and then shown, and shown sounds like しん."});
+  const r = await rewrite({select: ["神"], stories: {}, ask});
+  assert.equal(r.made, 1, "not rejected for a word that is the meaning itself");
+});
