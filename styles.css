@@ -807,7 +807,12 @@ html.motion-off #review-progress-bar { transition: none; }
    wider screen; the wall is long and tapping a cell must not cost your place. */
 .tool-sheet{width:100%;max-width:none;margin:auto auto 0;padding:0 0 calc(26px + env(safe-area-inset-bottom));border:0;border-top:1px solid var(--hairline);border-radius:10px 10px 0 0;background:var(--panel);background-image:repeating-linear-gradient(90deg,var(--texture) 0 1px,transparent 1px 3px);box-shadow:0 -14px 40px rgba(28,26,23,.14)}
 .tool-sheet>:not(.sheet-handle):not(.learn-nav):not(.sheet-head){margin-left:22px;margin-right:22px}
-.sheet-handle{width:38px;height:4px;margin:10px auto 0;border-radius:2px;background:var(--hairline)}
+/* The handle is a grab zone the width of the sheet; the bar is drawn inside it.
+   Dragging it down closes the sheet, as the shape promises. */
+.sheet-handle{display:flex;align-items:center;justify-content:center;height:28px;margin:0;cursor:grab;touch-action:none;user-select:none}
+.sheet-handle::before{content:"";width:38px;height:4px;border-radius:2px;background:var(--hairline)}
+.tool-sheet.is-dragging{transition:none}
+.tool-sheet{transition:transform .2s ease-out}
 .learn-nav{display:flex;align-items:center;gap:10px;margin:10px 22px 0;padding-bottom:12px;border-bottom:1px solid var(--rule)}
 .learn-nav span{flex-grow:1;text-align:center;font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-muted)}
 .learn-nav button{height:36px;min-height:36px;padding:0 12px;background:transparent;border:1px solid var(--hairline);border-radius:3px;font-size:12px;letter-spacing:normal;color:var(--ink-soft)}
