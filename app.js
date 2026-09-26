@@ -370,7 +370,7 @@ async function deleteFromSheet(sentence){
 async function renderWaniKaniStatus(){
   const status=$("#wanikani-status");
   try{const s=await waniKaniStatus();
-    status.textContent=s.synced?t("{n} kanji, synced {date}",{n:s.kanji.toLocaleString(),date:new Date(s.syncedAt).toLocaleDateString()}):t("Not synced");
+    status.textContent=s.synced?t("{n} kanji, synced {date}",{n:s.kanji.toLocaleString(),date:new Date(s.syncedAt).toLocaleDateString()})+(s.stale?" — "+t("the word list has changed; sync again to apply it"):""):t("Not synced");
   }catch{status.textContent=t("Not synced")}
 }
 async function runWaniKaniSync(){
