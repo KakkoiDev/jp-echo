@@ -747,3 +747,23 @@ html.motion-off #review-progress-bar { transition: none; }
    three wrapped lines the shared two-button row left it with. */
 #kanji-dialog .dialog-actions{display:block}
 #kanji-compose{width:100%}
+
+/* What WaniKani knows about a kanji, on the sheet */
+.kanji-meanings{font-family:var(--display);font-size:1.15rem;margin:0 0 .4rem}
+.kanji-readings{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;margin:0 0 .6rem;font-size:.9rem}
+.kanji-readings dt{font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;color:var(--quiet-title);align-self:baseline}
+.kanji-readings dd{margin:0}
+.kanji-mnemonic{margin:0 0 .3rem;font-size:.88rem;line-height:1.55}
+.kanji-mnemonic summary{cursor:pointer;color:var(--ink-muted);font-size:.8rem}
+.kanji-mnemonic p{margin:.4rem 0 .6rem}
+.kanji-list-head{margin:.9rem 0 .2rem}
+.kanji-sentence-text i{display:block;font-style:normal;font-size:.78rem;color:var(--ink-muted);margin-bottom:2px}
+.kanji-delete{flex:0 0 auto;width:34px;height:34px;display:grid;place-items:center;padding:0;border-radius:3px;color:var(--ink-muted)}
+.kanji-delete:hover{color:var(--seal)}
+/* WaniKani's inline markup, as spans, with a colour each so a story reads */
+.wk-kanji{color:var(--seal);font-weight:600}
+.wk-radical{color:var(--indigo);font-weight:600}
+.wk-vocabulary{color:var(--chip-learn-fg);font-weight:600}
+.wk-reading{font-weight:600;border-bottom:1px dotted var(--quiet-edge)}
+.wk-meaning{font-weight:600}
+.wk-ja{font-family:var(--display)}
