@@ -43,6 +43,12 @@ More screens, including dark and desktop, are in [`docs/screenshots`](docs/scree
   environment — official API, one page at a time, scrubbed the same way. That
   directory is gitignored: it is the reference you rewrite from, not something
   this public repository carries. What you write from it is yours.
+- `tools/rewrite-stories.mjs` is the writing. Given the facts — meanings and
+  readings from KANJIDIC2, the parts from the pull — it has the model write an
+  original story per kanji, with WaniKani's shown for structure only (or not
+  at all, with `--fresh`), and no religious reference or swearing by rule.
+  The result is `stories.js`, shipped and shown on the sheet above the
+  reference. Those stories are Echo's.
 - Grammar points come as a table of contents, not content. `tools/bunpro-
   structure.js` runs in your own browser on your own Bunpro index page and
   reads names and levels only — it never opens a grammar point, so it cannot

@@ -73,3 +73,12 @@ test("what is stored is already scrubbed — the raw text never reaches the disk
 test("the word list has a version, so a change to it is a reason to sync again", () => {
   assert.match(SCRUB_VERSION, /^[0-9a-z]+$/);
 });
+
+import {slimRadical} from "../wanikani.js";
+
+test("a kanji keeps the ids of its parts, and a radical keeps its name even with no character", () => {
+  const k = slimKanji({id: 1, data: {characters: "駅", level: 2, meanings: [], readings: [], amalgamation_subject_ids: [], component_subject_ids: [7, 8], meaning_mnemonic: "", reading_mnemonic: ""}});
+  assert.deepEqual(k.components, [7, 8]);
+  const r = slimRadical({id: 8, data: {characters: null, slug: "shaku", level: 1, meanings: [{meaning: "Shaku", accepted_answer: true}]}});
+  assert.deepEqual(r, {id: 8, characters: null, slug: "shaku", level: 1, meanings: ["Shaku"], hidden: false});
+});
