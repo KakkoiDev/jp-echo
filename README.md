@@ -29,6 +29,9 @@ More screens, including dark and desktop, are in [`docs/screenshots`](docs/scree
   nothing about it is stored, scheduled or sent. Only sentences are reviewed.
   The character list and grade bands come from `joyo-kanji` and `kyoiku-kanji`,
   both MIT; `tools/build-kanji-data.mjs` regenerates `kanji-data.js` from them.
+  Readings, meanings and the current school grade for each come from
+  `kanji-readings.js`, derived from KANJIDIC2 (© EDRDG, CC BY-SA 4.0); that
+  licence is that file's, and `tools/build-kanji-readings.mjs` regenerates it.
 - WaniKani meanings, readings, mnemonics and example sentences are optional and
   fetched with your own read-only token, into this browser, into a database of
   their own. Nothing of WaniKani's is bundled or redistributed. The token is

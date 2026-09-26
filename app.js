@@ -7,7 +7,7 @@ import {carries,compose,PROVIDER_DEFAULTS,tagGrammar,translate} from "./api.js";
 import {byLevel as grammarByLevel,coverage as grammarCoverage,hasGrammar,LEVELS as GRAMMAR_LEVELS,POINTS as GRAMMAR_POINTS,summarise as grammarSummarise,untagged as untaggedSentences} from "./grammar.js";
 import {japaneseVoices,recognitionFactory,ShadowLoop} from "./speech.js";
 import {forgetWaniKani,kanjiInfo,mnemonicHtml,syncWaniKani,waniKaniStatus} from "./wanikani.js";
-import {bands as kanjiBands,coverage as kanjiCoverage,learned as kanjiLearned,nextUnmet,summarise as kanjiSummarise,TOTAL as KANJI_TOTAL,unmetCount} from "./kanji.js";
+import {bands as kanjiBands,coverage as kanjiCoverage,facts as kanjiFacts,learned as kanjiLearned,nextUnmet,summarise as kanjiSummarise,TOTAL as KANJI_TOTAL,unmetCount} from "./kanji.js";
 import {downloadAnkiDeck} from "./anki-export.js";
 import {dueSentences,ensureSchedule,isDue,reviewSentence} from "./srs.js";
 import {DEFAULT_TIME,REMINDER_TAG,reminderText,shouldRemind} from "./reminders.js";
@@ -293,10 +293,17 @@ async function renderKanjiInfo(character){
   // a sync that simply does not know this character.
   let record=null,synced=false;
   try{synced=(await waniKaniStatus()).synced;record=synced?await kanjiInfo(character):null}catch{record=null}
+  // Readings and meanings are facts and come regardless; WaniKani adds the
+  // mnemonics and the sentences on top of them.
+  const mnemonics=document.querySelectorAll("#kanji-info details");
   if(!record){
-    none.textContent=!waniKaniToken()?t("Add a WaniKani token in Settings for meanings, readings and mnemonics.")
-      :!synced?t("Sync WaniKani in Settings for meanings, readings and mnemonics."):t("Not on WaniKani.");
+    const known=kanjiFacts(character);
+    if(known){$("#kanji-meanings").textContent=known.en.join(", ");$("#kanji-on").textContent=known.on.join("、")||"—";$("#kanji-kun").textContent=known.kun.join("、")||"—";
+      for(const d of mnemonics)d.hidden=true;info.hidden=false}
+    none.textContent=!waniKaniToken()?t("Add a WaniKani token in Settings for mnemonics and example sentences.")
+      :!synced?t("Sync WaniKani in Settings for mnemonics and example sentences."):t("Not on WaniKani.");
     none.hidden=false;return}
+  for(const d of mnemonics)d.hidden=false;
   $("#kanji-meanings").textContent=record.meanings.join(", ");
   $("#kanji-on").textContent=record.onyomi.join("、")||"—";
   $("#kanji-kun").textContent=record.kunyomi.join("、")||"—";

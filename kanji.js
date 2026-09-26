@@ -5,6 +5,7 @@
 // immediately and there is no second copy of the truth to fall out of step.
 import {stripFurigana} from "./core.js";
 import {JOYO, GRADES} from "./kanji-data.js";
+import {READINGS} from "./kanji-readings.js";
 
 const JOYO_SET = new Set(JOYO);
 
@@ -42,15 +43,27 @@ export function coverage(sentences = []) {
 }
 
 // The bands the wall is drawn in. `level` is the school grade, or null for
-// everything taught later — which, until we can source the 2017 revision's
-// per-grade assignment, also holds the twenty prefecture kanji it promoted.
+// everything taught later. The grade itself is the current one, from
+// KANJIDIC2; the older list only supplies the teaching order within a grade.
+// A kanji the 2017 revision moved — or added, as with the twenty prefecture
+// kanji at grade 4 — joins its current grade at the end, in joyo order.
 export function bands() {
-  const graded = new Set(GRADES.join(""));
-  return [
-    ...GRADES.map((chars, index) => ({key: "grade" + (index + 1), level: index + 1, chars: [...chars]})),
-    {key: "secondary", level: null, chars: [...JOYO].filter(character => !graded.has(character))},
-  ];
+  const placed = new Set();
+  const out = GRADES.map((chars, index) => {
+    const grade = index + 1, list = [];
+    for (const c of chars) if ((READINGS[c]?.grade ?? grade) === grade) { list.push(c); placed.add(c); }
+    return {key: "grade" + grade, level: grade, chars: list};
+  });
+  for (const c of JOYO) {
+    if (placed.has(c)) continue;
+    const grade = READINGS[c]?.grade;
+    if (grade >= 1 && grade <= 6) { out[grade - 1].chars.push(c); placed.add(c); }
+  }
+  out.push({key: "secondary", level: null, chars: [...JOYO].filter(c => !placed.has(c))});
+  return out;
 }
+// What is known about a character without any account at all.
+export const facts = character => READINGS[character] || null;
 
 // 𠮟 (U+20B9F) is joyo and sits outside the BMP, so String.length counts it
 // twice and would have the app claim 2,137 kanji forever. Everything here
