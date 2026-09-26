@@ -35,6 +35,12 @@ More screens, including dark and desktop, are in [`docs/screenshots`](docs/scree
   stored outside the settings object, so it cannot appear in a backup, and the
   mnemonics are passed through a small word list on the way in (`SCRUB` in
   `wanikani.js`) that replaces a few exclamations.
+- Grammar points come as a table of contents, not content. `tools/bunpro-
+  structure.js` runs in your own browser on your own Bunpro index page and
+  reads names and levels only — it never opens a grammar point, so it cannot
+  reach an explanation, an example or audio. `tools/build-grammar-data.mjs`
+  turns that into `grammar-data.js` and refuses any input carrying more than a
+  name, a level and a short gloss. Echo writes its own sentences on top.
 - Reminders are optional, at most one a day, and only when something is due.
   Echo has no server, so nothing is pushed: where the browser supports Periodic
   Background Sync the worker is woken to check, and everywhere else the check
