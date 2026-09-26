@@ -32,6 +32,19 @@ More screens, including dark and desktop, are in [`docs/screenshots`](docs/scree
   Readings, meanings and the current school grade for each come from
   `kanji-readings.js`, derived from KANJIDIC2 (© EDRDG, CC BY-SA 4.0); that
   licence is that file's, and `tools/build-kanji-readings.mjs` regenerates it.
+- Words are a dictionary on the device: the common words of JMdict — the
+  ones it marks as frequent in print — and every word on a JLPT list, about
+  23,000 in all, with readings, senses and the part of speech. Search by
+  kana, romaji, a kanji, or English; every word opens a sheet with your
+  sentences that use it, a place to say one, Echo writing one on request, and
+  a way to remember it, also on request, kept in your notes and every backup.
+  `words-data.js` is derived from JMdict (© EDRDG, CC BY-SA 4.0); that licence
+  is that file's, and `tools/build-words-data.mjs` regenerates it from
+  `data/jmdict/JMdict_e.gz` (download it from EDRDG; the directory is
+  gitignored) and the JLPT lists under `tools/jlpt-vocab` (Jonathan Waller's,
+  via elzup/jlpt-word-list, MIT). Whether a sentence uses a word is read off
+  its written form and, for a verb or adjective, its stem — there is no
+  parser — so the count is honest but not exact.
 - Nothing of WaniKani's is bundled, redistributed, or shown in the app. It is
   a reference you rework from, once, on your own machine:
   `tools/wanikani-pull.mjs` writes your subjects to `data/wanikani/subjects.json`

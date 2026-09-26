@@ -147,3 +147,21 @@ test("a sentence the model itself does not tag with the point is retried, then r
   assert.match(seen[2].user, /does not use 〜てしまう/);
   assert.match(seen[2].user, /食べた/, "the rejected sentence is quoted back");
 });
+
+test("a word is demanded by its written form, and the caller decides whether it is there", async () => {
+  const seen = record({source: "I ate bread.", casual: "パンを食【た】べた。", polite: "パンを食【た】べました。"});
+  const card = await compose({word: {word: "食べる", reading: "たべる", meaning: "to eat"}, check: plain => plain.includes("食べ")}, settings);
+  assert.equal(card.casual, "パンを食【た】べた。");
+  assert.match(seen[0].system, /MUST use the word 食べる（たべる）, meaning to eat, written as 食べる, conjugated/);
+  assert.equal(seen[0].user, "食べる");
+});
+
+test("a sentence the check refuses is asked for again, once", async () => {
+  const seen = record({source: "I bought bread.", casual: "パンを買【か】った。", polite: "パンを買【か】いました。"}, {source: "I ate bread.", casual: "パンを食【た】べた。", polite: "パンを食【た】べました。"});
+  const card = await compose({word: {word: "食べる"}, check: plain => plain.includes("食べ")}, settings);
+  assert.equal(card.source, "I ate bread.");
+  assert.equal(seen.length, 2);
+  assert.match(seen[1].user, /which does not use 食べる/);
+  record({source: "x", casual: "パンを買【か】った。", polite: "パンを買【か】った。"});
+  await assert.rejects(() => compose({word: {word: "食べる"}, check: () => false}, settings), /kept writing sentences without 食べる/);
+});

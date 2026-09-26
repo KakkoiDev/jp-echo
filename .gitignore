@@ -3,3 +3,4 @@ node_modules/
 data/wanikani/
 # Tokens and keys for the tools. Never committed.
 .env
+data/jmdict/

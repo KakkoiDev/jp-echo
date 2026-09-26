@@ -26,7 +26,7 @@ function reversePrompt(sourceLang,targetLang){
 // both halves.
 function composePrompt(sourceLang,targetLang,required,known){
   const from=languageName(sourceLang),to=languageName(targetLang);
-  const want=typeof required==="string"?`the character ${required}`:`the grammar point ${required.title}${required.hint?" ("+required.hint+")":""}`;
+  const want=typeof required==="string"?`the character ${required}`:required.word?`the word ${required.word}${required.reading&&required.reading!==required.word?"（"+required.reading+"）":""}${required.meaning?", meaning "+required.meaning:""}`:`the grammar point ${required.title}${required.hint?" ("+required.hint+")":""}`;
   const shape=hasRegisters(targetLang)
     ? `Return JSON only: {"source":"...","casual":"...","polite":"..."}. "source" is what the sentence means in natural ${from}. "casual" and "polite" are the same sentence in those two registers, each with a reading after every kanji run in this exact notation: 漢字【かんじ】. Do not add readings to hiragana or katakana.`
     : `Return JSON only: {"source":"...","translation":"..."}. "source" is what the sentence means in natural ${from}; "translation" is the ${to}.`;
@@ -34,6 +34,7 @@ function composePrompt(sourceLang,targetLang,required,known){
   // instruction models drop first. It is checked afterwards regardless.
   const must=typeof required==="string"
     ?`The sentence MUST contain the character ${required}. That is the entire point of this request — a sentence without ${required} is useless and will be thrown away. Do not substitute a synonym, a different word, or write it in kana.`
+    :required.word?`The sentence MUST use ${want}, written as ${required.word}, conjugated if it conjugates. That is the entire point of this request — a sentence without it is useless and will be thrown away. Do not substitute a synonym or a related word.`
     :`The sentence MUST use ${want}. That is the entire point of this request — a sentence that does not use it is useless and will be thrown away. Do not substitute a related construction.`;
   const prefer=known?` Where the rest of the sentence is a free choice, prefer these characters, so it does not introduce more than it teaches: ${known}.` : "";
   return `Write one short, natural, everyday ${to} sentence a learner could say out loud. ${must}${prefer} ${shape} No romaji, explanations, alternatives, or markdown.`;
@@ -105,8 +106,9 @@ export function carries(card,required){
 // that many kanji is not going to be tripped by whichever the model picks.
 const KNOWN_LIMIT=500;
 
-export async function compose({kanji,grammar,known=""},settings={}){
+export async function compose({kanji,grammar,word,check=null,known=""},settings={}){
   if(grammar)return composeGrammar(grammar,settings);
+  if(word)return composeWord(word,check,settings);
   if(!kanji)throw new Error("Nothing was asked for.");
   const pair={sourceLang:settings.sourceLang||DEFAULT_PAIR.sourceLang,targetLang:settings.targetLang||DEFAULT_PAIR.targetLang};
   const chosen=chosenProvider(settings);
@@ -125,6 +127,21 @@ export async function compose({kanji,grammar,known=""},settings={}){
   throw new Error(`The model kept writing sentences without ${kanji}.`);
 }
 
+// A word: the caller says whether the sentence carries it, since a verb
+// arrives conjugated and only the dictionary module knows what counts.
+async function composeWord(word,check,settings){
+  const pair={sourceLang:settings.sourceLang||DEFAULT_PAIR.sourceLang,targetLang:settings.targetLang||DEFAULT_PAIR.targetLang};
+  const chosen=chosenProvider(settings),system=composePrompt(pair.sourceLang,pair.targetLang,word,"");
+  let text=word.word,last=null;
+  for(let attempt=0;attempt<2;attempt++){
+    const card=shapeComposed(await ask(text,system,chosen,settings),pair);
+    const plain=stripFurigana(card.casual||"")+"\n"+stripFurigana(card.polite||"");
+    if(check?check(plain):plain.includes(word.word))return card;
+    last=stripFurigana(card.casual||"");
+    text=`${word.word}\n\nYour previous answer was ${JSON.stringify(last)}, which does not use ${word.word}. Write a different sentence that does.`;
+  }
+  throw new Error(`The model kept writing sentences without ${word.word}.`);
+}
 async function composeGrammar(point,settings){
   const pair={sourceLang:settings.sourceLang||DEFAULT_PAIR.sourceLang,targetLang:settings.targetLang||DEFAULT_PAIR.targetLang};
   const chosen=chosenProvider(settings),system=composePrompt(pair.sourceLang,pair.targetLang,point,"");
@@ -163,6 +180,24 @@ export async function writeNotes(point,settings={}){
     catch(error){last=error;if(error.message!=="rules")throw error}
   }
   throw new Error("The model could not keep to the rules for "+point.title+".");
+}
+// Echo's note on a word — a way to remember it — written on demand from the
+// word, its reading and its meaning, under the same rules as the rest.
+export function shapeWordNote(raw){
+  const remember=String(raw?.remember||raw?.text||"").trim();
+  if(!remember)throw new Error("The model did not write the note.");
+  if(NOTE_FORBIDDEN.test(remember))throw new Error("rules");
+  return {remember};
+}
+export async function writeWordNote(word,settings={}){
+  const chosen=chosenProvider(settings);
+  const system=`You write Echo's note on a Japanese word: a way to remember it. You are given the word, its reading, its meaning and what kind of word it is; write from those and your own knowledge of Japanese, not from any textbook or website. Return JSON only: {"remember":"..."}. A few sentences that make the word stick: what its parts or its kanji suggest if that helps, what the sound brings to mind, one tiny example inline. ${NOTE_RULES}`;
+  const text=`Word: ${word.word}\nReading: ${word.reading||"—"}\nMeaning: ${word.meaning||"—"}\nKind: ${word.kind||"—"}`;
+  for(let attempt=0;attempt<2;attempt++){
+    try{return shapeWordNote(await ask(attempt?text+"\n\nYour previous answer broke a rule. Write it again: no religious reference, no swearing, no gee, no tags.":text,system,chosen,settings))}
+    catch(error){if(error.message!=="rules")throw error}
+  }
+  throw new Error("The model could not keep to the rules for "+word.word+".");
 }
 // One note, rewritten to an instruction. `about` names what the note is on
 // (a point's title, or a kanji with its meaning); `kind` names the note.

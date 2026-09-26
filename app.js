@@ -3,12 +3,13 @@ import {earliestPair,flipSentence,isReversed,pairLooksSwapped,repairPair} from "
 import {DEFAULT_PAIR,LANGUAGES,createSentence,exportBackup,forAnki,hasFurigana,hasRegisters,languageName,mergeSentences,normalizeFurigana,rubyHtml,SCHEMA_VERSION,stripFurigana} from "./core.js";
 import {isExactMatch,markAttempt,markTarget} from "./diff.js";
 import {deleteSentence,getSentence,listSentences,migrateStore,replaceAll,saveSentence} from "./db.js";
-import {adjustNote,carries,compose,PROVIDER_DEFAULTS,tagGrammar,translate,writeNotes} from "./api.js";
+import {adjustNote,carries,compose,PROVIDER_DEFAULTS,tagGrammar,translate,writeNotes,writeWordNote} from "./api.js";
 import {byLevel as grammarByLevel,cleanTags as grammarTags,coverage as grammarCoverage,hasGrammar,isTagged,learned as grammarLearned,LEVELS as GRAMMAR_LEVELS,point as grammarPoint,POINTS as GRAMMAR_POINTS,summarise as grammarSummarise,untagged as untaggedSentences} from "./grammar.js";
 import {japaneseVoices,recognitionFactory,ShadowLoop} from "./speech.js";
 import {STORIES} from "./stories.js";
 import {coverage as kanjiCoverage,facts as kanjiFacts,jlptBands as kanjiBands,learned as kanjiLearned,LEVEL_LABELS,levelOf,nextUnmet,sentenceKanji,TOTAL as KANJI_TOTAL} from "./kanji.js";
-import {searchGrammar,searchKanji} from "./lookup.js";
+import {searchGrammar,searchKanji,searchWords} from "./lookup.js";
+import {bands as wordBands,carries as carriesWord,coverage as wordCoverage,kindOf,learned as wordLearned,levelOf as wordLevel,marks as wordMarks,sentenceWords,TOTAL as WORD_TOTAL,word as wordById} from "./words.js";
 import {deleteNote,forBackup,getNote,listNotes,makeNote,mergeNotes,noteKey,putNote,replaceNotes} from "./notes.js";
 import {downloadAnkiDeck} from "./anki-export.js";
 import {dueSentences,ensureSchedule,isDue,reviewSentence} from "./srs.js";
@@ -23,9 +24,9 @@ const pairWasRepaired=repairPair(settings);
 if(pairWasRepaired||settings.basePair===undefined)localStorage.setItem("jp-echo-settings",JSON.stringify(settings));
 const PLAY_ICON="M2 1.4 12 8 2 14.6V1.4Z",PAUSE_ICON="M2.5 1.5h3v13h-3zM7.5 1.5h3v13h-3z";
 let current=null,detail=null,kanjiPlaying=null,translationFailure=null,voiceFailed=false,dictationReady=false,echoesAtCardStart=0,voices=[],installPrompt=null,reviewQueue=[],reviewIndex=0,reviewRevealed=false,reviewRecognition=null,reviewListening=false;
-const loop=new ShadowLoop({onEcho:async()=>{const sheet=($("#kanji-dialog").open||$("#grammar-dialog").open)&&kanjiPlaying,reviewing=!$("#review-view").hidden,viewingDetail=!$("#sentence-view").hidden,target=sheet?kanjiPlaying:reviewing?reviewQueue[reviewIndex]:viewingDetail?detail:current;if(!target||target.transient)return;target.echoCount=(Number(target.echoCount)||0)+1;target.updatedAt=new Date().toISOString();await saveSentence(target);if(reviewing){reviewQueue[reviewIndex]=target;tickCount($("#review-echo-count"),target.echoCount)}if(viewingDetail)tickCount($("#stat-echoes"),target.echoCount);if(current?.id===target.id){current=target;renderCount()}},onState:state=>{const label=({speaking:"Playing — say it with the voice",imitate:"Your turn — echo it",paused:"Paused",stopped:"Ready",error:"That voice could not play"})[state]||state,playing=state!=="stopped"&&state!=="error",text=state==="paused"?"Play":playing?"Pause":"Play";$("#review-loop-state").textContent=label;$("#sentence-loop-state").textContent=label;const active=playing&&state!=="paused";for(const echo of document.querySelectorAll(".arcs:not(.small)>.echo"))echo.classList.toggle("is-playing",active);$("#practice").classList.toggle("playing",active);$("#review-panel").classList.toggle("playing",active);$("#loop-state").textContent=label;$("#play-pause").textContent=text;$("#play-pause").setAttribute("aria-pressed",String(playing));$("#review-audio").textContent=state==="paused"||!playing?"Play the loop":"Pause the loop";$("#review-audio").setAttribute("aria-pressed",String(playing));
+const loop=new ShadowLoop({onEcho:async()=>{const sheet=($("#kanji-dialog").open||$("#grammar-dialog").open||$("#word-dialog").open)&&kanjiPlaying,reviewing=!$("#review-view").hidden,viewingDetail=!$("#sentence-view").hidden,target=sheet?kanjiPlaying:reviewing?reviewQueue[reviewIndex]:viewingDetail?detail:current;if(!target||target.transient)return;target.echoCount=(Number(target.echoCount)||0)+1;target.updatedAt=new Date().toISOString();await saveSentence(target);if(reviewing){reviewQueue[reviewIndex]=target;tickCount($("#review-echo-count"),target.echoCount)}if(viewingDetail)tickCount($("#stat-echoes"),target.echoCount);if(current?.id===target.id){current=target;renderCount()}},onState:state=>{const label=({speaking:"Playing — say it with the voice",imitate:"Your turn — echo it",paused:"Paused",stopped:"Ready",error:"That voice could not play"})[state]||state,playing=state!=="stopped"&&state!=="error",text=state==="paused"?"Play":playing?"Pause":"Play";$("#review-loop-state").textContent=label;$("#sentence-loop-state").textContent=label;const active=playing&&state!=="paused";for(const echo of document.querySelectorAll(".arcs:not(.small)>.echo"))echo.classList.toggle("is-playing",active);$("#practice").classList.toggle("playing",active);$("#review-panel").classList.toggle("playing",active);$("#loop-state").textContent=label;$("#play-pause").textContent=text;$("#play-pause").setAttribute("aria-pressed",String(playing));$("#review-audio").textContent=state==="paused"||!playing?"Play the loop":"Pause the loop";$("#review-audio").setAttribute("aria-pressed",String(playing));
   $("#sentence-play").setAttribute("aria-pressed",String(playing));const showPlay=state==="paused"||!playing;$("#sentence-play").lastChild.textContent=showPlay?"Play the loop":"Pause the loop";$("#sentence-play").querySelector("path").setAttribute("d",showPlay?PLAY_ICON:PAUSE_ICON);$("#sentence-view").classList.toggle("playing",active);
-  for(const [dialog,state] of [["#kanji-dialog","#kanji-loop-state"],["#grammar-dialog","#grammar-loop-state"]])if($(dialog).open){$(state).textContent=playing?label:"";
+  for(const [dialog,state] of [["#kanji-dialog","#kanji-loop-state"],["#grammar-dialog","#grammar-loop-state"],["#word-dialog","#word-loop-state"]])if($(dialog).open){$(state).textContent=playing?label:"";
     // The row's button shows what a press will do: pause while it plays, play
     // while it is paused or another row has the loop.
     for(const row of document.querySelectorAll(dialog+" .kanji-sentences li")){const on=active&&row.dataset.id===kanjiPlaying?.id;row.classList.toggle("is-playing",on);
@@ -225,7 +226,7 @@ function showView(name){if(name==="map"&&targetLang()!=="ja")name="library";if(n
   for(const tab of document.querySelectorAll(".tab[data-view]")){const on=tab.dataset.view===name||(name==="session"&&tab.dataset.view==="review")||((name==="sentence"||name==="map")&&tab.dataset.view==="library");tab.classList.toggle("current",on);tab.setAttribute("aria-current",on?"page":"false")}
   document.body.dataset.view=name;scrollTo(0,0);renderSidePanel();
   if(name==="library"||(name==="sentence"&&isWide()))renderHistory();else if(name==="map")renderMap();else if(name==="review")renderReviewHome();else if(name==="practice")renderPracticeNotices();else if(name==="setup")resetSetupForm()}
-// The study tool: the wall of joyo kanji and the list of grammar points,
+// The study tool: the wall of joyo kanji, the dictionary and the list of grammar points,
 // read off your library every time the screen opens. Coverage is never
 // stored, so a sentence added or deleted moves the wall at once, and nothing
 // here is scheduled or graded.
@@ -235,7 +236,7 @@ const CHEVRON='<svg width="14" height="9" viewBox="0 0 14 9" fill="none" aria-hi
 const TICK='<svg width="12" height="10" viewBox="0 0 12 10" fill="none" aria-hidden="true"><path d="m1.5 5 3 3 6-6.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const RIGHT='<svg width="8" height="13" viewBox="0 0 8 13" fill="none" aria-hidden="true"><path d="m1.5 1.5 5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const STATE_LABELS={learned:"learned",met:"in a sentence",unmet:"not met yet",used:"used",unused:"not used yet"};
-const toolHalf=()=>hasGrammar()&&settings.mapView==="grammar"?"grammar":"kanji";
+const toolHalf=()=>settings.mapView==="words"?"words":hasGrammar()&&settings.mapView==="grammar"?"grammar":"kanji";
 const sentencesPhrase=n=>n===1?t("1 sentence"):t("{n} sentences",{n:n.toLocaleString()});
 const inYours=n=>n===1?t("in 1 of your sentences"):t("in {n} of your sentences",{n:n.toLocaleString()});
 function bar(learnedN,metN,total){const wrap=el("span","bar");const a=el("span","bar-learned"),b=el("span","bar-met");
@@ -244,15 +245,17 @@ function legend(rows){const list=el("ul","legend");for(const [cls,label,n] of ro
 async function renderMap(){
   const sentences=await listSentences();
   $("#map-from").textContent=sentences.length===1?t("From your 1 sentence"):t("From your {n} sentences",{n:sentences.length.toLocaleString()});
-  const half=toolHalf();$("#map-toggle").hidden=!hasGrammar();
+  const half=toolHalf();$("#map-tab-grammar").hidden=!hasGrammar();
   for(const button of document.querySelectorAll("#map-toggle [role=tab]")){const on=button.dataset.map===half;button.setAttribute("aria-selected",String(on));button.tabIndex=on?0:-1}
-  $("#map-search").placeholder=half==="kanji"?t("Kanji, reading, or meaning"):t("Point, particle, or meaning");
-  $("#map-search-hint").textContent=half==="kanji"?t("Paste one you saw in the wild, handwrite it with your keyboard’s Japanese input, or type がく, gaku or study."):t("Type てしまう, te shimau, or what it does — regret, completion.");
+  $("#map-search").placeholder=half==="kanji"?t("Kanji, reading, or meaning"):half==="words"?t("Word, reading, or meaning"):t("Point, particle, or meaning");
+  $("#map-search-hint").textContent=half==="kanji"?t("Paste one you saw in the wild, handwrite it with your keyboard’s Japanese input, or type がく, gaku or study."):half==="words"?t("Type ねこ, neko or cat, or paste 猫. The dictionary is on the device, so this works with no connection."):t("Type てしまう, te shimau, or what it does — regret, completion.");
+  $("#map-results-order").textContent=half==="words"?t("Best match first"):t("Band order");
   const query=$("#map-search").value.trim();$("#map-search-clear").hidden=!query;
-  $("#map-results").hidden=!query;$("#map-kanji").hidden=!!query||half!=="kanji";$("#map-grammar").hidden=!!query||half!=="grammar";
+  $("#map-results").hidden=!query;$("#map-kanji").hidden=!!query||half!=="kanji";$("#map-words").hidden=!!query||half!=="words";$("#map-grammar").hidden=!!query||half!=="grammar";
   if(query)return renderLookup(query,sentences);
   $("#map-results-list").replaceChildren();$("#map-not-joyo").hidden=true;
   if(half==="grammar")return renderGrammar(sentences);
+  if(half==="words")return renderWords(sentences);
   renderKanjiWall(sentences);
 }
 function renderKanjiWall(sentences){
@@ -323,6 +326,16 @@ function renderLookup(query,sentences){
     if(r.notJoyo.length){const c=r.notJoyo[0];$("#map-not-joyo").hidden=false;$("#map-not-joyo-char").textContent=c;
       $("#map-not-joyo-copy").textContent=t("{kanji} is not one of the jōyō {n}, so it has no cell and no band. Plenty of real Japanese is like that — names, 綺麗, a shop sign.",{kanji:c,n:KANJI_TOTAL.toLocaleString()});
       const go=$("#map-not-joyo-go");go.textContent=t("Say or write your own with {kanji}",{kanji:c});go.onclick=()=>{showView("practice");$("#english-input").value=c;$("#english-input").focus()}}
+  }else if(toolHalf()==="words"){
+    const r=searchWords(query),cover=wordCoverage(sentences),known=wordLearned(sentences),n=r.total.toLocaleString();
+    $("#map-results-title").textContent=(r.how==="read"?t("{n} words read {key}",{n,key:r.key}):r.how==="mean"?t("{n} words meaning {key}",{n,key:r.key}):t("{n} words with {key}",{n,key:r.key}))+(r.total>r.words.length?" · "+t("first {n}",{n:r.words.length}):"");
+    for(const w of r.words){const li=el("li"),row=el("button","lookup-row");row.type="button";
+      const count=(cover.get(w.id)||[]).length,state=known.has(w.id)?"learned":count?"met":"unmet";
+      const sw=el("span","swatch "+(state==="learned"?"learned":state==="met"?"met":""));if(state==="learned")sw.innerHTML=TICK;
+      const text=el("span","lookup-text"),title=el("b",null,w.w+(w.r!==w.w?"　"+w.r:""));title.lang="ja";
+      text.append(title,el("span",null,w.en[0]||""),el("span",null,[wordLevel(w)==="+"?null:wordLevel(w),kindOf(w),t(STATE_LABELS[state]),count?inYours(count):null].filter(Boolean).join(" · ")));
+      row.append(sw,text);row.insertAdjacentHTML("beforeend",RIGHT);row.onclick=()=>openWord(w,cover);li.append(row);list.append(li)}
+    if(!r.words.length)list.append(el("li","hint",t("Nothing in the dictionary matches that. It carries the common words and every JLPT list, not every word there is — say the sentence anyway and Echo translates it.")));
   }else{
     const r=searchGrammar(query),cover=grammarCoverage(sentences),known=grammarLearned(sentences),n=r.points.length;
     $("#map-results-title").textContent=r.how==="named"?t("{n} points named {key}",{n,key:r.key}):t("{n} points about {key}",{n,key:r.key});
@@ -761,6 +774,170 @@ async function removeFromGrammarSheet(sentence){
   await openGrammar(grammarOpen.point,grammarCoverage(await listSentences()),{learn:grammarOpen.learn});
   $("#grammar-status").textContent=t("Deleted.");renderMap();
 }
+// The Words half: the dictionary's common words and the JLPT lists, read
+// off your library like the kanji wall, with one sheet per word. A word is
+// met when a sentence of yours uses it — conjugated forms count, found by
+// their stem — and learned when that sentence reaches review. Echo writes a
+// sentence with it, or a way to remember it, only when asked.
+let wordOpen=null,wordLearnAt=null;const wordMore=new Map();
+function renderWords(sentences){
+  const cover=wordCoverage(sentences),known=wordLearned(sentences),met=cover.size,learnedN=known.size;
+  const card=$("#words-summary");card.replaceChildren();
+  card.append(el("span","overline",t("{n} words, N5 through the long tail",{n:WORD_TOTAL.toLocaleString()})));
+  const line=el("p","summary-line");line.append(el("strong",null,learnedN.toLocaleString()),el("span",null,t("learned, {met} met",{met:met.toLocaleString()})));
+  card.append(line,bar(learnedN,met,WORD_TOTAL),legend([["learned",t("Learned"),learnedN],["met",t("In a sentence"),met-learnedN],["",t("Not met yet"),WORD_TOTAL-met]]));
+  const copy=el("p","copy");
+  if(sentences.length){copy.append(t("A word is ")+"",el("em",null,t("met")),t(" once one of your sentences uses it — 食べた counts for 食べる — and "),el("em",null,t("learned")),t(" once that sentence reaches review. Echo reads words off their written form, with no parser behind it, so a short word in kana can be miscounted now and then. The wall is read off "));
+    const link=el("button",null,sentences.length===1?t("your 1 sentence"):t("your {n} sentences",{n:sentences.length.toLocaleString()}));link.type="button";link.onclick=()=>showView("library");copy.append(link,t(", and nothing you do here changes them."))}
+  else copy.textContent=t("Add a sentence and the words it uses will light up here. Look one up above, or practise a band and Echo opens each word in turn.");
+  card.append(copy);
+  const host=$("#word-bands");host.replaceChildren();
+  for(const band of wordBands())host.append(renderWordBand(band,cover,known));
+}
+function wordRow(w,cover,known,onOpen){
+  const count=(cover.get(w.id)||[]).length,state=known.has(w.id)?"learned":count?"met":"unmet";
+  const row=el("button","point-row"+(state==="unmet"?" unused":""));row.type="button";row.dataset.word=w.id;
+  const sw=el("span","swatch "+(state==="learned"?"learned":state==="met"?"met":""));if(state==="learned")sw.innerHTML=TICK;
+  const title=el("b",null,w.w);title.lang="ja";row.append(sw,title);
+  if(w.r!==w.w){const reading=el("span","reading",w.r);reading.lang="ja";row.append(reading)}
+  row.append(el("span","gloss",w.en[0]||""));if(count)row.append(el("i",null,sentencesPhrase(count)));
+  row.setAttribute("aria-label",w.w+(w.r!==w.w?"（"+w.r+"）":"")+" — "+t(STATE_LABELS[state])+(count?", "+inYours(count):""));
+  row.onclick=onOpen;return row}
+function renderWordBand(band,cover,known){
+  const section=el("section","band");section.dataset.level=band.level;
+  const total=band.words.length,metN=band.words.filter(w=>cover.has(w.id)).length,learnedN=band.words.filter(w=>known.has(w.id)).length,unmet=total-metN;
+  section.append(bandHead(band,learnedN,metN,total,unmet===1?t("1 to meet"):t("{n} to meet",{n:unmet.toLocaleString()})));
+  if(tool.open!==band.key)return section;
+  section.classList.add("open");section.setAttribute("aria-busy","");
+  const body=el("div","band-body");body.id="band-"+band.key;
+  const chips=el("div","chips");
+  const sets={all:band.words,unmet:band.words.filter(w=>!cover.has(w.id)),met:band.words.filter(w=>cover.has(w.id)&&!known.has(w.id)),learned:band.words.filter(w=>known.has(w.id))};
+  for(const [key,label] of [["all",t("All")],["unmet",t("To meet")],["met",t("In a sentence")],["learned",t("Learned")]]){
+    const chip=el("button","hit",label+" "+sets[key].length.toLocaleString());chip.type="button";chip.setAttribute("aria-pressed",String(tool.chip===key));
+    chip.onclick=()=>{tool.chip=key;renderMap()};chips.append(chip)}
+  body.append(chips);
+  const shown=sets[tool.chip]||sets.all,limit=Math.min(shown.length,wordMore.get(band.key+tool.chip)||20);
+  if(!shown.length)body.append(el("p","hint",t("Nothing in this band matches that yet.")));
+  for(let i=0;i<limit;i+=20){
+    body.append(chunkHead(i+1,Math.min(i+20,limit),i===0&&tool.chip==="all"));
+    const rows=el("div","point-rows");for(const w of shown.slice(i,Math.min(i+20,limit)))rows.append(wordRow(w,cover,known,()=>openWord(w,cover)));body.append(rows)}
+  // A band can hold thousands, so the list grows a hundred at a time; the
+  // search above is the way to one word in particular.
+  if(limit<shown.length){const rest=shown.length-limit,step=Math.min(rest,100);const more=el("button","show-more",rest<=step?t("Show the other {n} words",{n:rest.toLocaleString()}):t("Show {n} more of the {rest} words",{n:step.toLocaleString(),rest:rest.toLocaleString()}));more.type="button";more.onclick=()=>{wordMore.set(band.key+tool.chip,limit+step);renderMap()};body.append(more)}
+  const foot=el("div","band-foot");
+  if(unmet){const go=el("button","outlined",unmet===1?t("Practise the 1 you haven’t met"):t("Practise the {n} you haven’t met",{n:unmet.toLocaleString()}));go.type="button";go.onclick=()=>startWordLearn(band);foot.append(go,el("p","hint",t("Opens each one in turn, the most common first. Say your own sentence with it, or let Echo write one — either way it lands in your library like any other.")))}
+  else foot.append(el("p","hint",t("You have met every word in this band.")));
+  body.append(foot);section.append(body);return section}
+function renderWordNav(cover){
+  const nav=$("#word-learn-nav"),learn=wordOpen?.learn;nav.hidden=!learn;if(nav.hidden)return;
+  const left=learn.order.filter(id=>!cover.has(id)).length;
+  $("#word-learn-count").textContent=learn.level+" · "+(left===1?t("1 left to meet"):t("{n} left to meet",{n:left.toLocaleString()}));
+  $("#word-prev").disabled=!nextUnmet(cover,wordOpen.word.id,-1,{order:learn.order});
+  $("#word-next").disabled=!nextUnmet(cover,wordOpen.word.id,1,{order:learn.order});
+}
+async function startWordLearn(band){
+  const cover=wordCoverage(await listSentences()),order=band.words.map(w=>w.id);
+  const id=nextUnmet(cover,order.includes(wordLearnAt)?wordLearnAt:null,1,{inclusive:true,order})||nextUnmet(cover,null,1,{order});
+  if(!id){toast(t("You have met every word in this band."),4000);return}
+  wordLearnAt=id;await openWord(wordById(id),cover,{learn:{level:band.level,order}});
+}
+async function wordStep(direction){
+  if(!wordOpen?.learn)return;
+  const cover=wordCoverage(await listSentences());
+  const id=nextUnmet(cover,wordOpen.word.id,direction,{order:wordOpen.learn.order});if(!id)return;
+  wordLearnAt=id;if(loop.running)loop.stop();$("#word-say").value="";
+  await openWord(wordById(id),cover,{learn:wordOpen.learn});$("#word-dialog").scrollTop=0;
+}
+async function openWord(w,cover,{learn=null}={}){
+  wordOpen={word:w,learn};
+  const all=await listSentences(),known=wordLearned(all),ids=cover.get(w.id)||[],state=known.has(w.id)?"learned":ids.length?"met":"unmet";
+  renderWordNav(cover);
+  $("#word-level").textContent=wordLevel(w)==="+"?"":wordLevel(w);
+  const chip=$("#word-state");chip.textContent=t(STATE_LABELS[state]);chip.dataset.state=state;
+  $("#word-kind").textContent=kindOf(w);
+  $("#word-title").textContent=w.w;$("#word-reading").textContent=w.r!==w.w?w.r:"";
+  $("#word-also").textContent=w.k?t("Also written {kanji}",{kanji:w.k}):"";$("#word-also").hidden=!w.k;
+  $("#word-senses").replaceChildren(...w.en.map(sense=>el("li",null,sense)));
+  $("#word-meta").textContent=ids.length
+    ?capitalise(inYours(ids.length))+" · "+(state==="learned"?t("learned, since one of them reached review"):t("not learned yet — none of them has reached review"))
+    :t("Not in any of your sentences yet");
+  $("#word-say-label").textContent=t("Say a sentence using {word}",{word:w.w});
+  $("#word-say-hint").textContent=t("Echo translates it, checks the Japanese really uses {word} — conjugated is fine — and keeps it. If it doesn’t, you get it back to try again.",{word:w.w});
+  $("#word-say-go").disabled=!hasTranslator();$("#word-say").disabled=!hasTranslator();$("#word-mic").disabled=!hasTranslator()||!dictationReady;
+  $("#word-say-status").textContent="";$("#word-status").textContent=hasTranslator()?"":t("Add a translator and this starts working.");$("#word-loop-state").textContent="";
+  $("#word-compose").textContent=t("Or let Echo write one with {word}",{word:w.w});$("#word-compose").disabled=!hasTranslator();
+  const byId=new Map(all.map(s=>[s.id,s])),mine=ids.map(id=>byId.get(id)).filter(Boolean);
+  renderSheetSentences($("#word-sentences"),mine,{deletable:true,onDelete:deleteFromWordSheet,mark:wordMarks(w).join("・")});
+  $("#word-mine-head").hidden=!mine.length;
+  if(!$("#word-dialog").open)$("#word-dialog").showModal();
+  await renderWordNote(w);
+}
+// Echo's way to remember a word is written when you ask, not when the sheet
+// opens: one request, on your key, kept on the device and in every backup.
+async function renderWordNote(w){
+  const block=$("#word-note"),ask=$("#word-note-ask"),hint=$("#word-note-hint");$("#word-note-status").textContent="";
+  block.hidden=true;block.querySelector(".adjust-panel").hidden=true;
+  let note=null;try{note=await getNote(noteKey("word",w.id,"remember"))}catch{note=null}
+  ask.hidden=!!note;hint.hidden=!!note;ask.disabled=!hasTranslator();
+  hint.textContent=hasTranslator()?t("One request on your key. Kept on this device and in every backup, and yours to adjust."):t("Add a translator and Echo can write one.");
+  if(note)showWordNote(w,note);
+}
+function showWordNote(w,note){
+  const block=$("#word-note");block.hidden=false;block.querySelector(".adjust-link").disabled=!hasTranslator();
+  noteBlock(block,{about:w.w+(w.r!==w.w?"（"+w.r+"）":"")+" ("+(w.en[0]||"")+")",kind:t("A way to remember it"),note,
+    onSave:async(text,by)=>{const next=makeNote({kind:"word",id:w.id,part:"remember",text,echo:note.echo??note.text,by});await putNote(next);note=next;return next},
+    onReset:async()=>{const next=makeNote({kind:"word",id:w.id,part:"remember",text:note.echo??note.text});await putNote(next);note=next;return next},
+    echoLine:t("Written by Echo when you asked, on your own key, and kept on this device and in every backup. Adjust it if it does not stick."),
+    yoursLine:t("Your version. Reset brings Echo’s back.")});
+}
+async function askWordNote(){
+  const target=wordOpen;if(!target)return;const w=target.word,ask=$("#word-note-ask"),status=$("#word-note-status");
+  ask.disabled=true;status.textContent=t("Writing Echo’s note on {word}…",{word:w.w});
+  try{
+    const made=await writeWordNote({word:w.w,reading:w.r,meaning:w.en.join(" / "),kind:kindOf(w)},{...settings,targetLang:targetLang()});
+    if(wordOpen?.word.id!==w.id)return;
+    const note=makeNote({kind:"word",id:w.id,part:"remember",text:made.remember});await putNote(note);
+    status.textContent="";ask.hidden=true;$("#word-note-hint").hidden=true;showWordNote(w,note);
+  }catch(error){status.textContent=sheetError(error);ask.disabled=!hasTranslator()}
+}
+const plainOf=card=>stripFurigana(card.casual||"")+"\n"+stripFurigana(card.polite||"");
+async function sayForWord(){
+  const target=wordOpen;if(!target)return;const w=target.word;
+  const field=$("#word-say"),text=field.value.trim(),status=$("#word-say-status"),button=$("#word-say-go");
+  if(!text){status.textContent=t("Say or type a sentence first.");field.focus();return}
+  button.disabled=true;status.textContent=t("Translating…");
+  try{
+    const card=await translate(text,{...settings,inputLang,sourceLang:sourceLang(),targetLang:targetLang()});
+    if(!carriesWord(plainOf(card),w)){status.textContent=t("That sentence does not use {word} — try one that does.",{word:w.w});field.focus();return}
+    await saveWordSentence(card,w);field.value="";status.textContent=t("Saved to your library.");
+  }catch(error){status.textContent=sheetError(error)}
+  finally{button.disabled=!hasTranslator()}
+}
+async function composeForWord(){
+  const target=wordOpen;if(!target)return;const w=target.word;
+  const button=$("#word-compose"),previous=button.textContent;button.disabled=true;button.textContent=t("Writing…");$("#word-status").textContent="";
+  try{
+    const card=await compose({word:{word:w.w,reading:w.r,meaning:w.en[0]||""},check:plain=>carriesWord(plain,w)},{...settings,sourceLang:sourceLang(),targetLang:targetLang()});
+    await saveWordSentence(card,w);$("#word-status").textContent=t("Saved to your library.");
+  }catch(error){$("#word-status").textContent=sheetError(error)}
+  finally{button.disabled=!hasTranslator();button.textContent=previous}
+}
+async function saveWordSentence(card,w){
+  const made=ensureSchedule(createSentence(card.source,card,new Date(),undefined,{sourceLang:sourceLang(),targetLang:targetLang()}));
+  made.translationProvider=defaultProvider();await saveSentence(made);autoTag(made);refreshDueBadge();
+  await openWord(w,wordCoverage(await listSentences()),{learn:wordOpen?.learn||null});renderMap();
+}
+const deleteFromWordSheet=sentence=>askDelete(sentence,removeFromWordSheet);
+async function removeFromWordSheet(sentence){
+  if(!wordOpen)return;
+  if(loop.running&&kanjiPlaying?.id===sentence.id)loop.stop();
+  await deleteSentence(sentence.id);await restoreExample(sentence);
+  if(current?.id===sentence.id){current=null;renderSentence()}
+  if(detail?.id===sentence.id)detail=null;
+  refreshDueBadge();
+  await openWord(wordOpen.word,wordCoverage(await listSentences()),{learn:wordOpen.learn});
+  $("#word-status").textContent=t("Deleted.");renderMap();
+}
 function sheetError(error){
   const provider=defaultProvider(),name=PROVIDER_NAMES[provider]||provider;
   const refused=/\b(401|403|402|key|credit|quota)\b/i.test(error.message||""),offline=error instanceof TypeError;
@@ -812,9 +989,9 @@ const CARD_STATES={due:"Due now",new:"New",learning:"Learning",review:"Review"};
 const ORDER_LABELS={"created-desc":"Newest first","created-asc":"Oldest first","echoes-desc":"Most echoes","echoes-asc":"Fewest echoes","due-desc":"Furthest away","due-asc":"Due soonest","english-desc":"English Z–A","english-asc":"English A–Z","japanese-desc":"Japanese Z–A","japanese-asc":"Japanese A–Z"};
 function cardState(item,now=Date.now()){const state=item.srs?.state??0;if(!item.srs?.due||Date.parse(item.srs.due)<=now)return "due";if(state===0)return "new";if(state===1||state===3)return "learning";return "review"}
 function renderLibraryTool(all){const row=$("#library-tool");row.hidden=targetLang()!=="ja";if(row.hidden)return;
-  const k=kanjiLearned(all).size,g=hasGrammar()?grammarLearned(all).size:null;
-  $("#library-tool-tally").textContent=g===null?t("{n} learned",{n:k.toLocaleString()}):k.toLocaleString()+" · "+t("{n} learned",{n:g.toLocaleString()});
-  row.setAttribute("aria-label",t("Kanji and grammar")+": "+(g===null?t("{n} kanji learned",{n:k.toLocaleString()}):t("{k} kanji and {g} points learned",{k:k.toLocaleString(),g:g.toLocaleString()})))}
+  const k=kanjiLearned(all).size,w=wordLearned(all).size,g=hasGrammar()?grammarLearned(all).size:null;
+  $("#library-tool-tally").textContent=[k,w,g].filter(n=>n!==null).map(n=>n.toLocaleString()).join(" · ")+" "+t("learned");
+  row.setAttribute("aria-label",t("Kanji, words and grammar")+": "+(g===null?t("{k} kanji and {w} words learned",{k:k.toLocaleString(),w:w.toLocaleString()}):t("{k} kanji, {w} words and {g} points learned",{k:k.toLocaleString(),w:w.toLocaleString(),g:g.toLocaleString()})))}
 async function renderHistory(){const all=await listSentences();renderLibraryTool(all);const list=$("#history-list"),due=dueSentences(all),query=$("#history-search").value.trim().toLocaleLowerCase(),filter=$("#history-filter").value,order=$("#history-order").value,direction=$("#history-direction").value,now=Date.now();let items=all.filter(item=>{const haystack=[item.source,item.target,item.plainTarget,item.casualTarget,item.politeTarget].filter(Boolean).join(" ").toLocaleLowerCase();if(query&&!haystack.includes(query))return false;const state=item.srs?.state??0;if(filter==="due")return !item.srs?.due||Date.parse(item.srs.due)<=now;if(filter==="new")return state===0;if(filter==="learning")return state===1||state===3;if(filter==="review")return state===2;return true});const comparators={created:(a,b)=>a.createdAt.localeCompare(b.createdAt),echoes:(a,b)=>(Number(a.echoCount)||0)-(Number(b.echoCount)||0),due:(a,b)=>Date.parse(a.srs?.due||a.createdAt)-Date.parse(b.srs?.due||b.createdAt),english:(a,b)=>a.source.localeCompare(b.source),japanese:(a,b)=>(a.plainTarget||a.target).localeCompare(b.plainTarget||b.target,itemTarget(a))},factor=direction==="asc"?1:-1;items.sort((a,b)=>factor*(comparators[order]||comparators.created)(a,b));list.replaceChildren();$("#empty-history").hidden=all.length>0;$("#empty-results").hidden=all.length===0||items.length>0;$("#empty-results-count").textContent=all.length===1?"One is in your library.":capitalise(spell(all.length))+" are in your library.";updateDueBadge(due.length);$("#library-count").textContent=items.length===1?"1 sentence":items.length+" sentences";$("#library-order-label").textContent=ORDER_LABELS[order+"-"+direction]||"";$(".list-head").hidden=items.length===0;if(isWide()&&!detail&&items.length)return openDetail(items[0].id);
   for(const item of items){const li=document.createElement("li");li.dataset.id=item.id;const state=cardState(item,now);li.innerHTML='<button class="history-open" type="button"><span class="lines"><span lang="'+itemTarget(item)+'">'+rubyHtml(item.target)+'</span><span class="source-line">'+escapeText(item.source)+'</span><span class="status-chip '+state+'">'+CARD_STATES[state]+'</span></span><span class="tally"><strong>'+(Number(item.echoCount)||0)+'</strong><span>echoes</span></span></button>';li.querySelector(".history-open").onclick=()=>openDetail(item.id);list.append(li)}markSelectedRow()}
 const formatDate=value=>new Intl.DateTimeFormat(undefined,{day:"numeric",month:"long"}).format(new Date(value));
@@ -872,14 +1049,19 @@ const capitalise=value=>value.charAt(0).toUpperCase()+value.slice(1);
 async function renderDeleteConsequence(sentence){
   const line=$("#delete-consequence");line.hidden=true;line.replaceChildren();
   if(targetLang()!=="ja")return;
-  const others=(await listSentences()).filter(s=>s.id!==sentence.id),cover=kanjiCoverage(others),gcover=grammarCoverage(others);
+  const others=(await listSentences()).filter(s=>s.id!==sentence.id),cover=kanjiCoverage(others),gcover=grammarCoverage(others),wcover=wordCoverage(others);
   const kanji=[...sentenceKanji(sentence)].filter(c=>!cover.has(c)),points=grammarTags(sentence.grammar).filter(id=>!gcover.has(id)).map(id=>grammarPoint(id)?.title).filter(Boolean);
-  if(!kanji.length&&!points.length)return;
+  // Words of their own: "the only one with the words 電車 and 食べる". Past
+  // five, a count; a one-character word is the kanji already named.
+  const words=[...new Set([...sentenceWords(sentence)].filter(id=>!wcover.has(id)).map(id=>wordById(id)?.w).filter(w=>w&&w.length>1))];
+  const extra=Math.max(0,words.length-5),shownWords=words.slice(0,5);if(extra)shownWords.push(t("{n} more",{n:extra}));
+  if(!kanji.length&&!points.length&&!words.length)return;
   const ja=text=>{const b=el("b",null,text);b.lang="ja";return b};
   const join=items=>{const out=[];items.forEach((item,i)=>{if(i)out.push(document.createTextNode(i===items.length-1?" "+t("and")+" ":", "));out.push(ja(item))});return out};
-  if(kanji.length)line.append(document.createTextNode(kanji.length===1?t("It is the only sentence you have with ")+"":t("It is the only sentence you have with ")),...join(kanji));
-  if(points.length)line.append(document.createTextNode((kanji.length?", "+t("and the only one using")+" ":t("It is the only sentence you have using")+" ")),...join(points));
-  line.append(document.createTextNode(" — "+(kanji.length+points.length===1?t("that goes back to “not met” on the wall."):t("those go back to “not met” on the wall."))+" "+t("The wall only ever counts what is in your library.")));
+  if(kanji.length)line.append(document.createTextNode(t("It is the only sentence you have with ")),...join(kanji));
+  if(words.length)line.append(document.createTextNode(kanji.length?", "+t("the only one with the words")+" ":t("It is the only sentence you have with the words")+" "),...join(shownWords));
+  if(points.length)line.append(document.createTextNode((kanji.length||words.length)?", "+t("and the only one using")+" ":t("It is the only sentence you have using")+" "),...join(points));
+  line.append(document.createTextNode(" — "+(kanji.length+points.length+words.length===1?t("that goes back to “not met” on the wall."):t("those go back to “not met” on the wall."))+" "+t("The wall only ever counts what is in your library.")));
   line.hidden=false;
 }
 function resetSetupForm(){const provider=defaultProvider();$("#setup-provider").value=provider;showSetupFields();syncLanguageSelects();showSetupStep(1)}
@@ -981,7 +1163,8 @@ function bindDictation(mic,field,status){const recognition=recognitionFactory(in
 function setupRecognition(){
   dictationReady=bindDictation($("#microphone"),$("#english-input"),$("#voice-input-status"));
   bindDictation($("#kanji-mic"),$("#kanji-say"),$("#kanji-say-status"));
-  bindDictation($("#grammar-mic"),$("#grammar-say"),$("#grammar-say-status"))}
+  bindDictation($("#grammar-mic"),$("#grammar-say"),$("#grammar-say-status"));
+  bindDictation($("#word-mic"),$("#word-say"),$("#word-say-status"))}
 async function startReview(){const items=await listSentences(),scheduled=items.map(item=>ensureSchedule(item));await Promise.all(scheduled.filter((item,index)=>item!==items[index]).map(saveSentence));reviewQueue=dueSentences(scheduled);reviewIndex=0;if(!reviewQueue.length)return showView("review");showView("session");renderReview()}
 function reviewJapanese(sentence){return settings.showPolite&&hasRegisters(itemTarget(sentence))?(sentence.politeTarget||sentence.target):(sentence.casualTarget||sentence.target)}
 function reviewPlainJapanese(sentence){return settings.showPolite&&hasRegisters(itemTarget(sentence))?(sentence.plainPoliteTarget||sentence.plainTarget):(sentence.plainCasualTarget||sentence.plainTarget)}
@@ -1089,8 +1272,9 @@ function sheetDrag(dialog,close){
   handle.addEventListener("pointerup",end);handle.addEventListener("pointercancel",end);
   dialog.addEventListener("click",event=>{if(event.target===dialog)close()});
 }
-sheetDrag($("#kanji-dialog"),()=>{loop.stop();$("#kanji-dialog").close()});sheetDrag($("#grammar-dialog"),()=>{loop.stop();$("#grammar-dialog").close()});
-$("#kanji-close").onclick=()=>{loop.stop();$("#kanji-dialog").close()};$("#kanji-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;kanjiOpen=null});$("#kanji-compose").onclick=composeForKanji;$("#kanji-say-go").onclick=sayForKanji;$("#library-tool").onclick=()=>showView("map");$("#map-back").onclick=()=>showView("library");for(const button of document.querySelectorAll("#map-toggle [role=tab]"))button.onclick=()=>{settings.mapView=button.dataset.map;localStorage.setItem("jp-echo-settings",JSON.stringify(settings));tool.open=null;tool.chip="all";renderMap()};$("#map-toggle").addEventListener("keydown",event=>{if(event.key!=="ArrowLeft"&&event.key!=="ArrowRight")return;const other=document.querySelector("#map-toggle [role=tab][aria-selected=false]");if(other){other.click();other.focus()}});let lookupTimer=0;$("#map-search").oninput=()=>{clearTimeout(lookupTimer);lookupTimer=setTimeout(renderMap,150)};$("#map-search").onkeydown=event=>{if(event.key==="Escape"&&$("#map-search").value){$("#map-search").value="";renderMap()}};$("#map-search-clear").onclick=()=>{$("#map-search").value="";$("#map-search").focus();renderMap()};$("#grammar-prev").onclick=()=>grammarStep(-1);$("#grammar-next").onclick=()=>grammarStep(1);$("#grammar-close").onclick=()=>{loop.stop();$("#grammar-dialog").close()};$("#grammar-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;grammarOpen=null});$("#grammar-say-go").onclick=sayForGrammar;$("#grammar-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForGrammar()};$("#grammar-compose").onclick=composeForGrammar;$("#kanji-prev").onclick=()=>learnStep(-1);$("#kanji-next").onclick=()=>learnStep(1);$("#kanji-dialog").addEventListener("keydown",event=>{if(!kanjiOpen?.learn||event.target.tagName==="TEXTAREA")return;if(event.key==="ArrowRight")learnStep(1);else if(event.key==="ArrowLeft")learnStep(-1)});$("#kanji-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForKanji()};$("#sentence-back").onclick=()=>{detail=null;showView("library")};$("#sentence-play").onclick=playDetail;$("#sentence-edit").onclick=openEditor;$("#sentence-cancel").onclick=closeEditor;$("#sentence-editor").onsubmit=saveEdit;
+sheetDrag($("#kanji-dialog"),()=>{loop.stop();$("#kanji-dialog").close()});sheetDrag($("#grammar-dialog"),()=>{loop.stop();$("#grammar-dialog").close()});sheetDrag($("#word-dialog"),()=>{loop.stop();$("#word-dialog").close()});
+$("#word-close").onclick=()=>{loop.stop();$("#word-dialog").close()};$("#word-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;wordOpen=null});$("#word-compose").onclick=composeForWord;$("#word-say-go").onclick=sayForWord;$("#word-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForWord()};$("#word-note-ask").onclick=askWordNote;$("#word-prev").onclick=()=>wordStep(-1);$("#word-next").onclick=()=>wordStep(1);$("#word-dialog").addEventListener("keydown",event=>{if(!wordOpen?.learn||event.target.tagName==="TEXTAREA"||event.target.isContentEditable)return;if(event.key==="ArrowRight")wordStep(1);else if(event.key==="ArrowLeft")wordStep(-1)});
+$("#kanji-close").onclick=()=>{loop.stop();$("#kanji-dialog").close()};$("#kanji-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;kanjiOpen=null});$("#kanji-compose").onclick=composeForKanji;$("#kanji-say-go").onclick=sayForKanji;$("#library-tool").onclick=()=>showView("map");$("#map-back").onclick=()=>showView("library");for(const button of document.querySelectorAll("#map-toggle [role=tab]"))button.onclick=()=>{settings.mapView=button.dataset.map;localStorage.setItem("jp-echo-settings",JSON.stringify(settings));tool.open=null;tool.chip="all";renderMap()};$("#map-toggle").addEventListener("keydown",event=>{if(event.key!=="ArrowLeft"&&event.key!=="ArrowRight")return;const tabs=[...document.querySelectorAll("#map-toggle [role=tab]")].filter(b=>!b.hidden),at=tabs.findIndex(b=>b.getAttribute("aria-selected")==="true"),next=tabs[(at+(event.key==="ArrowRight"?1:tabs.length-1))%tabs.length];if(next){next.click();next.focus()}});let lookupTimer=0;$("#map-search").oninput=()=>{clearTimeout(lookupTimer);lookupTimer=setTimeout(renderMap,150)};$("#map-search").onkeydown=event=>{if(event.key==="Escape"&&$("#map-search").value){$("#map-search").value="";renderMap()}};$("#map-search-clear").onclick=()=>{$("#map-search").value="";$("#map-search").focus();renderMap()};$("#grammar-prev").onclick=()=>grammarStep(-1);$("#grammar-next").onclick=()=>grammarStep(1);$("#grammar-close").onclick=()=>{loop.stop();$("#grammar-dialog").close()};$("#grammar-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;grammarOpen=null});$("#grammar-say-go").onclick=sayForGrammar;$("#grammar-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForGrammar()};$("#grammar-compose").onclick=composeForGrammar;$("#kanji-prev").onclick=()=>learnStep(-1);$("#kanji-next").onclick=()=>learnStep(1);$("#kanji-dialog").addEventListener("keydown",event=>{if(!kanjiOpen?.learn||event.target.tagName==="TEXTAREA")return;if(event.key==="ArrowRight")learnStep(1);else if(event.key==="ArrowLeft")learnStep(-1)});$("#kanji-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForKanji()};$("#sentence-back").onclick=()=>{detail=null;showView("library")};$("#sentence-play").onclick=playDetail;$("#sentence-edit").onclick=openEditor;$("#sentence-cancel").onclick=closeEditor;$("#sentence-editor").onsubmit=saveEdit;
 $("#sentence-delete").onclick=()=>askDelete();$("#delete-cancel").onclick=()=>$("#delete-dialog").close();$("#delete-confirm").onclick=confirmDelete;$("#delete-dialog").onclick=event=>{if(event.target===$("#delete-dialog"))$("#delete-dialog").close()};
 $("#side-start-review").onclick=startReview;$("#side-export-anki").onclick=()=>exportAnki($("#side-export-anki"));
 wide.addEventListener("change",()=>showView(document.body.dataset.view||"practice"));

@@ -1,9 +1,10 @@
-// Looking a kanji or a grammar point up, on the device, from what the data
+// Looking a kanji, a word or a grammar point up, on the device, from what the data
 // files already carry: a character, a reading in kana or romaji, or a word
 // of the English meaning. No index, no network. Everything here is a filter
-// over the 2,136 readings and the 979 points, in the order the wall draws.
+// over the 2,136 readings, the 22,953 words and the 979 points, in the order the wall draws.
 import {READINGS} from "./kanji-readings.js";
 import {GRAMMAR} from "./grammar-data.js";
+import {WORDS} from "./words-data.js";
 import {isJoyo, jlptBands} from "./kanji.js";
 
 const WALL = jlptBands().flatMap(band => band.chars);
@@ -83,4 +84,39 @@ export function searchGrammar(raw) {
   if (points.length) return {how: "named", key: romaji, points};
   points = GRAMMAR.filter(p => p.title.toLowerCase().includes(word) || (p.hint || "").toLowerCase().includes(word));
   return {how: "mean", key: q, points};
+}
+
+// A word, by what you would type for it: the reading in kana or romaji, the
+// word itself or a kanji in it, or the English. A reading matches whole
+// first, then at the start, then anywhere; English matches a gloss whole
+// first ("eat", "to eat"), then at its start, then as a word inside it. The
+// order within a tier is the dictionary's own: level, then how common.
+const WORD_LIMIT = 60;
+const READ = WORDS.map(w => toHiragana(w.r));
+const escapeRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+export function searchWords(raw) {
+  const q = String(raw || "").trim();
+  if (!q) return null;
+  const tiers = [[], [], []], take = () => { const words = tiers.flat(); return {words: words.slice(0, WORD_LIMIT), total: words.length}; };
+  if ([...q].some(isCJK)) {
+    for (const w of WORDS) { if (w.w === q || w.k === q) tiers[0].push(w); else if (w.w.startsWith(q) || (w.k && w.k.startsWith(q))) tiers[1].push(w); else if (w.w.includes(q) || (w.k && w.k.includes(q))) tiers[2].push(w); }
+    return {how: "are", key: q, ...take()};
+  }
+  const kana = [...q].every(isKana) ? toHiragana(q) : romajiToKana(q);
+  if (kana) {
+    for (let i = 0; i < WORDS.length; i++) { const r = READ[i], w = WORDS[i]; if (r === kana || w.w === kana) tiers[0].push(w); else if (r.startsWith(kana)) tiers[1].push(w); else if (r.includes(kana)) tiers[2].push(w); }
+    if (tiers[0].length || tiers[1].length || tiers[2].length || [...q].every(isKana)) return {how: "read", key: kana, ...take()};
+  }
+  const word = q.toLowerCase(), inside = new RegExp("\\b" + escapeRe(word) + "\\b");
+  for (const w of WORDS) {
+    let best = 0;
+    for (const sense of w.en) for (const gloss of sense.split("; ")) {
+      const g = gloss.toLowerCase();
+      if (g === word || g === "to " + word) { best = 3; break; }
+      if (g.startsWith(word + " ") || g.startsWith("to " + word + " ")) best = Math.max(best, 2);
+      else if (best < 1 && inside.test(g)) best = 1;
+    }
+    if (best) tiers[3 - best].push(w);
+  }
+  return {how: "mean", key: q, ...take()};
 }
