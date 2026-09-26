@@ -145,7 +145,7 @@ test("JLPT bands: every joyo kanji in exactly one, N5 first, taught order within
   assert.deepEqual(sizes, [79, 166, 367, 367, 1157], "the counts the data carries, by code point");
   const n5 = bands[0].chars;
   assert.ok(n5.indexOf("一") < n5.indexOf("学"), "the commoner grade-1 kanji comes first");
-  assert.ok(n5.indexOf("学") < n5.indexOf("週"), "grade 1 before grade 2 within a band");
+  assert.ok(n5.indexOf("学") < n5.findIndex(c => facts(c).grade === 2), "grade 1 before grade 2 within a band");
   assert.equal(levelOf("学"), "N5"); assert.equal(levelOf("鬱"), "N1"); assert.equal(levelOf("𠮟"), "N1");
   assert.ok(bands.every(b => b.label.length > 0), "every band has a label");
 });
