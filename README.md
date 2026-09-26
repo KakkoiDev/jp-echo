@@ -29,6 +29,12 @@ More screens, including dark and desktop, are in [`docs/screenshots`](docs/scree
   nothing about it is stored, scheduled or sent. Only sentences are reviewed.
   The character list and grade bands come from `joyo-kanji` and `kyoiku-kanji`,
   both MIT; `tools/build-kanji-data.mjs` regenerates `kanji-data.js` from them.
+- WaniKani meanings, readings, mnemonics and example sentences are optional and
+  fetched with your own read-only token, into this browser, into a database of
+  their own. Nothing of WaniKani's is bundled or redistributed. The token is
+  stored outside the settings object, so it cannot appear in a backup, and the
+  mnemonics are passed through a small word list on the way in (`SCRUB` in
+  `wanikani.js`) that replaces a few exclamations.
 - Reminders are optional, at most one a day, and only when something is due.
   Echo has no server, so nothing is pushed: where the browser supports Periodic
   Background Sync the worker is woken to check, and everywhere else the check
