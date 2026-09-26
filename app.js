@@ -3,7 +3,7 @@ import {earliestPair,flipSentence,isReversed,pairLooksSwapped,repairPair} from "
 import {DEFAULT_PAIR,LANGUAGES,createSentence,exportBackup,hasFurigana,hasRegisters,languageName,mergeSentences,normalizeFurigana,rubyHtml,stripFurigana} from "./core.js";
 import {isExactMatch,markAttempt,markTarget} from "./diff.js";
 import {deleteSentence,getSentence,listSentences,migrateStore,replaceAll,saveSentence} from "./db.js";
-import {compose,PROVIDER_DEFAULTS,translate} from "./api.js";
+import {carries,compose,PROVIDER_DEFAULTS,translate} from "./api.js";
 import {japaneseVoices,recognitionFactory,ShadowLoop} from "./speech.js";
 import {forgetWaniKani,kanjiInfo,mnemonicHtml,syncWaniKani,waniKaniStatus} from "./wanikani.js";
 import {bands as kanjiBands,coverage as kanjiCoverage,learned as kanjiLearned,summarise as kanjiSummarise,TOTAL as KANJI_TOTAL} from "./kanji.js";
@@ -265,7 +265,11 @@ async function openKanji(character,cover){
   $("#kanji-meta").textContent=ids.length
     ?(ids.length===1?t("In 1 of your sentences"):t("In {n} of your sentences",{n:ids.length}))
     :t("Not in any of your sentences yet");
-  $("#kanji-compose").textContent=t("Make a sentence with {kanji}",{kanji:character});
+  $("#kanji-say-label").textContent=t("Say a sentence using {kanji}",{kanji:character});
+  $("#kanji-say-go").disabled=!hasTranslator();$("#kanji-say").disabled=!hasTranslator();
+  $("#kanji-mic").disabled=!hasTranslator()||!dictationReady;
+  $("#kanji-say-status").textContent="";
+  $("#kanji-compose").textContent=t("Let the AI write one with {kanji}",{kanji:character});
   $("#kanji-compose").disabled=!hasTranslator();
   $("#kanji-status").textContent=hasTranslator()?"":t("Add a translator and this starts working.");
   $("#kanji-loop-state").textContent="";
@@ -352,6 +356,27 @@ async function runWaniKaniSync(){
     if(kanjiOpen)renderKanjiInfo(kanjiOpen.character);
   }catch(error){progress.textContent=error instanceof TypeError?t("No connection, so the request never reached WaniKani."):(error.message||t("That did not work."))}
   finally{button.disabled=false;renderWaniKaniStatus()}
+}
+async function sayForKanji(){
+  const target=kanjiOpen;if(!target)return;
+  const field=$("#kanji-say"),text=field.value.trim(),status=$("#kanji-say-status"),button=$("#kanji-say-go");
+  if(!text){status.textContent=t("Say or type a sentence first.");field.focus();return}
+  button.disabled=true;status.textContent=t("Translating…");
+  try{
+    const card=await translate(text,{...settings,inputLang,sourceLang:sourceLang(),targetLang:targetLang()});
+    if(!carries(card,target.character)){
+      status.textContent=t("That sentence does not use {kanji} — try one that does.",{kanji:target.character});
+      field.focus();return}
+    const made=ensureSchedule(createSentence(card.source,card,new Date(),undefined,{sourceLang:sourceLang(),targetLang:targetLang()}));
+    made.translationProvider=defaultProvider();await saveSentence(made);refreshDueBadge();
+    field.value="";
+    const fresh=await listSentences();await openKanji(target.character,kanjiCoverage(fresh));
+    status.textContent=t("Saved to your library.");renderMap();
+  }catch(error){
+    const provider=defaultProvider(),name=PROVIDER_NAMES[provider]||provider;
+    const refused=/\b(401|403|402|key|credit|quota)\b/i.test(error.message||""),offline=error instanceof TypeError;
+    status.textContent=offline?t("No connection, so the request never reached {name}.",{name}):refused?t("{name} turned the request down.",{name}):(error.message||t("That did not work."));
+  }finally{button.disabled=!hasTranslator()}
 }
 async function composeForKanji(){
   const target=kanjiOpen;if(!target)return;
@@ -558,14 +583,17 @@ const dictationError=error=>DICTATION[error]||DICTATION.failed;
 // Append rather than replace, so a second burst adds to what you already said
 // instead of throwing it away.
 const appendHeard=(field,heard)=>{field.value=(field.value?field.value.trimEnd()+" "+heard:heard).trim()};
-function setupRecognition(){const recognition=recognitionFactory(inputLang),mic=$("#microphone"),status=$("#voice-input-status");
-  dictationReady=!!recognition;
-  if(!recognition){mic.disabled=true;mic.onclick=null;status.textContent=DICTATION.unavailable;return}
+function bindDictation(mic,field,status){const recognition=recognitionFactory(inputLang);
+  if(!recognition){mic.disabled=true;mic.onclick=null;status.textContent=DICTATION.unavailable;return false}
   mic.disabled=!hasTranslator();if(status.textContent===DICTATION.unavailable)status.textContent="";
   mic.onclick=()=>{status.textContent=DICTATION.listening;mic.classList.add("is-listening");try{recognition.start()}catch{}};
-  recognition.onresult=event=>{appendHeard($("#english-input"),event.results[0][0].transcript);status.textContent="Edit anything it mishears before you translate."};
+  recognition.onresult=event=>{appendHeard(field,event.results[0][0].transcript);status.textContent="Edit anything it mishears before you translate."};
   recognition.onerror=event=>{status.textContent=dictationError(event.error)};
-  recognition.onend=()=>{mic.classList.remove("is-listening");if(status.textContent===DICTATION.listening)status.textContent=""}}
+  recognition.onend=()=>{mic.classList.remove("is-listening");if(status.textContent===DICTATION.listening)status.textContent=""};
+  return true}
+function setupRecognition(){
+  dictationReady=bindDictation($("#microphone"),$("#english-input"),$("#voice-input-status"));
+  bindDictation($("#kanji-mic"),$("#kanji-say"),$("#kanji-say-status"))}
 async function startReview(){const items=await listSentences(),scheduled=items.map(item=>ensureSchedule(item));await Promise.all(scheduled.filter((item,index)=>item!==items[index]).map(saveSentence));reviewQueue=dueSentences(scheduled);reviewIndex=0;if(!reviewQueue.length)return showView("review");showView("session");renderReview()}
 function reviewJapanese(sentence){return settings.showPolite&&hasRegisters(itemTarget(sentence))?(sentence.politeTarget||sentence.target):(sentence.casualTarget||sentence.target)}
 function reviewPlainJapanese(sentence){return settings.showPolite&&hasRegisters(itemTarget(sentence))?(sentence.plainPoliteTarget||sentence.plainTarget):(sentence.plainCasualTarget||sentence.plainTarget)}
@@ -659,7 +687,7 @@ $("#setup-next").onclick=()=>{storeTranslator();showSetupStep(2)};
 $("#setup-back").onclick=()=>{if(setupStep===2)return showSetupStep(1);showView(settings.onboarded?"practice":"onboard")};$("#setup-provider").onchange=showSetupFields;$("#setup-save").onclick=saveSetup;$("#setup-skip").onclick=finishOnboarding;
 $("#clear-filters").onclick=()=>{$("#history-search").value="";$("#clear-history-search").hidden=true;$("#history-filter").value="all";settings.historyFilter="all";localStorage.setItem("jp-echo-settings",JSON.stringify(settings));renderHistory()};
 addEventListener("online",renderPracticeNotices);addEventListener("offline",renderPracticeNotices);
-$("#kanji-close").onclick=()=>{loop.stop();$("#kanji-dialog").close()};$("#kanji-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;kanjiOpen=null});$("#kanji-compose").onclick=composeForKanji;$("#wanikani-sync").onclick=runWaniKaniSync;$("#wanikani-forget").onclick=async()=>{await forgetWaniKani();$("#wanikani-progress").textContent=t("Forgotten.");renderWaniKaniStatus();if(kanjiOpen)renderKanjiInfo(kanjiOpen.character)};$("#sentence-back").onclick=()=>{detail=null;showView("library")};$("#sentence-play").onclick=playDetail;$("#sentence-edit").onclick=openEditor;$("#sentence-cancel").onclick=closeEditor;$("#sentence-editor").onsubmit=saveEdit;
+$("#kanji-close").onclick=()=>{loop.stop();$("#kanji-dialog").close()};$("#kanji-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;kanjiOpen=null});$("#kanji-compose").onclick=composeForKanji;$("#kanji-say-go").onclick=sayForKanji;$("#kanji-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForKanji()};$("#wanikani-sync").onclick=runWaniKaniSync;$("#wanikani-forget").onclick=async()=>{await forgetWaniKani();$("#wanikani-progress").textContent=t("Forgotten.");renderWaniKaniStatus();if(kanjiOpen)renderKanjiInfo(kanjiOpen.character)};$("#sentence-back").onclick=()=>{detail=null;showView("library")};$("#sentence-play").onclick=playDetail;$("#sentence-edit").onclick=openEditor;$("#sentence-cancel").onclick=closeEditor;$("#sentence-editor").onsubmit=saveEdit;
 $("#sentence-delete").onclick=askDelete;$("#delete-cancel").onclick=()=>$("#delete-dialog").close();$("#delete-confirm").onclick=confirmDelete;$("#delete-dialog").onclick=event=>{if(event.target===$("#delete-dialog"))$("#delete-dialog").close()};
 $("#side-start-review").onclick=startReview;$("#side-export-anki").onclick=()=>exportAnki($("#side-export-anki"));
 wide.addEventListener("change",()=>showView(document.body.dataset.view||"practice"));
