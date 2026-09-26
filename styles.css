@@ -886,29 +886,6 @@ html.motion-off #review-progress-bar { transition: none; }
 .kanji-say>.hint{margin-top:8px}
 .link-button{height:44px;min-height:44px;margin-top:6px;padding:0;display:flex;align-items:center;background:transparent;border:0;border-radius:0;font-size:13px;letter-spacing:normal;color:var(--seal-deep);text-decoration:underline;text-underline-offset:3px}
 .link-button:disabled{color:var(--disabled-fg)}
-/* What WaniKani adds, when it is connected */
-.wk-section{margin-top:14px;padding-top:14px;border-top:1px solid var(--rule)}
-.wk-section>.overline{display:block;font-size:10px}
-.wk-rows{display:flex;flex-direction:column;margin-top:6px}
-.wk-row{border-bottom:1px solid var(--rule);font-size:13px;color:var(--ink-soft)}
-.wk-row summary,.wk-row>span{display:flex;align-items:center;justify-content:space-between;min-height:42px;list-style:none;cursor:pointer}
-.wk-row summary::-webkit-details-marker{display:none}
-.wk-row summary::after{content:"";width:8px;height:8px;margin-right:6px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg)}
-.wk-row[open]>summary::after{transform:rotate(-135deg)}
-.wk-row p{margin:0 0 12px;font-size:13px;line-height:1.6;color:var(--sumi)}
-.wk-row .kanji-sentences{margin-bottom:8px}
-.wk-parts{font-family:var(--display);color:var(--sumi);margin-left:6px}
-.wk-section .hint{margin-top:8px;font-size:11px}
-.wk-invite{display:flex;flex-direction:column;gap:10px;margin-top:8px}
-.wk-invite-copy{margin:0;font-size:13px;line-height:1.6;color:var(--ink-soft);text-wrap:pretty}
-.wk-invite-copy:empty{display:none}
-.wk-invite .outlined{align-self:flex-start}
-.wk-kanji{color:var(--seal);font-weight:600}
-.wk-radical{color:var(--indigo);font-weight:600}
-.wk-vocabulary{color:var(--chip-learn-fg);font-weight:600}
-.wk-reading{font-weight:600;border-bottom:1px dotted var(--quiet-edge)}
-.wk-meaning{font-weight:600}
-.wk-ja{font-family:var(--display)}
 /* What deleting a sentence does to the wall */
 .delete-consequence{margin:-4px 0 0;padding:10px 12px;border:1px solid var(--rule);border-radius:3px;font-size:12px;line-height:1.6;color:var(--ink-soft);text-wrap:pretty}
 .delete-consequence b{font-family:var(--display);font-weight:400;color:var(--sumi)}
