@@ -265,6 +265,13 @@ export function mergeSentences(current, incoming) {
   return [...merged.values()];
 }
 
+// The Anki bundle was built when a sentence had English and Japanese fields;
+// the language pair renamed them. This is the shape it reads.
+export function forAnki(sentence) {
+  return {...sentence, english: sentence.source ?? sentence.english ?? "", japanese: sentence.target ?? sentence.japanese ?? "",
+    casualJapanese: sentence.casualTarget ?? sentence.casualJapanese ?? sentence.target ?? "", politeJapanese: sentence.politeTarget ?? sentence.politeJapanese ?? sentence.target ?? ""};
+}
+
 export function exportBackup(sentences, preferences = {}, notes = []) {
   const {apiKey, providerKeys, ...safe} = preferences;
   return {schemaVersion:SCHEMA_VERSION,exportedAt:new Date().toISOString(),sentences,preferences:safe,notes};

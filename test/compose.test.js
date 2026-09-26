@@ -98,7 +98,8 @@ test("tagging sends a closed list and keeps only ids from it", async () => {
   const tags = await tagGrammar([{id: "a", plainTarget: "食べてしまった"}, {id: "b", plainTarget: "猫だ"}], [shimau, nagara], settings);
   assert.deepEqual(tags.get("a"), ["te-shimau"], "the invented id is dropped");
   assert.deepEqual(tags.get("b"), []);
-  assert.match(seen[0].system, /te-shimau = 〜てしまう \(completely; regret\)/);
+  assert.match(seen[0].system, /te-shimau = 〜てしまう$/m, "id and title, and no gloss — the list is half the size");
+  assert.doesNotMatch(seen[0].system, /completely; regret/);
   assert.match(seen[0].system, /from this list and no other/);
   assert.match(seen[0].user, /^1\. 食べてしまった\n2\. 猫だ$/);
 });

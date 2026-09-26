@@ -24,23 +24,23 @@ export async function downloadAnkiDeck(sentences){
   if(!sentences.length)throw new Error("Translate at least one sentence before exporting.");
   const SQL=await getSql();
   const model=new Model({
-    name:"JP Echo sentence",
+    name:"Echo sentence",
     id:MODEL_ID,
     flds:[{name:"Japanese"},{name:"English"},{name:"Polite"},{name:"Echoes"}],
     req:[[0,"all",[0]]],
     css:".card{font-family:system-ui,sans-serif;text-align:center;font-size:22px;color:#20231f;background:#fffdf7}.jp{font-size:34px;line-height:1.8}rt{font-size:.45em;color:#5d655d}.meta{margin-top:18px;color:#687067;font-size:15px}",
     tmpls:[{name:"Japanese → English",qfmt:'<div class="jp">{{Japanese}}</div>',afmt:'{{FrontSide}}<hr id="answer"><div>{{English}}</div><div class="meta">Polite: {{Polite}} · {{Echoes}} echoes</div>'}]
   });
-  const deck=new Deck(DECK_ID,"JP Echo");
+  const deck=new Deck(DECK_ID,"Echo");
   for(const sentence of sentences){
-    const casual=sentence.casualJapanese||sentence.japanese;
-    const polite=sentence.politeJapanese||sentence.japanese;
-    deck.addNote(model.note([ankiRuby(casual),escapeHtml(sentence.english),ankiRuby(polite),String(Number(sentence.echoCount)||0)],null,sentence.id));
+    const casual=sentence.casualTarget||sentence.casualJapanese||sentence.target||sentence.japanese;
+    const polite=sentence.politeTarget||sentence.politeJapanese||sentence.target||sentence.japanese;
+    deck.addNote(model.note([ankiRuby(casual),escapeHtml(sentence.source??sentence.english),ankiRuby(polite),String(Number(sentence.echoCount)||0)],null,sentence.id));
   }
   const pkg=new Package();
   pkg.setSqlJs(new SQL.Database());
   pkg.addDeck(deck);
-  const initialBlob=await pkg.writeToFile("JP Echo.apkg");
+  const initialBlob=await pkg.writeToFile("Echo.apkg");
   const zip=await JSZip.loadAsync(await initialBlob.arrayBuffer());
   const db=new SQL.Database(await zip.file("collection.anki2").async("uint8array"));
   const createdSeconds=db.exec("SELECT crt FROM col")[0].values[0][0];
@@ -57,7 +57,7 @@ export async function downloadAnkiDeck(sentences){
   db.close();
   const blob=await zip.generateAsync({type:"blob",mimeType:"application/apkg"});
   const url=URL.createObjectURL(blob);
-  const link=Object.assign(document.createElement("a"),{href:url,download:"JP Echo.apkg"});
+  const link=Object.assign(document.createElement("a"),{href:url,download:"Echo.apkg"});
   document.body.append(link);
   link.click();
   link.remove();

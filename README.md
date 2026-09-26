@@ -22,7 +22,7 @@ More screens, including dark and desktop, are in [`docs/screenshots`](docs/scree
   own speech recognition, so that audio is handled by the browser's maker.
   Echo neither records nor stores it.
 - Device speech synthesis produces audio on demand; no audio file is stored.
-- History can be exported on-device as a standard `JP Echo.apkg` Anki deck.
+- History can be exported on-device as a standard `Echo.apkg` Anki deck.
 - Every translated sentence enters an offline FSRS review queue immediately.
 - Map counts the 2,136 joyo kanji against your own library. It is derived on
   the device from the sentences you already have, each time the view opens, so
@@ -62,7 +62,7 @@ More screens, including dark and desktop, are in [`docs/screenshots`](docs/scree
   front of you rather than promising either.
 - A review shows the English, takes the Japanese you say back, marks the
   difference, and then grades on Again or OK (Anki Good).
-- Anki exports include JP Echo's repetitions, lapses, interval, and due date.
+- Anki exports include Echo's repetitions, lapses, interval, and due date.
 - A configurable proxy is supported for browsers where DeepSeek blocks direct
   cross-origin requests. Proxy implementation and hosting remain external.
 
