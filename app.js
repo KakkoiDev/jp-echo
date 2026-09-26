@@ -374,13 +374,23 @@ async function renderKanjiInfo(character){
   // Then what WaniKani adds, behind three rows. Three different absences are
   // told apart: no token, a token never synced, and a sync that does not know
   // this character.
-  const none=$("#kanji-nowk"),parts=$("#kanji-parts-row"),mnemonics=$("#kanji-mnemonics"),examples=$("#kanji-wk-examples"),list=$("#kanji-wk-sentences");
-  none.hidden=true;parts.hidden=true;mnemonics.hidden=true;examples.hidden=true;list.replaceChildren();
+  const invite=$("#kanji-wk-invite"),none=$("#kanji-nowk"),go=$("#kanji-wk-go"),head=$("#kanji-wk-head"),parts=$("#kanji-parts-row"),mnemonics=$("#kanji-mnemonics"),examples=$("#kanji-wk-examples"),list=$("#kanji-wk-sentences");
+  invite.hidden=true;parts.hidden=true;mnemonics.hidden=true;examples.hidden=true;list.replaceChildren();head.hidden=false;head.textContent=t("With WaniKani connected");
   let record=null,synced=false;
   try{synced=(await waniKaniStatus()).synced;record=synced?await kanjiInfo(character):null}catch{record=null}
+  // Without an account the section is an invitation, not a shrug: it says
+  // what connecting adds and takes you to the field. With one, and a kanji
+  // WaniKani does not teach, it is one quiet line.
   if(!record){
-    none.textContent=!waniKaniToken()?t("Connect WaniKani in Settings for parts and their mnemonics."):!synced?t("Sync WaniKani in Settings for parts and their mnemonics."):t("Not on WaniKani.");
-    none.hidden=false;return}
+    invite.hidden=false;go.hidden=false;
+    if(!waniKaniToken()){head.textContent=t("More on {kanji} with WaniKani",{kanji:character});
+      none.textContent=t("Connect your WaniKani account and this sheet gains what {kanji} is built from, WaniKani’s meaning and reading mnemonics for it, and example sentences from the words that use it. Read with your own token and kept on this device.",{kanji:character});
+      go.textContent=t("Connect WaniKani");go.onclick=()=>{openSettings();$("#wanikani-token").focus()}}
+    else if(!synced){head.textContent=t("More on {kanji} with WaniKani",{kanji:character});
+      none.textContent=t("Your WaniKani token is in place. Sync once and this sheet gains the parts, the mnemonics and the example sentences.");
+      go.textContent=t("Sync WaniKani");go.onclick=()=>{openSettings();$("#wanikani-sync").focus()}}
+    else{head.hidden=true;none.textContent=t("Not on WaniKani.");go.hidden=true}
+    return}
   if(record.parts?.length){$("#kanji-parts").textContent=record.parts.map(p=>p.characters?p.characters+"（"+p.meanings[0]+"）":p.meanings[0]).join("　");parts.hidden=false}
   $("#kanji-meaning-mnemonic").innerHTML=mnemonicHtml(record.meaningMnemonic);
   $("#kanji-reading-mnemonic").innerHTML=mnemonicHtml(record.readingMnemonic);
