@@ -46,7 +46,10 @@ export function scrub(text = "") {
 
 // --- the sync ---------------------------------------------------------------
 // Its own database, so the sentence store and its migration are never touched.
-const DB_NAME = "jp-echo-wanikani", VERSION = 1;
+// SHAPE is bumped when what is stored changes; a sync from an older shape is
+// made full again so every record is refetched into the new one.
+const DB_NAME = "jp-echo-wanikani", VERSION = 2;
+export const SHAPE = 2;
 const API = "https://api.wanikani.com/v2/subjects";
 
 function openDb() {
@@ -54,9 +57,8 @@ function openDb() {
     const request = indexedDB.open(DB_NAME, VERSION);
     request.onupgradeneeded = () => {
       const db = request.result;
-      db.createObjectStore("kanji", {keyPath: "characters"});
-      db.createObjectStore("vocabulary", {keyPath: "id"});
-      db.createObjectStore("meta", {keyPath: "key"});
+      for (const [name, keyPath] of [["kanji", "characters"], ["vocabulary", "id"], ["radical", "id"], ["meta", "key"]])
+        if (!db.objectStoreNames.contains(name)) db.createObjectStore(name, {keyPath});
     };
     request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error);
@@ -97,8 +99,16 @@ export function slimKanji(subject) {
     kunyomi: d.readings.filter(r => r.type === "kunyomi").map(r => r.reading),
     meaningMnemonic: scrub(d.meaning_mnemonic || ""), readingMnemonic: scrub(d.reading_mnemonic || ""),
     vocabulary: d.amalgamation_subject_ids || [],
+    components: d.component_subject_ids || [],
     hidden: !!d.hidden_at,
   };
+}
+// A radical is a name and, usually, a character. Some are images and have no
+// character at all; the name is what a story uses either way.
+export function slimRadical(subject) {
+  const d = subject.data;
+  return {id: subject.id, characters: d.characters || null, slug: d.slug, level: d.level,
+    meanings: (d.meanings || []).filter(m => m.accepted_answer !== false).map(m => m.meaning), hidden: !!d.hidden_at};
 }
 export function slimVocabulary(subject) {
   const d = subject.data;
@@ -119,8 +129,8 @@ export async function syncWaniKani(token, {onProgress = () => {}, fetch: doFetch
   if (!token) throw new Error("Add your WaniKani token in Settings.");
   const db = await openDb();
   const meta = (await tx(db, ["meta"], "readonly", t => get(t.objectStore("meta"), "sync"))) || {key: "sync"};
-  const incremental = meta.updatedAfter && meta.scrubVersion === SCRUB_VERSION;
-  let url = API + "?types=kanji,vocabulary" + (incremental ? "&updated_after=" + encodeURIComponent(meta.updatedAfter) : "");
+  const incremental = meta.updatedAfter && meta.scrubVersion === SCRUB_VERSION && meta.shape === SHAPE;
+  let url = API + "?types=radical,kanji,vocabulary" + (incremental ? "&updated_after=" + encodeURIComponent(meta.updatedAfter) : "");
   let kanji = 0, vocabulary = 0, page = 0;
   const startedAt = new Date().toISOString();
   while (url) {
@@ -128,17 +138,18 @@ export async function syncWaniKani(token, {onProgress = () => {}, fetch: doFetch
     if (response.status === 401) throw new Error("WaniKani did not accept that token.");
     if (!response.ok) throw new Error("WaniKani answered " + response.status + ".");
     const body = await response.json();
-    await tx(db, ["kanji", "vocabulary"], "readwrite", t => {
+    await tx(db, ["kanji", "vocabulary", "radical"], "readwrite", t => {
       for (const subject of body.data || []) {
         if (subject.object === "kanji") { t.objectStore("kanji").put(slimKanji(subject)); kanji++; }
         else if (subject.object === "vocabulary") { t.objectStore("vocabulary").put(slimVocabulary(subject)); vocabulary++; }
+        else if (subject.object === "radical") t.objectStore("radical").put(slimRadical(subject));
       }
     });
     page++;
     onProgress({page, kanji, vocabulary, total: body.total_count});
     url = body.pages?.next_url || null;
   }
-  await tx(db, ["meta"], "readwrite", t => t.objectStore("meta").put({key: "sync", updatedAfter: startedAt, syncedAt: startedAt, kanji, vocabulary, scrubVersion: SCRUB_VERSION}));
+  await tx(db, ["meta"], "readwrite", t => t.objectStore("meta").put({key: "sync", updatedAfter: startedAt, syncedAt: startedAt, kanji, vocabulary, scrubVersion: SCRUB_VERSION, shape: SHAPE}));
   db.close();
   return {kanji, vocabulary, pages: page};
 }
@@ -152,7 +163,7 @@ export async function waniKaniStatus() {
   db.close();
   // stale: the word list has changed since this data was scrubbed, so what is
   // on disk was replaced by a list that is no longer the one in the code.
-  return {synced: !!meta?.syncedAt, syncedAt: meta?.syncedAt || null, kanji: count, stale: !!meta?.syncedAt && meta.scrubVersion !== SCRUB_VERSION};
+  return {synced: !!meta?.syncedAt, syncedAt: meta?.syncedAt || null, kanji: count, stale: !!meta?.syncedAt && (meta.scrubVersion !== SCRUB_VERSION || meta.shape !== SHAPE)};
 }
 
 // Everything the sheet shows for one character: the kanji's own record with
@@ -167,8 +178,12 @@ export async function kanjiInfo(character) {
     const store = t.objectStore("vocabulary");
     return Promise.all(record.vocabulary.map(id => get(store, id)));
   });
+  const parts = await tx(db, ["radical"], "readonly", async t => {
+    const store = t.objectStore("radical");
+    return Promise.all((record.components || []).map(id => get(store, id)));
+  });
   db.close();
-  return {...record, words: words.filter(w => w && !w.hidden)};
+  return {...record, words: words.filter(w => w && !w.hidden), parts: parts.filter(Boolean)};
 }
 
 export async function forgetWaniKani() {

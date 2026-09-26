@@ -168,6 +168,8 @@ export default {
   "Sync WaniKani in Settings for mnemonics and example sentences.": "ニーモニックと例文を見るには、設定でWaniKaniを同期してください。",
   "Add a WaniKani token in Settings for mnemonics and example sentences.": "ニーモニックと例文を見るには、設定でWaniKaniのトークンを追加してください。",
   "Meaning mnemonic": "意味のニーモニック",
+  "Echo's story": "Echoの物語",
+  "Parts": "部品",
   "Reading mnemonic": "読みのニーモニック",
   "Your sentences": "自分の文",
   "From WaniKani": "WaniKaniから",

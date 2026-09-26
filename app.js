@@ -7,6 +7,7 @@ import {carries,compose,PROVIDER_DEFAULTS,tagGrammar,translate} from "./api.js";
 import {byLevel as grammarByLevel,coverage as grammarCoverage,hasGrammar,LEVELS as GRAMMAR_LEVELS,POINTS as GRAMMAR_POINTS,summarise as grammarSummarise,untagged as untaggedSentences} from "./grammar.js";
 import {japaneseVoices,recognitionFactory,ShadowLoop} from "./speech.js";
 import {forgetWaniKani,kanjiInfo,mnemonicHtml,syncWaniKani,waniKaniStatus} from "./wanikani.js";
+import {STORIES} from "./stories.js";
 import {bands as kanjiBands,coverage as kanjiCoverage,facts as kanjiFacts,learned as kanjiLearned,nextUnmet,summarise as kanjiSummarise,TOTAL as KANJI_TOTAL,unmetCount} from "./kanji.js";
 import {downloadAnkiDeck} from "./anki-export.js";
 import {dueSentences,ensureSchedule,isDue,reviewSentence} from "./srs.js";
@@ -289,6 +290,10 @@ async function openKanji(character,cover,{learn=false}={}){
 async function renderKanjiInfo(character){
   const info=$("#kanji-info"),none=$("#kanji-nowk"),head=$("#kanji-wk-head"),list=$("#kanji-wk-sentences");
   info.hidden=true;none.hidden=true;head.hidden=true;list.replaceChildren();
+  // Echo's own story first, when there is one; the reference sits below it.
+  const story=STORIES[character];$("#kanji-story").hidden=!story;
+  if(story){$("#kanji-story-meaning").textContent=story.meaning;$("#kanji-story-reading").textContent=story.reading}
+  $("#kanji-parts-head").hidden=true;$("#kanji-parts").hidden=true;
   // Three different absences, told apart: no token, a token never synced, and
   // a sync that simply does not know this character.
   let record=null,synced=false;
@@ -304,6 +309,7 @@ async function renderKanjiInfo(character){
       :!synced?t("Sync WaniKani in Settings for mnemonics and example sentences."):t("Not on WaniKani.");
     none.hidden=false;return}
   for(const d of mnemonics)d.hidden=false;
+  if(record.parts?.length){$("#kanji-parts").textContent=record.parts.map(p=>p.characters?p.characters+"（"+p.meanings[0]+"）":p.meanings[0]).join("　");$("#kanji-parts-head").hidden=false;$("#kanji-parts").hidden=false}
   $("#kanji-meanings").textContent=record.meanings.join(", ");
   $("#kanji-on").textContent=record.onyomi.join("、")||"—";
   $("#kanji-kun").textContent=record.kunyomi.join("、")||"—";
