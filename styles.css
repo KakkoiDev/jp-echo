@@ -5,7 +5,7 @@
   --hairline:#D9D2C1;--rule:#E2DCCE;--quiet-edge:#9A9287;
   --seal:#B8342A;--seal-deep:#8F2820;--seal-tint:#FAEDE9;--seal-edge:#C9705F;--seal-on:#FCF7EE;
   --indigo:#2E4A6B;
-  --disabled-bg:#DFD9CB;--disabled-fg:#9A9287;--field-off:#EEEAE0;
+  --disabled-bg:#DFD9CB;--disabled-fg:#9A9287;--seal-wash:#F6E4E0;--faint:#B0A99C;--field-off:#EEEAE0;
   --chip-new-bd:#1C1A17;--chip-new-fg:#1C1A17;
   --chip-learn-bd:#9BA8B8;--chip-learn-bg:#ECEFF4;--chip-learn-fg:#2E4A6B;
   --chip-rev-bd:#C8C0AE;--chip-rev-bg:#F1EDE2;--chip-rev-fg:#55504A;
@@ -24,7 +24,7 @@
   --washi:#191712;--panel:#221F19;--panel-soft:rgba(34,31,25,.7);
   --sumi:#F2EEE3;--ink-muted:#A49B8C;--ink-soft:#C4BCAC;
   --hairline:#363028;--rule:#2C2820;--quiet-edge:#7D7568;
-  --seal:#E0614B;--seal-deep:#EE8672;--seal-tint:#2A1E1A;--seal-edge:#7A3A30;--seal-on:#1A1611;
+  --seal:#E0614B;--seal-deep:#EE8672;--seal-tint:#2A1E1A;--seal-edge:#7A3A30;--seal-wash:#3A241F;--faint:#7D7568;--seal-on:#1A1611;
   --disabled-bg:#3D362D;--disabled-fg:#7D7568;--field-off:#1F1C16;
   --chip-new-bd:#F2EEE3;--chip-new-fg:#F2EEE3;
   --chip-learn-bd:#4C6182;--chip-learn-bg:#1E242E;--chip-learn-fg:#9DB4D4;
@@ -40,7 +40,7 @@
     --washi:#191712;--panel:#221F19;--panel-soft:rgba(34,31,25,.7);
     --sumi:#F2EEE3;--ink-muted:#A49B8C;--ink-soft:#C4BCAC;
     --hairline:#363028;--rule:#2C2820;--quiet-edge:#7D7568;
-    --seal:#E0614B;--seal-deep:#EE8672;--seal-tint:#2A1E1A;--seal-edge:#7A3A30;--seal-on:#1A1611;
+    --seal:#E0614B;--seal-deep:#EE8672;--seal-tint:#2A1E1A;--seal-edge:#7A3A30;--seal-wash:#3A241F;--faint:#7D7568;--seal-on:#1A1611;
     --disabled-bg:#3D362D;--disabled-fg:#7D7568;--field-off:#1F1C16;
     --chip-new-bd:#F2EEE3;--chip-new-fg:#F2EEE3;
     --chip-learn-bd:#4C6182;--chip-learn-bg:#1E242E;--chip-learn-fg:#9DB4D4;
@@ -702,109 +702,192 @@ html.motion-on .echo-count.just-ticked { animation: echo-tick 280ms ease-out; }
 html.motion-off #review-progress-bar { transition: none; }
 
 
-/* Map — the wall of joyo kanji, and how much of it your sentences have met.
-   Nothing here is scheduled: a cell's state is read off the library every
-   time the view opens, so adding or deleting a sentence moves it at once. */
-.map-head{margin:0 0 18px}
-.map-summary{font-family:var(--display);font-size:1.45rem;margin:.15rem 0 .3rem;font-variant-numeric:tabular-nums}
-#map-view{padding-bottom:24px}
-.kanji-band{margin:0 0 22px}
-.kanji-band-head{display:flex;justify-content:space-between;align-items:baseline;
-  border-bottom:1px solid var(--rule);padding-bottom:6px;margin-bottom:10px}
-.kanji-band-head b{font-weight:600;font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--quiet-title)}
-.kanji-band-head span{font-size:.75rem;color:var(--ink-muted);font-variant-numeric:tabular-nums}
-.kanji-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(30px,1fr));gap:4px}
-.kanji-cell{aspect-ratio:1;display:grid;place-items:center;padding:0;
-  font-family:var(--display);font-size:17px;line-height:1;border-radius:3px;
-  border:1px solid transparent;background:var(--field-off);color:var(--quiet-edge)}
-.kanji-cell.met{background:var(--chip-learn-bg);border-color:var(--chip-learn-bd);color:var(--chip-learn-fg)}
-.kanji-cell.known{background:var(--seal);border-color:var(--seal-deep);color:var(--seal-on)}
-.kanji-cell:focus-visible{outline:2px solid var(--seal);outline-offset:2px}
-.map-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.74rem;color:var(--ink-muted);margin:0 0 18px}
-.map-legend i{display:inline-block;width:11px;height:11px;border-radius:2px;
-  vertical-align:-1px;margin-right:6px;border:1px solid var(--hairline);background:var(--field-off)}
-.map-legend .met i{background:var(--chip-learn-bg);border-color:var(--chip-learn-bd)}
-.map-legend .known i{background:var(--seal);border-color:var(--seal-deep)}
-@media(min-width:1024px){
-  .kanji-grid{grid-template-columns:repeat(auto-fill,minmax(34px,1fr));gap:5px}
-  .kanji-cell{font-size:19px}
-}
-
-/* The kanji sheet. A dialog rather than a view: the wall is 2,136 cells long
-   and tapping one near the bottom should not cost you your place on it. */
-#kanji-dialog{max-width:32rem}
-#kanji-character{font-family:var(--display);font-size:3.2rem;line-height:1;margin:0}
-#kanji-meta{margin:.1rem 0 1rem}
-.kanji-sentences{list-style:none;margin:0 0 4px;padding:0;display:flex;flex-direction:column;gap:2px}
-.kanji-sentences li{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--rule)}
-.kanji-sentences li:first-child{border-top:0}
+/* Kanji and grammar — the study tool behind the Library. Coverage is read
+   off your sentences every time the screen opens; nothing here is stored,
+   scheduled or graded, so a sentence added or deleted moves the wall at once.
+   Every number below is the artboard's. */
+#map-view{padding-bottom:40px}
+.tool-head{display:flex;align-items:center;gap:12px;padding:calc(24px + env(safe-area-inset-top)) 0 14px;border-bottom:1px solid var(--hairline)}
+.tool-titles{flex-grow:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.tool-title{font-family:var(--display);font-weight:600;font-size:19px;letter-spacing:.03em;line-height:1.2}
+.segmented{display:flex;margin:16px 0 0;border:1px solid var(--hairline);border-radius:4px;background:var(--panel);overflow:hidden}
+.segmented [role=tab]{flex:1 1 0;height:44px;min-height:44px;display:flex;align-items:center;justify-content:center;padding:0;border:0;border-radius:0;background:transparent;color:var(--ink-soft);font-size:14px;letter-spacing:.04em}
+.segmented [role=tab]+[role=tab]{border-left:1px solid var(--hairline)}
+.segmented [role=tab][aria-selected=true]{background:var(--sumi);color:var(--seal-on);font-weight:500}
+.tool-search{margin-top:16px}
+.search-field{display:flex;align-items:center;gap:10px;height:46px;padding:0 13px;background:var(--panel);border:1px solid var(--hairline);border-radius:4px;color:var(--ink-muted)}
+.search-field:focus-within{border-color:var(--sumi)}
+.search-field input{flex-grow:1;min-width:0;height:auto;min-height:0;padding:0;border:0;outline:0;background:transparent;font:inherit;font-size:15px;color:var(--sumi)}
+.search-field input::-webkit-search-cancel-button{display:none}
+.search-field button{width:24px;height:24px;min-height:24px;flex-shrink:0;padding:0;border:0;border-radius:12px;background:var(--rule);color:var(--sumi);font-size:15px;line-height:1}
+.tool-search .hint{margin-top:7px;font-size:11px}
+.tool-card{margin-top:18px;padding:16px 16px 17px;background:var(--panel);border:1px solid var(--hairline);border-radius:4px}
+.tool-card>.overline{display:block;font-size:10px}
+.summary-line{display:flex;align-items:baseline;gap:8px;margin:9px 0 0}
+.summary-line strong{font-family:var(--display);font-weight:600;font-size:27px;line-height:1;font-variant-numeric:tabular-nums}
+.summary-line span{font-size:14px;color:var(--ink-soft)}
+.bar{display:flex;height:10px;margin-top:12px;border:1px solid var(--rule);border-radius:2px;background:var(--panel);overflow:hidden}
+.bar-learned{background:var(--seal)}
+.bar-met{background-image:repeating-linear-gradient(135deg,var(--seal) 0 2px,transparent 2px 5px);background-color:var(--seal-wash)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin:14px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--ink-muted)}
+.swatch{width:14px;height:14px;box-sizing:border-box;flex-shrink:0;border-radius:2px;background:var(--panel);border:1px solid var(--rule)}
+.swatch.learned{background:var(--seal);border-color:var(--seal);color:var(--seal-on)}
+.swatch.met{border:1.5px solid var(--seal)}
+.tool-card .copy{margin:14px 0 0;font-size:12px;line-height:1.6;color:var(--ink-muted);text-wrap:pretty}
+.tool-card .copy em{font-style:normal;color:var(--sumi)}
+/* An inline link that is still a 44px target: the tall line box is pulled back with negative margins so the paragraph keeps its rhythm. */
+.tool-card .copy button{display:inline-block;padding:0;border:0;min-height:44px;height:44px;line-height:44px;margin:-13px 0;vertical-align:baseline;background:transparent;font:inherit;font-size:inherit;color:var(--seal-deep);text-decoration:underline;text-underline-offset:3px}
+/* A control drawn smaller than 44px keeps its drawing and gets a 44px hit area around it. */
+.hit{position:relative}
+.hit::before{content:"";position:absolute;left:0;right:0;top:calc(50% - 23px);bottom:calc(50% - 23px)}
+.tag-line{display:flex;align-items:center;gap:10px;margin-top:15px;padding-top:13px;border-top:1px solid var(--rule)}
+.tag-line span{flex-grow:1;font-size:12px;line-height:1.5;color:var(--ink-muted)}
+.tag-line button{flex-shrink:0;height:34px;min-height:34px;padding:0 12px;background:transparent;border:1px solid var(--hairline);border-radius:3px;font-size:12px;color:var(--ink-soft)}
+.bands{margin-top:24px}
+.band{border-bottom:1px solid var(--rule)}
+.band-head{display:flex;align-items:center;gap:14px;width:100%;min-height:60px;padding:15px 0;background:transparent;border:0;border-radius:0;text-align:left;color:inherit;letter-spacing:normal;font-size:inherit}
+.band.open{border-bottom:0;margin-top:0}
+.band.open>.band-head{padding-top:15px;padding-bottom:11px;border-bottom:1px solid var(--sumi)}
+.band-level{width:34px;flex-shrink:0;font-family:var(--display);font-weight:600;font-size:19px}
+.band-text{flex-grow:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.band-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.band-label{font-size:13px;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.band-tally{flex-shrink:0;font-size:12px;color:var(--ink-muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+.band-tally strong{font-weight:500;color:var(--sumi)}
+.band-text .bar{height:8px;margin-top:0}
+.band-head svg{flex-shrink:0;color:var(--ink-muted);transition:transform .2s}
+.band[aria-busy] svg{transform:rotate(180deg)}
+.band-body{padding-bottom:24px}
+.chips{display:flex;flex-wrap:wrap;gap:12px 7px;margin-top:13px}
+.chips button{height:34px;min-height:34px;padding:0 12px;border-radius:3px;font-size:12px;letter-spacing:.04em;white-space:nowrap;background:var(--panel);border:1px solid var(--hairline);color:var(--ink-soft)}
+.chips button[aria-pressed=true]{background:var(--sumi);border-color:var(--sumi);color:var(--seal-on)}
+.chunk-head{display:flex;align-items:center;gap:10px;margin:16px 0 0;font-size:10px;text-transform:uppercase;letter-spacing:.16em;color:var(--ink-muted)}
+.chunk-head::after{content:"";flex-grow:1;height:1px;background:var(--rule)}
+.kanji-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-top:8px}
+.kanji-cell{height:46px;min-height:46px;display:flex;align-items:center;justify-content:center;padding:0;border-radius:3px;font-family:var(--display);font-size:20px;line-height:1;letter-spacing:normal;background:var(--panel);border:1px solid var(--rule);color:var(--faint)}
+.kanji-cell.met{border:1.5px solid var(--seal);color:var(--seal-deep)}
+.kanji-cell.known{background:var(--seal);border-color:var(--seal);color:var(--seal-on)}
+.band-foot{display:flex;flex-direction:column;gap:8px;margin-top:18px}
+.band-foot .hint{font-size:11px}
+.outlined{height:48px;min-height:48px;display:flex;align-items:center;justify-content:center;gap:10px;padding:0 16px;background:var(--panel);color:var(--sumi);border:1px solid var(--sumi);border-radius:4px;font-size:14px;font-weight:500;letter-spacing:.04em}
+.point-rows{margin-top:4px}
+.point-row{display:flex;align-items:center;gap:12px;width:100%;min-height:44px;padding:13px 0;border:0;border-bottom:1px solid var(--rule);border-radius:0;background:transparent;text-align:left;color:inherit;letter-spacing:normal;font-size:inherit}
+.point-row .swatch{width:20px;height:20px;display:flex;align-items:center;justify-content:center}
+.point-row b{font-family:var(--display);font-weight:400;font-size:16px;color:var(--sumi);flex-shrink:0;max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.point-row.unused b{color:var(--faint)}
+.point-row .gloss{flex-grow:1;min-width:0;font-size:12px;color:var(--ink-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.point-row i{flex-shrink:0;font-style:normal;font-size:11px;color:var(--ink-muted);font-variant-numeric:tabular-nums}
+.show-more{width:100%;height:44px;min-height:44px;margin-top:12px;background:transparent;border:1px dashed var(--hairline);border-radius:4px;font-size:13px;letter-spacing:normal;color:var(--ink-soft)}
+/* Looking one up */
+#map-results .list-head{margin-top:20px}
+.lookup-list{list-style:none;margin:0;padding:0}
+.lookup-row{display:flex;align-items:center;gap:13px;width:100%;padding:13px 0;border:0;border-bottom:1px solid var(--rule);border-radius:0;background:transparent;text-align:left;color:inherit;letter-spacing:normal;font-size:inherit}
+.lookup-row .kanji-cell{width:46px;flex-shrink:0;font-size:24px}
+.lookup-row .swatch{width:20px;height:20px;display:flex;align-items:center;justify-content:center}
+.lookup-text{flex-grow:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.lookup-text span:first-child{font-size:14px;line-height:1.4}
+.lookup-text b{font-family:var(--display);font-weight:400;font-size:16px}
+.lookup-text span:last-child{font-size:12px;color:var(--ink-muted)}
+.lookup-row svg{flex-shrink:0;color:var(--ink-muted)}
+.rule-line{display:flex;align-items:center;gap:9px}
+.rule-line::after{content:"";flex-grow:1;height:1px;background:var(--rule)}
+.not-joyo-row{display:flex;align-items:center;gap:12px;margin:9px 0 0}
+.not-joyo-cell{width:40px;height:40px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-radius:3px;background:var(--washi);border:1px dashed var(--quiet-edge);color:var(--ink-muted);font-family:var(--display);font-size:22px}
+.not-joyo-row span:last-child{font-size:12px;line-height:1.55;color:var(--ink-soft)}
+#map-not-joyo .outlined{width:100%;height:42px;min-height:42px;margin-top:12px;font-size:13px}
+.offline-note{margin-top:14px;font-size:11px}
+/* The row in the Library that opens the tool */
+.library-tool{display:flex;align-items:center;gap:12px;width:100%;height:44px;min-height:44px;margin-top:12px;padding:0;background:transparent;border:0;border-radius:0;color:inherit;text-align:left;letter-spacing:normal;font-size:inherit}
+.library-tool-glyph{width:30px;height:30px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:1px solid var(--hairline);border-radius:3px;background:var(--panel);font-family:var(--display);font-size:16px;color:var(--seal-deep)}
+.library-tool-label{flex-grow:1;min-width:0;font-size:13px;color:var(--ink-soft)}
+.library-tool-tally{flex-shrink:0;font-size:12px;color:var(--ink-muted);font-variant-numeric:tabular-nums}
+.library-tool svg{flex-shrink:0;color:var(--ink-muted)}
+/* The sheets: one kanji, one point. Bottom-anchored on a phone, a card on a
+   wider screen; the wall is long and tapping a cell must not cost your place. */
+.tool-sheet{width:100%;max-width:none;margin:auto auto 0;padding:0 0 calc(26px + env(safe-area-inset-bottom));border:0;border-top:1px solid var(--hairline);border-radius:10px 10px 0 0;background:var(--panel);background-image:repeating-linear-gradient(90deg,var(--texture) 0 1px,transparent 1px 3px);box-shadow:0 -14px 40px rgba(28,26,23,.14)}
+.tool-sheet>:not(.sheet-handle):not(.learn-nav):not(.sheet-head){margin-left:22px;margin-right:22px}
+.sheet-handle{width:38px;height:4px;margin:10px auto 0;border-radius:2px;background:var(--hairline)}
+.learn-nav{display:flex;align-items:center;gap:10px;margin:10px 22px 0;padding-bottom:12px;border-bottom:1px solid var(--rule)}
+.learn-nav span{flex-grow:1;text-align:center;font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-muted)}
+.learn-nav button{height:36px;min-height:36px;padding:0 12px;background:transparent;border:1px solid var(--hairline);border-radius:3px;font-size:12px;letter-spacing:normal;color:var(--ink-soft)}
+.learn-nav .nav-next{border-color:var(--sumi);color:var(--sumi);font-weight:500}
+.learn-nav button:disabled{opacity:.4}
+.sheet-head{display:flex;align-items:flex-start;gap:16px;padding:16px 22px 0}
+.kanji-tile{width:78px;height:78px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-radius:5px;font-family:var(--display);font-weight:500;font-size:46px;line-height:1;background:var(--panel);border:1px solid var(--rule);color:var(--faint)}
+.kanji-tile[data-state=met]{border:1.5px solid var(--seal);color:var(--seal-deep)}
+.kanji-tile[data-state=learned]{background:var(--seal);border-color:var(--seal);color:var(--seal-on)}
+.sheet-titles{flex-grow:1;min-width:0;display:flex;flex-direction:column;gap:7px;padding-top:3px}
+.chip-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.level-chip,.state-chip{padding:3px 8px;border:1px solid var(--sumi);border-radius:2px;font-size:10px;text-transform:uppercase;letter-spacing:.12em;line-height:1.4}
+.level-chip:empty,.state-chip:empty{display:none}
+.state-chip[data-state=learned]{background:var(--seal);border-color:var(--seal);color:var(--seal-on)}
+.state-chip[data-state=met]{border:1.5px solid var(--seal);color:var(--seal-deep)}
+.state-chip[data-state=unmet]{border-color:var(--rule);color:var(--ink-muted)}
+.sheet-meaning{font-family:var(--display);font-size:19px;line-height:1.3}
+.sheet-readings{font-size:13px;color:var(--ink-soft)}
+.sheet-readings .rk{font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-muted);margin-right:5px}
+.sheet-readings .rk+span{margin-right:12px}
+.icon-button.small{width:34px;height:34px;background:var(--washi)}
+.point-title{font-family:var(--display);font-weight:600;font-size:30px;line-height:1.2;margin:0}
+.point-gloss{font-size:14px;color:var(--ink-soft)}
+#kanji-meta,#grammar-meta{margin-top:12px;font-size:12px}
+.note-block{margin-top:18px;padding:14px 16px;border-left:2px solid var(--seal);background:var(--washi);border-radius:0 4px 4px 0}
+.note-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0}
+.note-head .overline{font-size:10px;color:var(--seal-deep)}
+.note-block p{margin:9px 0 0;font-size:14px;line-height:1.65;text-wrap:pretty}
+.note-block .hint{margin-top:11px;font-size:11px}
+.tool-sheet .rule-heading{margin-top:22px}
+.kanji-sentences{list-style:none;margin:4px 0 0;padding:0;display:flex;flex-direction:column}
+.kanji-sentences li{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--rule)}
 .kanji-sentence-text{flex:1 1 auto;min-width:0}
-.kanji-sentence-text b{display:block;font-family:var(--display);font-size:1.05rem;font-weight:400}
-.kanji-sentence-text span{display:block;font-size:.8rem;color:var(--ink-muted);margin-top:2px}
-.kanji-sentences .is-playing b{color:var(--seal)}
-.kanji-play{flex:0 0 auto;width:38px;height:38px;display:grid;place-items:center;padding:0;border-radius:3px}
-/* One action, and it names a character — it gets the width rather than the
-   three wrapped lines the shared two-button row left it with. */
-#kanji-dialog .dialog-actions{display:block}
-#kanji-compose{width:100%}
-
-/* What WaniKani knows about a kanji, on the sheet */
-.kanji-meanings{font-family:var(--display);font-size:1.15rem;margin:0 0 .4rem}
-.kanji-readings{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;margin:0 0 .6rem;font-size:.9rem}
-.kanji-readings dt{font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;color:var(--quiet-title);align-self:baseline}
-.kanji-readings dd{margin:0}
-.kanji-mnemonic{margin:0 0 .3rem;font-size:.88rem;line-height:1.55}
-.kanji-mnemonic summary{cursor:pointer;color:var(--ink-muted);font-size:.8rem}
-.kanji-mnemonic p{margin:.4rem 0 .6rem}
-.kanji-list-head{margin:.9rem 0 .2rem}
+.kanji-sentence-text b{display:block;font-family:var(--display);font-size:17px;line-height:1.45;font-weight:400}
+.kanji-sentence-text mark{background:var(--seal-wash);color:var(--seal-deep);padding:0 1px}
+.kanji-sentence-text span{display:block;font-size:12px;color:var(--ink-muted);margin-top:3px}
 .kanji-sentence-text i{display:block;font-style:normal;font-size:.78rem;color:var(--ink-muted);margin-bottom:2px}
+.kanji-sentences .is-playing b{color:var(--seal)}
+.kanji-sentences .status-chip{flex-shrink:0}
+.kanji-play{flex:0 0 auto;width:38px;height:38px;display:grid;place-items:center;padding:0;border-radius:3px}
 .kanji-delete{flex:0 0 auto;width:34px;height:34px;display:grid;place-items:center;padding:0;border-radius:3px;color:var(--ink-muted)}
 .kanji-delete:hover{color:var(--seal)}
-/* WaniKani's inline markup, as spans, with a colour each so a story reads */
+/* Your own sentence, on the sheet */
+.kanji-say{margin-top:22px}
+.kanji-say>label{display:block;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.2em;color:var(--seal-deep)}
+.kanji-say .input-row{margin-top:9px;gap:8px}
+.kanji-say textarea{height:auto;min-height:65px;background:var(--washi)}
+.kanji-say .mic{width:48px;height:auto}
+.say-row{display:flex;align-items:center;gap:12px;margin-top:9px}
+.say-row .outlined{height:44px;min-height:44px;padding:0 22px;flex-shrink:0}
+.say-row .hint{font-size:11px}
+.kanji-say>.hint{margin-top:8px}
+.link-button{height:44px;min-height:44px;margin-top:6px;padding:0;display:flex;align-items:center;background:transparent;border:0;border-radius:0;font-size:13px;letter-spacing:normal;color:var(--seal-deep);text-decoration:underline;text-underline-offset:3px}
+.link-button:disabled{color:var(--disabled-fg)}
+/* What WaniKani adds, when it is connected */
+.wk-section{margin-top:14px;padding-top:14px;border-top:1px solid var(--rule)}
+.wk-section>.overline{display:block;font-size:10px}
+.wk-rows{display:flex;flex-direction:column;margin-top:6px}
+.wk-row{border-bottom:1px solid var(--rule);font-size:13px;color:var(--ink-soft)}
+.wk-row summary,.wk-row>span{display:flex;align-items:center;justify-content:space-between;min-height:42px;list-style:none;cursor:pointer}
+.wk-row summary::-webkit-details-marker{display:none}
+.wk-row summary::after{content:"";width:8px;height:8px;margin-right:6px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg)}
+.wk-row[open]>summary::after{transform:rotate(-135deg)}
+.wk-row p{margin:0 0 12px;font-size:13px;line-height:1.6;color:var(--sumi)}
+.wk-row .kanji-sentences{margin-bottom:8px}
+.wk-parts{font-family:var(--display);color:var(--sumi);margin-left:6px}
+.wk-section .hint{margin-top:8px;font-size:11px}
 .wk-kanji{color:var(--seal);font-weight:600}
 .wk-radical{color:var(--indigo);font-weight:600}
 .wk-vocabulary{color:var(--chip-learn-fg);font-weight:600}
 .wk-reading{font-weight:600;border-bottom:1px dotted var(--quiet-edge)}
 .wk-meaning{font-weight:600}
 .wk-ja{font-family:var(--display)}
-
-/* Your own sentence on the sheet. The row is the composer's row. */
-.kanji-say{margin:14px 0 2px}
-.kanji-say .overline{display:block;margin-bottom:6px}
-.kanji-say textarea{min-height:52px}
-#kanji-dialog .dialog-actions{margin-top:6px}
-#kanji-compose{width:100%}
-
-/* Learn */
-.map-summary-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.map-summary-row .map-summary{margin:.15rem 0}
-#map-learn{flex:0 0 auto}
-.kanji-learn-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px;padding-bottom:12px;border-bottom:1px solid var(--rule)}
-.kanji-learn-nav span{font-size:.78rem;color:var(--ink-muted);font-variant-numeric:tabular-nums;text-align:center;flex:1 1 auto}
-.kanji-learn-nav button{flex:0 0 auto}
-
-/* The Map's two faces */
-.map-toggle{display:inline-flex;gap:2px;padding:3px;margin:0 0 16px;border:1px solid var(--hairline);border-radius:4px;background:var(--field-off)}
-.map-toggle button{padding:6px 14px;border:0;border-radius:3px;background:transparent;color:var(--ink-muted);font-size:.85rem}
-.map-toggle button.on{background:var(--panel);color:var(--sumi);box-shadow:0 1px 0 var(--hairline)}
-.grammar-points{display:flex;flex-direction:column;gap:2px}
-.grammar-point{display:grid;grid-template-columns:auto 1fr auto;align-items:baseline;gap:10px;width:100%;padding:9px 10px;
-  text-align:left;border:1px solid transparent;border-radius:3px;background:var(--field-off);color:var(--quiet-edge)}
-.grammar-point b{font-family:var(--display);font-weight:400;font-size:1.02rem;color:inherit}
-.grammar-point span{font-size:.78rem;color:var(--ink-muted);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.grammar-point i{font-style:normal;font-size:.75rem;font-variant-numeric:tabular-nums;color:var(--ink-muted)}
-.grammar-point.met{background:var(--chip-learn-bg);border-color:var(--chip-learn-bd);color:var(--chip-learn-fg)}
-.grammar-point.met i{color:var(--chip-learn-fg);font-weight:600}
-.grammar-point:focus-visible{outline:2px solid var(--seal);outline-offset:2px}
-#grammar-dialog{max-width:32rem}
-#grammar-title{font-family:var(--display);font-size:2rem;line-height:1.1;margin:0;font-weight:400}
-#grammar-compose{width:100%}
-#grammar-dialog .dialog-actions{display:block;margin-top:6px}
-
-/* Echo's story, and the parts a kanji is made of */
-.kanji-story{margin:0 0 14px;padding:12px 14px;border-left:2px solid var(--seal);background:var(--panel)}
-.kanji-story .overline{margin:0 0 6px}
-.kanji-story p{margin:0 0 .5rem;font-size:.92rem;line-height:1.55}
-.kanji-story p:last-child{margin-bottom:0}
-.kanji-parts-head{margin:.6rem 0 .2rem}
-.kanji-parts{margin:0 0 .6rem;font-size:.95rem}
+/* What deleting a sentence does to the wall */
+.delete-consequence{margin:-4px 0 0;padding:10px 12px;border:1px solid var(--rule);border-radius:3px;font-size:12px;line-height:1.6;color:var(--ink-soft);text-wrap:pretty}
+.delete-consequence b{font-family:var(--display);font-weight:400;color:var(--sumi)}
+@media(min-width:720px){
+  .tool-sheet{max-width:520px;margin:auto;border:1px solid var(--hairline);border-radius:6px;box-shadow:none}
+}
+@media(min-width:1024px){
+  .tool-head{padding-top:0}
+  body[data-view="map"] .tabs .tab[data-view="library"]{background:var(--panel);border:1px solid var(--hairline);color:var(--sumi)}
+}
