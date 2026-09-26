@@ -6,7 +6,7 @@ import {deleteSentence,getSentence,listSentences,migrateStore,replaceAll,saveSen
 import {carries,compose,PROVIDER_DEFAULTS,translate} from "./api.js";
 import {japaneseVoices,recognitionFactory,ShadowLoop} from "./speech.js";
 import {forgetWaniKani,kanjiInfo,mnemonicHtml,syncWaniKani,waniKaniStatus} from "./wanikani.js";
-import {bands as kanjiBands,coverage as kanjiCoverage,learned as kanjiLearned,summarise as kanjiSummarise,TOTAL as KANJI_TOTAL} from "./kanji.js";
+import {bands as kanjiBands,coverage as kanjiCoverage,learned as kanjiLearned,nextUnmet,summarise as kanjiSummarise,TOTAL as KANJI_TOTAL,unmetCount} from "./kanji.js";
 import {downloadAnkiDeck} from "./anki-export.js";
 import {dueSentences,ensureSchedule,isDue,reviewSentence} from "./srs.js";
 import {DEFAULT_TIME,REMINDER_TAG,reminderText,shouldRemind} from "./reminders.js";
@@ -258,8 +258,9 @@ async function renderMap(){
 // Which sentence the loop is currently speaking, so the row can say so. The
 // loop is the one the rest of the app uses; nothing here owns a second one.
 let kanjiOpen=null;
-async function openKanji(character,cover){
-  kanjiOpen={character};
+async function openKanji(character,cover,{learn=false}={}){
+  kanjiOpen={character,learn};
+  renderLearnNav(cover);
   const ids=cover.get(character)||[];
   $("#kanji-character").textContent=character;
   $("#kanji-meta").textContent=ids.length
@@ -327,6 +328,33 @@ function playKanjiSentence(sentence){
   const voice=voices[Number($("#voice").value)]||voices[0]||null;
   loop.play(sentence.plainTarget||stripFurigana(sentence.target),{voice,rate:Number($("#rate").value),lang:targetLang()});
 }
+// Learn: the next kanji you have not met, one at a time, from where you
+// stopped. The sheet is the same sheet; only the controls at the top change.
+function renderLearnNav(cover){
+  const nav=$("#kanji-learn-nav");nav.hidden=!kanjiOpen?.learn;if(nav.hidden)return;
+  const left=unmetCount(cover);
+  $("#kanji-learn-count").textContent=left===1?t("1 left to meet"):t("{n} left to meet",{n:left.toLocaleString()});
+  $("#kanji-prev").disabled=!nextUnmet(cover,kanjiOpen.character,-1);
+  $("#kanji-next").disabled=!nextUnmet(cover,kanjiOpen.character,1);
+}
+async function startLearn(){
+  const cover=kanjiCoverage(await listSentences());
+  const character=nextUnmet(cover,settings.learnAt||null,1,{inclusive:true})||nextUnmet(cover,null,1);
+  if(!character){toast(t("You have met every kanji on the list."),4000);return}
+  settings.learnAt=character;localStorage.setItem("jp-echo-settings",JSON.stringify(settings));
+  await openKanji(character,cover,{learn:true});
+}
+async function learnStep(direction){
+  if(!kanjiOpen?.learn)return;
+  const cover=kanjiCoverage(await listSentences());
+  const character=nextUnmet(cover,kanjiOpen.character,direction);
+  if(!character)return;
+  settings.learnAt=character;localStorage.setItem("jp-echo-settings",JSON.stringify(settings));
+  if(loop.running)loop.stop();
+  $("#kanji-say").value="";
+  await openKanji(character,cover,{learn:true});
+  $("#kanji-dialog").scrollTop=0;
+}
 async function deleteFromSheet(sentence){
   if(!kanjiOpen)return;
   if(loop.running&&kanjiPlaying?.id===sentence.id)loop.stop();
@@ -334,8 +362,8 @@ async function deleteFromSheet(sentence){
   if(current?.id===sentence.id){current=null;renderSentence()}
   if(detail?.id===sentence.id)detail=null;
   refreshDueBadge();
-  const fresh=await listSentences();
-  await openKanji(kanjiOpen.character,kanjiCoverage(fresh));
+  const fresh=await listSentences(),learn=kanjiOpen.learn;
+  await openKanji(kanjiOpen.character,kanjiCoverage(fresh),{learn});
   $("#kanji-status").textContent=t("Deleted.");
   renderMap();
 }
@@ -370,7 +398,7 @@ async function sayForKanji(){
     const made=ensureSchedule(createSentence(card.source,card,new Date(),undefined,{sourceLang:sourceLang(),targetLang:targetLang()}));
     made.translationProvider=defaultProvider();await saveSentence(made);refreshDueBadge();
     field.value="";
-    const fresh=await listSentences();await openKanji(target.character,kanjiCoverage(fresh));
+    const fresh=await listSentences();await openKanji(target.character,kanjiCoverage(fresh),{learn:target.learn});
     status.textContent=t("Saved to your library.");renderMap();
   }catch(error){
     const provider=defaultProvider(),name=PROVIDER_NAMES[provider]||provider;
@@ -393,7 +421,7 @@ async function composeForKanji(){
     await saveSentence(made);
     refreshDueBadge();
     const fresh=await listSentences(),cover=kanjiCoverage(fresh);
-    await openKanji(target.character,cover);
+    await openKanji(target.character,cover,{learn:target.learn});
     $("#kanji-status").textContent=t("Saved to your library.");
     renderMap();
   }catch(error){
@@ -687,7 +715,7 @@ $("#setup-next").onclick=()=>{storeTranslator();showSetupStep(2)};
 $("#setup-back").onclick=()=>{if(setupStep===2)return showSetupStep(1);showView(settings.onboarded?"practice":"onboard")};$("#setup-provider").onchange=showSetupFields;$("#setup-save").onclick=saveSetup;$("#setup-skip").onclick=finishOnboarding;
 $("#clear-filters").onclick=()=>{$("#history-search").value="";$("#clear-history-search").hidden=true;$("#history-filter").value="all";settings.historyFilter="all";localStorage.setItem("jp-echo-settings",JSON.stringify(settings));renderHistory()};
 addEventListener("online",renderPracticeNotices);addEventListener("offline",renderPracticeNotices);
-$("#kanji-close").onclick=()=>{loop.stop();$("#kanji-dialog").close()};$("#kanji-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;kanjiOpen=null});$("#kanji-compose").onclick=composeForKanji;$("#kanji-say-go").onclick=sayForKanji;$("#kanji-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForKanji()};$("#wanikani-sync").onclick=runWaniKaniSync;$("#wanikani-forget").onclick=async()=>{await forgetWaniKani();$("#wanikani-progress").textContent=t("Forgotten.");renderWaniKaniStatus();if(kanjiOpen)renderKanjiInfo(kanjiOpen.character)};$("#sentence-back").onclick=()=>{detail=null;showView("library")};$("#sentence-play").onclick=playDetail;$("#sentence-edit").onclick=openEditor;$("#sentence-cancel").onclick=closeEditor;$("#sentence-editor").onsubmit=saveEdit;
+$("#kanji-close").onclick=()=>{loop.stop();$("#kanji-dialog").close()};$("#kanji-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;kanjiOpen=null});$("#kanji-compose").onclick=composeForKanji;$("#kanji-say-go").onclick=sayForKanji;$("#map-learn").onclick=startLearn;$("#kanji-prev").onclick=()=>learnStep(-1);$("#kanji-next").onclick=()=>learnStep(1);$("#kanji-dialog").addEventListener("keydown",event=>{if(!kanjiOpen?.learn||event.target.tagName==="TEXTAREA")return;if(event.key==="ArrowRight")learnStep(1);else if(event.key==="ArrowLeft")learnStep(-1)});$("#kanji-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForKanji()};$("#wanikani-sync").onclick=runWaniKaniSync;$("#wanikani-forget").onclick=async()=>{await forgetWaniKani();$("#wanikani-progress").textContent=t("Forgotten.");renderWaniKaniStatus();if(kanjiOpen)renderKanjiInfo(kanjiOpen.character)};$("#sentence-back").onclick=()=>{detail=null;showView("library")};$("#sentence-play").onclick=playDetail;$("#sentence-edit").onclick=openEditor;$("#sentence-cancel").onclick=closeEditor;$("#sentence-editor").onsubmit=saveEdit;
 $("#sentence-delete").onclick=askDelete;$("#delete-cancel").onclick=()=>$("#delete-dialog").close();$("#delete-confirm").onclick=confirmDelete;$("#delete-dialog").onclick=event=>{if(event.target===$("#delete-dialog"))$("#delete-dialog").close()};
 $("#side-start-review").onclick=startReview;$("#side-export-anki").onclick=()=>exportAnki($("#side-export-anki"));
 wide.addEventListener("change",()=>showView(document.body.dataset.view||"practice"));
