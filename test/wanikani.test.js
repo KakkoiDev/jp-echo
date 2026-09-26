@@ -57,3 +57,19 @@ test("a known tag wrapping hostile content still escapes the content", () => {
 test("tags span lines", () => {
   assert.equal(mnemonicHtml("<meaning>two\nlines</meaning>"), '<span class="wk-meaning">two\nlines</span>');
 });
+
+import {slimKanji, slimVocabulary, SCRUB_VERSION} from "../wanikani.js";
+
+test("what is stored is already scrubbed — the raw text never reaches the disk", () => {
+  const kanji = slimKanji({id: 1, data: {characters: "駅", level: 2, meanings: [{meaning: "Station", accepted_answer: true}],
+    readings: [], amalgamation_subject_ids: [], meaning_mnemonic: "Jesus, a <kanji>station</kanji>.", reading_mnemonic: "Oh my God."}});
+  assert.equal(kanji.meaningMnemonic, "Whoa, a <kanji>station</kanji>.");
+  assert.equal(kanji.readingMnemonic, "Oh wow.");
+  const word = slimVocabulary({id: 2, data: {characters: "駅", context_sentences: [{ja: "駅は遠い。", en: "Gee, it's far."}]}});
+  assert.equal(word.sentences[0].en, "Whoa, it's far.");
+  assert.equal(word.sentences[0].ja, "駅は遠い。", "the Japanese is untouched");
+});
+
+test("the word list has a version, so a change to it is a reason to sync again", () => {
+  assert.match(SCRUB_VERSION, /^[0-9a-z]+$/);
+});

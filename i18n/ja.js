@@ -157,6 +157,7 @@ export default {
   "Forgotten.": "消去しました。",
   "Create a WaniKani token": "WaniKaniのトークンを作る",
   "Not synced": "未同期",
+  "the word list has changed; sync again to apply it": "置き換えの語リストが変わりました。再同期で反映されます",
   "{n} kanji, synced {date}": "{n}字、{date}に同期",
   "Add your WaniKani token first.": "先にWaniKaniのトークンを入れてください。",
   "Syncing…": "同期中…",

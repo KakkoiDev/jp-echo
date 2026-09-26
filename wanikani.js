@@ -76,27 +76,37 @@ const get = (store, key) => new Promise((resolve, reject) => {
   const r = store.get(key); r.onsuccess = () => resolve(r.result); r.onerror = () => reject(r.error);
 });
 
-// Only what the app reads is kept. A subject as WaniKani sends it is several
-// kilobytes of fields nobody here looks at, across eight thousand subjects.
-function slimKanji(subject) {
+// Only what the app reads is kept, and it is kept scrubbed. A subject as
+// WaniKani sends it is several kilobytes of fields nobody here looks at,
+// across eight thousand subjects; and the mnemonic as it sends it is text
+// this app never stores. The replacement is lossy — once "God" is "the Giant"
+// on disk there is no "God" left to replace differently — so a change to the
+// word list is a reason to sync again, and SCRUB_VERSION is how the app knows.
+export const SCRUB_VERSION = hashList(SCRUB);
+function hashList(list) {
+  let h = 0;
+  for (const c of JSON.stringify(list)) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  return h.toString(36);
+}
+export function slimKanji(subject) {
   const d = subject.data;
   return {
     characters: d.characters, id: subject.id, level: d.level,
     meanings: d.meanings.filter(m => m.accepted_answer !== false).map(m => m.meaning),
     onyomi: d.readings.filter(r => r.type === "onyomi").map(r => r.reading),
     kunyomi: d.readings.filter(r => r.type === "kunyomi").map(r => r.reading),
-    meaningMnemonic: d.meaning_mnemonic || "", readingMnemonic: d.reading_mnemonic || "",
+    meaningMnemonic: scrub(d.meaning_mnemonic || ""), readingMnemonic: scrub(d.reading_mnemonic || ""),
     vocabulary: d.amalgamation_subject_ids || [],
     hidden: !!d.hidden_at,
   };
 }
-function slimVocabulary(subject) {
+export function slimVocabulary(subject) {
   const d = subject.data;
   return {
     id: subject.id, characters: d.characters, level: d.level,
     meanings: (d.meanings || []).filter(m => m.accepted_answer !== false).map(m => m.meaning),
     readings: (d.readings || []).map(r => r.reading),
-    sentences: (d.context_sentences || []).map(s => ({ja: s.ja, en: s.en})),
+    sentences: (d.context_sentences || []).map(s => ({ja: s.ja, en: scrub(s.en || "")})),
     hidden: !!d.hidden_at,
   };
 }
@@ -109,7 +119,8 @@ export async function syncWaniKani(token, {onProgress = () => {}, fetch: doFetch
   if (!token) throw new Error("Add your WaniKani token in Settings.");
   const db = await openDb();
   const meta = (await tx(db, ["meta"], "readonly", t => get(t.objectStore("meta"), "sync"))) || {key: "sync"};
-  let url = API + "?types=kanji,vocabulary" + (meta.updatedAfter ? "&updated_after=" + encodeURIComponent(meta.updatedAfter) : "");
+  const incremental = meta.updatedAfter && meta.scrubVersion === SCRUB_VERSION;
+  let url = API + "?types=kanji,vocabulary" + (incremental ? "&updated_after=" + encodeURIComponent(meta.updatedAfter) : "");
   let kanji = 0, vocabulary = 0, page = 0;
   const startedAt = new Date().toISOString();
   while (url) {
@@ -127,7 +138,7 @@ export async function syncWaniKani(token, {onProgress = () => {}, fetch: doFetch
     onProgress({page, kanji, vocabulary, total: body.total_count});
     url = body.pages?.next_url || null;
   }
-  await tx(db, ["meta"], "readwrite", t => t.objectStore("meta").put({key: "sync", updatedAfter: startedAt, syncedAt: startedAt, kanji, vocabulary}));
+  await tx(db, ["meta"], "readwrite", t => t.objectStore("meta").put({key: "sync", updatedAfter: startedAt, syncedAt: startedAt, kanji, vocabulary, scrubVersion: SCRUB_VERSION}));
   db.close();
   return {kanji, vocabulary, pages: page};
 }
@@ -139,7 +150,9 @@ export async function waniKaniStatus() {
     const r = t.objectStore("kanji").count(); r.onsuccess = () => resolve(r.result); r.onerror = () => reject(r.error);
   }));
   db.close();
-  return {synced: !!meta?.syncedAt, syncedAt: meta?.syncedAt || null, kanji: count};
+  // stale: the word list has changed since this data was scrubbed, so what is
+  // on disk was replaced by a list that is no longer the one in the code.
+  return {synced: !!meta?.syncedAt, syncedAt: meta?.syncedAt || null, kanji: count, stale: !!meta?.syncedAt && meta.scrubVersion !== SCRUB_VERSION};
 }
 
 // Everything the sheet shows for one character: the kanji's own record with
@@ -155,12 +168,7 @@ export async function kanjiInfo(character) {
     return Promise.all(record.vocabulary.map(id => get(store, id)));
   });
   db.close();
-  return {
-    ...record,
-    meaningMnemonic: scrub(record.meaningMnemonic),
-    readingMnemonic: scrub(record.readingMnemonic),
-    words: words.filter(w => w && !w.hidden).map(w => ({...w, sentences: w.sentences.map(s => ({ja: s.ja, en: scrub(s.en)}))})),
-  };
+  return {...record, words: words.filter(w => w && !w.hidden)};
 }
 
 export async function forgetWaniKani() {
