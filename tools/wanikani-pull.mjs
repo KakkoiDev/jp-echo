@@ -2,6 +2,9 @@
 //
 //   WANIKANI_TOKEN=... node tools/wanikani-pull.mjs
 //
+// or put WANIKANI_TOKEN=... in a .env file next to package.json (gitignored)
+// and run it bare.
+//
 // The token comes from the environment, never an argument, so it stays out of
 // shell history. The official API is used — not the site — one page at a
 // time, with a pause between pages and a wait when asked to. Subsequent runs
@@ -19,7 +22,7 @@ const API = "https://api.wanikani.com/v2/subjects";
 const PAUSE_MS = 400;
 
 export async function pull({token, out, fetch: doFetch = fetch, sleep = ms => new Promise(r => setTimeout(r, ms)), log = () => {}}) {
-  if (!token) throw new Error("Set WANIKANI_TOKEN. A read-only personal access token is enough.");
+  if (!token) throw new Error("No token. Put WANIKANI_TOKEN=... in a .env file next to package.json, or run\n  WANIKANI_TOKEN=... node tools/wanikani-pull.mjs\non one line. A read-only personal access token is enough.");
   const file = out + "/subjects.json";
   const previous = existsSync(file) ? JSON.parse(readFileSync(file, "utf8")) : null;
   // A word-list change makes the stored text stale, so the pull is full again.
@@ -65,6 +68,7 @@ export async function pull({token, out, fetch: doFetch = fetch, sleep = ms => ne
 
 if (import.meta.url === new URL(process.argv[1], "file://").href || process.argv[1]?.endsWith("wanikani-pull.mjs")) {
   const out = new URL("../data/wanikani", import.meta.url).pathname;
+  try { process.loadEnvFile(); } catch {}  // .env in the working directory, if there is one
   pull({token: process.env.WANIKANI_TOKEN, out, log: console.log})
     .then(meta => console.log(`data/wanikani/subjects.json: ${meta.kanji} kanji, ${meta.vocabulary} words${meta.incremental ? " (incremental)" : ""}`))
     .catch(error => { console.error(error.message); process.exit(1); });

@@ -83,6 +83,7 @@ if (process.argv[1]?.endsWith("rewrite-stories.mjs")) {
   const subjectsPath = new URL("../data/wanikani/subjects.json", import.meta.url);
   const subjects = existsSync(subjectsPath) ? JSON.parse(readFileSync(subjectsPath, "utf8")) : null;
   if (!subjects) console.warn("no data/wanikani/subjects.json — writing from facts alone, with no parts named");
+  try { process.loadEnvFile(); } catch {}  // .env in the working directory, if there is one
   const provider = process.env.ECHO_PROVIDER || "google", key = process.env.ECHO_API_KEY || "";
   const settings = {provider, providerKeys: {[provider]: key}, providerModels: process.env.ECHO_MODEL ? {[provider]: process.env.ECHO_MODEL} : {}, localEndpoint: process.env.ECHO_ENDPOINT};
   const {STORIES} = await import("../stories.js");

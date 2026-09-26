@@ -57,7 +57,7 @@ test("a 429 is waited out, as asked, not retried into", async () => {
 
 test("no token, or a refused one, stops before anything is written", async () => {
   const out = mkdtempSync(join(tmpdir(), "wk-"));
-  await assert.rejects(() => pull({token: "", out, fetch: async () => { throw new Error("must not be called"); }}), /Set WANIKANI_TOKEN/);
+  await assert.rejects(() => pull({token: "", out, fetch: async () => { throw new Error("must not be called"); }}), /WANIKANI_TOKEN=... in a .env file/);
   await assert.rejects(() => pull({token: "bad", out, fetch: async () => ({ok: false, status: 401}), sleep: async () => {}}), /did not accept that token/);
   assert.equal(existsSync(join(out, "subjects.json")), false);
 });
