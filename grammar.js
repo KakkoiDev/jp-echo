@@ -37,6 +37,17 @@ export function coverage(sentences = []) {
   return map;
 }
 
+// Points on a sentence you have actually learned — one at Review — as
+// against merely used. The same proxy the kanji wall uses.
+export function learned(sentences = []) {
+  const known = new Set();
+  for (const sentence of sentences) {
+    if ((sentence?.srs?.state ?? 0) !== 2) continue;
+    for (const id of cleanTags(sentence?.grammar)) known.add(id);
+  }
+  return known;
+}
+
 export const byLevel = () => Object.fromEntries(LEVELS.map(level => [level, GRAMMAR.filter(p => p.level === level)]));
 
 export function summarise(cover, points = GRAMMAR) {
