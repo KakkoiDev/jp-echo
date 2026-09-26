@@ -38,6 +38,11 @@ More screens, including dark and desktop, are in [`docs/screenshots`](docs/scree
   stored outside the settings object, so it cannot appear in a backup, and the
   mnemonics are passed through a small word list on the way in (`SCRUB` in
   `wanikani.js`) that replaces a few exclamations.
+  To rework them rather than read them, `tools/wanikani-pull.mjs` writes the
+  same subjects to `data/wanikani/subjects.json` with `WANIKANI_TOKEN` from the
+  environment — official API, one page at a time, scrubbed the same way. That
+  directory is gitignored: it is the reference you rewrite from, not something
+  this public repository carries. What you write from it is yours.
 - Grammar points come as a table of contents, not content. `tools/bunpro-
   structure.js` runs in your own browser on your own Bunpro index page and
   reads names and levels only — it never opens a grammar point, so it cannot

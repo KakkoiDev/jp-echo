@@ -10,7 +10,7 @@ test("a list of names and levels builds, deduplicated and in level order", () =>
   assert.equal(points.length, 6, "the duplicate slug is dropped");
   assert.deepEqual(points.map(p => p.level), ["N5", "N4", "N4", "N3", "N2", "N1"]);
   assert.deepEqual(byLevel, {N5: 1, N4: 2, N3: 1, N2: 1, N1: 1});
-  assert.deepEqual(points.find(p => p.id === "nagara"), {id: "nagara", title: "〜ながら", level: "N4", hint: "while"});
+  assert.deepEqual(points.find(p => p.id === "nagara"), {id: "nagara", title: "〜ながら", level: "N4", order: 6, hint: "while"});
 });
 
 test("anything beyond a name, a level and a gloss is refused", () => {
@@ -38,4 +38,13 @@ test("the rendered module is what the app will import", () => {
   assert.match(source, /^export const LEVELS = \["N5","N4","N3","N2","N1"\];$/m);
   assert.match(source, /no explanations, no example sentences,\n\/\/ no audio/);
   assert.equal((source.match(/"id":/g) || []).length, 5);
+});
+
+test("order is kept within a level, and comes from the index when it is given", () => {
+  const {points} = build([
+    {slug: "b", title: "b", level: "N4", order: 20}, {slug: "a", title: "a", level: "N4", order: 10},
+    ...LEVELS.filter(l => l !== "N4").map(one),
+  ]);
+  assert.deepEqual(points.filter(p => p.level === "N4").map(p => p.id), ["a", "b"], "10 before 20, whatever the file order");
+  assert.throws(() => build([...full, {slug: "x", title: "x", level: "N5", order: "third"}]), /order is not an integer/);
 });

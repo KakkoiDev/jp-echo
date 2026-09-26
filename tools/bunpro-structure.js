@@ -1,8 +1,9 @@
 // Paste into the browser console on https://bunpro.jp/grammar_points while
 // logged in. It reads the index page in front of you and nothing else.
 //
-// What it takes: each grammar point's name, its slug, its JLPT level, and a
-// short English gloss if one sits beside the name on the index.
+// What it takes: each grammar point's name, its slug, its JLPT level, its
+// position in the list — Bunpro's teaching order — and a short English gloss
+// if one sits beside the name on the index.
 // What it never takes: it does not open a single grammar point, so it cannot
 // reach an explanation, an example sentence, or audio. The structure, not
 // the product.
@@ -28,7 +29,7 @@
       // A gloss is a short Latin-script line next to the name, if the index
       // shows one. Best effort; blank is fine.
       const rest = el.innerText.trim().split("\n").slice(1).map(s => s.trim()).find(s => s && /^[\x20-\x7E]+$/.test(s) && s.length < 60) || "";
-      points.set(slug, {slug, title, level, hint: rest});
+      points.set(slug, {slug, title, level, order: points.size, hint: rest});
     }
   }
 
