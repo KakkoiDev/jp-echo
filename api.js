@@ -137,6 +137,45 @@ async function composeGrammar(point,settings){
   throw new Error(`The model kept writing sentences without ${point.title}.`);
 }
 
+// Echo's notes on a grammar point, written from its name and gloss alone —
+// never from the index they were read off — and Echo's rewrite of any note,
+// including the bundled kanji story, to an instruction of yours. The same
+// rules as the stories: no religion, no swearing, plain text.
+const NOTE_RULES="Write in plain, vivid, everyday English for someone learning Japanese. Never mention any religion, deity, or holy figure, and never swear or use a euphemism for swearing; the sound ジ is written jee, never gee. Plain text only: no HTML, no markdown, no headings. Japanese inside the text is fine, and readings go in the notation 駅【えき】 after a kanji run.";
+const NOTE_FORBIDDEN=/\b(god|gods|jesus|christ|lord|allah|buddha|damn|hell|gee)\b|<[a-z][^>]*>/i;
+function notesPrompt(){
+  return `You write Echo's notes on a Japanese grammar point. You are given only its name and a one-line gloss; write from those and your own knowledge of Japanese, not from any textbook or website. Return JSON only: {"breath":"...","remember":"...","examples":[{"ja":"...","en":"..."},{"ja":"...","en":"..."}]}. "breath" explains the point in one paragraph, in one breath: how it attaches, what it means, one tiny example inline. "remember" is a way to remember it, a few sentences. "examples" are two short natural Japanese sentences that use the point, each with its English. ${NOTE_RULES}`;
+}
+export function shapeNotes(raw){
+  const breath=String(raw?.breath||"").trim(),remember=String(raw?.remember||"").trim();
+  const examples=(Array.isArray(raw?.examples)?raw.examples:[]).map(e=>({ja:String(e?.ja||e?.japanese||"").trim(),en:String(e?.en||e?.english||"").trim()})).filter(e=>e.ja&&e.en).slice(0,2);
+  if(!breath||!remember||examples.length<2)throw new Error("The model did not write the whole note.");
+  if(NOTE_FORBIDDEN.test(breath+" "+remember+" "+examples.map(e=>e.en).join(" ")))throw new Error("rules");
+  return {breath,remember,examples};
+}
+export async function writeNotes(point,settings={}){
+  const chosen=chosenProvider(settings),text=`Grammar point: ${point.title}\nGloss: ${point.hint||"—"}\nLevel: ${point.level||"—"}`;
+  let last=null;
+  for(let attempt=0;attempt<2;attempt++){
+    try{return shapeNotes(await ask(attempt?text+"\n\nYour previous answer broke a rule. Write it again: no religious reference, no swearing, no gee, no tags.":text,notesPrompt(),chosen,settings))}
+    catch(error){last=error;if(error.message!=="rules")throw error}
+  }
+  throw new Error("The model could not keep to the rules for "+point.title+".");
+}
+// One note, rewritten to an instruction. `about` names what the note is on
+// (a point's title, or a kanji with its meaning); `kind` names the note.
+export async function adjustNote({about,kind,current,instruction},settings={}){
+  const chosen=chosenProvider(settings);
+  const system=`You rewrite one of Echo's notes for someone learning Japanese. The note is "${kind}" on ${about}. Keep it the same shape and about the same length, change only what the instruction asks, and keep everything else. Return JSON only: {"text":"..."}. ${NOTE_RULES}`;
+  const text=`Current note:\n${current}\n\nWhat to change: ${instruction}`;
+  for(let attempt=0;attempt<2;attempt++){
+    const raw=await ask(attempt?text+"\n\nYour previous answer broke a rule. Write it again: no religious reference, no swearing, no gee, no tags.":text,system,chosen,settings);
+    const out=String(raw?.text||"").trim();
+    if(out&&!NOTE_FORBIDDEN.test(out))return out;
+  }
+  throw new Error("The model could not keep to the rules.");
+}
+
 // For tools that run outside the app — a rewrite script, say — with the same
 // provider choice and the same request shapes as everything above.
 export async function askModel(text,system,settings={}){return ask(text,system,chosenProvider(settings),settings)}

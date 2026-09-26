@@ -265,7 +265,7 @@ export function mergeSentences(current, incoming) {
   return [...merged.values()];
 }
 
-export function exportBackup(sentences, preferences = {}) {
+export function exportBackup(sentences, preferences = {}, notes = []) {
   const {apiKey, providerKeys, ...safe} = preferences;
-  return {schemaVersion:SCHEMA_VERSION,exportedAt:new Date().toISOString(),sentences,preferences:safe};
+  return {schemaVersion:SCHEMA_VERSION,exportedAt:new Date().toISOString(),sentences,preferences:safe,notes};
 }

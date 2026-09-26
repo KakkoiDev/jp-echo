@@ -1,15 +1,16 @@
 import {applyI18n,setDictionary,t} from "./i18n.js";
 import {earliestPair,flipSentence,isReversed,pairLooksSwapped,repairPair} from "./repair.js";
-import {DEFAULT_PAIR,LANGUAGES,createSentence,exportBackup,hasFurigana,hasRegisters,languageName,mergeSentences,normalizeFurigana,rubyHtml,stripFurigana} from "./core.js";
+import {DEFAULT_PAIR,LANGUAGES,createSentence,exportBackup,hasFurigana,hasRegisters,languageName,mergeSentences,normalizeFurigana,rubyHtml,SCHEMA_VERSION,stripFurigana} from "./core.js";
 import {isExactMatch,markAttempt,markTarget} from "./diff.js";
 import {deleteSentence,getSentence,listSentences,migrateStore,replaceAll,saveSentence} from "./db.js";
-import {carries,compose,PROVIDER_DEFAULTS,tagGrammar,translate} from "./api.js";
+import {adjustNote,carries,compose,PROVIDER_DEFAULTS,tagGrammar,translate,writeNotes} from "./api.js";
 import {byLevel as grammarByLevel,cleanTags as grammarTags,coverage as grammarCoverage,hasGrammar,learned as grammarLearned,LEVELS as GRAMMAR_LEVELS,point as grammarPoint,POINTS as GRAMMAR_POINTS,summarise as grammarSummarise,untagged as untaggedSentences} from "./grammar.js";
 import {japaneseVoices,recognitionFactory,ShadowLoop} from "./speech.js";
 import {forgetWaniKani,kanjiInfo,mnemonicHtml,syncWaniKani,waniKaniStatus} from "./wanikani.js";
 import {STORIES} from "./stories.js";
 import {coverage as kanjiCoverage,facts as kanjiFacts,jlptBands as kanjiBands,learned as kanjiLearned,LEVEL_LABELS,levelOf,nextUnmet,sentenceKanji,TOTAL as KANJI_TOTAL} from "./kanji.js";
 import {searchGrammar,searchKanji} from "./lookup.js";
+import {deleteNote,forBackup,getNote,listNotes,makeNote,mergeNotes,noteKey,putNote,replaceNotes} from "./notes.js";
 import {downloadAnkiDeck} from "./anki-export.js";
 import {dueSentences,ensureSchedule,isDue,reviewSentence} from "./srs.js";
 import {DEFAULT_TIME,REMINDER_TAG,reminderText,shouldRemind} from "./reminders.js";
@@ -365,9 +366,7 @@ async function openKanji(character,cover,{learn=null}={}){
 }
 async function renderKanjiInfo(character){
   // Echo's own story first, when there is one.
-  const story=STORIES[character];$("#kanji-story").hidden=!story;
-  if(story){$("#kanji-story-meaning").textContent=story.meaning;$("#kanji-story-reading").textContent=story.reading;
-    $("#kanji-story-note").textContent=t("Bundled with the app for {have} of the {total}.",{have:Object.keys(STORIES).length.toLocaleString(),total:KANJI_TOTAL.toLocaleString()})}
+  await renderStory(character);
   // Then what WaniKani adds, behind three rows. Three different absences are
   // told apart: no token, a token never synced, and a sync that does not know
   // this character.
@@ -388,13 +387,26 @@ async function renderKanjiInfo(character){
   renderSheetSentences(list,sentences,{deletable:false});
   examples.hidden=!sentences.length;
 }
+// Mark a kanji or a grammar pattern inside rendered ruby HTML. A point's title
+// may list forms (てしまう・ちゃう) or lead with 〜; each form that appears is
+// marked, longest first so ちゃった is not cut by ちゃう's shorter twin.
+function markPattern(html,title){
+  if(!title)return html;
+  const forms=String(title).split(/[・／\/]/).map(f=>f.replace(/^[〜~]+|[〜~]+$/g,"").trim()).filter(f=>f&&!/[A-Za-z()\[\]]/.test(f));
+  // A conjugated form (てしまった) still shows its stem (てしま), so the stem is
+  // tried after the whole form.
+  const stems=forms.filter(f=>f.length>2&&/[うる]$/.test(f)).map(f=>f.slice(0,-1));
+  // A て-form pattern voices after ん, む, ぶ, ぐ (読んでしまう), so で is tried too.
+  const voiced=[...forms,...stems].filter(f=>/^て/.test(f)).map(f=>"で"+f.slice(1));
+  for(const form of [...forms,...stems,...voiced].sort((a,b)=>b.length-a.length))if(html.includes(form))return html.split(form).join("<mark>"+escapeText(form)+"</mark>");
+  return html;
+}
 function renderSheetSentences(list,sentences,{deletable,onDelete,mark=null}){
   list.replaceChildren();
   for(const sentence of sentences){
     const row=document.createElement("li");row.dataset.id=sentence.id;
     let text=document.createElement("div");text.className="kanji-sentence-text";
-    const target=document.createElement("b");target.lang=targetLang();let html=rubyHtml(sentence.target);
-    if(mark&&html.includes(mark))html=html.split(mark).join("<mark>"+escapeText(mark)+"</mark>");target.innerHTML=html;
+    const target=document.createElement("b");target.lang=targetLang();target.innerHTML=markPattern(rubyHtml(sentence.target),mark);
     const source=document.createElement("span");source.textContent=sentence.source;
     if(sentence.word){const word=document.createElement("i");word.lang=targetLang();word.textContent=sentence.word+(sentence.reading?"（"+sentence.reading+"）":"");text.append(word)}
     text.append(target,source);
@@ -617,9 +629,101 @@ async function openGrammar(point,cover,{learn=null}={}){
   $("#grammar-say-status").textContent="";$("#grammar-status").textContent=hasTranslator()?"":t("Add a translator and this starts working.");$("#grammar-loop-state").textContent="";
   $("#grammar-compose").textContent=t("Or let Echo write one with {point}",{point:point.title});$("#grammar-compose").disabled=!hasTranslator();
   const byId=new Map(all.map(s=>[s.id,s])),mine=ids.map(id=>byId.get(id)).filter(Boolean);
-  renderSheetSentences($("#grammar-sentences"),mine,{deletable:true,onDelete:deleteFromGrammarSheet,mark:point.title.replace(/^[〜~]/,"")});
+  renderSheetSentences($("#grammar-sentences"),mine,{deletable:true,onDelete:deleteFromGrammarSheet,mark:point.title});
   $("#grammar-mine-head").hidden=!mine.length;
   if(!$("#grammar-dialog").open)$("#grammar-dialog").showModal();
+  renderPointNotes(point);
+}
+// Echo's notes on a point — In one breath, A way to remember it, Two to try
+// — are written on your own key the first time you open it, and kept. Every
+// note can be adjusted, by an instruction to Echo or by hand, and reset.
+// Written from the point's name and gloss alone, never from the index.
+const NOTE_TITLES={breath:"In one breath",remember:"A way to remember it"};
+async function renderPointNotes(point){
+  const status=$("#point-notes-status");status.textContent="";
+  const blocks={breath:$("#point-breath"),remember:$("#point-remember")};
+  for(const block of Object.values(blocks)){block.hidden=true;block.querySelector(".adjust-panel").hidden=true}
+  $("#point-examples").hidden=true;$("#point-example-list").replaceChildren();
+  let notes={};
+  try{for(const part of ["breath","remember","examples"])notes[part]=await getNote(noteKey("point",point.id,part))}catch{notes={}}
+  if(!notes.breath||!notes.remember){
+    if(!hasTranslator()||!navigator.onLine){
+      for(const [part,block] of Object.entries(blocks)){block.hidden=false;block.querySelector(".note-text").textContent=t("Connect to write this one.");block.querySelector(".note-note").textContent="";block.querySelector(".adjust-link").disabled=true}
+      return}
+    status.textContent=t("Writing Echo’s notes on {point}…",{point:point.title});
+    try{
+      const made=await writeNotes(point,{...settings,targetLang:targetLang()});
+      if(grammarOpen?.point.id!==point.id)return;
+      for(const part of ["breath","remember"])notes[part]=makeNote({kind:"point",id:point.id,part,text:made[part]});
+      notes.examples=makeNote({kind:"point",id:point.id,part:"examples",text:made.examples});
+      await Promise.all(Object.values(notes).map(n=>putNote(n)));
+      status.textContent="";
+    }catch(error){status.textContent=sheetError(error);return}
+  }
+  for(const [part,block] of Object.entries(blocks)){
+    const note=notes[part];block.hidden=false;block.querySelector(".adjust-link").disabled=!hasTranslator();
+    noteBlock(block,{about:point.title+(point.hint?" ("+point.hint+")":""),kind:t(NOTE_TITLES[part]),note,
+      onSave:async(text,by)=>{const next=makeNote({kind:"point",id:point.id,part,text,echo:note.echo??note.text,by});await putNote(next);notes[part]=next;return next},
+      onReset:async()=>{const next=makeNote({kind:"point",id:point.id,part,text:note.echo??note.text});await putNote(next);notes[part]=next;return next},
+      echoLine:t("Written by Echo the first time you opened this point, on your own key, and kept. Adjust it if it explains the wrong thing."),
+      yoursLine:t("Your version. Reset brings Echo’s back.")});
+  }
+  if(notes.examples?.text?.length){
+    const list=$("#point-example-list");list.replaceChildren();$("#point-examples").hidden=false;
+    for(const example of notes.examples.text){
+      const row=el("li"),text=el("div","kanji-sentence-text"),target=el("b");target.lang=targetLang();
+      target.innerHTML=markPattern(rubyHtml(example.ja),point.title);
+      text.append(target,el("span",null,example.en));
+      const keep=el("button","keep hit",t("Keep"));keep.type="button";
+      keep.onclick=async()=>{keep.disabled=true;keep.textContent=t("Keeping…");
+        try{await saveGrammarSentence({source:example.en,casual:example.ja,polite:example.ja},point);
+          const rest=notes.examples.text.filter(e=>e!==example);notes.examples=makeNote({kind:"point",id:point.id,part:"examples",text:rest});await putNote(notes.examples)}
+        catch(error){keep.disabled=false;keep.textContent=t("Keep");$("#grammar-status").textContent=sheetError(error)}};
+      row.append(text,keep);list.append(row)}
+  }
+}
+// One note block: the text, whose it is, and the Adjust panel — an
+// instruction to Echo, editing by hand, or Reset to Echo's.
+function noteBlock(block,{about,kind,note,onSave,onReset,echoLine,yoursLine,render=null}){
+  const text=block.querySelector(".note-text"),line=block.querySelector(".note-note"),panel=block.querySelector(".adjust-panel"),input=panel.querySelector("input"),rewrite=panel.querySelector(".rewrite"),reset=panel.querySelector(".reset-link"),adjust=block.querySelector(".adjust-link"),pstatus=panel.querySelector(".adjust-status");
+  const show=n=>{if(render)render(n);else text.textContent=n.text;line.textContent=n.by==="you"?yoursLine:echoLine;block.dataset.by=n.by;reset.hidden=n.by!=="you"&&!(render&&n.by==="you")};
+  show(note);pstatus.textContent="";input.value="";
+  adjust.onclick=()=>{panel.hidden=!panel.hidden;if(!panel.hidden){input.focus()}};
+  const current=()=>render?null:text.textContent;
+  rewrite.onclick=async()=>{const instruction=input.value.trim();if(!instruction){input.focus();return}
+    rewrite.disabled=true;pstatus.textContent=t("Rewriting…");
+    try{const made=await adjustNote({about,kind,current:block.currentText?block.currentText():current(),instruction},{...settings,targetLang:targetLang()});
+      note=await onSave(made,"you");show(note);pstatus.textContent=t("Rewritten. Yours now.");input.value=""}
+    catch(error){pstatus.textContent=sheetError(error)}
+    finally{rewrite.disabled=false}};
+  reset.onclick=async()=>{note=await onReset();show(note);pstatus.textContent=t("Echo’s version is back.")};
+  // Editing by hand: the text becomes editable while the panel is open, and
+  // what you leave in it is saved on the way out.
+  for(const p of block.querySelectorAll(".note-text")){
+    p.contentEditable="false";
+    p.onfocus=null;
+    p.onblur=async()=>{if(p.contentEditable!=="true")return;const edited=block.currentText?block.currentText():p.textContent.trim();if(edited===(block.currentText?block.savedText:note.text)||!edited)return;note=await onSave(edited,"you");show(note);pstatus.textContent=t("Saved. Yours now.")};
+  }
+  const editable=on=>{for(const p of block.querySelectorAll(".note-text"))p.contentEditable=on?"true":"false"};
+  adjust.onclick=()=>{panel.hidden=!panel.hidden;editable(!panel.hidden);if(!panel.hidden)input.focus()};
+}
+// The bundled story, or your version of it: an override in the notes store,
+// the bundle itself never edited. Reset deletes the override.
+async function renderStory(character){
+  const block=$("#kanji-story"),bundled=STORIES[character];
+  let override=null;try{override=await getNote(noteKey("kanji",character,"story"))}catch{override=null}
+  const story=override?.text||bundled;block.hidden=!story;if(!story)return;
+  block.querySelector(".adjust-link").disabled=!hasTranslator();block.querySelector(".adjust-panel").hidden=true;
+  const note=override||{text:bundled,echo:bundled,by:"echo"};
+  const asText=s=>[s.meaning,s.reading].filter(Boolean).join("\n\n"),fromText=v=>{const [meaning,...rest]=String(v).split(/\n\s*\n/);return {meaning:meaning.trim(),reading:rest.join("\n\n").trim()}};
+  block.currentText=()=>[$("#kanji-story-meaning").textContent.trim(),$("#kanji-story-reading").textContent.trim()].filter(Boolean).join("\n\n");
+  block.savedText=asText(story);
+  noteBlock(block,{about:character+" ("+(kanjiFacts(character)?.en||[]).join(", ")+")",kind:t("Echo’s story"),note,
+    render:n=>{const s=typeof n.text==="string"?fromText(n.text):n.text;$("#kanji-story-meaning").textContent=s.meaning||"";$("#kanji-story-reading").textContent=s.reading||"";block.savedText=asText(s)},
+    onSave:async(text,by)=>{const next=makeNote({kind:"kanji",id:character,part:"story",text:fromText(text),echo:bundled||null,by});await putNote(next);return next},
+    onReset:async()=>{await deleteNote(noteKey("kanji",character,"story"));return {text:bundled,echo:bundled,by:"echo"}},
+    echoLine:bundled?t("Bundled with the app for {have} of the {total}. Adjust it and your version replaces it here, on this device and in every backup.",{have:Object.keys(STORIES).length.toLocaleString(),total:KANJI_TOTAL.toLocaleString()}):t("Your story."),
+    yoursLine:t("Your version, kept on this device and in every backup. Reset brings the bundled one back.")});
 }
 // Whether a sentence uses a point is the model's own report, asked the same
 // way tagging asks. It catches a sentence that plainly does not; it cannot
@@ -929,7 +1033,7 @@ function skipReview(){reviewIndex++;renderReview()}
 function playReviewAudio(){const sentence=reviewQueue[reviewIndex];if(!sentence)return;if(loop.running){loop.togglePause();return}const voice=voices[Number($("#voice").value)]||voices[0]||null;loop.play(reviewPlainJapanese(sentence)||reviewJapanese(sentence).replace(/【[^】]+】/g,""),{voice,rate:Number($("#rate").value),lang:targetLang()})}
 async function rateReview(rating){const sentence=reviewQueue[reviewIndex];if(!sentence||!reviewRevealed)return;resetSession();const graded=reviewSentence(sentence,rating);
   const updated={...graded,reviews:[...(Array.isArray(sentence.reviews)?sentence.reviews:[]),{at:new Date().toISOString(),rating,echoes:Math.max(0,(Number(sentence.echoCount)||0)-echoesAtCardStart)}]};await saveSentence(updated);if(current?.id===updated.id)current=updated;reviewQueue[reviewIndex]=updated;reviewIndex++;renderReview()}
-async function exportHistory(){const data=exportBackup(await listSentences(),settings),url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"})),link=Object.assign(document.createElement("a"),{href:url,download:"jp-echo-backup.json"});link.click();URL.revokeObjectURL(url)}
+async function exportHistory(){const data=exportBackup(await listSentences(),settings,forBackup(await listNotes().catch(()=>[]))),url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"})),link=Object.assign(document.createElement("a"),{href:url,download:"jp-echo-backup.json"});link.click();URL.revokeObjectURL(url)}
 async function exportAnki(button=$("#export-anki")){const items=await listSentences();const label=button.textContent;button.disabled=true;button.textContent="Building deck…";$("#anki-status").textContent="Creating JP Echo.apkg on this device…";try{await downloadAnkiDeck(items);$("#open-anki").hidden=false;const launched=openAnki(true);$("#anki-status").textContent=launched?"JP Echo.apkg downloaded. Opening Anki… If it stays here, tap Open Anki.":"JP Echo.apkg downloaded. Open it from Downloads to import it into Anki."}catch(error){$("#anki-status").textContent=error.message||"Anki export failed."}finally{button.disabled=false;button.textContent=label}}
 function openAnki(automatic=false){const android=/android/i.test(navigator.userAgent),ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(android){window.location.href="intent:#Intent;package=com.ichi2.anki;end";return true}if(ios){window.location.href="anki://";return true}if(!automatic)$("#anki-status").textContent="Open JP Echo.apkg from your Downloads folder to import it into Anki.";return false}
 // Cards filed while the pair was reversed. Only run when the pair itself was
@@ -961,7 +1065,7 @@ async function repairReversedCards(){
   renderHistory();refreshDueBadge();
   toast(broken.length===1?"Put 1 sentence the right way round":"Put "+broken.length+" sentences the right way round",6000);
 }
-async function importHistory(file){if(!file)return;try{const backup=JSON.parse(await file.text());if(backup.schemaVersion!==1||!Array.isArray(backup.sentences))throw new Error("Unsupported backup.");const merged=mergeSentences(await listSentences(),backup.sentences);await replaceAll(merged);setStatus("Imported "+backup.sentences.length+" sentence(s).");renderHistory()}catch(error){setStatus(error.message||"Import failed.",true)}}
+async function importHistory(file){if(!file)return;try{const backup=JSON.parse(await file.text());if(!(Number(backup.schemaVersion)>=1&&Number(backup.schemaVersion)<=SCHEMA_VERSION)||!Array.isArray(backup.sentences))throw new Error("Unsupported backup.");const merged=mergeSentences(await listSentences(),backup.sentences);await replaceAll(merged);if(Array.isArray(backup.notes))await replaceNotes(mergeNotes(await listNotes().catch(()=>[]),backup.notes)).catch(()=>{});setStatus("Imported "+backup.sentences.length+" sentence(s).");renderHistory()}catch(error){setStatus(error.message||"Import failed.",true)}}
 for(const tab of document.querySelectorAll(".tab[data-view]"))tab.onclick=()=>showView(tab.dataset.view);$("#translate").onclick=performTranslation;$("#english-input").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")performTranslation()};$("#play-pause").onclick=()=>{if(!current)return;if(loop.running){loop.togglePause();return}const voice=voices[Number($("#voice").value)]||voices[0]||null;loop.play(selectedPlainJapanese(),{voice,rate:Number($("#rate").value),lang:targetLang()})};$("#show-english").onchange=()=>{saveSettings();renderSentence()};$("#show-furigana").onchange=()=>{saveSettings();renderSentence()};$("#show-polite").onchange=()=>{resetSession();saveSettings();renderSentence()};$("#rate").oninput=()=>{const rate=Number($("#rate").value);$("#rate-value").textContent=rate.toFixed(1)+"×";resetSession();loop.setRate(rate)};$("#settings-button").onclick=()=>$("#settings-dialog").showModal();$("#close-settings").onclick=()=>{saveSettings();$("#settings-dialog").close();renderPracticeNotices();writeReminderPrefs();syncReminderSchedule()};
 $("#remind").onchange=async()=>{const wanted=$("#remind").checked;
   if(wanted&&!await enableReminders()){$("#remind").checked=false;$("#remind-hint").textContent="Notifications are blocked for Echo. Allow them in your browser settings, then turn this on again.";$("#remind-hint").classList.add("error");$("#remind-reach").textContent="";return}

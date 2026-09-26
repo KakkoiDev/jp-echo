@@ -837,6 +837,22 @@ html.motion-off #review-progress-bar { transition: none; }
 .note-head .overline{font-size:10px;color:var(--seal-deep)}
 .note-block p{margin:9px 0 0;font-size:14px;line-height:1.65;text-wrap:pretty}
 .note-block .hint{margin-top:11px;font-size:11px}
+.note-block .note-text:empty{display:none}
+.adjust-link,.reset-link{padding:0;border:0;min-height:0;height:auto;background:transparent;font:inherit;font-size:11px;color:var(--seal-deep);text-decoration:underline;text-underline-offset:3px;letter-spacing:normal}
+.reset-link{flex-shrink:0;color:var(--ink-muted)}
+.adjust-link:disabled{color:var(--disabled-fg);text-decoration:none}
+.note-text[contenteditable="true"]{outline:1px dashed var(--seal-edge);outline-offset:4px;border-radius:2px}
+.adjust-panel{display:flex;flex-direction:column;gap:8px;margin:10px 0 0;padding:12px 14px 14px;border:1px dashed var(--quiet-edge);border-radius:4px}
+.adjust-panel>.overline{font-size:11px}
+.adjust-row{display:flex;gap:8px}
+.adjust-row input{flex-grow:1;min-width:0;height:40px;min-height:40px;padding:0 12px;box-sizing:border-box;background:var(--panel);border:1px solid var(--hairline);border-radius:4px;font:inherit;font-size:14px;color:var(--sumi)}
+.outlined.small{height:40px;min-height:40px;padding:0 16px;font-size:13px;flex-shrink:0}
+.adjust-hint{display:flex;justify-content:space-between;gap:10px;margin:0!important}
+.adjust-status:empty{display:none}
+.keep{flex-shrink:0;height:34px;min-height:34px;padding:0 12px;background:var(--panel);color:var(--sumi);border:1px solid var(--sumi);border-radius:3px;font-size:12px;font-weight:500;letter-spacing:normal}
+.keep:disabled{border-color:var(--hairline);color:var(--ink-muted)}
+#point-examples .rule-heading{margin-top:22px}
+#point-examples>.hint{margin-top:8px;font-size:11px}
 .tool-sheet .rule-heading{margin-top:22px}
 .kanji-sentences{list-style:none;margin:4px 0 0;padding:0;display:flex;flex-direction:column}
 .kanji-sentences li{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--rule)}
@@ -854,6 +870,9 @@ html.motion-off #review-progress-bar { transition: none; }
 .kanji-say{margin-top:22px}
 .kanji-say>label{display:block;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.2em;color:var(--seal-deep)}
 .kanji-say .input-row{margin-top:9px;gap:8px}
+/* The composer wraps its row while the library is empty; the sheets never do. */
+.tool-sheet .kanji-say .input-row{flex-wrap:nowrap}
+.tool-sheet .kanji-say .input-row textarea{flex-basis:auto;height:auto}
 .kanji-say textarea{height:auto;min-height:65px;background:var(--washi)}
 .kanji-say .mic{width:48px;height:auto}
 .say-row{display:flex;align-items:center;gap:12px;margin-top:9px}
