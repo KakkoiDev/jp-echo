@@ -441,7 +441,7 @@ const deleteFromSheet=sentence=>askDelete(sentence,removeFromSheet);
 async function removeFromSheet(sentence){
   if(!kanjiOpen)return;
   if(loop.running&&kanjiPlaying?.id===sentence.id)loop.stop();
-  await deleteSentence(sentence.id);
+  await deleteSentence(sentence.id);await restoreExample(sentence);
   if(current?.id===sentence.id){current=null;renderSentence()}
   if(detail?.id===sentence.id)detail=null;
   refreshDueBadge();
@@ -655,7 +655,7 @@ async function renderPointNotes(point){
       text.append(target,el("span",null,example.en));
       const keep=el("button","keep hit",t("Keep"));keep.type="button";
       keep.onclick=async()=>{keep.disabled=true;keep.textContent=t("Keeping…");
-        try{await saveGrammarSentence({source:example.en,casual:example.ja,polite:example.ja},point);
+        try{await saveGrammarSentence({source:example.en,casual:example.ja,polite:example.ja},point,{example:{point:point.id,ja:example.ja,en:example.en}});
           const rest=notes.examples.text.filter(e=>e!==example);notes.examples=makeNote({kind:"point",id:point.id,part:"examples",text:rest});await putNote(notes.examples)}
         catch(error){keep.disabled=false;keep.textContent=t("Keep");$("#grammar-status").textContent=sheetError(error)}};
       row.append(text,keep);list.append(row)}
@@ -731,17 +731,30 @@ async function composeForGrammar(){
   }catch(error){$("#grammar-status").textContent=sheetError(error)}
   finally{button.disabled=!hasTranslator();button.textContent=previous}
 }
-async function saveGrammarSentence(card,point){
+async function saveGrammarSentence(card,point,{example=null}={}){
   const made=ensureSchedule(createSentence(card.source,card,new Date(),undefined,{sourceLang:sourceLang(),targetLang:targetLang()}));
   made.translationProvider=defaultProvider();made.grammar=[...new Set([...(card.grammar||[]),point.id])];
+  // A kept example remembers it was one, so deleting it later puts the
+  // suggestion back rather than losing it.
+  if(example)made.example=example;
   await saveSentence(made);refreshDueBadge();
   await openGrammar(point,grammarCoverage(await listSentences()),{learn:grammarOpen?.learn||null});renderMap();
 }
 const deleteFromGrammarSheet=sentence=>askDelete(sentence,removeFromGrammarSheet);
+// A sentence that began as one of Echo's examples goes back to "Two to try"
+// when it is deleted: the suggestion was never the thing being thrown away.
+async function restoreExample(sentence){
+  const ex=sentence?.example;if(!ex?.point||!ex.ja)return;
+  try{
+    const key=noteKey("point",ex.point,"examples"),note=await getNote(key),list=Array.isArray(note?.text)?note.text:[];
+    if(list.some(e=>e.ja===ex.ja))return;
+    await putNote(makeNote({kind:"point",id:ex.point,part:"examples",text:[...list,{ja:ex.ja,en:ex.en}]}));
+  }catch{}
+}
 async function removeFromGrammarSheet(sentence){
   if(!grammarOpen)return;
   if(loop.running&&kanjiPlaying?.id===sentence.id)loop.stop();
-  await deleteSentence(sentence.id);
+  await deleteSentence(sentence.id);await restoreExample(sentence);
   if(current?.id===sentence.id){current=null;renderSentence()}
   if(detail?.id===sentence.id)detail=null;
   refreshDueBadge();
@@ -850,8 +863,8 @@ async function askDelete(sentence=detail,onConfirm=confirmDetailDelete){if(!sent
     (echoes||reviews?capitalise(say(echoes))+(echoes===1?" echo":" echoes")+" and "+say(reviews)+(reviews===1?" review":" reviews")+" go with it. ":"")+"There is no undo.";
   $("#delete-dialog").showModal()}
 async function confirmDelete(){const pending=pendingDelete;pendingDelete=null;$("#delete-dialog").close();if(pending)await pending.onConfirm(pending.sentence)}
-async function confirmDetailDelete(){if(!detail)return;const id=detail.id;resetSession();
-  await deleteSentence(id);if(current?.id===id){current=null;renderSentence()}
+async function confirmDetailDelete(){if(!detail)return;const id=detail.id,gone=detail;resetSession();
+  await deleteSentence(id);await restoreExample(gone);if(current?.id===id){current=null;renderSentence()}
   reviewQueue=reviewQueue.filter(item=>item.id!==id);detail=null;refreshDueBadge();showView("library")}
 const capitalise=value=>value.charAt(0).toUpperCase()+value.slice(1);
 // The wall is a mirror, not a trophy case: delete the only sentence carrying
@@ -1062,6 +1075,21 @@ $("#setup-next").onclick=()=>{storeTranslator();showSetupStep(2)};
 $("#setup-back").onclick=()=>{if(setupStep===2)return showSetupStep(1);showView(settings.onboarded?"practice":"onboard")};$("#setup-provider").onchange=showSetupFields;$("#setup-save").onclick=saveSetup;$("#setup-skip").onclick=finishOnboarding;
 $("#clear-filters").onclick=()=>{$("#history-search").value="";$("#clear-history-search").hidden=true;$("#history-filter").value="all";settings.historyFilter="all";localStorage.setItem("jp-echo-settings",JSON.stringify(settings));renderHistory()};
 addEventListener("online",renderPracticeNotices);addEventListener("offline",renderPracticeNotices);
+// A sheet closes the way it looks like it should: drag the handle down far
+// enough and let go, or tap the dimmed page behind it. A short drag springs
+// back. Pointer events, so a mouse can do it too.
+function sheetDrag(dialog,close){
+  const handle=dialog.querySelector(".sheet-handle");if(!handle)return;
+  let startY=null,dy=0;
+  handle.addEventListener("pointerdown",event=>{startY=event.clientY;dy=0;handle.setPointerCapture(event.pointerId);dialog.classList.add("is-dragging")});
+  handle.addEventListener("pointermove",event=>{if(startY===null)return;dy=Math.max(0,event.clientY-startY);dialog.style.transform=dy?`translateY(${dy}px)`:""});
+  const end=event=>{if(startY===null)return;const far=dy>90||(dy>40&&event.type==="pointerup"&&(event.timeStamp-downAt)<250);startY=null;dialog.classList.remove("is-dragging");
+    if(far){dialog.style.transform="";close()}else dialog.style.transform=""};
+  let downAt=0;handle.addEventListener("pointerdown",event=>{downAt=event.timeStamp});
+  handle.addEventListener("pointerup",end);handle.addEventListener("pointercancel",end);
+  dialog.addEventListener("click",event=>{if(event.target===dialog)close()});
+}
+sheetDrag($("#kanji-dialog"),()=>{loop.stop();$("#kanji-dialog").close()});sheetDrag($("#grammar-dialog"),()=>{loop.stop();$("#grammar-dialog").close()});
 $("#kanji-close").onclick=()=>{loop.stop();$("#kanji-dialog").close()};$("#kanji-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;kanjiOpen=null});$("#kanji-compose").onclick=composeForKanji;$("#kanji-say-go").onclick=sayForKanji;$("#library-tool").onclick=()=>showView("map");$("#map-back").onclick=()=>showView("library");for(const button of document.querySelectorAll("#map-toggle [role=tab]"))button.onclick=()=>{settings.mapView=button.dataset.map;localStorage.setItem("jp-echo-settings",JSON.stringify(settings));tool.open=null;tool.chip="all";renderMap()};$("#map-toggle").addEventListener("keydown",event=>{if(event.key!=="ArrowLeft"&&event.key!=="ArrowRight")return;const other=document.querySelector("#map-toggle [role=tab][aria-selected=false]");if(other){other.click();other.focus()}});let lookupTimer=0;$("#map-search").oninput=()=>{clearTimeout(lookupTimer);lookupTimer=setTimeout(renderMap,150)};$("#map-search").onkeydown=event=>{if(event.key==="Escape"&&$("#map-search").value){$("#map-search").value="";renderMap()}};$("#map-search-clear").onclick=()=>{$("#map-search").value="";$("#map-search").focus();renderMap()};$("#grammar-prev").onclick=()=>grammarStep(-1);$("#grammar-next").onclick=()=>grammarStep(1);$("#grammar-close").onclick=()=>{loop.stop();$("#grammar-dialog").close()};$("#grammar-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;grammarOpen=null});$("#grammar-say-go").onclick=sayForGrammar;$("#grammar-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForGrammar()};$("#grammar-compose").onclick=composeForGrammar;$("#kanji-prev").onclick=()=>learnStep(-1);$("#kanji-next").onclick=()=>learnStep(1);$("#kanji-dialog").addEventListener("keydown",event=>{if(!kanjiOpen?.learn||event.target.tagName==="TEXTAREA")return;if(event.key==="ArrowRight")learnStep(1);else if(event.key==="ArrowLeft")learnStep(-1)});$("#kanji-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForKanji()};$("#sentence-back").onclick=()=>{detail=null;showView("library")};$("#sentence-play").onclick=playDetail;$("#sentence-edit").onclick=openEditor;$("#sentence-cancel").onclick=closeEditor;$("#sentence-editor").onsubmit=saveEdit;
 $("#sentence-delete").onclick=()=>askDelete();$("#delete-cancel").onclick=()=>$("#delete-dialog").close();$("#delete-confirm").onclick=confirmDelete;$("#delete-dialog").onclick=event=>{if(event.target===$("#delete-dialog"))$("#delete-dialog").close()};
 $("#side-start-review").onclick=startReview;$("#side-export-anki").onclick=()=>exportAnki($("#side-export-anki"));
