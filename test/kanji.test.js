@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {bands, coverage, isJoyo, kanjiIn, learned, sentenceKanji, summarise, TOTAL} from "../kanji.js";
+import {bands, coverage, facts, isJoyo, kanjiIn, learned, sentenceKanji, summarise, TOTAL} from "../kanji.js";
 
 const sentence = (id, plainTarget, createdAt) =>
   ({id, plainTarget, target: plainTarget, createdAt});
@@ -53,17 +53,28 @@ test("the bands partition the joyo list exactly", () => {
   assert.equal(new Set(all).size, TOTAL, "no kanji appears in two bands");
 });
 
-test("grade bands hold the 1,006 kyoiku kanji as published before 2017", () => {
+test("grade bands hold the 1,026 kyoiku kanji as currently assigned", () => {
   const graded = bands().filter(band => band.level !== null);
-  assert.deepEqual(graded.map(band => band.chars.length), [80, 160, 200, 200, 185, 181]);
-  assert.equal(graded.reduce((n, band) => n + band.chars.length, 0), 1006);
+  assert.deepEqual(graded.map(band => band.chars.length), [80, 160, 200, 202, 193, 191]);
+  assert.equal(graded.reduce((n, band) => n + band.chars.length, 0), 1026);
 });
 
-test("the twenty prefecture kanji sit in the last band, not in a guessed grade", () => {
-  const secondary = bands().find(band => band.level === null);
-  // 沖 and 阪 became kyoiku in 2020; no source we have says which grade, so
-  // they wait here rather than being placed by guesswork.
-  for (const character of "沖阪茨栃") assert.ok(secondary.chars.includes(character), character);
+test("the twenty prefecture kanji are grade 4, where the 2017 revision put them", () => {
+  const grade4 = bands().find(band => band.level === 4);
+  for (const character of "茨媛岡潟岐阜熊香佐埼崎滋鹿縄沖井栃奈梨阪") assert.ok(grade4.chars.includes(character), character);
+  assert.equal(bands().find(band => band.level === null).chars.length, 1110);
+});
+
+test("teaching order survives: grade 1 still opens with the numerals", () => {
+  assert.equal(bands()[0].chars.slice(0, 10).join(""), "一二三四五六七八九十");
+});
+
+test("every kanji has readings and meanings without any account", () => {
+  assert.deepEqual(facts("駅"), {on: ["エキ"], kun: [], en: ["station"], grade: 3});
+  assert.equal(facts("𠮟").on[0], "シツ");
+  assert.equal(facts("沖").grade, 4);
+  assert.equal(facts("猫")?.en?.[0], "cat");
+  assert.equal(facts("綺"), null, "not joyo, not carried");
 });
 
 test("summarise counts against whichever band it is given", () => {
