@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {translate,writeWordNote,discuss} from "../api.js";
-import {MORA_MNEMONICS,moraMnemonicPrompt} from "../core.js";
+import {MORA_MNEMONICS,moraMnemonicPrompt,moraMnemonicTokens} from "../core.js";
 
 const modelReply={casual:"今日【きょう】はいい",polite:"今日【きょう】はいいです"};
 const translation={source:"Today is good",casual:"今日【きょう】はいい",polite:"今日【きょう】はいいです"};
@@ -44,7 +44,11 @@ test("a reverse answer with no meaning in it is refused",async()=>{
 
 test("Mora v1 keeps the frozen canonical anchors",()=>{assert.equal(MORA_MNEMONICS["え"],"海老");assert.equal(MORA_MNEMONICS["ぬ"],"縫い針");assert.equal(MORA_MNEMONICS["ほ"],"本");assert.equal(MORA_MNEMONICS["る"],"ルーペ");assert.equal(MORA_MNEMONICS["を"],"ヲタ芸");assert.match(moraMnemonicPrompt(),/が=泥の傘/);assert.match(moraMnemonicPrompt(),/ぱ=泡の花/)});
 
-test("word learning help sends Mora v1 and causal-scene rules to the AI",async()=>{let body;global.fetch=async(url,options)=>(body=JSON.parse(options.body),response({choices:[{message:{content:JSON.stringify({remember:"A vivid scene."})}}]}));await writeWordNote({word:"壊す",reading:"こわす",meaning:"to break",kind:"verb"},{provider:"local",localEndpoint:"http://x/v1/chat/completions",providerModels:{local:"test"}});const system=body.messages[0].content;assert.match(system,/Echo Mora v1/);assert.match(system,/こ=氷/);assert.match(system,/わ=鰐/);assert.match(system,/す=寿司/);assert.match(system,/causal animation/);assert.match(system,/meaning itself/)});
+test("word learning help sends Mora v1 and causal-scene rules to the AI",async()=>{let body;global.fetch=async(url,options)=>(body=JSON.parse(options.body),response({choices:[{message:{content:JSON.stringify({remember:"氷 hits a 鰐 into 寿司.",anchors:["氷","鰐","寿司"]})}}]}));await writeWordNote({word:"壊す",reading:"こわす",meaning:"to break",kind:"verb"},{provider:"local",localEndpoint:"http://x/v1/chat/completions",providerModels:{local:"test"}});const system=body.messages[0].content;assert.match(system,/Echo Mora v1/);assert.match(system,/こ=氷/);assert.match(system,/わ=鰐/);assert.match(system,/す=寿司/);assert.match(system,/causal animation/);assert.match(system,/meaning itself/)});
+
+test("Mora anchors are derived from the exact furigana, including long vowels",()=>{assert.deepEqual(moraMnemonicTokens("操作"),[]);assert.deepEqual(moraMnemonicTokens("そうさ"),[{mora:"そ",image:"算盤"},{mora:"う",image:"牛"},{mora:"さ",image:"猿"}]);assert.deepEqual(moraMnemonicTokens("ほうふ"),[{mora:"ほ",image:"本"},{mora:"う",image:"牛"},{mora:"ふ",image:"船"}])});
+
+test("word mnemonic rejects a model that substitutes its own anchors and retries",async()=>{let n=0;global.fetch=async()=>response({choices:[{message:{content:JSON.stringify(n++?{remember:"本 meets 牛 on a 船.",anchors:["本","牛","船"]}:{remember:"A sail rides a boat.",anchors:["帆","船"]})}}]});const out=await writeWordNote({word:"豊富",reading:"ほうふ",meaning:"abundant; plentiful; rich",kind:"adjective"},{provider:"local",localEndpoint:"http://x/v1/chat/completions",providerModels:{local:"test"}});assert.equal(n,2);assert.match(out.remember,/本/)});
 
 
 test("discussion opens with an AI turn and translates a learner reply",async()=>{const replies=[{user:{target:"",source:""},ai:{target:"いらっしゃいませ。","source":"Welcome."}},{user:{target:"味噌【みそ】ラーメンをお願【ねが】いします。","source":"Miso ramen, please."},ai:{target:"かしこまりました。","source":"Certainly."}}];let n=0;global.fetch=async()=>response({choices:[{message:{content:JSON.stringify(replies[n++])}}]});const settings={provider:"local",localEndpoint:"http://x/v1/chat/completions",providerModels:{local:"test"}};const first=await discuss({scenario:"ramen shop"},settings);assert.equal(first.ai.target,"いらっしゃいませ。");const second=await discuss({scenario:"ramen shop",message:"Miso ramen please",history:[{role:"ai",...first.ai}]},settings);assert.match(second.user.target,/味噌/);assert.equal(second.ai.source,"Certainly.")});
