@@ -52,9 +52,8 @@ function setPair(source,target){
   if(!hasFurigana(target)&&document.body.dataset.view==="map")showView("practice");
 }
 // Which language you are typing, which is not which language you are learning.
-// The pair is fixed: you learn from the one you know towards the one you do
-// not, and a card always comes out that way round. This only moves the input
-// side, for repeating a word or letting a native speak into the box.
+// The configured pair may also be same-language (for example Japanese to Japanese).
+// This transient toggle only chooses which side the composer accepts.
 //
 // Deliberately not persisted. Every launch starts on the language you know,
 // because that is what the app is for; the other direction is the errand.
