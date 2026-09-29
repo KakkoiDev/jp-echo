@@ -17,6 +17,7 @@ import {DEFAULT_TIME,REMINDER_TAG,reminderText,shouldRemind} from "./reminders.j
 import {saveDiscussionTurn} from "./actions.js";
 import {parseRoute,routeFor} from "./routes.js";
 const $=selector=>document.querySelector(selector);
+{const p=new URLSearchParams(location.search).get("echo-route")||sessionStorage.getItem("echo-route");if(p){sessionStorage.removeItem("echo-route");history.replaceState({echo:true},"",p)}}
 const settings=JSON.parse(localStorage.getItem("jp-echo-settings")||"{}");
 // Before anything reads the pair: a build shipped a swap button that reversed
 // the stored pair rather than the input language, so a device left swapped
