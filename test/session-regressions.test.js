@@ -53,3 +53,6 @@ test("navigation is URL-driven with browser back-forward restoration",()=>{asser
 test("legacy workspace is only an upgrade bridge, not normal route restoration",()=>{assert.match(app,/One upgrade bridge only/);assert.match(app,/localStorage\.removeItem\(WORKSPACE_KEY\)/);assert.doesNotMatch(app,/async function restoreWorkspace/)});
 
 test("discussion save uses explicit awaited persistence action",()=>{assert.match(app,/saveDiscussionTurn\(turn/);assert.match(app,/save\.textContent="Saving…"/);assert.match(app,/await saveDiscussionTurn/);assert.match(app,/catch\(error\)\{save\.disabled=false/)});
+
+
+test("Mora v1 is learning content outside settings with independent display toggles",()=>{assert.match(html,/id="mora-view"/);assert.match(html,/id="mora-show-emoji"/);assert.match(html,/id="mora-show-furigana"/);assert.match(html,/id="mora-show-english"/);assert.doesNotMatch(html,/<section class="settings-section"><h3>Memory — Mora v1/);assert.match(app,/MORA_MNEMONIC_META/);assert.match(app,/function renderMora/)});
