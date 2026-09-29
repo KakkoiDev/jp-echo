@@ -1173,7 +1173,8 @@ function setupRecognition(){
   dictationReady=bindDictation($("#microphone"),$("#english-input"),$("#voice-input-status"));
   bindDictation($("#kanji-mic"),$("#kanji-say"),$("#kanji-say-status"));
   bindDictation($("#grammar-mic"),$("#grammar-say"),$("#grammar-say-status"));
-  bindDictation($("#word-mic"),$("#word-say"),$("#word-say-status"))}
+  bindDictation($("#word-mic"),$("#word-say"),$("#word-say-status"));
+  bindDictation($("#discussion-scenario-mic"),$("#discussion-scenario"),$("#discussion-scenario-status"))}
 async function startReview(){const items=await listSentences(),scheduled=items.map(item=>ensureSchedule(item));await Promise.all(scheduled.filter((item,index)=>item!==items[index]).map(saveSentence));reviewQueue=dueSentences(scheduled);reviewIndex=0;if(!reviewQueue.length)return showView("review");showView("session");renderReview()}
 function reviewJapanese(sentence){return settings.showPolite&&hasRegisters(itemTarget(sentence))?(sentence.politeTarget||sentence.target):(sentence.casualTarget||sentence.target)}
 function reviewPlainJapanese(sentence){return settings.showPolite&&hasRegisters(itemTarget(sentence))?(sentence.plainPoliteTarget||sentence.plainTarget):(sentence.plainCasualTarget||sentence.plainTarget)}
