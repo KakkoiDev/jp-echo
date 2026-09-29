@@ -921,11 +921,10 @@ html.motion-off #review-progress-bar { transition: none; }
 .mora-cell{min-height:7.5rem;border:1px solid var(--line);border-radius:12px;padding:.65rem;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:.18rem;background:var(--surface)}
 .mora-cell.empty{visibility:hidden}
 .mora-kana{font-size:.8rem;font-weight:700;opacity:.65}
-.mora-anchor{display:flex;align-items:center;justify-content:center;gap:.3rem;min-width:0}
-.mora-word{font-family:"Shippori Mincho",serif;font-size:1.25rem;font-weight:600;overflow-wrap:anywhere}
-.mora-emoji{font-size:1.35rem}
-.mora-reading{font-size:.82rem}
-.mora-english{font-size:.72rem;opacity:.65}
+.mora-word{display:block;font-family:"Shippori Mincho",serif;font-size:1.25rem;font-weight:600;line-height:1.2;overflow-wrap:anywhere}
+.mora-emoji{display:block;font-size:1.35rem;line-height:1.2}
+.mora-reading{display:block;font-size:.82rem}
+.mora-english{display:block;font-size:.72rem;opacity:.65}
 .mora-modifiers{max-width:46rem;margin:1rem auto 3rem;display:flex;gap:1rem;flex-wrap:wrap}
 .mora-open{margin-top:.55rem}
-@media(max-width:600px){.mora-row{gap:.25rem}.mora-table{gap:.25rem}.mora-cell{min-height:7rem;padding:.35rem .2rem;border-radius:9px}.mora-anchor{flex-direction:column;gap:.08rem}.mora-word{font-size:1rem;line-height:1.15}.mora-emoji{display:block;font-size:1.1rem;line-height:1.15}.mora-reading{font-size:.72rem}.mora-english{font-size:.64rem}.mora-intro{margin-top:.8rem}}
+@media(max-width:600px){.mora-row{gap:.25rem}.mora-table{gap:.25rem}.mora-cell{min-height:7rem;padding:.35rem .2rem;border-radius:9px}.mora-word{font-size:1rem;line-height:1.15}.mora-emoji{display:block;font-size:1.1rem;line-height:1.15}.mora-reading{font-size:.72rem}.mora-english{font-size:.64rem}.mora-intro{margin-top:.8rem}}
