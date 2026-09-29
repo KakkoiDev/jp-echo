@@ -118,7 +118,7 @@ function openSentence(sentence){resetSession();current=sentence;$("#english-inpu
 
 let discussionMode=false,discussionTurns=[],discussionScenario="";
 const discussionLoop=new ConversationLoop({onEcho:()=>{},onState:(state,index)=>{const n=$("#discussion-loop-state");if(n)n.textContent=state==="speaking"?`Playing turn ${(index??0)+1} of ${discussionTurns.length}`:state==="imitate"?"Your turn - echo it":state==="paused"?"Paused":state==="error"?"That voice could not play":"Ready"}});
-function setPracticeMode(mode){discussionMode=mode==="discussion";saveWorkspace({discussionMode});$("#discussion").hidden=!discussionMode;$("#welcome").hidden=discussionMode||!!current;$("#practice").hidden=discussionMode||!current;$(".dock").hidden=discussionMode;$("#mode-sentence").setAttribute("aria-selected",String(!discussionMode));$("#mode-discussion").setAttribute("aria-selected",String(discussionMode));loop.stop();discussionLoop.stop()}
+function setPracticeMode(mode,{route=true}={}){discussionMode=mode==="discussion";saveWorkspace({discussionMode});if(route)syncRoute({view:"practice",discussionMode});$("#discussion").hidden=!discussionMode;$("#welcome").hidden=discussionMode||!!current;$("#practice").hidden=discussionMode||!current;$(".dock").hidden=discussionMode;$("#mode-sentence").setAttribute("aria-selected",String(!discussionMode));$("#mode-discussion").setAttribute("aria-selected",String(discussionMode));loop.stop();discussionLoop.stop()}
 function renderDiscussion(){const list=$("#discussion-turns");list.replaceChildren(...discussionTurns.map((turn,i)=>{const li=document.createElement("li");li.className="discussion-turn "+turn.role;const who=document.createElement("strong");who.textContent=turn.role==="ai"?"AI":"You";const ja=document.createElement("p");ja.lang="ja";ja.innerHTML=rubyHtml(turn.target);const en=document.createElement("p");en.className="hint discussion-translation";en.textContent=turn.source;en.hidden=!$("#discussion-english").checked;const save=document.createElement("button");save.type="button";save.className="plain discussion-save";save.textContent=turn.saved?"Saved":"Save sentence";save.disabled=!!turn.saved;save.onclick=async()=>{save.disabled=true;const previous=save.textContent;save.textContent="Saving…";try{await saveDiscussionTurn(turn,{sourceLang:sourceLang(),targetLang:targetLang()});turn.saved=true;save.textContent="Saved";renderLibrary?.()}catch(error){save.disabled=false;save.textContent=previous;showToast(sheetError(error))}};li.append(who,ja,en,save);return li}));$("#discussion-live").hidden=!discussionTurns.length;$("#discussion-begin").parentElement.hidden=!!discussionTurns.length;$("#discussion-title").textContent=discussionScenario}
 function playDiscussion(){if(discussionLoop.running){discussionLoop.togglePause();return}const pick=policy=>{if(!voices.length)return null;if(policy==="random")return voices[Math.floor(Math.random()*voices.length)];if(policy==="default")return voices.find(v=>v.default)||voices[0];return voices[Number(policy)]||voices[0]};discussionLoop.playConversation(discussionTurns.map(t=>({text:stripFurigana(t.target),role:t.role})),{voiceFor:turn=>pick(turn.role==="ai"?$("#discussion-voice-ai").value:$("#discussion-voice-user").value),rate:Number($("#rate").value),lang:targetLang()})}
 async function beginDiscussion(){discussionScenario=$("#discussion-scenario").value.trim()||"An everyday conversation";$("#discussion-status").textContent="Starting...";try{const out=await discuss({scenario:discussionScenario,history:[]},{...settings,sourceLang:sourceLang(),targetLang:targetLang()});discussionTurns=[{role:"ai",...out.ai}];renderDiscussion();playDiscussion();$("#discussion-status").textContent=""}catch(e){$("#discussion-status").textContent=e.message}}
@@ -223,17 +223,21 @@ function renderVoiceNotices(){for(const id of ["#sentence-notices","#review-noti
 const WORKSPACE_KEY="jp-echo-workspace";
 const workspace=()=>{try{return JSON.parse(localStorage.getItem(WORKSPACE_KEY)||"{}")}catch{return {}}};
 function saveWorkspace(patch={}){const next={...workspace(),view:document.body.dataset.view||"practice",discussionMode,mapQuery:$("#map-search")?.value||"",historyQuery:$("#history-search")?.value||"",mapView:settings.mapView||"kanji",...patch};localStorage.setItem(WORKSPACE_KEY,JSON.stringify(next));return next}
+let applyingRoute=false;
+function navigationState(patch={}){return {view:document.body.dataset.view||"practice",discussionMode,mapView:settings.mapView||"kanji",mapQuery:$("#map-search")?.value||"",historyQuery:$("#history-search")?.value||"",historyFilter:$("#history-filter")?.value||"all",historyOrder:$("#history-order")?.value||"created",historyDirection:$("#history-direction")?.value||"desc",sentenceId:detail?.id||null,...patch}}
+function syncRoute(patch={},replace=false){if(applyingRoute)return;const url=routeFor(navigationState(patch));if(location.pathname+location.search===url)return;history[replace?"replaceState":"pushState"]({echo:true},"",url)}
+
 const wide=matchMedia("(min-width:1024px)");
 const isWide=()=>wide.matches;
 const VIEW_TITLES={review:"Review",library:"Library"};
-function showView(name){if(name==="map"&&targetLang()!=="ja")name="library";if(name!=="practice")resetSession();speechSynthesis.cancel();
+function showView(name,{route=true}={}){if(name==="map"&&targetLang()!=="ja")name="library";if(name!=="practice")resetSession();speechSynthesis.cancel();
   $("#main-view").hidden=name!=="practice";$("#review-home").hidden=name!=="review";$("#history-view").hidden=!(name==="library"||(name==="sentence"&&isWide()));$("#review-view").hidden=name!=="session";$("#sentence-view").hidden=name!=="sentence";$("#onboard-view").hidden=name!=="onboard";$("#setup-view").hidden=name!=="setup";$("#map-view").hidden=name!=="map";
   const solo=name==="onboard"||name==="setup"||((name==="session"||name==="sentence"||name==="map")&&!isWide());document.querySelector("header").hidden=solo;$("#tabs").hidden=solo;
   $("#view-title").textContent=VIEW_TITLES[name]||"";$("#view-title").hidden=!VIEW_TITLES[name];document.querySelector(".brand").hidden=!!VIEW_TITLES[name];
   $("#mode-sentence").onclick=()=>setPracticeMode("sentence");$("#mode-discussion").onclick=()=>setPracticeMode("discussion");$("#discussion-begin").onclick=beginDiscussion;$("#discussion-send").onclick=replyDiscussion;$("#discussion-input").onkeydown=e=>{if((e.metaKey||e.ctrlKey)&&e.key==="Enter")replyDiscussion()};$("#discussion-play").onclick=playDiscussion;$("#discussion-english").onchange=renderDiscussion;$("#discussion-new").onclick=()=>{discussionLoop.stop();discussionTurns=[];$("#discussion-scenario").value="";renderDiscussion();$("#discussion-scenario").focus()};
 for(const tab of document.querySelectorAll(".tab[data-view]")){const on=tab.dataset.view===name||(name==="session"&&tab.dataset.view==="review")||((name==="sentence"||name==="map")&&tab.dataset.view==="library");tab.classList.toggle("current",on);tab.setAttribute("aria-current",on?"page":"false")}
   document.body.dataset.view=name;scrollTo(0,0);renderSidePanel();
-  saveWorkspace({view:name});if(name==="library"||(name==="sentence"&&isWide()))renderHistory();else if(name==="map")renderMap();else if(name==="review")renderReviewHome();else if(name==="practice")renderPracticeNotices();else if(name==="setup")resetSetupForm()}
+  saveWorkspace({view:name});if(route)syncRoute({view:name});if(name==="library"||(name==="sentence"&&isWide()))renderHistory();else if(name==="map")renderMap();else if(name==="review")renderReviewHome();else if(name==="practice")renderPracticeNotices();else if(name==="setup")resetSetupForm()}
 // The study tool: the wall of joyo kanji, the dictionary and the list of grammar points,
 // read off your library every time the screen opens. Coverage is never
 // stored, so a sentence added or deleted moves the wall at once, and nothing
@@ -358,8 +362,8 @@ function renderLookup(query,sentences){
 // Which sentence the loop is currently speaking, so the row can say so. The
 // loop is the one the rest of the app uses; nothing here owns a second one.
 let kanjiOpen=null;
-async function openKanji(character,cover,{learn=null}={}){
-  kanjiOpen={character,learn};saveWorkspace({modal:{kind:"kanji",id:character}});
+async function openKanji(character,cover,{learn=null,route=true}={}){
+  kanjiOpen={character,learn};saveWorkspace({modal:{kind:"kanji",id:character}});if(route)syncRoute({view:"map",mapView:"kanji",modal:{kind:"kanji",id:character}});
   const all=await listSentences(),known=kanjiLearned(all);
   renderLearnNav(cover);
   const ids=cover.get(character)||[],state=cellState(character,cover,known),facts=kanjiFacts(character);
@@ -616,8 +620,8 @@ async function grammarStep(direction){
   if(loop.running)loop.stop();$("#grammar-say").value="";
   await openGrammar(grammarPoint(id),cover,{learn:grammarOpen.learn});$("#grammar-dialog").scrollTop=0;
 }
-async function openGrammar(point,cover,{learn=null}={}){
-  saveWorkspace({modal:{kind:"grammar",id:point.id}});grammarOpen={point,learn};
+async function openGrammar(point,cover,{learn=null,route=true}={}){
+  saveWorkspace({modal:{kind:"grammar",id:point.id}});if(route)syncRoute({view:"map",mapView:"grammar",modal:{kind:"grammar",id:point.id}});grammarOpen={point,learn};
   const all=await listSentences(),known=grammarLearned(all),ids=cover.get(point.id)||[],state=known.has(point.id)?"learned":ids.length?"used":"unused";
   renderGrammarNav(cover);
   $("#grammar-level").textContent=point.level;const chip=$("#grammar-state");chip.textContent=t(STATE_LABELS[state]);chip.dataset.state=state==="learned"?"learned":state==="used"?"met":"unmet";
@@ -856,7 +860,7 @@ async function wordStep(direction){
   wordLearnAt=id;if(loop.running)loop.stop();$("#word-say").value="";
   await openWord(wordById(id),cover,{learn:wordOpen.learn});$("#word-dialog").scrollTop=0;
 }
-async function openWord(w,cover,{learn=null}={}){
+async function openWord(w,cover,{learn=null,route=true}={}){
   wordOpen={word:w,learn};
   const all=await listSentences(),known=wordLearned(all),ids=cover.get(w.id)||[],state=known.has(w.id)?"learned":ids.length?"met":"unmet";
   renderWordNav(cover);
