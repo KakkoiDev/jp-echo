@@ -68,3 +68,6 @@ test("service worker updates never navigate or reload an open Echo page",async()
 
 
 test("Discussion renders visible message bubbles with a persistent reply composer",()=>{assert.match(html,/id="discussion-turns" class="discussion-turns"/);assert.match(html,/class="discussion-composer"/);assert.match(app,/className="discussion-bubble"/);assert.match(app,/className="discussion-japanese"/);assert.match(app,/className="discussion-turn "\+turn\.role/)});
+
+
+test("Discussion renderer hides only setup, never the whole discussion after a turn",()=>{assert.match(html,/id="discussion-setup"/);assert.match(app,/\$\("#discussion-setup"\)\.hidden=!!discussionTurns\.length/);assert.doesNotMatch(app,/\$\("#discussion-begin"\)\.parentElement\.hidden/)});
