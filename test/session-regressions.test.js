@@ -74,3 +74,6 @@ test("Discussion renderer hides only setup, never the whole discussion after a t
 
 
 test("Discussion reply composer supports speech dictation",()=>{assert.match(html,/id="discussion-mic"/);assert.match(html,/id="discussion-dictation-status"/);assert.match(app,/bindDictation\(\$\("#discussion-mic"\),\$\("#discussion-input"\),\$\("#discussion-dictation-status"\)\)/)});
+
+
+test("Discussion reuses the sentence composer instead of owning a second reply input",()=>{assert.doesNotMatch(html,/id="discussion-input"/);assert.doesNotMatch(html,/id="discussion-mic"/);assert.match(app,/const message=\$\("#english-input"\)\.value\.trim\(\)/);assert.match(app,/discussionMode\?replyDiscussion\(\):performTranslation\(\)/);assert.match(app,/classList\.toggle\("discussion-dock",discussionMode\)/)});
