@@ -184,19 +184,20 @@ export async function writeNotes(point,settings={}){
 }
 // Echo's note on a word — a way to remember it — written on demand from the
 // word, its reading and its meaning, under the same rules as the rest.
-export function shapeWordNote(raw){
+export function shapeWordNote(raw,expectedAnchors=null){
   const remember=String(raw?.remember||raw?.text||"").trim();
   if(!remember)throw new Error("The model did not write the note.");
   if(NOTE_FORBIDDEN.test(remember))throw new Error("rules");
+  if(expectedAnchors){const used=Array.isArray(raw?.anchors)?raw.anchors.map(String):[];if(used.length!==expectedAnchors.length||used.some((v,i)=>v!==expectedAnchors[i]))throw new Error("anchors")}
   return {remember};
 }
 export async function writeWordNote(word,settings={}){
   const chosen=chosenProvider(settings);const anchors=moraMnemonicTokens(word.reading||"");const allowed=anchors.map(a=>a.mora+"→"+a.image).join(", ")||"none (do not invent any)";
-  const system=`You write Echo\'s note on a Japanese word: a way to remember it. You are given the word, its reading, its meaning and what kind of word it is. Return JSON only: {"remember":"..."}. Do not give a generic etymology-style note. Build a compact mnemonic using the canonical system below. The application has already parsed the exact reading. You MUST use only the Allowed anchors supplied by the application, in exactly that order. Never add an anchor for a sound not listed there, and never infer or change the reading yourself. Use the written kanji and meaning to make the physical action express the meaning. If the word is already obvious/concrete, keep the mnemonic especially short.\n\n${moraMnemonicPrompt()}\n\n${NOTE_RULES}`;
+  const system=`You write Echo\'s note on a Japanese word: a way to remember it. You are given the word, its reading, its meaning and what kind of word it is. Return JSON only: {"remember":"...","anchors":["exact anchor image 1","exact anchor image 2"]}. The anchors array is mandatory and must copy the supplied Allowed anchor images exactly, in order. Do not give a generic etymology-style note. Build a compact mnemonic using the canonical system below. The application has already parsed the exact reading. You MUST use only the Allowed anchors supplied by the application, in exactly that order. Never add an anchor for a sound not listed there, and never infer or change the reading yourself. Use the written kanji and meaning to make the physical action express the meaning. If the word is already obvious/concrete, keep the mnemonic especially short.\n\n${moraMnemonicPrompt()}\n\n${NOTE_RULES}`;
   const text=`Word: ${word.word}\nReading: ${word.reading||"—"}\nMeaning: ${word.meaning||"—"}\nAllowed anchors from exact reading: ${allowed}\nKind: ${word.kind||"—"}`;
   for(let attempt=0;attempt<2;attempt++){
-    try{return shapeWordNote(await ask(attempt?text+"\n\nYour previous answer broke a rule. Write it again: no religious reference, no swearing, no gee, no tags.":text,system,chosen,settings))}
-    catch(error){if(error.message!=="rules")throw error}
+    try{return shapeWordNote(await ask(attempt?text+"\n\nYour previous answer was invalid. Use ONLY the exact Allowed anchors, in order, and copy those image names into the anchors array.":text,system,chosen,settings),anchors.map(a=>a.image))}
+    catch(error){if(error.message!=="rules"&&error.message!=="anchors")throw error}
   }
   throw new Error("The model could not keep to the rules for "+word.word+".");
 }
