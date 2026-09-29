@@ -1,4 +1,4 @@
-import {moraMnemonicPrompt} from "./core.js";
+import {moraMnemonicPrompt,moraMnemonicTokens} from "./core.js";
 import {DEFAULT_PAIR,hasFurigana,hasRegisters,languageName,normalizeFurigana,stripFurigana,validateTranslation,validateTranslations} from "./core.js";
 
 // The prompt is built from the pair. Only Japanese asks for furigana and the
@@ -191,9 +191,9 @@ export function shapeWordNote(raw){
   return {remember};
 }
 export async function writeWordNote(word,settings={}){
-  const chosen=chosenProvider(settings);
-  const system=`You write Echo\'s note on a Japanese word: a way to remember it. You are given the word, its reading, its meaning and what kind of word it is. Return JSON only: {"remember":"..."}. Do not give a generic etymology-style note. Build a compact mnemonic using the canonical system below. If the word is already obvious/concrete, keep the mnemonic especially short.\n\n${moraMnemonicPrompt()}\n\n${NOTE_RULES}`;
-  const text=`Word: ${word.word}\nReading: ${word.reading||"—"}\nMeaning: ${word.meaning||"—"}\nKind: ${word.kind||"—"}`;
+  const chosen=chosenProvider(settings);const anchors=moraMnemonicTokens(word.reading||"");const allowed=anchors.map(a=>a.mora+"→"+a.image).join(", ")||"none (do not invent any)";
+  const system=`You write Echo\'s note on a Japanese word: a way to remember it. You are given the word, its reading, its meaning and what kind of word it is. Return JSON only: {"remember":"..."}. Do not give a generic etymology-style note. Build a compact mnemonic using the canonical system below. The application has already parsed the exact reading. You MUST use only the Allowed anchors supplied by the application, in exactly that order. Never add an anchor for a sound not listed there, and never infer or change the reading yourself. Use the written kanji and meaning to make the physical action express the meaning. If the word is already obvious/concrete, keep the mnemonic especially short.\n\n${moraMnemonicPrompt()}\n\n${NOTE_RULES}`;
+  const text=`Word: ${word.word}\nReading: ${word.reading||"—"}\nMeaning: ${word.meaning||"—"}\nAllowed anchors from exact reading: ${allowed}\nKind: ${word.kind||"—"}`;
   for(let attempt=0;attempt<2;attempt++){
     try{return shapeWordNote(await ask(attempt?text+"\n\nYour previous answer broke a rule. Write it again: no religious reference, no swearing, no gee, no tags.":text,system,chosen,settings))}
     catch(error){if(error.message!=="rules")throw error}
