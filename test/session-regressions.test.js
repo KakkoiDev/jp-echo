@@ -62,3 +62,6 @@ test("GitHub Pages deep-link recovery runs before route parsing",()=>{const rout
 
 
 test("Mora emoji is a separate row after the kanji, not an inline anchor",()=>{assert.match(app,/mora-word.*?\$\{kanji\}.*?mora-emoji/s);assert.doesNotMatch(app,/class="mora-anchor"/)});
+
+
+test("service worker updates never navigate or reload an open Echo page",async()=>{const fs=await import("node:fs/promises");const sw=await fs.readFile(new URL("../sw.js",import.meta.url),"utf8");assert.doesNotMatch(sw,/reloadClients/);assert.doesNotMatch(sw,/client\.navigate\(/);assert.match(sw,/self\.clients\.claim\(\)/)});
