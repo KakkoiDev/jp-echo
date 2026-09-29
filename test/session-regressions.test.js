@@ -71,3 +71,6 @@ test("Discussion renders visible message bubbles with a persistent reply compose
 
 
 test("Discussion renderer hides only setup, never the whole discussion after a turn",()=>{assert.match(html,/id="discussion-setup"/);assert.match(app,/\$\("#discussion-setup"\)\.hidden=!!discussionTurns\.length/);assert.doesNotMatch(app,/\$\("#discussion-begin"\)\.parentElement\.hidden/)});
+
+
+test("Discussion reply composer supports speech dictation",()=>{assert.match(html,/id="discussion-mic"/);assert.match(html,/id="discussion-dictation-status"/);assert.match(app,/bindDictation\(\$\("#discussion-mic"\),\$\("#discussion-input"\),\$\("#discussion-dictation-status"\)\)/)});
