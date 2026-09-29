@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {translate,writeWordNote,discuss} from "../api.js";
+import {translate,writeWordNote,discuss,composeWordFromIntent} from "../api.js";
 import {MORA_MNEMONICS,moraMnemonicPrompt,moraMnemonicTokens} from "../core.js";
 
 const modelReply={casual:"今日【きょう】はいい",polite:"今日【きょう】はいいです"};
@@ -52,3 +52,8 @@ test("word mnemonic rejects a model that substitutes its own anchors and retries
 
 
 test("discussion opens with an AI turn and translates a learner reply",async()=>{const replies=[{user:{target:"",source:""},ai:{target:"いらっしゃいませ。","source":"Welcome."}},{user:{target:"味噌【みそ】ラーメンをお願【ねが】いします。","source":"Miso ramen, please."},ai:{target:"かしこまりました。","source":"Certainly."}}];let n=0;global.fetch=async()=>response({choices:[{message:{content:JSON.stringify(replies[n++])}}]});const settings={provider:"local",localEndpoint:"http://x/v1/chat/completions",providerModels:{local:"test"}};const first=await discuss({scenario:"ramen shop"},settings);assert.equal(first.ai.target,"いらっしゃいませ。");const second=await discuss({scenario:"ramen shop",message:"Miso ramen please",history:[{role:"ai",...first.ai}]},settings);assert.match(second.user.target,/味噌/);assert.equal(second.ai.source,"Certainly.")});
+
+
+test("word exercise treats learner text as intent and creates a fresh sentence containing the studied word",async()=>{let body;global.fetch=async(url,options)=>(body=JSON.parse(options.body),response({choices:[{message:{content:JSON.stringify({source:"This shop has a rich selection.",casual:"この店【みせ】は商品【しょうひん】が豊富【ほうふ】だ。",polite:"この店【みせ】は商品【しょうひん】が豊富【ほうふ】です。"})}}]}));const card=await composeWordFromIntent({word:{word:"豊富",reading:"ほうふ",meaning:"abundant; plentiful; rich"},intent:"They have a lot of different products"},{provider:"local",localEndpoint:"http://x/v1/chat/completions",providerModels:{local:"test"},sourceLang:"en",targetLang:"ja"});assert.match(card.casual,/豊富/);assert.match(body.messages[0].content,/do not judge or validate/i);assert.match(body.messages[1].content,/They have a lot of different products/)});
+
+test("word intent composition retries if the model omits the studied word",async()=>{let n=0;global.fetch=async()=>response({choices:[{message:{content:JSON.stringify(n++?{source:"There are many resources.",casual:"資源【しげん】が豊富【ほうふ】だ。",polite:"資源【しげん】が豊富【ほうふ】です。"}:{source:"There are many resources.",casual:"資源【しげん】がたくさんある。",polite:"資源【しげん】がたくさんあります。"})}}]});const card=await composeWordFromIntent({word:{word:"豊富",reading:"ほうふ",meaning:"abundant"},intent:"There are lots of resources"},{provider:"local",localEndpoint:"http://x/v1/chat/completions",providerModels:{local:"test"},sourceLang:"en",targetLang:"ja"});assert.equal(n,2);assert.match(card.casual,/豊富/)});
