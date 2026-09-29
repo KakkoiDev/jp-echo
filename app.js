@@ -1325,8 +1325,26 @@ const legacyOrders={newest:["created","desc"],oldest:["created","asc"],echoes:["
 // Android fills the voice list after the page has settled and does not always
 // fire voiceschanged, so the select is rebuilt a few times before giving up.
 for(const delay of [400,1200,3000])setTimeout(populateVoices,delay);
-async function restoreWorkspace(){const s=workspace();if(!settings.onboarded&&!hasTranslator())return showView("onboard");$("#history-search").value=s.historyQuery||"";$("#clear-history-search").hidden=!s.historyQuery;$("#map-search").value=s.mapQuery||"";if(s.mapView)settings.mapView=s.mapView;const forced=new URLSearchParams(location.search).get("view");showView(forced==="review"?"review":s.view||"practice");if((s.view||"practice")==="practice")setPracticeMode(s.discussionMode?"discussion":"sentence");if(!s.modal)return;const sentences=await listSentences();try{if(s.modal.kind==="word"){const w=wordById(s.modal.id);if(w)await openWord(w,wordCoverage(sentences))}else if(s.modal.kind==="kanji")await openKanji(s.modal.id,kanjiCoverage(sentences));else if(s.modal.kind==="grammar"){const p=grammarPoint(s.modal.id);if(p)await openGrammar(p,grammarCoverage(sentences))}}catch{saveWorkspace({modal:null})}}
-applyLanguage();migrateStore().then(async()=>{await repairReversedCards();await restoreWorkspace()}).catch(()=>restoreWorkspace());refreshDueBadge();setupRecognition();updateInstallUI();
+async function applyRoute(route=parseRoute(location.href)){
+  applyingRoute=true;
+  try{
+    if(route.notFound){history.replaceState({echo:true},"","/");route=parseRoute("/")}
+    if(!settings.onboarded&&!hasTranslator()&&route.view!=="setup"&&route.view!=="onboard")route={view:"onboard"};
+    if(route.historyQuery!=null){$("#history-search").value=route.historyQuery;$("#clear-history-search").hidden=!route.historyQuery}
+    if(route.historyFilter)$("#history-filter").value=route.historyFilter;if(route.historyOrder)$("#history-order").value=route.historyOrder;if(route.historyDirection)$("#history-direction").value=route.historyDirection;
+    if(route.mapQuery!=null)$("#map-search").value=route.mapQuery;if(route.mapView)settings.mapView=route.mapView;
+    if(route.sentenceId){const sentence=await getSentence(route.sentenceId);if(sentence){detail=ensureSchedule(sentence);showView("sentence",{route:false});renderDetail()}else showView("library",{route:false})}
+    else {showView(route.view||"practice",{route:false});if((route.view||"practice")==="practice")setPracticeMode(route.discussionMode?"discussion":"sentence",{route:false})}
+    if(route.modal){const sentences=await listSentences();if(route.modal.kind==="word"){const w=wordById(route.modal.id);if(w)await openWord(w,wordCoverage(sentences),{route:false})}else if(route.modal.kind==="kanji")await openKanji(route.modal.id,kanjiCoverage(sentences),{route:false});else if(route.modal.kind==="grammar"){const p=grammarPoint(route.modal.id);if(p)await openGrammar(p,grammarCoverage(sentences),{route:false})}}
+  }finally{applyingRoute=false}
+}
+async function restoreRoute(){
+  // One upgrade bridge only: old root URLs had no navigation information.
+  if(location.pathname==="/"&&!location.search){const legacy=workspace();if(legacy.view&&legacy.view!=="practice"||legacy.discussionMode||legacy.modal||legacy.historyQuery||legacy.mapQuery){history.replaceState({echo:true},"",routeFor({...legacy,historyFilter:settings.historyFilter,historyOrder:settings.historyOrder,historyDirection:settings.historyDirection}));localStorage.removeItem(WORKSPACE_KEY)}}
+  await applyRoute();
+}
+window.addEventListener("popstate",()=>applyRoute());
+applyLanguage();migrateStore().then(async()=>{await repairReversedCards();await restoreRoute()}).catch(()=>restoreRoute());refreshDueBadge();setupRecognition();updateInstallUI();
 // The in-app WaniKani sync is gone (the pull tool feeds the stories instead);
 // what it left in a browser is cleared once, quietly.
 try{localStorage.removeItem("jp-echo-wanikani-token");indexedDB.deleteDatabase("jp-echo-wanikani")}catch{}
