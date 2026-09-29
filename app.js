@@ -14,6 +14,8 @@ import {deleteNote,forBackup,getNote,listNotes,makeNote,mergeNotes,noteKey,putNo
 import {downloadAnkiDeck} from "./anki-export.js";
 import {dueSentences,ensureSchedule,isDue,reviewSentence} from "./srs.js";
 import {DEFAULT_TIME,REMINDER_TAG,reminderText,shouldRemind} from "./reminders.js";
+import {saveDiscussionTurn} from "./actions.js";
+import {parseRoute,routeFor} from "./routes.js";
 const $=selector=>document.querySelector(selector);
 const settings=JSON.parse(localStorage.getItem("jp-echo-settings")||"{}");
 // Before anything reads the pair: a build shipped a swap button that reversed
