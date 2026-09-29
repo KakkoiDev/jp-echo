@@ -65,3 +65,6 @@ test("Mora emoji is a separate row after the kanji, not an inline anchor",()=>{a
 
 
 test("service worker updates never navigate or reload an open Echo page",async()=>{const fs=await import("node:fs/promises");const sw=await fs.readFile(new URL("../sw.js",import.meta.url),"utf8");assert.doesNotMatch(sw,/reloadClients/);assert.doesNotMatch(sw,/client\.navigate\(/);assert.match(sw,/self\.clients\.claim\(\)/)});
+
+
+test("Discussion renders visible message bubbles with a persistent reply composer",()=>{assert.match(html,/id="discussion-turns" class="discussion-turns"/);assert.match(html,/class="discussion-composer"/);assert.match(app,/className="discussion-bubble"/);assert.match(app,/className="discussion-japanese"/);assert.match(app,/className="discussion-turn "\+turn\.role/)});
