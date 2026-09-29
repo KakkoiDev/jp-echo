@@ -130,6 +130,20 @@ export async function compose({kanji,grammar,word,check=null,known=""},settings=
 
 // A word: the caller says whether the sentence carries it, since a verb
 // arrives conjugated and only the dictionary module knows what counts.
+export async function composeWordFromIntent({word,intent},settings={}){
+  const pair={sourceLang:settings.sourceLang||DEFAULT_PAIR.sourceLang,targetLang:settings.targetLang||DEFAULT_PAIR.targetLang};
+  const chosen=chosenProvider(settings);
+  const system=`You help a learner actively use one studied Japanese word. The learner gives an idea/template in either their source language or Japanese. Write a NEW natural sentence in the target language that conveys the learner's intended meaning and deliberately uses the studied word (a grammatically valid inflected form is allowed). Do not judge or validate the learner's wording and do not merely translate it literally. Return the normal Echo sentence JSON. Studied word: ${word.word}【${word.reading||""}】. Meaning: ${word.meaning||""}. ${composePrompt(pair.sourceLang,pair.targetLang,word,"")}`;
+  let text=`Learner's intended meaning/template: ${intent}`;
+  for(let attempt=0;attempt<2;attempt++){
+    const card=shapeComposed(await ask(text,system,chosen,settings),pair);
+    const plain=stripFurigana(card.casual||"")+"\\n"+stripFurigana(card.polite||"");
+    if(plain.includes(word.word))return card;
+    text=`Learner's intended meaning/template: ${intent}\\nYour previous sentence omitted the required studied word ${word.word}. Write a fresh natural sentence preserving the intended meaning and include it.`;
+  }
+  throw new Error(`The model kept omitting ${word.word}.`);
+}
+
 async function composeWord(word,check,settings){
   const pair={sourceLang:settings.sourceLang||DEFAULT_PAIR.sourceLang,targetLang:settings.targetLang||DEFAULT_PAIR.targetLang};
   const chosen=chosenProvider(settings),system=composePrompt(pair.sourceLang,pair.targetLang,word,"");
