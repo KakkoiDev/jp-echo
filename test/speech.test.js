@@ -17,7 +17,7 @@ globalThis.window = {
   performance: globalThis.performance,
 };
 
-const {ShadowLoop} = await import("../speech.js");
+const {ShadowLoop,ConversationLoop} = await import("../speech.js");
 
 test("repeats after a completed utterance", () => {
   spoken.length = 0;
@@ -180,3 +180,6 @@ test("an unnamed language still gets one, rather than undefined", () => {
   assert.equal(spoken.at(-1).lang, "ja");
   loop.stop(false);
 });
+
+
+test("conversation loop speaks accumulated turns in order with per-speaker voices",()=>{spoken.length=0;const timers=[];const ai={name:"AI"},user={name:"User"};const loop=new ConversationLoop({onEcho:()=>{},onState:()=>{},setTimer:fn=>{timers.push(fn);return timers.length},clearTimer:()=>{},setWatchdogTimer:()=>1,clearWatchdogTimer:()=>{}});loop.playConversation([{text:"first",role:"ai"},{text:"second",role:"user"}],{voiceFor:t=>t.role==="ai"?ai:user,lang:"ja"});assert.equal(spoken[0].text,"first");assert.equal(spoken[0].voice,ai);spoken[0].onend();timers.shift()();assert.equal(spoken[1].text,"second");assert.equal(spoken[1].voice,user);spoken[1].onend();timers.shift()();assert.equal(spoken[2].text,"first","latest turn loops back to the beginning")});
