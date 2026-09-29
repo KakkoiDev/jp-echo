@@ -928,4 +928,4 @@ html.motion-off #review-progress-bar { transition: none; }
 .mora-english{font-size:.72rem;opacity:.65}
 .mora-modifiers{max-width:46rem;margin:1rem auto 3rem;display:flex;gap:1rem;flex-wrap:wrap}
 .mora-open{margin-top:.55rem}
-@media(max-width:600px){.mora-row{gap:.25rem}.mora-table{gap:.25rem}.mora-cell{min-height:6.4rem;padding:.35rem .2rem;border-radius:9px}.mora-word{font-size:1rem}.mora-emoji{font-size:1.1rem}.mora-reading{font-size:.72rem}.mora-english{font-size:.64rem}.mora-intro{margin-top:.8rem}}
+@media(max-width:600px){.mora-row{gap:.25rem}.mora-table{gap:.25rem}.mora-cell{min-height:7rem;padding:.35rem .2rem;border-radius:9px}.mora-anchor{flex-direction:column;gap:.08rem}.mora-word{font-size:1rem;line-height:1.15}.mora-emoji{display:block;font-size:1.1rem;line-height:1.15}.mora-reading{font-size:.72rem}.mora-english{font-size:.64rem}.mora-intro{margin-top:.8rem}}
