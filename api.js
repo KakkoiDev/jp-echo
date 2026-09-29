@@ -1,3 +1,4 @@
+import {moraMnemonicPrompt} from "./core.js";
 import {DEFAULT_PAIR,hasFurigana,hasRegisters,languageName,normalizeFurigana,stripFurigana,validateTranslation,validateTranslations} from "./core.js";
 
 // The prompt is built from the pair. Only Japanese asks for furigana and the
@@ -191,7 +192,7 @@ export function shapeWordNote(raw){
 }
 export async function writeWordNote(word,settings={}){
   const chosen=chosenProvider(settings);
-  const system=`You write Echo's note on a Japanese word: a way to remember it. You are given the word, its reading, its meaning and what kind of word it is; write from those and your own knowledge of Japanese, not from any textbook or website. Return JSON only: {"remember":"..."}. A few sentences that make the word stick: what its parts or its kanji suggest if that helps, what the sound brings to mind, one tiny example inline. ${NOTE_RULES}`;
+  const system=`You write Echo\'s note on a Japanese word: a way to remember it. You are given the word, its reading, its meaning and what kind of word it is. Return JSON only: {"remember":"..."}. Do not give a generic etymology-style note. Build a compact mnemonic using the canonical system below. If the word is already obvious/concrete, keep the mnemonic especially short.\n\n${moraMnemonicPrompt()}\n\n${NOTE_RULES}`;
   const text=`Word: ${word.word}\nReading: ${word.reading||"—"}\nMeaning: ${word.meaning||"—"}\nKind: ${word.kind||"—"}`;
   for(let attempt=0;attempt<2;attempt++){
     try{return shapeWordNote(await ask(attempt?text+"\n\nYour previous answer broke a rule. Write it again: no religious reference, no swearing, no gee, no tags.":text,system,chosen,settings))}
