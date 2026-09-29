@@ -3,7 +3,7 @@ import {earliestPair,flipSentence,isReversed,pairLooksSwapped,repairPair} from "
 import {DEFAULT_PAIR,LANGUAGES,createSentence,exportBackup,forAnki,hasFurigana,hasRegisters,languageName,mergeSentences,normalizeFurigana,rubyHtml,SCHEMA_VERSION,stripFurigana} from "./core.js";
 import {isExactMatch,markAttempt,markTarget} from "./diff.js";
 import {deleteSentence,getSentence,listSentences,migrateStore,replaceAll,saveSentence} from "./db.js";
-import {adjustNote,carries,compose,PROVIDER_DEFAULTS,tagGrammar,translate,discuss,writeNotes,writeWordNote} from "./api.js";
+import {adjustNote,carries,compose,composeWordFromIntent,PROVIDER_DEFAULTS,tagGrammar,translate,discuss,writeNotes,writeWordNote} from "./api.js";
 import {byLevel as grammarByLevel,cleanTags as grammarTags,coverage as grammarCoverage,hasGrammar,isTagged,learned as grammarLearned,LEVELS as GRAMMAR_LEVELS,point as grammarPoint,POINTS as GRAMMAR_POINTS,summarise as grammarSummarise,untagged as untaggedSentences} from "./grammar.js";
 import {japaneseVoices,recognitionFactory,ShadowLoop,ConversationLoop} from "./speech.js";
 import {STORIES} from "./stories.js";
@@ -870,7 +870,7 @@ async function openWord(w,cover,{learn=null}={}){
     ?capitalise(inYours(ids.length))+" · "+(state==="learned"?t("learned, since one of them reached review"):t("not learned yet — none of them has reached review"))
     :t("Not in any of your sentences yet");
   $("#word-say-label").textContent=t("Say a sentence using {word}",{word:w.w});
-  $("#word-say-hint").textContent=t("Echo translates it, checks the Japanese really uses {word} — conjugated is fine — and keeps it. If it doesn’t, you get it back to try again.",{word:w.w});
+  $("#word-say-hint").textContent=t("Give Echo the meaning you want to express, in English or Japanese. Echo writes a new natural sentence using {word} and keeps it.",{word:w.w});
   $("#word-say-go").disabled=!hasTranslator();$("#word-say").disabled=!hasTranslator();$("#word-mic").disabled=!hasTranslator()||!dictationReady;
   $("#word-say-status").textContent="";$("#word-status").textContent=hasTranslator()?"":t("Add a translator and this starts working.");$("#word-loop-state").textContent="";
   $("#word-compose").textContent=t("Or let Echo write one with {word}",{word:w.w});$("#word-compose").disabled=!hasTranslator();
@@ -922,10 +922,9 @@ async function sayForWord(){
   const target=wordOpen;if(!target)return;const w=target.word;
   const field=$("#word-say"),text=field.value.trim(),status=$("#word-say-status"),button=$("#word-say-go");
   if(!text){status.textContent=t("Say or type a sentence first.");field.focus();return}
-  button.disabled=true;status.textContent=t("Translating…");
+  button.disabled=true;status.textContent=t("Writing a sentence with {word}…",{word:w.w});
   try{
-    const card=await translate(text,{...settings,inputLang,sourceLang:sourceLang(),targetLang:targetLang()});
-    if(!carriesWord(plainOf(card),w)){status.textContent=t("That sentence does not use {word} — try one that does.",{word:w.w});field.focus();return}
+    const card=await composeWordFromIntent({word:{word:w.w,reading:w.r,meaning:w.en.join(" / ")},intent:text},{...settings,sourceLang:sourceLang(),targetLang:targetLang()});
     await saveWordSentence(card,w);field.value="";status.textContent=t("Saved to your library.");
   }catch(error){status.textContent=sheetError(error)}
   finally{button.disabled=!hasTranslator()}
