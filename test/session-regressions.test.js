@@ -53,3 +53,6 @@ test("target voice management is reachable from settings and missing-voice notic
   assert.match(app,/voice-manage/);assert.match(app,/voice-install/);
   assert.match(app,/installTargetVoice/);
 });
+
+
+test("word practice is creation from intent rather than validation",()=>{assert.match(html,/id="word-say-go"[^>]*><span class="label">Create sentence<\/span>/);assert.match(app,/composeWordFromIntent\(/);assert.doesNotMatch(app,/That sentence does not use \{word\}/);assert.match(app,/Give Echo the meaning you want to express/)});
