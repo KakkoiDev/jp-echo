@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {translate,writeWordNote} from "../api.js";
+import {translate,writeWordNote,discuss} from "../api.js";
 import {MORA_MNEMONICS,moraMnemonicPrompt} from "../core.js";
 
 const modelReply={casual:"今日【きょう】はいい",polite:"今日【きょう】はいいです"};
@@ -45,3 +45,6 @@ test("a reverse answer with no meaning in it is refused",async()=>{
 test("Mora v1 keeps the frozen canonical anchors",()=>{assert.equal(MORA_MNEMONICS["え"],"海老");assert.equal(MORA_MNEMONICS["ぬ"],"縫い針");assert.equal(MORA_MNEMONICS["ほ"],"本");assert.equal(MORA_MNEMONICS["る"],"ルーペ");assert.equal(MORA_MNEMONICS["を"],"ヲタ芸");assert.match(moraMnemonicPrompt(),/が=泥の傘/);assert.match(moraMnemonicPrompt(),/ぱ=泡の花/)});
 
 test("word learning help sends Mora v1 and causal-scene rules to the AI",async()=>{let body;global.fetch=async(url,options)=>(body=JSON.parse(options.body),response({choices:[{message:{content:JSON.stringify({remember:"A vivid scene."})}}]}));await writeWordNote({word:"壊す",reading:"こわす",meaning:"to break",kind:"verb"},{provider:"local",localEndpoint:"http://x/v1/chat/completions",providerModels:{local:"test"}});const system=body.messages[0].content;assert.match(system,/Echo Mora v1/);assert.match(system,/こ=氷/);assert.match(system,/わ=鰐/);assert.match(system,/す=寿司/);assert.match(system,/causal animation/);assert.match(system,/meaning itself/)});
+
+
+test("discussion opens with an AI turn and translates a learner reply",async()=>{const replies=[{user:{target:"",source:""},ai:{target:"いらっしゃいませ。","source":"Welcome."}},{user:{target:"味噌【みそ】ラーメンをお願【ねが】いします。","source":"Miso ramen, please."},ai:{target:"かしこまりました。","source":"Certainly."}}];let n=0;global.fetch=async()=>response({choices:[{message:{content:JSON.stringify(replies[n++])}}]});const settings={provider:"local",localEndpoint:"http://x/v1/chat/completions",providerModels:{local:"test"}};const first=await discuss({scenario:"ramen shop"},settings);assert.equal(first.ai.target,"いらっしゃいませ。");const second=await discuss({scenario:"ramen shop",message:"Miso ramen please",history:[{role:"ai",...first.ai}]},settings);assert.match(second.user.target,/味噌/);assert.equal(second.ai.source,"Certainly.")});
