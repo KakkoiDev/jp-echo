@@ -11,6 +11,7 @@ export function routeFor(state={}){
   else if(view==="review"||view==="session")path="/review";
   else if(view==="library")path="/library";
   else if(view==="map")path=state.mapView==="words"?"/words":state.mapView==="grammar"?"/grammar":"/kanji";
+  else if(view==="mora")path="/mora";
   else if(view==="setup")path="/setup";
   else if(view==="onboard")path="/onboard";
   else if(state.discussionMode)path="/discussion";
@@ -27,6 +28,7 @@ export function parseRoute(input){
   if(p==="/")return base;
   if(p==="/discussion")return {...base,discussionMode:true};
   if(p==="/review")return {...base,view:"review"};
+  if(p==="/mora")return {...base,view:"mora"};
   if(p==="/library")return {...base,view:"library",historyQuery:q.get("q")||"",historyFilter:q.get("filter")||"all",historyOrder:q.get("order")||"created",historyDirection:q.get("direction")||"desc"};
   if(p==="/setup")return {...base,view:"setup"};
   if(p==="/onboard")return {...base,view:"onboard"};
