@@ -899,6 +899,8 @@ function showWordNote(w,note){
     echoLine:t("Written by Echo when you asked, on your own key, and kept on this device and in every backup. Adjust it if it does not stick."),
     yoursLine:t("Your version. Reset brings Echo’s back.")});
   const panel=block.querySelector(".adjust-panel"),text=block.querySelector(".note-text"),edit=panel.querySelector(".note-edit"),saveEdit=panel.querySelector(".note-save"),del=panel.querySelector(".note-delete"),regen=panel.querySelector(".note-regenerate"),mic=panel.querySelector(".note-adjust-mic"),instruction=panel.querySelector("input"),status=panel.querySelector(".adjust-status");
+  // Word mnemonics use explicit Save edit. The generic blur-save races Delete/Generate new.
+  text.onblur=null;
   edit.onclick=()=>{text.contentEditable="true";text.focus();edit.hidden=true;saveEdit.hidden=false};
   saveEdit.onclick=async()=>{const value=text.textContent.trim();if(!value)return;text.contentEditable="false";note=await save(value);edit.hidden=false;saveEdit.hidden=true;status.textContent=t("Saved. Yours now.")};
   del.onclick=async()=>{await deleteNote(noteKey("word",w.id,"remember"));block.hidden=true;$("#word-note-ask").hidden=false;$("#word-note-hint").hidden=false;$("#word-note-ask").disabled=!hasTranslator();$("#word-note-status").textContent=t("Deleted. You can generate a new one from scratch.")};
