@@ -927,8 +927,6 @@ html.motion-off #review-progress-bar { transition: none; }
 .discussion-message-actions button{font-size:.75rem;padding:.2rem .35rem;opacity:.65}
 .discussion-controls{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;margin:.8rem 0}
 .discussion-controls #discussion-loop-state{flex-basis:100%;margin:0}
-.discussion-composer{position:sticky;bottom:5.4rem;z-index:5;display:flex;align-items:flex-end;gap:.5rem;padding:.6rem;background:var(--paper,#fff);border:1px solid var(--line,#777);border-radius:1rem;box-shadow:0 -4px 18px color-mix(in srgb,var(--ink,#222) 8%,transparent)}
-.discussion-composer textarea{min-height:2.7rem;max-height:8rem;resize:vertical;border:0;background:transparent;padding:.65rem}
-.discussion-composer textarea:focus{outline:none}
-.discussion-composer button{flex:none}
-@media(max-width:480px){#discussion{padding:.7rem .7rem 7rem}.discussion-bubble{max-width:88%}.discussion-composer{bottom:5rem}}
+@media(max-width:480px){#discussion{padding:.7rem .7rem 7rem}.discussion-bubble{max-width:88%}}
+
+.discussion-dock .composer>label::after{content:" — reply to the conversation"}
