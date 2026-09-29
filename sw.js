@@ -1,6 +1,6 @@
-const CACHE="jp-echo-v71";
+const CACHE="jp-echo-v72";
 const PREFS_CACHE="jp-echo-prefs",PREFS_KEY="./reminder",REMINDER_TAG="echo-due";
-const ASSETS=["./","./index.html","./styles.css","./app.js","./anki-export.js","./srs.js","./vendor/sql-wasm.wasm","./core.js","./diff.js","./reminders.js","./db.js","./api.js","./speech.js","./repair.js","./kanji.js","./kanji-data.js","./kanji-readings.js","./grammar.js","./grammar-data.js","./lookup.js","./notes.js","./stories.js","./words.js","./words-data.js","./i18n.js","./i18n/ja.js","./manifest.webmanifest","./icon.svg","./icon-192.png","./icon-512.png","./icon-maskable-512.png","./apple-touch-icon.png","./favicon.ico","./mask-icon.svg"];
+const ASSETS=["./","./index.html","./styles.css","./app.js","./actions.js","./routes.js","./anki-export.js","./srs.js","./vendor/sql-wasm.wasm","./core.js","./diff.js","./reminders.js","./db.js","./api.js","./speech.js","./repair.js","./kanji.js","./kanji-data.js","./kanji-readings.js","./grammar.js","./grammar-data.js","./lookup.js","./notes.js","./stories.js","./words.js","./words-data.js","./i18n.js","./i18n/ja.js","./manifest.webmanifest","./icon.svg","./icon-192.png","./icon-512.png","./icon-maskable-512.png","./apple-touch-icon.png","./favicon.ico","./mask-icon.svg"];
 
 self.addEventListener("install",event=>event.waitUntil(
   caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting())
@@ -105,6 +105,6 @@ self.addEventListener("notificationclick",event=>{
   event.waitUntil((async()=>{
     const clients=await self.clients.matchAll({type:"window",includeUncontrolled:true});
     for(const client of clients)if(client.url.includes(self.registration.scope))return client.focus();
-    return self.clients.openWindow("./?view=review");
+    return self.clients.openWindow("./review");
   })());
 });
