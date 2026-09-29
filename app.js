@@ -889,11 +889,18 @@ async function renderWordNote(w){
 }
 function showWordNote(w,note){
   const block=$("#word-note");block.hidden=false;block.querySelector(".adjust-link").disabled=!hasTranslator();
+  const save=async(text,by="you")=>{const next=makeNote({kind:"word",id:w.id,part:"remember",text,echo:note.echo??note.text,by});await putNote(next);note=next;return next};
   noteBlock(block,{about:w.w+(w.r!==w.w?"（"+w.r+"）":"")+" ("+(w.en[0]||"")+")",kind:t("A way to remember it"),note,
-    onSave:async(text,by)=>{const next=makeNote({kind:"word",id:w.id,part:"remember",text,echo:note.echo??note.text,by});await putNote(next);note=next;return next},
+    onSave:save,
     onReset:async()=>{const next=makeNote({kind:"word",id:w.id,part:"remember",text:note.echo??note.text});await putNote(next);note=next;return next},
     echoLine:t("Written by Echo when you asked, on your own key, and kept on this device and in every backup. Adjust it if it does not stick."),
     yoursLine:t("Your version. Reset brings Echo’s back.")});
+  const panel=block.querySelector(".adjust-panel"),text=block.querySelector(".note-text"),edit=panel.querySelector(".note-edit"),saveEdit=panel.querySelector(".note-save"),del=panel.querySelector(".note-delete"),regen=panel.querySelector(".note-regenerate"),mic=panel.querySelector(".note-adjust-mic"),instruction=panel.querySelector("input"),status=panel.querySelector(".adjust-status");
+  edit.onclick=()=>{text.contentEditable="true";text.focus();edit.hidden=true;saveEdit.hidden=false};
+  saveEdit.onclick=async()=>{const value=text.textContent.trim();if(!value)return;text.contentEditable="false";note=await save(value);edit.hidden=false;saveEdit.hidden=true;status.textContent=t("Saved. Yours now.")};
+  del.onclick=async()=>{await deleteNote(noteKey("word",w.id,"remember"));block.hidden=true;$("#word-note-ask").hidden=false;$("#word-note-hint").hidden=false;$("#word-note-ask").disabled=!hasTranslator();$("#word-note-status").textContent=t("Deleted. You can generate a new one from scratch.")};
+  regen.onclick=async()=>{regen.disabled=true;status.textContent=t("Writing a new one from scratch…");try{const made=await writeWordNote({word:w.w,reading:w.r,meaning:w.en.join(" / "),kind:kindOf(w)},{...settings,targetLang:targetLang()});const next=makeNote({kind:"word",id:w.id,part:"remember",text:made.remember});await putNote(next);showWordNote(w,next)}catch(error){status.textContent=sheetError(error)}finally{regen.disabled=false}};
+  bindDictation(mic,instruction,status);
 }
 async function askWordNote(){
   const target=wordOpen;if(!target)return;const w=target.word,ask=$("#word-note-ask"),status=$("#word-note-status");
