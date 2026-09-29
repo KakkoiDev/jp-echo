@@ -26,19 +26,9 @@ test("library exposes skipped filter and review persists then clears skipped sta
   assert.match(app,/skipped:false,skippedAt:null/);
 });
 
-test("workspace restoration keeps page searches practice mode and open tool modal",()=>{
-  assert.match(app,/WORKSPACE_KEY="jp-echo-workspace"/);
-  assert.match(app,/historyQuery:/);assert.match(app,/mapQuery:/);assert.match(app,/discussionMode/);
-  assert.match(app,/async function restoreWorkspace/);
-  assert.match(app,/s\.modal\.kind==="word"/);assert.match(app,/s\.modal\.kind==="kanji"/);assert.match(app,/s\.modal\.kind==="grammar"/);
-});
+test("URL restoration keeps page searches practice mode and open tool modal",()=>{assert.match(app,/async function applyRoute/);assert.match(app,/historyQuery/);assert.match(app,/mapQuery/);assert.match(app,/discussionMode/);assert.match(app,/route\.modal\.kind==="word"/);assert.match(app,/route\.modal\.kind==="kanji"/);assert.match(app,/route\.modal\.kind==="grammar"/)});
 
-test("discussion UI includes scenario dictation and sentence saving",()=>{
-  assert.match(html,/id="discussion-scenario-mic"/);
-  assert.match(app,/discussion-scenario-mic/);
-  assert.match(app,/Save sentence/);
-  assert.match(app,/createSentence\(turn\.source/);
-});
+test("discussion UI includes scenario dictation and explicit sentence saving",()=>{assert.match(html,/id="discussion-scenario-mic"/);assert.match(app,/discussion-scenario-mic/);assert.match(app,/Save sentence/);assert.match(app,/saveDiscussionTurn\(turn/)});
 
 test("settings support same-language pairs swap and three voice policies",()=>{
   assert.match(html,/id="settings-swap-langs"/);
