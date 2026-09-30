@@ -695,7 +695,7 @@ async function renderPointNotes(point){
 // One note block: the text, whose it is, and the Adjust panel — an
 // instruction to Echo, editing by hand, or Reset to Echo's.
 function noteBlock(block,{about,kind,note,onSave,onReset,echoLine,yoursLine,render=null}){
-  const text=block.querySelector(".note-text"),line=block.querySelector(".note-note"),panel=block.querySelector(".adjust-panel"),input=panel.querySelector("input"),rewrite=panel.querySelector(".rewrite"),reset=panel.querySelector(".reset-link"),adjust=block.querySelector(".adjust-link"),pstatus=panel.querySelector(".adjust-status");
+  const text=block.querySelector(".note-text"),line=block.querySelector(".note-note"),panel=block.querySelector(".adjust-panel"),input=panel.querySelector("input"),rewrite=panel.querySelector(".rewrite"),reset=panel.querySelector(".reset-link"),adjust=block.querySelector(".adjust-link"),pstatus=panel.querySelector(".adjust-status");const adjustMic=panel.querySelector(".note-adjust-mic");if(adjustMic)bindDictation(adjustMic,input,pstatus);
   const show=n=>{if(render)render(n);else text.textContent=n.text;line.textContent=n.by==="you"?yoursLine:echoLine;block.dataset.by=n.by;reset.hidden=n.by!=="you"&&!(render&&n.by==="you")};
   show(note);pstatus.textContent="";input.value="";
   adjust.onclick=()=>{panel.hidden=!panel.hidden;if(!panel.hidden){input.focus()}};
