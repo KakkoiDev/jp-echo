@@ -21,7 +21,7 @@ const $=selector=>document.querySelector(selector);
 const settings=JSON.parse(localStorage.getItem("jp-echo-settings")||"{}");
 // Gemini 2.5 access is restricted for new projects. Migrate Echo's old default
 // without overriding any other model the learner explicitly selected.
-if(settings.providerModels?.google==="gemini-2.5-flash"){settings.providerModels.google=PROVIDER_DEFAULTS.google;localStorage.setItem("jp-echo-settings",JSON.stringify(settings))}
+if(["gemini-2.5-flash","gemini-3.5-flash-lite"].includes(settings.providerModels?.google)){settings.providerModels.google=PROVIDER_DEFAULTS.google;localStorage.setItem("jp-echo-settings",JSON.stringify(settings))}
 // Before anything reads the pair: a build shipped a swap button that reversed
 // the stored pair rather than the input language, so a device left swapped
 // reopens typing the language it is learning. Consumes its own evidence, so
@@ -1215,7 +1215,7 @@ function bindDictation(mic,field,status){
     const recognition=recognitionFactory(inputLang);if(!recognition){recordedFallback();return}active=recognition;let gotEvent=false;
     recognition.onstart=()=>{gotEvent=true;status.textContent=DICTATION.listening};
     recognition.onresult=e=>{gotEvent=true;appendHeard(field,e.results[0][0].transcript);status.textContent="Edit anything it mishears before you send."};
-    recognition.onerror=e=>{gotEvent=true;const error=e.error;idle();if(["network","service-not-allowed"].includes(error))recordedFallback();else status.textContent=dictationError(error)};
+    recognition.onerror=e=>{gotEvent=true;const error=e.error;idle();if(error==="not-allowed"||error==="audio-capture")status.textContent=dictationError(error);else recordedFallback()};
     recognition.onend=()=>{const hadEvent=gotEvent;idle();if(!hadEvent)recordedFallback()};
     mic.classList.add("is-listening");mic.setAttribute("aria-pressed","true");status.textContent="Starting microphone…";
     watchdog=setTimeout(()=>{if(active===recognition&&!gotEvent){try{recognition.abort()}catch{}idle();recordedFallback()}},5000);
