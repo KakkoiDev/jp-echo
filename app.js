@@ -1190,7 +1190,7 @@ const dictationError=error=>DICTATION[error]||DICTATION.failed;
 const appendHeard=(field,heard)=>{field.value=(field.value?field.value.trimEnd()+" "+heard:heard).trim()};
 function bindDictation(mic,field,status){
   const canRecord=!!(navigator.mediaDevices?.getUserMedia&&window.MediaRecorder);
-  const hasNative=!!recognitionFactory(inputLang);
+  const hasNative=!!recognitionFactory(inputLang),nativeBroken=()=>localStorage.getItem("jp-echo-native-dictation-broken")==="1",markNativeBroken=()=>localStorage.setItem("jp-echo-native-dictation-broken","1");
   if(!hasNative&&!canRecord){mic.disabled=true;mic.onclick=null;status.textContent=DICTATION.unavailable;return false}
   mic.disabled=false;if(status.textContent===DICTATION.unavailable)status.textContent="";
   let active=null,watchdog=null,fallbackStarted=false;
@@ -1211,15 +1211,15 @@ function bindDictation(mic,field,status){
   mic.setAttribute("aria-pressed","false");
   mic.onclick=()=>{
     if(active){try{active.abort()}catch{}idle();return}
-    if(!hasNative){recordedFallback();return}
+    if(!hasNative||nativeBroken()){recordedFallback();return}
     const recognition=recognitionFactory(inputLang);if(!recognition){recordedFallback();return}active=recognition;let gotEvent=false;
     recognition.onstart=()=>{gotEvent=true;status.textContent=DICTATION.listening};
     recognition.onresult=e=>{gotEvent=true;appendHeard(field,e.results[0][0].transcript);status.textContent="Edit anything it mishears before you send."};
-    recognition.onerror=e=>{gotEvent=true;const error=e.error;idle();if(error==="not-allowed"||error==="audio-capture")status.textContent=dictationError(error);else recordedFallback()};
-    recognition.onend=()=>{const hadEvent=gotEvent;idle();if(!hadEvent)recordedFallback()};
+    recognition.onerror=e=>{gotEvent=true;const error=e.error;idle();if(error==="not-allowed"||error==="audio-capture")status.textContent=dictationError(error);else{markNativeBroken();recordedFallback()}};
+    recognition.onend=()=>{const hadEvent=gotEvent;idle();if(!hadEvent){markNativeBroken();recordedFallback()}};
     mic.classList.add("is-listening");mic.setAttribute("aria-pressed","true");status.textContent="Starting microphone…";
-    watchdog=setTimeout(()=>{if(active===recognition&&!gotEvent){try{recognition.abort()}catch{}idle();recordedFallback()}},5000);
-    try{recognition.start()}catch{idle();recordedFallback()}
+    watchdog=setTimeout(()=>{if(active===recognition&&!gotEvent){markNativeBroken();try{recognition.abort()}catch{}idle();recordedFallback()}},5000);
+    try{recognition.start()}catch{markNativeBroken();idle();recordedFallback()}
   };
   return true}
 function setupRecognition(){
