@@ -77,3 +77,8 @@ test("Discussion reply composer supports speech dictation",()=>{assert.match(htm
 
 
 test("Discussion reuses the sentence composer instead of owning a second reply input",()=>{assert.doesNotMatch(html,/id="discussion-input"/);assert.doesNotMatch(html,/id="discussion-mic"/);assert.match(app,/const message=\$\("#english-input"\)\.value\.trim\(\)/);assert.match(app,/discussionMode\?replyDiscussion\(\):performTranslation\(\)/);assert.match(app,/classList\.toggle\("discussion-dock",discussionMode\)/)});
+
+
+test("learner composition inputs share switch mic and submit affordances",()=>{for(const id of ["english-input","kanji-say","grammar-say","word-say"])assert.match(html,new RegExp('(?:learner-composer[^>]*>[\\s\\S]{0,900}id="'+id+'"|id="'+id+'"[\\s\\S]{0,900}data-input-swap)'));for(const id of ["kanji-say","grammar-say","word-say"])assert.match(html,new RegExp('data-input-swap="'+id+'"'))});
+
+test("AI adjustment prompts support voice instructions",()=>{const panels=[...html.matchAll(/class="adjust-panel"/g)];const mics=[...html.matchAll(/class="mic note-adjust-mic"/g)];assert.ok(panels.length>0);assert.ok(mics.length>=panels.length);assert.match(app,/bindDictation\(adjustMic,input,pstatus\)/)});
