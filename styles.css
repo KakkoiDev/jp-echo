@@ -910,9 +910,10 @@ html.motion-off #review-progress-bar { transition: none; }
 }
 
 /* Discussion: messaging is the visual layer; the conversation loop remains the audio layer. */
-.practice-mode{display:flex;gap:.35rem;max-width:28rem;margin:1rem auto;padding:.25rem;border:1px solid var(--line,#777);border-radius:999px}
-.practice-mode button{flex:1;border:0;border-radius:999px;padding:.6rem 1rem;background:transparent}
-.practice-mode button[aria-selected="true"]{background:var(--ink,#222);color:var(--paper,#fff)}
+.practice-mode{display:flex;justify-content:center;gap:1.35rem;max-width:28rem;margin:.8rem auto 1.15rem;border-bottom:1px solid var(--rule)}
+.practice-mode button{position:relative;border:0;background:transparent;padding:.55rem .15rem .65rem;color:var(--ink-muted);font-size:.86rem;letter-spacing:.04em}
+.practice-mode button[aria-selected="true"]{color:var(--sumi);font-weight:500}
+.practice-mode button[aria-selected="true"]::after{content:"";position:absolute;left:20%;right:20%;bottom:-1px;height:2px;background:var(--seal)}
 #discussion{max-width:44rem;margin:0 auto;padding:1rem;padding-bottom:7rem}
 #discussion textarea{width:100%;box-sizing:border-box}
 .discussion-turns{list-style:none;margin:1rem 0;padding:0;display:flex;flex-direction:column;gap:.7rem}
