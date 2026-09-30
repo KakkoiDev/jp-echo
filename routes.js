@@ -14,6 +14,7 @@ export function routeFor(state={}){
   else if(view==="mora")path="/mora";
   else if(view==="setup")path="/setup";
   else if(view==="onboard")path="/onboard";
+  else if(state.readingMode)path="/reading";
   else if(state.discussionMode)path="/discussion";
   const q=new URLSearchParams();
   if(path==="/library"){if(state.historyQuery)q.set("q",state.historyQuery);if(state.historyFilter&&state.historyFilter!=="all")q.set("filter",state.historyFilter);if(state.historyOrder&&state.historyOrder!=="created")q.set("order",state.historyOrder);if(state.historyDirection&&state.historyDirection!=="desc")q.set("direction",state.historyDirection)}
@@ -27,6 +28,7 @@ export function parseRoute(input){
   const base={view:"practice",discussionMode:false,modal:null};
   if(p==="/")return base;
   if(p==="/discussion")return {...base,discussionMode:true};
+  if(p==="/reading")return {...base,readingMode:true};
   if(p==="/review")return {...base,view:"review"};
   if(p==="/mora")return {...base,view:"mora"};
   if(p==="/library")return {...base,view:"library",historyQuery:q.get("q")||"",historyFilter:q.get("filter")||"all",historyOrder:q.get("order")||"created",historyDirection:q.get("direction")||"desc"};
