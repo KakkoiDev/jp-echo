@@ -129,3 +129,6 @@ test("reading tap reveals an explicit Save to Library action",()=>{const start=a
 
 
 test("reading has its own loop and controls before the passage",()=>{assert.match(app,/const readingLoop=new ConversationLoop/);const play=app.slice(app.indexOf("function playReading"),app.indexOf("function saveWorkspace"));assert.match(play,/readingLoop\.running/);assert.match(play,/readingLoop\.playConversation/);assert.doesNotMatch(play,/discussionLoop/)});
+
+
+test("reading echo uses only the existing voice list and no undefined voice helper",()=>{const start=app.indexOf("function playReading"),end=app.indexOf("function saveWorkspace",start),block=app.slice(start,end);assert.match(block,/voices\.find\(v=>v\.default\)/);assert.match(block,/readingLoop\.playConversation/);assert.doesNotMatch(block,/voiceForPolicy/)});
