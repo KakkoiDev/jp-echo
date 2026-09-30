@@ -268,11 +268,21 @@ export async function generateReading({prompt=""},settings={}){const pair={sourc
 // browser-only fallback with no extra account or server.
 function blobBase64(blob){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onerror=()=>reject(reader.error);reader.onload=()=>resolve(String(reader.result).split(",")[1]||"");reader.readAsDataURL(blob)})}
 export async function transcribeAudio(blob,lang,settings={}){
-  const {provider,key,model}=chosenProvider(settings);
-  if(provider!=="google")throw new Error("Audio transcription fallback currently requires Gemini.");
-  const data=await blobBase64(blob),name=languageName(lang);
+  const speechProvider=settings.speechProvider||"auto",name=languageName(lang);
+  if(speechProvider==="auto"||speechProvider==="groq"){
+    const key=settings.speechKeys?.groq||"";
+    if(key){
+      const form=new FormData();form.append("file",blob,"speech.webm");form.append("model","whisper-large-v3-turbo");form.append("response_format","json");form.append("language",(lang||"en").split("-")[0].toLowerCase());
+      const response=await fetch("https://api.groq.com/openai/v1/audio/transcriptions",{method:"POST",headers:{Authorization:"Bearer "+key},body:form});
+      if(!response.ok){let detail="";try{const body=await response.json();detail=body.error?.message||body.message||""}catch{}throw new Error("Speech recognition failed ("+response.status+")"+(detail?": "+detail:"."))}
+      const payload=await response.json(),text=payload.text?.trim();if(!text)throw new Error("Nothing heard.");return text
+    }
+    if(speechProvider==="groq")throw new Error("Add your Groq speech API key in Settings.")
+  }
+  if(speechProvider==="browser")throw new Error("Browser speech recognition failed.");
+  const key=settings.providerKeys?.google||"",model=settings.providerModels?.google||PROVIDER_DEFAULTS.google;
+  if(!key)throw new Error("Add a Groq speech key, or a Gemini key for speech fallback.");
+  const data=await blobBase64(blob);
   const payload=await fetchJson(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,{method:"POST",headers:{"Content-Type":"application/json","x-goog-api-key":key},body:JSON.stringify({contents:[{role:"user",parts:[{text:`Transcribe this spoken ${name} exactly. Return only the transcription, no quotes, labels, translation, or explanation.`},{inlineData:{mimeType:blob.type||"audio/webm",data}}]}]})});
-  const text=payload.candidates?.[0]?.content?.parts?.map(part=>part.text||"").join("").trim();
-  if(!text)throw new Error("Nothing heard.");
-  return text;
+  const text=payload.candidates?.[0]?.content?.parts?.map(part=>part.text||"").join("").trim();if(!text)throw new Error("Nothing heard.");return text
 }
