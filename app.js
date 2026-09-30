@@ -3,7 +3,7 @@ import {earliestPair,flipSentence,isReversed,pairLooksSwapped,repairPair} from "
 import {DEFAULT_PAIR,LANGUAGES,MORA_MNEMONIC_META,createSentence,exportBackup,forAnki,hasFurigana,hasRegisters,languageName,mergeSentences,normalizeFurigana,rubyHtml,SCHEMA_VERSION,stripFurigana} from "./core.js";
 import {isExactMatch,markAttempt,markTarget} from "./diff.js";
 import {deleteSentence,getSentence,listSentences,migrateStore,replaceAll,saveSentence} from "./db.js";
-import {adjustNote,carries,compose,composeWordFromIntent,PROVIDER_DEFAULTS,tagGrammar,translate,discuss,generateReading,writeNotes,writeWordNote} from "./api.js";
+import {adjustNote,carries,compose,composeWordFromIntent,PROVIDER_DEFAULTS,tagGrammar,translate,discuss,generateReading,writeNotes,writeWordNote,transcribeAudio} from "./api.js";
 import {byLevel as grammarByLevel,cleanTags as grammarTags,coverage as grammarCoverage,hasGrammar,isTagged,learned as grammarLearned,LEVELS as GRAMMAR_LEVELS,point as grammarPoint,POINTS as GRAMMAR_POINTS,summarise as grammarSummarise,untagged as untaggedSentences} from "./grammar.js";
 import {japaneseVoices,recognitionFactory,ShadowLoop,ConversationLoop} from "./speech.js";
 import {STORIES} from "./stories.js";
@@ -1186,22 +1186,25 @@ const dictationError=error=>DICTATION[error]||DICTATION.failed;
 // instead of throwing it away.
 const appendHeard=(field,heard)=>{field.value=(field.value?field.value.trimEnd()+" "+heard:heard).trim()};
 function bindDictation(mic,field,status){
-  if(!recognitionFactory(inputLang)){mic.disabled=true;mic.onclick=null;status.textContent=DICTATION.unavailable;return false}
+  const canRecord=!!(navigator.mediaDevices?.getUserMedia&&window.MediaRecorder);
+  if(!canRecord&&!recognitionFactory(inputLang)){mic.disabled=true;mic.onclick=null;status.textContent=DICTATION.unavailable;return false}
   mic.disabled=false;if(status.textContent===DICTATION.unavailable)status.textContent="";
-  let active=null,timer=null,heard=false;
-  const clear=()=>{if(timer)clearTimeout(timer);timer=null;active=null;mic.classList.remove("is-listening");mic.setAttribute("aria-pressed","false")};
-  const stop=(message="")=>{const recognition=active;clear();status.textContent=message;if(recognition)try{recognition.abort()}catch{}};
+  let recorder=null,stream=null,chunks=[],timer=null;
+  const reset=()=>{if(timer)clearTimeout(timer);timer=null;mic.classList.remove("is-listening");mic.setAttribute("aria-pressed","false");stream?.getTracks().forEach(track=>track.stop());stream=null;recorder=null};
   mic.setAttribute("aria-pressed","false");
-  mic.onclick=()=>{if(active){stop("");return}
+  mic.onclick=async()=>{
+    if(recorder&&recorder.state!=="inactive"){recorder.stop();return}
+    if(canRecord){
+      try{
+        status.textContent="Starting microphone…";stream=await navigator.mediaDevices.getUserMedia({audio:true});chunks=[];
+        recorder=new MediaRecorder(stream);recorder.ondataavailable=e=>{if(e.data?.size)chunks.push(e.data)};
+        recorder.onerror=()=>{reset();status.textContent=DICTATION.failed};
+        recorder.onstop=async()=>{const type=recorder?.mimeType||chunks[0]?.type||"audio/webm",blob=new Blob(chunks,{type});reset();if(!blob.size){status.textContent=DICTATION["no-speech"];return}status.textContent="Transcribing…";try{const heard=await transcribeAudio(blob,inputLang,settings);appendHeard(field,heard);status.textContent="Edit anything it mishears before you send."}catch(error){status.textContent=error?.message||DICTATION.failed}};
+        recorder.start();mic.classList.add("is-listening");mic.setAttribute("aria-pressed","true");status.textContent="Listening — tap again when done";timer=setTimeout(()=>{if(recorder?.state==="recording")recorder.stop()},15000);return
+      }catch(error){reset();if(error?.name==="NotAllowedError"||error?.name==="SecurityError"){status.textContent=DICTATION["not-allowed"];return}}
+    }
     const recognition=recognitionFactory(inputLang);if(!recognition){status.textContent=DICTATION.unavailable;return}
-    active=recognition;heard=false;
-    recognition.onstart=()=>{if(active!==recognition)return;status.textContent=DICTATION.listening};
-    recognition.onresult=event=>{if(active!==recognition)return;heard=true;appendHeard(field,event.results[0][0].transcript);status.textContent="Edit anything it mishears before you send."};
-    recognition.onerror=event=>{if(active!==recognition)return;stop(dictationError(event.error))};
-    recognition.onend=()=>{if(active!==recognition)return;const message=heard?status.textContent:"";clear();if(!heard&&status.textContent===DICTATION.listening)status.textContent=message};
-    status.textContent="Starting microphone…";mic.classList.add("is-listening");mic.setAttribute("aria-pressed","true");
-    timer=setTimeout(()=>{if(mic.getAttribute("aria-pressed")==="true"&&!heard)stop(DICTATION["service-timeout"])},10000);try{recognition.start()}
-    catch(error){stop(error?.name==="NotAllowedError"?DICTATION["not-allowed"]:DICTATION.failed)}
+    recognition.onresult=e=>{appendHeard(field,e.results[0][0].transcript);status.textContent="Edit anything it mishears before you send."};recognition.onerror=e=>status.textContent=dictationError(e.error);recognition.onend=()=>{mic.classList.remove("is-listening");mic.setAttribute("aria-pressed","false")};mic.classList.add("is-listening");mic.setAttribute("aria-pressed","true");status.textContent=DICTATION.listening;try{recognition.start()}catch{status.textContent=DICTATION.failed}
   };
   return true}
 function setupRecognition(){
