@@ -29,7 +29,7 @@ test("library exposes skipped filter and review persists then clears skipped sta
 
 test("URL restoration keeps page searches practice mode and open tool modal",()=>{assert.match(app,/async function applyRoute/);assert.match(app,/historyQuery/);assert.match(app,/mapQuery/);assert.match(app,/discussionMode/);assert.match(app,/route\.modal\.kind==="word"/);assert.match(app,/route\.modal\.kind==="kanji"/);assert.match(app,/route\.modal\.kind==="grammar"/)});
 
-test("discussion UI includes scenario dictation and explicit sentence saving",()=>{assert.match(html,/id="discussion-scenario-mic"/);assert.match(app,/discussion-scenario-mic/);assert.match(app,/save\.textContent=turn\.saved\?"Saved":"Save"/);assert.match(app,/saveDiscussionTurn\(turn/)});
+test("discussion uses shared composer and explicit sentence saving",()=>{assert.doesNotMatch(html,/id="discussion-scenario-mic"/);assert.match(app,/discussionScenario=\$\("#english-input"\)\.value\.trim/);assert.match(app,/save\.textContent=turn\.saved\?"Saved":"Save"/);assert.match(app,/saveDiscussionTurn\(turn/)});
 
 test("settings support same-language pairs swap and three voice policies",()=>{
   assert.match(html,/id="settings-swap-langs"/);
@@ -76,7 +76,7 @@ test("Discussion renderer hides only setup, never the whole discussion after a t
 
 
 
-test("Discussion reuses the sentence composer instead of owning a second reply input",()=>{assert.doesNotMatch(html,/id="discussion-input"/);assert.doesNotMatch(html,/id="discussion-mic"/);assert.match(app,/const message=\$\("#english-input"\)\.value\.trim\(\)/);assert.match(app,/discussionMode\?replyDiscussion\(\):performTranslation\(\)/);assert.match(app,/classList\.toggle\("discussion-dock",discussionMode\)/)});
+test("Discussion reuses the sentence composer instead of owning a second reply input",()=>{assert.doesNotMatch(html,/id="discussion-input"/);assert.doesNotMatch(html,/id="discussion-mic"/);assert.match(app,/const message=\$\("#english-input"\)\.value\.trim\(\)/);assert.match(app,/discussionMode\?\(discussionTurns\.length\?replyDiscussion\(\):beginDiscussion\(\)\)/);assert.match(app,/classList\.toggle\("discussion-dock",discussionMode\|\|readingMode\)/)});
 
 
 test("learner composition inputs share switch mic and submit affordances",()=>{for(const id of ["english-input","kanji-say","grammar-say","word-say"])assert.match(html,new RegExp('(?:learner-composer[^>]*>[\\s\\S]{0,900}id="'+id+'"|id="'+id+'"[\\s\\S]{0,900}data-input-swap)'));for(const id of ["kanji-say","grammar-say","word-say"])assert.match(html,new RegExp('data-input-swap="'+id+'"'))});
