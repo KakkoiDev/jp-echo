@@ -105,3 +105,5 @@ test("language switch controls are complete before JavaScript hydration",()=>{fo
 
 
 test("front page controls and bottom navigation are self-contained and wired",()=>{const i=html.indexOf('id="english-input"'),chunk=html.slice(i,i+3000);assert.match(chunk,/id="swap-langs"[\s\S]*?<svg/);assert.match(chunk,/id="microphone"[\s\S]*?<svg[^>]*class="mic-glyph"/);assert.match(chunk,/id="translate"[\s\S]*?<svg/);assert.match(app,/\$\("#tabs"\)\.addEventListener\("click"/);assert.match(app,/event\.target\.closest\("\.tab\[data-view\]"/)});
+
+test("static microphone controls keep the canonical compact glyph",()=>{for(const button of html.matchAll(/<button[^>]*data-record-button[^>]*>[\s\S]*?<\/button>/g)){assert.match(button[0],/<svg class="mic-glyph" width="16" height="20"/);assert.doesNotMatch(button[0],/width="24" height="30"/)}});
