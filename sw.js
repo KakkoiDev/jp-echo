@@ -1,4 +1,4 @@
-const CACHE="jp-echo-v95";
+const CACHE="jp-echo-v96";
 const PREFS_CACHE="jp-echo-prefs",PREFS_KEY="./reminder",REMINDER_TAG="echo-due";
 const ASSETS=["./","./index.html","./404.html","./styles.css","./app.js","./components.js","./actions.js","./routes.js","./anki-export.js","./srs.js","./vendor/sql-wasm.wasm","./core.js","./diff.js","./reminders.js","./db.js","./api.js","./speech.js","./repair.js","./kanji.js","./kanji-data.js","./kanji-readings.js","./grammar.js","./grammar-data.js","./lookup.js","./notes.js","./stories.js","./words.js","./words-data.js","./i18n.js","./i18n/ja.js","./manifest.webmanifest","./icon.svg","./icon-192.png","./icon-512.png","./icon-maskable-512.png","./apple-touch-icon.png","./favicon.ico","./mask-icon.svg"];
 
@@ -18,7 +18,7 @@ self.addEventListener("fetch",event=>{
   if(event.request.method!=="GET"||!event.request.url.startsWith(self.location.origin))return;
   event.respondWith((async()=>{
     try{
-      const response=await fetch(event.request);
+      const response=await fetch(event.request,{cache:"no-store"});
       if(response.ok){const cache=await caches.open(CACHE);cache.put(event.request,response.clone())}
       return response;
     }catch(error){
