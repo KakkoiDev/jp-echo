@@ -118,3 +118,8 @@ test("dictation watchdog falls back instead of leaving native recognition active
 
 
 test("reading renders every generated sentence with the shared ruby renderer",()=>{const start=app.indexOf("function renderReading"),end=app.indexOf("async function saveReadingSentence",start),block=app.slice(start,end);assert.match(block,/readingPassage\.sentences\.forEach/);assert.match(block,/rubyHtml\(sentence\.target\)/);assert.doesNotMatch(block,/furiganaHTML/)});
+
+
+test("reading renderer uses only defined shared escaping and ruby helpers",()=>{const start=app.indexOf("function renderReading"),end=app.indexOf("async function saveReadingSentence",start),block=app.slice(start,end);assert.match(block,/rubyHtml\(sentence\.target\)/);assert.match(block,/escapeText\(stripFurigana\(sentence\.target\)\)/);assert.match(block,/escapeText\(sentence\.source\)/);assert.doesNotMatch(block,/escapeHTML|furiganaHTML/)});
+
+test("reading composer survives language UI refreshes",()=>{const start=app.indexOf("function applyLanguageUI"),end=app.indexOf("function applyTheme",start),block=app.slice(start,end);assert.match(block,/readingMode\?"Describe a text to generate"/);const modeStart=app.indexOf("function setPracticeMode"),modeEnd=app.indexOf("function renderDiscussion",modeStart),mode=app.slice(modeStart,modeEnd);assert.match(mode,/readingMode\?"What do you want to read\?"/);assert.match(mode,/readingMode\?"Describe a text to generate"/)});
