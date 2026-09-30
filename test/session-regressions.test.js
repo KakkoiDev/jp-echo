@@ -115,3 +115,6 @@ test("Mora reference keeps its responsive five-column table styling",()=>{assert
 test("dictation cannot remain stuck when Android native recognition hangs",()=>{const start=app.indexOf("function bindDictation"),end=app.indexOf("function setupRecognition",start),block=app.slice(start,end);assert.match(block,/watchdog=setTimeout/);assert.match(block,/recognition\.abort\(\)/);assert.match(block,/recordedFallback\(\)/);assert.match(block,/markNativeBroken\(\)/);assert.match(block,/aria-pressed/)});
 
 test("dictation watchdog falls back instead of leaving native recognition active",()=>{const start=app.indexOf("function bindDictation"),end=app.indexOf("function setupRecognition",start),block=app.slice(start,end);assert.match(block,/watchdog=setTimeout/);assert.match(block,/active===recognition/);assert.match(block,/idle\(\);recordedFallback\(\)/);assert.ok(block.indexOf("watchdog=setTimeout")<block.indexOf("recognition.start()"))});
+
+
+test("reading renders every generated sentence with the shared ruby renderer",()=>{const start=app.indexOf("function renderReading"),end=app.indexOf("async function saveReadingSentence",start),block=app.slice(start,end);assert.match(block,/readingPassage\.sentences\.forEach/);assert.match(block,/rubyHtml\(sentence\.target\)/);assert.doesNotMatch(block,/furiganaHTML/)});
