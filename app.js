@@ -1,4 +1,3 @@
-import {hydrateUI} from "./components.js";
 import {applyI18n,setDictionary,t} from "./i18n.js";
 import {earliestPair,flipSentence,isReversed,pairLooksSwapped,repairPair} from "./repair.js";
 import {DEFAULT_PAIR,LANGUAGES,MORA_MNEMONIC_META,createSentence,exportBackup,forAnki,hasFurigana,hasRegisters,languageName,mergeSentences,normalizeFurigana,rubyHtml,SCHEMA_VERSION,stripFurigana} from "./core.js";
@@ -18,7 +17,6 @@ import {DEFAULT_TIME,REMINDER_TAG,reminderText,shouldRemind} from "./reminders.j
 import {saveDiscussionTurn} from "./actions.js";
 import {parseRoute,routeFor} from "./routes.js";
 const $=selector=>document.querySelector(selector);
-hydrateUI();
 {const p=new URLSearchParams(location.search).get("echo-route")||sessionStorage.getItem("echo-route");if(p){sessionStorage.removeItem("echo-route");history.replaceState({echo:true},"",p)}}
 const settings=JSON.parse(localStorage.getItem("jp-echo-settings")||"{}");
 // Before anything reads the pair: a build shipped a swap button that reversed
