@@ -19,6 +19,9 @@ import {parseRoute,routeFor} from "./routes.js";
 const $=selector=>document.querySelector(selector);
 {const p=new URLSearchParams(location.search).get("echo-route")||sessionStorage.getItem("echo-route");if(p){sessionStorage.removeItem("echo-route");history.replaceState({echo:true},"",p)}}
 const settings=JSON.parse(localStorage.getItem("jp-echo-settings")||"{}");
+// Gemini 2.5 access is restricted for new projects. Migrate Echo's old default
+// without overriding any other model the learner explicitly selected.
+if(settings.providerModels?.google==="gemini-2.5-flash"){settings.providerModels.google=PROVIDER_DEFAULTS.google;localStorage.setItem("jp-echo-settings",JSON.stringify(settings))}
 // Before anything reads the pair: a build shipped a swap button that reversed
 // the stored pair rather than the input language, so a device left swapped
 // reopens typing the language it is learning. Consumes its own evidence, so
