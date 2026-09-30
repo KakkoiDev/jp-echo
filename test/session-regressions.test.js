@@ -46,7 +46,7 @@ test("target voice management is reachable from settings and missing-voice notic
 });
 
 
-test("word practice is creation from intent rather than validation",()=>{assert.match(html,/id="word-say-go"[^>]*><span class="label">Create sentence<\/span>/);assert.match(app,/composeWordFromIntent\(/);assert.doesNotMatch(app,/That sentence does not use \{word\}/);assert.match(app,/Give Echo the meaning you want to express/)});
+test("word practice is creation from intent rather than validation",()=>{assert.match(html,/id="word-say-go"[^>]*><span class="label">→<\/span>/);assert.match(app,/composeWordFromIntent\(/);assert.doesNotMatch(app,/That sentence does not use \{word\}/);assert.match(app,/Give Echo the meaning you want to express/)});
 
 
 test("navigation is URL-driven with browser back-forward restoration",()=>{assert.match(app,/import \{parseRoute,routeFor\} from "\.\/routes\.js"/);assert.match(app,/history\[replace\?"replaceState":"pushState"\]/);assert.match(app,/window\.addEventListener\("popstate",\(\)=>applyRoute\(\)\)/);assert.match(app,/async function applyRoute/);assert.match(app,/showView\("sentence",\{route:false\}\)/);assert.match(app,/openWord\(w,wordCoverage\(sentences\),\{route:false\}\)/)});
