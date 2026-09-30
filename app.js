@@ -1200,7 +1200,7 @@ function bindDictation(mic,field,status){
     recognition.onerror=event=>{if(active!==recognition)return;stop(dictationError(event.error))};
     recognition.onend=()=>{if(active!==recognition)return;const message=heard?status.textContent:"";clear();if(!heard&&status.textContent===DICTATION.listening)status.textContent=message};
     status.textContent="Starting microphone…";mic.classList.add("is-listening");mic.setAttribute("aria-pressed","true");
-    try{recognition.start();timer=setTimeout(()=>{if(active===recognition&&!heard)stop(DICTATION["service-timeout"])},10000)}
+    timer=setTimeout(()=>{if(mic.getAttribute("aria-pressed")==="true"&&!heard)stop(DICTATION["service-timeout"])},10000);try{recognition.start()}
     catch(error){stop(error?.name==="NotAllowedError"?DICTATION["not-allowed"]:DICTATION.failed)}
   };
   return true}
