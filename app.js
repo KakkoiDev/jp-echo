@@ -1184,13 +1184,18 @@ const dictationError=error=>DICTATION[error]||DICTATION.failed;
 // Append rather than replace, so a second burst adds to what you already said
 // instead of throwing it away.
 const appendHeard=(field,heard)=>{field.value=(field.value?field.value.trimEnd()+" "+heard:heard).trim()};
-function bindDictation(mic,field,status){const recognition=recognitionFactory(inputLang);
-  if(!recognition){mic.disabled=true;mic.onclick=null;status.textContent=DICTATION.unavailable;return false}
-  mic.disabled=!hasTranslator();if(status.textContent===DICTATION.unavailable)status.textContent="";
-  mic.onclick=()=>{status.textContent=DICTATION.listening;mic.classList.add("is-listening");try{recognition.start()}catch{}};
-  recognition.onresult=event=>{appendHeard(field,event.results[0][0].transcript);status.textContent="Edit anything it mishears before you translate."};
-  recognition.onerror=event=>{status.textContent=dictationError(event.error)};
-  recognition.onend=()=>{mic.classList.remove("is-listening");if(status.textContent===DICTATION.listening)status.textContent=""};
+function bindDictation(mic,field,status){
+  if(!recognitionFactory(inputLang)){mic.disabled=true;mic.onclick=null;status.textContent=DICTATION.unavailable;return false}
+  mic.disabled=false;if(status.textContent===DICTATION.unavailable)status.textContent="";
+  let active=null;
+  mic.onclick=()=>{if(active){try{active.abort()}catch{}active=null;mic.classList.remove("is-listening");return}
+    const recognition=recognitionFactory(inputLang);if(!recognition){status.textContent=DICTATION.unavailable;return}
+    active=recognition;recognition.onresult=event=>{appendHeard(field,event.results[0][0].transcript);status.textContent="Edit anything it mishears before you send."};
+    recognition.onerror=event=>{status.textContent=dictationError(event.error)};
+    recognition.onend=()=>{active=null;mic.classList.remove("is-listening");if(status.textContent===DICTATION.listening)status.textContent=""};
+    status.textContent=DICTATION.listening;mic.classList.add("is-listening");
+    try{recognition.start()}catch(error){active=null;mic.classList.remove("is-listening");status.textContent=error?.name==="NotAllowedError"?DICTATION["not-allowed"]:DICTATION.failed}
+  };
   return true}
 function setupRecognition(){
   dictationReady=bindDictation($("#microphone"),$("#english-input"),$("#voice-input-status"));
