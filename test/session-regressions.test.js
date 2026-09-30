@@ -68,7 +68,7 @@ test("Mora emoji is a separate row after the kanji, not an inline anchor",()=>{a
 test("service worker updates never navigate or reload an open Echo page",async()=>{const fs=await import("node:fs/promises");const sw=await fs.readFile(new URL("../sw.js",import.meta.url),"utf8");assert.doesNotMatch(sw,/reloadClients/);assert.doesNotMatch(sw,/client\.navigate\(/);assert.match(sw,/self\.clients\.claim\(\)/)});
 
 
-test("Discussion renders visible message bubbles and reuses the shared learner composer",()=>{assert.match(html,/id="discussion-turns" class="discussion-turns"/);assert.match(app,/className="discussion-bubble"/);assert.match(app,/className="discussion-japanese"/);assert.match(app,/className="discussion-turn "+turn.role/);assert.doesNotMatch(html,/id="discussion-input"/)});
+test("Discussion renders visible message bubbles and reuses the shared learner composer",()=>{assert.match(html,/id="discussion-turns" class="discussion-turns"/);assert.match(app,/className="discussion-bubble"/);assert.match(app,/className="discussion-japanese"/);assert.match(app,/className="discussion-turn "\+turn\.role/);assert.doesNotMatch(html,/id="discussion-input"/)});
 
 
 test("Discussion renderer hides only setup, never the whole discussion after a turn",()=>{assert.match(html,/id="discussion-setup"/);assert.match(app,/\$\("#discussion-setup"\)\.hidden=!!discussionTurns\.length/);assert.doesNotMatch(app,/\$\("#discussion-begin"\)\.parentElement\.hidden/)});
@@ -89,4 +89,4 @@ test("component library is the authority for reusable learner interactions",asyn
 
 test("maintainer constitution protects Echo product and visual philosophy",async()=>{const fs=await import("node:fs/promises");const guide=await fs.readFile(new URL("../CLAUDE.md",import.meta.url),"utf8");assert.match(guide,/Visual consistency is correctness/);assert.match(guide,/One action, one implementation/);assert.match(guide,/Could this screenshot plausibly be from a different app/);assert.match(guide,/Sentence and Discussion are two modes/)});
 
-test("Practice mode selector and Discussion use Echo design tokens",()=>{assert.match(css,/\.practice-mode button\[aria-selected="true"\]::after[^}]*var\(--seal\)/);assert.match(css,/\.discussion-bubble[^}]*var\(--hairline\)[^}]*var\(--panel\)/s);assert.doesNotMatch(css,/\.practice-mode\{[^}]*border-radius:999px/)});
+test("Practice mode selector and Discussion use Echo design tokens",()=>{assert.match(css,/\.practice-mode button\[aria-selected="true"\]::after[^}]*var\(--seal\)/);assert.match(css,/\.discussion-bubble\{[^}]*var\(--hairline\)[^}]*var\(--panel\)/s);assert.doesNotMatch(css,/\.practice-mode\{[^}]*border-radius:999px/)});
