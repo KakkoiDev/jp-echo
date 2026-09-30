@@ -920,8 +920,8 @@ html.motion-off #review-progress-bar { transition: none; }
 .discussion-turn{display:flex;width:100%;padding:0;border:0}
 .discussion-turn.ai{justify-content:flex-start}
 .discussion-turn.user{justify-content:flex-end}
-.discussion-bubble{max-width:min(82%,32rem);padding:.7rem .9rem;border:1px solid var(--line,#777);border-radius:1rem 1rem 1rem .3rem;background:var(--paper,#fff)}
-.discussion-turn.user .discussion-bubble{border-radius:1rem 1rem .3rem 1rem;background:color-mix(in srgb,var(--accent,#b33) 10%,var(--paper,#fff))}
+.discussion-bubble{max-width:min(82%,32rem);padding:.7rem .9rem;border:1px solid var(--hairline);border-radius:.8rem .8rem .8rem .2rem;background:var(--panel)}
+.discussion-turn.user .discussion-bubble{border-radius:.8rem .8rem .2rem .8rem;background:var(--seal-tint);border-color:var(--seal-edge)}
 .discussion-japanese{font-size:1.08rem;line-height:1.65;margin:0}
 .discussion-translation{margin:.25rem 0 0;font-size:.86rem;opacity:.68}
 .discussion-message-actions{display:flex;justify-content:flex-end;margin-top:.2rem}
