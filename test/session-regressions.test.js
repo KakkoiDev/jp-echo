@@ -126,3 +126,6 @@ test("reading composer survives language UI refreshes",()=>{const start=app.inde
 
 
 test("reading tap reveals an explicit Save to Library action",()=>{const start=app.indexOf("function renderReading"),end=app.indexOf("async function generateReadingMode",start),block=app.slice(start,end);assert.match(block,/readingSelected=index;renderReading\(\)/);assert.match(block,/save\.textContent="Save to Library"/);assert.match(block,/await saveReadingSentence\(index\)/);assert.match(block,/save\.disabled=true/);assert.match(block,/s\.saved=true;renderReading\(\)/)});
+
+
+test("reading has its own loop and controls before the passage",()=>{assert.match(app,/const readingLoop=new ConversationLoop/);const play=app.slice(app.indexOf("function playReading"),app.indexOf("function saveWorkspace"));assert.match(play,/readingLoop\.running/);assert.match(play,/readingLoop\.playConversation/);assert.doesNotMatch(play,/discussionLoop/)});
