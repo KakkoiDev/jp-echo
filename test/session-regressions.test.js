@@ -4,6 +4,7 @@ import {readFile} from "node:fs/promises";
 
 const app=await readFile(new URL("../app.js",import.meta.url),"utf8");
 const html=await readFile(new URL("../index.html",import.meta.url),"utf8");
+const css=await readFile(new URL("../styles.css",import.meta.url),"utf8");
 
 test("word mnemonic has working explicit edit delete regenerate and voice controls",()=>{
   for(const cls of ["note-adjust-mic","note-edit","note-save","note-delete","note-regenerate"])assert.match(html,new RegExp('class="[^"]*'+cls));
