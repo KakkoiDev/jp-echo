@@ -1179,6 +1179,7 @@ const DICTATION={
   // behind it, so start() resolves straight into one of these two.
   network:"Dictation needs a connection your browser will not make — type it instead.",
   "service-not-allowed":"Your browser blocks its speech service — type it instead.",
+  "service-timeout":"Speech recognition did not respond — try Chrome/Google speech services, or type it instead.",
   failed:"Dictation failed — type it instead."};
 const dictationError=error=>DICTATION[error]||DICTATION.failed;
 // Append rather than replace, so a second burst adds to what you already said
@@ -1187,14 +1188,20 @@ const appendHeard=(field,heard)=>{field.value=(field.value?field.value.trimEnd()
 function bindDictation(mic,field,status){
   if(!recognitionFactory(inputLang)){mic.disabled=true;mic.onclick=null;status.textContent=DICTATION.unavailable;return false}
   mic.disabled=false;if(status.textContent===DICTATION.unavailable)status.textContent="";
-  let active=null;
-  mic.onclick=()=>{if(active){try{active.abort()}catch{}active=null;mic.classList.remove("is-listening");return}
+  let active=null,timer=null,heard=false;
+  const clear=()=>{if(timer)clearTimeout(timer);timer=null;active=null;mic.classList.remove("is-listening");mic.setAttribute("aria-pressed","false")};
+  const stop=(message="")=>{const recognition=active;clear();status.textContent=message;if(recognition)try{recognition.abort()}catch{}};
+  mic.setAttribute("aria-pressed","false");
+  mic.onclick=()=>{if(active){stop("");return}
     const recognition=recognitionFactory(inputLang);if(!recognition){status.textContent=DICTATION.unavailable;return}
-    active=recognition;recognition.onresult=event=>{appendHeard(field,event.results[0][0].transcript);status.textContent="Edit anything it mishears before you send."};
-    recognition.onerror=event=>{status.textContent=dictationError(event.error)};
-    recognition.onend=()=>{active=null;mic.classList.remove("is-listening");if(status.textContent===DICTATION.listening)status.textContent=""};
-    status.textContent=DICTATION.listening;mic.classList.add("is-listening");
-    try{recognition.start()}catch(error){active=null;mic.classList.remove("is-listening");status.textContent=error?.name==="NotAllowedError"?DICTATION["not-allowed"]:DICTATION.failed}
+    active=recognition;heard=false;
+    recognition.onstart=()=>{if(active!==recognition)return;status.textContent=DICTATION.listening};
+    recognition.onresult=event=>{if(active!==recognition)return;heard=true;appendHeard(field,event.results[0][0].transcript);status.textContent="Edit anything it mishears before you send."};
+    recognition.onerror=event=>{if(active!==recognition)return;stop(dictationError(event.error))};
+    recognition.onend=()=>{if(active!==recognition)return;const message=heard?status.textContent:"";clear();if(!heard&&status.textContent===DICTATION.listening)status.textContent=message};
+    status.textContent="Starting microphone…";mic.classList.add("is-listening");mic.setAttribute("aria-pressed","true");
+    try{recognition.start();timer=setTimeout(()=>{if(active===recognition&&!heard)stop(DICTATION["service-timeout"])},10000)}
+    catch(error){stop(error?.name==="NotAllowedError"?DICTATION["not-allowed"]:DICTATION.failed)}
   };
   return true}
 function setupRecognition(){
