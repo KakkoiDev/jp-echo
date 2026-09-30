@@ -260,3 +260,19 @@ export async function discuss({scenario="",message="",history=[]},settings={}){c
 function readingPrompt(sourceLang,targetLang){const known=languageName(sourceLang),learning=languageName(targetLang);return `Write a coherent short reading passage in ${learning} for a language learner. Follow the learner's topic, situation, desired level, length, style, or other instruction. Prefer useful natural language over explanations. Return JSON only: {"title":"...","sentences":[{"target":"...","source":"..."}]}. Each array item must be exactly one sentence. "source" is its natural ${known} meaning. For Japanese, annotate every kanji run as 漢字【かんじ】. No romaji, markdown, commentary, numbering, or alternatives. Aim for 5-10 sentences unless the learner asks otherwise.`}
 
 export async function generateReading({prompt=""},settings={}){const pair={sourceLang:settings.sourceLang||DEFAULT_PAIR.sourceLang,targetLang:settings.targetLang||DEFAULT_PAIR.targetLang},chosen=chosenProvider(settings);const raw=await ask(prompt||"Write an interesting everyday reading passage.",readingPrompt(pair.sourceLang,pair.targetLang),chosen,settings);const sentences=(Array.isArray(raw?.sentences)?raw.sentences:[]).map(x=>({target:normalizeFurigana(String(x?.target||"").trim()),source:String(x?.source||"").trim()})).filter(x=>x.target&&x.source);if(!sentences.length)throw new Error("The model did not return a reading passage.");return {title:String(raw?.title||"Reading").trim()||"Reading",sentences}}
+
+
+// Browser SpeechRecognition is only a convenience path. On Android Chrome the
+// constructor can exist while Google's speech service never returns an event.
+// Gemini already has the learner's API key, so recorded audio is a reliable
+// browser-only fallback with no extra account or server.
+function blobBase64(blob){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onerror=()=>reject(reader.error);reader.onload=()=>resolve(String(reader.result).split(",")[1]||"");reader.readAsDataURL(blob)})}
+export async function transcribeAudio(blob,lang,settings={}){
+  const {provider,key,model}=chosenProvider(settings);
+  if(provider!=="google")throw new Error("Audio transcription fallback currently requires Gemini.");
+  const data=await blobBase64(blob),name=languageName(lang);
+  const payload=await fetchJson(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(key)}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({contents:[{role:"user",parts:[{text:`Transcribe this spoken ${name} exactly. Return only the transcription, no quotes, labels, translation, or explanation.`},{inlineData:{mimeType:blob.type||"audio/webm",data}}]}]})});
+  const text=payload.candidates?.[0]?.content?.parts?.map(part=>part.text||"").join("").trim();
+  if(!text)throw new Error("Nothing heard.");
+  return text;
+}
