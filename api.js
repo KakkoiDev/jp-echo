@@ -67,7 +67,7 @@ export async function tagGrammar(sentences,points,settings={}){
   return out;
 }
 
-export const PROVIDER_DEFAULTS={deepseek:"deepseek-chat",google:"gemini-3.5-flash-lite",openai:"gpt-4.1-mini",anthropic:"claude-sonnet-4-5",local:"qwen3:4b"};
+export const PROVIDER_DEFAULTS={deepseek:"deepseek-chat",google:"gemini-3.8-flash",openai:"gpt-4.1-mini",anthropic:"claude-sonnet-4-5",local:"qwen3:4b"};
 
 function jsonText(value){const text=String(value||"").trim().replace(/^```(?:json)?\s*/i,"").replace(/\s*```$/i,"");return JSON.parse(text||"{}")}
 async function fetchJson(url,options){const response=await fetch(url,options);if(!response.ok){let detail="";try{const body=await response.json();detail=body.error?.message||body.message||""}catch{}throw new Error("Translation failed ("+response.status+")"+(detail?": "+detail:"."))}return response.json()}
