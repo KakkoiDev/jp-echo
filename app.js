@@ -1187,24 +1187,36 @@ const dictationError=error=>DICTATION[error]||DICTATION.failed;
 const appendHeard=(field,heard)=>{field.value=(field.value?field.value.trimEnd()+" "+heard:heard).trim()};
 function bindDictation(mic,field,status){
   const canRecord=!!(navigator.mediaDevices?.getUserMedia&&window.MediaRecorder);
-  if(!canRecord&&!recognitionFactory(inputLang)){mic.disabled=true;mic.onclick=null;status.textContent=DICTATION.unavailable;return false}
+  const hasNative=!!recognitionFactory(inputLang);
+  if(!hasNative&&!canRecord){mic.disabled=true;mic.onclick=null;status.textContent=DICTATION.unavailable;return false}
   mic.disabled=false;if(status.textContent===DICTATION.unavailable)status.textContent="";
-  let recorder=null,stream=null,chunks=[],timer=null;
-  const reset=()=>{if(timer)clearTimeout(timer);timer=null;mic.classList.remove("is-listening");mic.setAttribute("aria-pressed","false");stream?.getTracks().forEach(track=>track.stop());stream=null;recorder=null};
+  let active=null,watchdog=null,fallbackStarted=false;
+  const idle=()=>{if(watchdog)clearTimeout(watchdog);watchdog=null;active=null;mic.classList.remove("is-listening");mic.setAttribute("aria-pressed","false")};
+  async function recordedFallback(){
+    if(fallbackStarted||!canRecord)return false;fallbackStarted=true;idle();
+    let stream,recorder,chunks=[],ctx,source,analyser,raf,heardSound=false,lastSound=performance.now(),started=performance.now();
+    try{
+      status.textContent="Starting microphone…";stream=await navigator.mediaDevices.getUserMedia({audio:true});recorder=new MediaRecorder(stream);
+      recorder.ondataavailable=e=>{if(e.data?.size)chunks.push(e.data)};
+      const stopped=new Promise(resolve=>recorder.onstop=resolve);recorder.start();mic.classList.add("is-listening");mic.setAttribute("aria-pressed","true");status.textContent=DICTATION.listening;
+      ctx=new (window.AudioContext||window.webkitAudioContext)();source=ctx.createMediaStreamSource(stream);analyser=ctx.createAnalyser();analyser.fftSize=512;source.connect(analyser);const data=new Uint8Array(analyser.fftSize);
+      await new Promise(resolve=>{const tick=()=>{analyser.getByteTimeDomainData(data);let sum=0;for(const v of data){const x=(v-128)/128;sum+=x*x}const rms=Math.sqrt(sum/data.length),now=performance.now();if(rms>.025){heardSound=true;lastSound=now}if((heardSound&&now-lastSound>900)||now-started>12000){resolve();return}raf=requestAnimationFrame(tick)};tick()});
+      if(recorder.state==="recording")recorder.stop();await stopped;const type=recorder.mimeType||chunks[0]?.type||"audio/webm",blob=new Blob(chunks,{type});status.textContent="Transcribing…";if(!heardSound||!blob.size)throw new Error("Nothing heard.");const heard=await transcribeAudio(blob,inputLang,settings);appendHeard(field,heard);status.textContent="Edit anything it mishears before you send.";return true
+    }catch(error){status.textContent=error?.name==="NotAllowedError"?DICTATION["not-allowed"]:(error?.message||DICTATION.failed);return false}
+    finally{if(raf)cancelAnimationFrame(raf);try{source?.disconnect()}catch{}try{await ctx?.close()}catch{}stream?.getTracks().forEach(track=>track.stop());idle();fallbackStarted=false}
+  }
   mic.setAttribute("aria-pressed","false");
-  mic.onclick=async()=>{
-    if(recorder&&recorder.state!=="inactive"){recorder.stop();return}
-    if(canRecord){
-      try{
-        status.textContent="Starting microphone…";stream=await navigator.mediaDevices.getUserMedia({audio:true});chunks=[];
-        recorder=new MediaRecorder(stream);recorder.ondataavailable=e=>{if(e.data?.size)chunks.push(e.data)};
-        recorder.onerror=()=>{reset();status.textContent=DICTATION.failed};
-        recorder.onstop=async()=>{const type=recorder?.mimeType||chunks[0]?.type||"audio/webm",blob=new Blob(chunks,{type});reset();if(!blob.size){status.textContent=DICTATION["no-speech"];return}status.textContent="Transcribing…";try{const heard=await transcribeAudio(blob,inputLang,settings);appendHeard(field,heard);status.textContent="Edit anything it mishears before you send."}catch(error){status.textContent=error?.message||DICTATION.failed}};
-        recorder.start();mic.classList.add("is-listening");mic.setAttribute("aria-pressed","true");status.textContent="Listening — tap again when done";timer=setTimeout(()=>{if(recorder?.state==="recording")recorder.stop()},15000);return
-      }catch(error){reset();if(error?.name==="NotAllowedError"||error?.name==="SecurityError"){status.textContent=DICTATION["not-allowed"];return}}
-    }
-    const recognition=recognitionFactory(inputLang);if(!recognition){status.textContent=DICTATION.unavailable;return}
-    recognition.onresult=e=>{appendHeard(field,e.results[0][0].transcript);status.textContent="Edit anything it mishears before you send."};recognition.onerror=e=>status.textContent=dictationError(e.error);recognition.onend=()=>{mic.classList.remove("is-listening");mic.setAttribute("aria-pressed","false")};mic.classList.add("is-listening");mic.setAttribute("aria-pressed","true");status.textContent=DICTATION.listening;try{recognition.start()}catch{status.textContent=DICTATION.failed}
+  mic.onclick=()=>{
+    if(active){try{active.abort()}catch{}idle();return}
+    if(!hasNative){recordedFallback();return}
+    const recognition=recognitionFactory(inputLang);if(!recognition){recordedFallback();return}active=recognition;let gotEvent=false;
+    recognition.onstart=()=>{gotEvent=true;status.textContent=DICTATION.listening};
+    recognition.onresult=e=>{gotEvent=true;appendHeard(field,e.results[0][0].transcript);status.textContent="Edit anything it mishears before you send."};
+    recognition.onerror=e=>{gotEvent=true;const error=e.error;idle();if(["network","service-not-allowed"].includes(error))recordedFallback();else status.textContent=dictationError(error)};
+    recognition.onend=()=>{const hadEvent=gotEvent;idle();if(!hadEvent)recordedFallback()};
+    mic.classList.add("is-listening");mic.setAttribute("aria-pressed","true");status.textContent="Starting microphone…";
+    watchdog=setTimeout(()=>{if(active===recognition&&!gotEvent){try{recognition.abort()}catch{}idle();recordedFallback()}},5000);
+    try{recognition.start()}catch{idle();recordedFallback()}
   };
   return true}
 function setupRecognition(){
