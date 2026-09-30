@@ -62,3 +62,27 @@ When a component needs a new state or variant:
 
 A component API should expose meaning (for example `mode="discussion"`), not
 arbitrary styling knobs. This keeps callers from slowly fragmenting the design.
+
+
+## Primitive rule
+
+Every interactive control is a component, including apparently trivial controls.
+Static HTML declares a component host with `data-ui`; `components.js` owns the
+primitive implementation and hydration.
+
+Primitive vocabulary:
+- `Button` / `IconButton`
+- `RecordButton`
+- `LanguageSwitchButton`
+- `SubmitButton`
+- `TextInput` / `TextArea`
+- `Status`
+- native checkbox/radio/range/select controls wrapped by shared component styling
+
+Higher-level components compose these primitives; they do not copy their icons or
+interaction behavior. A screen-specific ID is allowed for orchestration, but a
+screen-specific implementation of a generic control is not.
+
+During migration, legacy CSS classes may remain on component hosts to preserve
+the established visual design. They are compatibility styling, not permission to
+create a new primitive.
