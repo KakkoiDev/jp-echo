@@ -85,3 +85,8 @@ test("AI adjustment prompts support voice instructions",()=>{const panels=[...ht
 
 
 test("component library is the authority for reusable learner interactions",async()=>{const fs=await import("node:fs/promises");const components=await fs.readFile(new URL("../components.js",import.meta.url),"utf8");assert.match(components,/export function learnerComposer/);assert.match(components,/export function wireLearnerComposer/);assert.match(components,/export function wireAIAdjuster/);const contract=await fs.readFile(new URL("../COMPONENTS.md",import.meta.url),"utf8");assert.match(contract,/one action, one implementation/i);assert.match(contract,/Do not copy component markup/i)});
+
+
+test("maintainer constitution protects Echo product and visual philosophy",async()=>{const fs=await import("node:fs/promises");const guide=await fs.readFile(new URL("../CLAUDE.md",import.meta.url),"utf8");assert.match(guide,/Visual consistency is correctness/);assert.match(guide,/One action, one implementation/);assert.match(guide,/Could this screenshot plausibly be from a different app/);assert.match(guide,/Sentence and Discussion are two modes/)});
+
+test("Practice mode selector and Discussion use Echo design tokens",()=>{assert.match(css,/\.practice-mode button\[aria-selected="true"\]::after[^}]*var\(--seal\)/);assert.match(css,/\.discussion-bubble[^}]*var\(--hairline\)[^}]*var\(--panel\)/);assert.doesNotMatch(css,/\.practice-mode\{[^}]*border-radius:999px/)});
