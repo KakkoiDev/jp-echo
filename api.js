@@ -67,12 +67,12 @@ export async function tagGrammar(sentences,points,settings={}){
   return out;
 }
 
-export const PROVIDER_DEFAULTS={deepseek:"deepseek-chat",google:"gemini-2.5-flash",openai:"gpt-4.1-mini",anthropic:"claude-sonnet-4-5",local:"qwen3:4b"};
+export const PROVIDER_DEFAULTS={deepseek:"deepseek-chat",google:"gemini-3.5-flash-lite",openai:"gpt-4.1-mini",anthropic:"claude-sonnet-4-5",local:"qwen3:4b"};
 
 function jsonText(value){const text=String(value||"").trim().replace(/^```(?:json)?\s*/i,"").replace(/\s*```$/i,"");return JSON.parse(text||"{}")}
 async function fetchJson(url,options){const response=await fetch(url,options);if(!response.ok){let detail="";try{const body=await response.json();detail=body.error?.message||body.message||""}catch{}throw new Error("Translation failed ("+response.status+")"+(detail?": "+detail:"."))}return response.json()}
 async function openAICompatible(provider,english,key,model,endpoint,system){const urls={deepseek:"https://api.deepseek.com/chat/completions",openai:"https://api.openai.com/v1/chat/completions"};const headers={"Content-Type":"application/json"};if(key)headers.Authorization="Bearer "+key;const body={model,messages:[{role:"system",content:system},{role:"user",content:english}]};if(provider!=="local")body.response_format={type:"json_object"};const payload=await fetchJson(endpoint||urls[provider],{method:"POST",headers,body:JSON.stringify(body)});return jsonText(payload.choices?.[0]?.message?.content)}
-async function gemini(english,key,model,system){const payload=await fetchJson(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(key)}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({systemInstruction:{parts:[{text:system}]},contents:[{role:"user",parts:[{text:english}]}],generationConfig:{responseMimeType:"application/json"}})});return jsonText(payload.candidates?.[0]?.content?.parts?.map(part=>part.text).join(""))}
+async function gemini(english,key,model,system){const payload=await fetchJson(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,{method:"POST",headers:{"Content-Type":"application/json","x-goog-api-key":key},body:JSON.stringify({systemInstruction:{parts:[{text:system}]},contents:[{role:"user",parts:[{text:english}]}],generationConfig:{responseMimeType:"application/json"}})});return jsonText(payload.candidates?.[0]?.content?.parts?.map(part=>part.text).join(""))}
 async function anthropicRequest(english,key,model,system){const payload=await fetchJson("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":key,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model,max_tokens:700,system,messages:[{role:"user",content:english}]})});return jsonText(payload.content?.filter(part=>part.type==="text").map(part=>part.text).join(""))}
 async function proxyRequest(url,english,provider,model,key,pair){const payload=await fetchJson(url,{method:"POST",headers:{"Content-Type":"application/json",...(key?{Authorization:"Bearer "+key}:{})},body:JSON.stringify({english,provider,model,...pair})});return (payload.casual||payload.casualJapanese||payload.translation)?payload:jsonText(payload.choices?.[0]?.message?.content)}
 
@@ -271,7 +271,7 @@ export async function transcribeAudio(blob,lang,settings={}){
   const {provider,key,model}=chosenProvider(settings);
   if(provider!=="google")throw new Error("Audio transcription fallback currently requires Gemini.");
   const data=await blobBase64(blob),name=languageName(lang);
-  const payload=await fetchJson(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(key)}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({contents:[{role:"user",parts:[{text:`Transcribe this spoken ${name} exactly. Return only the transcription, no quotes, labels, translation, or explanation.`},{inlineData:{mimeType:blob.type||"audio/webm",data}}]}]})});
+  const payload=await fetchJson(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,{method:"POST",headers:{"Content-Type":"application/json","x-goog-api-key":key},body:JSON.stringify({contents:[{role:"user",parts:[{text:`Transcribe this spoken ${name} exactly. Return only the transcription, no quotes, labels, translation, or explanation.`},{inlineData:{mimeType:blob.type||"audio/webm",data}}]}]})});
   const text=payload.candidates?.[0]?.content?.parts?.map(part=>part.text||"").join("").trim();
   if(!text)throw new Error("Nothing heard.");
   return text;
