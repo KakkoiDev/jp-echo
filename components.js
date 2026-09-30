@@ -34,3 +34,17 @@ export function wireAIAdjuster(block,{bindDictation,onRewrite,onManualSave,onDel
   bind(".note-save",onManualSave);bind(".note-delete",onDelete);bind(".note-regenerate",onRegenerate);
   return {panel,instruction,status,mic,rewrite};
 }
+
+
+// Primitive controls. Screens declare semantic data-ui attributes; this module
+// is the only place that maps those semantics to reusable visual behavior.
+export function button({label="",variant="default",icon="",ariaLabel="",type="button"}={}){const el=document.createElement("button");el.type=type;el.dataset.ui="button";el.dataset.variant=variant;if(ariaLabel)el.setAttribute("aria-label",ariaLabel);if(icon)el.dataset.icon=icon;if(label)el.textContent=label;return el}
+export function iconButton({icon,label,variant="icon"}={}){return button({icon,ariaLabel:label,variant})}
+export function languageSwitchButton({target=""}={}){const el=iconButton({icon:"swap",label:"Swap the languages",variant:"input"});el.dataset.inputSwap=target;return el}
+export function submitButton({label="Send"}={}){const el=button({label,variant:"primary",ariaLabel:label});el.dataset.icon="send";return el}
+export function textInput({type="text",placeholder="",label=""}={}){const el=document.createElement("input");el.type=type;el.placeholder=placeholder;el.dataset.ui="input";if(label)el.setAttribute("aria-label",label);return el}
+export function textArea({placeholder="",rows=2,label=""}={}){const el=document.createElement("textarea");el.rows=rows;el.placeholder=placeholder;el.dataset.ui="textarea";if(label)el.setAttribute("aria-label",label);return el}
+export function status({className="hint"}={}){const el=document.createElement("p");el.className=className;el.dataset.ui="status";el.setAttribute("aria-live","polite");return el}
+
+const icons={mic:micSvg,swap:swapSvg,send:sendSvg};
+export function hydrateUI(root=document){hydrateRecordButtons(root);for(const el of root.querySelectorAll("[data-ui]")){const kind=el.dataset.ui;if(kind==="button"){el.classList.add("ui-button");const v=el.dataset.variant;if(v&&v!=="default")el.classList.add("ui-"+v);const icon=icons[el.dataset.icon];if(icon&&!el.querySelector("svg"))el.insertAdjacentHTML(el.textContent.trim()?"beforeend":"afterbegin",icon)}else if(kind==="input"||kind==="textarea")el.classList.add("ui-field");else if(kind==="status")el.classList.add("ui-status")}return root}
