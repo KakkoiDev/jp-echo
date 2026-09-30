@@ -45,3 +45,20 @@ then consume it from the screen.
 Do not copy component markup into a new screen. Do not add a second dictation,
 language-switch, submit, AI-adjust, save, or playback implementation merely
 because the surrounding screen is different.
+
+
+## Visual contract
+
+Components do not invent their own aesthetic. Their visuals come from Echo's
+existing design tokens and shared primitives in `styles.css`.
+
+When a component needs a new state or variant:
+1. Prefer an existing Echo control/surface.
+2. Express differences with semantic component state, not copied markup.
+3. Use existing tokens; do not hard-code a new palette.
+4. Verify light/dark/system and narrow mobile.
+5. If the visual concept is genuinely new, make it reusable here rather than
+   styling one screen locally.
+
+A component API should expose meaning (for example `mode="discussion"`), not
+arbitrary styling knobs. This keeps callers from slowly fragmenting the design.
