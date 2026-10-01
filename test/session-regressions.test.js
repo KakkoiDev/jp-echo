@@ -161,3 +161,6 @@ test("Listening is audio-only, Reading is bare Japanese, and Writing requires ty
   assert.match(block,/review-answer-tools"\)\.hidden=true/);
   assert.match(block,/if\(listening\)requestAnimationFrame/);
 });
+
+
+test("revealed review vocabulary opens the existing word dictionary sheet",()=>{const revealStart=app.indexOf("async function revealReview"),revealEnd=app.indexOf("function reviewRecognitionLang",revealStart),block=app.slice(revealStart,revealEnd);assert.match(block,/enableReviewVocabulary\(sentence,target\)/);assert.match(app,/function enableReviewVocabulary/);assert.match(app,/sentenceWords\(sentence\)/);assert.match(app,/wordMarks\(w\)/);assert.match(app,/openWord\(w,wordCoverage\(await listSentences\(\)\),\{route:false\}\)/)});
