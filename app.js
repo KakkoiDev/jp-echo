@@ -13,6 +13,7 @@ import {bands as wordBands,carries as carriesWord,coverage as wordCoverage,kindO
 import {deleteNote,forBackup,getNote,listNotes,makeNote,mergeNotes,noteKey,putNote,replaceNotes} from "./notes.js";
 import {downloadAnkiDeck} from "./anki-export.js";
 import {dueSentences,ensureSchedule,isDue,reviewSentence} from "./srs.js";
+import {ensureReviewTrack,recordReviewMode,reviewMode,reviewModeMeta} from "./review-modes.js";
 import {DEFAULT_TIME,REMINDER_TAG,reminderText,shouldRemind} from "./reminders.js";
 import {saveDiscussionTurn} from "./actions.js";
 import {parseRoute,routeFor} from "./routes.js";
@@ -31,6 +32,7 @@ if(pairWasRepaired||settings.basePair===undefined)localStorage.setItem("jp-echo-
 const PLAY_ICON="M2 1.4 12 8 2 14.6V1.4Z",PAUSE_ICON="M2.5 1.5h3v13h-3zM7.5 1.5h3v13h-3z";
 let current=null,detail=null,kanjiPlaying=null,translationFailure=null,voiceFailed=false,dictationReady=false,echoesAtCardStart=0,voices=[],installPrompt=null,reviewQueue=[],reviewIndex=0,reviewRevealed=false,reviewRecognition=null,reviewListening=false;
 const loop=new ShadowLoop({onEcho:async()=>{const sheet=($("#kanji-dialog").open||$("#grammar-dialog").open||$("#word-dialog").open)&&kanjiPlaying,reviewing=!$("#review-view").hidden,viewingDetail=!$("#sentence-view").hidden,target=sheet?kanjiPlaying:reviewing?reviewQueue[reviewIndex]:viewingDetail?detail:current;if(!target||target.transient)return;target.echoCount=(Number(target.echoCount)||0)+1;target.updatedAt=new Date().toISOString();await saveSentence(target);if(reviewing){reviewQueue[reviewIndex]=target;tickCount($("#review-echo-count"),target.echoCount)}if(viewingDetail)tickCount($("#stat-echoes"),target.echoCount);if(current?.id===target.id){current=target;renderCount()}},onState:state=>{const label=({speaking:"Playing — say it with the voice",imitate:"Your turn — echo it",paused:"Paused",stopped:"Ready",error:"That voice could not play"})[state]||state,playing=state!=="stopped"&&state!=="error",text=state==="paused"?"Play":playing?"Pause":"Play";$("#review-loop-state").textContent=label;$("#sentence-loop-state").textContent=label;const active=playing&&state!=="paused";for(const echo of document.querySelectorAll(".arcs:not(.small)>.echo"))echo.classList.toggle("is-playing",active);$("#practice").classList.toggle("playing",active);$("#review-panel").classList.toggle("playing",active);$("#loop-state").textContent=label;$("#play-pause").textContent=text;$("#play-pause").setAttribute("aria-pressed",String(playing));$("#review-audio").textContent=state==="paused"||!playing?"Play the loop":"Pause the loop";$("#review-audio").setAttribute("aria-pressed",String(playing));
+  const reviewFrontAudio=$("#review-front-audio");if(reviewFrontAudio){reviewFrontAudio.textContent=state==="paused"||!playing?"Play sentence":"Pause";reviewFrontAudio.setAttribute("aria-pressed",String(playing))}
   $("#sentence-play").setAttribute("aria-pressed",String(playing));const showPlay=state==="paused"||!playing;$("#sentence-play").lastChild.textContent=showPlay?"Play the loop":"Pause the loop";$("#sentence-play").querySelector("path").setAttribute("d",showPlay?PLAY_ICON:PAUSE_ICON);$("#sentence-view").classList.toggle("playing",active);
   for(const [dialog,state] of [["#kanji-dialog","#kanji-loop-state"],["#grammar-dialog","#grammar-loop-state"],["#word-dialog","#word-loop-state"]])if($(dialog).open){$(state).textContent=playing?label:"";
     // The row's button shows what a press will do: pause while it plays, play
@@ -992,7 +994,7 @@ async function renderReviewHome(){const all=(await listSentences()).map(item=>en
   $("#review-due-block").hidden=due.length===0;$("#review-rest-block").hidden=due.length>0;
   document.querySelector(".ring-stage").classList.toggle("resting",due.length===0);
   $("#start-review").hidden=due.length===0;$("#review-practice").hidden=due.length>0;
-  if(due.length){$("#review-estimate").textContent="Say each one out loud before you check. Roughly "+spell(Math.max(1,Math.round(due.length*.55)))+" minutes.";
+  if(due.length){$("#review-estimate").textContent="One skill per sentence — listening, reading, or writing. Roughly "+spell(Math.max(1,Math.round(due.length*.55)))+" minutes.";
     $("#review-footnote").textContent=next?"Next batch unlocks in "+describeGap(next-now)+".":""}
   else{const at=next?new Intl.DateTimeFormat(undefined,{hour:"2-digit",minute:"2-digit"}).format(new Date(next)):null;
     $("#review-rest-copy").textContent=all.length===0?"Translate a sentence and it joins the queue straight away.":(at?"Your next batch comes back at "+at+". ":"")+spell(all.length)+(all.length===1?" sentence is":" sentences are")+" resting until then.";
@@ -1041,15 +1043,15 @@ function renderDetail(){if(!detail)return;closeEditor();markSelectedRow();
   $("#sentence-english").textContent=detail.source;
   $("#sentence-view").classList.toggle("hide-furigana",settings.showFurigana===false);
   $("#stat-echoes").textContent=String(Number(detail.echoCount)||0);
-  const state=cardState(detail);$("#stat-stage").textContent=CARD_STATES[state];$("#stat-stage").className="status-chip "+state;
+  const state=cardState(detail),nextReview=reviewModeMeta(ensureReviewTrack(detail));$("#stat-stage").textContent=CARD_STATES[state]+" · "+nextReview.icon;$("#stat-stage").title="Next review: "+nextReview.label;$("#stat-stage").className="status-chip "+state;
   $("#stat-due").textContent=untilDue(detail);
   const reviews=Array.isArray(detail.reviews)?[...detail.reviews]:[];
-  const rows=reviews.slice().reverse().map(entry=>({when:formatDate(entry.at),echoes:Number(entry.echoes)||0,rating:RATING_LABELS[entry.rating]||entry.rating,className:entry.rating==="again"?"again":""}));
+  const rows=reviews.slice().reverse().map(entry=>{const mode=entry.mode?reviewModeMeta(entry.mode):null;return {when:formatDate(entry.at),echoes:Number(entry.echoes)||0,rating:(mode?mode.icon+" "+mode.label+" · ":"")+(RATING_LABELS[entry.rating]||entry.rating),className:entry.rating==="again"?"again":""}});
   rows.push({when:formatDate(detail.createdAt),echoes:null,rating:"First",className:"first"});
   $("#sentence-history").replaceChildren(...rows.map(row=>{const li=document.createElement("li");
     li.innerHTML='<span class="when">'+escapeText(row.when)+'</span><span class="detail">'+(row.echoes===null?"":'<span class="echoes">'+row.echoes+" echoes</span>")+'<span class="rating-chip '+row.className+'">'+escapeText(row.rating)+"</span></span>";return li}));
   const lapses=reviews.filter(entry=>entry.rating==="again").length;
-  $("#sentence-history-note").textContent=lapses?"It came out wrong "+(lapses===1?"once":spell(lapses)+" times")+". The difference shows up marked when you check.":reviews.length?"Said correctly every time so far.":"Not reviewed yet — it is waiting in the queue.";
+  $("#sentence-history-note").textContent=lapses?"A review was marked Again "+(lapses===1?"once":spell(lapses)+" times")+".":reviews.length?"Reviewed correctly every time so far.":"Not reviewed yet — it is waiting in the queue.";
   $("#sentence-play").disabled=false}
 function openEditor(){if(!detail)return;resetSession();$("#sentence-draft").value=detail.target;$("#sentence-edit-error").hidden=true;$("#sentence-editor").hidden=false;$("#sentence-japanese").hidden=true;$("#sentence-english").hidden=true;$(".sentence-controls").hidden=true;$("#sentence-draft").focus()}
 function closeEditor(){$("#sentence-editor").hidden=true;$("#sentence-japanese").hidden=false;$("#sentence-english").hidden=false;$(".sentence-controls").hidden=false}
@@ -1229,39 +1231,56 @@ function setupRecognition(){
   bindDictation($("#grammar-mic"),$("#grammar-say"),$("#grammar-say-status"));
   bindDictation($("#word-mic"),$("#word-say"),$("#word-say-status"));
   }
-async function startReview(){const items=await listSentences(),scheduled=items.map(item=>ensureSchedule(item));await Promise.all(scheduled.filter((item,index)=>item!==items[index]).map(saveSentence));reviewQueue=dueSentences(scheduled);reviewIndex=0;if(!reviewQueue.length)return showView("review");showView("session");renderReview()}
+async function startReview(){const items=await listSentences(),prepared=items.map(item=>ensureReviewTrack(ensureSchedule(item)));await Promise.all(prepared.filter((item,index)=>item!==items[index]).map(saveSentence));reviewQueue=dueSentences(prepared);reviewIndex=0;if(!reviewQueue.length)return showView("review");showView("session");renderReview()}
 function reviewJapanese(sentence){return settings.showPolite&&hasRegisters(itemTarget(sentence))?(sentence.politeTarget||sentence.target):(sentence.casualTarget||sentence.target)}
 function reviewPlainJapanese(sentence){return settings.showPolite&&hasRegisters(itemTarget(sentence))?(sentence.plainPoliteTarget||sentence.plainTarget):(sentence.plainCasualTarget||sentence.plainTarget)}
 const STAGE_LABELS={0:"New",1:"Learning",2:"Review",3:"Relearning"};
 function stageLabel(sentence){const state=sentence.srs?.state??0,reps=Number(sentence.srs?.reps)||0;return STAGE_LABELS[state]+(reps?" · seen "+reps+(reps===1?" time":" times"):"")}
 function stageClass(sentence){const state=sentence.srs?.state??0;return state===0?"new":state===2?"review":"learning"}
-function renderReview(){resetSession();stopReviewListening();$("#review-mic").disabled=!dictationReady;const sentence=reviewQueue[reviewIndex],complete=!sentence;
+function renderReview(){resetSession();stopReviewListening();const sentence=reviewQueue[reviewIndex],complete=!sentence;
   $("#review-panel").hidden=complete;$("#review-prompt-actions").hidden=complete;$("#review-actions").hidden=true;$("#review-complete").hidden=!complete;
   $("#review-progress").textContent=complete?`${reviewQueue.length} / ${reviewQueue.length}`:`${reviewIndex+1} / ${reviewQueue.length}`;
   renderSidePanel();$("#review-progress-bar").style.width=(reviewQueue.length?Math.round((complete?reviewQueue.length:reviewIndex)/reviewQueue.length*100):0)+"%";
   if(complete)return renderReviewComplete();
   reviewRevealed=false;
+  const mode=reviewMode(sentence),meta=reviewModeMeta(mode),writing=mode==="writing",listening=mode==="listening";
+  $("#review-panel").dataset.reviewMode=mode;
   $("#review-stage").textContent=stageLabel(sentence);$("#review-stage").className="status-chip "+stageClass(sentence);
-  $("#review-prompt").textContent=sentence.source;$("#review-prompt").hidden=false;$("#review-prompt-echo").textContent=sentence.source;
-  $("#review-capture").hidden=false;$("#review-result").hidden=true;
-  $("#review-answer").value="";$("#review-listen-state").textContent="";
+  $("#review-mode").textContent=meta.icon+" "+meta.label;
+  $("#review-mode-instruction").textContent=listening?"Listen without reading. Can you understand the sentence?":mode==="reading"?"Read the Japanese without furigana. Can you understand it?":"Write the Japanese sentence from the meaning.";
+  $("#review-prompt").hidden=listening;
+  $("#review-prompt").lang=mode==="reading"?targetLang():sourceLang();
+  $("#review-prompt").textContent=mode==="reading"?reviewPlainJapanese(sentence):sentence.source;
+  $("#review-prompt-echo").textContent=sentence.source;
+  $("#review-passive").hidden=writing;$("#review-front-audio").hidden=!listening;$("#review-capture").hidden=!writing;$("#review-answer-tools").hidden=true;
+  $("#review-capture-label").textContent="Write it in Japanese";$("#review-answer").placeholder="Write the Japanese sentence";$("#review-answer").value="";$("#review-listen-state").textContent="";
+  $("#review-result").hidden=true;$("#review-attempt-label").hidden=true;$("#review-attempt").hidden=true;
+  $("#review-check .label").textContent=listening?"Show answer":mode==="reading"?"Show meaning":"Check writing";
   echoesAtCardStart=Number(sentence.echoCount)||0;$("#review-echo-count").textContent=String(echoesAtCardStart);
   updateCheckButton();
-  if(settings.autoListen!==false)startReviewListening();else $("#review-answer").focus()}
-async function renderReviewComplete(){const said=reviewQueue.length;let copy=said?spell(said)+(said===1?" sentence":" sentences")+" out loud.":"Nothing was due.";
+  if(listening)requestAnimationFrame(()=>{if(reviewQueue[reviewIndex]?.id===sentence.id&&!reviewRevealed)playReviewAudio()});
+  else if(writing)$("#review-answer").focus()}
+async function renderReviewComplete(){const done=reviewQueue.length;let copy=done?spell(done)+(done===1?" review":" reviews")+" completed.":"Nothing was due.";
   const all=(await listSentences()).map(item=>ensureSchedule(item)),next=all.filter(item=>!isDue(item)).map(item=>Date.parse(item.srs.due)).filter(Number.isFinite).sort((a,b)=>a-b)[0];
   if(next)copy+=" The next batch comes back in "+describeGap(next-Date.now())+".";
   $("#review-complete-copy").textContent=copy;refreshDueBadge()}
-function updateCheckButton(){$("#review-check").disabled=!$("#review-answer").value.trim()}
+function updateCheckButton(){const sentence=reviewQueue[reviewIndex];if(!sentence)return $("#review-check").disabled=true;$("#review-check").disabled=reviewMode(sentence)==="writing"&&!$("#review-answer").value.trim()}
 async function revealReview(){let sentence=reviewQueue[reviewIndex];if(!sentence||reviewRevealed)return;
-  const attempt=$("#review-answer").value.trim();if(!attempt)return;
-  reviewRevealed=true;stopReviewListening();
+  const mode=reviewMode(sentence),attempt=$("#review-answer").value.trim();if(mode==="writing"&&!attempt)return;
+  reviewRevealed=true;stopReviewListening();resetSession();
   if(sentence.skipped){sentence={...sentence,skipped:false,skippedAt:null,updatedAt:new Date().toISOString()};reviewQueue[reviewIndex]=sentence;await saveSentence(sentence)}
   const target=reviewJapanese(sentence);
-  $("#review-attempt").innerHTML=markAttempt(attempt,target).map(part=>part.changed?"<mark>"+escapeText(part.text)+"</mark>":escapeText(part.text)).join("");
-  $("#review-japanese").innerHTML=markTarget(attempt,target).map(part=>part.changed?"<mark>"+part.html+"</mark>":part.html).join("");
-  $("#review-panel").classList.toggle("hide-furigana",settings.showFurigana===false);
-  $("#review-capture").hidden=true;$("#review-result").hidden=false;
+  $("#review-prompt-echo").textContent=sentence.source;
+  if(mode==="writing"){
+    $("#review-attempt-label").hidden=false;$("#review-attempt").hidden=false;
+    $("#review-attempt").innerHTML=markAttempt(attempt,target).map(part=>part.changed?"<mark>"+escapeText(part.text)+"</mark>":escapeText(part.text)).join("");
+    $("#review-japanese").innerHTML=markTarget(attempt,target).map(part=>part.changed?"<mark>"+part.html+"</mark>":part.html).join("");
+  }else{
+    $("#review-attempt-label").hidden=true;$("#review-attempt").hidden=true;$("#review-attempt").textContent="";
+    $("#review-japanese").innerHTML=rubyHtml(target);
+  }
+  $("#review-panel").classList.toggle("hide-furigana",mode==="writing"&&settings.showFurigana===false);
+  $("#review-capture").hidden=true;$("#review-passive").hidden=true;$("#review-result").hidden=false;
   $("#review-prompt").hidden=true;$("#review-prompt-actions").hidden=true;$("#review-actions").hidden=false;
   playReviewAudio()}
 function reviewRecognitionLang(){return targetLang()}
@@ -1277,9 +1296,9 @@ function startReviewListening(){if(reviewListening)return;
 function stopReviewListening(){if(!reviewListening||!reviewRecognition)return;reviewListening=false;try{reviewRecognition.stop()}catch{}$("#review-mic").setAttribute("aria-pressed","false");$("#review-panel").classList.remove("is-listening")}
 function toggleReviewListening(){reviewListening?stopReviewListening():startReviewListening()}
 async function skipReview(){const sentence=reviewQueue[reviewIndex];if(sentence){const updated={...sentence,skipped:true,skippedAt:new Date().toISOString(),updatedAt:new Date().toISOString()};await saveSentence(updated);reviewQueue[reviewIndex]=updated}reviewIndex++;renderReview()}
-function playReviewAudio(){const sentence=reviewQueue[reviewIndex];if(!sentence)return;if(loop.running){loop.togglePause();return}const voice=voices[Number($("#voice").value)]||voices[0]||null;loop.play(reviewPlainJapanese(sentence)||reviewJapanese(sentence).replace(/【[^】]+】/g,""),{voice,rate:Number($("#rate").value),lang:targetLang()})}
-async function rateReview(rating){const sentence=reviewQueue[reviewIndex];if(!sentence||!reviewRevealed)return;resetSession();const graded=reviewSentence(sentence,rating);
-  const updated={...graded,reviews:[...(Array.isArray(sentence.reviews)?sentence.reviews:[]),{at:new Date().toISOString(),rating,echoes:Math.max(0,(Number(sentence.echoCount)||0)-echoesAtCardStart)}]};await saveSentence(updated);if(current?.id===updated.id)current=updated;reviewQueue[reviewIndex]=updated;reviewIndex++;renderReview()}
+function playReviewAudio(){const sentence=reviewQueue[reviewIndex];if(!sentence)return;if(loop.running){loop.togglePause();return}const policy=$("#voice").value,voice=policy==="random"?voices[Math.floor(Math.random()*voices.length)]:(policy==="default"?voices.find(v=>v.default)||voices[0]:voices[Number(policy)])||null;loop.play(reviewPlainJapanese(sentence)||reviewJapanese(sentence).replace(/【[^】]+】/g,""),{voice,rate:Number($("#rate").value),lang:targetLang()})}
+async function rateReview(rating){const sentence=reviewQueue[reviewIndex];if(!sentence||!reviewRevealed)return;resetSession();const now=new Date(),mode=reviewMode(sentence),graded=reviewSentence(sentence,rating,now),progressed=recordReviewMode(graded,rating,now);
+  const updated={...progressed,reviews:[...(Array.isArray(sentence.reviews)?sentence.reviews:[]),{at:now.toISOString(),rating,mode,echoes:Math.max(0,(Number(sentence.echoCount)||0)-echoesAtCardStart)}]};await saveSentence(updated);if(current?.id===updated.id)current=updated;reviewQueue[reviewIndex]=updated;reviewIndex++;renderReview()}
 async function exportHistory(){const data=exportBackup(await listSentences(),settings,forBackup(await listNotes().catch(()=>[]))),url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"})),link=Object.assign(document.createElement("a"),{href:url,download:"jp-echo-backup.json"});link.click();URL.revokeObjectURL(url)}
 async function exportAnki(button=$("#export-anki")){const items=await listSentences();const label=button.textContent;button.disabled=true;button.textContent="Building deck…";$("#anki-status").textContent="Creating Echo.apkg on this device…";try{await downloadAnkiDeck(items.map(forAnki));$("#open-anki").hidden=false;const launched=openAnki(true);$("#anki-status").textContent=launched?"Echo.apkg downloaded. Opening Anki… If it stays here, tap Open Anki.":"Echo.apkg downloaded. Open it from Downloads to import it into Anki."}catch(error){$("#anki-status").textContent=error.message||"Anki export failed."}finally{button.disabled=false;button.textContent=label}}
 function openAnki(automatic=false){const android=/android/i.test(navigator.userAgent),ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(android){window.location.href="intent:#Intent;package=com.ichi2.anki;end";return true}if(ios){window.location.href="anki://";return true}if(!automatic)$("#anki-status").textContent="Open Echo.apkg from your Downloads folder to import it into Anki.";return false}
@@ -1356,7 +1375,7 @@ addEventListener("keydown",event=>{
   if(event.key==="1"){event.preventDefault();rateReview("again")}
   else if(event.key==="2"){event.preventDefault();rateReview("ok")}
 });
-$("#start-review").onclick=startReview;$("#review-practice").onclick=()=>showView("practice");$("#review-back").onclick=()=>{stopReviewListening();showView("review")};$("#review-done").onclick=()=>showView("practice");$("#review-home-link").onclick=()=>showView("review");$("#review-check").onclick=revealReview;$("#review-skip").onclick=skipReview;$("#review-mic").onclick=toggleReviewListening;$("#review-answer").oninput=updateCheckButton;$("#review-audio").onclick=playReviewAudio;$("#review-again").onclick=()=>rateReview("again");$("#review-ok").onclick=()=>rateReview("ok");
+$("#start-review").onclick=startReview;$("#review-practice").onclick=()=>showView("practice");$("#review-back").onclick=()=>{stopReviewListening();showView("review")};$("#review-done").onclick=()=>showView("practice");$("#review-home-link").onclick=()=>showView("review");$("#review-check").onclick=revealReview;$("#review-skip").onclick=skipReview;$("#review-mic").onclick=toggleReviewListening;$("#review-answer").oninput=updateCheckButton;$("#review-front-audio").onclick=playReviewAudio;$("#review-audio").onclick=playReviewAudio;$("#review-again").onclick=()=>rateReview("again");$("#review-ok").onclick=()=>rateReview("ok");
 $("#settings-button").onclick=openSettings;$("#settings-nav").onclick=openSettings;$("#dismiss-settings").onclick=cancelSettings;$("#cancel-settings").onclick=cancelSettings;$("#install-app").onclick=installApp;$("#settings-dialog").addEventListener("cancel",event=>{event.preventDefault();cancelSettings()});$("#settings-dialog").onclick=event=>{if(event.target===$("#settings-dialog"))cancelSettings()};$("#voice").onchange=resetSession;$("#discussion-voice-ai").onchange=()=>discussionLoop.stop();$("#discussion-voice-user").onchange=()=>discussionLoop.stop();$("#provider").onchange=showProviderConfig;$("#source-lang").onchange=()=>setPair($("#source-lang").value,targetLang());
 $("#target-lang").onchange=()=>setPair(sourceLang(),$("#target-lang").value);
 $("#setup-source").onchange=()=>setPair($("#setup-source").value,targetLang());

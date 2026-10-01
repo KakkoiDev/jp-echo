@@ -138,3 +138,26 @@ test("Mora page teaches fused small kana and sokuon",()=>{
   assert.match(html,/Small kana — fuse/);
   for(const sample of ["きゃ = 木＋山","しゅ = 鹿＋雪","ちょ = 蝶々＋洋服","きって = 木 → 手×2"])assert.match(html,new RegExp(sample.replace(/[＋→×]/g,"\\$&")));
 });
+
+
+test("review sessions rotate one stored skill per sentence",()=>{
+  assert.match(app,/ensureReviewTrack\(ensureSchedule\(item\)\)/);
+  assert.match(app,/const mode=reviewMode\(sentence\)/);
+  assert.match(app,/mode==="listening"/);
+  assert.match(app,/mode==="reading"/);
+  assert.match(app,/mode==="writing"/);
+  assert.match(app,/recordReviewMode\(graded,rating,now\)/);
+  assert.match(app,/rating,mode,echoes/);
+  assert.match(html,/id="review-mode"/);
+  assert.match(html,/id="review-front-audio"/);
+  assert.match(html,/id="review-capture-label"/);
+});
+
+test("Listening is audio-only, Reading is bare Japanese, and Writing requires typed Japanese",()=>{
+  const start=app.indexOf("function renderReview"),end=app.indexOf("async function renderReviewComplete",start),block=app.slice(start,end);
+  assert.match(block,/review-prompt"\)\.hidden=listening/);
+  assert.match(block,/mode==="reading"\?reviewPlainJapanese\(sentence\):sentence\.source/);
+  assert.match(block,/review-capture"\)\.hidden=!writing/);
+  assert.match(block,/review-answer-tools"\)\.hidden=true/);
+  assert.match(block,/if\(listening\)requestAnimationFrame/);
+});
