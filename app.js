@@ -1052,7 +1052,7 @@ function renderDetail(){if(!detail)return;closeEditor();markSelectedRow();
   }
   $("#sentence-view").classList.toggle("hide-furigana",settings.showFurigana===false);
   $("#stat-echoes").textContent=String(Number(detail.echoCount)||0);
-  const state=cardState(detail),nextReview=reviewModeMeta(ensureReviewTrack(detail));$("#stat-stage").textContent=CARD_STATES[state]+" · "+nextReview.icon;$("#stat-stage").title="Next review: "+nextReview.label;$("#stat-stage").className="status-chip "+state;
+  const trackedDetail=ensureReviewTrack(detail),state=cardState(detail),nextReview=reviewModeMeta(trackedDetail);$("#stat-stage").textContent=CARD_STATES[state]+" · "+nextReview.icon;$("#stat-stage").title="Next review: "+nextReview.label;$("#stat-stage").className="status-chip "+state;for(const mode of ["listening","reading","writing"]){const n=$("#sentence-review-track [data-review-track=\""+mode+"\"] strong");if(n)n.textContent=String(trackedDetail.reviewTrack.completed[mode]||0)}
   $("#stat-due").textContent=untilDue(detail);
   const reviews=Array.isArray(detail.reviews)?[...detail.reviews]:[];
   const rows=reviews.slice().reverse().map(entry=>{const mode=entry.mode?reviewModeMeta(entry.mode):null;return {when:formatDate(entry.at),echoes:Number(entry.echoes)||0,rating:(mode?mode.icon+" "+mode.label+" · ":"")+(RATING_LABELS[entry.rating]||entry.rating),className:entry.rating==="again"?"again":""}});
