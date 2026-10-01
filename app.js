@@ -121,11 +121,11 @@ async function installApp(){if(isInstalled())return updateInstallUI();if(install
 // ticks twice in a row restarts the animation instead of swallowing it.
 function tickCount(node,value){const text=String(value);if(!node||node.textContent===text)return;node.textContent=text;node.classList.remove("just-ticked");void node.offsetWidth;node.classList.add("just-ticked");node.addEventListener("animationend",()=>node.classList.remove("just-ticked"),{once:true})}
 function renderCount(){tickCount($("#echo-count"),current?.echoCount??0)}
-function selectedJapanese(){const polite=$("#show-polite").checked&&hasRegisters(itemTarget(current));return polite?(current.politeTarget||current.target):(current.casualTarget||current.target)}
-function selectedPlainJapanese(){const polite=$("#show-polite").checked&&hasRegisters(itemTarget(current));return polite?(current.plainPoliteTarget||current.plainTarget):(current.plainCasualTarget||current.plainTarget)}
+function selectedJapanese(){return current&&hasRegisters(itemTarget(current))?preferredTarget(current):(current?.target||"")}
+function selectedPlainJapanese(){return current&&hasRegisters(itemTarget(current))?preferredPlainTarget(current):(current?.plainTarget||stripFurigana(current?.target||""))}
 function resetSession(){loop.stop()}
 function renderSentence(){const panel=$("#practice");panel.hidden=!current;$("#welcome").hidden=!!current;document.body.classList.toggle("has-sentence",!!current);if(!current)return;$("#japanese").innerHTML=rubyHtml(selectedJapanese());$("#english-display").textContent=current.source;$("#english-display").hidden=!$("#show-english").checked;panel.classList.toggle("hide-furigana",!$("#show-furigana").checked);renderCount();populateVoices()}
-function openSentence(sentence){resetSession();current=sentence;$("#english-input").value=sentence.source;if(enteringTarget())setInputLang(sourceLang());showView("practice");renderSentence()}
+function openSentence(sentence){resetSession();current=sentence;if(hasRegisters(itemTarget(sentence)))$("#show-polite").checked=sentenceRegister(sentence)==="polite";$("#english-input").value=sentence.source;if(enteringTarget())setInputLang(sourceLang());showView("practice");renderSentence()}
 
 let discussionMode=false,readingMode=false,discussionTurns=[],discussionScenario="",readingPassage=null,readingSelected=-1;
 const discussionLoop=new ConversationLoop({onEcho:()=>{},onState:(state,index)=>{const n=$("#discussion-loop-state");if(n)n.textContent=state==="speaking"?`Playing turn ${(index??0)+1} of ${discussionTurns.length}`:state==="imitate"?"Your turn - echo it":state==="paused"?"Paused":state==="error"?"That voice could not play":"Ready"}});
@@ -433,7 +433,7 @@ function renderSheetSentences(list,sentences,{deletable,onDelete,mark=null}){
   for(const sentence of sentences){
     const row=document.createElement("li");row.dataset.id=sentence.id;
     let text=document.createElement("div");text.className="kanji-sentence-text";
-    const target=document.createElement("b");target.lang=targetLang();target.innerHTML=markPattern(rubyHtml(sentence.target),mark);
+    const target=document.createElement("b");target.lang=targetLang();target.innerHTML=markPattern(rubyHtml(preferredTarget(sentence)),mark);
     const source=document.createElement("span");source.textContent=sentence.source;
     if(sentence.word){const word=document.createElement("i");word.lang=targetLang();word.textContent=sentence.word+(sentence.reading?"（"+sentence.reading+"）":"");text.append(word)}
     text.append(target,source);
@@ -452,7 +452,7 @@ function playKanjiSentence(sentence){
   if(loop.running&&kanjiPlaying?.id===sentence.id){loop.togglePause();return}
   kanjiPlaying=sentence;
   const voice=voices[Number($("#voice").value)]||voices[0]||null;
-  loop.play(sentence.plainTarget||stripFurigana(sentence.target),{voice,rate:Number($("#rate").value),lang:targetLang()});
+  loop.play(preferredPlainTarget(sentence),{voice,rate:Number($("#rate").value),lang:targetLang()});
 }
 // Practise walks one band, in its taught order, and shows only what you have
 // not met. `learnAt` is where you stopped; if it is in this band, you pick up
@@ -1014,7 +1014,7 @@ async function renderSidePanel(){
   $("#side-start-review").disabled=due.length===0;
   $("#due-empty").hidden=due.length>0;
   $("#due-list").replaceChildren(...due.slice(0,8).map(item=>{const li=document.createElement("li");
-    li.innerHTML='<button type="button"><span lang="'+itemTarget(item)+'">'+escapeText(item.plainTarget||stripFurigana(item.target))+'</span><span class="source-line">'+escapeText(item.source)+"</span></button>";
+    li.innerHTML='<button type="button"><span lang="'+itemTarget(item)+'">'+escapeText(preferredPlainTarget(item))+'</span><span class="source-line">'+escapeText(item.source)+"</span></button>";
     li.querySelector("button").onclick=()=>openDetail(item.id);
     return li}));}
 function renderQueuePanel(){
@@ -1032,8 +1032,8 @@ function renderLibraryTool(all){const row=$("#library-tool");row.hidden=targetLa
   const k=kanjiLearned(all).size,w=wordLearned(all).size,g=hasGrammar()?grammarLearned(all).size:null;
   $("#library-tool-tally").textContent=[k,w,g].filter(n=>n!==null).map(n=>n.toLocaleString()).join(" · ")+" "+t("learned");
   row.setAttribute("aria-label",t("Kanji, words and grammar")+": "+(g===null?t("{k} kanji and {w} words learned",{k:k.toLocaleString(),w:w.toLocaleString()}):t("{k} kanji, {w} words and {g} points learned",{k:k.toLocaleString(),w:w.toLocaleString(),g:g.toLocaleString()})))}
-async function renderHistory(){const all=await listSentences();renderLibraryTool(all);const list=$("#history-list"),due=dueSentences(all),query=$("#history-search").value.trim().toLocaleLowerCase(),filter=$("#history-filter").value,order=$("#history-order").value,direction=$("#history-direction").value,now=Date.now();let items=all.filter(item=>{const haystack=[item.source,item.target,item.plainTarget,item.casualTarget,item.politeTarget].filter(Boolean).join(" ").toLocaleLowerCase();if(query&&!haystack.includes(query))return false;const state=item.srs?.state??0;if(filter==="due")return !item.srs?.due||Date.parse(item.srs.due)<=now;if(filter==="new")return state===0;if(filter==="learning")return state===1||state===3;if(filter==="review")return state===2;if(filter==="skipped")return item.skipped===true;return true});const comparators={created:(a,b)=>a.createdAt.localeCompare(b.createdAt),echoes:(a,b)=>(Number(a.echoCount)||0)-(Number(b.echoCount)||0),due:(a,b)=>Date.parse(a.srs?.due||a.createdAt)-Date.parse(b.srs?.due||b.createdAt),english:(a,b)=>a.source.localeCompare(b.source),japanese:(a,b)=>(a.plainTarget||a.target).localeCompare(b.plainTarget||b.target,itemTarget(a))},factor=direction==="asc"?1:-1;items.sort((a,b)=>factor*(comparators[order]||comparators.created)(a,b));list.replaceChildren();$("#empty-history").hidden=all.length>0;$("#empty-results").hidden=all.length===0||items.length>0;$("#empty-results-count").textContent=all.length===1?"One is in your library.":capitalise(spell(all.length))+" are in your library.";updateDueBadge(due.length);$("#library-count").textContent=items.length===1?"1 sentence":items.length+" sentences";$("#library-order-label").textContent=ORDER_LABELS[order+"-"+direction]||"";$(".list-head").hidden=items.length===0;if(isWide()&&!detail&&items.length)return openDetail(items[0].id);
-  for(const item of items){const li=document.createElement("li");li.dataset.id=item.id;const state=cardState(item,now);li.innerHTML='<button class="history-open" type="button"><span class="lines"><span lang="'+itemTarget(item)+'">'+rubyHtml(item.target)+'</span><span class="source-line">'+escapeText(item.source)+'</span><span class="status-chip '+state+'">'+CARD_STATES[state]+'</span></span><span class="tally"><strong>'+(Number(item.echoCount)||0)+'</strong><span>echoes</span></span></button>';li.querySelector(".history-open").onclick=()=>openDetail(item.id);list.append(li)}markSelectedRow()}
+async function renderHistory(){const all=await listSentences();renderLibraryTool(all);const list=$("#history-list"),due=dueSentences(all),query=$("#history-search").value.trim().toLocaleLowerCase(),filter=$("#history-filter").value,order=$("#history-order").value,direction=$("#history-direction").value,now=Date.now();let items=all.filter(item=>{const haystack=[item.source,item.target,item.plainTarget,item.casualTarget,item.politeTarget].filter(Boolean).join(" ").toLocaleLowerCase();if(query&&!haystack.includes(query))return false;const state=item.srs?.state??0;if(filter==="due")return !item.srs?.due||Date.parse(item.srs.due)<=now;if(filter==="new")return state===0;if(filter==="learning")return state===1||state===3;if(filter==="review")return state===2;if(filter==="skipped")return item.skipped===true;return true});const comparators={created:(a,b)=>a.createdAt.localeCompare(b.createdAt),echoes:(a,b)=>(Number(a.echoCount)||0)-(Number(b.echoCount)||0),due:(a,b)=>Date.parse(a.srs?.due||a.createdAt)-Date.parse(b.srs?.due||b.createdAt),english:(a,b)=>a.source.localeCompare(b.source),japanese:(a,b)=>preferredPlainTarget(a).localeCompare(preferredPlainTarget(b),itemTarget(a))},factor=direction==="asc"?1:-1;items.sort((a,b)=>factor*(comparators[order]||comparators.created)(a,b));list.replaceChildren();$("#empty-history").hidden=all.length>0;$("#empty-results").hidden=all.length===0||items.length>0;$("#empty-results-count").textContent=all.length===1?"One is in your library.":capitalise(spell(all.length))+" are in your library.";updateDueBadge(due.length);$("#library-count").textContent=items.length===1?"1 sentence":items.length+" sentences";$("#library-order-label").textContent=ORDER_LABELS[order+"-"+direction]||"";$(".list-head").hidden=items.length===0;if(isWide()&&!detail&&items.length)return openDetail(items[0].id);
+  for(const item of items){const li=document.createElement("li");li.dataset.id=item.id;const state=cardState(item,now);li.innerHTML='<button class="history-open" type="button"><span class="lines"><span lang="'+itemTarget(item)+'">'+rubyHtml(preferredTarget(item))+'</span><span class="source-line">'+escapeText(item.source)+'</span><span class="status-chip '+state+'">'+CARD_STATES[state]+'</span></span><span class="tally"><strong>'+(Number(item.echoCount)||0)+'</strong><span>echoes</span></span></button>';li.querySelector(".history-open").onclick=()=>openDetail(item.id);list.append(li)}markSelectedRow()}
 const formatDate=value=>new Intl.DateTimeFormat(undefined,{day:"numeric",month:"long"}).format(new Date(value));
 const RATING_LABELS={again:"Again",ok:"OK"};
 function untilDue(sentence,now=Date.now()){const due=Date.parse(sentence.srs?.due||"");if(!Number.isFinite(due)||due<=now)return "Now";
@@ -1042,8 +1042,14 @@ async function openDetail(id){const sentence=await getSentence(id);if(!sentence)
 function markSelectedRow(){for(const li of document.querySelectorAll("#history-list li"))li.classList.toggle("selected",li.dataset.id===detail?.id);}
 function renderDetail(){if(!detail)return;closeEditor();markSelectedRow();
   $("#sentence-added").textContent="Added "+formatDate(detail.createdAt);
-  $("#sentence-japanese").innerHTML=rubyHtml(detail.target);$("#sentence-japanese").lang=itemTarget(detail);
+  $("#sentence-japanese").innerHTML=rubyHtml(preferredTarget(detail));$("#sentence-japanese").lang=itemTarget(detail);
   $("#sentence-english").textContent=detail.source;
+  const registerRow=$("#sentence-register-row"),canChooseRegister=hasRegisters(itemTarget(detail))&&(detail.casualTarget||detail.target)!==(detail.politeTarget||detail.target);
+  registerRow.hidden=!canChooseRegister;
+  if(canChooseRegister)for(const button of $("#sentence-register").querySelectorAll("[data-register]")){
+    const on=button.dataset.register===sentenceRegister(detail);button.classList.toggle("selected",on);button.setAttribute("aria-pressed",String(on));
+    button.onclick=async()=>{if(button.dataset.register===sentenceRegister(detail))return;resetSession();detail={...detail,reviewRegister:button.dataset.register,updatedAt:new Date().toISOString()};await saveSentence(detail);if(current?.id===detail.id){current=detail;$("#show-polite").checked=sentenceRegister(detail)==="polite";renderSentence()}renderDetail();renderHistory()}
+  }
   $("#sentence-view").classList.toggle("hide-furigana",settings.showFurigana===false);
   $("#stat-echoes").textContent=String(Number(detail.echoCount)||0);
   const state=cardState(detail),nextReview=reviewModeMeta(ensureReviewTrack(detail));$("#stat-stage").textContent=CARD_STATES[state]+" · "+nextReview.icon;$("#stat-stage").title="Next review: "+nextReview.label;$("#stat-stage").className="status-chip "+state;
@@ -1056,23 +1062,24 @@ function renderDetail(){if(!detail)return;closeEditor();markSelectedRow();
   const lapses=reviews.filter(entry=>entry.rating==="again").length;
   $("#sentence-history-note").textContent=lapses?"A review was marked Again "+(lapses===1?"once":spell(lapses)+" times")+".":reviews.length?"Reviewed correctly every time so far.":"Not reviewed yet — it is waiting in the queue.";
   $("#sentence-play").disabled=false}
-function openEditor(){if(!detail)return;resetSession();$("#sentence-draft").value=detail.target;$("#sentence-edit-error").hidden=true;$("#sentence-editor").hidden=false;$("#sentence-japanese").hidden=true;$("#sentence-english").hidden=true;$(".sentence-controls").hidden=true;$("#sentence-draft").focus()}
+function openEditor(){if(!detail)return;resetSession();$("#sentence-draft").value=preferredTarget(detail);$("#sentence-edit-error").hidden=true;$("#sentence-editor").hidden=false;$("#sentence-japanese").hidden=true;$("#sentence-english").hidden=true;$(".sentence-controls").hidden=true;$("#sentence-draft").focus()}
 function closeEditor(){$("#sentence-editor").hidden=true;$("#sentence-japanese").hidden=false;$("#sentence-english").hidden=false;$(".sentence-controls").hidden=false}
 async function saveEdit(event){event.preventDefault();if(!detail)return;
   const japanese=normalizeFurigana($("#sentence-draft").value.trim());
   if(!japanese||!/[\u3040-\u30ff\u3400-\u9fff]/.test(japanese)){$("#sentence-edit-error").textContent="That needs to be a Japanese sentence.";$("#sentence-edit-error").hidden=false;return}
   const plain=stripFurigana(japanese).trim();
-  detail={...detail,target:japanese,plainTarget:plain,casualTarget:japanese,plainCasualTarget:plain,politeTarget:japanese,plainPoliteTarget:plain,updatedAt:new Date().toISOString()};
+  if(sentenceRegister(detail)==="polite")detail={...detail,politeTarget:japanese,plainPoliteTarget:plain,updatedAt:new Date().toISOString()};
+  else detail={...detail,target:japanese,plainTarget:plain,casualTarget:japanese,plainCasualTarget:plain,updatedAt:new Date().toISOString()};
   await saveSentence(detail);if(current?.id===detail.id){current=detail;renderSentence()}renderDetail()}
 function playDetail(){if(!detail)return;if(loop.running){loop.togglePause();return}
-  const voice=voices[Number($("#voice").value)]||voices[0]||null;loop.play(detail.plainTarget||stripFurigana(detail.target),{voice,rate:Number($("#rate").value),lang:targetLang()})}
+  const voice=voices[Number($("#voice").value)]||voices[0]||null;loop.play(preferredPlainTarget(detail),{voice,rate:Number($("#rate").value),lang:targetLang()})}
 // One confirm sheet for every delete — the detail page and the rows on the
 // kanji and grammar sheets — so a slip of the thumb costs a second tap, and
 // the consequence line is read the same way everywhere.
 let pendingDelete=null;
 async function askDelete(sentence=detail,onConfirm=confirmDetailDelete){if(!sentence)return;
   pendingDelete={sentence,onConfirm};
-  $("#delete-quote").innerHTML=rubyHtml(sentence.target);
+  $("#delete-quote").innerHTML=rubyHtml(preferredTarget(sentence));
   await renderDeleteConsequence(sentence);
   const echoes=Number(sentence.echoCount)||0,reviews=Array.isArray(sentence.reviews)?sentence.reviews.length:0;
   const say=echoes<=10&&reviews<=10?spell:String;
@@ -1136,7 +1143,7 @@ async function performTranslation(){const english=$("#english-input").value.trim
   // icon and the .label span with it, and they never came back — after one
   // translation the button was bare text that no longer answered the rule
   // hiding the word on a phone.
-  const button=$("#translate"),label=button.querySelector(".label"),previous=label.textContent;button.disabled=true;label.textContent="Translating…";button.setAttribute("aria-busy","true");setStatus("Translating…");try{translationFailure=null;const card=await translate(english,{...settings,inputLang});resetSession();current=ensureSchedule(createSentence(card.source,card,new Date(),undefined,{sourceLang:sourceLang(),targetLang:targetLang()}));current.translationProvider=provider;await saveSentence(current);autoTag(current);renderSentence();refreshDueBadge();clearComposer();setStatus("Ready to practice.")}catch(error){const name=PROVIDER_NAMES[provider]||provider;
+  const button=$("#translate"),label=button.querySelector(".label"),previous=label.textContent;button.disabled=true;label.textContent="Translating…";button.setAttribute("aria-busy","true");setStatus("Translating…");try{translationFailure=null;const card=await translate(english,{...settings,inputLang});resetSession();current=ensureSchedule(createSentence(card.source,card,new Date(),undefined,{sourceLang:sourceLang(),targetLang:targetLang()}));current.reviewRegister=$("#show-polite").checked?"polite":"casual";current.translationProvider=provider;await saveSentence(current);autoTag(current);renderSentence();refreshDueBadge();clearComposer();setStatus("Ready to practice.")}catch(error){const name=PROVIDER_NAMES[provider]||provider;
     const refused=/\b(401|403|402|key|credit|quota)\b/i.test(error.message||"");
     // A failed fetch is a TypeError and its message is "Failed to fetch",
     // which tells you nothing you did not already suspect.
@@ -1358,7 +1365,7 @@ async function repairReversedCards(){
   toast(broken.length===1?"Put 1 sentence the right way round":"Put "+broken.length+" sentences the right way round",6000);
 }
 async function importHistory(file){if(!file)return;try{const backup=JSON.parse(await file.text());if(!(Number(backup.schemaVersion)>=1&&Number(backup.schemaVersion)<=SCHEMA_VERSION)||!Array.isArray(backup.sentences))throw new Error("Unsupported backup.");const merged=mergeSentences(await listSentences(),backup.sentences);await replaceAll(merged);if(Array.isArray(backup.notes))await replaceNotes(mergeNotes(await listNotes().catch(()=>[]),backup.notes)).catch(()=>{});setStatus("Imported "+backup.sentences.length+" sentence(s).");renderHistory()}catch(error){setStatus(error.message||"Import failed.",true)}}
-$("#tabs").addEventListener("click",event=>{const tab=event.target.closest(".tab[data-view]");if(tab)showView(tab.dataset.view)});$("#translate").onclick=()=>discussionMode?(discussionTurns.length?replyDiscussion():beginDiscussion()):readingMode?generateReadingMode():performTranslation();$("#english-input").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")(discussionMode?(discussionTurns.length?replyDiscussion():beginDiscussion()):readingMode?generateReadingMode():performTranslation)()};$("#play-pause").onclick=()=>{if(!current)return;if(loop.running){loop.togglePause();return}const policy=$("#voice").value,voice=policy==="random"?voices[Math.floor(Math.random()*voices.length)]:(policy==="default"?voices.find(v=>v.default)||voices[0]:voices[Number(policy)])||null;loop.play(selectedPlainJapanese(),{voice,rate:Number($("#rate").value),lang:targetLang()})};$("#show-english").onchange=()=>{saveSettings();renderSentence()};$("#show-furigana").onchange=()=>{saveSettings();renderSentence()};$("#show-polite").onchange=()=>{resetSession();saveSettings();renderSentence()};$("#rate").oninput=()=>{const rate=Number($("#rate").value);$("#rate-value").textContent=rate.toFixed(1)+"×";resetSession();loop.setRate(rate)};$("#settings-button").onclick=()=>$("#settings-dialog").showModal();$("#close-settings").onclick=()=>{saveSettings();$("#settings-dialog").close();renderPracticeNotices();writeReminderPrefs();syncReminderSchedule()};
+$("#tabs").addEventListener("click",event=>{const tab=event.target.closest(".tab[data-view]");if(tab)showView(tab.dataset.view)});$("#translate").onclick=()=>discussionMode?(discussionTurns.length?replyDiscussion():beginDiscussion()):readingMode?generateReadingMode():performTranslation();$("#english-input").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")(discussionMode?(discussionTurns.length?replyDiscussion():beginDiscussion()):readingMode?generateReadingMode():performTranslation)()};$("#play-pause").onclick=()=>{if(!current)return;if(loop.running){loop.togglePause();return}const policy=$("#voice").value,voice=policy==="random"?voices[Math.floor(Math.random()*voices.length)]:(policy==="default"?voices.find(v=>v.default)||voices[0]:voices[Number(policy)])||null;loop.play(selectedPlainJapanese(),{voice,rate:Number($("#rate").value),lang:targetLang()})};$("#show-english").onchange=()=>{saveSettings();renderSentence()};$("#show-furigana").onchange=()=>{saveSettings();renderSentence()};$("#show-polite").onchange=async()=>{resetSession();saveSettings();if(current&&hasRegisters(itemTarget(current))){current={...current,reviewRegister:$("#show-polite").checked?"polite":"casual",updatedAt:new Date().toISOString()};await saveSentence(current);if(detail?.id===current.id)detail=current}renderSentence()};$("#rate").oninput=()=>{const rate=Number($("#rate").value);$("#rate-value").textContent=rate.toFixed(1)+"×";resetSession();loop.setRate(rate)};$("#settings-button").onclick=()=>$("#settings-dialog").showModal();$("#close-settings").onclick=()=>{saveSettings();$("#settings-dialog").close();renderPracticeNotices();writeReminderPrefs();syncReminderSchedule()};
 $("#remind").onchange=async()=>{const wanted=$("#remind").checked;
   if(wanted&&!await enableReminders()){$("#remind").checked=false;$("#remind-hint").textContent="Notifications are blocked for Echo. Allow them in your browser settings, then turn this on again.";$("#remind-hint").classList.add("error");$("#remind-reach").textContent="";return}
   $("#remind-hint").textContent="Your device asks permission the first time you turn this on.";$("#remind-hint").classList.remove("error");
