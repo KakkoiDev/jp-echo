@@ -132,3 +132,9 @@ test("reading has its own loop and controls before the passage",()=>{assert.matc
 
 
 test("reading echo uses only the existing voice list and no undefined voice helper",()=>{const start=app.indexOf("function playReading"),end=app.indexOf("function saveWorkspace",start),block=app.slice(start,end);assert.match(block,/voices\.find\(v=>v\.default\)/);assert.match(block,/readingLoop\.playConversation/);assert.doesNotMatch(block,/voiceForPolicy/)});
+
+
+test("Mora page teaches fused small kana and sokuon",()=>{
+  assert.match(html,/Small kana — fuse/);
+  for(const sample of ["きゃ = 木＋山","しゅ = 鹿＋雪","ちょ = 蝶々＋洋服","きって = 木 → 手×2"])assert.match(html,new RegExp(sample.replace(/[＋→×]/g,"\\$&")));
+});
