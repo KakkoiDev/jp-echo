@@ -1279,10 +1279,34 @@ async function revealReview(){let sentence=reviewQueue[reviewIndex];if(!sentence
     $("#review-attempt-label").hidden=true;$("#review-attempt").hidden=true;$("#review-attempt").textContent="";
     $("#review-japanese").innerHTML=rubyHtml(target);
   }
+  enableReviewVocabulary(sentence,target);
   $("#review-panel").classList.toggle("hide-furigana",mode==="writing"&&settings.showFurigana===false);
   $("#review-capture").hidden=true;$("#review-passive").hidden=true;$("#review-result").hidden=false;
   $("#review-prompt").hidden=true;$("#review-prompt-actions").hidden=true;$("#review-actions").hidden=false;
   playReviewAudio()}
+function reviewVocabularyHits(sentence,target){
+  const plain=stripFurigana(target),hits=[];
+  for(const id of sentenceWords(sentence)){const w=wordById(id);if(!w)continue;
+    for(const form of wordMarks(w)){if(!form)continue;let from=0,index;
+      while((index=plain.indexOf(form,from))!==-1){hits.push({id,start:index,end:index+form.length,length:form.length});from=index+Math.max(1,form.length)}
+    }}
+  return hits.sort((a,b)=>b.length-a.length||a.start-b.start)
+}
+function enableReviewVocabulary(sentence,target){
+  const root=$("#review-japanese");if(!root||itemTarget(sentence)!=="ja")return;
+  const hits=reviewVocabularyHits(sentence,target);if(!hits.length)return;
+  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),nodes=[];
+  while(walker.nextNode())if(!walker.currentNode.parentElement?.closest("rt"))nodes.push(walker.currentNode);
+  let offset=0;
+  for(const node of nodes){const frag=document.createDocumentFragment();
+    for(const ch of [...node.data]){const at=offset;offset+=ch.length;const hit=hits.find(h=>h.start<=at&&at<h.end);
+      if(!hit){frag.append(document.createTextNode(ch));continue}
+      const span=document.createElement("span");span.className="review-vocab";span.dataset.wordId=hit.id;span.tabIndex=0;span.setAttribute("role","button");span.setAttribute("aria-label","Open vocabulary");span.textContent=ch;frag.append(span)}
+    node.replaceWith(frag)}
+  const open=async token=>{const w=wordById(token?.dataset.wordId);if(!w)return;resetSession();await openWord(w,wordCoverage(await listSentences()),{route:false})};
+  root.onclick=event=>{const token=event.target.closest?.(".review-vocab");if(token)open(token)};
+  root.onkeydown=event=>{if(event.key!=="Enter"&&event.key!==" ")return;const token=event.target.closest?.(".review-vocab");if(!token)return;event.preventDefault();open(token)}
+}
 function reviewRecognitionLang(){return targetLang()}
 function startReviewListening(){if(reviewListening)return;
   if(reviewRecognition&&reviewRecognition.lang!==reviewRecognitionLang())reviewRecognition=null;
