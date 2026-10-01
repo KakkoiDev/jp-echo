@@ -177,3 +177,12 @@ test("sentence register choice is stored per card and drives every review form",
   assert.match(app,/rubyHtml\(preferredTarget\(detail\)\)/);
   assert.match(app,/rubyHtml\(preferredTarget\(item\)\)/);
 });
+
+
+test("sentence detail exposes cumulative listening reading writing progress",()=>{
+  assert.match(html,/id="sentence-review-track"/);
+  assert.match(html,/data-review-track="listening"/);
+  assert.match(html,/data-review-track="reading"/);
+  assert.match(html,/data-review-track="writing"/);
+  assert.match(app,/trackedDetail\.reviewTrack\.completed\[mode\]/);
+});
