@@ -313,6 +313,12 @@ body.no-key .mic{display:none}
 #sentence-added{flex-grow:1;letter-spacing:.18em}
 #sentence-japanese{margin:0;font-family:var(--display);font-weight:500;font-size:30px;line-height:2;letter-spacing:.01em;overflow-wrap:anywhere}
 #sentence-english{margin:14px 0 0;padding-left:13px;border-left:2px solid var(--hairline);font-size:15px;line-height:1.6;color:var(--ink-soft);overflow-wrap:anywhere}
+.sentence-register-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:18px}
+.sentence-register-row>.overline{flex:0 0 auto}
+#sentence-register{margin:0;min-width:210px}
+#sentence-register button{flex:1 1 0;height:40px;min-height:40px;border:0;border-radius:0;background:transparent;color:var(--ink-soft);font-size:13px;letter-spacing:.04em}
+#sentence-register button+button{border-left:1px solid var(--hairline)}
+#sentence-register button.selected{background:var(--sumi);color:var(--seal-on);font-weight:500}
 .sentence-controls{display:flex;gap:10px;margin-top:22px}
 .sentence-controls .primary{flex-grow:1;min-height:52px}
 #sentence-view .stats strong{position:relative}
