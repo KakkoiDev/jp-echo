@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {DEFAULT_PAIR,LANGUAGES,createSentence,hasRegisters,migrateSentence,newId,exportBackup,mergeSentences,normalizeFurigana,rubyHtml,stripFurigana,validateTranslation,validateTranslations} from "../core.js";
+import {DEFAULT_PAIR,LANGUAGES,createSentence,hasRegisters,migrateSentence,newId,exportBackup,mergeSentences,normalizeFurigana,rubyHtml,stripFurigana,validateTranslation,validateTranslations,moraMnemonicTokens,moraMnemonicPrompt,MORA_MNEMONICS_VERSION} from "../core.js";
 test("safe ruby HTML",()=>{assert.equal(rubyHtml("<b>日本【にほん】</b>"),"&lt;b&gt;<ruby>日本<rt>にほん</rt></ruby>&lt;/b&gt;");assert.equal(stripFurigana("日本【にほん】です"),"日本です")});
 test("removes redundant kana furigana",()=>{const bad="これはテスト【てすと】です、うまくいっています。";assert.equal(normalizeFurigana(bad),"これはテストです、うまくいっています。");assert.equal(normalizeFurigana("これ【これ】はテスト【てすと】です"),"これはテストです");assert.equal(rubyHtml(bad),"これはテストです、うまくいっています。");assert.equal(validateTranslation({japanese:bad}),"これはテストです、うまくいっています。")});
 test("validates Japanese",()=>{assert.throws(()=>validateTranslation({japanese:"hello"}));assert.equal(validateTranslation({japanese:"日本【にほん】"}),"日本【にほん】")});
@@ -90,4 +90,17 @@ test("the Anki export reads the fields the app writes today, and the old names s
   assert.equal(now.english, "Where is the station?"); assert.equal(now.casualJapanese, "駅【えき】はどこ？"); assert.equal(now.politeJapanese, "駅【えき】はどこですか。"); assert.equal(now.echoCount, 3);
   const old = forAnki({english: "Hi", japanese: "やあ", casualJapanese: "やあ", politeJapanese: "こんにちは"});
   assert.equal(old.casualJapanese, "やあ"); assert.equal(old.politeJapanese, "こんにちは"); assert.equal(old.english, "Hi");
+});
+
+
+test("Mora fuses small ya yu yo with the previous i-row anchor",()=>{
+  assert.equal(MORA_MNEMONICS_VERSION,2);
+  assert.deepEqual(moraMnemonicTokens("きゃく"),[{mora:"きゃ",image:"木＋山（融合）"},{mora:"く",image:"熊"}]);
+  assert.deepEqual(moraMnemonicTokens("ジュース"),[{mora:"じゅ",image:"泥の鹿＋雪（融合）"},{mora:"す",image:"寿司"}]);
+});
+
+test("small tsu doubles the following anchor instead of inventing its own",()=>{
+  assert.deepEqual(moraMnemonicTokens("きって"),[{mora:"き",image:"木"},{mora:"って",image:"手×2（っ：次の子音を詰める）"}]);
+  assert.deepEqual(moraMnemonicTokens("まっちゃ"),[{mora:"ま",image:"枕"},{mora:"っちゃ",image:"蝶々＋山（融合）×2（っ：次の子音を詰める）"}]);
+  assert.match(moraMnemonicPrompt(),/Small っ has no anchor of its own/);
 });
