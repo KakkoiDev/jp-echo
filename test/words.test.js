@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {ALL, bands, carries, coverage, kindOf, learned, LEVELS, marks, sentenceWords, summarise, TOTAL, word, wordsIn} from "../words.js";
+import {ALL, bands, carries, coverage, kindOf, learned, LEVELS, marks, sentenceWords, summarise, TOTAL, word, wordSpans, wordsIn} from "../words.js";
 
 const by = form => ALL.find(w => w.w === form || w.k === form);
 const names = text => [...wordsIn(text)].map(id => word(id).w);
@@ -72,4 +72,12 @@ test("coverage and learned read the library, every register, oldest first", () =
   const known = learned([a, b]);
   assert.ok(known.has(eat) && known.has(buy) && !known.has(by("駅").id));
   assert.deepEqual(summarise(cover, [by("食べる"), by("駅")]), {met: 1, total: 2});
+});
+
+
+test("clickable vocabulary spans include the full polite inflection",()=>{
+  const hit=wordSpans("おります").find(part=>part.start===0);
+  assert.ok(hit,"the verb at the start is recognised");
+  assert.equal(hit.end,4,"the clickable surface is おります, not only お");
+  assert.ok(word(hit.id),"the span resolves to a dictionary entry");
 });
