@@ -987,6 +987,12 @@ html.motion-off #review-progress-bar { transition: none; }
 .mora-emoji{display:block;font-size:23px;line-height:1.25}
 .mora-reading{display:block;font-family:var(--display);font-size:12px;color:var(--ink-muted);line-height:1.25}
 .mora-english{display:block;font-family:var(--ui);font-size:10px;color:var(--ink-muted);line-height:1.2;overflow-wrap:anywhere}
+.mora-small-title{margin:18px 0 8px;color:var(--quiet-title)}
+.mora-small-rules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.mora-small-card{border:1px solid var(--hairline);border-radius:4px;background:var(--paper);padding:10px 12px;display:grid;grid-template-columns:28px 1fr;gap:2px 8px;align-items:baseline}
+.mora-small-card strong{grid-row:1 / span 2;font-family:var(--display);font-size:22px;color:var(--seal)}
+.mora-small-card span{font-family:var(--display);font-size:14px}
+.mora-small-card small{color:var(--ink-muted);font-size:10px;line-height:1.35}
 .mora-modifiers{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;color:var(--ink-muted);font-size:12px}
 .mora-modifiers span{border:1px solid var(--hairline);padding:8px 10px;border-radius:4px;background:var(--paper)}
 @media(max-width:520px){
@@ -999,4 +1005,5 @@ html.motion-off #review-progress-bar { transition: none; }
  .mora-emoji{font-size:20px}
  .mora-reading{font-size:10px}
  .mora-english{font-size:9px}
+ .mora-small-rules{grid-template-columns:1fr}
 }
