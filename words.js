@@ -150,6 +150,61 @@ export function wordsIn(text = "") {
   return found;
 }
 export const carries = (text, w) => !!w && wordsIn(text).has(w.id);
+// Clickable dictionary spans use the same conjugation rules as coverage, but
+// keep the whole surface form instead of exposing only the dictionary stem.
+// The matcher has already proved that the first inflection kana is legal for
+// this word; these are the common continuations that belong to that same verb.
+const INFLECTION_TAILS=Object.freeze([
+  "ませんでした","ていました","でいました","られました","させました",
+  "なかった","たかった","ません","ました","ています","でいます","られます","させます",
+  "なければ","ていた","でいた","られた","させた",
+  "ます","ている","でいる","られる","させる","ない","たい","たくない","たくなかった",
+  "れば","れる","せる","いる","いた","ください","た","て","で"
+].sort((a,b)=>b.length-a.length));
+function extendInflectedSurface(text,end){
+  const rest=text.slice(end),last=text[end-1]||"";
+  // Ichidan polite forms have already consumed ま, so only the remainder is
+  // left. Godan polite forms still have the whole ます/ました tail.
+  if(last==="ま"){
+    for(const tail of ["せんでした","した","せん","す"])if(rest.startsWith(tail))return end+tail.length;
+  }
+  for(const tail of INFLECTION_TAILS)if(rest.startsWith(tail))return end+tail.length;
+  return end;
+}
+
+// Return non-overlapping surface ranges linked to dictionary-form word ids.
+// Supplying ids keeps review highlighting constrained to words the sentence
+// matcher already recognised, avoiding a second independent tokenizer.
+export function wordSpans(text="",ids=null){
+  const s=String(text),wanted=ids==null?null:new Set([...ids].map(Number)),hits=[];
+  const words=wanted?[...wanted].map(word).filter(Boolean):WORDS;
+  for(const w of words)for(const k of keysOf(w)){
+    if(!k.key)continue;
+    let from=0,indexAt;
+    while((indexAt=s.indexOf(k.key,from))!==-1){
+      const after=s[indexAt+k.key.length]||"",before=s[indexAt-1]||"";
+      let end=indexAt+k.key.length,stem=false;
+      if(k.next){
+        if(!after||!k.next.includes(after)){from=indexAt+1;continue}
+        if(k.key.length===1&&k.kana&&isKana(before)&&!AFTER_ONE.includes(before)){from=indexAt+1;continue}
+        end=extendInflectedSurface(s,end+1);stem=true;
+      }else{
+        if(k.alone&&(isKanji(before)||isKanji(after))){from=indexAt+1;continue}
+        if(k.bound&&(isKana(before)||isKana(after))){from=indexAt+1;continue}
+      }
+      hits.push({id:w.id,start:indexAt,end,stem,dictionary:w.w});
+      from=indexAt+Math.max(1,k.key.length);
+    }
+  }
+  hits.sort((a,b)=>a.start-b.start||(b.end-b.start)-(a.end-a.start)||(b.stem-a.stem)||String(a.dictionary).length-String(b.dictionary).length);
+  const chosen=[];
+  for(const hit of hits){
+    if(chosen.some(other=>hit.start<other.end&&other.start<hit.end))continue;
+    chosen.push(hit);
+  }
+  return chosen;
+}
+
 
 // Every register, because 見る and 拝見する are different words and you have
 // met both. Each register is read on its own, so a stem at the end of one
