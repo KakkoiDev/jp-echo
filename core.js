@@ -234,7 +234,7 @@ export function createSentence(source, translation, now = new Date(), id = newId
     casualTarget:casual,plainCasualTarget:stripFurigana(casual).trim(),
     politeTarget:polite,plainPoliteTarget:stripFurigana(polite).trim(),
     echoCount:0,createdAt:now.toISOString(),updatedAt:now.toISOString(),
-    translationProvider:"deepseek",schemaVersion:SCHEMA_VERSION};
+    reviewRegister:"casual",translationProvider:"deepseek",schemaVersion:SCHEMA_VERSION};
 }
 
 // Records written before languages existed were all English to Japanese. The
