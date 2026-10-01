@@ -164,3 +164,16 @@ test("Listening is audio-only, Reading is bare Japanese, and Writing requires ty
 
 
 test("revealed review vocabulary opens the existing word dictionary sheet",()=>{const revealStart=app.indexOf("async function revealReview"),revealEnd=app.indexOf("function reviewRecognitionLang",revealStart),block=app.slice(revealStart,revealEnd);assert.match(block,/enableReviewVocabulary\(sentence,target\)/);assert.match(app,/function enableReviewVocabulary/);assert.match(app,/sentenceWords\(sentence\)/);assert.match(app,/wordMarks\(w\)/);assert.match(app,/openWord\(w,wordCoverage\(await listSentences\(\)\),\{route:false\}\)/)});
+
+
+test("sentence register choice is stored per card and drives every review form",()=>{
+  assert.match(html,/id="sentence-register"/);
+  assert.match(html,/data-register="casual"/);
+  assert.match(html,/data-register="polite"/);
+  assert.match(app,/const sentenceRegister=item=>item\?\.reviewRegister==="polite"\?"polite":"casual"/);
+  assert.match(app,/function reviewJapanese\(sentence\).*preferredTarget\(sentence\)/);
+  assert.match(app,/function reviewPlainJapanese\(sentence\).*preferredPlainTarget\(sentence\)/);
+  assert.match(app,/reviewRegister:button\.dataset\.register/);
+  assert.match(app,/rubyHtml\(preferredTarget\(detail\)\)/);
+  assert.match(app,/rubyHtml\(preferredTarget\(item\)\)/);
+});
