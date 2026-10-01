@@ -9,7 +9,7 @@ import {japaneseVoices,recognitionFactory,ShadowLoop,ConversationLoop} from "./s
 import {STORIES} from "./stories.js";
 import {coverage as kanjiCoverage,facts as kanjiFacts,jlptBands as kanjiBands,learned as kanjiLearned,LEVEL_LABELS,levelOf,nextUnmet,sentenceKanji,TOTAL as KANJI_TOTAL} from "./kanji.js";
 import {searchGrammar,searchKanji,searchWords} from "./lookup.js";
-import {bands as wordBands,carries as carriesWord,coverage as wordCoverage,kindOf,learned as wordLearned,levelOf as wordLevel,marks as wordMarks,sentenceWords,TOTAL as WORD_TOTAL,word as wordById} from "./words.js";
+import {bands as wordBands,carries as carriesWord,coverage as wordCoverage,kindOf,learned as wordLearned,levelOf as wordLevel,marks as wordMarks,sentenceWords,wordSpans,TOTAL as WORD_TOTAL,word as wordById} from "./words.js";
 import {deleteNote,forBackup,getNote,listNotes,makeNote,mergeNotes,noteKey,putNote,replaceNotes} from "./notes.js";
 import {downloadAnkiDeck} from "./anki-export.js";
 import {dueSentences,ensureSchedule,isDue,reviewSentence} from "./srs.js";
@@ -52,6 +52,9 @@ const targetLang=()=>settings.targetLang||DEFAULT_PAIR.targetLang;
 // A sentence carries the pair it was made with, so an old card keeps rendering
 // the way it was made even after the setting moves on.
 const itemTarget=item=>item.targetLang||DEFAULT_PAIR.targetLang;
+const sentenceRegister=item=>item?.reviewRegister==="polite"?"polite":"casual";
+const preferredTarget=item=>sentenceRegister(item)==="polite"?(item?.politeTarget||item?.target||""):(item?.casualTarget||item?.target||"");
+const preferredPlainTarget=item=>sentenceRegister(item)==="polite"?(item?.plainPoliteTarget||item?.plainTarget||stripFurigana(preferredTarget(item))):(item?.plainCasualTarget||item?.plainTarget||stripFurigana(preferredTarget(item)));
 function setPair(source,target){
   settings.sourceLang=source;settings.targetLang=target;
   localStorage.setItem("jp-echo-settings",JSON.stringify(settings));
@@ -1232,8 +1235,8 @@ function setupRecognition(){
   bindDictation($("#word-mic"),$("#word-say"),$("#word-say-status"));
   }
 async function startReview(){const items=await listSentences(),prepared=items.map(item=>ensureReviewTrack(ensureSchedule(item)));await Promise.all(prepared.filter((item,index)=>item!==items[index]).map(saveSentence));reviewQueue=dueSentences(prepared);reviewIndex=0;if(!reviewQueue.length)return showView("review");showView("session");renderReview()}
-function reviewJapanese(sentence){return settings.showPolite&&hasRegisters(itemTarget(sentence))?(sentence.politeTarget||sentence.target):(sentence.casualTarget||sentence.target)}
-function reviewPlainJapanese(sentence){return settings.showPolite&&hasRegisters(itemTarget(sentence))?(sentence.plainPoliteTarget||sentence.plainTarget):(sentence.plainCasualTarget||sentence.plainTarget)}
+function reviewJapanese(sentence){return hasRegisters(itemTarget(sentence))?preferredTarget(sentence):(sentence.target||"")}
+function reviewPlainJapanese(sentence){return hasRegisters(itemTarget(sentence))?preferredPlainTarget(sentence):(sentence.plainTarget||stripFurigana(sentence.target||""))}
 const STAGE_LABELS={0:"New",1:"Learning",2:"Review",3:"Relearning"};
 function stageLabel(sentence){const state=sentence.srs?.state??0,reps=Number(sentence.srs?.reps)||0;return STAGE_LABELS[state]+(reps?" · seen "+reps+(reps===1?" time":" times"):"")}
 function stageClass(sentence){const state=sentence.srs?.state??0;return state===0?"new":state===2?"review":"learning"}
@@ -1285,12 +1288,8 @@ async function revealReview(){let sentence=reviewQueue[reviewIndex];if(!sentence
   $("#review-prompt").hidden=true;$("#review-prompt-actions").hidden=true;$("#review-actions").hidden=false;
   playReviewAudio()}
 function reviewVocabularyHits(sentence,target){
-  const plain=stripFurigana(target),hits=[];
-  for(const id of sentenceWords(sentence)){const w=wordById(id);if(!w)continue;
-    for(const form of wordMarks(w)){if(!form)continue;let from=0,index;
-      while((index=plain.indexOf(form,from))!==-1){hits.push({id,start:index,end:index+form.length,length:form.length});from=index+Math.max(1,form.length)}
-    }}
-  return hits.sort((a,b)=>b.length-a.length||a.start-b.start)
+  const plain=stripFurigana(target);
+  return wordSpans(plain,sentenceWords(sentence)).sort((a,b)=>a.start-b.start||(b.end-b.start)-(a.end-a.start))
 }
 function enableReviewVocabulary(sentence,target){
   const root=$("#review-japanese");if(!root||itemTarget(sentence)!=="ja")return;
@@ -1298,11 +1297,14 @@ function enableReviewVocabulary(sentence,target){
   const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),nodes=[];
   while(walker.nextNode())if(!walker.currentNode.parentElement?.closest("rt"))nodes.push(walker.currentNode);
   let offset=0;
-  for(const node of nodes){const frag=document.createDocumentFragment();
-    for(const ch of [...node.data]){const at=offset;offset+=ch.length;const hit=hits.find(h=>h.start<=at&&at<h.end);
-      if(!hit){frag.append(document.createTextNode(ch));continue}
-      const span=document.createElement("span");span.className="review-vocab";span.dataset.wordId=hit.id;span.tabIndex=0;span.setAttribute("role","button");span.setAttribute("aria-label","Open vocabulary");span.textContent=ch;frag.append(span)}
-    node.replaceWith(frag)}
+  for(const node of nodes){const frag=document.createDocumentFragment(),data=node.data;let local=0;
+    while(local<data.length){const at=offset+local,hit=hits.find(h=>h.start<=at&&at<h.end);
+      if(!hit){frag.append(document.createTextNode(data[local]));local++;continue}
+      const take=Math.min(data.length-local,hit.end-at),span=document.createElement("span");
+      span.className="review-vocab";span.dataset.wordId=hit.id;span.tabIndex=0;span.setAttribute("role","button");
+      const w=wordById(hit.id);span.setAttribute("aria-label","Open "+(w?.w||"vocabulary")+" in dictionary");
+      span.textContent=data.slice(local,local+take);frag.append(span);local+=take}
+    offset+=data.length;node.replaceWith(frag)}
   const open=async token=>{const w=wordById(token?.dataset.wordId);if(!w)return;resetSession();await openWord(w,wordCoverage(await listSentences()),{route:false})};
   root.onclick=event=>{const token=event.target.closest?.(".review-vocab");if(token)open(token)};
   root.onkeydown=event=>{if(event.key!=="Enter"&&event.key!==" ")return;const token=event.target.closest?.(".review-vocab");if(!token)return;event.preventDefault();open(token)}
