@@ -11,3 +11,8 @@ test("library search/filter/order are URL state",()=>{const url=routeFor({view:"
 test("tool search is URL state",()=>{assert.equal(routeFor({view:"map",mapView:"words",mapQuery:"ほうふ"}),"/words?q=%E3%81%BB%E3%81%86%E3%81%B5");assert.equal(parseRoute("/words?q=%E3%81%BB%E3%81%86%E3%81%B5").mapQuery,"ほうふ")});
 
 test("unknown path is explicit",()=>assert.equal(parseRoute("/nope").notFound,true));
+
+test('pretty-route restoration keeps assets rooted at the deployed app',async()=>{
+ const {readFile}=await import('node:fs/promises');const html=await readFile(new URL('../index.html',import.meta.url),'utf8');
+ const base=html.indexOf('<base href="/">'),restore=html.indexOf('echo-pages-route');assert.ok(base>=0&&base<restore,'asset base is established before history restores a nested route');
+});
