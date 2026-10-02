@@ -141,3 +141,9 @@ Vocabulary, kanji and grammar sheets all accept sentence ideas or directions usi
 The service worker installs and serves a complete app version together. It serves the app shell for offline deep links, preserves reminder preferences on upgrades, and registers before module startup so an outdated installed app can recover. JP Core owns the content identity/merge helpers, mirrored in `core.js`.
 
 Starter-import JP Core revision: ee9bfdb8a5b3fc38903ef6fcbcd50fa65d75bdf3.
+
+### Compact Mini Hongo starter (v2)
+
+The starter contains 274 cards: the 231 main vocabulary entries as words/glosses, plus one short authored example per each of 43 grammar points. Advanced vocabulary, compounds, expressions, stories and extra examples are excluded.
+
+On the first v119 launch, Echo archives and removes only recognizable v1 Minihongo import cards, restores the personal library, and strips imported-only dictionary links. Existing personal IDs, content and review progress remain intact. Settings shows the removed/kept counts and an **Undo Mini Hongo cleanup** recovery action. No new starter cards are added during cleanup; import the compact bundle separately when wanted. Old oversized starter files are rejected.

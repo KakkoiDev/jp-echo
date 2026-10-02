@@ -1,3 +1,4 @@
+import {planMiniCleanup} from './mini-imports.js';
 import {migrateSentence} from "./core.js";
 const DB_NAME="jp-echo", STORE="sentences";
 function openDb(){return new Promise((resolve,reject)=>{const request=indexedDB.open(DB_NAME,1);request.onupgradeneeded=()=>{const store=request.result.createObjectStore(STORE,{keyPath:"id"});store.createIndex("createdAt","createdAt")};request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error)})}
@@ -21,3 +22,18 @@ export async function migrateStore(){
   db.close();return stale.length;
 }
 export async function replaceAll(items){const db=await openDb();await new Promise((resolve,reject)=>{const tx=db.transaction(STORE,"readwrite"),store=tx.objectStore(STORE);store.clear();items.forEach(item=>store.put(item));tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});db.close()}
+
+// Separate recovery database avoids changing the sentence store's schema.
+async function importRecovery(action,mode='readonly'){
+ const db=await new Promise((resolve,reject)=>{const req=indexedDB.open('jp-echo-import-recovery',1);req.onupgradeneeded=()=>req.result.createObjectStore('backups');req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)});
+ try{return await new Promise((resolve,reject)=>{let result;const tx=db.transaction('backups',mode),request=action(tx.objectStore('backups'));request.onsuccess=()=>result=request.result;tx.oncomplete=()=>resolve(result);tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error)})}finally{db.close()}
+}
+export async function saveImportRecovery(backup){if(await readImportRecovery())return;await importRecovery(store=>store.put(backup,'minihongo-v1'),'readwrite')}
+export const readImportRecovery=()=>importRecovery(store=>store.get('minihongo-v1'));
+
+// Delete only archived IDs, reading current records inside the write transaction.
+// Other tabs' new sentences and the latest personal review state are retained.
+export async function removeArchivedMiniCards(kept,removed,catalogues){
+ const db=await openDb(),ids=new Set(removed.map(s=>s.id));
+ try{await new Promise((resolve,reject)=>{const tx=db.transaction(STORE,'readwrite'),store=tx.objectStore(STORE),request=store.getAll();request.onsuccess=()=>{const records=request.result,clean=new Map(planMiniCleanup(records,catalogues).kept.map(s=>[s.id,s]));for(const record of records){if(ids.has(record.id))store.delete(record.id);else if(clean.has(record.id))store.put(clean.get(record.id))}};tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error)})}finally{db.close()}
+}
