@@ -131,3 +131,13 @@ with library sentences, appear in each grammar point’s sentence list, and
 remain usable offline. Refresh grammar explicitly after changes or to retry.
 Recognition can miss or misclassify a point; only known IDs with exact quoted
 evidence are accepted.
+
+### Starter imports and installed updates
+
+Settings → Your sentences can import the Mini Hongo starter directly from `KakkoiDev/minihongo/master/imports/jp-echo.json`. JSON bundles may include `catalogues.words` (negative stable IDs) and `catalogues.grammar` (`minihongo:` IDs), which are backed up with sentences and available in the dictionaries. Source definitions and examples retain attribution. Imports append new sentences and merge identical Japanese text (ignoring furigana/layout whitespace), while preserving existing card IDs and review progress. Reimporting the same starter adds no duplicates.
+
+Vocabulary, kanji and grammar sheets all accept sentence ideas or directions using the same language switch and microphone composer. AI creates a sentence using the chosen item and checks it before saving.
+
+The service worker installs and serves a complete app version together. It serves the app shell for offline deep links, preserves reminder preferences on upgrades, and registers before module startup so an outdated installed app can recover. JP Core owns the content identity/merge helpers, mirrored in `core.js`.
+
+Starter-import JP Core revision: ee9bfdb8a5b3fc38903ef6fcbcd50fa65d75bdf3.

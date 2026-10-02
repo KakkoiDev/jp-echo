@@ -887,7 +887,7 @@ html.motion-off #review-progress-bar { transition: none; }
 .kanji-sentence-text{flex:1 1 auto;min-width:0}
 .kanji-sentence-text b{display:block;font-family:var(--display);font-size:17px;line-height:1.45;font-weight:400}
 .kanji-sentence-text mark{background:var(--seal-wash);color:var(--seal-deep);padding:0 1px}
-.kanji-sentence-text span{display:block;font-size:12px;color:var(--ink-muted);margin-top:3px}
+.kanji-sentence-text>span{display:block;font-size:12px;color:var(--ink-muted);margin-top:3px}
 .kanji-sentence-text i{display:block;font-style:normal;font-size:.78rem;color:var(--ink-muted);margin-bottom:2px}
 .kanji-sentences .is-playing b{color:var(--seal)}
 .kanji-sentences .status-chip{flex-shrink:0}

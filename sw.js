@@ -1,32 +1,33 @@
-const CACHE="jp-echo-v117";
+const CACHE="jp-echo-v118";
 const PREFS_CACHE="jp-echo-prefs",PREFS_KEY="./reminder",REMINDER_TAG="echo-due";
-const ASSETS=["./","./index.html","./404.html","./styles.css","./styles.css?v=96","./app.js","./components.js","./actions.js","./routes.js","./anki-export.js","./srs.js","./review-modes.js","./vendor/sql-wasm.wasm","./core.js","./diff.js","./reminders.js","./db.js","./api.js","./speech.js","./repair.js","./kanji.js","./kanji-data.js","./kanji-readings.js","./grammar.js","./grammar-spans.js","./grammar-data.js","./lookup.js","./notes.js","./stories.js","./words.js","./japanese-words.js","./words-data.js","./i18n.js","./i18n/ja.js","./manifest.webmanifest","./icon.svg","./icon-192.png","./icon-512.png","./icon-maskable-512.png","./apple-touch-icon.png","./favicon.ico","./mask-icon.svg"];
+const ASSETS=["./","./index.html","./404.html","./styles.css","./styles.css?v=96","./app.js","./components.js","./actions.js","./routes.js","./anki-export.js","./srs.js","./review-modes.js","./vendor/sql-wasm.wasm","./core.js","./catalogues.js","./diff.js","./reminders.js","./db.js","./api.js","./speech.js","./repair.js","./kanji.js","./kanji-data.js","./kanji-readings.js","./grammar.js","./grammar-spans.js","./grammar-data.js","./lookup.js","./notes.js","./stories.js","./words.js","./japanese-words.js","./words-data.js","./i18n.js","./i18n/ja.js","./manifest.webmanifest","./icon.svg","./icon-192.png","./icon-512.png","./icon-maskable-512.png","./apple-touch-icon.png","./favicon.ico","./mask-icon.svg"];
 
 self.addEventListener("install",event=>event.waitUntil(
-  caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting())
+  caches.open(CACHE).then(cache=>cache.addAll(ASSETS.map(path=>new Request(path,{cache:"reload"})))).then(()=>self.skipWaiting())
 ));
 
 self.addEventListener("activate",event=>{
   event.waitUntil((async()=>{
     const keys=await caches.keys();
-    await Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)));
+    await Promise.all(keys.filter(key=>key.startsWith("jp-echo-v")&&key!==CACHE).map(key=>caches.delete(key)));
     await self.clients.claim();
   })());
 });
 
+// Serve one complete installed version. Mixing live app.js with a cached API
+// module can prevent startup; upgrades replace the whole pre-cached shell.
 self.addEventListener("fetch",event=>{
-  if(event.request.method!=="GET"||!event.request.url.startsWith(self.location.origin))return;
+  const url=new URL(event.request.url);
+  if(event.request.method!=="GET"||url.origin!==self.location.origin)return;
   event.respondWith((async()=>{
-    try{
-      const response=await fetch(event.request,{cache:"no-store"});
-      if(response.ok){const cache=await caches.open(CACHE);cache.put(event.request,response.clone())}
-      return response;
-    }catch(error){
-      const cached=await caches.match(event.request,{ignoreSearch:true});
-      if(cached)return cached;
-      if(event.request.mode==="navigate")return caches.match("./index.html");
-      throw error;
-    }
+    const cache=await caches.open(CACHE);
+    const route=/^\/(?:$|index\.html$|(?:sentences|words|kanji|grammar)(?:\/|$)|(?:review|library|mora|setup|onboard|reading|discussion)\/?$)/.test(url.pathname);
+    if(event.request.mode==="navigate"&&route){const shell=await cache.match("./index.html");if(shell)return shell}
+    const asset=ASSETS.some(path=>new URL(path,self.registration.scope).pathname===url.pathname);
+    if(asset){const installed=await cache.match(event.request,{ignoreSearch:true});if(installed)return installed}
+    try{const response=await fetch(event.request);if(response.ok)return response;
+      const cached=await cache.match(event.request,{ignoreSearch:true});return cached||response;
+    }catch(error){const cached=await cache.match(event.request,{ignoreSearch:true});if(cached)return cached;throw error}
   })());
 });
 

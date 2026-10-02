@@ -303,3 +303,19 @@ export async function analyzeSentenceGrammar(text,points,settings={}){
  if(!Array.isArray(raw?.matches))throw new Error('The model did not return grammar evidence. Try again.');
  return validateGrammarAnalysis(text,raw,points);
 }
+
+// Shared intent composer used by all three dictionary sheets.
+export async function composeFromIntent({kanji,grammar,word,intent,check=null},settings={}){
+ if(!intent?.trim())throw new Error('Describe the sentence you want.');
+ const pair={sourceLang:settings.sourceLang||DEFAULT_PAIR.sourceLang,targetLang:settings.targetLang||DEFAULT_PAIR.targetLang},required=kanji||grammar||word;
+ if(!required)throw new Error('Choose a word, kanji or grammar point.');
+ const system=`The learner gives directions or an intended meaning in either language. Write a new natural sentence matching that intent while using the required item. Do not merely translate the directions themselves. ${composePrompt(pair.sourceLang,pair.targetLang,required,'')}`;
+ for(let attempt=0;attempt<2;attempt++){
+  const card=shapeComposed(await ask(`Learner's intended sentence: ${intent}${attempt?'\nYour last answer omitted the required item. Preserve the intended meaning and include it.':''}`,system,chosenProvider(settings),settings),pair);
+  const plain=stripFurigana(card.casual||'')+'\n'+stripFurigana(card.polite||'');
+  if(kanji&&carries(card,kanji))return card;
+  if(word&&(check?check(plain):plain.includes(word.word)))return card;
+  if(grammar){const tags=await tagGrammar([{id:'intent',plainTarget:plain}],[grammar],settings);if((tags.get('intent')||[]).includes(grammar.id))return {...card,grammar:[grammar.id]}}
+ }
+ throw new Error('The model did not include the required item. Try different directions.');
+}
