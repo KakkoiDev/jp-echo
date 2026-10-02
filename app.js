@@ -3,13 +3,13 @@ import {earliestPair,flipSentence,isReversed,pairLooksSwapped,repairPair} from "
 import {DEFAULT_PAIR,LANGUAGES,MORA_MNEMONIC_META,createSentence,replaceSentenceContent,exportBackup,forAnki,hasFurigana,hasRegisters,languageName,mergeSentences,normalizeFurigana,rubyHtml,SCHEMA_VERSION,stripFurigana} from "./core.js";
 import {isExactMatch,markAttempt,markTarget} from "./diff.js";
 import {deleteSentence,getSentence,listSentences,migrateStore,replaceAll,saveSentence as persistSentence} from "./db.js";
-import {analyzeSentenceGrammar,askModel,rewriteSentence,adjustNote,carries,compose,composeWordFromIntent,PROVIDER_DEFAULTS,tagGrammar,translate,discuss,generateReading,writeNotes,writeWordNote,transcribeAudio} from "./api.js";
-import {byLevel as grammarByLevel,cleanTags as grammarTags,coverage as grammarCoverage,hasGrammar,isTagged,learned as grammarLearned,LEVELS as GRAMMAR_LEVELS,point as grammarPoint,POINTS as GRAMMAR_POINTS,summarise as grammarSummarise,untagged as untaggedSentences} from "./grammar.js";
+import {analyzeSentenceGrammar,askModel,rewriteSentence,adjustNote,carries,compose,composeFromIntent,PROVIDER_DEFAULTS,tagGrammar,translate,discuss,generateReading,writeNotes,writeWordNote,transcribeAudio} from "./api.js";
+import {setImportedGrammar,byLevel as grammarByLevel,cleanTags as grammarTags,coverage as grammarCoverage,hasGrammar,isTagged,learned as grammarLearned,LEVELS as GRAMMAR_LEVELS,point as grammarPoint,POINTS as GRAMMAR_POINTS,summarise as grammarSummarise,untagged as untaggedSentences} from "./grammar.js";
 import {japaneseVoices,recognitionFactory,ShadowLoop,ConversationLoop} from "./speech.js";
 import {STORIES} from "./stories.js";
 import {coverage as kanjiCoverage,facts as kanjiFacts,jlptBands as kanjiBands,learned as kanjiLearned,LEVEL_LABELS,levelOf,nextUnmet,sentenceKanji,TOTAL as KANJI_TOTAL} from "./kanji.js";
 import {searchGrammar,searchKanji,searchWords} from "./lookup.js";
-import {bands as wordBands,carries as carriesWord,coverage as wordCoverage,kindOf,learned as wordLearned,levelOf as wordLevel,marks as wordMarks,sentenceWords,wordSpans,TOTAL as WORD_TOTAL,word as wordById} from "./words.js";
+import {setImportedWords,bands as wordBands,carries as carriesWord,coverage as wordCoverage,kindOf,learned as wordLearned,levelOf as wordLevel,marks as wordMarks,sentenceWords,wordSpans,TOTAL as WORD_TOTAL,word as wordById} from "./words.js";
 import {deleteNote,forBackup,getNote,listNotes,makeNote,mergeNotes,noteKey,putNote,replaceNotes} from "./notes.js";
 import {downloadAnkiDeck} from "./anki-export.js";
 import {dueSentences,ensureSchedule,isDue,reviewSentence} from "./srs.js";
@@ -17,6 +17,10 @@ import {ensureReviewTrack,recordReviewMode,reviewMode,reviewModeMeta} from "./re
 import {DEFAULT_TIME,REMINDER_TAG,reminderText,shouldRemind} from "./reminders.js";
 import {saveDiscussionTurn} from "./actions.js";
 import {parseRoute,routeFor} from "./routes.js";
+import {mergeCatalogues,readCatalogues,saveCatalogues} from "./catalogues.js";
+let importedCatalogues=readCatalogues();
+function applyCatalogues(){setImportedWords(importedCatalogues.words);setImportedGrammar(importedCatalogues.grammar)}
+applyCatalogues();
 const grammarAnalysisCache=new Map();
 async function saveSentence(sentence){
   const texts=[sentence.target,sentence.casualTarget,sentence.politeTarget].filter(Boolean).map(stripFurigana);
@@ -403,7 +407,7 @@ async function openKanji(character,cover,{learn=null,route=true}={}){
     ?capitalise(inYours(ids.length))+" · "+(state==="learned"?t("learned, since one of them reached review"):t("not learned yet — none of them has reached review"))
     :t("Not in any of your sentences yet");
   $("#kanji-say-label").textContent=t("Say a sentence using {kanji}",{kanji:character});
-  $("#kanji-say-hint").textContent=t("Echo translates it, checks the Japanese really carries {kanji}, and keeps it. If it doesn’t, you get it back to try again.",{kanji:character});
+  $("#kanji-say-hint").textContent=t("Give Echo an idea or directions in either language. It creates a natural sentence using {kanji} and saves it to your library.",{kanji:character});
   $("#kanji-say-go").disabled=!hasTranslator();$("#kanji-say").disabled=!hasTranslator();
   $("#kanji-mic").disabled=!hasTranslator()||!dictationReady;
   $("#kanji-say-status").textContent="";
@@ -508,10 +512,7 @@ async function sayForKanji(){
   if(!text){status.textContent=t("Say or type a sentence first.");field.focus();return}
   button.disabled=true;status.textContent=t("Translating…");
   try{
-    const card=await translate(text,{...settings,inputLang,sourceLang:sourceLang(),targetLang:targetLang()});
-    if(!carries(card,target.character)){
-      status.textContent=t("That sentence does not use {kanji} — try one that does.",{kanji:target.character});
-      field.focus();return}
+    const card=await composeFromIntent({kanji:target.character,intent:text},{...settings,inputLang,sourceLang:sourceLang(),targetLang:targetLang()});
     const made=ensureSchedule(createSentence(card.source,card,new Date(),undefined,{sourceLang:sourceLang(),targetLang:targetLang()}));
     made.translationProvider=defaultProvider();await saveSentence(made);autoTag(made);refreshDueBadge();
     field.value="";
@@ -671,6 +672,11 @@ async function openGrammar(point,cover,{learn=null,route=true}={}){
 // Written from the point's name and gloss alone, never from the index.
 const NOTE_TITLES={breath:"In one breath",remember:"A way to remember it"};
 async function renderPointNotes(point){
+  if(point.origin==="minihongo"){
+    $("#point-notes-status").textContent="From Minihongo · CC BY-SA 4.0";
+    const block=$("#point-breath");block.hidden=false;block.querySelector(".note-text").textContent=point.explanation||point.hint;block.querySelector(".note-note").textContent="Minihongo, https://minihongo.com";block.querySelector(".adjust-link").disabled=true;
+    $("#point-remember").hidden=true;$("#point-examples").hidden=true;return;
+  }
   const status=$("#point-notes-status");status.textContent="";
   const blocks={breath:$("#point-breath"),remember:$("#point-remember")};
   for(const block of Object.values(blocks)){block.hidden=true;block.querySelector(".adjust-panel").hidden=true}
@@ -766,10 +772,7 @@ async function sayForGrammar(){
   if(!text){status.textContent=t("Say or type a sentence first.");field.focus();return}
   button.disabled=true;status.textContent=t("Translating…");
   try{
-    const card=await translate(text,{...settings,inputLang,sourceLang:sourceLang(),targetLang:targetLang()});
-    const tags=await tagGrammar([{id:"new",plainTarget:stripFurigana(card.casual||card.polite||"")}],[target.point],{...settings,targetLang:targetLang()});
-    if(!(tags.get("new")||[]).includes(target.point.id)){
-      status.textContent=t("That sentence does not use {point} — try one that does.",{point:target.point.title});field.focus();return}
+    const card=await composeFromIntent({grammar:target.point,intent:text},{...settings,inputLang,sourceLang:sourceLang(),targetLang:targetLang()});
     await saveGrammarSentence(card,target.point);field.value="";status.textContent=t("Saved to your library.");
   }catch(error){status.textContent=sheetError(error)}
   finally{button.disabled=!hasTranslator()}
@@ -955,7 +958,7 @@ async function sayForWord(){
   if(!text){status.textContent=t("Say or type a sentence first.");field.focus();return}
   button.disabled=true;status.textContent=t("Writing a sentence with {word}…",{word:w.w});
   try{
-    const card=await composeWordFromIntent({word:{word:w.w,reading:w.r,meaning:w.en.join(" / ")},intent:text},{...settings,sourceLang:sourceLang(),targetLang:targetLang()});
+    const card=await composeFromIntent({word:{word:w.w,reading:w.r,meaning:w.en.join(" / ")},intent:text,check:plain=>carriesWord(plain,w)},{...settings,sourceLang:sourceLang(),targetLang:targetLang()});
     await saveWordSentence(card,w);field.value="";status.textContent=t("Saved to your library.");
   }catch(error){status.textContent=sheetError(error)}
   finally{button.disabled=!hasTranslator()}
@@ -1393,7 +1396,7 @@ async function skipReview(){const sentence=reviewQueue[reviewIndex];if(sentence)
 function playReviewAudio(){const sentence=reviewQueue[reviewIndex];if(!sentence)return;if(loop.running){loop.togglePause();return}const policy=$("#voice").value,voice=policy==="random"?voices[Math.floor(Math.random()*voices.length)]:(policy==="default"?voices.find(v=>v.default)||voices[0]:voices[Number(policy)])||null;loop.play(reviewPlainJapanese(sentence)||reviewJapanese(sentence).replace(/【[^】]+】/g,""),{voice,rate:Number($("#rate").value),lang:targetLang()})}
 async function rateReview(rating){const sentence=reviewQueue[reviewIndex];if(!sentence||!reviewRevealed)return;resetSession();const now=new Date(),mode=reviewMode(sentence),graded=reviewSentence(sentence,rating,now),progressed=recordReviewMode(graded,rating,now);
   const updated={...progressed,reviews:[...(Array.isArray(sentence.reviews)?sentence.reviews:[]),{at:now.toISOString(),rating,mode,echoes:Math.max(0,(Number(sentence.echoCount)||0)-echoesAtCardStart)}]};await saveSentence(updated);if(current?.id===updated.id)current=updated;reviewQueue[reviewIndex]=updated;reviewIndex++;renderReview()}
-async function exportHistory(){const data=exportBackup(await listSentences(),settings,forBackup(await listNotes().catch(()=>[]))),url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"})),link=Object.assign(document.createElement("a"),{href:url,download:"jp-echo-backup.json"});link.click();URL.revokeObjectURL(url)}
+async function exportHistory(){const data={...exportBackup(await listSentences(),settings,forBackup(await listNotes().catch(()=>[]))),catalogues:importedCatalogues},url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"})),link=Object.assign(document.createElement("a"),{href:url,download:"jp-echo-backup.json"});link.click();URL.revokeObjectURL(url)}
 async function exportAnki(button=$("#export-anki")){const items=await listSentences();const label=button.textContent;button.disabled=true;button.textContent="Building deck…";$("#anki-status").textContent="Creating Echo.apkg on this device…";try{await downloadAnkiDeck(items.map(forAnki));$("#open-anki").hidden=false;const launched=openAnki(true);$("#anki-status").textContent=launched?"Echo.apkg downloaded. Opening Anki… If it stays here, tap Open Anki.":"Echo.apkg downloaded. Open it from Downloads to import it into Anki."}catch(error){$("#anki-status").textContent=error.message||"Anki export failed."}finally{button.disabled=false;button.textContent=label}}
 function openAnki(automatic=false){const android=/android/i.test(navigator.userAgent),ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(android){window.location.href="intent:#Intent;package=com.ichi2.anki;end";return true}if(ios){window.location.href="anki://";return true}if(!automatic)$("#anki-status").textContent="Open Echo.apkg from your Downloads folder to import it into Anki.";return false}
 // Cards filed while the pair was reversed. Only run when the pair itself was
@@ -1425,7 +1428,17 @@ async function repairReversedCards(){
   renderHistory();refreshDueBadge();
   toast(broken.length===1?"Put 1 sentence the right way round":"Put "+broken.length+" sentences the right way round",6000);
 }
-async function importHistory(file){if(!file)return;try{const backup=JSON.parse(await file.text());if(!(Number(backup.schemaVersion)>=1&&Number(backup.schemaVersion)<=SCHEMA_VERSION)||!Array.isArray(backup.sentences))throw new Error("Unsupported backup.");const merged=mergeSentences(await listSentences(),backup.sentences);await replaceAll(merged);if(Array.isArray(backup.notes))await replaceNotes(mergeNotes(await listNotes().catch(()=>[]),backup.notes)).catch(()=>{});setStatus("Imported "+backup.sentences.length+" sentence(s).");renderHistory()}catch(error){setStatus(error.message||"Import failed.",true)}}
+async function importBackupData(backup){
+ if(!(Number(backup.schemaVersion)>=1&&Number(backup.schemaVersion)<=SCHEMA_VERSION)||!Array.isArray(backup.sentences))throw new Error("Unsupported backup.");
+ const before=await listSentences(),merged=mergeSentences(before,backup.sentences),catalogues=mergeCatalogues(importedCatalogues,backup.catalogues);
+ saveCatalogues(catalogues);try{await replaceAll(merged)}catch(error){saveCatalogues(importedCatalogues);throw error}importedCatalogues=catalogues;applyCatalogues();
+ if(Array.isArray(backup.notes))await replaceNotes(mergeNotes(await listNotes().catch(()=>[]),backup.notes));
+ const added=merged.length-before.length,message=`Added ${added} sentence(s). ${backup.sentences.length-added} already present; existing progress kept.`;
+ $("#import-status").textContent=message;setStatus(message);refreshDueBadge();await renderHistory();return {added,total:merged.length};
+}
+async function importHistory(file){if(!file)return;try{await importBackupData(JSON.parse(await file.text()))}catch(error){$("#import-status").textContent=error.message||"Import failed.";setStatus(error.message||"Import failed.",true)}}
+async function importMiniHongo(){const button=$("#import-minihongo"),status=$("#import-status");button.disabled=true;status.textContent="Downloading Mini Hongo…";try{const response=await fetch("https://raw.githubusercontent.com/KakkoiDev/minihongo/master/imports/jp-echo.json",{cache:"no-store"});if(!response.ok)throw new Error("Mini Hongo download failed ("+response.status+").");await importBackupData(await response.json())}catch(error){status.textContent=error.message}finally{button.disabled=false}}
+
 $("#tabs").addEventListener("click",event=>{const tab=event.target.closest(".tab[data-view]");if(tab)showView(tab.dataset.view)});$("#translate").onclick=()=>discussionMode?(discussionTurns.length?replyDiscussion():beginDiscussion()):readingMode?generateReadingMode():performTranslation();$("#english-input").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")(discussionMode?(discussionTurns.length?replyDiscussion():beginDiscussion()):readingMode?generateReadingMode():performTranslation)()};$("#play-pause").onclick=()=>{if(!current)return;if(loop.running){loop.togglePause();return}const policy=$("#voice").value,voice=policy==="random"?voices[Math.floor(Math.random()*voices.length)]:(policy==="default"?voices.find(v=>v.default)||voices[0]:voices[Number(policy)])||null;loop.play(selectedPlainJapanese(),{voice,rate:Number($("#rate").value),lang:targetLang()})};$("#show-english").onchange=()=>{saveSettings();renderSentence()};$("#show-furigana").onchange=()=>{saveSettings();renderSentence()};$("#show-polite").onchange=async()=>{resetSession();saveSettings();if(current&&hasRegisters(itemTarget(current))){current={...current,reviewRegister:$("#show-polite").checked?"polite":"casual",updatedAt:new Date().toISOString()};await saveSentence(current);if(detail?.id===current.id)detail=current}renderSentence()};$("#rate").oninput=()=>{const rate=Number($("#rate").value);$("#rate-value").textContent=rate.toFixed(1)+"×";resetSession();loop.setRate(rate)};$("#settings-button").onclick=()=>$("#settings-dialog").showModal();$("#close-settings").onclick=()=>{saveSettings();$("#settings-dialog").close();renderPracticeNotices();writeReminderPrefs();syncReminderSchedule()};
 $("#remind").onchange=async()=>{const wanted=$("#remind").checked;
   if(wanted&&!await enableReminders()){$("#remind").checked=false;$("#remind-hint").textContent="Notifications are blocked for Echo. Allow them in your browser settings, then turn this on again.";$("#remind-hint").classList.add("error");$("#remind-reach").textContent="";return}
@@ -1504,10 +1517,14 @@ applyLanguage();migrateStore().then(async()=>{await repairReversedCards();await 
 // The in-app WaniKani sync is gone (the pull tool feeds the stories instead);
 // what it left in a browser is cleared once, quietly.
 try{localStorage.removeItem("jp-echo-wanikani-token");indexedDB.deleteDatabase("jp-echo-wanikani")}catch{}
-if("serviceWorker"in navigator){navigator.serviceWorker.register("./sw.js");writeReminderPrefs();syncReminderSchedule();remindOnOpen()}
+if("serviceWorker"in navigator){writeReminderPrefs();syncReminderSchedule();remindOnOpen()}
 
 $("#sentence-rewrite").onclick=rewriteDetailSentence;
 $("#sentence-instruction").onkeydown=e=>{if((e.metaKey||e.ctrlKey)&&e.key==="Enter"){e.preventDefault();rewriteDetailSentence()}};
 
 $("#dictionary-close").onclick=()=>$("#dictionary-dialog").close();
 $("#dictionary-dialog").addEventListener("close",()=>dictionaryLookupGeneration++);
+
+window.addEventListener("echo-before-update",()=>saveWorkspace());
+
+$("#import-minihongo").onclick=importMiniHongo;

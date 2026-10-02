@@ -92,7 +92,6 @@ export function searchGrammar(raw) {
 // first ("eat", "to eat"), then at its start, then as a word inside it. The
 // order within a tier is the dictionary's own: level, then how common.
 const WORD_LIMIT = 60;
-const READ = WORDS.map(w => toHiragana(w.r));
 const escapeRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 export function searchWords(raw) {
   const q = String(raw || "").trim();
@@ -104,7 +103,7 @@ export function searchWords(raw) {
   }
   const kana = [...q].every(isKana) ? toHiragana(q) : romajiToKana(q);
   if (kana) {
-    for (let i = 0; i < WORDS.length; i++) { const r = READ[i], w = WORDS[i]; if (r === kana || w.w === kana) tiers[0].push(w); else if (r.startsWith(kana)) tiers[1].push(w); else if (r.includes(kana)) tiers[2].push(w); }
+    for (let i = 0; i < WORDS.length; i++) { const w = WORDS[i], r = toHiragana(w.r); if (r === kana || w.w === kana) tiers[0].push(w); else if (r.startsWith(kana)) tiers[1].push(w); else if (r.includes(kana)) tiers[2].push(w); }
     if (tiers[0].length || tiers[1].length || tiers[2].length || [...q].every(isKana)) return {how: "read", key: kana, ...take()};
   }
   const word = q.toLowerCase(), inside = new RegExp("\\b" + escapeRe(word) + "\\b");

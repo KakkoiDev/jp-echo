@@ -260,21 +260,45 @@ export function migrateSentence(record) {
     schemaVersion:SCHEMA_VERSION};
 }
 
+// Identity ignores furigana and Japanese layout whitespace, but keeps languages
+// and wording distinct. Import IDs are not sufficient to identify the same text.
+export function sentenceIdentity(record) {
+  const s=migrateSentence(record);if(!s?.target)return "";
+  const lang=s.targetLang||DEFAULT_PAIR.targetLang;
+  const plain=stripFurigana(s.casualTarget||s.target).normalize("NFKC").trim();
+  const text=lang==="ja"?plain.replace(/\s+/g,""):plain.replace(/\s+/g," ");
+  return JSON.stringify([s.sourceLang||DEFAULT_PAIR.sourceLang,lang,text]);
+}
+
 export function mergeSentences(current, incoming) {
-  const merged = new Map(current.map(migrateSentence).map(item => [item.id, item]));
+  const merged = new Map(current.map(migrateSentence).filter(Boolean).map(item => [item.id, item]));
+  const identities=new Map([...merged.values()].map(s=>[sentenceIdentity(s),s.id]));
+  const union=(a,b)=>[...new Set([...(Array.isArray(a)?a:[]),...(Array.isArray(b)?b:[])])];
   for (const record of incoming) {
     const candidate = migrateSentence(record);
     if (!candidate?.id || !candidate.source || !candidate.target) continue;
-    const old = merged.get(candidate.id);
-    if (!old) { merged.set(candidate.id, candidate); continue; }
-    const newest = Date.parse(candidate.updatedAt) > Date.parse(old.updatedAt) ? candidate : old;
-    merged.set(candidate.id, {...newest,echoCount:Math.max(Number(old.echoCount)||0,Number(candidate.echoCount)||0),createdAt:Date.parse(old.createdAt)<=Date.parse(candidate.createdAt)?old.createdAt:candidate.createdAt});
+    const identity=sentenceIdentity(candidate),sameId=merged.has(candidate.id),id=sameId?candidate.id:identities.get(identity);
+    const old = merged.get(id);
+    if (!old) { merged.set(candidate.id, candidate);identities.set(identity,candidate.id);continue; }
+    // A catalogue refresh must never replace the learner's card or scheduling.
+    const newest=sameId&&Date.parse(candidate.updatedAt)>Date.parse(old.updatedAt)?candidate:old;
+    const reviews=[...new Map([...(old.reviews||[]),...(candidate.reviews||[])].map(r=>[JSON.stringify(r),r])).values()].sort((a,b)=>String(a.at).localeCompare(String(b.at)));
+    const result={...old,...newest,id:old.id,
+      echoCount:Math.max(Number(old.echoCount)||0,Number(candidate.echoCount)||0),
+      createdAt:Date.parse(old.createdAt)<=Date.parse(candidate.createdAt)?old.createdAt:candidate.createdAt,
+      ...(Array.isArray(old.grammar)||Array.isArray(candidate.grammar)?{grammar:union(old.grammar,candidate.grammar)}:{}),
+      ...(Array.isArray(old.vocabulary)||Array.isArray(candidate.vocabulary)?{vocabulary:union(old.vocabulary,candidate.vocabulary)}:{})};
+    if(reviews.length)result.reviews=reviews;
+    if(old.srs&&(!candidate.srs||Number(candidate.srs.reps||0)<Number(old.srs.reps||0)))result.srs=old.srs;
+    if(!sameId&&old.srs)result.srs=old.srs;
+    if(old.reviewTrack)result.reviewTrack=old.reviewTrack;
+    const analysis=[...new Map([...(candidate.grammarAnalysis||[]),...(old.grammarAnalysis||[])].map(a=>[a.text,a])).values()];if(analysis.length)result.grammarAnalysis=analysis;
+    merged.set(old.id,result);identities.set(identity,old.id);
   }
   return [...merged.values()];
 }
 
-// The Anki bundle was built when a sentence had English and Japanese fields;
-// the language pair renamed them. This is the shape it reads.
+// Compatibility shape consumed by the Anki bundle.
 export function forAnki(sentence) {
   return {...sentence, english: sentence.source ?? sentence.english ?? "", japanese: sentence.target ?? sentence.japanese ?? "",
     casualJapanese: sentence.casualTarget ?? sentence.casualJapanese ?? sentence.target ?? "", politeJapanese: sentence.politeTarget ?? sentence.politeJapanese ?? sentence.target ?? ""};

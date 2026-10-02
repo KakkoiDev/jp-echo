@@ -22,7 +22,7 @@ export const LEVEL_LABELS = {N5: "Getting around", N4: "Everyday talk", N3: "New
 const INDEX = new Map(WORDS.map(w => [w.id, w]));
 export const word = id => INDEX.get(Number(id)) || null;
 export const levelOf = w => w?.jlpt || "+";
-export const TOTAL = WORDS.length;
+export let TOTAL = WORDS.length;
 export const ALL = WORDS;
 
 // The bands, N5 first, then the common words on no list. The order within a
@@ -51,7 +51,7 @@ export function kindOf(w) {
 // (書か, 書き, 書く, 書け, 書こ) or drops to い or っ before た and て; an
 // ichidan stem takes the endings straight; an い-adjective drops い for
 // く, かった, ければ, さ, そう.
-const {wordsIn,wordSpans,keysOf}=createJapaneseWordMatcher(WORDS);
+let {wordsIn,wordSpans,keysOf}=createJapaneseWordMatcher(WORDS);
 export {wordsIn,wordSpans};
 export const carries = (text,w) => !!w && wordsIn(text).has(w.id);
 
@@ -61,7 +61,7 @@ export const carries = (text,w) => !!w && wordsIn(text).has(w.id);
 export function sentenceWords(sentence) {
   const texts = [sentence?.plainTarget, sentence?.plainCasualTarget, sentence?.plainPoliteTarget].filter(Boolean);
   if (!texts.length) texts.push(stripFurigana(sentence?.target || ""));
-  const found = new Set();
+  const found = new Set((sentence?.vocabulary||[]).filter(id=>word(id)));
   for (const text of texts) for (const id of wordsIn(text)) found.add(id);
   return found;
 }
@@ -101,4 +101,11 @@ export function summarise(cover, words = WORDS) {
 // so 食べた shows 食べ marked and 書いて shows 書.
 export function marks(w) {
   return [...new Set(keysOf(w).flatMap(k => [k.key]).concat([w.w, w.k].filter(Boolean)))].sort((a, b) => b.length - a.length);
+}
+
+const BASE_WORDS=[...WORDS];
+export function setImportedWords(imported=[]){
+ WORDS.splice(0,WORDS.length,...BASE_WORDS,...imported.filter(w=>Number.isInteger(w.id)&&w.id<0&&w.w&&Array.isArray(w.en)));
+ INDEX.clear();for(const w of WORDS)INDEX.set(w.id,w);TOTAL=WORDS.length;BANDS=null;
+ ({wordsIn,wordSpans,keysOf}=createJapaneseWordMatcher(WORDS));
 }
