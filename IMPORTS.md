@@ -25,3 +25,5 @@ A minimal supported deck is:
 ```
 
 Each sentence needs a stable, unique string `id`, its `source` meaning, and its `target` text. Use IDs specific to your deck. Readings can use `漢字【かんじ】`; they are optional. Dates are optional for new deck cards. Echo backup exports also include registers, scheduling, review records, notes and dictionary catalogues. Older schema-version-1 Echo backups remain supported.
+
+For a complete six-sentence model and a prompt you can give another LLM, see [examples/README.md](examples/README.md) and [examples/sentence-deck.json](examples/sentence-deck.json). The example deck has its own one-click import in Settings and is available offline after installation.

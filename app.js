@@ -1465,6 +1465,7 @@ async function importDeckURL(url,button,label='deck'){
  try{await importBackupData(await fetchDeckBackup(url,{signal:controller.signal}))}catch(error){status.textContent=error.message}finally{clearTimeout(timer);button.disabled=false}
 }
 const MINI_DECK_URL="https://raw.githubusercontent.com/KakkoiDev/minihongo/master/imports/jp-echo.json";
+const EXAMPLE_DECK_URL=new URL("./examples/sentence-deck.json",document.baseURI).href;
 const AI_TEAM_DECK_URL="https://raw.githubusercontent.com/KakkoiDev/nihongo-it-anki/master/imports/agentic-lab-jp-echo.json";
 function importMiniHongo(){return importDeckURL(MINI_DECK_URL,$("#import-minihongo"),"Mini Hongo")}
 
@@ -1558,6 +1559,7 @@ $("#dictionary-dialog").addEventListener("close",()=>dictionaryLookupGeneration+
 window.addEventListener("echo-before-update",()=>saveWorkspace());
 
 $("#import-minihongo").onclick=importMiniHongo;
+$("#import-example-deck").onclick=()=>importDeckURL(EXAMPLE_DECK_URL,$("#import-example-deck"),"example sentences");
 $("#import-ai-team").onclick=()=>importDeckURL(AI_TEAM_DECK_URL,$("#import-ai-team"),"AI team sentences");
 $("#import-deck-url").onclick=()=>importDeckURL($("#deck-json-url").value,$("#import-deck-url"));
 
