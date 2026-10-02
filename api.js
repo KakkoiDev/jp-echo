@@ -294,3 +294,12 @@ export async function rewriteSentence({current,source,instruction},settings={}){
   const system=`Rewrite the existing ${languageName(pair.targetLang)} sentence according to the learner's directions, which may be in either language. They may request a shorter sentence, only the first or second part, or a particular word. Follow those changes while keeping the remaining intent. Return one natural sentence and its updated meaning in ${languageName(pair.sourceLang)}. ${format} No explanations, alternatives, or markdown.`;
   return shapeComposed(await ask(JSON.stringify({current,source,instruction}),system,chosenProvider(settings),settings),pair);
 }
+
+export async function analyzeSentenceGrammar(text,points,settings={}){
+ const {validateGrammarAnalysis}=await import('./grammar-spans.js');
+ const list=points.map(p=>p.id+' = '+p.title).join('\n');
+ const system=`Identify Japanese grammar used in the supplied sentence, including particles, conjugations and constructions. Choose only IDs from this list:\n${list}\nReturn JSON only: {"matches":[{"id":"...","quote":"exact text copied from the sentence","occurrence":0}]}. Quote the precise surface phrase where the point is used, including conjugated forms. occurrence is its zero-based occurrence in the sentence. Do not infer unrelated points merely from shared characters. Return an empty matches array if none apply.`;
+ const raw=await ask(text,system,chosenProvider(settings),settings);
+ if(!Array.isArray(raw?.matches))throw new Error('The model did not return grammar evidence. Try again.');
+ return validateGrammarAnalysis(text,raw,points);
+}
