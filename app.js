@@ -1,8 +1,9 @@
+import {repairMiniImport} from './mini-imports.js';
 import {applyI18n,setDictionary,t} from "./i18n.js";
 import {earliestPair,flipSentence,isReversed,pairLooksSwapped,repairPair} from "./repair.js";
 import {DEFAULT_PAIR,LANGUAGES,MORA_MNEMONIC_META,createSentence,replaceSentenceContent,exportBackup,forAnki,hasFurigana,hasRegisters,languageName,mergeSentences,normalizeFurigana,rubyHtml,SCHEMA_VERSION,stripFurigana} from "./core.js";
 import {isExactMatch,markAttempt,markTarget} from "./diff.js";
-import {deleteSentence,getSentence,listSentences,migrateStore,replaceAll,saveSentence as persistSentence} from "./db.js";
+import {removeArchivedMiniCards,readImportRecovery,saveImportRecovery,deleteSentence,getSentence,listSentences,migrateStore,replaceAll,saveSentence as persistSentence} from "./db.js";
 import {analyzeSentenceGrammar,askModel,rewriteSentence,adjustNote,carries,compose,composeFromIntent,PROVIDER_DEFAULTS,tagGrammar,translate,discuss,generateReading,writeNotes,writeWordNote,transcribeAudio} from "./api.js";
 import {setImportedGrammar,byLevel as grammarByLevel,cleanTags as grammarTags,coverage as grammarCoverage,hasGrammar,isTagged,learned as grammarLearned,LEVELS as GRAMMAR_LEVELS,point as grammarPoint,POINTS as GRAMMAR_POINTS,summarise as grammarSummarise,untagged as untaggedSentences} from "./grammar.js";
 import {japaneseVoices,recognitionFactory,ShadowLoop,ConversationLoop} from "./speech.js";
@@ -21,6 +22,7 @@ import {mergeCatalogues,readCatalogues,saveCatalogues} from "./catalogues.js";
 let importedCatalogues=readCatalogues();
 function applyCatalogues(){setImportedWords(importedCatalogues.words);setImportedGrammar(importedCatalogues.grammar)}
 applyCatalogues();
+let startupCleanup=Promise.resolve();
 const grammarAnalysisCache=new Map();
 async function saveSentence(sentence){
   const texts=[sentence.target,sentence.casualTarget,sentence.politeTarget].filter(Boolean).map(stripFurigana);
@@ -1429,6 +1431,8 @@ async function repairReversedCards(){
   toast(broken.length===1?"Put 1 sentence the right way round":"Put "+broken.length+" sentences the right way round",6000);
 }
 async function importBackupData(backup){
+ await startupCleanup;
+ if(backup.title==="Mini Hongo starter library"&&backup.starterVersion!==2)throw new Error("This is the old oversized Mini Hongo starter. Use the compact starter from Settings instead.");
  if(!(Number(backup.schemaVersion)>=1&&Number(backup.schemaVersion)<=SCHEMA_VERSION)||!Array.isArray(backup.sentences))throw new Error("Unsupported backup.");
  const before=await listSentences(),merged=mergeSentences(before,backup.sentences),catalogues=mergeCatalogues(importedCatalogues,backup.catalogues);
  saveCatalogues(catalogues);try{await replaceAll(merged)}catch(error){saveCatalogues(importedCatalogues);throw error}importedCatalogues=catalogues;applyCatalogues();
@@ -1437,6 +1441,18 @@ async function importBackupData(backup){
  $("#import-status").textContent=message;setStatus(message);refreshDueBadge();await renderHistory();return {added,total:merged.length};
 }
 async function importHistory(file){if(!file)return;try{await importBackupData(JSON.parse(await file.text()))}catch(error){$("#import-status").textContent=error.message||"Import failed.";setStatus(error.message||"Import failed.",true)}}
+async function cleanupLegacyMiniHongo(){
+ const marker='jp-echo-minihongo-cleanup-v2';
+ if(localStorage.getItem(marker)!=='done'){
+  const plan=await repairMiniImport(await listSentences(),importedCatalogues,{archive:saveImportRecovery,replace:(kept,removed)=>removeArchivedMiniCards(kept,removed,importedCatalogues),saveCatalogues});
+  if(plan.changed){importedCatalogues=plan.catalogues;applyCatalogues();localStorage.setItem('jp-echo-minihongo-cleanup-message',`Removed ${plan.removed.length} old Mini Hongo cards. Kept ${plan.kept.length} existing sentences.`)}
+  localStorage.setItem(marker,'done');
+ }
+ $('#mini-cleanup-status').textContent=localStorage.getItem('jp-echo-minihongo-cleanup-message')||'';
+ $('#undo-mini-cleanup').hidden=!(await readImportRecovery());
+ await refreshDueBadge();
+}
+async function undoMiniCleanup(){const button=$('#undo-mini-cleanup');button.disabled=true;try{const backup=await readImportRecovery();if(!backup)throw new Error('No cleanup backup is available.');await importBackupData(backup);$('#mini-cleanup-status').textContent='Restored the removed Mini Hongo cards from the recovery copy.'}catch(error){$('#mini-cleanup-status').textContent=error.message}finally{button.disabled=false}}
 async function importMiniHongo(){const button=$("#import-minihongo"),status=$("#import-status");button.disabled=true;status.textContent="Downloading Mini Hongo…";try{const response=await fetch("https://raw.githubusercontent.com/KakkoiDev/minihongo/master/imports/jp-echo.json",{cache:"no-store"});if(!response.ok)throw new Error("Mini Hongo download failed ("+response.status+").");await importBackupData(await response.json())}catch(error){status.textContent=error.message}finally{button.disabled=false}}
 
 $("#tabs").addEventListener("click",event=>{const tab=event.target.closest(".tab[data-view]");if(tab)showView(tab.dataset.view)});$("#translate").onclick=()=>discussionMode?(discussionTurns.length?replyDiscussion():beginDiscussion()):readingMode?generateReadingMode():performTranslation();$("#english-input").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")(discussionMode?(discussionTurns.length?replyDiscussion():beginDiscussion()):readingMode?generateReadingMode():performTranslation)()};$("#play-pause").onclick=()=>{if(!current)return;if(loop.running){loop.togglePause();return}const policy=$("#voice").value,voice=policy==="random"?voices[Math.floor(Math.random()*voices.length)]:(policy==="default"?voices.find(v=>v.default)||voices[0]:voices[Number(policy)])||null;loop.play(selectedPlainJapanese(),{voice,rate:Number($("#rate").value),lang:targetLang()})};$("#show-english").onchange=()=>{saveSettings();renderSentence()};$("#show-furigana").onchange=()=>{saveSettings();renderSentence()};$("#show-polite").onchange=async()=>{resetSession();saveSettings();if(current&&hasRegisters(itemTarget(current))){current={...current,reviewRegister:$("#show-polite").checked?"polite":"casual",updatedAt:new Date().toISOString()};await saveSentence(current);if(detail?.id===current.id)detail=current}renderSentence()};$("#rate").oninput=()=>{const rate=Number($("#rate").value);$("#rate-value").textContent=rate.toFixed(1)+"×";resetSession();loop.setRate(rate)};$("#settings-button").onclick=()=>$("#settings-dialog").showModal();$("#close-settings").onclick=()=>{saveSettings();$("#settings-dialog").close();renderPracticeNotices();writeReminderPrefs();syncReminderSchedule()};
@@ -1513,7 +1529,7 @@ async function restoreRoute(){
   await applyRoute();
 }
 window.addEventListener("popstate",()=>applyRoute());
-applyLanguage();migrateStore().then(async()=>{await repairReversedCards();await restoreRoute()}).catch(()=>restoreRoute());refreshDueBadge();setupRecognition();updateInstallUI();
+applyLanguage();startupCleanup=migrateStore().then(()=>cleanupLegacyMiniHongo());startupCleanup.then(async()=>{await repairReversedCards();await restoreRoute()}).catch(error=>{setStatus('Mini Hongo cleanup could not finish: '+error.message,true);restoreRoute()});refreshDueBadge();setupRecognition();updateInstallUI();
 // The in-app WaniKani sync is gone (the pull tool feeds the stories instead);
 // what it left in a browser is cleared once, quietly.
 try{localStorage.removeItem("jp-echo-wanikani-token");indexedDB.deleteDatabase("jp-echo-wanikani")}catch{}
@@ -1528,3 +1544,5 @@ $("#dictionary-dialog").addEventListener("close",()=>dictionaryLookupGeneration+
 window.addEventListener("echo-before-update",()=>saveWorkspace());
 
 $("#import-minihongo").onclick=importMiniHongo;
+
+$('#undo-mini-cleanup').onclick=undoMiniCleanup;
