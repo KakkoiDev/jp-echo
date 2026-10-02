@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 2,
+  "title": "Echo example sentence deck",
+  "description": "Six short Japanese sentences demonstrating the minimal supported Echo deck format. Copy this structure to make your own deck.",
+  "sentences": [
+    {
+      "id": "echo-example-001",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "Today I will study Japanese.",
+      "target": "今日【きょう】は日本語【にほんご】を勉強【べんきょう】します。"
+    },
+    {
+      "id": "echo-example-002",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "This book is easy to read.",
+      "target": "この本【ほん】は読【よ】みやすいです。"
+    },
+    {
+      "id": "echo-example-003",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "Please check this code.",
+      "target": "このコードを確認【かくにん】してください。"
+    },
+    {
+      "id": "echo-example-004",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "Please let me know if there is a problem.",
+      "target": "問題【もんだい】があれば、教【おし】えてください。"
+    },
+    {
+      "id": "echo-example-005",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "After the tests finish, I will save the changes.",
+      "target": "テストが終【お】わったら、変更【へんこう】を保存【ほぞん】します。"
+    },
+    {
+      "id": "echo-example-006",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "Tomorrow I will explain the results to the team.",
+      "target": "明日【あした】、チームに結果【けっか】を説明【せつめい】します。"
+    }
+  ]
+}
