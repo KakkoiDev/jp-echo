@@ -286,3 +286,11 @@ export async function transcribeAudio(blob,lang,settings={}){
   const payload=await fetchJson(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,{method:"POST",headers:{"Content-Type":"application/json","x-goog-api-key":key},body:JSON.stringify({contents:[{role:"user",parts:[{text:`Transcribe this spoken ${name} exactly. Return only the transcription, no quotes, labels, translation, or explanation.`},{inlineData:{mimeType:blob.type||"audio/webm",data}}]}]})});
   const text=payload.candidates?.[0]?.content?.parts?.map(part=>part.text||"").join("").trim();if(!text)throw new Error("Nothing heard.");return text
 }
+
+export async function rewriteSentence({current,source,instruction},settings={}){
+  if(!current?.trim()||!instruction?.trim())throw new Error("Enter a sentence and directions for the rewrite.");
+  const pair={sourceLang:settings.sourceLang||DEFAULT_PAIR.sourceLang,targetLang:settings.targetLang||DEFAULT_PAIR.targetLang};
+  const format=hasRegisters(pair.targetLang)?'Return JSON only: {"source":"...","casual":"...","polite":"..."}. Both registers express the same revised meaning. Add readings after every kanji run as 漢字【かんじ】, never after kana.':'Return JSON only: {"source":"...","translation":"..."}.';
+  const system=`Rewrite the existing ${languageName(pair.targetLang)} sentence according to the learner's directions, which may be in either language. They may request a shorter sentence, only the first or second part, or a particular word. Follow those changes while keeping the remaining intent. Return one natural sentence and its updated meaning in ${languageName(pair.sourceLang)}. ${format} No explanations, alternatives, or markdown.`;
+  return shapeComposed(await ask(JSON.stringify({current,source,instruction}),system,chosenProvider(settings),settings),pair);
+}

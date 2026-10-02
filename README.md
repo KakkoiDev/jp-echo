@@ -86,7 +86,7 @@ rather than reimplementing it.
 
 Change these rules in JP Core first and bring the copy over in the same change.
 The synchronized JP Core revision is
-`c84048782e545420dd7b7b62d2556789cd8d6f98`.
+`4555766d3fa4545de48a0821b860271e3a2b8e84`.
 
 ## Layout
 
@@ -104,3 +104,11 @@ The synchronized JP Core revision is
 
 Serve the directory over HTTP to exercise service workers, microphone
 permissions, IndexedDB, and PWA installation.
+
+## Rewrite a library sentence
+
+Open Library → choose a sentence → Edit → Rewrite with AI. Type or dictate
+directions using the same microphone and language switch as the other inputs.
+Ask for a shorter sentence, only its first/second part, or a particular word.
+Review the generated sentence and updated meaning, then Save; Cancel keeps the
+original. Both registers update together and existing review history is retained.
