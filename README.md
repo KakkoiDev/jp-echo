@@ -86,7 +86,7 @@ rather than reimplementing it.
 
 Change these rules in JP Core first and bring the copy over in the same change.
 The synchronized JP Core revision is
-`ed7df6849c9f8646cc2024e40a7b155b0535161e`.
+`b6956d9fbc5fb454e4516b1d67537faf8c1c3467`.
 
 ## Layout
 
@@ -121,3 +121,13 @@ sheet. Ruby readings and inflection endings share the same action. Ambiguous
 kana spellings offer their dictionary meanings; unknown katakana words and names
 stay whole, with an optional AI explanation using the current sentence context.
 The linguistic matcher is JP Core’s `browser/japanese-words.js`, copied unchanged.
+
+## Grammar in sentences
+
+Use **Find grammar** below a Japanese sentence to make one AI request. Exact
+phrases are highlighted and point chips open the grammar sheet. A tap on a
+phrase with both vocabulary and grammar offers both choices. Links are saved
+with library sentences, appear in each grammar point’s sentence list, and
+remain usable offline. Refresh grammar explicitly after changes or to retry.
+Recognition can miss or misclassify a point; only known IDs with exact quoted
+evidence are accepted.
