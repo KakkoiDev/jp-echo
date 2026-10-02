@@ -1530,10 +1530,10 @@ async function applyRoute(route=parseRoute(location.href)){
 async function restoreRoute(){
   // One upgrade bridge only: old root URLs had no navigation information.
   if(location.pathname==="/"&&!location.search){const legacy=workspace();if(legacy.view&&legacy.view!=="practice"||legacy.discussionMode||legacy.modal||legacy.historyQuery||legacy.mapQuery){history.replaceState({echo:true},"",routeFor({...legacy,historyFilter:settings.historyFilter,historyOrder:settings.historyOrder,historyDirection:settings.historyDirection}));try{localStorage.removeItem(WORKSPACE_KEY)}catch{}}}
-  await applyRoute();
+  await applyRoute();window.echoRouteReady=true;
 }
 window.addEventListener("popstate",()=>applyRoute());
-applyLanguage();startupCleanup=migrateStore().then(()=>cleanupLegacyMiniHongo());startupCleanup.then(async()=>{await repairReversedCards();await restoreRoute()}).catch(error=>{setStatus('Mini Hongo cleanup could not finish: '+error.message,true);restoreRoute()});refreshDueBadge();setupRecognition();updateInstallUI();
+applyLanguage();startupCleanup=migrateStore().then(()=>cleanupLegacyMiniHongo());startupCleanup.then(async()=>{await repairReversedCards();await restoreRoute()}).catch(error=>{window.echoReportError?.(error);setStatus('Mini Hongo cleanup could not finish: '+error.message,true);restoreRoute().catch(error=>window.echoReportError?.(error))});refreshDueBadge();setupRecognition();updateInstallUI();
 // The in-app WaniKani sync is gone (the pull tool feeds the stories instead);
 // what it left in a browser is cleared once, quietly.
 try{localStorage.removeItem("jp-echo-wanikani-token");indexedDB.deleteDatabase("jp-echo-wanikani")}catch{}
@@ -1550,3 +1550,5 @@ window.addEventListener("echo-before-update",()=>saveWorkspace());
 $("#import-minihongo").onclick=importMiniHongo;
 
 $('#undo-mini-cleanup').onclick=undoMiniCleanup;
+
+window.echoAppReady=true;
