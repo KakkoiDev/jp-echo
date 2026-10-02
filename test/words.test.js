@@ -81,3 +81,10 @@ test("clickable vocabulary spans include the full polite inflection",()=>{
   assert.equal(hit.end,4,"the clickable surface is おります, not only お");
   assert.ok(word(hit.id),"the span resolves to a dictionary entry");
 });
+
+test('kana おきます is clickable as a verb, not the prefix お',()=>{
+ const hit=wordSpans('おきます。')[0];assert.equal(hit.end,4);assert.ok(hit.ids.map(word).some(w=>w.w==='起きる'));assert.ok(!hit.ids.map(word).some(w=>w.w==='お'));
+});
+test('Rambo stays one unknown name instead of run and bow',()=>{
+ const hit=wordSpans('ランボーは映画の主人公。')[0];assert.equal(hit.dictionary,'ランボー');assert.equal(hit.end,4);assert.equal(hit.id,null);assert.ok(!wordsIn('ランボー').has(ALL.find(w=>w.w==='ラン').id));
+});

@@ -1025,3 +1025,5 @@ html.motion-off #review-progress-bar { transition: none; }
 }
 
 #sentence-ai{margin:18px 0}#sentence-ai summary{cursor:pointer;margin-bottom:12px}#sentence-ai .input-row{display:grid;grid-template-columns:minmax(0,1fr) 44px 44px;gap:8px}#sentence-ai .input-row textarea{height:auto;min-height:76px;grid-column:1/-1}#sentence-ai .primary{grid-column:1;grid-row:2}#sentence-ai .mic{width:44px;height:54px}
+
+.dictionary-choice{display:block;width:100%;text-align:left;margin:10px 0;padding:12px}#dictionary-context{overflow-wrap:anywhere}#dictionary-dialog{max-width:560px}
