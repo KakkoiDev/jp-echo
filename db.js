@@ -28,8 +28,8 @@ async function importRecovery(action,mode='readonly'){
  const db=await new Promise((resolve,reject)=>{const req=indexedDB.open('jp-echo-import-recovery',1);req.onupgradeneeded=()=>req.result.createObjectStore('backups');req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)});
  try{return await new Promise((resolve,reject)=>{let result;const tx=db.transaction('backups',mode),request=action(tx.objectStore('backups'));request.onsuccess=()=>result=request.result;tx.oncomplete=()=>resolve(result);tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error)})}finally{db.close()}
 }
-export async function saveImportRecovery(backup){if(await readImportRecovery())return;await importRecovery(store=>store.put(backup,'minihongo-v1'),'readwrite')}
-export const readImportRecovery=()=>importRecovery(store=>store.get('minihongo-v1'));
+export async function saveImportRecovery(backup,key='minihongo-v1'){if(await importRecovery(store=>store.get(key)))return;await importRecovery(store=>store.put(backup,key),'readwrite')}
+export const readImportRecovery=async()=>await importRecovery(store=>store.get('minihongo-v2-word-cards'))||await importRecovery(store=>store.get('minihongo-v1'));
 
 // Delete only archived IDs, reading current records inside the write transaction.
 // Other tabs' new sentences and the latest personal review state are retained.
