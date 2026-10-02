@@ -237,6 +237,14 @@ export function createSentence(source, translation, now = new Date(), id = newId
     reviewRegister:"casual",translationProvider:"deepseek",schemaVersion:SCHEMA_VERSION};
 }
 
+// Replace the linguistic content of an existing card without resetting its history.
+export function replaceSentenceContent(record, {source,casual,polite}, now = new Date()) {
+  if (!source?.trim() || !casual?.trim()) throw new Error("A sentence and its meaning are required.");
+  const fresh=createSentence(source,{casual:normalizeFurigana(casual),polite:normalizeFurigana(polite||casual)},now,record.id,record);
+  const keys=["source","target","plainTarget","casualTarget","plainCasualTarget","politeTarget","plainPoliteTarget","updatedAt"];
+  return {...record,...Object.fromEntries(keys.map(key=>[key,fresh[key]]))};
+}
+
 // Records written before languages existed were all English to Japanese. The
 // old field names are kept readable here rather than anywhere else: every
 // other reader works from the neutral ones.

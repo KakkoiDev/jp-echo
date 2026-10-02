@@ -86,7 +86,7 @@ rather than reimplementing it.
 
 Change these rules in JP Core first and bring the copy over in the same change.
 The synchronized JP Core revision is
-`c84048782e545420dd7b7b62d2556789cd8d6f98`.
+`ed7df6849c9f8646cc2024e40a7b155b0535161e`.
 
 ## Layout
 
@@ -104,3 +104,20 @@ The synchronized JP Core revision is
 
 Serve the directory over HTTP to exercise service workers, microphone
 permissions, IndexedDB, and PWA installation.
+
+## Rewrite a library sentence
+
+Open Library → choose a sentence → Edit → Rewrite with AI. Type or dictate
+directions using the same microphone and language switch as the other inputs.
+Ask for a shorter sentence, only its first/second part, or a particular word.
+Review the generated sentence and updated meaning, then Save; Cancel keeps the
+original. Both registers update together and existing review history is retained.
+
+## Dictionary lookup in sentences
+
+Tap a vocabulary word in sentence details, practice, library results, readings,
+conversation turns, revealed reviews or study examples to open its dictionary
+sheet. Ruby readings and inflection endings share the same action. Ambiguous
+kana spellings offer their dictionary meanings; unknown katakana words and names
+stay whole, with an optional AI explanation using the current sentence context.
+The linguistic matcher is JP Core’s `browser/japanese-words.js`, copied unchanged.

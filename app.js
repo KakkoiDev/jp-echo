@@ -1,9 +1,9 @@
 import {applyI18n,setDictionary,t} from "./i18n.js";
 import {earliestPair,flipSentence,isReversed,pairLooksSwapped,repairPair} from "./repair.js";
-import {DEFAULT_PAIR,LANGUAGES,MORA_MNEMONIC_META,createSentence,exportBackup,forAnki,hasFurigana,hasRegisters,languageName,mergeSentences,normalizeFurigana,rubyHtml,SCHEMA_VERSION,stripFurigana} from "./core.js";
+import {DEFAULT_PAIR,LANGUAGES,MORA_MNEMONIC_META,createSentence,replaceSentenceContent,exportBackup,forAnki,hasFurigana,hasRegisters,languageName,mergeSentences,normalizeFurigana,rubyHtml,SCHEMA_VERSION,stripFurigana} from "./core.js";
 import {isExactMatch,markAttempt,markTarget} from "./diff.js";
 import {deleteSentence,getSentence,listSentences,migrateStore,replaceAll,saveSentence} from "./db.js";
-import {adjustNote,carries,compose,composeWordFromIntent,PROVIDER_DEFAULTS,tagGrammar,translate,discuss,generateReading,writeNotes,writeWordNote,transcribeAudio} from "./api.js";
+import {askModel,rewriteSentence,adjustNote,carries,compose,composeWordFromIntent,PROVIDER_DEFAULTS,tagGrammar,translate,discuss,generateReading,writeNotes,writeWordNote,transcribeAudio} from "./api.js";
 import {byLevel as grammarByLevel,cleanTags as grammarTags,coverage as grammarCoverage,hasGrammar,isTagged,learned as grammarLearned,LEVELS as GRAMMAR_LEVELS,point as grammarPoint,POINTS as GRAMMAR_POINTS,summarise as grammarSummarise,untagged as untaggedSentences} from "./grammar.js";
 import {japaneseVoices,recognitionFactory,ShadowLoop,ConversationLoop} from "./speech.js";
 import {STORIES} from "./stories.js";
@@ -124,14 +124,14 @@ function renderCount(){tickCount($("#echo-count"),current?.echoCount??0)}
 function selectedJapanese(){return current&&hasRegisters(itemTarget(current))?preferredTarget(current):(current?.target||"")}
 function selectedPlainJapanese(){return current&&hasRegisters(itemTarget(current))?preferredPlainTarget(current):(current?.plainTarget||stripFurigana(current?.target||""))}
 function resetSession(){loop.stop()}
-function renderSentence(){const panel=$("#practice");panel.hidden=!current;$("#welcome").hidden=!!current;document.body.classList.toggle("has-sentence",!!current);if(!current)return;$("#japanese").innerHTML=rubyHtml(selectedJapanese());$("#english-display").textContent=current.source;$("#english-display").hidden=!$("#show-english").checked;panel.classList.toggle("hide-furigana",!$("#show-furigana").checked);renderCount();populateVoices()}
+function renderSentence(){const panel=$("#practice");panel.hidden=!current;$("#welcome").hidden=!!current;document.body.classList.toggle("has-sentence",!!current);if(!current)return;$("#japanese").innerHTML=rubyHtml(selectedJapanese());enableVocabulary($("#japanese"),selectedJapanese(),itemTarget(current));$("#english-display").textContent=current.source;$("#english-display").hidden=!$("#show-english").checked;panel.classList.toggle("hide-furigana",!$("#show-furigana").checked);renderCount();populateVoices()}
 function openSentence(sentence){resetSession();current=sentence;if(hasRegisters(itemTarget(sentence)))$("#show-polite").checked=sentenceRegister(sentence)==="polite";$("#english-input").value=sentence.source;if(enteringTarget())setInputLang(sourceLang());showView("practice");renderSentence()}
 
 let discussionMode=false,readingMode=false,discussionTurns=[],discussionScenario="",readingPassage=null,readingSelected=-1;
 const discussionLoop=new ConversationLoop({onEcho:()=>{},onState:(state,index)=>{const n=$("#discussion-loop-state");if(n)n.textContent=state==="speaking"?`Playing turn ${(index??0)+1} of ${discussionTurns.length}`:state==="imitate"?"Your turn - echo it":state==="paused"?"Paused":state==="error"?"That voice could not play":"Ready"}});
 const readingLoop=new ConversationLoop({onEcho:()=>{},onState:(state,index)=>{const n=$("#reading-loop-state"),button=$("#reading-echo");if(n)n.textContent=state==="speaking"?`Playing sentence ${(index??0)+1} of ${readingPassage?.sentences.length||0}`:state==="imitate"?"Your turn — echo it":state==="paused"?"Paused":state==="error"?"That voice could not play":"Ready";if(button){const active=state==="speaking"||state==="imitate"||state==="paused";button.textContent=state==="paused"?"Resume":active?"Pause":"Start echo";button.setAttribute("aria-pressed",String(active))}}});
 function setPracticeMode(mode,{route=true}={}){discussionMode=mode==="discussion";readingMode=mode==="reading";saveWorkspace({discussionMode,readingMode});if(route)syncRoute({view:"practice",discussionMode,readingMode});$("#discussion").hidden=!discussionMode;$("#reading").hidden=!readingMode;$("#welcome").hidden=discussionMode||readingMode||!!current;$("#practice").hidden=discussionMode||readingMode||!current;$(".dock").hidden=false;$(".dock").classList.toggle("discussion-dock",discussionMode||readingMode);$("#composer-label").textContent=discussionMode?"What do you want to say?":readingMode?"What do you want to read?":"What do you want to say?";$("#translate .label").textContent=discussionMode?"Send":readingMode?"Generate":"Translate";$("#translate").setAttribute("aria-label",discussionMode?"Send":readingMode?"Generate reading":"Translate");$("#english-input").placeholder=discussionMode?(discussionTurns.length?"Reply in either language":"Describe a conversation scenario"):readingMode?"Describe a text to generate":"Enter a sentence in "+languageName(inputLang);$("#mode-sentence").setAttribute("aria-selected",String(mode==="sentence"));$("#mode-discussion").setAttribute("aria-selected",String(discussionMode));$("#mode-reading").setAttribute("aria-selected",String(readingMode));loop.stop();discussionLoop.stop();readingLoop.stop()}
-function renderDiscussion(){const list=$("#discussion-turns");list.replaceChildren(...discussionTurns.map(turn=>{const li=document.createElement("li");li.className="discussion-turn "+turn.role;const bubble=document.createElement("div");bubble.className="discussion-bubble";const ja=document.createElement("p");ja.className="discussion-japanese";ja.lang=targetLang();ja.innerHTML=rubyHtml(turn.target);const en=document.createElement("p");en.className="discussion-translation";en.textContent=turn.source;en.hidden=!$("#discussion-english").checked;const actions=document.createElement("div");actions.className="discussion-message-actions";const save=document.createElement("button");save.type="button";save.className="plain discussion-save";save.textContent=turn.saved?"Saved":"Save";save.disabled=!!turn.saved;save.onclick=async()=>{save.disabled=true;const previous=save.textContent;save.textContent="Saving…";try{await saveDiscussionTurn(turn,{sourceLang:sourceLang(),targetLang:targetLang()});turn.saved=true;save.textContent="Saved";renderLibrary?.()}catch(error){save.disabled=false;save.textContent=previous;showToast(sheetError(error))}};actions.append(save);bubble.append(ja,en,actions);li.append(bubble);return li}));$("#discussion-live").hidden=!discussionTurns.length;$("#discussion-setup").hidden=!!discussionTurns.length;$("#discussion-title").textContent=discussionScenario;requestAnimationFrame(()=>{if(discussionTurns.length)list.lastElementChild?.scrollIntoView({block:"nearest",behavior:"smooth"})})}
+function renderDiscussion(){const list=$("#discussion-turns");list.replaceChildren(...discussionTurns.map(turn=>{const li=document.createElement("li");li.className="discussion-turn "+turn.role;const bubble=document.createElement("div");bubble.className="discussion-bubble";const ja=document.createElement("p");ja.className="discussion-japanese";ja.lang=targetLang();ja.innerHTML=rubyHtml(turn.target);enableVocabulary(ja,turn.target);const en=document.createElement("p");en.className="discussion-translation";en.textContent=turn.source;en.hidden=!$("#discussion-english").checked;const actions=document.createElement("div");actions.className="discussion-message-actions";const save=document.createElement("button");save.type="button";save.className="plain discussion-save";save.textContent=turn.saved?"Saved":"Save";save.disabled=!!turn.saved;save.onclick=async()=>{save.disabled=true;const previous=save.textContent;save.textContent="Saving…";try{await saveDiscussionTurn(turn,{sourceLang:sourceLang(),targetLang:targetLang()});turn.saved=true;save.textContent="Saved";renderLibrary?.()}catch(error){save.disabled=false;save.textContent=previous;showToast(sheetError(error))}};actions.append(save);bubble.append(ja,en,actions);li.append(bubble);return li}));$("#discussion-live").hidden=!discussionTurns.length;$("#discussion-setup").hidden=!!discussionTurns.length;$("#discussion-title").textContent=discussionScenario;requestAnimationFrame(()=>{if(discussionTurns.length)list.lastElementChild?.scrollIntoView({block:"nearest",behavior:"smooth"})})}
 function playDiscussion(){if(discussionLoop.running){discussionLoop.togglePause();return}const pick=policy=>{if(!voices.length)return null;if(policy==="random")return voices[Math.floor(Math.random()*voices.length)];if(policy==="default")return voices.find(v=>v.default)||voices[0];return voices[Number(policy)]||voices[0]};discussionLoop.playConversation(discussionTurns.map(t=>({text:stripFurigana(t.target),role:t.role})),{voiceFor:turn=>pick(turn.role==="ai"?$("#discussion-voice-ai").value:$("#discussion-voice-user").value),rate:Number($("#rate").value),lang:targetLang()})}
 async function beginDiscussion(){discussionScenario=$("#english-input").value.trim()||"An everyday conversation";$("#english-input").value="";$("#discussion-status").textContent="Starting...";try{const out=await discuss({scenario:discussionScenario,history:[]},{...settings,sourceLang:sourceLang(),targetLang:targetLang()});discussionTurns=[{role:"ai",...out.ai}];renderDiscussion();playDiscussion();$("#discussion-status").textContent=""}catch(e){$("#discussion-status").textContent=e.message}}
 async function replyDiscussion(){const message=$("#english-input").value.trim();if(!message)return;discussionLoop.stop();$("#discussion-status").textContent="Replying...";$("#translate").disabled=true;try{const out=await discuss({scenario:discussionScenario,message,history:discussionTurns},{...settings,sourceLang:sourceLang(),targetLang:targetLang()});discussionTurns.push({role:"user",...out.user},{role:"ai",...out.ai});$("#english-input").value="";renderDiscussion();playDiscussion();$("#discussion-status").textContent=""}catch(e){$("#discussion-status").textContent=e.message}finally{$("#translate").disabled=false}}
@@ -234,7 +234,7 @@ function renderVoiceNotices(){for(const id of ["#sentence-notices","#review-noti
   host.replaceChildren();if(voiceFailed)host.append(voiceNotice())}}
 const WORKSPACE_KEY="jp-echo-workspace";
 const workspace=()=>{try{return JSON.parse(localStorage.getItem(WORKSPACE_KEY)||"{}")}catch{return {}}};
-function renderReading(){const host=$("#reading-text");host.innerHTML="";$("#reading-empty").hidden=!!readingPassage;$("#reading-controls").hidden=!readingPassage;if(!readingPassage)return;$("#reading-title").textContent=readingPassage.title;readingPassage.sentences.forEach((sentence,index)=>{const row=document.createElement("div");row.className="reading-sentence"+(readingSelected===index?" selected":"");row.dataset.index=index;const text=document.createElement("button");text.type="button";text.className="reading-sentence-text";const target=$("#reading-furigana").checked?rubyHtml(sentence.target):escapeText(stripFurigana(sentence.target));text.innerHTML='<span class="reading-japanese">'+target+'</span>'+($("#reading-english").checked?'<span class="reading-english">'+escapeText(sentence.source)+'</span>':"");text.onclick=()=>{readingSelected=index;renderReading()};row.append(text);if(sentence.saved){const saved=document.createElement("span");saved.className="reading-save saved";saved.textContent="Saved";row.append(saved)}else if(readingSelected===index){const save=document.createElement("button");save.type="button";save.className="reading-save primary";save.textContent="Save to Library";save.onclick=async()=>{save.disabled=true;save.textContent="Saving…";try{await saveReadingSentence(index)}catch(e){save.disabled=false;save.textContent="Save to Library";$("#reading-status").textContent=e.message}};row.append(save)}host.append(row)})}
+function renderReading(){const host=$("#reading-text");host.innerHTML="";$("#reading-empty").hidden=!!readingPassage;$("#reading-controls").hidden=!readingPassage;if(!readingPassage)return;$("#reading-title").textContent=readingPassage.title;readingPassage.sentences.forEach((sentence,index)=>{const row=document.createElement("div");row.className="reading-sentence"+(readingSelected===index?" selected":"");row.dataset.index=index;const text=document.createElement("button");text.type="button";text.className="reading-sentence-text";const target=$("#reading-furigana").checked?rubyHtml(sentence.target):escapeText(stripFurigana(sentence.target));text.innerHTML='<span class="reading-japanese">'+target+'</span>'+($("#reading-english").checked?'<span class="reading-english">'+escapeText(sentence.source)+'</span>':"");enableVocabulary(text.querySelector(".reading-japanese"),sentence.target);text.onclick=()=>{readingSelected=index;renderReading()};row.append(text);if(sentence.saved){const saved=document.createElement("span");saved.className="reading-save saved";saved.textContent="Saved";row.append(saved)}else if(readingSelected===index){const save=document.createElement("button");save.type="button";save.className="reading-save primary";save.textContent="Save to Library";save.onclick=async()=>{save.disabled=true;save.textContent="Saving…";try{await saveReadingSentence(index)}catch(e){save.disabled=false;save.textContent="Save to Library";$("#reading-status").textContent=e.message}};row.append(save)}host.append(row)})}
 async function saveReadingSentence(index){const s=readingPassage?.sentences[index];if(!s||s.saved)return;const made=createSentence(s.source,{casual:s.target,polite:s.target},new Date(),undefined,{sourceLang:sourceLang(),targetLang:targetLang()});await saveSentence(made);s.saved=true;renderReading();toast("Saved to your library.")}
 async function generateReadingMode(){const prompt=$("#english-input").value.trim();if(!prompt)return;$("#translate").disabled=true;$("#reading-status").textContent="Writing…";try{readingPassage=await generateReading({prompt},{...settings,sourceLang:sourceLang(),targetLang:targetLang()});readingSelected=-1;$("#english-input").value="";renderReading();$("#reading-status").textContent=""}catch(e){$("#reading-status").textContent=e.message}finally{$("#translate").disabled=false}}
 function playReading(){if(!readingPassage?.sentences.length)return;if(readingLoop.running){readingLoop.togglePause();return}const policy=settings.voice||"default",pick=()=>{if(!voices.length)return null;if(policy==="random")return voices[Math.floor(Math.random()*voices.length)];if(policy==="default")return voices.find(v=>v.default)||voices[0];return voices[Number(policy)]||voices[0]};readingLoop.playConversation(readingPassage.sentences.map(s=>({role:"ai",text:stripFurigana(s.target)})),{lang:targetLang(),rate:Number($("#rate").value),voiceFor:pick})}
@@ -433,7 +433,7 @@ function renderSheetSentences(list,sentences,{deletable,onDelete,mark=null}){
   for(const sentence of sentences){
     const row=document.createElement("li");row.dataset.id=sentence.id;
     let text=document.createElement("div");text.className="kanji-sentence-text";
-    const target=document.createElement("b");target.lang=targetLang();target.innerHTML=markPattern(rubyHtml(preferredTarget(sentence)),mark);
+    const target=document.createElement("b");target.lang=targetLang();target.innerHTML=markPattern(rubyHtml(preferredTarget(sentence)),mark);enableVocabulary(target,preferredTarget(sentence),itemTarget(sentence));
     const source=document.createElement("span");source.textContent=sentence.source;
     if(sentence.word){const word=document.createElement("i");word.lang=targetLang();word.textContent=sentence.word+(sentence.reading?"（"+sentence.reading+"）":"");text.append(word)}
     text.append(target,source);
@@ -696,7 +696,7 @@ async function renderPointNotes(point){
     const list=$("#point-example-list");list.replaceChildren();$("#point-examples").hidden=false;
     for(const example of notes.examples.text){
       const row=el("li"),text=el("div","kanji-sentence-text"),target=el("b");target.lang=targetLang();
-      target.innerHTML=markPattern(rubyHtml(example.ja),point.title);
+      target.innerHTML=markPattern(rubyHtml(example.ja),point.title);enableVocabulary(target,example.ja,"ja");
       text.append(target,el("span",null,example.en));
       const keep=el("button","keep hit",t("Keep"));keep.type="button";
       keep.onclick=async()=>{keep.disabled=true;keep.textContent=t("Keeping…");
@@ -1033,7 +1033,7 @@ function renderLibraryTool(all){const row=$("#library-tool");row.hidden=targetLa
   $("#library-tool-tally").textContent=[k,w,g].filter(n=>n!==null).map(n=>n.toLocaleString()).join(" · ")+" "+t("learned");
   row.setAttribute("aria-label",t("Kanji, words and grammar")+": "+(g===null?t("{k} kanji and {w} words learned",{k:k.toLocaleString(),w:w.toLocaleString()}):t("{k} kanji, {w} words and {g} points learned",{k:k.toLocaleString(),w:w.toLocaleString(),g:g.toLocaleString()})))}
 async function renderHistory(){const all=await listSentences();renderLibraryTool(all);const list=$("#history-list"),due=dueSentences(all),query=$("#history-search").value.trim().toLocaleLowerCase(),filter=$("#history-filter").value,order=$("#history-order").value,direction=$("#history-direction").value,now=Date.now();let items=all.filter(item=>{const haystack=[item.source,item.target,item.plainTarget,item.casualTarget,item.politeTarget].filter(Boolean).join(" ").toLocaleLowerCase();if(query&&!haystack.includes(query))return false;const state=item.srs?.state??0;if(filter==="due")return !item.srs?.due||Date.parse(item.srs.due)<=now;if(filter==="new")return state===0;if(filter==="learning")return state===1||state===3;if(filter==="review")return state===2;if(filter==="skipped")return item.skipped===true;return true});const comparators={created:(a,b)=>a.createdAt.localeCompare(b.createdAt),echoes:(a,b)=>(Number(a.echoCount)||0)-(Number(b.echoCount)||0),due:(a,b)=>Date.parse(a.srs?.due||a.createdAt)-Date.parse(b.srs?.due||b.createdAt),english:(a,b)=>a.source.localeCompare(b.source),japanese:(a,b)=>preferredPlainTarget(a).localeCompare(preferredPlainTarget(b),itemTarget(a))},factor=direction==="asc"?1:-1;items.sort((a,b)=>factor*(comparators[order]||comparators.created)(a,b));list.replaceChildren();$("#empty-history").hidden=all.length>0;$("#empty-results").hidden=all.length===0||items.length>0;$("#empty-results-count").textContent=all.length===1?"One is in your library.":capitalise(spell(all.length))+" are in your library.";updateDueBadge(due.length);$("#library-count").textContent=items.length===1?"1 sentence":items.length+" sentences";$("#library-order-label").textContent=ORDER_LABELS[order+"-"+direction]||"";$(".list-head").hidden=items.length===0;if(isWide()&&!detail&&items.length)return openDetail(items[0].id);
-  for(const item of items){const li=document.createElement("li");li.dataset.id=item.id;const state=cardState(item,now);li.innerHTML='<button class="history-open" type="button"><span class="lines"><span lang="'+itemTarget(item)+'">'+rubyHtml(preferredTarget(item))+'</span><span class="source-line">'+escapeText(item.source)+'</span><span class="status-chip '+state+'">'+CARD_STATES[state]+'</span></span><span class="tally"><strong>'+(Number(item.echoCount)||0)+'</strong><span>echoes</span></span></button>';li.querySelector(".history-open").onclick=()=>openDetail(item.id);list.append(li)}markSelectedRow()}
+  for(const item of items){const li=document.createElement("li");li.dataset.id=item.id;const state=cardState(item,now);li.innerHTML='<button class="history-open" type="button"><span class="lines"><span lang="'+itemTarget(item)+'">'+rubyHtml(preferredTarget(item))+'</span><span class="source-line">'+escapeText(item.source)+'</span><span class="status-chip '+state+'">'+CARD_STATES[state]+'</span></span><span class="tally"><strong>'+(Number(item.echoCount)||0)+'</strong><span>echoes</span></span></button>';enableVocabulary(li.querySelector(".lines>span[lang]"),preferredTarget(item),itemTarget(item));li.querySelector(".history-open").onclick=()=>openDetail(item.id);list.append(li)}markSelectedRow()}
 const formatDate=value=>new Intl.DateTimeFormat(undefined,{day:"numeric",month:"long"}).format(new Date(value));
 const RATING_LABELS={again:"Again",ok:"OK"};
 function untilDue(sentence,now=Date.now()){const due=Date.parse(sentence.srs?.due||"");if(!Number.isFinite(due)||due<=now)return "Now";
@@ -1042,7 +1042,7 @@ async function openDetail(id){const sentence=await getSentence(id);if(!sentence)
 function markSelectedRow(){for(const li of document.querySelectorAll("#history-list li"))li.classList.toggle("selected",li.dataset.id===detail?.id);}
 function renderDetail(){if(!detail)return;closeEditor();markSelectedRow();
   $("#sentence-added").textContent="Added "+formatDate(detail.createdAt);
-  $("#sentence-japanese").innerHTML=rubyHtml(preferredTarget(detail));$("#sentence-japanese").lang=itemTarget(detail);
+  $("#sentence-japanese").innerHTML=rubyHtml(preferredTarget(detail));$("#sentence-japanese").lang=itemTarget(detail);enableVocabulary($("#sentence-japanese"),preferredTarget(detail),itemTarget(detail));
   $("#sentence-english").textContent=detail.source;
   const registerRow=$("#sentence-register-row"),canChooseRegister=hasRegisters(itemTarget(detail))&&(detail.casualTarget||detail.target)!==(detail.politeTarget||detail.target);
   registerRow.hidden=!canChooseRegister;
@@ -1062,15 +1062,30 @@ function renderDetail(){if(!detail)return;closeEditor();markSelectedRow();
   const lapses=reviews.filter(entry=>entry.rating==="again").length;
   $("#sentence-history-note").textContent=lapses?"A review was marked Again "+(lapses===1?"once":spell(lapses)+" times")+".":reviews.length?"Reviewed correctly every time so far.":"Not reviewed yet — it is waiting in the queue.";
   $("#sentence-play").disabled=false}
-function openEditor(){if(!detail)return;resetSession();$("#sentence-draft").value=preferredTarget(detail);$("#sentence-edit-error").hidden=true;$("#sentence-editor").hidden=false;$("#sentence-japanese").hidden=true;$("#sentence-english").hidden=true;$("#sentence-register-row").hidden=true;$(".sentence-controls").hidden=true;$("#sentence-draft").focus()}
-function closeEditor(){$("#sentence-editor").hidden=true;$("#sentence-japanese").hidden=false;$("#sentence-english").hidden=false;const canChoose=detail&&hasRegisters(itemTarget(detail))&&(detail.casualTarget||detail.target)!==(detail.politeTarget||detail.target);$("#sentence-register-row").hidden=!canChoose;$(".sentence-controls").hidden=false}
+let editorGeneration=0,rewrittenDraft=null;
+function openEditor(){editorGeneration++;rewrittenDraft=null;$("#sentence-source-draft").value=detail?.source||"";$("#sentence-instruction").value="";$("#sentence-ai").open=false;$("#sentence-rewrite-status").textContent="";$("#sentence-rewrite").disabled=!hasTranslator();if(!detail)return;resetSession();$("#sentence-draft").value=preferredTarget(detail);$("#sentence-edit-error").hidden=true;$("#sentence-editor").hidden=false;$("#sentence-japanese").hidden=true;$("#sentence-english").hidden=true;$("#sentence-register-row").hidden=true;$(".sentence-controls").hidden=true;$("#sentence-draft").focus()}
+function closeEditor(){editorGeneration++;rewrittenDraft=null;$("#sentence-editor").hidden=true;$("#sentence-japanese").hidden=false;$("#sentence-english").hidden=false;const canChoose=detail&&hasRegisters(itemTarget(detail))&&(detail.casualTarget||detail.target)!==(detail.politeTarget||detail.target);$("#sentence-register-row").hidden=!canChoose;$(".sentence-controls").hidden=false}
 async function saveEdit(event){event.preventDefault();if(!detail)return;
   const japanese=normalizeFurigana($("#sentence-draft").value.trim());
-  if(!japanese||!/[\u3040-\u30ff\u3400-\u9fff]/.test(japanese)){$("#sentence-edit-error").textContent="That needs to be a Japanese sentence.";$("#sentence-edit-error").hidden=false;return}
+  if(!japanese||(hasFurigana(itemTarget(detail))&&!/[\u3040-\u30ff\u3400-\u9fff]/.test(japanese))){$("#sentence-edit-error").textContent="That needs to be a Japanese sentence.";$("#sentence-edit-error").hidden=false;return}
+  const source=$("#sentence-source-draft").value.trim();
+  if(!source){$("#sentence-edit-error").textContent="Enter the sentence meaning.";$("#sentence-edit-error").hidden=false;return}
   const plain=stripFurigana(japanese).trim();
   if(sentenceRegister(detail)==="polite")detail={...detail,politeTarget:japanese,plainPoliteTarget:plain,updatedAt:new Date().toISOString()};
   else detail={...detail,target:japanese,plainTarget:plain,casualTarget:japanese,plainCasualTarget:plain,updatedAt:new Date().toISOString()};
+  if(rewrittenDraft){const forms={...rewrittenDraft,source};forms[sentenceRegister(detail)==="polite"?"polite":"casual"]=japanese;detail=replaceSentenceContent(detail,forms);delete detail.grammar}else detail={...detail,source};
   await saveSentence(detail);if(current?.id===detail.id){current=detail;renderSentence()}renderDetail()}
+async function rewriteDetailSentence(){
+  if(!detail||$("#sentence-rewrite").disabled)return;
+  const instruction=$("#sentence-instruction").value.trim(),status=$("#sentence-rewrite-status"),button=$("#sentence-rewrite");
+  if(!instruction){status.textContent="Tell AI what to change.";$("#sentence-instruction").focus();return}
+  const generation=editorGeneration,id=detail.id;button.disabled=true;$("#sentence-save").disabled=true;status.textContent="Rewriting…";
+  try{const card=await rewriteSentence({current:$("#sentence-draft").value,source:$("#sentence-source-draft").value,instruction},{...settings,sourceLang:detail.sourceLang||sourceLang(),targetLang:itemTarget(detail)});
+    if(generation!==editorGeneration||detail?.id!==id)return;
+    rewrittenDraft=card;$("#sentence-draft").value=sentenceRegister(detail)==="polite"?card.polite:card.casual;$("#sentence-source-draft").value=card.source;status.textContent="Review the rewrite, then Save. Cancel keeps the original.";
+  }catch(error){if(generation===editorGeneration)status.textContent=error.message||"Could not rewrite. Try again."}
+  finally{button.disabled=!hasTranslator();$("#sentence-save").disabled=false}
+}
 function playDetail(){if(!detail)return;if(loop.running){loop.togglePause();return}
   const voice=voices[Number($("#voice").value)]||voices[0]||null;loop.play(preferredPlainTarget(detail),{voice,rate:Number($("#rate").value),lang:targetLang()})}
 // One confirm sheet for every delete — the detail page and the rows on the
@@ -1239,6 +1254,7 @@ function setupRecognition(){
   dictationReady=bindDictation($("#microphone"),$("#english-input"),$("#voice-input-status"));
   bindDictation($("#kanji-mic"),$("#kanji-say"),$("#kanji-say-status"));
   bindDictation($("#grammar-mic"),$("#grammar-say"),$("#grammar-say-status"));
+  bindDictation($("#sentence-rewrite-mic"),$("#sentence-instruction"),$("#sentence-rewrite-voice"));
   bindDictation($("#word-mic"),$("#word-say"),$("#word-say-status"));
   }
 async function startReview(){const items=await listSentences(),prepared=items.map(item=>ensureReviewTrack(ensureSchedule(item)));await Promise.all(prepared.filter((item,index)=>item!==items[index]).map(saveSentence));reviewQueue=dueSentences(prepared);reviewIndex=0;if(!reviewQueue.length)return showView("review");showView("session");renderReview()}
@@ -1295,26 +1311,43 @@ async function revealReview(){let sentence=reviewQueue[reviewIndex];if(!sentence
   $("#review-prompt").hidden=true;$("#review-prompt-actions").hidden=true;$("#review-actions").hidden=false;
   playReviewAudio()}
 function reviewVocabularyHits(sentence,target){
-  const plain=stripFurigana(target);
-  return wordSpans(plain,sentenceWords(sentence)).sort((a,b)=>a.start-b.start||(b.end-b.start)-(a.end-a.start))
+  return wordSpans(stripFurigana(target));
 }
-function enableReviewVocabulary(sentence,target){
-  const root=$("#review-japanese");if(!root||itemTarget(sentence)!=="ja")return;
-  const hits=reviewVocabularyHits(sentence,target);if(!hits.length)return;
+function enableReviewVocabulary(sentence,target){enableVocabulary($("#review-japanese"),target,itemTarget(sentence))}
+// Preserve ruby and review correction marks while attaching the same dictionary
+// action to every fragment of a surface word. Reading annotations aren't offsets.
+function enableVocabulary(root,target,lang=targetLang()){
+  if(!root||lang!=="ja")return;
+  const hits=wordSpans(stripFurigana(target));if(!hits.length)return;
   const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),nodes=[];
   while(walker.nextNode())if(!walker.currentNode.parentElement?.closest("rt"))nodes.push(walker.currentNode);
   let offset=0;
   for(const node of nodes){const frag=document.createDocumentFragment(),data=node.data;let local=0;
-    while(local<data.length){const at=offset+local,hit=hits.find(h=>h.start<=at&&at<h.end);
+    while(local<data.length){const at=offset+local,index=hits.findIndex(h=>h.start<=at&&at<h.end),hit=hits[index];
       if(!hit){frag.append(document.createTextNode(data[local]));local++;continue}
       const take=Math.min(data.length-local,hit.end-at),span=document.createElement("span");
-      span.className="review-vocab";span.dataset.wordId=hit.id;span.tabIndex=0;span.setAttribute("role","button");
-      const w=wordById(hit.id);span.setAttribute("aria-label","Open "+(w?.w||"vocabulary")+" in dictionary");
+      span.className="review-vocab";span.dataset.vocabularyIndex=index;span.tabIndex=0;span.setAttribute("role","button");
+      span.setAttribute("aria-label","Look up "+stripFurigana(target).slice(hit.start,hit.end));
       span.textContent=data.slice(local,local+take);frag.append(span);local+=take}
     offset+=data.length;node.replaceWith(frag)}
-  const open=async token=>{const w=wordById(token?.dataset.wordId);if(!w)return;resetSession();await openWord(w,wordCoverage(await listSentences()),{route:false})};
-  root.onclick=event=>{const token=event.target.closest?.(".review-vocab");if(token)open(token)};
-  root.onkeydown=event=>{if(event.key!=="Enter"&&event.key!==" ")return;const token=event.target.closest?.(".review-vocab");if(!token)return;event.preventDefault();open(token)}
+  const tokenFor=event=>event.target.closest?.(".review-vocab")||event.target.closest?.("ruby")?.querySelector(".review-vocab");
+  const open=token=>{const hit=hits[Number(token.dataset.vocabularyIndex)];resetSession();openVocabularyHit(hit,stripFurigana(target))};
+  root.onclick=event=>{const token=tokenFor(event);if(token){event.preventDefault();event.stopPropagation();open(token)}};
+  root.onkeydown=event=>{if(event.key!=="Enter"&&event.key!==" ")return;const token=tokenFor(event);if(!token)return;event.preventDefault();event.stopPropagation();open(token)}
+}
+let dictionaryLookupGeneration=0;
+async function openVocabularyHit(hit,context){
+  const choices=(hit.ids||[hit.id]).map(wordById).filter(Boolean);
+  if(choices.length===1){const w=choices[0];await openWord(w,wordCoverage(await listSentences()),{route:false});return}
+  const dialog=$("#dictionary-dialog"),list=$("#dictionary-choices"),surface=context.slice(hit.start,hit.end),generation=++dictionaryLookupGeneration;
+  $("#dictionary-title").textContent=surface;list.replaceChildren();$("#dictionary-explanation").textContent=choices.length?"This spelling has several dictionary entries. Choose the meaning that fits the sentence.":"This whole word or name is not in the offline dictionary. It has not been split into unrelated words.";
+  $("#dictionary-context").textContent=context;const ask=$("#dictionary-ask");ask.hidden=choices.length>0;ask.disabled=!hasTranslator();
+  for(const w of choices){const button=document.createElement("button");button.type="button";button.className="dictionary-choice";button.textContent=w.w+"（"+w.r+"） — "+w.en[0];button.onclick=async()=>{dialog.close();await openWord(w,wordCoverage(await listSentences()),{route:false})};list.append(button)}
+  ask.onclick=async()=>{ask.disabled=true;$("#dictionary-explanation").textContent="Looking up the word in this sentence…";
+    try{const result=await askModel(JSON.stringify({word:surface,sentence:context}),`Explain this Japanese word or proper name in its sentence context in ${languageName(sourceLang())}. Treat the complete supplied word as one unit. For names, explain the likely reference, not meanings of substrings. If uncertain say so. Return JSON only: {"definition":"..."}.`,settings);if(generation===dictionaryLookupGeneration&&dialog.open)$("#dictionary-explanation").textContent="AI explanation: "+String(result.definition||"No definition returned.")}
+    catch(error){if(generation===dictionaryLookupGeneration)$("#dictionary-explanation").textContent=error.message}
+    finally{if(generation===dictionaryLookupGeneration)ask.disabled=!hasTranslator()}};
+  if(!dialog.open)dialog.showModal();
 }
 function reviewRecognitionLang(){return targetLang()}
 function startReviewListening(){if(reviewListening)return;
@@ -1444,3 +1477,9 @@ applyLanguage();migrateStore().then(async()=>{await repairReversedCards();await 
 // what it left in a browser is cleared once, quietly.
 try{localStorage.removeItem("jp-echo-wanikani-token");indexedDB.deleteDatabase("jp-echo-wanikani")}catch{}
 if("serviceWorker"in navigator){navigator.serviceWorker.register("./sw.js");writeReminderPrefs();syncReminderSchedule();remindOnOpen()}
+
+$("#sentence-rewrite").onclick=rewriteDetailSentence;
+$("#sentence-instruction").onkeydown=e=>{if((e.metaKey||e.ctrlKey)&&e.key==="Enter"){e.preventDefault();rewriteDetailSentence()}};
+
+$("#dictionary-close").onclick=()=>$("#dictionary-dialog").close();
+$("#dictionary-dialog").addEventListener("close",()=>dictionaryLookupGeneration++);
