@@ -1,3 +1,4 @@
+import {validateDeckBackup,fetchDeckBackup} from './imports.js';
 import {planMiniSentenceUpgrade,repairMiniImport} from './mini-imports.js';
 import {applyI18n,setDictionary,t} from "./i18n.js";
 import {earliestPair,flipSentence,isReversed,pairLooksSwapped,repairPair} from "./repair.js";
@@ -1435,6 +1436,7 @@ async function repairReversedCards(){
   toast(broken.length===1?"Put 1 sentence the right way round":"Put "+broken.length+" sentences the right way round",6000);
 }
 async function importBackupData(backup){
+ backup=validateDeckBackup(backup);
  await startupCleanup;
  if(backup.title==="Mini Hongo starter library"&&![2,3].includes(backup.starterVersion))throw new Error("This is the old oversized Mini Hongo starter. Use the compact starter from Settings instead.");
  if(!(Number(backup.schemaVersion)>=1&&Number(backup.schemaVersion)<=SCHEMA_VERSION)||!Array.isArray(backup.sentences))throw new Error("Unsupported backup.");
@@ -1458,13 +1460,20 @@ async function cleanupLegacyMiniHongo(){
  await refreshDueBadge();
 }
 async function undoMiniCleanup(){const button=$('#undo-mini-cleanup');button.disabled=true;try{const backup=await readImportRecovery();if(!backup)throw new Error('No cleanup backup is available.');await importBackupData(backup);$('#mini-cleanup-status').textContent='Restored the removed Mini Hongo cards from the recovery copy.'}catch(error){$('#mini-cleanup-status').textContent=error.message}finally{button.disabled=false}}
-async function importMiniHongo(){const button=$("#import-minihongo"),status=$("#import-status");button.disabled=true;status.textContent="Downloading Mini Hongo…";try{const response=await fetch("https://raw.githubusercontent.com/KakkoiDev/minihongo/master/imports/jp-echo.json",{cache:"no-store"});if(!response.ok)throw new Error("Mini Hongo download failed ("+response.status+").");await importBackupData(await response.json())}catch(error){status.textContent=error.message}finally{button.disabled=false}}
+async function importDeckURL(url,button,label='deck'){
+ const status=$("#import-status"),controller=new AbortController(),timer=setTimeout(()=>controller.abort(),30000);button.disabled=true;status.textContent="Downloading "+label+"…";
+ try{await importBackupData(await fetchDeckBackup(url,{signal:controller.signal}))}catch(error){status.textContent=error.message}finally{clearTimeout(timer);button.disabled=false}
+}
+const MINI_DECK_URL="https://raw.githubusercontent.com/KakkoiDev/minihongo/master/imports/jp-echo.json";
+const AI_TEAM_DECK_URL="https://raw.githubusercontent.com/KakkoiDev/nihongo-it-anki/master/imports/agentic-lab-jp-echo.json";
+function importMiniHongo(){return importDeckURL(MINI_DECK_URL,$("#import-minihongo"),"Mini Hongo")}
+
 
 $("#tabs").addEventListener("click",event=>{const tab=event.target.closest(".tab[data-view]");if(tab)showView(tab.dataset.view)});$("#translate").onclick=()=>discussionMode?(discussionTurns.length?replyDiscussion():beginDiscussion()):readingMode?generateReadingMode():performTranslation();$("#english-input").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")(discussionMode?(discussionTurns.length?replyDiscussion():beginDiscussion()):readingMode?generateReadingMode():performTranslation)()};$("#play-pause").onclick=()=>{if(!current)return;if(loop.running){loop.togglePause();return}const policy=$("#voice").value,voice=policy==="random"?voices[Math.floor(Math.random()*voices.length)]:(policy==="default"?voices.find(v=>v.default)||voices[0]:voices[Number(policy)])||null;loop.play(selectedPlainJapanese(),{voice,rate:Number($("#rate").value),lang:targetLang()})};$("#show-english").onchange=()=>{saveSettings();renderSentence()};$("#show-furigana").onchange=()=>{saveSettings();renderSentence()};$("#show-polite").onchange=async()=>{resetSession();saveSettings();if(current&&hasRegisters(itemTarget(current))){current={...current,reviewRegister:$("#show-polite").checked?"polite":"casual",updatedAt:new Date().toISOString()};await saveSentence(current);if(detail?.id===current.id)detail=current}renderSentence()};$("#rate").oninput=()=>{const rate=Number($("#rate").value);$("#rate-value").textContent=rate.toFixed(1)+"×";resetSession();loop.setRate(rate)};$("#settings-button").onclick=()=>$("#settings-dialog").showModal();$("#close-settings").onclick=()=>{saveSettings();$("#settings-dialog").close();renderPracticeNotices();writeReminderPrefs();syncReminderSchedule()};
 $("#remind").onchange=async()=>{const wanted=$("#remind").checked;
   if(wanted&&!await enableReminders()){$("#remind").checked=false;$("#remind-hint").textContent="Notifications are blocked for Echo. Allow them in your browser settings, then turn this on again.";$("#remind-hint").classList.add("error");$("#remind-reach").textContent="";return}
   $("#remind-hint").textContent="Your device asks permission the first time you turn this on.";$("#remind-hint").classList.remove("error");
-  settings.remind=wanted;$("#remind-reach").textContent=wanted?reminderReach():""};$("#export-anki").onclick=()=>exportAnki($("#export-anki"));$("#open-anki").onclick=()=>openAnki();$("#export").onclick=exportHistory;$("#import").onclick=()=>$("#import-file").click();$("#import-file").onchange=event=>importHistory(event.target.files[0]);
+  settings.remind=wanted;$("#remind-reach").textContent=wanted?reminderReach():""};$("#export-anki").onclick=()=>exportAnki($("#export-anki"));$("#open-anki").onclick=()=>openAnki();$("#export").onclick=exportHistory;$("#import").onclick=()=>$("#import-file").click();$("#import-file").onchange=async event=>{await importHistory(event.target.files[0]);event.target.value=""};
 $("#voice-install").onclick=installTargetVoice;$("#voice-manage").onclick=installTargetVoice;$("#settings-swap-langs").onclick=()=>setPair(targetLang(),sourceLang());window.addEventListener("focus",()=>setTimeout(populateVoices,250));document.addEventListener("visibilitychange",()=>{if(!document.hidden)setTimeout(populateVoices,250)});$("#onboard-start").onclick=()=>showView("setup");$("#onboard-restore").onclick=()=>{finishOnboarding();showView("library");$("#import-file").click()};
 $("#setup-next").onclick=()=>{storeTranslator();showSetupStep(2)};
 $("#setup-back").onclick=()=>{if(setupStep===2)return showSetupStep(1);showView(settings.onboarded?"practice":"onboard")};$("#setup-provider").onchange=showSetupFields;$("#setup-save").onclick=saveSetup;$("#setup-skip").onclick=finishOnboarding;
@@ -1549,6 +1558,8 @@ $("#dictionary-dialog").addEventListener("close",()=>dictionaryLookupGeneration+
 window.addEventListener("echo-before-update",()=>saveWorkspace());
 
 $("#import-minihongo").onclick=importMiniHongo;
+$("#import-ai-team").onclick=()=>importDeckURL(AI_TEAM_DECK_URL,$("#import-ai-team"),"AI team sentences");
+$("#import-deck-url").onclick=()=>importDeckURL($("#deck-json-url").value,$("#import-deck-url"));
 
 $('#undo-mini-cleanup').onclick=undoMiniCleanup;
 
