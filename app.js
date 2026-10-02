@@ -1,4 +1,4 @@
-import {repairMiniImport} from './mini-imports.js';
+import {planMiniSentenceUpgrade,repairMiniImport} from './mini-imports.js';
 import {applyI18n,setDictionary,t} from "./i18n.js";
 import {earliestPair,flipSentence,isReversed,pairLooksSwapped,repairPair} from "./repair.js";
 import {DEFAULT_PAIR,LANGUAGES,MORA_MNEMONIC_META,createSentence,replaceSentenceContent,exportBackup,forAnki,hasFurigana,hasRegisters,languageName,mergeSentences,normalizeFurigana,rubyHtml,SCHEMA_VERSION,stripFurigana} from "./core.js";
@@ -1436,12 +1436,13 @@ async function repairReversedCards(){
 }
 async function importBackupData(backup){
  await startupCleanup;
- if(backup.title==="Mini Hongo starter library"&&backup.starterVersion!==2)throw new Error("This is the old oversized Mini Hongo starter. Use the compact starter from Settings instead.");
+ if(backup.title==="Mini Hongo starter library"&&![2,3].includes(backup.starterVersion))throw new Error("This is the old oversized Mini Hongo starter. Use the compact starter from Settings instead.");
  if(!(Number(backup.schemaVersion)>=1&&Number(backup.schemaVersion)<=SCHEMA_VERSION)||!Array.isArray(backup.sentences))throw new Error("Unsupported backup.");
- const before=await listSentences(),merged=mergeSentences(before,backup.sentences),catalogues=mergeCatalogues(importedCatalogues,backup.catalogues);
+ const before=await listSentences(),upgrade=planMiniSentenceUpgrade(before,backup),merged=upgrade.sentences,catalogues=mergeCatalogues(importedCatalogues,backup.catalogues);
+ if(upgrade.removed.length)await saveImportRecovery({schemaVersion:2,sentences:upgrade.removed,catalogues:importedCatalogues,kind:'Minihongo word cards replaced with sentences'},'minihongo-v2-word-cards');
  saveCatalogues(catalogues);try{await replaceAll(merged)}catch(error){saveCatalogues(importedCatalogues);throw error}importedCatalogues=catalogues;applyCatalogues();
  if(Array.isArray(backup.notes))await replaceNotes(mergeNotes(await listNotes().catch(()=>[]),backup.notes));
- const added=merged.length-before.length,message=`Added ${added} sentence(s). ${backup.sentences.length-added} already present; existing progress kept.`;
+ const added=merged.length-before.length+upgrade.removed.length,message=`Added ${added} sentence(s). ${backup.sentences.length-added} already present; existing progress kept.${upgrade.removed.length?` Replaced ${upgrade.removed.length} Mini Hongo word cards with sentences.`:""}`;
  $("#import-status").textContent=message;setStatus(message);refreshDueBadge();await renderHistory();return {added,total:merged.length};
 }
 async function importHistory(file){if(!file)return;try{await importBackupData(JSON.parse(await file.text()))}catch(error){$("#import-status").textContent=error.message||"Import failed.";setStatus(error.message||"Import failed.",true)}}

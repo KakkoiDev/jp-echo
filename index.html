@@ -36,7 +36,7 @@
 window.echoReportError=function(error){
  const panel=document.getElementById('startup-error');
  const message=error?.message||String(error||'Unknown startup error');
- document.getElementById('startup-error-message').textContent='Echo v123: '+message;
+ document.getElementById('startup-error-message').textContent='Echo v124: '+message;
  panel.hidden=false;
 };
 window.addEventListener('error',event=>{if(event.error)window.echoReportError(event.error)});
