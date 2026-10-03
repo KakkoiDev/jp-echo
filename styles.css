@@ -58,6 +58,10 @@ html{background:var(--washi)}
 body{margin:0;min-height:100dvh;font-family:var(--ui);font-size:15px;color:var(--sumi);background-color:var(--washi);background-image:repeating-linear-gradient(90deg,var(--texture) 0 1px,transparent 1px 3px),repeating-linear-gradient(0deg,var(--texture-soft) 0 1px,transparent 1px 4px);-webkit-font-smoothing:antialiased}
 [hidden]{display:none!important}
 button,input,textarea,select{font:inherit;color:inherit}
+/* iOS Safari zooms into any field under 16px when it is tapped and does not
+   zoom back out, which leaves the page panning sideways. On touch screens no
+   field goes below 16px; larger textareas keep their own, more specific size. */
+@media (pointer:coarse){input:not([type=checkbox],[type=radio],[type=range]),select{font-size:16px!important}textarea{font-size:16px}}
 a{color:var(--seal)}
 a:hover{color:var(--seal-deep)}
 ::placeholder{color:var(--disabled-fg);opacity:1}
@@ -76,6 +80,9 @@ h2{margin:0;font-family:var(--display);font-weight:600;font-size:23px;letter-spa
 .icon-button svg{display:block}
 
 main{padding:0 22px calc(94px + env(safe-area-inset-bottom));overflow-x:clip}
+/* The echo ripples reach past the screen edge; clip keeps them from widening
+   the page. Browsers without clip (iOS before 16) need hidden instead. */
+@supports not (overflow-x:clip){@media (max-width:1023px){main{overflow-x:hidden}}}
 #main-view{padding-bottom:calc(12rem + env(safe-area-inset-bottom))}
 body[data-view="session"] main{padding-bottom:calc(7rem + env(safe-area-inset-bottom))}
 .section-title{display:flex;align-items:center;gap:12px;padding:18px 0 0}
