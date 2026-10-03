@@ -1192,19 +1192,26 @@ function showSetupFields(){const provider=$("#setup-provider").value,local=provi
 // means nothing until there is something to translate with.
 let setupStep=1;
 function showSetupStep(step){setupStep=step;
-  $("#setup-step-1").hidden=step!==1;$("#setup-step-2").hidden=step!==2;
+  $("#setup-step-1").hidden=step!==1;$("#setup-step-2").hidden=step!==2;if(step===2)listSentences().then(renderSetupStarter).catch(()=>renderSetupStarter([]));
   $("#setup-step-label").textContent="Step "+step+" of 2";
-  $("#setup-title").textContent=step===1?"One thing first":"Which languages?";
+  $("#setup-title").textContent=step===1?"One thing first":"Your languages";document.querySelector("#setup-view .note-box").hidden=step!==1;
   $("#setup-copy").textContent=step===1
     ?"Echo needs a translator. Pick a service you have an account with and paste its key — it is saved on this device and goes nowhere else."
-    :"What you write in, and what Echo translates into. Both can change later.";
+    :"Write in the language you think in. Echo answers in the one you are learning.";
   $("#setup-next").hidden=step!==1;$("#setup-save").hidden=step!==2;
   $("#setup-skip").hidden=step!==1;}
 function storeTranslator(){const provider=$("#setup-provider").value;
   settings.provider=provider;
   if(provider==="local")settings.localEndpoint=$("#setup-endpoint").value.trim();
   else settings.providerKeys={...(settings.providerKeys||{}),[provider]:$("#setup-key").value.trim()};}
-function saveSetup(){storeTranslator();finishOnboarding()}
+// The import runs after Start practising and is awaited before routing. If it
+// fails, onboarding still finishes: the learner is told, and Settings offers it.
+async function saveSetup(){storeTranslator();
+  if(!$("#setup-starter").hidden&&$("#setup-starter-add").checked){const button=$("#setup-save");button.disabled=true;$("#setup-starter-status").textContent="Adding the starter sentences…";
+    try{await addStarter();$("#setup-starter-status").textContent=""}
+    catch{toast("The ミニ本語 Minihongo starter could not be downloaded. You can add it later in Settings → Your sentences.",7000);$("#setup-starter-status").textContent=""}
+    finally{button.disabled=false}}
+  finishOnboarding()}
 function finishOnboarding(){settings.onboarded=true;storePreference("jp-echo-settings",JSON.stringify(settings));resetSettingsForm();showView("practice")}
 async function performTranslation(){const english=$("#english-input").value.trim();if(!english)return setStatus(t("Enter a sentence in {language}.",{language:t(languageName(inputLang))}),true);const provider=defaultProvider();if(!hasTranslator())return showView("setup");
   // Swap the label's text, not the button's: textContent would take the arrow
@@ -1509,13 +1516,13 @@ async function repairReversedCards(){
 async function importBackupData(backup){
  backup=validateDeckBackup(backup);
  await startupCleanup;
- if(backup.title==="Mini Hongo starter library"&&![2,3].includes(backup.starterVersion))throw new Error("This is the old oversized Mini Hongo starter. Use the compact starter from Settings instead.");
+ if(backup.title==="Mini Hongo starter library"&&![2,3].includes(backup.starterVersion))throw new Error("This is the old oversized Minihongo starter. Use the compact starter from Settings instead.");
  if(!(Number(backup.schemaVersion)>=1&&Number(backup.schemaVersion)<=SCHEMA_VERSION)||!Array.isArray(backup.sentences))throw new Error("Unsupported backup.");
  const before=await listSentences(),upgrade=planMiniSentenceUpgrade(before,backup),merged=upgrade.sentences,catalogues=mergeCatalogues(importedCatalogues,backup.catalogues);
  if(upgrade.removed.length)await saveImportRecovery({schemaVersion:2,sentences:upgrade.removed,catalogues:importedCatalogues,kind:'Minihongo word cards replaced with sentences'},'minihongo-v2-word-cards');
  saveCatalogues(catalogues);try{await replaceAll(merged)}catch(error){saveCatalogues(importedCatalogues);throw error}markBackupDirty();importedCatalogues=catalogues;applyCatalogues();
  if(Array.isArray(backup.notes))await replaceNotes(mergeNotes(await listNotes().catch(()=>[]),backup.notes));
- const added=merged.length-before.length+upgrade.removed.length,message=`Added ${added} sentence(s). ${backup.sentences.length-added} already present; existing progress kept.${upgrade.removed.length?` Replaced ${upgrade.removed.length} Mini Hongo word cards with sentences.`:""}`;
+ const added=merged.length-before.length+upgrade.removed.length,message=`Added ${added} sentence(s). ${backup.sentences.length-added} already present; existing progress kept.${upgrade.removed.length?` Replaced ${upgrade.removed.length} Minihongo word cards with sentences.`:""}`;
  setStatus(message);refreshDueBadge();await renderHistory();return {added,total:merged.length};
 }
 // Import — a deck or a backup, from a file or a URL — is one merge. Messages go
@@ -1537,14 +1544,14 @@ async function cleanupLegacyMiniHongo(){
  const marker='jp-echo-minihongo-cleanup-v2';
  if(localStorage.getItem(marker)!=='done'){
   const plan=await repairMiniImport(await listSentences(),importedCatalogues,{archive:saveImportRecovery,replace:(kept,removed)=>removeArchivedMiniCards(kept,removed,importedCatalogues),saveCatalogues});
-  if(plan.changed){importedCatalogues=plan.catalogues;applyCatalogues();storePreference('jp-echo-minihongo-cleanup-message',`Removed ${plan.removed.length} old Mini Hongo cards. Kept ${plan.kept.length} existing sentences.`)}
+  if(plan.changed){importedCatalogues=plan.catalogues;applyCatalogues();storePreference('jp-echo-minihongo-cleanup-message',`Removed ${plan.removed.length} old Minihongo cards. Kept ${plan.kept.length} existing sentences.`)}
   storePreference(marker,'done');
  }
  $('#mini-cleanup-status').textContent=localStorage.getItem('jp-echo-minihongo-cleanup-message')||'';
  $('#undo-mini-cleanup').hidden=!(await readImportRecovery());
  await refreshDueBadge();
 }
-async function undoMiniCleanup(){const button=$('#undo-mini-cleanup');button.disabled=true;try{const backup=await readImportRecovery();if(!backup)throw new Error('No cleanup backup is available.');await importBackupData(backup);$('#mini-cleanup-status').textContent='Restored the removed Mini Hongo cards from the recovery copy.'}catch(error){$('#mini-cleanup-status').textContent=error.message}finally{button.disabled=false}}
+async function undoMiniCleanup(){const button=$('#undo-mini-cleanup');button.disabled=true;try{const backup=await readImportRecovery();if(!backup)throw new Error('No cleanup backup is available.');await importBackupData(backup);$('#mini-cleanup-status').textContent='Restored the removed Minihongo cards from the recovery copy.'}catch(error){$('#mini-cleanup-status').textContent=error.message}finally{button.disabled=false}}
 // Automatic backup to a secret GitHub gist (see gist-backup.js). The token,
 // gist URL and the on/off switch are settings (stripped from every backup);
 // the bookkeeping — dirty, last attempt, last success, last error — is its
@@ -1613,17 +1620,25 @@ function markModeUsed(mode){if(modesUsed()[mode])return;storePreference(MODES_US
 function renderWelcomeModes(){const used=modesUsed();$("#welcome-discussion").hidden=!!used.discussion;$("#welcome-reading").hidden=!!used.reading;$("#welcome-modes").hidden=!!(used.discussion&&used.reading)}
 // "Your sentences with it  2": the count sits at the end of the rule heading.
 function sheetCount(head,n){let count=head.querySelector(".count");if(!count){count=el("span","count","");head.append(count)}count.textContent=String(n);head.classList.add("counted")}
-// Echo has one built-in deck, the Mini Hongo starter, offered only to seed an
+// Echo has one built-in deck, the ミニ本語 Minihongo starter, offered only to seed an
 // empty or young library. Everything else in a library is the learner's own.
 const MINI_DECK_URL="https://raw.githubusercontent.com/KakkoiDev/minihongo/master/imports/jp-echo.json";
+// The starter import, shared by Settings, the empty Library and onboarding:
+// download, then the usual merge (duplicates skipped). Resolves {added,total}.
+async function addStarter(){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),30000);
+  try{return await importBackupData(await fetchDeckBackup(MINI_DECK_URL,{signal:controller.signal}))}finally{clearTimeout(timer)}}
 async function seedStarter(button,status=$("#import-status")){
- const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),30000),label=button.textContent;button.disabled=true;button.textContent="Adding…";status.textContent="Downloading the Mini Hongo starter…";
- try{const {added}=await importBackupData(await fetchDeckBackup(MINI_DECK_URL,{signal:controller.signal}));status.textContent=added?`Added ${added} starter sentences. They are yours now — practise, edit or delete any of them.`:"The starter sentences are already in your library."}
+ const label=button.textContent;button.disabled=true;button.textContent="Adding…";status.textContent="Downloading the ミニ本語 Minihongo starter…";
+ try{const {added}=await addStarter();status.textContent=added?`Added ${added} starter sentences. They are yours now — practise, edit or delete any of them.`:"The starter sentences are already in your library."}
  catch(error){status.textContent=error.message;button.disabled=false;button.textContent=label}
- finally{clearTimeout(timer);renderStarterOffer(await listSentences())}
+ finally{renderStarterOffer(await listSentences())}
 }
+// Onboarding step 2: the starter, unticked, for a Japanese target only and
+// only when it is not already in the library.
+let starterSeeded=false;
+function renderSetupStarter(all){if(all)starterSeeded=isSeeded(all);const show=$("#setup-target")?.value==="ja"&&!starterSeeded;$("#setup-starter").hidden=!show;if(!show)$("#setup-starter-add").checked=false}
 function renderStarterOffer(all){
- const ja=targetLang()==="ja",seeded=isSeeded(all);
+ const ja=targetLang()==="ja",seeded=isSeeded(all);renderSetupStarter(all);
  $("#starter-row").hidden=!ja;$("#starter-link").hidden=!ja;
  const add=$("#import-minihongo");add.disabled=seeded;add.textContent=seeded?"Added":"Add";
  for(const id of ["#empty-starter","#empty-starter-copy"])$(id).hidden=!ja||seeded;
@@ -1686,7 +1701,7 @@ $("#start-review").onclick=startReview;$("#review-practice").onclick=()=>showVie
 $("#settings-button").onclick=openSettings;$("#settings-nav").onclick=openSettings;$("#dismiss-settings").onclick=cancelSettings;$("#cancel-settings").onclick=cancelSettings;$("#install-app").onclick=installApp;$("#settings-dialog").addEventListener("cancel",event=>{event.preventDefault();cancelSettings()});$("#settings-dialog").onclick=event=>{if(event.target===$("#settings-dialog"))cancelSettings()};$("#voice").onchange=resetSession;$("#discussion-voice-ai").onchange=()=>discussionLoop.stop();$("#discussion-voice-user").onchange=()=>discussionLoop.stop();$("#provider").onchange=showProviderConfig;$("#source-lang").onchange=()=>setPair($("#source-lang").value,targetLang());
 $("#target-lang").onchange=()=>setPair(sourceLang(),$("#target-lang").value);
 $("#setup-source").onchange=()=>setPair($("#setup-source").value,targetLang());
-$("#setup-target").onchange=()=>setPair(sourceLang(),$("#setup-target").value);
+$("#setup-target").onchange=()=>{setPair(sourceLang(),$("#setup-target").value);renderSetupStarter()};
 $("#swap-langs").onclick=()=>{setInputLang(enteringTarget()?sourceLang():targetLang());toast("Typing in "+languageName(inputLang))};for(const swap of document.querySelectorAll("[data-input-swap]"))swap.onclick=()=>{setInputLang(enteringTarget()?sourceLang():targetLang());toast("Typing in "+languageName(inputLang));const field=$("#"+swap.dataset.inputSwap);if(field)field.focus()};
 $("#theme").onchange=()=>applyTheme($("#theme").value);$("#motion").onchange=()=>applyMotion($("#motion").value);window.addEventListener("beforeinstallprompt",event=>{event.preventDefault();installPrompt=event;updateInstallUI()});window.addEventListener("appinstalled",()=>{installPrompt=null;updateInstallUI()});
 $("#history-search").oninput=()=>{$("#clear-history-search").hidden=!$("#history-search").value;saveWorkspace();syncRoute({},true);renderHistory()};$("#clear-history-search").onclick=()=>{$("#history-search").value="";$("#clear-history-search").hidden=true;$("#history-search").focus();renderHistory()};for(const id of ["#history-filter","#history-order","#history-direction"]){$(id).onchange=()=>{settings.historyFilter=$("#history-filter").value;settings.historyOrder=$("#history-order").value;settings.historyDirection=$("#history-direction").value;try{storePreference("jp-echo-settings",JSON.stringify(settings))}catch{}syncRoute({},true);renderHistory()}}
@@ -1713,7 +1728,7 @@ async function restoreRoute(){
   await applyRoute();window.echoRouteReady=true;
 }
 window.addEventListener("popstate",()=>applyRoute());
-applyLanguage();startupCleanup=migrateStore().then(()=>cleanupLegacyMiniHongo());startupCleanup.then(async()=>{await repairReversedCards();await restoreRoute();maybeAutoBackup("open").catch(()=>{})}).catch(error=>{window.echoReportError?.(error);setStatus('Mini Hongo cleanup could not finish: '+error.message,true);restoreRoute().catch(error=>window.echoReportError?.(error))});refreshDueBadge();setupRecognition();updateInstallUI();
+applyLanguage();startupCleanup=migrateStore().then(()=>cleanupLegacyMiniHongo());startupCleanup.then(async()=>{await repairReversedCards();await restoreRoute();maybeAutoBackup("open").catch(()=>{})}).catch(error=>{window.echoReportError?.(error);setStatus('Minihongo cleanup could not finish: '+error.message,true);restoreRoute().catch(error=>window.echoReportError?.(error))});refreshDueBadge();setupRecognition();updateInstallUI();
 // The in-app WaniKani sync is gone (the pull tool feeds the stories instead);
 // what it left in a browser is cleared once, quietly.
 try{localStorage.removeItem("jp-echo-wanikani-token");indexedDB.deleteDatabase("jp-echo-wanikani")}catch{}

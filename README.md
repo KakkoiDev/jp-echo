@@ -152,7 +152,7 @@ written so an AI agent can produce a valid deck from it, with a complete
 [example deck](decks/example-deck.json) and a [JSON Schema](decks/deck.schema.json).
 Echo bundles no decks. The one built-in option is a seed:
 Settings → Your sentences → **Starter sentences**, also offered on an empty
-Library, adds Mini Hongo's 262 example sentences from
+Library, adds ミニ本語 Minihongo's 262 example sentences from
 `KakkoiDev/minihongo/master/imports/jp-echo.json` (Japanese targets only).
 Once added they are ordinary sentences. The bundle may include
 `catalogues.words` and `catalogues.grammar` (`minihongo:` IDs), which are
@@ -164,8 +164,8 @@ The service worker installs and serves a complete app version together. It serve
 
 Starter-import JP Core revision: ee9bfdb8a5b3fc38903ef6fcbcd50fa65d75bdf3.
 
-### Compact Mini Hongo starter (v2)
+### Compact ミニ本語 Minihongo starter (v2)
 
 The starter contains 274 cards: the 231 main vocabulary entries as words/glosses, plus one short authored example per each of 43 grammar points. Advanced vocabulary, compounds, expressions, stories and extra examples are excluded.
 
-On the first v119 launch, Echo archives and removes only recognizable v1 Minihongo import cards, restores the personal library, and strips imported-only dictionary links. Existing personal IDs, content and review progress remain intact. Settings shows the removed/kept counts and an **Undo Mini Hongo cleanup** recovery action. No new starter cards are added during cleanup; import the compact bundle separately when wanted. Old oversized starter files are rejected.
+On the first v119 launch, Echo archives and removes only recognizable v1 Minihongo import cards, restores the personal library, and strips imported-only dictionary links. Existing personal IDs, content and review progress remain intact. Settings shows the removed/kept counts and an **Undo Minihongo cleanup** recovery action. No new starter cards are added during cleanup; import the compact bundle separately when wanted. Old oversized starter files are rejected.

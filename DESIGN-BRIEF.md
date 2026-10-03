@@ -127,10 +127,10 @@ what is still safe ("Your sentence is still in the box.").
 - **Decks import by file or URL.** Settings → Your sentences → **Import**:
   *Choose file* (a deck or a backup) or a URL field with *Import URL*, and a
   link to `DECK-FORMAT.md`. Echo bundles no decks; the one built-in option is
-  the **Mini Hongo starter** (262 sentences, Japanese only), offered in
+  the **ミニ本語 Minihongo starter** (262 sentences, Japanese only), offered in
   Settings and on the empty Library and withdrawn once added. Imports merge.
 - **Empty Library** is now a panel: "Your library is empty", a primary "Write a
-  sentence", then plain "Add 262 Mini Hongo starter sentences" and "Import a deck".
+  sentence", then plain "Add 262 ミニ本語 Minihongo starter sentences" and "Import a deck".
 - **Grammar.** The old "Find grammar / Refresh grammar" button that appeared
   under every sentence everywhere is gone. Grammar now shows in **one place
   that may ask** — the sentence page ("Explain the grammar", a quiet link with

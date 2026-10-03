@@ -129,7 +129,7 @@ Before considering the change complete:
   a deck or a backup file, or a deck URL, and merges. The format is
   `DECK-FORMAT.md` (with `decks/example-deck.json` and `decks/deck.schema.json`),
   held to the importer by `test/deck-format.test.js` — change the importer and
-  the page together. The only built-in content is the optional Mini Hongo
+  the page together. The only built-in content is the optional ミニ本語 Minihongo
   starter seed (Japanese only). Do not add one-click buttons for third-party
   decks.
 - **Grammar UI has two hosts and one ask.** Chips and the "Explain the

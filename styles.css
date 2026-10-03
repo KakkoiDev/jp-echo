@@ -1155,3 +1155,12 @@ html.motion-off #review-progress-bar { transition: none; }
 .sheet-more[open]>summary{border-bottom:1px solid var(--rule)}
 /* Nothing written yet: no empty collapsed row. */
 .sheet-more:not(:has(> :not(summary):not([hidden]))){display:none}
+
+/* Onboarding starter offer (design §7): one panel label, unticked. */
+.starter-offer{display:flex;align-items:flex-start;gap:14px;margin-top:22px;padding:18px;border:1px solid var(--hairline);border-radius:4px;background:var(--panel);cursor:pointer}
+.starter-offer input{flex-shrink:0;width:22px;height:22px;margin:2px 0 0;accent-color:var(--seal)}
+.starter-offer-copy{display:flex;flex-direction:column;gap:6px}
+.starter-offer-copy strong{font-family:var(--display);font-weight:500;font-size:17px;color:var(--sumi)}
+.starter-offer-copy>span{font-size:13px;line-height:1.55;color:var(--ink-soft)}
+.starter-offer-copy a{margin-top:4px;font-size:13px;color:var(--seal-deep)}
+.starter-offer[hidden]{display:none}

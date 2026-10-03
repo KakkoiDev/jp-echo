@@ -25,7 +25,7 @@ regression test in `test/audit-regressions.test.js` or `test/ux-library.test.js`
 
 - **Imports simplified.** One **Import** takes a deck or backup file, or a
   deck URL (GitHub `blob` links become raw links). Removed: the one-click
-  AI-team and example-deck buttons. Kept: one optional **Mini Hongo starter**
+  AI-team and example-deck buttons. Kept: one optional **ミニ本語 Minihongo starter**
   seed (Settings, and on an empty Library; Japanese only; withdrawn once
   seeded). The format is now a tested contract: `DECK-FORMAT.md`,
   `decks/example-deck.json`, `decks/deck.schema.json` (replacing `IMPORTS.md`

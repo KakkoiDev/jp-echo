@@ -103,3 +103,20 @@ test("learn mode: arrow keys step like the footer, and typing stays typing", () 
   assert.match(keys, /querySelector\(event\.key==="ArrowLeft"\?"\.nav-prev":"\.nav-next"\)/);
   assert.match(keys, /if\(!nav\|\|nav\.hidden\)return/, "only in learn mode");
 });
+
+test("onboarding offers the starter, unticked, for Japanese only, and awaits it", () => {
+  assert.match(html, /<label id="setup-starter" class="starter-offer" hidden><input id="setup-starter-add" type="checkbox">/);
+  assert.doesNotMatch(html, /id="setup-starter-add"[^>]*checked/, "unticked by default");
+  assert.match(html, /The <span lang="ja">ミニ本語<\/span> Minihongo starter/);
+  assert.match(app, /const show=\$\("#setup-target"\)\?\.value==="ja"&&!starterSeeded/);
+  const save = app.slice(app.indexOf("async function saveSetup"), app.indexOf("function finishOnboarding"));
+  assert.match(save, /try\{await addStarter\(\)/, "awaited before routing");
+  assert.match(save, /finishOnboarding\(\)\}\s*$/, "onboarding finishes even if the download fails");
+  assert.match(app, /async function addStarter\(\)\{[\s\S]*importBackupData\(await fetchDeckBackup\(MINI_DECK_URL/, "one import path for every entry point");
+});
+
+test("the starter is named ミニ本語 Minihongo in everything a learner reads", () => {
+  assert.doesNotMatch(html, /Mini Hongo/);
+  const visible = [...app.matchAll(/"[^"\n]*Mini Hongo[^"\n]*"/g)].map(m => m[0]);
+  assert.deepEqual(visible, ['"Mini Hongo starter library"'], "only the deck file's own title (data) keeps the old spelling");
+});
