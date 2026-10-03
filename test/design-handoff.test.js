@@ -64,3 +64,20 @@ test("the due line names the next card and what it will ask", async () => {
   s = recordReviewMode(recordReviewMode(s, "ok"), "ok");
   assert.equal(dueLine(s, "in 3 days"), "Due in 3 days, as a writing card — you will see the meaning and type the Japanese.");
 });
+
+test("practice: empty states carry discoverability; the mode switch stays quiet", () => {
+  assert.match(html, /id="welcome-modes"[\s\S]*Or practise another way[\s\S]*id="welcome-discussion" class="library-tool two-line"[\s\S]*id="welcome-reading" class="library-tool two-line"/);
+  assert.match(app, /function renderWelcomeModes\(\)\{const used=modesUsed\(\);\$\("#welcome-discussion"\)\.hidden=!!used\.discussion/);
+  assert.match(app, /discussionTurns=\[\{role:"ai",\.\.\.out\.ai\}\];renderDiscussion\(\);playDiscussion\(\);markModeUsed\("discussion"\)/, "a row goes after the mode is really used");
+  assert.match(app, /renderReading\(\);\$\("#reading-status"\)\.textContent="";markModeUsed\("reading"\)/);
+});
+
+test("discussion: starter scenes fill the box and never send", () => {
+  const scenes = [...html.matchAll(/data-scene="([^"]+)"/g)].map(m => m[1]);
+  assert.deepEqual(scenes, ["Ordering at a café", "Checking in at a hotel", "Small talk with a neighbour", "Asking a colleague for help"]);
+  const wire = app.slice(app.indexOf('document.querySelectorAll("#discussion-scenes [data-scene]")'), app.indexOf("\n", app.indexOf('document.querySelectorAll("#discussion-scenes [data-scene]")')));
+  assert.match(wire, /input\.value=scene\.dataset\.scene/);
+  assert.doesNotMatch(wire, /beginDiscussion|replyDiscussion|\.click\(\)/, "filling is not sending");
+  assert.match(app, /function composerLabel\(\)\{return discussionMode\?\(discussionTurns\.length\?"Reply to the conversation":"Describe the conversation"\)/);
+  assert.doesNotMatch(css, /reply to the conversation"\}/, "no CSS-appended second label");
+});

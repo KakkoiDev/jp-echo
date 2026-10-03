@@ -931,7 +931,7 @@ html.motion-off #review-progress-bar { transition: none; }
 .practice-mode button{position:relative;border:0;background:transparent;padding:.55rem .15rem .65rem;color:var(--ink-muted);font-size:.86rem;letter-spacing:.04em}
 .practice-mode button[aria-selected="true"]{color:var(--sumi);font-weight:500}
 .practice-mode button[aria-selected="true"]::after{content:"";position:absolute;left:20%;right:20%;bottom:-1px;height:2px;background:var(--seal)}
-#discussion{max-width:44rem;margin:0 auto;padding:1rem;padding-bottom:7rem}
+#discussion{max-width:44rem;margin:0 auto;padding:1rem;padding-bottom:calc(14rem + env(safe-area-inset-bottom))}
 #discussion textarea{width:100%;box-sizing:border-box}
 .discussion-turns{list-style:none;margin:1rem 0;padding:0;display:flex;flex-direction:column;gap:.7rem}
 .discussion-turn{display:flex;width:100%;padding:0;border:0}
@@ -945,9 +945,9 @@ html.motion-off #review-progress-bar { transition: none; }
 .discussion-message-actions button{font-size:.75rem;padding:.2rem .35rem;opacity:.65}
 .discussion-controls{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;margin:.8rem 0}
 .discussion-controls #discussion-loop-state{flex-basis:100%;margin:0}
-@media(max-width:480px){#discussion{padding:.7rem .7rem 7rem}.discussion-bubble{max-width:88%}}
+@media(max-width:480px){#discussion{padding:.7rem .7rem calc(14rem + env(safe-area-inset-bottom))}.discussion-bubble{max-width:88%}}
 
-.discussion-dock .composer>label::after{content:" — reply to the conversation"}
+
 
 /* Reading is paper, not a second app: sentences reuse Echo's quiet surfaces. */
 .reading-head{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin:1.4rem 0 1rem}
@@ -1116,3 +1116,28 @@ html.motion-off #review-progress-bar { transition: none; }
   .text-danger{align-self:flex-start;margin:14px 0 0;padding:0;font-size:13px}
   .sentence-aside .collapse-meta{display:none}.sentence-aside .collapse-chevron{margin-left:auto}
 }
+
+/* Practice empty states (design §2): the quiet mode switch stays; the empty
+   states carry discoverability. Rows reuse .library-tool. */
+.welcome-modes{position:relative;display:flex;flex-direction:column;margin-top:28px}
+.welcome-modes .overline{margin-bottom:2px}
+.library-tool.two-line{height:auto;min-height:60px;margin-top:0;padding:8px 0;border-bottom:1px solid var(--rule)}
+.library-tool.two-line:last-child{border-bottom:0}
+.library-tool.two-line .library-tool-label{display:flex;flex-direction:column;gap:2px}
+.library-tool.two-line strong{font-family:var(--ui);font-weight:500;font-size:15px;color:var(--sumi)}
+.library-tool.two-line .library-tool-label span{font-size:13px;line-height:1.45;color:var(--ink-soft)}
+.mode-intro{display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding-top:10px}
+.mode-intro-title{font-family:var(--display);font-weight:600;font-size:22px;line-height:1.35}
+.mode-intro .mode-hint{margin:0}.mode-intro .overline{margin-top:10px}.mode-intro .chips{margin-top:0}.mode-intro .hint{margin:0}
+.mode-intro .chips button{white-space:normal;text-align:left;height:auto;min-height:36px}
+.side-skill-mix{display:flex;justify-content:space-between;gap:10px;margin:10px 0 0;font-size:12px;color:var(--ink-muted)}
+.side-skill-mix span:first-child{font-family:var(--display);letter-spacing:.04em}
+@media (min-width:1024px){
+  .welcome-modes{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:470px}
+  .welcome-modes .overline{grid-column:1/-1}
+  .library-tool.two-line{align-items:flex-start;padding:16px;border:1px solid var(--hairline);border-radius:4px;background:var(--panel)}
+  .library-tool.two-line:last-child{border-bottom:1px solid var(--hairline)}
+  .library-tool.two-line>svg{display:none}
+  .library-tool.two-line[hidden]{display:none}
+}
+.library-tool[hidden]{display:none}
