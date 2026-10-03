@@ -139,7 +139,12 @@ Before considering the change complete:
   by the shadowing loop, not graded in review.
 - **Untrusted text never reaches markup unescaped.** Language codes go through
   `safeLanguage`; imported codes must be on `LANGUAGES`. Credentials of every
-  kind are stripped in `exportBackup`.
+  kind are stripped in `exportBackup` — provider keys, speech keys, the GitHub
+  gist token and the gist URL. Add any new credential there, with a test.
+- **Gist backup is one document.** `buildBackup()` is the only producer; Export
+  downloads it and the gist holds it. Writes that change a backup go through
+  the `saveSentence` / `deleteSentence` / note wrappers in `app.js` (which call
+  `markBackupDirty`), never straight to `db.js` or `notes.js`.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

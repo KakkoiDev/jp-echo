@@ -310,8 +310,9 @@ export function forAnki(sentence) {
 
 export function exportBackup(sentences, preferences = {}, notes = []) {
   // Every credential the app stores. A backup is a file people share and
-  // re-upload; none of these may ever be in it.
-  const {apiKey, providerKeys, speechKeys, ...safe} = preferences;
+  // re-upload — and the gist backup uploads it — so none of these may ever be
+  // in it. The gist URL is left out too: anyone holding it can read the library.
+  const {apiKey, providerKeys, speechKeys, gistToken, gistUrl, ...safe} = preferences;
   return {schemaVersion:SCHEMA_VERSION,exportedAt:new Date().toISOString(),sentences,preferences:safe,notes};
 }
 

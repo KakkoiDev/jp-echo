@@ -4,7 +4,8 @@ import {applyI18n,setDictionary,t} from "./i18n.js";
 import {earliestPair,flipSentence,isReversed,pairLooksSwapped,repairPair} from "./repair.js";
 import {DEFAULT_PAIR,LANGUAGES,safeLanguage,MORA_MNEMONIC_META,createSentence,replaceSentenceContent,exportBackup,forAnki,hasFurigana,hasRegisters,languageName,mergeSentences,normalizeFurigana,rubyHtml,SCHEMA_VERSION,stripFurigana} from "./core.js";
 import {isExactMatch,markAttempt,markTarget} from "./diff.js";
-import {removeArchivedMiniCards,readImportRecovery,saveImportRecovery,deleteSentence,getSentence,listSentences,migrateStore,replaceAll,saveSentence as persistSentence} from "./db.js";
+import {removeArchivedMiniCards,readImportRecovery,saveImportRecovery,deleteSentence as dbDeleteSentence,getSentence,listSentences,migrateStore,replaceAll,saveSentence as persistSentence} from "./db.js";
+import {MIN_INTERVAL_MS,QUIET_MS,downloadBackup,parseGistId,shouldAutoBackup,uploadBackup} from "./gist-backup.js";
 import {analyzeSentenceGrammar,askModel,rewriteSentence,adjustNote,carries,compose,composeFromIntent,PROVIDER_DEFAULTS,tagGrammar,translate,discuss,generateReading,writeNotes,writeWordNote,transcribeAudio} from "./api.js";
 import {setImportedGrammar,byLevel as grammarByLevel,cleanTags as grammarTags,coverage as grammarCoverage,hasGrammar,isTagged,learned as grammarLearned,LEVELS as GRAMMAR_LEVELS,point as grammarPoint,POINTS as GRAMMAR_POINTS,summarise as grammarSummarise,untagged as untaggedSentences} from "./grammar.js";
 import {japaneseVoices,recognitionFactory,ShadowLoop,ConversationLoop} from "./speech.js";
@@ -12,7 +13,7 @@ import {STORIES} from "./stories.js";
 import {coverage as kanjiCoverage,facts as kanjiFacts,jlptBands as kanjiBands,learned as kanjiLearned,LEVEL_LABELS,levelOf,nextUnmet,sentenceKanji,TOTAL as KANJI_TOTAL} from "./kanji.js";
 import {searchGrammar,searchKanji,searchWords} from "./lookup.js";
 import {setImportedWords,bands as wordBands,carries as carriesWord,coverage as wordCoverage,kindOf,learned as wordLearned,levelOf as wordLevel,marks as wordMarks,sentenceWords,wordSpans,TOTAL as WORD_TOTAL,word as wordById} from "./words.js";
-import {deleteNote,forBackup,getNote,listNotes,makeNote,mergeNotes,noteKey,putNote,replaceNotes} from "./notes.js";
+import {deleteNote as dbDeleteNote,forBackup,getNote,listNotes,makeNote,mergeNotes,noteKey,putNote as dbPutNote,replaceNotes as dbReplaceNotes} from "./notes.js";
 import {downloadAnkiDeck} from "./anki-export.js";
 import {dueSentences,ensureSchedule,isDue,reviewSentence} from "./srs.js";
 import {ensureReviewTrack,recordReviewMode,reviewMode,reviewModeMeta} from "./review-modes.js";
@@ -29,8 +30,14 @@ async function saveSentence(sentence){
   const texts=[sentence.target,sentence.casualTarget,sentence.politeTarget].filter(Boolean).map(stripFurigana);
   const analyses=texts.map(text=>grammarAnalysisCache.get(text)||(sentence.grammarAnalysis||[]).find(a=>a.text===text)).filter(Boolean);
   if(analyses.length){sentence={...sentence,grammarAnalysis:[...new Map(analyses.map(a=>[a.text,a])).values()],grammar:grammarTags([...(sentence.grammar||[]),...analyses.flatMap(a=>a.grammar)])}}
-  return persistSentence(sentence);
+  const saved=await persistSentence(sentence);markBackupDirty();return saved;
 }
+// Every write that changes what a backup would contain goes through one of
+// these, so the gist backup knows there is something new to upload.
+async function deleteSentence(id){const done=await dbDeleteSentence(id);markBackupDirty();return done}
+async function putNote(...args){const done=await dbPutNote(...args);markBackupDirty();return done}
+async function deleteNote(...args){const done=await dbDeleteNote(...args);markBackupDirty();return done}
+async function replaceNotes(...args){const done=await dbReplaceNotes(...args);markBackupDirty();return done}
 const $=selector=>document.querySelector(selector);
 try{const p=new URLSearchParams(location.search).get("echo-route")||sessionStorage.getItem("echo-route");if(p){sessionStorage.removeItem("echo-route");history.replaceState({echo:true},"",p)}}catch{}
 // Preferences must not prevent the app from opening its IndexedDB library.
@@ -129,8 +136,10 @@ function applyTheme(theme=settings.theme||"system"){document.documentElement.dat
   if(theme==="system"){metas[0].content="#F3F0E7";if(metas[1])metas[1].content="#191712"}
   else for(const meta of metas)meta.content=dark?"#191712":"#F3F0E7"}
 function showProviderConfig(){const provider=$("#provider").value;document.querySelectorAll(".provider-config").forEach(node=>node.hidden=node.dataset.provider!==provider)}
-function saveSettings(){settings.provider=$("#provider").value;settings.speechProvider=$("#speech-provider").value;settings.speechKeys={groq:$("#groq-speech-key").value.trim()};settings.providerKeys={deepseek:$("#deepseek-key").value.trim(),google:$("#google-key").value.trim(),openai:$("#openai-key").value.trim(),anthropic:$("#anthropic-key").value.trim()};settings.providerModels={deepseek:$("#deepseek-model").value.trim(),google:$("#google-model").value.trim(),openai:$("#openai-model").value.trim(),anthropic:$("#anthropic-model").value.trim(),local:$("#local-model").value.trim()};settings.localEndpoint=$("#local-endpoint").value.trim();settings.proxyUrl=$("#proxy-url").value.trim();settings.theme=$("#theme").value;settings.motion=$("#motion").value;settings.voice=$("#voice").value;settings.discussionVoiceAI=$("#discussion-voice-ai").value;settings.discussionVoiceUser=$("#discussion-voice-user").value;settings.rate=Number($("#rate").value);settings.showEnglish=$("#show-english").checked;settings.showFurigana=$("#show-furigana").checked;settings.showPolite=$("#show-polite").checked;settings.autoTag=$("#autotag").checked;settings.remindTime=$("#remind-time").value;storePreference("jp-echo-settings",JSON.stringify(settings));applyTheme();applyMotion()}
-function resetSettingsForm(){const keys=settings.providerKeys||{},models=settings.providerModels||{};$("#provider").value=defaultProvider();$("#speech-provider").value=settings.speechProvider||"auto";$("#groq-speech-key").value=settings.speechKeys?.groq||"";$("#deepseek-key").value=keys.deepseek||settings.apiKey||"";$("#google-key").value=keys.google||"";$("#openai-key").value=keys.openai||"";$("#anthropic-key").value=keys.anthropic||"";for(const provider of Object.keys(PROVIDER_DEFAULTS))$("#"+provider+"-model").value=models[provider]||PROVIDER_DEFAULTS[provider];$("#local-endpoint").value=settings.localEndpoint||"http://localhost:11434/v1/chat/completions";$("#proxy-url").value=settings.proxyUrl||"";$("#theme").value=settings.theme||"system";$("#motion").value=settings.motion||"system";$("#autotag").checked=!!settings.autoTag;$("#remind").checked=!!settings.remind;$("#remind-time").value=settings.remindTime||DEFAULT_TIME;$("#remind-reach").textContent=settings.remind?reminderReach():"";$("#voice").value=settings.voice||"default";$("#discussion-voice-ai").value=settings.discussionVoiceAI||"default";$("#discussion-voice-user").value=settings.discussionVoiceUser||"default";$("#rate").value=settings.rate||1;$("#rate-value").textContent=Number($("#rate").value).toFixed(1)+"×";showProviderConfig()}
+function saveSettings(){settings.provider=$("#provider").value;settings.speechProvider=$("#speech-provider").value;settings.speechKeys={groq:$("#groq-speech-key").value.trim()};settings.providerKeys={deepseek:$("#deepseek-key").value.trim(),google:$("#google-key").value.trim(),openai:$("#openai-key").value.trim(),anthropic:$("#anthropic-key").value.trim()};settings.providerModels={deepseek:$("#deepseek-model").value.trim(),google:$("#google-model").value.trim(),openai:$("#openai-model").value.trim(),anthropic:$("#anthropic-model").value.trim(),local:$("#local-model").value.trim()};settings.localEndpoint=$("#local-endpoint").value.trim();settings.proxyUrl=$("#proxy-url").value.trim();settings.theme=$("#theme").value;settings.motion=$("#motion").value;settings.voice=$("#voice").value;settings.discussionVoiceAI=$("#discussion-voice-ai").value;settings.discussionVoiceUser=$("#discussion-voice-user").value;settings.rate=Number($("#rate").value);settings.showEnglish=$("#show-english").checked;settings.showFurigana=$("#show-furigana").checked;settings.showPolite=$("#show-polite").checked;settings.autoTag=$("#autotag").checked;settings.remindTime=$("#remind-time").value;const gistWasOn=!!settings.gistAuto;settings.gistAuto=$("#gist-auto").checked;settings.gistToken=$("#gist-token").value.trim();settings.gistUrl=$("#gist-url").value.trim();storePreference("jp-echo-settings",JSON.stringify(settings));applyTheme();applyMotion();
+  // Switching it on backs up everything once, straight away.
+  if(settings.gistAuto&&!gistWasOn){patchGistState({dirty:true,lastChangeAt:0});maybeAutoBackup("open").catch(()=>{})}renderGistStatus()}
+function resetSettingsForm(){const keys=settings.providerKeys||{},models=settings.providerModels||{};$("#provider").value=defaultProvider();$("#speech-provider").value=settings.speechProvider||"auto";$("#groq-speech-key").value=settings.speechKeys?.groq||"";$("#deepseek-key").value=keys.deepseek||settings.apiKey||"";$("#google-key").value=keys.google||"";$("#openai-key").value=keys.openai||"";$("#anthropic-key").value=keys.anthropic||"";for(const provider of Object.keys(PROVIDER_DEFAULTS))$("#"+provider+"-model").value=models[provider]||PROVIDER_DEFAULTS[provider];$("#local-endpoint").value=settings.localEndpoint||"http://localhost:11434/v1/chat/completions";$("#proxy-url").value=settings.proxyUrl||"";$("#theme").value=settings.theme||"system";$("#motion").value=settings.motion||"system";$("#autotag").checked=!!settings.autoTag;$("#remind").checked=!!settings.remind;$("#remind-time").value=settings.remindTime||DEFAULT_TIME;$("#gist-auto").checked=!!settings.gistAuto;$("#gist-token").value=settings.gistToken||"";$("#gist-url").value=settings.gistUrl||"";renderGistStatus();$("#remind-reach").textContent=settings.remind?reminderReach():"";$("#voice").value=settings.voice||"default";$("#discussion-voice-ai").value=settings.discussionVoiceAI||"default";$("#discussion-voice-user").value=settings.discussionVoiceUser||"default";$("#rate").value=settings.rate||1;$("#rate-value").textContent=Number($("#rate").value).toFixed(1)+"×";showProviderConfig()}
 function openSettings(){resetSettingsForm();updateInstallUI();listSentences().then(renderStarterOffer).catch(()=>{});$("#settings-dialog").showModal()}
 function cancelSettings(){settings.remind=!!readSettings().remind;resetSettingsForm();applyTheme();applyMotion();$("#settings-dialog").close()}
 function isInstalled(){return window.matchMedia("(display-mode: standalone)").matches||window.navigator.standalone===true}
@@ -1431,7 +1440,9 @@ function playReviewAudio(){const sentence=reviewQueue[reviewIndex];if(!sentence)
 let reviewBusy=false;
 async function rateReview(rating){const sentence=reviewQueue[reviewIndex];if(!sentence||!reviewRevealed||reviewBusy)return;reviewBusy=true;try{resetSession();const now=new Date(),mode=reviewMode(sentence),graded=reviewSentence(sentence,rating,now),progressed=recordReviewMode(graded,rating,now);
   const updated={...progressed,reviews:[...(Array.isArray(sentence.reviews)?sentence.reviews:[]),{at:now.toISOString(),rating,mode,echoes:Math.max(0,(Number(sentence.echoCount)||0)-echoesAtCardStart)}]};await saveSentence(updated);if(current?.id===updated.id)current=updated;reviewQueue[reviewIndex]=updated;reviewIndex++;renderReview()}finally{reviewBusy=false}}
-async function exportHistory(){const data={...exportBackup(await listSentences(),settings,forBackup(await listNotes().catch(()=>[]))),catalogues:importedCatalogues},url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"})),link=Object.assign(document.createElement("a"),{href:url,download:"jp-echo-backup.json"});link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);$("#import-status").textContent="Backup saved as jp-echo-backup.json."}
+// The one backup document: the file Export downloads is byte-for-byte what the gist holds.
+async function buildBackup(){return {...exportBackup(await listSentences(),settings,forBackup(await listNotes().catch(()=>[]))),catalogues:importedCatalogues}}
+async function exportHistory(){const data=await buildBackup(),url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"})),link=Object.assign(document.createElement("a"),{href:url,download:"jp-echo-backup.json"});link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);$("#import-status").textContent="Backup saved as jp-echo-backup.json."}
 async function exportAnki(button=$("#export-anki")){const items=await listSentences();const label=button.textContent;button.disabled=true;button.textContent="Building deck…";$("#anki-status").textContent="Creating Echo.apkg on this device…";try{await downloadAnkiDeck(items.map(forAnki));$("#open-anki").hidden=false;const launched=openAnki(true);$("#anki-status").textContent=launched?"Echo.apkg downloaded. Opening Anki… If it stays here, tap Open Anki.":"Echo.apkg downloaded. Open it from Downloads to import it into Anki."}catch(error){$("#anki-status").textContent=error.message||"Anki export failed."}finally{button.disabled=false;button.textContent=label}}
 function openAnki(automatic=false){const android=/android/i.test(navigator.userAgent),ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(android){window.location.href="intent:#Intent;package=com.ichi2.anki;end";return true}if(ios){window.location.href="anki://";return true}if(!automatic)$("#anki-status").textContent="Open Echo.apkg from your Downloads folder to import it into Anki.";return false}
 // Cards filed while the pair was reversed. Only run when the pair itself was
@@ -1470,7 +1481,7 @@ async function importBackupData(backup){
  if(!(Number(backup.schemaVersion)>=1&&Number(backup.schemaVersion)<=SCHEMA_VERSION)||!Array.isArray(backup.sentences))throw new Error("Unsupported backup.");
  const before=await listSentences(),upgrade=planMiniSentenceUpgrade(before,backup),merged=upgrade.sentences,catalogues=mergeCatalogues(importedCatalogues,backup.catalogues);
  if(upgrade.removed.length)await saveImportRecovery({schemaVersion:2,sentences:upgrade.removed,catalogues:importedCatalogues,kind:'Minihongo word cards replaced with sentences'},'minihongo-v2-word-cards');
- saveCatalogues(catalogues);try{await replaceAll(merged)}catch(error){saveCatalogues(importedCatalogues);throw error}importedCatalogues=catalogues;applyCatalogues();
+ saveCatalogues(catalogues);try{await replaceAll(merged)}catch(error){saveCatalogues(importedCatalogues);throw error}markBackupDirty();importedCatalogues=catalogues;applyCatalogues();
  if(Array.isArray(backup.notes))await replaceNotes(mergeNotes(await listNotes().catch(()=>[]),backup.notes));
  const added=merged.length-before.length+upgrade.removed.length,message=`Added ${added} sentence(s). ${backup.sentences.length-added} already present; existing progress kept.${upgrade.removed.length?` Replaced ${upgrade.removed.length} Mini Hongo word cards with sentences.`:""}`;
  $("#import-status").textContent=message;setStatus(message);refreshDueBadge();await renderHistory();return {added,total:merged.length};
@@ -1488,6 +1499,65 @@ async function cleanupLegacyMiniHongo(){
  await refreshDueBadge();
 }
 async function undoMiniCleanup(){const button=$('#undo-mini-cleanup');button.disabled=true;try{const backup=await readImportRecovery();if(!backup)throw new Error('No cleanup backup is available.');await importBackupData(backup);$('#mini-cleanup-status').textContent='Restored the removed Mini Hongo cards from the recovery copy.'}catch(error){$('#mini-cleanup-status').textContent=error.message}finally{button.disabled=false}}
+// Automatic backup to a secret GitHub gist (see gist-backup.js). The token,
+// gist URL and the on/off switch are settings (stripped from every backup);
+// the bookkeeping — dirty, last attempt, last success, last error — is its
+// own key, so Settings' Save/Cancel never rolls it back.
+const GIST_STATE_KEY="jp-echo-gist-state";
+function gistState(){try{const value=JSON.parse(localStorage.getItem(GIST_STATE_KEY)||"{}");return value&&typeof value==="object"?value:{}}catch{return {}}}
+function patchGistState(patch){const next={...gistState(),...patch};storePreference(GIST_STATE_KEY,JSON.stringify(next));return next}
+let gistTimer=null,gistRunning=null,gistWarned=false;
+function scheduleGistBackup(delay){clearTimeout(gistTimer);gistTimer=setTimeout(()=>maybeAutoBackup("change").catch(()=>{}),Math.max(1000,delay))}
+function markBackupDirty(){if(!settings.gistAuto)return;patchGistState({dirty:true,lastChangeAt:Date.now()});scheduleGistBackup(QUIET_MS+500)}
+async function maybeAutoBackup(reason){
+  const state=gistState(),now=Date.now(),ready=!!settings.gistAuto&&!!settings.gistToken&&!!state.dirty;
+  if(!shouldAutoBackup({enabled:!!settings.gistAuto,hasToken:!!settings.gistToken,dirty:!!state.dirty,lastAttemptAt:state.lastAttemptAt,lastChangeAt:state.lastChangeAt,now,reason})){
+    // Too soon after the last upload: come back when the interval allows.
+    if(ready&&reason!=="hidden")scheduleGistBackup(Math.max((Number(state.lastAttemptAt)||0)+MIN_INTERVAL_MS,(Number(state.lastChangeAt)||0)+QUIET_MS)-now+500);
+    return null}
+  return runGistBackup({auto:true})}
+async function runGistBackup({auto=false,token=settings.gistToken,gist=settings.gistUrl}={}){
+  if(gistRunning)return gistRunning;
+  // A URL that does not parse must not silently become "create a new gist".
+  if(String(gist||"").trim()&&!parseGistId(gist))throw new Error("That gist URL is not one Echo recognises. Paste the gist's page URL, or leave it blank.");
+  const startedAt=Date.now();patchGistState({lastAttemptAt:startedAt});
+  gistRunning=(async()=>{
+    try{const result=await uploadBackup({token,gist,backup:await buildBackup()});
+      const state=patchGistState({dirty:(Number(gistState().lastChangeAt)||0)>startedAt,lastSuccessAt:Date.now(),lastError:"",url:result.url});
+      if(settings.gistUrl!==result.url||settings.gistToken!==token){settings.gistUrl=result.url;settings.gistToken=token;storePreference("jp-echo-settings",JSON.stringify(settings));if($("#settings-dialog").open)$("#gist-url").value=result.url}
+      if(state.dirty)scheduleGistBackup(MIN_INTERVAL_MS+500);
+      return result}
+    catch(error){patchGistState({lastError:error.message||String(error)});
+      if(auto&&!gistWarned){gistWarned=true;toast("Gist backup failed: "+(error.message||error),6000)}
+      throw error}
+    finally{gistRunning=null;renderGistStatus()}})();
+  return gistRunning}
+const gistWhen=value=>new Intl.DateTimeFormat(undefined,{dateStyle:"medium",timeStyle:"short"}).format(new Date(value));
+function renderGistStatus(){
+  const node=$("#gist-status");if(!node)return;const state=gistState();node.replaceChildren();node.classList.remove("error");
+  if(state.lastError){node.classList.add("error");node.textContent="Last backup failed: "+state.lastError;return}
+  if(state.lastSuccessAt){node.append("Backed up "+gistWhen(state.lastSuccessAt)+". ");
+    if(state.url&&parseGistId(state.url)){const link=document.createElement("a");link.href=state.url;link.target="_blank";link.rel="noopener noreferrer";link.textContent="Open the gist";node.append(link)}
+    if(settings.gistAuto&&state.dirty)node.append(" Newer changes are waiting.");return}
+  node.textContent=settings.gistAuto?(settings.gistToken?"Nothing backed up yet — the first backup runs shortly.":"Add a token to start backing up."):"";
+}
+async function gistBackupNow(){
+  const button=$("#gist-now"),token=$("#gist-token").value.trim(),gist=$("#gist-url").value.trim();
+  if(!token){$("#gist-status").textContent="Add a GitHub token first.";$("#gist-token").focus();return}
+  button.disabled=true;$("#gist-status").textContent="Uploading…";
+  try{const result=await runGistBackup({token,gist});$("#gist-status").textContent=(result.created?"Created a secret gist with ":"Updated the gist with ")+result.sentences+(result.sentences===1?" sentence.":" sentences.");setTimeout(renderGistStatus,4000)}
+  catch(error){$("#gist-status").classList.add("error");$("#gist-status").textContent=error.message}
+  finally{button.disabled=false}}
+async function gistRestore(){
+  const button=$("#gist-restore"),gist=$("#gist-url").value.trim(),token=$("#gist-token").value.trim();
+  if(!parseGistId(gist)){$("#gist-status").textContent="Paste the gist's URL to restore from it.";$("#gist-url").focus();return}
+  button.disabled=true;$("#gist-status").classList.remove("error");$("#gist-status").textContent="Downloading the backup…";
+  try{const {backup,url}=await downloadBackup({gist,token});const {added}=await importBackupData(backup);
+    // Continue backing up to the gist this device was restored from.
+    if(url&&!settings.gistUrl){settings.gistUrl=url;storePreference("jp-echo-settings",JSON.stringify(settings));$("#gist-url").value=url}
+    $("#gist-status").textContent=added?`Restored ${added} sentence${added===1?"":"s"} from the gist. Everything already here was kept.`:"Everything in that gist is already on this device."}
+  catch(error){$("#gist-status").classList.add("error");$("#gist-status").textContent=error.message}
+  finally{button.disabled=false}}
 // Echo has one built-in deck, the Mini Hongo starter, offered only to seed an
 // empty or young library. Everything else in a library is the learner's own.
 const MINI_DECK_URL="https://raw.githubusercontent.com/KakkoiDev/minihongo/master/imports/jp-echo.json";
@@ -1579,7 +1649,7 @@ async function restoreRoute(){
   await applyRoute();window.echoRouteReady=true;
 }
 window.addEventListener("popstate",()=>applyRoute());
-applyLanguage();startupCleanup=migrateStore().then(()=>cleanupLegacyMiniHongo());startupCleanup.then(async()=>{await repairReversedCards();await restoreRoute()}).catch(error=>{window.echoReportError?.(error);setStatus('Mini Hongo cleanup could not finish: '+error.message,true);restoreRoute().catch(error=>window.echoReportError?.(error))});refreshDueBadge();setupRecognition();updateInstallUI();
+applyLanguage();startupCleanup=migrateStore().then(()=>cleanupLegacyMiniHongo());startupCleanup.then(async()=>{await repairReversedCards();await restoreRoute();maybeAutoBackup("open").catch(()=>{})}).catch(error=>{window.echoReportError?.(error);setStatus('Mini Hongo cleanup could not finish: '+error.message,true);restoreRoute().catch(error=>window.echoReportError?.(error))});refreshDueBadge();setupRecognition();updateInstallUI();
 // The in-app WaniKani sync is gone (the pull tool feeds the stories instead);
 // what it left in a browser is cleared once, quietly.
 try{localStorage.removeItem("jp-echo-wanikani-token");indexedDB.deleteDatabase("jp-echo-wanikani")}catch{}
@@ -1595,6 +1665,9 @@ window.addEventListener("echo-before-update",()=>saveWorkspace());
 
 
 $('#undo-mini-cleanup').onclick=undoMiniCleanup;
+$("#gist-now").onclick=gistBackupNow;$("#gist-restore").onclick=gistRestore;
+// Leaving the app is the last chance to save pending changes; opening it catches up.
+document.addEventListener("visibilitychange",()=>{if(document.hidden)maybeAutoBackup("hidden").catch(()=>{})});
 $("#import-minihongo").onclick=()=>seedStarter($("#import-minihongo"));
 $("#empty-starter").onclick=()=>seedStarter($("#empty-starter"),$("#empty-starter-status"));
 $("#empty-practice").onclick=()=>{showView("practice");setPracticeMode("sentence");$("#english-input").focus()};

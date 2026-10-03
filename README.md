@@ -19,6 +19,14 @@ More screens, including dark and desktop, are in [`docs/screenshots`](docs/scree
 - The library lives in IndexedDB. A backup file can be exported and restored
   (restoring merges; nothing already on the device is lost). Backups never
   contain any key — translation or speech.
+- Optional automatic backup to a **secret GitHub gist** (Settings → Your
+  sentences), the same approach as webmods/annotate: one `echo-backup.json` in
+  one gist, updated in place. A change marks the library dirty; it is uploaded
+  after two quiet minutes, at most every five, and when the app is left or
+  reopened with changes pending. The GitHub token stays in this browser and,
+  like the gist URL, is never written into any backup. Secret gists are
+  unlisted, not private: anyone with the URL can read them. **Restore from
+  gist** merges, and needs only the URL on a new device.
 - The shadowing loop never opens the microphone.
 - Dictation — in the composer, or when answering a review — uses the browser's
   own speech recognition, so that audio is handled by the browser's maker.

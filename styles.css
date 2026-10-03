@@ -1034,3 +1034,9 @@ html.motion-off #review-progress-bar { transition: none; }
 
 .grammar-host{margin:4px 0 12px}.grammar-host .link-button{margin-top:0}.grammar-host .hint{margin:0}
 .sentence-grammar{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;font-size:12px;font-weight:normal}.grammar-chip{font:inherit;min-height:32px;height:auto;padding:4px 10px;border-radius:14px;letter-spacing:normal;background:transparent}.grammar-chip{color:var(--seal);border:1px solid var(--seal)}.grammar-vocab{border-bottom:2px dotted var(--seal)}.sentence-grammar .hint{width:100%}
+
+/* Gist backup: a sub-block of Your sentences, using the settings field and switch styles. */
+.gist-backup{display:flex;flex-direction:column;gap:10px;padding:13px 0;border-bottom:1px solid var(--rule)}
+.gist-backup .gist-actions{flex-wrap:wrap}
+#gist-status a{color:var(--seal-deep)}
+#gist-status.error{color:var(--seal)}

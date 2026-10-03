@@ -55,7 +55,7 @@ plus Settings (gear).
 | **Kanji, words and grammar** | Three tabs. Each is a wall of everything there is (2,136 jōyō kanji, ~23k words, N5–N1 grammar points), lit up by what the learner's own sentences contain. Banded by JLPT level, with search. Each item opens a bottom **sheet**: facts, the learner's sentences using it, and a composer to "say a sentence using this". | unmet · met · learned |
 | **Mora table** | Kana to fixed mnemonic images (飴, 犬, 牛…) for pronunciation anchoring. | emoji / furigana / English toggles |
 | **Onboarding + setup** | A three-step promise (一 二 三), then a two-step setup: AI service + key, then the language pair. "Look around first" is allowed. | — |
-| **Settings** | A long modal: appearance, audio/voices, grammar auto-read, reminders, languages, AI provider, speech recognition, **Your sentences** (Anki export, backup Export/Restore, Starter sentences), install. Save/Cancel. | — |
+| **Settings** | A long modal: appearance, audio/voices, grammar auto-read, reminders, languages, AI provider, speech recognition, **Your sentences** (Anki export, backup Export/Restore, automatic GitHub gist backup, Starter sentences), install. Save/Cancel. | — |
 
 ## 5. The visual language — "washi and seal"
 
@@ -138,6 +138,12 @@ what is still safe ("Your sentence is still in the box.").
   revealed review answer. Lists, sheets, Discussion and Reading show no grammar
   UI.
 - Library rows are one tap target (they open the sentence page).
+- **Automatic gist backup** in Settings → Your sentences: a switch, a GitHub
+  token, an optional gist URL, *Back up now*, *Restore from gist*, and a status
+  line (last backup time, a link to the gist, or the last error). It runs
+  silently; the only interruption is one toast if an automatic upload fails.
+  Design question: should a quiet "backed up" signal live somewhere outside
+  Settings, or is silence the right default?
 - Review → Writing is a typed answer by design; the dead "start listening
   automatically" toggle was removed.
 
