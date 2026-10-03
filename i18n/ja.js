@@ -154,8 +154,6 @@ export default {
   "{n} kanji, synced {date}": "{n}字、{date}に同期",
   "Echo's story": "Echoの物語",
   "Parts": "部品",
-  "Your sentences": "自分の文",
-  "Delete this sentence": "この文を削除",
   "Deleted.": "削除しました。",
   "Kanji": "漢字",
   "Grammar": "文法",

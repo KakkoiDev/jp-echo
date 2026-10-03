@@ -1,4 +1,4 @@
-import {migrateSentence,SCHEMA_VERSION} from './core.js';
+import {isLanguage,migrateSentence,SCHEMA_VERSION} from './core.js';
 
 // Validate the entire file before any catalogue or sentence store is changed.
 export function validateDeckBackup(value){
@@ -7,7 +7,9 @@ export function validateDeckBackup(value){
   if(!record||typeof record!=='object'||Array.isArray(record))throw new Error(`Sentence ${index+1} is invalid.`);
   const sentence=migrateSentence({...record,schemaVersion:record.schemaVersion??value.schemaVersion});
   for(const key of ['id','source','target'])if(typeof sentence[key]!=='string'||!sentence[key].trim())throw new Error(`Sentence ${index+1} needs a non-empty ${key}.`);
-  for(const key of ['casualTarget','politeTarget','sourceLang','targetLang'])if(sentence[key]!=null&&typeof sentence[key]!=='string')throw new Error(`Sentence ${index+1} has an invalid ${key}.`);
+  for(const key of ['casualTarget','politeTarget'])if(sentence[key]!=null&&typeof sentence[key]!=='string')throw new Error(`Sentence ${index+1} has an invalid ${key}.`);
+  // Language codes are rendered into lang="" attributes: only known codes pass.
+  for(const key of ['sourceLang','targetLang'])if(sentence[key]!=null&&!isLanguage(sentence[key]))throw new Error(`Sentence ${index+1} has an unknown ${key}.`);
   for(const key of ['grammar','vocabulary','reviews','grammarAnalysis'])if(sentence[key]!=null&&!Array.isArray(sentence[key]))throw new Error(`Sentence ${index+1} has an invalid ${key}.`);
   const createdAt=typeof sentence.createdAt==='string'&&Number.isFinite(Date.parse(sentence.createdAt))?sentence.createdAt:'1970-01-01T00:00:00.000Z';
   return {...sentence,createdAt,updatedAt:sentence.updatedAt||createdAt};
