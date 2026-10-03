@@ -1,5 +1,5 @@
 import {validateDeckBackup,fetchDeckBackup} from './imports.js';
-import {planMiniSentenceUpgrade,repairMiniImport} from './mini-imports.js';
+import {isSeeded,planMiniSentenceUpgrade,repairMiniImport} from './mini-imports.js';
 import {applyI18n,setDictionary,t} from "./i18n.js";
 import {earliestPair,flipSentence,isReversed,pairLooksSwapped,repairPair} from "./repair.js";
 import {DEFAULT_PAIR,LANGUAGES,safeLanguage,MORA_MNEMONIC_META,createSentence,replaceSentenceContent,exportBackup,forAnki,hasFurigana,hasRegisters,languageName,mergeSentences,normalizeFurigana,rubyHtml,SCHEMA_VERSION,stripFurigana} from "./core.js";
@@ -131,7 +131,7 @@ function applyTheme(theme=settings.theme||"system"){document.documentElement.dat
 function showProviderConfig(){const provider=$("#provider").value;document.querySelectorAll(".provider-config").forEach(node=>node.hidden=node.dataset.provider!==provider)}
 function saveSettings(){settings.provider=$("#provider").value;settings.speechProvider=$("#speech-provider").value;settings.speechKeys={groq:$("#groq-speech-key").value.trim()};settings.providerKeys={deepseek:$("#deepseek-key").value.trim(),google:$("#google-key").value.trim(),openai:$("#openai-key").value.trim(),anthropic:$("#anthropic-key").value.trim()};settings.providerModels={deepseek:$("#deepseek-model").value.trim(),google:$("#google-model").value.trim(),openai:$("#openai-model").value.trim(),anthropic:$("#anthropic-model").value.trim(),local:$("#local-model").value.trim()};settings.localEndpoint=$("#local-endpoint").value.trim();settings.proxyUrl=$("#proxy-url").value.trim();settings.theme=$("#theme").value;settings.motion=$("#motion").value;settings.voice=$("#voice").value;settings.discussionVoiceAI=$("#discussion-voice-ai").value;settings.discussionVoiceUser=$("#discussion-voice-user").value;settings.rate=Number($("#rate").value);settings.showEnglish=$("#show-english").checked;settings.showFurigana=$("#show-furigana").checked;settings.showPolite=$("#show-polite").checked;settings.autoTag=$("#autotag").checked;settings.remindTime=$("#remind-time").value;storePreference("jp-echo-settings",JSON.stringify(settings));applyTheme();applyMotion()}
 function resetSettingsForm(){const keys=settings.providerKeys||{},models=settings.providerModels||{};$("#provider").value=defaultProvider();$("#speech-provider").value=settings.speechProvider||"auto";$("#groq-speech-key").value=settings.speechKeys?.groq||"";$("#deepseek-key").value=keys.deepseek||settings.apiKey||"";$("#google-key").value=keys.google||"";$("#openai-key").value=keys.openai||"";$("#anthropic-key").value=keys.anthropic||"";for(const provider of Object.keys(PROVIDER_DEFAULTS))$("#"+provider+"-model").value=models[provider]||PROVIDER_DEFAULTS[provider];$("#local-endpoint").value=settings.localEndpoint||"http://localhost:11434/v1/chat/completions";$("#proxy-url").value=settings.proxyUrl||"";$("#theme").value=settings.theme||"system";$("#motion").value=settings.motion||"system";$("#autotag").checked=!!settings.autoTag;$("#remind").checked=!!settings.remind;$("#remind-time").value=settings.remindTime||DEFAULT_TIME;$("#remind-reach").textContent=settings.remind?reminderReach():"";$("#voice").value=settings.voice||"default";$("#discussion-voice-ai").value=settings.discussionVoiceAI||"default";$("#discussion-voice-user").value=settings.discussionVoiceUser||"default";$("#rate").value=settings.rate||1;$("#rate-value").textContent=Number($("#rate").value).toFixed(1)+"×";showProviderConfig()}
-function openSettings(){resetSettingsForm();updateInstallUI();$("#settings-dialog").showModal()}
+function openSettings(){resetSettingsForm();updateInstallUI();listSentences().then(renderStarterOffer).catch(()=>{});$("#settings-dialog").showModal()}
 function cancelSettings(){settings.remind=!!readSettings().remind;resetSettingsForm();applyTheme();applyMotion();$("#settings-dialog").close()}
 function isInstalled(){return window.matchMedia("(display-mode: standalone)").matches||window.navigator.standalone===true}
 function updateInstallUI(){const installed=isInstalled();$("#install-app").disabled=installed;$("#install-app").textContent=installed?"Installed":"Install";$("#install-status").textContent=installed?"Opened as an installed app.":""}
@@ -616,10 +616,13 @@ function renderGrammarBand(band,cover,known){
 async function autoTag(sentence){
   if(!settings.autoTag||!hasGrammar()||targetLang()!=="ja"||!hasTranslator()||!sentence?.id||isTagged(sentence))return;
   try{
-    const tags=await tagGrammar([sentence],GRAMMAR_POINTS,{...settings,targetLang:targetLang()}),got=tags.get(sentence.id);
-    if(!got)return;
-    const fresh=await getSentence(sentence.id);if(!fresh)return;
-    await saveSentence({...fresh,grammar:got,updatedAt:new Date().toISOString()});
+    // The same analysis the sentence page's "Explain the grammar" runs, so an
+    // auto-read sentence gets highlighted evidence as well as its tags.
+    const text=stripFurigana(preferredTarget(sentence)),found=await analyzeSentenceGrammar(text,GRAMMAR_POINTS,{...settings,targetLang:"ja"});
+    grammarAnalysisCache.set(text,found);
+    const fresh=await getSentence(sentence.id);if(!fresh||isTagged(fresh))return;
+    const updated={...fresh,grammarAnalysis:[...(fresh.grammarAnalysis||[]).filter(a=>a.text!==text),found],grammar:found.grammar,updatedAt:new Date().toISOString()};
+    await saveSentence(updated);if(detail?.id===updated.id){detail=updated;if(document.body.dataset.view==="sentence")renderDetail()}if(current?.id===updated.id)current=updated;
     if(document.body.dataset.view==="map")renderMap();
   }catch{}
 }
@@ -1053,8 +1056,8 @@ function renderLibraryTool(all){const row=$("#library-tool");row.hidden=targetLa
   $("#library-tool-tally").textContent=[k,w,g].filter(n=>n!==null).map(n=>n.toLocaleString()).join(" · ")+" "+t("learned");
   row.setAttribute("aria-label",t("Kanji, words and grammar")+": "+(g===null?t("{k} kanji and {w} words learned",{k:k.toLocaleString(),w:w.toLocaleString()}):t("{k} kanji, {w} words and {g} points learned",{k:k.toLocaleString(),w:w.toLocaleString(),g:g.toLocaleString()})))}
 let historyRenderVersion=0;
-async function renderHistory(){const version=++historyRenderVersion,all=await listSentences();if(version!==historyRenderVersion)return;renderLibraryTool(all);const list=$("#history-list"),due=dueSentences(all),query=$("#history-search").value.trim().toLocaleLowerCase(),filter=$("#history-filter").value,order=$("#history-order").value,direction=$("#history-direction").value,now=Date.now();let items=all.filter(item=>{const haystack=[item.source,item.target,item.plainTarget,item.casualTarget,item.politeTarget].filter(Boolean).join(" ").toLocaleLowerCase();if(query&&!haystack.includes(query))return false;const state=item.srs?.state??0;if(filter==="due")return !item.srs?.due||Date.parse(item.srs.due)<=now;if(filter==="new")return state===0;if(filter==="learning")return state===1||state===3;if(filter==="review")return state===2;if(filter==="skipped")return item.skipped===true;return true});const comparators={created:(a,b)=>a.createdAt.localeCompare(b.createdAt),echoes:(a,b)=>(Number(a.echoCount)||0)-(Number(b.echoCount)||0),due:(a,b)=>Date.parse(a.srs?.due||a.createdAt)-Date.parse(b.srs?.due||b.createdAt),english:(a,b)=>a.source.localeCompare(b.source),japanese:(a,b)=>preferredPlainTarget(a).localeCompare(preferredPlainTarget(b),itemTarget(a))},factor=direction==="asc"?1:-1;items.sort((a,b)=>factor*(comparators[order]||comparators.created)(a,b));list.replaceChildren();$("#empty-history").hidden=all.length>0;$("#empty-results").hidden=all.length===0||items.length>0;$("#empty-results-count").textContent=all.length===1?"One is in your library.":capitalise(spell(all.length))+" are in your library.";updateDueBadge(due.length);$("#library-count").textContent=items.length===1?"1 sentence":items.length+" sentences";$("#library-order-label").textContent=ORDER_LABELS[order+"-"+direction]||"";$(".list-head").hidden=items.length===0;if(isWide()&&!detail&&items.length)return openDetail(items[0].id);
-  for(const [index,item] of items.entries()){if(index%10===0){await new Promise(resolve=>setTimeout(resolve,0));if(version!==historyRenderVersion)return}const li=document.createElement("li");li.dataset.id=item.id;const state=cardState(item,now);li.innerHTML='<button class="history-open" type="button"><span class="lines"><span lang="'+itemTarget(item)+'">'+rubyHtml(preferredTarget(item))+'</span><span class="source-line">'+escapeText(item.source)+'</span><span class="status-chip '+state+'">'+CARD_STATES[state]+'</span></span><span class="tally"><strong>'+(Number(item.echoCount)||0)+'</strong><span>echoes</span></span></button>';enableVocabulary(li.querySelector(".lines>span[lang]"),preferredTarget(item),itemTarget(item),item);li.querySelector(".history-open").onclick=()=>openDetail(item.id);list.append(li)}markSelectedRow()}
+async function renderHistory(){const version=++historyRenderVersion,all=await listSentences();if(version!==historyRenderVersion)return;renderLibraryTool(all);const list=$("#history-list"),due=dueSentences(all),query=$("#history-search").value.trim().toLocaleLowerCase(),filter=$("#history-filter").value,order=$("#history-order").value,direction=$("#history-direction").value,now=Date.now();let items=all.filter(item=>{const haystack=[item.source,item.target,item.plainTarget,item.casualTarget,item.politeTarget].filter(Boolean).join(" ").toLocaleLowerCase();if(query&&!haystack.includes(query))return false;const state=item.srs?.state??0;if(filter==="due")return !item.srs?.due||Date.parse(item.srs.due)<=now;if(filter==="new")return state===0;if(filter==="learning")return state===1||state===3;if(filter==="review")return state===2;if(filter==="skipped")return item.skipped===true;return true});const comparators={created:(a,b)=>a.createdAt.localeCompare(b.createdAt),echoes:(a,b)=>(Number(a.echoCount)||0)-(Number(b.echoCount)||0),due:(a,b)=>Date.parse(a.srs?.due||a.createdAt)-Date.parse(b.srs?.due||b.createdAt),english:(a,b)=>a.source.localeCompare(b.source),japanese:(a,b)=>preferredPlainTarget(a).localeCompare(preferredPlainTarget(b),itemTarget(a))},factor=direction==="asc"?1:-1;items.sort((a,b)=>factor*(comparators[order]||comparators.created)(a,b));list.replaceChildren();$("#empty-history").hidden=all.length>0;renderStarterOffer(all);document.querySelector(".history-tools").hidden=all.length===0;$("#empty-results").hidden=all.length===0||items.length>0;$("#empty-results-count").textContent=all.length===1?"One is in your library.":capitalise(spell(all.length))+" are in your library.";updateDueBadge(due.length);$("#library-count").textContent=items.length===1?"1 sentence":items.length+" sentences";$("#library-order-label").textContent=ORDER_LABELS[order+"-"+direction]||"";$(".list-head").hidden=items.length===0;if(isWide()&&!detail&&items.length)return openDetail(items[0].id);
+  for(const [index,item] of items.entries()){if(index%10===0){await new Promise(resolve=>setTimeout(resolve,0));if(version!==historyRenderVersion)return}const li=document.createElement("li");li.dataset.id=item.id;const state=cardState(item,now);li.innerHTML='<button class="history-open" type="button"><span class="lines"><span lang="'+itemTarget(item)+'">'+rubyHtml(preferredTarget(item))+'</span><span class="source-line">'+escapeText(item.source)+'</span><span class="status-chip '+state+'">'+CARD_STATES[state]+'</span></span><span class="tally"><strong>'+(Number(item.echoCount)||0)+'</strong><span>echoes</span></span></button>';li.querySelector(".history-open").onclick=()=>openDetail(item.id);list.append(li)}markSelectedRow()}
 const formatDate=value=>new Intl.DateTimeFormat(undefined,{day:"numeric",month:"long"}).format(new Date(value));
 const RATING_LABELS={again:"Again",ok:"OK"};
 function untilDue(sentence,now=Date.now()){const due=Date.parse(sentence.srs?.due||"");if(!Number.isFinite(due)||due<=now)return "Now";
@@ -1063,7 +1066,7 @@ async function openDetail(id){const sentence=await getSentence(id);if(!sentence)
 function markSelectedRow(){for(const li of document.querySelectorAll("#history-list li"))li.classList.toggle("selected",li.dataset.id===detail?.id);}
 function renderDetail(){if(!detail)return;closeEditor();markSelectedRow();
   $("#sentence-added").textContent="Added "+formatDate(detail.createdAt);
-  $("#sentence-japanese").innerHTML=rubyHtml(preferredTarget(detail));$("#sentence-japanese").lang=itemTarget(detail);enableVocabulary($("#sentence-japanese"),preferredTarget(detail),itemTarget(detail),detail);
+  $("#sentence-grammar").replaceChildren();$("#sentence-grammar").hidden=true;$("#sentence-japanese").innerHTML=rubyHtml(preferredTarget(detail));$("#sentence-japanese").lang=itemTarget(detail);enableVocabulary($("#sentence-japanese"),preferredTarget(detail),itemTarget(detail),detail,{grammarHost:$("#sentence-grammar"),explain:true});
   $("#sentence-english").textContent=detail.source;
   const registerRow=$("#sentence-register-row"),canChooseRegister=hasRegisters(itemTarget(detail))&&(detail.casualTarget||detail.target)!==(detail.politeTarget||detail.target);
   registerRow.hidden=!canChooseRegister;
@@ -1084,7 +1087,7 @@ function renderDetail(){if(!detail)return;closeEditor();markSelectedRow();
   $("#sentence-history-note").textContent=lapses?"A review was marked Again "+(lapses===1?"once":spell(lapses)+" times")+".":reviews.length?"Reviewed correctly every time so far.":"Not reviewed yet — it is waiting in the queue.";
   $("#sentence-play").disabled=false}
 let editorGeneration=0,rewrittenDraft=null;
-function openEditor(){editorGeneration++;rewrittenDraft=null;$("#sentence-source-draft").value=detail?.source||"";$("#sentence-instruction").value="";$("#sentence-ai").open=false;$("#sentence-rewrite-status").textContent="";$("#sentence-rewrite").disabled=!hasTranslator();if(!detail)return;resetSession();$("#sentence-draft").value=preferredTarget(detail);$("#sentence-edit-error").hidden=true;$("#sentence-editor").hidden=false;$("#sentence-japanese").hidden=true;$("#sentence-english").hidden=true;$("#sentence-register-row").hidden=true;$(".sentence-controls").hidden=true;$("#sentence-draft").focus()}
+function openEditor(){editorGeneration++;rewrittenDraft=null;$("#sentence-source-draft").value=detail?.source||"";$("#sentence-instruction").value="";$("#sentence-ai").open=false;$("#sentence-rewrite-status").textContent="";$("#sentence-rewrite").disabled=!hasTranslator();if(!detail)return;resetSession();$("#sentence-draft").value=preferredTarget(detail);$("#sentence-edit-error").hidden=true;$("#sentence-editor").hidden=false;$("#sentence-japanese").hidden=true;$("#sentence-grammar").hidden=true;$("#sentence-english").hidden=true;$("#sentence-register-row").hidden=true;$(".sentence-controls").hidden=true;$("#sentence-draft").focus()}
 function closeEditor(){editorGeneration++;rewrittenDraft=null;$("#sentence-editor").hidden=true;$("#sentence-japanese").hidden=false;$("#sentence-english").hidden=false;const canChoose=detail&&hasRegisters(itemTarget(detail))&&(detail.casualTarget||detail.target)!==(detail.politeTarget||detail.target);$("#sentence-register-row").hidden=!canChoose;$(".sentence-controls").hidden=false}
 async function saveEdit(event){event.preventDefault();if(!detail)return;
   const japanese=normalizeFurigana($("#sentence-draft").value.trim());
@@ -1302,7 +1305,7 @@ function renderReview(){resetSession();stopReviewListening();const sentence=revi
   $("#review-prompt-echo").textContent=sentence.source;
   $("#review-passive").hidden=writing;$("#review-front-audio").hidden=!listening;$("#review-capture").hidden=!writing;$("#review-answer-tools").hidden=true;
   $("#review-capture-label").textContent="Write it in Japanese";$("#review-answer").lang=itemTarget(sentence);$("#review-answer").placeholder="Write the Japanese sentence";$("#review-answer").value="";$("#review-listen-state").textContent="";
-  $("#review-result").hidden=true;$("#review-attempt-label").hidden=true;$("#review-attempt").hidden=true;
+  $("#review-grammar").replaceChildren();$("#review-grammar").hidden=true;$("#review-result").hidden=true;$("#review-attempt-label").hidden=true;$("#review-attempt").hidden=true;
   $("#review-check .label").textContent=listening?"Show answer":mode==="reading"?"Show meaning":"Check writing";
   echoesAtCardStart=Number(sentence.echoCount)||0;$("#review-echo-count").textContent=String(echoesAtCardStart);
   updateCheckButton();
@@ -1335,10 +1338,13 @@ async function revealReview(){let sentence=reviewQueue[reviewIndex];if(!sentence
 function reviewVocabularyHits(sentence,target){
   return wordSpans(stripFurigana(target));
 }
-function enableReviewVocabulary(sentence,target){enableVocabulary($("#review-japanese"),target,itemTarget(sentence),sentence)}
+function enableReviewVocabulary(sentence,target){enableVocabulary($("#review-japanese"),target,itemTarget(sentence),sentence,{grammarHost:$("#review-grammar")})}
 // Preserve ruby and review correction marks while attaching the same dictionary
 // action to every fragment of a surface word. Reading annotations aren't offsets.
-function enableVocabulary(root,target,lang=targetLang(),sentence=null){
+// Grammar is shown only where a host is given: the sentence page and the
+// revealed review answer. Lists, sheets, Discussion and Reading keep word
+// lookup but no grammar UI, so nothing is injected into a row or bubble.
+function enableVocabulary(root,target,lang=targetLang(),sentence=null,{grammarHost=null,explain=false}={}){
   if(!root||lang!=="ja")return;
   const plain=stripFurigana(target),analysis=grammarAnalysisCache.get(plain)||(sentence?.grammarAnalysis||[]).find(a=>a.text===plain);
   const vocabulary=wordSpans(plain),grammar=(analysis?.spans||[]).filter(s=>grammarPoint(s.id)&&plain.slice(s.start,s.end)===s.quote);
@@ -1359,21 +1365,35 @@ function enableVocabulary(root,target,lang=targetLang(),sentence=null){
   const open=token=>{const hit=hits[Number(token.dataset.vocabularyIndex)];resetSession();openVocabularyHit(hit,stripFurigana(target))};
   root.onclick=event=>{const token=tokenFor(event);if(token){event.preventDefault();event.stopPropagation();open(token)}};
   root.onkeydown=event=>{if(event.key!=="Enter"&&event.key!==" ")return;const token=tokenFor(event);if(!token)return;event.preventDefault();event.stopPropagation();open(token)};
-  renderSentenceGrammar(root,plain,sentence,analysis);
+  if(grammarHost)renderSentenceGrammar(grammarHost,plain,sentence,analysis,{root,target,lang,explain});
 }
-function renderSentenceGrammar(root,text,sentence,analysis){
-  const panel=document.createElement("span");panel.className="sentence-grammar";
+function renderSentenceGrammar(host,text,sentence,analysis,{root,target,lang,explain}){
+  host.replaceChildren();
   const ids=grammarTags([...(analysis?.grammar||[]),...(sentence?.grammar||[])]);
-  for(const id of ids){const point=grammarPoint(id),chip=document.createElement("button");chip.type="button";chip.className="grammar-chip";chip.textContent=point.title;chip.setAttribute("aria-label","Open grammar: "+point.title);chip.onclick=async event=>{event.preventDefault();event.stopPropagation();resetSession();await openGrammar(point,grammarCoverage(await listSentences()),{route:false})};panel.append(chip)}
-  const find=document.createElement("button"),status=document.createElement("span");find.type="button";find.className="grammar-find";find.textContent=analysis?"Refresh grammar":"Find grammar";find.disabled=!hasTranslator();find.title="One AI request; saves grammar links for this sentence.";status.className="hint";status.setAttribute("aria-live","polite");
-  find.onclick=async event=>{event.preventDefault();event.stopPropagation();find.disabled=true;status.textContent="Finding grammar…";
-    try{const found=await analyzeSentenceGrammar(text,GRAMMAR_POINTS,{...settings,targetLang:"ja"});grammarAnalysisCache.set(text,found);
-      if(sentence){sentence.grammarAnalysis=[...(sentence.grammarAnalysis||[]).filter(a=>a.text!==text),found];sentence.grammar=grammarTags(sentence.grammarAnalysis.flatMap(a=>a.grammar));saveWorkspace()}
-      if(sentence?.id){const fresh=await getSentence(sentence.id);if(fresh&&[fresh.target,fresh.casualTarget,fresh.politeTarget].filter(Boolean).map(stripFurigana).includes(text)){const previous=(fresh.grammarAnalysis||[]).filter(a=>a.text!==text);const updated={...fresh,grammarAnalysis:[...previous,found],grammar:grammarTags([...previous.flatMap(a=>a.grammar),...found.grammar]),updatedAt:new Date().toISOString()};await saveSentence(updated);if(detail?.id===fresh.id)detail=updated;if(current?.id===fresh.id)current=updated;sentence=updated}}
-      if(!root.isConnected)return;panel.remove();for(const span of root.querySelectorAll(".review-vocab"))span.replaceWith(...span.childNodes);root.normalize();enableVocabulary(root,text,"ja",sentence);
-      const result=root.querySelector(".sentence-grammar .hint");if(result)result.textContent=found.grammar.length?"Grammar saved.":"No grammar points identified.";
-    }catch(error){status.textContent=error.message;find.disabled=!hasTranslator()}};
-  panel.append(find,status);root.append(panel);
+  if(ids.length){const chips=el("div","sentence-grammar");
+    for(const id of ids){const point=grammarPoint(id),chip=el("button","grammar-chip",point.title);chip.type="button";chip.lang="ja";chip.setAttribute("aria-label",t("Open grammar: {title}",{title:point.title}));
+      chip.onclick=async()=>{resetSession();await openGrammar(point,grammarCoverage(await listSentences()),{route:false})};chips.append(chip)}
+    host.append(chips)}
+  else if(analysis)host.append(el("p","hint",t("None of the listed grammar points appear in this sentence.")));
+  // One explicit, priced action, offered only once and only where it can run.
+  // After it answers, the chips and highlights replace it: there is no "refresh".
+  if(explain&&!analysis&&lang==="ja"&&hasGrammar()&&hasTranslator()){
+    const ask=el("button","link-button",ids.length?t("Show where each point is used"):t("Explain the grammar"));ask.type="button";
+    const status=el("p","hint",t("One request on your AI key."));status.setAttribute("aria-live","polite");
+    ask.onclick=async()=>{ask.disabled=true;status.textContent=t("Reading the grammar…");
+      try{const found=await analyzeSentenceGrammar(text,GRAMMAR_POINTS,{...settings,targetLang:"ja"});grammarAnalysisCache.set(text,found);
+        let saved=sentence;
+        if(sentence?.id){const fresh=await getSentence(sentence.id);
+          if(fresh&&[fresh.target,fresh.casualTarget,fresh.politeTarget].filter(Boolean).map(stripFurigana).includes(text)){
+            const previous=(fresh.grammarAnalysis||[]).filter(a=>a.text!==text);
+            saved={...fresh,grammarAnalysis:[...previous,found],grammar:grammarTags([...previous.flatMap(a=>a.grammar),...found.grammar]),updatedAt:new Date().toISOString()};
+            await saveSentence(saved);if(detail?.id===saved.id)detail=saved;if(current?.id===saved.id)current=saved}}
+        if(!root.isConnected)return;
+        for(const span of root.querySelectorAll(".review-vocab"))span.replaceWith(...span.childNodes);root.normalize();
+        enableVocabulary(root,target,lang,saved,{grammarHost:host,explain});
+      }catch(error){ask.disabled=false;status.textContent=sheetError(error)}};
+    host.append(ask,status)}
+  host.hidden=!host.childElementCount;
 }
 let dictionaryLookupGeneration=0;
 async function openVocabularyHit(hit,context){
@@ -1468,14 +1488,21 @@ async function cleanupLegacyMiniHongo(){
  await refreshDueBadge();
 }
 async function undoMiniCleanup(){const button=$('#undo-mini-cleanup');button.disabled=true;try{const backup=await readImportRecovery();if(!backup)throw new Error('No cleanup backup is available.');await importBackupData(backup);$('#mini-cleanup-status').textContent='Restored the removed Mini Hongo cards from the recovery copy.'}catch(error){$('#mini-cleanup-status').textContent=error.message}finally{button.disabled=false}}
-async function importDeckURL(url,button,label='deck'){
- const status=$("#import-status"),controller=new AbortController(),timer=setTimeout(()=>controller.abort(),30000);button.disabled=true;status.textContent="Downloading "+label+"…";
- try{await importBackupData(await fetchDeckBackup(url,{signal:controller.signal}))}catch(error){status.textContent=error.message}finally{clearTimeout(timer);button.disabled=false}
-}
+// Echo has one built-in deck, the Mini Hongo starter, offered only to seed an
+// empty or young library. Everything else in a library is the learner's own.
 const MINI_DECK_URL="https://raw.githubusercontent.com/KakkoiDev/minihongo/master/imports/jp-echo.json";
-const EXAMPLE_DECK_URL=new URL("./examples/sentence-deck.json",document.baseURI).href;
-const AI_TEAM_DECK_URL="https://raw.githubusercontent.com/KakkoiDev/nihongo-it-anki/master/imports/agentic-lab-jp-echo.json";
-function importMiniHongo(){return importDeckURL(MINI_DECK_URL,$("#import-minihongo"),"Mini Hongo")}
+async function seedStarter(button,status=$("#import-status")){
+ const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),30000),label=button.textContent;button.disabled=true;button.textContent="Adding…";status.textContent="Downloading the Mini Hongo starter…";
+ try{const {added}=await importBackupData(await fetchDeckBackup(MINI_DECK_URL,{signal:controller.signal}));status.textContent=added?`Added ${added} starter sentences. They are yours now — practise, edit or delete any of them.`:"The starter sentences are already in your library."}
+ catch(error){status.textContent=error.message;button.disabled=false;button.textContent=label}
+ finally{clearTimeout(timer);renderStarterOffer(await listSentences())}
+}
+function renderStarterOffer(all){
+ const ja=targetLang()==="ja",seeded=isSeeded(all);
+ $("#starter-row").hidden=!ja;$("#starter-link").hidden=!ja;
+ const add=$("#import-minihongo");add.disabled=seeded;add.textContent=seeded?"Added":"Add";
+ for(const id of ["#empty-starter","#empty-starter-copy"])$(id).hidden=!ja||seeded;
+}
 
 
 $("#tabs").addEventListener("click",event=>{const tab=event.target.closest(".tab[data-view]");if(tab)showView(tab.dataset.view)});$("#translate").onclick=()=>discussionMode?(discussionTurns.length?replyDiscussion():beginDiscussion()):readingMode?generateReadingMode():performTranslation();$("#english-input").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")(discussionMode?(discussionTurns.length?replyDiscussion():beginDiscussion()):readingMode?generateReadingMode():performTranslation)()};$("#play-pause").onclick=()=>{if(!current)return;if(loop.running){loop.togglePause();return}const policy=$("#voice").value,voice=policy==="random"?voices[Math.floor(Math.random()*voices.length)]:(policy==="default"?voices.find(v=>v.default)||voices[0]:voices[Number(policy)])||null;loop.play(selectedPlainJapanese(),{voice,rate:Number($("#rate").value),lang:targetLang()})};$("#show-english").onchange=()=>{saveSettings();renderSentence()};$("#show-furigana").onchange=()=>{saveSettings();renderSentence()};$("#show-polite").onchange=async()=>{resetSession();saveSettings();if(current&&hasRegisters(itemTarget(current))){current={...current,reviewRegister:$("#show-polite").checked?"polite":"casual",updatedAt:new Date().toISOString()};await saveSentence(current);if(detail?.id===current.id)detail=current}renderSentence()};$("#rate").oninput=()=>{const rate=Number($("#rate").value);$("#rate-value").textContent=rate.toFixed(1)+"×";resetSession();loop.setRate(rate)};$("#settings-button").onclick=()=>$("#settings-dialog").showModal();$("#close-settings").onclick=()=>{saveSettings();$("#settings-dialog").close();renderPracticeNotices();writeReminderPrefs();syncReminderSchedule()};
@@ -1566,11 +1593,10 @@ $("#dictionary-dialog").addEventListener("close",()=>dictionaryLookupGeneration+
 
 window.addEventListener("echo-before-update",()=>saveWorkspace());
 
-$("#import-minihongo").onclick=importMiniHongo;
-$("#import-example-deck").onclick=()=>importDeckURL(EXAMPLE_DECK_URL,$("#import-example-deck"),"example sentences");
-$("#import-ai-team").onclick=()=>importDeckURL(AI_TEAM_DECK_URL,$("#import-ai-team"),"AI team sentences");
-$("#import-deck-url").onclick=()=>importDeckURL($("#deck-json-url").value,$("#import-deck-url"));
 
 $('#undo-mini-cleanup').onclick=undoMiniCleanup;
+$("#import-minihongo").onclick=()=>seedStarter($("#import-minihongo"));
+$("#empty-starter").onclick=()=>seedStarter($("#empty-starter"),$("#empty-starter-status"));
+$("#empty-practice").onclick=()=>{showView("practice");setPracticeMode("sentence");$("#english-input").focus()};
 
 window.echoAppReady=true;

@@ -274,6 +274,10 @@ html.motion-on .toast{animation:toast-in .18s ease-out}
 .empty-panel strong{font-family:var(--display);font-weight:400;font-size:18px}
 .empty-panel span{font-size:13px;color:var(--ink-soft)}
 .empty-panel button{min-height:38px;height:38px;margin-top:4px;padding:0 16px;border-radius:3px;font-size:13px;letter-spacing:normal;background:transparent}
+/* The empty library leads with the one action that fills it. */
+.empty-panel button.primary{background:var(--seal);min-height:44px;height:44px;font-size:14px}
+.empty-panel button.plain{text-decoration:underline;text-underline-offset:3px}
+#empty-history>span,#empty-history>p{font-family:var(--ui)}
 
 /* No translator connected */
 body.no-key #welcome strong,body.no-key #welcome strong em{color:var(--quiet-title)}
@@ -1028,4 +1032,5 @@ html.motion-off #review-progress-bar { transition: none; }
 
 .dictionary-choice{display:block;width:100%;text-align:left;margin:10px 0;padding:12px}#dictionary-context{overflow-wrap:anywhere}#dictionary-dialog{max-width:560px}
 
-.sentence-grammar{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;font-size:12px;font-weight:normal}.grammar-chip,.grammar-find{font:inherit;padding:4px 8px;border-radius:14px}.grammar-chip{color:var(--seal);border:1px solid var(--seal)}.grammar-vocab{border-bottom:2px dotted var(--seal)}.sentence-grammar .hint{width:100%}
+.grammar-host{margin:4px 0 12px}.grammar-host .link-button{margin-top:0}.grammar-host .hint{margin:0}
+.sentence-grammar{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;font-size:12px;font-weight:normal}.grammar-chip{font:inherit;min-height:32px;height:auto;padding:4px 10px;border-radius:14px;letter-spacing:normal;background:transparent}.grammar-chip{color:var(--seal);border:1px solid var(--seal)}.grammar-vocab{border-bottom:2px dotted var(--seal)}.sentence-grammar .hint{width:100%}
