@@ -16,7 +16,9 @@ More screens, including dark and desktop, are in [`docs/screenshots`](docs/scree
 
 - Provider keys are stored only in the user's browser and are never included
   in an export.
-- The library lives in IndexedDB and can be exported/imported as JSON.
+- The library lives in IndexedDB. A backup file can be exported and restored
+  (restoring merges; nothing already on the device is lost). Backups never
+  contain any key — translation or speech.
 - The shadowing loop never opens the microphone.
 - Dictation — in the composer, or when answering a review — uses the browser's
   own speech recognition, so that audio is handled by the browser's maker.
@@ -115,26 +117,35 @@ original. Both registers update together and existing review history is retained
 
 ## Dictionary lookup in sentences
 
-Tap a vocabulary word in sentence details, practice, library results, readings,
-conversation turns, revealed reviews or study examples to open its dictionary
-sheet. Ruby readings and inflection endings share the same action. Ambiguous
+Tap a vocabulary word in sentence details, practice, readings, conversation
+turns, revealed reviews or study examples to open its dictionary
+sheet. (A library row is one tap target: it opens the sentence.) Ruby readings and inflection endings share the same action. Ambiguous
 kana spellings offer their dictionary meanings; unknown katakana words and names
 stay whole, with an optional AI explanation using the current sentence context.
 The linguistic matcher is JP Core’s `browser/japanese-words.js`, copied unchanged.
 
 ## Grammar in sentences
 
-Use **Find grammar** below a Japanese sentence to make one AI request. Exact
-phrases are highlighted and point chips open the grammar sheet. A tap on a
-phrase with both vocabulary and grammar offers both choices. Links are saved
-with library sentences, appear in each grammar point’s sentence list, and
-remain usable offline. Refresh grammar explicitly after changes or to retry.
-Recognition can miss or misclassify a point; only known IDs with exact quoted
-evidence are accepted.
+On a sentence's page, **Explain the grammar** makes one AI request. Exact
+phrases are highlighted and point chips open the grammar sheet; the result is
+saved with the sentence, so the action is offered once and then replaced by
+its answer (editing the sentence clears it). Revealed review answers show the
+saved chips but never ask. Lists, sheets, Discussion and Reading show no
+grammar UI. With *Read new sentences for grammar automatically* on, every new
+sentence gets the same analysis in the background. Recognition can miss or
+misclassify a point; only known IDs with exact quoted evidence are accepted.
 
-### Starter imports and installed updates
+### Your library is yours; the starter is a seed
 
-Settings → Your sentences can import the Mini Hongo starter directly from `KakkoiDev/minihongo/master/imports/jp-echo.json`. JSON bundles may include `catalogues.words` (negative stable IDs) and `catalogues.grammar` (`minihongo:` IDs), which are backed up with sentences and available in the dictionaries. Source definitions and examples retain attribution. Imports append new sentences and merge identical Japanese text (ignoring furigana/layout whitespace), while preserving existing card IDs and review progress. Reimporting the same starter adds no duplicates.
+Echo does not import other people's decks. Every sentence is one the learner
+chose to say — translated, composed from a kanji, word or grammar point, or
+saved from Discussion or Reading. The single exception is an optional seed:
+Settings → Your sentences → **Starter sentences**, also offered on an empty
+Library, adds Mini Hongo's 262 example sentences from
+`KakkoiDev/minihongo/master/imports/jp-echo.json` (Japanese targets only).
+Once added they are ordinary sentences. The bundle may include
+`catalogues.words` and `catalogues.grammar` (`minihongo:` IDs), which are
+backed up with sentences. **Restore** accepts an Echo backup file and merges it.
 
 Vocabulary, kanji and grammar sheets all accept sentence ideas or directions using the same language switch and microphone composer. AI creates a sentence using the chosen item and checks it before saving.
 

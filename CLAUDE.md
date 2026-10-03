@@ -123,6 +123,26 @@ Before considering the change complete:
 - `sw.js`: offline cache/service worker. Never navigate/reload clients on update.
 - `test/`: behavior/regression contracts.
 
+## Product constraints (added October 2026)
+
+- **The library is the learner's own.** There is no general deck import (file
+  or URL). The only built-in content is the optional Mini Hongo starter seed,
+  offered in Settings and on an empty Library for Japanese targets. Restore
+  accepts Echo backups and merges. Do not reintroduce deck marketplaces,
+  URL imports or bundled example decks.
+- **Grammar UI has two hosts and one ask.** Chips and the "Explain the
+  grammar" action render only into `#sentence-grammar` (which may ask) and
+  `#review-grammar` (which never asks), via `enableVocabulary(...,{grammarHost})`.
+  Never append controls inside a sentence element, a row button or a bubble.
+- **Review skills are Listening, Reading and Writing.** Writing is a typed
+  answer by design (`test/session-regressions.test.js`). Speaking is practised
+  by the shadowing loop, not graded in review.
+- **Untrusted text never reaches markup unescaped.** Language codes go through
+  `safeLanguage`; imported codes must be on `LANGUAGES`. Credentials of every
+  kind are stripped in `exportBackup`.
+- Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
+  change to precached files; `test/pwa.test.js` follows the current name.
+
 ## Migration rule
 
 Legacy duplication exists. Do not use it as precedent. When touching a duplicated
