@@ -438,7 +438,7 @@ async function openKanji(character,cover,{learn=null,route=true}={}){
   $("#kanji-loop-state").textContent="";
   const byId=new Map(all.map(item=>[item.id,item])),mine=ids.map(id=>byId.get(id)).filter(Boolean);
   renderSheetSentences($("#kanji-sentences"),mine,{deletable:true,onDelete:deleteFromSheet,mark:character});
-  $("#kanji-mine-head").hidden=!mine.length;
+  $("#kanji-mine-head").hidden=!mine.length;sheetCount($("#kanji-mine-head"),mine.length);
   await renderKanjiInfo(character);
   if(!$("#kanji-dialog").open)$("#kanji-dialog").showModal();
 }
@@ -688,7 +688,7 @@ async function openGrammar(point,cover,{learn=null,route=true}={}){
   $("#grammar-compose").textContent=t("Or let Echo write one with {point}",{point:point.title});$("#grammar-compose").disabled=!hasTranslator();
   const byId=new Map(all.map(s=>[s.id,s])),mine=ids.map(id=>byId.get(id)).filter(Boolean);
   renderSheetSentences($("#grammar-sentences"),mine,{deletable:true,onDelete:deleteFromGrammarSheet,mark:point.title});
-  $("#grammar-mine-head").hidden=!mine.length;
+  $("#grammar-mine-head").hidden=!mine.length;sheetCount($("#grammar-mine-head"),mine.length);
   if(!$("#grammar-dialog").open)$("#grammar-dialog").showModal();
   renderPointNotes(point);
 }
@@ -936,7 +936,7 @@ async function openWord(w,cover,{learn=null,route=true}={}){
   $("#word-compose").textContent=t("Or let Echo write one with {word}",{word:w.w});$("#word-compose").disabled=!hasTranslator();
   const byId=new Map(all.map(s=>[s.id,s])),mine=ids.map(id=>byId.get(id)).filter(Boolean);
   renderSheetSentences($("#word-sentences"),mine,{deletable:true,onDelete:deleteFromWordSheet,mark:wordMarks(w).join("・")});
-  $("#word-mine-head").hidden=!mine.length;
+  $("#word-mine-head").hidden=!mine.length;sheetCount($("#word-mine-head"),mine.length);
   if(!$("#word-dialog").open)$("#word-dialog").showModal();
   await renderWordNote(w);
 }
@@ -1611,6 +1611,8 @@ const MODES_USED_KEY="jp-echo-modes-used";
 function modesUsed(){try{return JSON.parse(localStorage.getItem(MODES_USED_KEY)||"{}")||{}}catch{return {}}}
 function markModeUsed(mode){if(modesUsed()[mode])return;storePreference(MODES_USED_KEY,JSON.stringify({...modesUsed(),[mode]:true}));renderWelcomeModes()}
 function renderWelcomeModes(){const used=modesUsed();$("#welcome-discussion").hidden=!!used.discussion;$("#welcome-reading").hidden=!!used.reading;$("#welcome-modes").hidden=!!(used.discussion&&used.reading)}
+// "Your sentences with it  2": the count sits at the end of the rule heading.
+function sheetCount(head,n){let count=head.querySelector(".count");if(!count){count=el("span","count","");head.append(count)}count.textContent=String(n);head.classList.add("counted")}
 // Echo has one built-in deck, the Mini Hongo starter, offered only to seed an
 // empty or young library. Everything else in a library is the learner's own.
 const MINI_DECK_URL="https://raw.githubusercontent.com/KakkoiDev/minihongo/master/imports/jp-echo.json";
@@ -1661,6 +1663,13 @@ $("#sentence-change").ontoggle=()=>{if($("#sentence-change").open){if(document.a
 $("#sentence-delete").onclick=()=>askDelete();$("#delete-cancel").onclick=()=>$("#delete-dialog").close();$("#delete-confirm").onclick=confirmDelete;$("#delete-dialog").onclick=event=>{if(event.target===$("#delete-dialog"))$("#delete-dialog").close()};
 $("#side-start-review").onclick=startReview;$("#side-export-anki").onclick=()=>exportAnki($("#side-export-anki"));
 wide.addEventListener("change",()=>showView(document.body.dataset.view||"practice"));
+// Learn mode in a sheet: ← and → step through the band, like the footer's
+// Previous / Next. Typing stays typing.
+addEventListener("keydown",event=>{
+  if((event.key!=="ArrowLeft"&&event.key!=="ArrowRight")||event.metaKey||event.ctrlKey||event.altKey)return;
+  if(event.target.closest?.("input,textarea,select,[contenteditable]"))return;
+  const sheet=document.querySelector("dialog.tool-sheet[open]"),nav=sheet?.querySelector(".sheet-footer");if(!nav||nav.hidden)return;
+  const step=nav.querySelector(event.key==="ArrowLeft"?".nav-prev":".nav-next");if(step&&!step.disabled){event.preventDefault();step.click()}});
 // Desktop keys, as the sidebar legend promises. Typing must stay typing, so
 // only Escape is honoured while the answer box has focus.
 addEventListener("keydown",event=>{

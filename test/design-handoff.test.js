@@ -81,3 +81,25 @@ test("discussion: starter scenes fill the box and never send", () => {
   assert.match(app, /function composerLabel\(\)\{return discussionMode\?\(discussionTurns\.length\?"Reply to the conversation":"Describe the conversation"\)/);
   assert.doesNotMatch(css, /reply to the conversation"\}/, "no CSS-appended second label");
 });
+
+test("sheets: your sentences, then say, then the collapsed note, then the learn footer", () => {
+  for (const [prefix, notes, collapsed] of [["kanji", "kanji-story", true], ["word", "word-note", true], ["grammar", "point-notes", false]]) {
+    const start = html.indexOf(`<dialog id="${prefix}-dialog"`), sheet = html.slice(start, html.indexOf("</dialog>", start));
+    const at = id => sheet.indexOf(`id="${id}"`);
+    const order = [`${prefix}-mine-head`, `${prefix}-say`, notes, `${prefix}-learn-nav`].map(at);
+    assert.ok(order.every(i => i > 0), prefix);
+    assert.deepEqual([...order].sort((a, b) => a - b), order, prefix + " in the design's order");
+    assert.match(sheet, new RegExp(`id="${prefix}-learn-nav" class="learn-nav sheet-footer"`), prefix + " footer");
+    assert.equal(sheet.includes(`<details id="${prefix}-more" class="collapse-row sheet-more">`), collapsed, prefix + (collapsed ? " note collapsed" : " explanation stays open"));
+  }
+  assert.match(html, /A story to remember it by[\s\S]*Written by Echo · you can change it/);
+  for (const k of ["kanji", "grammar", "word"]) assert.match(app, new RegExp(`\\$\\("#${k}-mine-head"\\)\\.hidden=!mine\\.length;sheetCount\\(`));
+  assert.match(css, /\.sheet-more:not\(:has\(> :not\(summary\):not\(\[hidden\]\)\)\)\{display:none\}/, "no empty collapsed row");
+});
+
+test("learn mode: arrow keys step like the footer, and typing stays typing", () => {
+  const keys = app.slice(app.indexOf("// Learn mode in a sheet"), app.indexOf("// Desktop keys, as the sidebar legend promises."));
+  assert.match(keys, /event\.target\.closest\?\.\("input,textarea,select,\[contenteditable\]"\)\)return/);
+  assert.match(keys, /querySelector\(event\.key==="ArrowLeft"\?"\.nav-prev":"\.nav-next"\)/);
+  assert.match(keys, /if\(!nav\|\|nav\.hidden\)return/, "only in learn mode");
+});
