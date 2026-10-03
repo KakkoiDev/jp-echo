@@ -159,3 +159,12 @@ test("settings page structure: four groups, SettingsRow rows, lock note, install
   assert.match(view, /class="install-panel"/);
   assert.match(css, /\.settings-row\{display:flex;align-items:center;gap:12px;width:100%;min-height:64px/);
 });
+
+test("mobile never pans sideways: fields stay at 16px on touch, ripples stay clipped", () => {
+  // iOS zooms into a field under 16px on tap and leaves the page panning.
+  assert.match(css, /@media \(pointer:coarse\)\{input:not\(\[type=checkbox\],\[type=radio\],\[type=range\]\),select\{font-size:16px!important\}textarea\{font-size:16px\}\}/);
+  for (const [, size] of css.matchAll(/(?:^|[}\s,])textarea\{[^}]*font-size:(\d+)px/g)) assert.ok(Number(size) >= 16, `textarea at ${size}px`);
+  // The echo ripples overhang the screen edge; main clips them, with a fallback.
+  assert.match(css, /main\{[^}]*overflow-x:clip\}/);
+  assert.match(css, /@supports not \(overflow-x:clip\)\{@media \(max-width:1023px\)\{main\{overflow-x:hidden\}\}\}/);
+});
