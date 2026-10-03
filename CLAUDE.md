@@ -123,6 +123,46 @@ Before considering the change complete:
 - `sw.js`: offline cache/service worker. Never navigate/reload clients on update.
 - `test/`: behavior/regression contracts.
 
+## Product constraints (added October 2026)
+
+- **Decks come in by file or URL; Echo bundles none.** Settings → Import takes
+  a deck or a backup file, or a deck URL, and merges. The format is
+  `DECK-FORMAT.md` (with `decks/example-deck.json` and `decks/deck.schema.json`),
+  held to the importer by `test/deck-format.test.js` — change the importer and
+  the page together. The only built-in content is the optional ミニ本語 Minihongo
+  starter seed (Japanese only). Do not add one-click buttons for third-party
+  decks.
+- **Grammar UI has two hosts and one ask.** The GrammarList and the "Explain the
+  grammar" action render only into `#sentence-grammar` (which may ask) and
+  `#review-grammar` (which never asks), via `enableVocabulary(...,{grammarHost})`.
+  Never append controls inside a sentence element, a row button or a bubble.
+- **Review skills are Listening, Reading and Writing.** Writing is a typed
+  answer by design (`test/session-regressions.test.js`). Speaking is practised
+  by the shadowing loop, not graded in review.
+- **Untrusted text never reaches markup unescaped.** Language codes go through
+  `safeLanguage`; imported codes must be on `LANGUAGES`. Credentials of every
+  kind are stripped in `exportBackup` — provider keys, speech keys, the GitHub
+  gist token and the gist URL. Add any new credential there, with a test.
+- **Gist backup is one document.** `buildBackup()` is the only producer; Export
+  downloads it and the gist holds it. Writes that change a backup go through
+  the `saveSentence` / `deleteSentence` / note wrappers in `app.js` (which call
+  `markBackupDirty`), never straight to `db.js` or `notes.js`.
+- Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
+  change to precached files; `test/pwa.test.js` follows the current name.
+
+## Design handoff decisions (October 2026)
+
+- **Skills are glyphs.** 聴 読 書 via `SkillGlyph` (components.js); never emoji.
+  Skill copy derives from `review-modes.js` (`skillReason`, `skillMix`,
+  `dueLine`) — change the copy to fit the logic, never the logic to fit copy.
+- **Answered grammar is a list, not chips** (`GrammarList`). Word marks
+  (`.review-vocab`, interactive) and grammar marks (`.grammar-mark`, not
+  interactive) differ in weight and colour and may share a segment.
+- **Settings is a route.** Preferences commit on `change` through
+  `saveSettings()`, which must never touch credentials; credentials have their
+  own explicit saves. In-page Back pops history only via `settingsStack`.
+- **Discoverability lives in empty states**, not louder switches.
+
 ## Migration rule
 
 Legacy duplication exists. Do not use it as precedent. When touching a duplicated

@@ -62,7 +62,10 @@ export async function tagGrammar(sentences,points,settings={}){
     const text=batch.map((s,n)=>(n+1)+". "+stripFurigana(s.plainTarget||s.target||"")).join("\n");
     const raw=await ask(text,tagPrompt(pair.targetLang,points),chosen,settings);
     const tags=raw?.tags||{};
-    batch.forEach((s,n)=>{const got=tags[String(n+1)];out.set(s.id,[...new Set((Array.isArray(got)?got:[]).filter(id=>known.has(id)))])});
+    // Only a sentence the model actually answered for gets a result. An empty
+    // array means "read, uses nothing", so writing one for a sentence the
+    // model skipped would hide it from every later read.
+    batch.forEach((s,n)=>{const got=tags[String(n+1)];if(Array.isArray(got))out.set(s.id,[...new Set(got.filter(id=>known.has(id)))])});
   }
   return out;
 }
@@ -73,7 +76,10 @@ function jsonText(value){const text=String(value||"").trim().replace(/^```(?:jso
 async function fetchJson(url,options){const response=await fetch(url,options);if(!response.ok){let detail="";try{const body=await response.json();detail=body.error?.message||body.message||""}catch{}throw new Error("Translation failed ("+response.status+")"+(detail?": "+detail:"."))}return response.json()}
 async function openAICompatible(provider,english,key,model,endpoint,system){const urls={deepseek:"https://api.deepseek.com/chat/completions",openai:"https://api.openai.com/v1/chat/completions"};const headers={"Content-Type":"application/json"};if(key)headers.Authorization="Bearer "+key;const body={model,messages:[{role:"system",content:system},{role:"user",content:english}]};if(provider!=="local")body.response_format={type:"json_object"};const payload=await fetchJson(endpoint||urls[provider],{method:"POST",headers,body:JSON.stringify(body)});return jsonText(payload.choices?.[0]?.message?.content)}
 async function gemini(english,key,model,system){const payload=await fetchJson(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,{method:"POST",headers:{"Content-Type":"application/json","x-goog-api-key":key},body:JSON.stringify({systemInstruction:{parts:[{text:system}]},contents:[{role:"user",parts:[{text:english}]}],generationConfig:{responseMimeType:"application/json"}})});return jsonText(payload.candidates?.[0]?.content?.parts?.map(part=>part.text).join(""))}
-async function anthropicRequest(english,key,model,system){const payload=await fetchJson("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":key,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model,max_tokens:700,system,messages:[{role:"user",content:english}]})});return jsonText(payload.content?.filter(part=>part.type==="text").map(part=>part.text).join(""))}
+// The same request carries one sentence, a 30-sentence grammar batch or a
+// reading passage with furigana; 700 tokens cut the longer ones off mid-JSON.
+export const ANTHROPIC_MAX_TOKENS=4096;
+async function anthropicRequest(english,key,model,system){const payload=await fetchJson("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":key,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model,max_tokens:ANTHROPIC_MAX_TOKENS,system,messages:[{role:"user",content:english}]})});return jsonText(payload.content?.filter(part=>part.type==="text").map(part=>part.text).join(""))}
 async function proxyRequest(url,english,provider,model,key,pair){const payload=await fetchJson(url,{method:"POST",headers:{"Content-Type":"application/json",...(key?{Authorization:"Bearer "+key}:{})},body:JSON.stringify({english,provider,model,...pair})});return (payload.casual||payload.casualJapanese||payload.translation)?payload:jsonText(payload.choices?.[0]?.message?.content)}
 
 // Which provider, which key, which model — the same decision for anything

@@ -43,6 +43,10 @@ export const LANGUAGES = [
 ];
 const LANGUAGE_NAMES = new Map(LANGUAGES);
 export function languageName(code){return LANGUAGE_NAMES.get(code)||code}
+// A sentence's language codes end up in lang="" attributes and voice lookups,
+// so anything that is not on the list above is treated as not a language.
+export const isLanguage = code => typeof code === "string" && LANGUAGE_NAMES.has(code);
+export const safeLanguage = (code, fallback) => isLanguage(code) ? code : fallback;
 // Furigana and the casual/polite pair are Japanese-only. Every other target
 // gets one plain translation, and the toggles that drive them hide themselves.
 // Furigana and the casual/polite pair are Japanese-only. Every other target
@@ -305,7 +309,10 @@ export function forAnki(sentence) {
 }
 
 export function exportBackup(sentences, preferences = {}, notes = []) {
-  const {apiKey, providerKeys, ...safe} = preferences;
+  // Every credential the app stores. A backup is a file people share and
+  // re-upload — and the gist backup uploads it — so none of these may ever be
+  // in it. The gist URL is left out too: anyone holding it can read the library.
+  const {apiKey, providerKeys, speechKeys, gistToken, gistUrl, ...safe} = preferences;
   return {schemaVersion:SCHEMA_VERSION,exportedAt:new Date().toISOString(),sentences,preferences:safe,notes};
 }
 

@@ -16,7 +16,18 @@ More screens, including dark and desktop, are in [`docs/screenshots`](docs/scree
 
 - Provider keys are stored only in the user's browser and are never included
   in an export.
-- The library lives in IndexedDB and can be exported/imported as JSON.
+- The library lives in IndexedDB. A backup file can be exported; a backup or
+  a deck can be imported from a file or a URL (importing merges; nothing
+  already on the device is lost). Backups never
+  contain any key — translation or speech.
+- Optional automatic backup to a **secret GitHub gist** (Settings → Your
+  sentences), the same approach as webmods/annotate: one `echo-backup.json` in
+  one gist, updated in place. A change marks the library dirty; it is uploaded
+  after two quiet minutes, at most every five, and when the app is left or
+  reopened with changes pending. The GitHub token stays in this browser and,
+  like the gist URL, is never written into any backup. Secret gists are
+  unlisted, not private: anyone with the URL can read them. **Restore from
+  gist** merges, and needs only the URL on a new device.
 - The shadowing loop never opens the microphone.
 - Dictation — in the composer, or when answering a review — uses the browser's
   own speech recognition, so that audio is handled by the browser's maker.
@@ -115,26 +126,51 @@ original. Both registers update together and existing review history is retained
 
 ## Dictionary lookup in sentences
 
-Tap a vocabulary word in sentence details, practice, library results, readings,
-conversation turns, revealed reviews or study examples to open its dictionary
-sheet. Ruby readings and inflection endings share the same action. Ambiguous
+Tap a vocabulary word in sentence details, practice, readings, conversation
+turns, revealed reviews or study examples to open its dictionary
+sheet. (A library row is one tap target: it opens the sentence.) Ruby readings and inflection endings share the same action. Ambiguous
 kana spellings offer their dictionary meanings; unknown katakana words and names
 stay whole, with an optional AI explanation using the current sentence context.
 The linguistic matcher is JP Core’s `browser/japanese-words.js`, copied unchanged.
 
 ## Grammar in sentences
 
-Use **Find grammar** below a Japanese sentence to make one AI request. Exact
-phrases are highlighted and point chips open the grammar sheet. A tap on a
-phrase with both vocabulary and grammar offers both choices. Links are saved
-with library sentences, appear in each grammar point’s sentence list, and
-remain usable offline. Refresh grammar explicitly after changes or to retry.
-Recognition can miss or misclassify a point; only known IDs with exact quoted
+On a sentence's page, **Explain the grammar** makes one AI request. The answer
+is kept with the sentence and shown as a numbered list (一 二 三…): each point's
+phrase as it appears, its JLPT level and a short gloss; a row opens the grammar
+sheet. In the sentence, words you can look up have a grey dotted underline and
+grammar a heavier vermilion one; a key line under the meaning says which is
+which. The same list appears on the revealed review answer, which never asks.
+Without a key, or offline, the action stays visible but disabled with the
+reason. With *Read new sentences for grammar automatically* on, new sentences
+get the same analysis in the background. Only known IDs with exact quoted
 evidence are accepted.
 
-### Starter imports and installed updates
+### Review skills
 
-Settings → Your sentences can import the Mini Hongo starter directly from `KakkoiDev/minihongo/master/imports/jp-echo.json`. JSON bundles may include `catalogues.words` (negative stable IDs) and `catalogues.grammar` (`minihongo:` IDs), which are backed up with sentences and available in the dictionaries. Source definitions and examples retain attribution. Imports append new sentences and merge identical Japanese text (ignoring furigana/layout whitespace), while preserving existing card IDs and review progress. Reimporting the same starter adds no duplicates.
+Each sentence takes turns being **聴 heard**, **読 read** and **書 written**, one
+skill per visit, and moves to the next skill when it is graded OK (Again keeps
+the skill). The card says which skill and why, from the sentence's own track.
+
+### Settings
+
+Settings is a page — `/settings`, with sub-pages `/settings/ai`, `speech`,
+`backup`, `import`, `export` and `grammar` — not a dialog. Preferences are
+saved as you change them; keys and endpoints only when you press their Save.
+
+### Decks, and the starter seed
+
+Settings → Your sentences → **Import** takes a deck file or a deck URL (or an
+Echo backup) and merges it. **[DECK-FORMAT.md](DECK-FORMAT.md) is the format**,
+written so an AI agent can produce a valid deck from it, with a complete
+[example deck](decks/example-deck.json) and a [JSON Schema](decks/deck.schema.json).
+Echo bundles no decks. The one built-in option is a seed:
+Settings → Your sentences → **Starter sentences**, also offered on an empty
+Library, adds ミニ本語 Minihongo's 262 example sentences from
+`KakkoiDev/minihongo/master/imports/jp-echo.json` (Japanese targets only).
+Once added they are ordinary sentences. The bundle may include
+`catalogues.words` and `catalogues.grammar` (`minihongo:` IDs), which are
+backed up with sentences.
 
 Vocabulary, kanji and grammar sheets all accept sentence ideas or directions using the same language switch and microphone composer. AI creates a sentence using the chosen item and checks it before saving.
 
@@ -142,8 +178,8 @@ The service worker installs and serves a complete app version together. It serve
 
 Starter-import JP Core revision: ee9bfdb8a5b3fc38903ef6fcbcd50fa65d75bdf3.
 
-### Compact Mini Hongo starter (v2)
+### Compact ミニ本語 Minihongo starter (v2)
 
 The starter contains 274 cards: the 231 main vocabulary entries as words/glosses, plus one short authored example per each of 43 grammar points. Advanced vocabulary, compounds, expressions, stories and extra examples are excluded.
 
-On the first v119 launch, Echo archives and removes only recognizable v1 Minihongo import cards, restores the personal library, and strips imported-only dictionary links. Existing personal IDs, content and review progress remain intact. Settings shows the removed/kept counts and an **Undo Mini Hongo cleanup** recovery action. No new starter cards are added during cleanup; import the compact bundle separately when wanted. Old oversized starter files are rejected.
+On the first v119 launch, Echo archives and removes only recognizable v1 Minihongo import cards, restores the personal library, and strips imported-only dictionary links. Existing personal IDs, content and review progress remain intact. Settings shows the removed/kept counts and an **Undo Minihongo cleanup** recovery action. No new starter cards are added during cleanup; import the compact bundle separately when wanted. Old oversized starter files are rejected.

@@ -106,10 +106,10 @@ test("tagging sends a closed list and keeps only ids from it", async () => {
 
 test("tagging batches, so a big library is a few requests, not hundreds", async () => {
   const many = Array.from({length: TAG_BATCH + 1}, (_, i) => ({id: "s" + i, plainTarget: "文" + i}));
-  const seen = record({tags: {}});
+  const seen = record({tags: Object.fromEntries(Array.from({length: TAG_BATCH}, (_, i) => [String(i + 1), []]))});
   const tags = await tagGrammar(many, [shimau], settings);
   assert.equal(seen.length, 2);
-  assert.equal(tags.size, TAG_BATCH + 1, "every sentence gets an answer, even an empty one");
+  assert.equal(tags.size, TAG_BATCH + 1, "every sentence the model answered for gets an answer, even an empty one");
 });
 
 test("nothing to tag, or nothing to tag against, makes no request", async () => {
@@ -164,4 +164,13 @@ test("a sentence the check refuses is asked for again, once", async () => {
   assert.match(seen[1].user, /which does not use 食べる/);
   record({source: "x", casual: "パンを買【か】った。", polite: "パンを買【か】った。"});
   await assert.rejects(() => compose({word: {word: "食べる"}, check: () => false}, settings), /kept writing sentences without 食べる/);
+});
+
+test("a sentence the model left out stays untagged, so the next read picks it up", async () => {
+  // The prompt asks for an empty array for "uses none". A missing number is a
+  // skipped sentence, and marking it [] would hide it from every later read.
+  record({tags: {"1": ["te-shimau"]}});
+  const tags = await tagGrammar([{id: "a", plainTarget: "食べてしまった"}, {id: "b", plainTarget: "猫だ"}], [shimau], settings);
+  assert.deepEqual(tags.get("a"), ["te-shimau"]);
+  assert.equal(tags.has("b"), false);
 });

@@ -38,3 +38,9 @@ export function planMiniSentenceUpgrade(current,backup){
  const ids=new Set(removed.map(s=>s.id)),kept=current.filter(s=>!ids.has(s.id));
  return {removed,sentences:mergeSentences(mergeSentences(kept,[...candidates.values()]),backup.sentences)};
 }
+
+// The current starter (v3, full example sentences). A library that holds any of
+// them has been seeded, so the offer to seed it again is withdrawn.
+export const MINI_STARTER_VERSION=3;
+export const isStarterSentence=s=>s?.provenance?.project==='Minihongo'&&Number(s.provenance.starterVersion)>=MINI_STARTER_VERSION;
+export const isSeeded=(sentences=[])=>sentences.some(isStarterSentence);

@@ -1,23 +1,29 @@
 import {validateDeckBackup,fetchDeckBackup} from './imports.js';
-import {planMiniSentenceUpgrade,repairMiniImport} from './mini-imports.js';
+import {isSeeded,planMiniSentenceUpgrade,repairMiniImport} from './mini-imports.js';
 import {applyI18n,setDictionary,t} from "./i18n.js";
 import {earliestPair,flipSentence,isReversed,pairLooksSwapped,repairPair} from "./repair.js";
-import {DEFAULT_PAIR,LANGUAGES,MORA_MNEMONIC_META,createSentence,replaceSentenceContent,exportBackup,forAnki,hasFurigana,hasRegisters,languageName,mergeSentences,normalizeFurigana,rubyHtml,SCHEMA_VERSION,stripFurigana} from "./core.js";
+import {DEFAULT_PAIR,LANGUAGES,safeLanguage,MORA_MNEMONIC_META,createSentence,replaceSentenceContent,exportBackup,forAnki,hasFurigana,hasRegisters,languageName,mergeSentences,normalizeFurigana,rubyHtml,SCHEMA_VERSION,stripFurigana} from "./core.js";
 import {isExactMatch,markAttempt,markTarget} from "./diff.js";
-import {removeArchivedMiniCards,readImportRecovery,saveImportRecovery,deleteSentence,getSentence,listSentences,migrateStore,replaceAll,saveSentence as persistSentence} from "./db.js";
+import {removeArchivedMiniCards,readImportRecovery,saveImportRecovery,deleteSentence as dbDeleteSentence,getSentence,listSentences,migrateStore,replaceAll,saveSentence as persistSentence} from "./db.js";
+import {MIN_INTERVAL_MS,QUIET_MS,downloadBackup,parseGistId,shouldAutoBackup,uploadBackup} from "./gist-backup.js";
 import {analyzeSentenceGrammar,askModel,rewriteSentence,adjustNote,carries,compose,composeFromIntent,PROVIDER_DEFAULTS,tagGrammar,translate,discuss,generateReading,writeNotes,writeWordNote,transcribeAudio} from "./api.js";
-import {setImportedGrammar,byLevel as grammarByLevel,cleanTags as grammarTags,coverage as grammarCoverage,hasGrammar,isTagged,learned as grammarLearned,LEVELS as GRAMMAR_LEVELS,point as grammarPoint,POINTS as GRAMMAR_POINTS,summarise as grammarSummarise,untagged as untaggedSentences} from "./grammar.js";
+import {grammarListItems,setImportedGrammar,byLevel as grammarByLevel,cleanTags as grammarTags,coverage as grammarCoverage,hasGrammar,isTagged,learned as grammarLearned,LEVELS as GRAMMAR_LEVELS,point as grammarPoint,POINTS as GRAMMAR_POINTS,summarise as grammarSummarise,untagged as untaggedSentences} from "./grammar.js";
 import {japaneseVoices,recognitionFactory,ShadowLoop,ConversationLoop} from "./speech.js";
 import {STORIES} from "./stories.js";
 import {coverage as kanjiCoverage,facts as kanjiFacts,jlptBands as kanjiBands,learned as kanjiLearned,LEVEL_LABELS,levelOf,nextUnmet,sentenceKanji,TOTAL as KANJI_TOTAL} from "./kanji.js";
 import {searchGrammar,searchKanji,searchWords} from "./lookup.js";
 import {setImportedWords,bands as wordBands,carries as carriesWord,coverage as wordCoverage,kindOf,learned as wordLearned,levelOf as wordLevel,marks as wordMarks,sentenceWords,wordSpans,TOTAL as WORD_TOTAL,word as wordById} from "./words.js";
-import {deleteNote,forBackup,getNote,listNotes,makeNote,mergeNotes,noteKey,putNote,replaceNotes} from "./notes.js";
+import {deleteNote as dbDeleteNote,forBackup,getNote,listNotes,makeNote,mergeNotes,noteKey,putNote as dbPutNote,replaceNotes as dbReplaceNotes} from "./notes.js";
 import {downloadAnkiDeck} from "./anki-export.js";
 import {dueSentences,ensureSchedule,isDue,reviewSentence} from "./srs.js";
-import {ensureReviewTrack,recordReviewMode,reviewMode,reviewModeMeta} from "./review-modes.js";
+import {dueLine,ensureReviewTrack,nextSkill,recordReviewMode,reviewMode,reviewModeMeta,skillMix,skillReason} from "./review-modes.js";
 import {DEFAULT_TIME,REMINDER_TAG,reminderText,shouldRemind} from "./reminders.js";
 import {saveDiscussionTurn} from "./actions.js";
+// New shared UI comes from the component library (COMPONENTS.md).
+import {grammarList,skillGlyph,skillTrio} from "./components.js";
+// Settings page state, declared before anything can read it (navigationState).
+const SETTINGS_TITLES={main:"Settings",ai:"AI service",speech:"Speech recognition",backup:"Backup",import:"Import sentences",export:"Export",grammar:"Grammar"};
+let settingsPage="main",settingsReturn="practice";
 import {parseRoute,routeFor} from "./routes.js";
 import {mergeCatalogues,readCatalogues,saveCatalogues} from "./catalogues.js";
 let importedCatalogues=readCatalogues();
@@ -29,8 +35,14 @@ async function saveSentence(sentence){
   const texts=[sentence.target,sentence.casualTarget,sentence.politeTarget].filter(Boolean).map(stripFurigana);
   const analyses=texts.map(text=>grammarAnalysisCache.get(text)||(sentence.grammarAnalysis||[]).find(a=>a.text===text)).filter(Boolean);
   if(analyses.length){sentence={...sentence,grammarAnalysis:[...new Map(analyses.map(a=>[a.text,a])).values()],grammar:grammarTags([...(sentence.grammar||[]),...analyses.flatMap(a=>a.grammar)])}}
-  return persistSentence(sentence);
+  const saved=await persistSentence(sentence);markBackupDirty();return saved;
 }
+// Every write that changes what a backup would contain goes through one of
+// these, so the gist backup knows there is something new to upload.
+async function deleteSentence(id){const done=await dbDeleteSentence(id);markBackupDirty();return done}
+async function putNote(...args){const done=await dbPutNote(...args);markBackupDirty();return done}
+async function deleteNote(...args){const done=await dbDeleteNote(...args);markBackupDirty();return done}
+async function replaceNotes(...args){const done=await dbReplaceNotes(...args);markBackupDirty();return done}
 const $=selector=>document.querySelector(selector);
 try{const p=new URLSearchParams(location.search).get("echo-route")||sessionStorage.getItem("echo-route");if(p){sessionStorage.removeItem("echo-route");history.replaceState({echo:true},"",p)}}catch{}
 // Preferences must not prevent the app from opening its IndexedDB library.
@@ -68,7 +80,9 @@ const sourceLang=()=>settings.sourceLang||DEFAULT_PAIR.sourceLang;
 const targetLang=()=>settings.targetLang||DEFAULT_PAIR.targetLang;
 // A sentence carries the pair it was made with, so an old card keeps rendering
 // the way it was made even after the setting moves on.
-const itemTarget=item=>item.targetLang||DEFAULT_PAIR.targetLang;
+// Guarded: the code is interpolated into lang="" markup, and a record imported
+// before codes were validated may carry anything.
+const itemTarget=item=>safeLanguage(item?.targetLang,DEFAULT_PAIR.targetLang);
 const sentenceRegister=item=>item?.reviewRegister==="polite"?"polite":"casual";
 const preferredTarget=item=>sentenceRegister(item)==="polite"?(item?.politeTarget||item?.target||""):(item?.casualTarget||item?.target||"");
 const preferredPlainTarget=item=>sentenceRegister(item)==="polite"?(item?.plainPoliteTarget||item?.plainTarget||stripFurigana(preferredTarget(item))):(item?.plainCasualTarget||item?.plainTarget||stripFurigana(preferredTarget(item)));
@@ -127,10 +141,67 @@ function applyTheme(theme=settings.theme||"system"){document.documentElement.dat
   if(theme==="system"){metas[0].content="#F3F0E7";if(metas[1])metas[1].content="#191712"}
   else for(const meta of metas)meta.content=dark?"#191712":"#F3F0E7"}
 function showProviderConfig(){const provider=$("#provider").value;document.querySelectorAll(".provider-config").forEach(node=>node.hidden=node.dataset.provider!==provider)}
-function saveSettings(){settings.provider=$("#provider").value;settings.speechProvider=$("#speech-provider").value;settings.speechKeys={groq:$("#groq-speech-key").value.trim()};settings.providerKeys={deepseek:$("#deepseek-key").value.trim(),google:$("#google-key").value.trim(),openai:$("#openai-key").value.trim(),anthropic:$("#anthropic-key").value.trim()};settings.providerModels={deepseek:$("#deepseek-model").value.trim(),google:$("#google-model").value.trim(),openai:$("#openai-model").value.trim(),anthropic:$("#anthropic-model").value.trim(),local:$("#local-model").value.trim()};settings.localEndpoint=$("#local-endpoint").value.trim();settings.proxyUrl=$("#proxy-url").value.trim();settings.theme=$("#theme").value;settings.motion=$("#motion").value;settings.voice=$("#voice").value;settings.discussionVoiceAI=$("#discussion-voice-ai").value;settings.discussionVoiceUser=$("#discussion-voice-user").value;settings.rate=Number($("#rate").value);settings.showEnglish=$("#show-english").checked;settings.showFurigana=$("#show-furigana").checked;settings.showPolite=$("#show-polite").checked;settings.autoListen=$("#autolisten").checked;settings.autoTag=$("#autotag").checked;settings.remindTime=$("#remind-time").value;storePreference("jp-echo-settings",JSON.stringify(settings));applyTheme();applyMotion()}
-function resetSettingsForm(){const keys=settings.providerKeys||{},models=settings.providerModels||{};$("#provider").value=defaultProvider();$("#speech-provider").value=settings.speechProvider||"auto";$("#groq-speech-key").value=settings.speechKeys?.groq||"";$("#deepseek-key").value=keys.deepseek||settings.apiKey||"";$("#google-key").value=keys.google||"";$("#openai-key").value=keys.openai||"";$("#anthropic-key").value=keys.anthropic||"";for(const provider of Object.keys(PROVIDER_DEFAULTS))$("#"+provider+"-model").value=models[provider]||PROVIDER_DEFAULTS[provider];$("#local-endpoint").value=settings.localEndpoint||"http://localhost:11434/v1/chat/completions";$("#proxy-url").value=settings.proxyUrl||"";$("#theme").value=settings.theme||"system";$("#motion").value=settings.motion||"system";$("#autolisten").checked=settings.autoListen!==false;$("#autotag").checked=!!settings.autoTag;$("#remind").checked=!!settings.remind;$("#remind-time").value=settings.remindTime||DEFAULT_TIME;$("#remind-reach").textContent=settings.remind?reminderReach():"";$("#voice").value=settings.voice||"default";$("#discussion-voice-ai").value=settings.discussionVoiceAI||"default";$("#discussion-voice-user").value=settings.discussionVoiceUser||"default";$("#rate").value=settings.rate||1;$("#rate-value").textContent=Number($("#rate").value).toFixed(1)+"×";showProviderConfig()}
-function openSettings(){resetSettingsForm();updateInstallUI();$("#settings-dialog").showModal()}
-function cancelSettings(){settings.remind=!!readSettings().remind;resetSettingsForm();applyTheme();applyMotion();$("#settings-dialog").close()}
+// Preferences apply as they change: each control commits on "change", and the
+// header says so once the write has landed. Credentials never pass through
+// here — they have explicit saves (saveAIService, saveSpeech), so a toggle on
+// the Practice screen can never commit a half-typed key.
+function saveSettings(){settings.theme=$("#theme").value;settings.motion=$("#motion").value;settings.voice=$("#voice").value;settings.discussionVoiceAI=$("#discussion-voice-ai").value;settings.discussionVoiceUser=$("#discussion-voice-user").value;settings.rate=Number($("#rate").value);settings.showEnglish=$("#show-english").checked;settings.showFurigana=$("#show-furigana").checked;settings.showPolite=$("#show-polite").checked;settings.autoTag=$("#autotag").checked;settings.remindTime=$("#remind-time").value;
+  const gistWasOn=!!settings.gistAuto;settings.gistAuto=$("#gist-auto").checked;settings.gistUrl=$("#gist-url").value.trim();
+  // Turning automatic backup on is an explicit act, so it takes the token typed beside it.
+  if(settings.gistAuto&&!gistWasOn)settings.gistToken=$("#gist-token").value.trim();
+  const saved=persistSettings();applyTheme();applyMotion();
+  if(settings.gistAuto&&!gistWasOn){patchGistState({dirty:true,lastChangeAt:0});maybeAutoBackup("open").catch(()=>{})}renderGistStatus();renderSettingsRows();if(saved)flashSaved();return saved}
+// One write path; true only when the browser actually kept it.
+function persistSettings(){try{storePreference("jp-echo-settings",JSON.stringify(settings));return JSON.parse(localStorage.getItem("jp-echo-settings")||"null")!==null}catch{return false}}
+let savedTimer=null;
+function flashSaved(text="Saved"){const note=$("#settings-saved");if(!note)return;note.textContent=text;clearTimeout(savedTimer);savedTimer=setTimeout(()=>note.textContent="Saved as you go",2200)}
+function resetSettingsForm(){const keys=settings.providerKeys||{},models=settings.providerModels||{};$("#provider").value=defaultProvider();$("#speech-provider").value=settings.speechProvider||"auto";$("#groq-speech-key").value=settings.speechKeys?.groq||"";$("#deepseek-key").value=keys.deepseek||settings.apiKey||"";$("#google-key").value=keys.google||"";$("#openai-key").value=keys.openai||"";$("#anthropic-key").value=keys.anthropic||"";for(const provider of Object.keys(PROVIDER_DEFAULTS))$("#"+provider+"-model").value=models[provider]||PROVIDER_DEFAULTS[provider];$("#local-endpoint").value=settings.localEndpoint||"http://localhost:11434/v1/chat/completions";$("#proxy-url").value=settings.proxyUrl||"";$("#theme").value=settings.theme||"system";$("#motion").value=settings.motion||"system";$("#autotag").checked=!!settings.autoTag;$("#remind").checked=!!settings.remind;$("#remind-time").value=settings.remindTime||DEFAULT_TIME;$("#gist-auto").checked=!!settings.gistAuto;$("#gist-token").value=settings.gistToken||"";$("#gist-url").value=settings.gistUrl||"";renderGistStatus();$("#remind-reach").textContent=settings.remind?reminderReach():"";$("#voice").value=settings.voice||"default";$("#discussion-voice-ai").value=settings.discussionVoiceAI||"default";$("#discussion-voice-user").value=settings.discussionVoiceUser||"default";$("#rate").value=settings.rate||1;$("#rate-value").textContent=Number($("#rate").value).toFixed(1)+"×";showProviderConfig()}
+// Settings is a page (/settings, /settings/<sub-page>), not a modal.
+function openSettings(page="main",{route=true}={}){const view=document.body.dataset.view,entering=view!=="settings";if(entering){if(view)settingsReturn=view;settingsStack=route?["out"]:[]}
+  // Browser Back from a sub-page lands here with route:false: drop that push.
+  else if(!route&&page==="main"&&settingsStack[settingsStack.length-1]==="main")settingsStack.pop();
+  resetSettingsForm();updateInstallUI();listSentences().then(renderStarterOffer).catch(()=>{});showView("settings",{route:false});showSettingsPage(page,{route,fresh:entering})}
+function showSettingsPage(page,{route=true,fresh=false}={}){const previous=settingsPage;settingsPage=SETTINGS_TITLES[page]?page:"main";
+  if(route&&!fresh&&previous==="main"&&settingsPage!=="main")settingsStack.push("main");
+  for(const node of document.querySelectorAll("#settings-view .settings-page"))node.hidden=node.dataset.settingsPage!==settingsPage;
+  $("#settings-heading").textContent=t(SETTINGS_TITLES[settingsPage]);$("#settings-saved").hidden=settingsPage!=="main";
+  if(settingsPage==="ai"){$("#ai-status").textContent="";showProviderConfig()}if(settingsPage==="speech")$("#speech-status").textContent="";
+  renderSettingsRows();if(route)syncRoute({view:"settings",settingsPage});document.querySelector("#settings-view")?.scrollTo?.(0,0);scrollTo(0,0)}
+// Back steps back through history when the entry before is where Back leads
+// (so the browser's Back stays in step). settingsStack records the pushes made
+// in this session: "out" = entered Settings from another view, "main" = opened
+// a sub-page from /settings. After a reload or deep link it is empty, and Back
+// navigates instead.
+let settingsStack=[];
+function leaveSettings(){const target=settingsPage!=="main"?"main":"out";
+  if(settingsStack[settingsStack.length-1]===target){settingsStack.pop();history.back();return}
+  // Pushing /settings here means the entry behind is no longer "outside".
+  if(target==="main"){settingsStack=[];return showSettingsPage("main")}settingsStack=[];showView(settingsReturn==="settings"?"practice":settingsReturn)}
+// SettingsRow statuses: one line each, true to what is stored.
+function renderSettingsRows(){if(!$("#settings-status-ai"))return;
+  const provider=defaultProvider(),names={google:"Google Gemini",deepseek:"DeepSeek",openai:"OpenAI",anthropic:"Anthropic",local:"Local AI"};
+  $("#settings-status-ai").textContent=names[provider]+(provider==="local"?(settings.localEndpoint?" · endpoint saved":" · no endpoint yet"):(settings.providerKeys?.[provider]?" · key saved ✓":" · no key yet"));
+  $("#settings-status-speech").textContent={auto:"Auto — browser, then Groq",browser:"Browser only",groq:"Groq Whisper",google:"Gemini"}[settings.speechProvider||"auto"]||"Auto — browser, then Groq";
+  $("#settings-status-grammar").textContent=settings.autoTag?"Read new sentences automatically":"Explained only when I ask";$("#settings-row-grammar").hidden=targetLang()!=="ja";
+  $("#settings-status-import").textContent=targetLang()==="ja"?"A deck file, a URL, or the ミニ本語 Minihongo starter":"A deck file or a URL";
+  $("#settings-status-export").textContent="An Anki deck, or a backup file";
+  const gist=gistState(),status=$("#settings-status-backup");status.classList.toggle("ok",!!(settings.gistAuto&&gist.lastSuccessAt&&!gist.lastError));status.classList.toggle("error",!!gist.lastError);
+  status.textContent=gist.lastError?"Last backup failed — open to see why":settings.gistAuto&&gist.lastSuccessAt?"Backed up to your gist · "+gistWhen(gist.lastSuccessAt):settings.gistAuto?"Gist backup is on — nothing backed up yet":"Off — back up to a GitHub gist"}
+// Credentials: explicit saves. The AI key is checked only when asked (one request).
+function aiFormSettings(){const provider=$("#provider").value,keys={...(settings.providerKeys||{})},models={...(settings.providerModels||{})};
+  if(provider!=="local"){keys[provider]=$("#"+provider+"-key").value.trim()}models[provider]=$("#"+provider+"-model").value.trim();
+  return {...settings,provider,providerKeys:keys,providerModels:models,localEndpoint:provider==="local"?$("#local-endpoint").value.trim():settings.localEndpoint,proxyUrl:$("#proxy-url").value.trim()}}
+function saveAIService(){const next=aiFormSettings();Object.assign(settings,{provider:next.provider,providerKeys:next.providerKeys,providerModels:next.providerModels,localEndpoint:next.localEndpoint,proxyUrl:next.proxyUrl});
+  $("#ai-status").textContent=persistSettings()?(next.provider==="local"?"Saved. Echo will use this endpoint.":"Key saved on this device."):"This browser would not store it. Check that site storage is allowed.";renderSettingsRows();renderPracticeNotices?.()}
+async function checkAIService(){const button=$("#ai-check"),next=aiFormSettings();if(next.provider!=="local"&&!next.providerKeys[next.provider]){$("#ai-status").textContent="Paste a key first.";return}
+  button.disabled=true;$("#ai-status").textContent="Checking…";
+  try{await translate("Good morning.",{...next,sourceLang:"en",targetLang:targetLang()});$("#ai-status").textContent="The key works — checked just now. The check used one request."}
+  catch(error){$("#ai-status").textContent="That did not work: "+(error.message||error)}finally{button.disabled=false}}
+function removeAIKey(){const provider=$("#provider").value;
+  if(provider==="local"){settings.localEndpoint="";$("#local-endpoint").value=""}else{settings.providerKeys={...(settings.providerKeys||{}),[provider]:""};if(provider==="deepseek")delete settings.apiKey;$("#"+provider+"-key").value=""}
+  $("#ai-status").textContent=persistSettings()?"Removed from this device. Your sentences stay.":"This browser would not update its storage.";renderSettingsRows();renderPracticeNotices?.()}
+function saveSpeech(){settings.speechProvider=$("#speech-provider").value;settings.speechKeys={...(settings.speechKeys||{}),groq:$("#groq-speech-key").value.trim()};
+  $("#speech-status").textContent=persistSettings()?"Saved on this device.":"This browser would not store it.";renderSettingsRows();setupRecognition?.()}
 function isInstalled(){return window.matchMedia("(display-mode: standalone)").matches||window.navigator.standalone===true}
 function updateInstallUI(){const installed=isInstalled();$("#install-app").disabled=installed;$("#install-app").textContent=installed?"Installed":"Install";$("#install-status").textContent=installed?"Opened as an installed app.":""}
 async function installApp(){if(isInstalled())return updateInstallUI();if(installPrompt){installPrompt.prompt();const choice=await installPrompt.userChoice;installPrompt=null;$("#install-status").textContent=choice.outcome==="accepted"?"Installation started.":"Installation was cancelled.";return updateInstallUI()}$("#install-status").textContent=/iphone|ipad|ipod/i.test(navigator.userAgent)?"In Safari, tap Share, then Add to Home Screen.":"Open the browser menu and choose Install app or Add to Home screen."}
@@ -147,11 +218,13 @@ function openSentence(sentence){resetSession();current=sentence;if(hasRegisters(
 let discussionMode=false,readingMode=false,discussionTurns=[],discussionScenario="",readingPassage=null,readingSelected=-1;
 const discussionLoop=new ConversationLoop({onEcho:()=>{},onState:(state,index)=>{const n=$("#discussion-loop-state");if(n)n.textContent=state==="speaking"?`Playing turn ${(index??0)+1} of ${discussionTurns.length}`:state==="imitate"?"Your turn - echo it":state==="paused"?"Paused":state==="error"?"That voice could not play":"Ready"}});
 const readingLoop=new ConversationLoop({onEcho:()=>{},onState:(state,index)=>{const n=$("#reading-loop-state"),button=$("#reading-echo");if(n)n.textContent=state==="speaking"?`Playing sentence ${(index??0)+1} of ${readingPassage?.sentences.length||0}`:state==="imitate"?"Your turn — echo it":state==="paused"?"Paused":state==="error"?"That voice could not play":"Ready";if(button){const active=state==="speaking"||state==="imitate"||state==="paused";button.textContent=state==="paused"?"Resume":active?"Pause":"Start echo";button.setAttribute("aria-pressed",String(active))}}});
-function setPracticeMode(mode,{route=true}={}){discussionMode=mode==="discussion";readingMode=mode==="reading";saveWorkspace({discussionMode,readingMode});if(route)syncRoute({view:"practice",discussionMode,readingMode});$("#discussion").hidden=!discussionMode;$("#reading").hidden=!readingMode;$("#welcome").hidden=discussionMode||readingMode||!!current;$("#practice").hidden=discussionMode||readingMode||!current;$(".dock").hidden=false;$(".dock").classList.toggle("discussion-dock",discussionMode||readingMode);$("#composer-label").textContent=discussionMode?"What do you want to say?":readingMode?"What do you want to read?":"What do you want to say?";$("#translate .label").textContent=discussionMode?"Send":readingMode?"Generate":"Translate";$("#translate").setAttribute("aria-label",discussionMode?"Send":readingMode?"Generate reading":"Translate");$("#english-input").placeholder=discussionMode?(discussionTurns.length?"Reply in either language":"Describe a conversation scenario"):readingMode?"Describe a text to generate":"Enter a sentence in "+languageName(inputLang);$("#mode-sentence").setAttribute("aria-selected",String(mode==="sentence"));$("#mode-discussion").setAttribute("aria-selected",String(discussionMode));$("#mode-reading").setAttribute("aria-selected",String(readingMode));loop.stop();discussionLoop.stop();readingLoop.stop()}
-function renderDiscussion(){const list=$("#discussion-turns");list.replaceChildren(...discussionTurns.map(turn=>{const li=document.createElement("li");li.className="discussion-turn "+turn.role;const bubble=document.createElement("div");bubble.className="discussion-bubble";const ja=document.createElement("p");ja.className="discussion-japanese";ja.lang=targetLang();ja.innerHTML=rubyHtml(turn.target);enableVocabulary(ja,turn.target,targetLang(),turn);const en=document.createElement("p");en.className="discussion-translation";en.textContent=turn.source;en.hidden=!$("#discussion-english").checked;const actions=document.createElement("div");actions.className="discussion-message-actions";const save=document.createElement("button");save.type="button";save.className="plain discussion-save";save.textContent=turn.saved?"Saved":"Save";save.disabled=!!turn.saved;save.onclick=async()=>{save.disabled=true;const previous=save.textContent;save.textContent="Saving…";try{await saveDiscussionTurn(turn,{sourceLang:sourceLang(),targetLang:targetLang(),save:saveSentence});turn.saved=true;save.textContent="Saved";renderLibrary?.()}catch(error){save.disabled=false;save.textContent=previous;showToast(sheetError(error))}};actions.append(save);bubble.append(ja,en,actions);li.append(bubble);return li}));$("#discussion-live").hidden=!discussionTurns.length;$("#discussion-setup").hidden=!!discussionTurns.length;$("#discussion-title").textContent=discussionScenario;requestAnimationFrame(()=>{if(discussionTurns.length)list.lastElementChild?.scrollIntoView({block:"nearest",behavior:"smooth"})})}
+function setPracticeMode(mode,{route=true}={}){discussionMode=mode==="discussion";readingMode=mode==="reading";saveWorkspace({discussionMode,readingMode});if(route)syncRoute({view:"practice",discussionMode,readingMode});$("#discussion").hidden=!discussionMode;$("#reading").hidden=!readingMode;$("#welcome").hidden=discussionMode||readingMode||!!current;$("#practice").hidden=discussionMode||readingMode||!current;$(".dock").hidden=false;$(".dock").classList.toggle("discussion-dock",discussionMode||readingMode);$("#composer-label").textContent=composerLabel();renderWelcomeModes();$("#translate .label").textContent=discussionMode?"Send":readingMode?"Generate":"Translate";$("#translate").setAttribute("aria-label",discussionMode?"Send":readingMode?"Generate reading":"Translate");$("#english-input").placeholder=discussionMode?(discussionTurns.length?"Reply in either language":"Describe a conversation scenario"):readingMode?"Describe a text to generate":"Enter a sentence in "+languageName(inputLang);$("#mode-sentence").setAttribute("aria-selected",String(mode==="sentence"));$("#mode-discussion").setAttribute("aria-selected",String(discussionMode));$("#mode-reading").setAttribute("aria-selected",String(readingMode));loop.stop();discussionLoop.stop();readingLoop.stop()}
+// One place for the composer label: Discussion asks for a scene until it starts.
+function composerLabel(){return discussionMode?(discussionTurns.length?"Reply to the conversation":"Describe the conversation"):readingMode?"What do you want to read?":"What do you want to say?"}
+function renderDiscussion(){if(discussionMode)$("#composer-label").textContent=composerLabel();const list=$("#discussion-turns");list.replaceChildren(...discussionTurns.map(turn=>{const li=document.createElement("li");li.className="discussion-turn "+turn.role;const bubble=document.createElement("div");bubble.className="discussion-bubble";const ja=document.createElement("p");ja.className="discussion-japanese";ja.lang=targetLang();ja.innerHTML=rubyHtml(turn.target);enableVocabulary(ja,turn.target,targetLang(),turn);const en=document.createElement("p");en.className="discussion-translation";en.textContent=turn.source;en.hidden=!$("#discussion-english").checked;const actions=document.createElement("div");actions.className="discussion-message-actions";const save=document.createElement("button");save.type="button";save.className="plain discussion-save";save.textContent=turn.saved?"Saved":"Save";save.disabled=!!turn.saved;save.onclick=async()=>{save.disabled=true;const previous=save.textContent;save.textContent="Saving…";try{await saveDiscussionTurn(turn,{sourceLang:sourceLang(),targetLang:targetLang(),save:saveSentence});turn.saved=true;save.textContent="Saved";refreshDueBadge();toast("Saved to your library.")}catch(error){save.disabled=false;save.textContent=previous;toast(sheetError(error),5000)}};actions.append(save);bubble.append(ja,en,actions);li.append(bubble);return li}));$("#discussion-live").hidden=!discussionTurns.length;$("#discussion-setup").hidden=!!discussionTurns.length;$("#discussion-title").textContent=discussionScenario;requestAnimationFrame(()=>{if(discussionTurns.length)list.lastElementChild?.scrollIntoView({block:"nearest",behavior:"smooth"})})}
 function playDiscussion(){if(discussionLoop.running){discussionLoop.togglePause();return}const pick=policy=>{if(!voices.length)return null;if(policy==="random")return voices[Math.floor(Math.random()*voices.length)];if(policy==="default")return voices.find(v=>v.default)||voices[0];return voices[Number(policy)]||voices[0]};discussionLoop.playConversation(discussionTurns.map(t=>({text:stripFurigana(t.target),role:t.role})),{voiceFor:turn=>pick(turn.role==="ai"?$("#discussion-voice-ai").value:$("#discussion-voice-user").value),rate:Number($("#rate").value),lang:targetLang()})}
-async function beginDiscussion(){discussionScenario=$("#english-input").value.trim()||"An everyday conversation";$("#english-input").value="";$("#discussion-status").textContent="Starting...";try{const out=await discuss({scenario:discussionScenario,history:[]},{...settings,sourceLang:sourceLang(),targetLang:targetLang()});discussionTurns=[{role:"ai",...out.ai}];renderDiscussion();playDiscussion();$("#discussion-status").textContent=""}catch(e){$("#discussion-status").textContent=e.message}}
-async function replyDiscussion(){const message=$("#english-input").value.trim();if(!message)return;discussionLoop.stop();$("#discussion-status").textContent="Replying...";$("#translate").disabled=true;try{const out=await discuss({scenario:discussionScenario,message,history:discussionTurns},{...settings,sourceLang:sourceLang(),targetLang:targetLang()});discussionTurns.push({role:"user",...out.user},{role:"ai",...out.ai});$("#english-input").value="";renderDiscussion();playDiscussion();$("#discussion-status").textContent=""}catch(e){$("#discussion-status").textContent=e.message}finally{$("#translate").disabled=false}}
+async function beginDiscussion(){if($("#translate").disabled)return;const typed=$("#english-input").value;discussionScenario=$("#english-input").value.trim()||"An everyday conversation";$("#english-input").value="";$("#discussion-status").textContent="Starting…";$("#translate").disabled=true;try{const out=await discuss({scenario:discussionScenario,history:[]},{...settings,sourceLang:sourceLang(),targetLang:targetLang()});discussionTurns=[{role:"ai",...out.ai}];renderDiscussion();playDiscussion();markModeUsed("discussion");$("#discussion-status").textContent=""}catch(e){if(!$("#english-input").value.trim())$("#english-input").value=typed;$("#discussion-status").textContent=e.message}finally{$("#translate").disabled=false}}
+async function replyDiscussion(){const message=$("#english-input").value.trim();if(!message)return;discussionLoop.stop();$("#discussion-status").textContent="Replying…";$("#translate").disabled=true;try{const out=await discuss({scenario:discussionScenario,message,history:discussionTurns},{...settings,sourceLang:sourceLang(),targetLang:targetLang()});discussionTurns.push({role:"user",...out.user},{role:"ai",...out.ai});$("#english-input").value="";renderDiscussion();playDiscussion();$("#discussion-status").textContent=""}catch(e){$("#discussion-status").textContent=e.message}finally{$("#translate").disabled=false}}
 const PREFS_CACHE="jp-echo-prefs",PREFS_KEY="./reminder";
 const isStandalone=()=>matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
 const canSyncInBackground=()=>"serviceWorker" in navigator&&"PeriodicSyncManager" in window;
@@ -233,7 +306,7 @@ function renderPracticeNotices(){const host=$("#practice-notices"),connected=has
     copy:"Echo can play and review what you already have, but it cannot make new sentences yet.",
     link:{label:"Add a key — takes a minute",onClick:()=>showView("setup")}}));
   else if(translationFailure)host.append(notice({icon:"failed",alert:true,title:translationFailure.title,copy:translationFailure.copy,
-    actions:[{label:"Try again",onClick:()=>{translationFailure=null;performTranslation()}},{label:"Check the key",outline:true,onClick:openSettings}]}));
+    actions:[{label:"Try again",onClick:()=>{translationFailure=null;performTranslation()}},{label:"Check the key",outline:true,onClick:()=>openSettings("ai")}]}));
   else if(!navigator.onLine)host.append(notice({icon:"offline",title:"You're offline",
     copy:"Practising and reviewing carry on as normal. New translations will wait until you're back."}));
   // Only after a playback attempt actually failed. An empty getVoices() list is
@@ -253,20 +326,20 @@ const WORKSPACE_KEY="jp-echo-workspace";
 const workspace=()=>{try{return JSON.parse(localStorage.getItem(WORKSPACE_KEY)||"{}")}catch{return {}}};
 function renderReading(){const host=$("#reading-text");host.innerHTML="";$("#reading-empty").hidden=!!readingPassage;$("#reading-controls").hidden=!readingPassage;if(!readingPassage)return;$("#reading-title").textContent=readingPassage.title;readingPassage.sentences.forEach((sentence,index)=>{const row=document.createElement("div");row.className="reading-sentence"+(readingSelected===index?" selected":"");row.dataset.index=index;const text=document.createElement("button");text.type="button";text.className="reading-sentence-text";const target=$("#reading-furigana").checked?rubyHtml(sentence.target):escapeText(stripFurigana(sentence.target));text.innerHTML='<span class="reading-japanese">'+target+'</span>'+($("#reading-english").checked?'<span class="reading-english">'+escapeText(sentence.source)+'</span>':"");enableVocabulary(text.querySelector(".reading-japanese"),sentence.target,targetLang(),sentence);text.onclick=()=>{readingSelected=index;renderReading()};row.append(text);if(sentence.saved){const saved=document.createElement("span");saved.className="reading-save saved";saved.textContent="Saved";row.append(saved)}else if(readingSelected===index){const save=document.createElement("button");save.type="button";save.className="reading-save primary";save.textContent="Save to Library";save.onclick=async()=>{save.disabled=true;save.textContent="Saving…";try{await saveReadingSentence(index)}catch(e){save.disabled=false;save.textContent="Save to Library";$("#reading-status").textContent=e.message}};row.append(save)}host.append(row)})}
 async function saveReadingSentence(index){const s=readingPassage?.sentences[index];if(!s||s.saved)return;const made=createSentence(s.source,{casual:s.target,polite:s.target},new Date(),undefined,{sourceLang:sourceLang(),targetLang:targetLang()});await saveSentence(made);s.saved=true;renderReading();toast("Saved to your library.")}
-async function generateReadingMode(){const prompt=$("#english-input").value.trim();if(!prompt)return;$("#translate").disabled=true;$("#reading-status").textContent="Writing…";try{readingPassage=await generateReading({prompt},{...settings,sourceLang:sourceLang(),targetLang:targetLang()});readingSelected=-1;$("#english-input").value="";renderReading();$("#reading-status").textContent=""}catch(e){$("#reading-status").textContent=e.message}finally{$("#translate").disabled=false}}
+async function generateReadingMode(){const prompt=$("#english-input").value.trim();if(!prompt)return;$("#translate").disabled=true;$("#reading-status").textContent="Writing…";try{readingPassage=await generateReading({prompt},{...settings,sourceLang:sourceLang(),targetLang:targetLang()});readingSelected=-1;$("#english-input").value="";renderReading();$("#reading-status").textContent="";markModeUsed("reading")}catch(e){$("#reading-status").textContent=e.message}finally{$("#translate").disabled=false}}
 function playReading(){if(!readingPassage?.sentences.length)return;if(readingLoop.running){readingLoop.togglePause();return}const policy=settings.voice||"default",pick=()=>{if(!voices.length)return null;if(policy==="random")return voices[Math.floor(Math.random()*voices.length)];if(policy==="default")return voices.find(v=>v.default)||voices[0];return voices[Number(policy)]||voices[0]};readingLoop.playConversation(readingPassage.sentences.map(s=>({role:"ai",text:stripFurigana(s.target)})),{lang:targetLang(),rate:Number($("#rate").value),voiceFor:pick})}
 
 function saveWorkspace(patch={}){const next={...workspace(),view:document.body.dataset.view||"practice",discussionMode,mapQuery:$("#map-search")?.value||"",historyQuery:$("#history-search")?.value||"",mapView:settings.mapView||"kanji",...patch};try{storePreference(WORKSPACE_KEY,JSON.stringify(next))}catch{/* Navigation must work even when browser storage is full or unavailable. */}return next}
 let applyingRoute=false;
-function navigationState(patch={}){return {view:document.body.dataset.view||"practice",discussionMode,mapView:settings.mapView||"kanji",mapQuery:$("#map-search")?.value||"",historyQuery:$("#history-search")?.value||"",historyFilter:$("#history-filter")?.value||"all",historyOrder:$("#history-order")?.value||"created",historyDirection:$("#history-direction")?.value||"desc",sentenceId:detail?.id||null,...patch}}
+function navigationState(patch={}){return {view:document.body.dataset.view||"practice",discussionMode,mapView:settings.mapView||"kanji",mapQuery:$("#map-search")?.value||"",historyQuery:$("#history-search")?.value||"",historyFilter:$("#history-filter")?.value||"all",historyOrder:$("#history-order")?.value||"created",historyDirection:$("#history-direction")?.value||"desc",sentenceId:detail?.id||null,settingsPage,...patch}}
 function syncRoute(patch={},replace=false){if(applyingRoute)return;const url=routeFor(navigationState(patch));if(location.pathname+location.search===url)return;history[replace?"replaceState":"pushState"]({echo:true},"",url)}
 
 const wide=matchMedia("(min-width:1024px)");
 const isWide=()=>wide.matches;
 const VIEW_TITLES={review:"Review",library:"Library"};
 function showView(name,{route=true}={}){if(name==="map"&&targetLang()!=="ja")name="library";if(name!=="practice")resetSession();speechSynthesis.cancel();
-  $("#main-view").hidden=name!=="practice";$("#review-home").hidden=name!=="review";$("#history-view").hidden=!(name==="library"||(name==="sentence"&&isWide()));$("#review-view").hidden=name!=="session";$("#sentence-view").hidden=name!=="sentence";$("#onboard-view").hidden=name!=="onboard";$("#setup-view").hidden=name!=="setup";$("#map-view").hidden=name!=="map";$("#mora-view").hidden=name!=="mora";
-  const solo=name==="onboard"||name==="setup"||((name==="session"||name==="sentence"||name==="map")&&!isWide());document.querySelector("header").hidden=solo;$("#tabs").hidden=solo;
+  $("#main-view").hidden=name!=="practice";$("#review-home").hidden=name!=="review";$("#history-view").hidden=!(name==="library"||(name==="sentence"&&isWide()));$("#review-view").hidden=name!=="session";$("#sentence-view").hidden=name!=="sentence";$("#onboard-view").hidden=name!=="onboard";$("#setup-view").hidden=name!=="setup";$("#map-view").hidden=name!=="map";$("#mora-view").hidden=name!=="mora";$("#settings-view").hidden=name!=="settings";if(name!=="settings")settingsStack=[];$("#settings-nav")?.toggleAttribute("aria-current",name==="settings");if(name!=="settings"&&$("#ai-show-key")?.getAttribute("aria-pressed")==="true")$("#ai-show-key").click();
+  const solo=name==="onboard"||name==="setup"||((name==="session"||name==="sentence"||name==="map"||name==="settings")&&!isWide());document.querySelector("header").hidden=solo;$("#tabs").hidden=solo;
   $("#view-title").textContent=VIEW_TITLES[name]||"";$("#view-title").hidden=!VIEW_TITLES[name];document.querySelector(".brand").hidden=!!VIEW_TITLES[name];
   $("#mode-sentence").onclick=()=>setPracticeMode("sentence");$("#mode-discussion").onclick=()=>setPracticeMode("discussion");$("#mode-reading").onclick=()=>setPracticeMode("reading");$("#discussion-play").onclick=playDiscussion;$("#discussion-english").onchange=renderDiscussion;$("#discussion-new").onclick=()=>{discussionLoop.stop();discussionTurns=[];discussionScenario="";renderDiscussion();$("#english-input").value="";$("#english-input").focus()};$("#reading-furigana").onchange=renderReading;$("#reading-english").onchange=renderReading;$("#reading-echo").onclick=playReading;$("#reading-new").onclick=()=>{readingLoop.stop();readingPassage=null;readingSelected=-1;renderReading();$("#english-input").focus()};
 for(const tab of document.querySelectorAll(".tab[data-view]")){const on=tab.dataset.view===name||(name==="session"&&tab.dataset.view==="review")||((name==="sentence"||name==="map")&&tab.dataset.view==="library");tab.classList.toggle("current",on);tab.setAttribute("aria-current",on?"page":"false")}
@@ -423,7 +496,7 @@ async function openKanji(character,cover,{learn=null,route=true}={}){
   $("#kanji-loop-state").textContent="";
   const byId=new Map(all.map(item=>[item.id,item])),mine=ids.map(id=>byId.get(id)).filter(Boolean);
   renderSheetSentences($("#kanji-sentences"),mine,{deletable:true,onDelete:deleteFromSheet,mark:character});
-  $("#kanji-mine-head").hidden=!mine.length;
+  $("#kanji-mine-head").hidden=!mine.length;sheetCount($("#kanji-mine-head"),mine.length);
   await renderKanjiInfo(character);
   if(!$("#kanji-dialog").open)$("#kanji-dialog").showModal();
 }
@@ -614,10 +687,13 @@ function renderGrammarBand(band,cover,known){
 async function autoTag(sentence){
   if(!settings.autoTag||!hasGrammar()||targetLang()!=="ja"||!hasTranslator()||!sentence?.id||isTagged(sentence))return;
   try{
-    const tags=await tagGrammar([sentence],GRAMMAR_POINTS,{...settings,targetLang:targetLang()}),got=tags.get(sentence.id);
-    if(!got)return;
-    const fresh=await getSentence(sentence.id);if(!fresh)return;
-    await saveSentence({...fresh,grammar:got,updatedAt:new Date().toISOString()});
+    // The same analysis the sentence page's "Explain the grammar" runs, so an
+    // auto-read sentence gets highlighted evidence as well as its tags.
+    const text=stripFurigana(preferredTarget(sentence)),found=await analyzeSentenceGrammar(text,GRAMMAR_POINTS,{...settings,targetLang:"ja"});
+    grammarAnalysisCache.set(text,found);
+    const fresh=await getSentence(sentence.id);if(!fresh||isTagged(fresh))return;
+    const updated={...fresh,grammarAnalysis:[...(fresh.grammarAnalysis||[]).filter(a=>a.text!==text),found],grammar:found.grammar,updatedAt:new Date().toISOString()};
+    await saveSentence(updated);if(detail?.id===updated.id){detail=updated;if(document.body.dataset.view==="sentence")renderDetail()}if(current?.id===updated.id)current=updated;
     if(document.body.dataset.view==="map")renderMap();
   }catch{}
 }
@@ -630,7 +706,9 @@ async function tagUntagged(){
   try{
     const tags=await tagGrammar(todo,GRAMMAR_POINTS,{...settings,targetLang:targetLang()});
     let done=0;
-    for(const sentence of todo){const got=tags.get(sentence.id);if(!got)continue;await saveSentence({...sentence,grammar:got,updatedAt:new Date().toISOString()});done++}
+    // Re-read each one: the request can take a while, and a review graded or a
+    // sentence edited meanwhile must not be overwritten by the copy read before it.
+    for(const sentence of todo){const got=tags.get(sentence.id);if(!got)continue;const fresh=await getSentence(sentence.id);if(!fresh||isTagged(fresh))continue;await saveSentence({...fresh,grammar:got,updatedAt:new Date().toISOString()});done++}
     await renderMap();$("#grammar-tag-status").textContent=done===1?t("Read 1 sentence."):t("Read {n} sentences.",{n:done.toLocaleString()});
   }catch(error){status.textContent=sheetError(error);if(button)button.disabled=!hasTranslator()}
 }
@@ -668,7 +746,7 @@ async function openGrammar(point,cover,{learn=null,route=true}={}){
   $("#grammar-compose").textContent=t("Or let Echo write one with {point}",{point:point.title});$("#grammar-compose").disabled=!hasTranslator();
   const byId=new Map(all.map(s=>[s.id,s])),mine=ids.map(id=>byId.get(id)).filter(Boolean);
   renderSheetSentences($("#grammar-sentences"),mine,{deletable:true,onDelete:deleteFromGrammarSheet,mark:point.title});
-  $("#grammar-mine-head").hidden=!mine.length;
+  $("#grammar-mine-head").hidden=!mine.length;sheetCount($("#grammar-mine-head"),mine.length);
   if(!$("#grammar-dialog").open)$("#grammar-dialog").showModal();
   renderPointNotes(point);
 }
@@ -916,7 +994,7 @@ async function openWord(w,cover,{learn=null,route=true}={}){
   $("#word-compose").textContent=t("Or let Echo write one with {word}",{word:w.w});$("#word-compose").disabled=!hasTranslator();
   const byId=new Map(all.map(s=>[s.id,s])),mine=ids.map(id=>byId.get(id)).filter(Boolean);
   renderSheetSentences($("#word-sentences"),mine,{deletable:true,onDelete:deleteFromWordSheet,mark:wordMarks(w).join("・")});
-  $("#word-mine-head").hidden=!mine.length;
+  $("#word-mine-head").hidden=!mine.length;sheetCount($("#word-mine-head"),mine.length);
   if(!$("#word-dialog").open)$("#word-dialog").showModal();
   await renderWordNote(w);
 }
@@ -1005,6 +1083,10 @@ const spell=count=>NUMBER_WORDS[count]||String(count);
 function describeGap(ms){const minutes=Math.round(ms/60000);if(minutes<60)return spell(Math.max(1,minutes))+(minutes===1?" minute":" minutes");const hours=Math.round(minutes/60);if(hours<24)return spell(hours)+(hours===1?" hour":" hours");const days=Math.round(hours/24);return spell(days)+(days===1?" day":" days")}
 function updateDueBadge(count){const badge=$("#due-badge");badge.textContent=String(count);badge.hidden=count===0}
 async function refreshDueBadge(){updateDueBadge(dueSentences((await listSentences()).map(item=>ensureSchedule(item))).length)}
+// "Today you will": each due sentence's next skill, from review-modes.js.
+function renderSkillMix(due){const mix=skillMix(due),row=$("#review-skill-mix-row");$("#review-skill-mix").hidden=due.length===0;
+  row.setAttribute("aria-label","Today you will "+["listening","reading","writing"].map(mode=>reviewModeMeta(mode).verb+" "+mix[mode]).join(", "));
+  row.replaceChildren(...["listening","reading","writing"].map(mode=>{const item=document.createElement("span");item.className="skill-mix-item";item.setAttribute("aria-hidden","true");const count=document.createElement("strong");count.textContent=String(mix[mode]);item.append(skillGlyph(mode,{size:30})," "+reviewModeMeta(mode).verb+" ",count);return item}))}
 async function renderReviewHome(){const all=(await listSentences()).map(item=>ensureSchedule(item)),now=Date.now(),due=dueSentences(all),counts={new:0,learning:0,review:0};
   for(const item of due){const state=item.srs?.state??0;if(state===1||state===3)counts.learning++;else if(state===2)counts.review++;else counts.new++}
   $("#due-count").textContent=String(due.length);$("#due-new").textContent=String(counts.new);$("#due-learning").textContent=String(counts.learning);$("#due-review").textContent=String(counts.review);
@@ -1013,7 +1095,8 @@ async function renderReviewHome(){const all=(await listSentences()).map(item=>en
   $("#review-due-block").hidden=due.length===0;$("#review-rest-block").hidden=due.length>0;
   document.querySelector(".ring-stage").classList.toggle("resting",due.length===0);
   $("#start-review").hidden=due.length===0;$("#review-practice").hidden=due.length>0;
-  if(due.length){$("#review-estimate").textContent="One skill per sentence — listening, reading, or writing. Roughly "+spell(Math.max(1,Math.round(due.length*.55)))+" minutes.";
+  renderSkillMix(due);
+  if(due.length){$("#review-estimate").textContent="About "+spell(Math.max(1,Math.round(due.length*.55)))+" minute"+(Math.round(due.length*.55)>1?"s":"")+", out loud.";
     $("#review-footnote").textContent=next?"Next batch unlocks in "+describeGap(next-now)+".":""}
   else{const at=next?new Intl.DateTimeFormat(undefined,{hour:"2-digit",minute:"2-digit"}).format(new Date(next)):null;
     $("#review-rest-copy").textContent=all.length===0?"Translate a sentence and it joins the queue straight away.":(at?"Your next batch comes back at "+at+". ":"")+spell(all.length)+(all.length===1?" sentence is":" sentences are")+" resting until then.";
@@ -1027,6 +1110,11 @@ async function renderSidePanel(){
   if(view==="session")return renderQueuePanel();
   const due=dueSentences((await listSentences()).map(item=>ensureSchedule(item)));
   $("#side-due-count").textContent=String(due.length);
+  // 聴4 · 読3 · 書2 — the same mix as review home, in one line.
+  const mix=skillMix(due),minutes=Math.max(1,Math.round(due.length*.55));$("#side-skill-mix").hidden=due.length===0;
+  $("#side-skill-mix-skills").textContent=["listening","reading","writing"].map(mode=>reviewModeMeta(mode).icon+" "+mix[mode]).join(" · ");
+  $("#side-skill-mix-skills").setAttribute("aria-label",["listening","reading","writing"].map(mode=>mix[mode]+" "+reviewModeMeta(mode).label.toLowerCase()).join(", "));
+  $("#side-skill-mix-time").textContent="about "+spell(minutes)+" minute"+(minutes===1?"":"s");
   $("#side-start-review").disabled=due.length===0;
   $("#due-empty").hidden=due.length>0;
   $("#due-list").replaceChildren(...due.slice(0,8).map(item=>{const li=document.createElement("li");
@@ -1037,6 +1125,7 @@ function renderQueuePanel(){
   $("#queue-list").replaceChildren(...reviewQueue.map((item,index)=>{const li=document.createElement("li");
     li.className=index===reviewIndex?"now":index<reviewIndex?"done":"";
     li.innerHTML='<span class="dot" aria-hidden="true"></span><span class="source-line">'+escapeText(item.source)+"</span>";
+    const mode=reviewMode(item),glyph=skillGlyph(mode,{state:index===reviewIndex?"current":"default",size:24});li.append(glyph);li.setAttribute("aria-label",item.source+" — "+reviewModeMeta(mode).label.toLowerCase()+" card");
     return li}));
   const left=Math.max(0,reviewQueue.length-reviewIndex),done=reviewIndex;
   $("#queue-note").textContent=left?(done?spell(done)+" done. ":"")+"About "+spell(Math.max(1,Math.round(left*.55)))+" minutes left at your pace.":"All said.";}
@@ -1049,8 +1138,8 @@ function renderLibraryTool(all){const row=$("#library-tool");row.hidden=targetLa
   $("#library-tool-tally").textContent=[k,w,g].filter(n=>n!==null).map(n=>n.toLocaleString()).join(" · ")+" "+t("learned");
   row.setAttribute("aria-label",t("Kanji, words and grammar")+": "+(g===null?t("{k} kanji and {w} words learned",{k:k.toLocaleString(),w:w.toLocaleString()}):t("{k} kanji, {w} words and {g} points learned",{k:k.toLocaleString(),w:w.toLocaleString(),g:g.toLocaleString()})))}
 let historyRenderVersion=0;
-async function renderHistory(){const version=++historyRenderVersion,all=await listSentences();if(version!==historyRenderVersion)return;renderLibraryTool(all);const list=$("#history-list"),due=dueSentences(all),query=$("#history-search").value.trim().toLocaleLowerCase(),filter=$("#history-filter").value,order=$("#history-order").value,direction=$("#history-direction").value,now=Date.now();let items=all.filter(item=>{const haystack=[item.source,item.target,item.plainTarget,item.casualTarget,item.politeTarget].filter(Boolean).join(" ").toLocaleLowerCase();if(query&&!haystack.includes(query))return false;const state=item.srs?.state??0;if(filter==="due")return !item.srs?.due||Date.parse(item.srs.due)<=now;if(filter==="new")return state===0;if(filter==="learning")return state===1||state===3;if(filter==="review")return state===2;if(filter==="skipped")return item.skipped===true;return true});const comparators={created:(a,b)=>a.createdAt.localeCompare(b.createdAt),echoes:(a,b)=>(Number(a.echoCount)||0)-(Number(b.echoCount)||0),due:(a,b)=>Date.parse(a.srs?.due||a.createdAt)-Date.parse(b.srs?.due||b.createdAt),english:(a,b)=>a.source.localeCompare(b.source),japanese:(a,b)=>preferredPlainTarget(a).localeCompare(preferredPlainTarget(b),itemTarget(a))},factor=direction==="asc"?1:-1;items.sort((a,b)=>factor*(comparators[order]||comparators.created)(a,b));list.replaceChildren();$("#empty-history").hidden=all.length>0;$("#empty-results").hidden=all.length===0||items.length>0;$("#empty-results-count").textContent=all.length===1?"One is in your library.":capitalise(spell(all.length))+" are in your library.";updateDueBadge(due.length);$("#library-count").textContent=items.length===1?"1 sentence":items.length+" sentences";$("#library-order-label").textContent=ORDER_LABELS[order+"-"+direction]||"";$(".list-head").hidden=items.length===0;if(isWide()&&!detail&&items.length)return openDetail(items[0].id);
-  for(const [index,item] of items.entries()){if(index%10===0){await new Promise(resolve=>setTimeout(resolve,0));if(version!==historyRenderVersion)return}const li=document.createElement("li");li.dataset.id=item.id;const state=cardState(item,now);li.innerHTML='<button class="history-open" type="button"><span class="lines"><span lang="'+itemTarget(item)+'">'+rubyHtml(preferredTarget(item))+'</span><span class="source-line">'+escapeText(item.source)+'</span><span class="status-chip '+state+'">'+CARD_STATES[state]+'</span></span><span class="tally"><strong>'+(Number(item.echoCount)||0)+'</strong><span>echoes</span></span></button>';enableVocabulary(li.querySelector(".lines>span[lang]"),preferredTarget(item),itemTarget(item),item);li.querySelector(".history-open").onclick=()=>openDetail(item.id);list.append(li)}markSelectedRow()}
+async function renderHistory(){const version=++historyRenderVersion,all=await listSentences();if(version!==historyRenderVersion)return;renderLibraryTool(all);const list=$("#history-list"),due=dueSentences(all),query=$("#history-search").value.trim().toLocaleLowerCase(),filter=$("#history-filter").value,order=$("#history-order").value,direction=$("#history-direction").value,now=Date.now();let items=all.filter(item=>{const haystack=[item.source,item.target,item.plainTarget,item.casualTarget,item.politeTarget].filter(Boolean).join(" ").toLocaleLowerCase();if(query&&!haystack.includes(query))return false;const state=item.srs?.state??0;if(filter==="due")return !item.srs?.due||Date.parse(item.srs.due)<=now;if(filter==="new")return state===0;if(filter==="learning")return state===1||state===3;if(filter==="review")return state===2;if(filter==="skipped")return item.skipped===true;return true});const comparators={created:(a,b)=>a.createdAt.localeCompare(b.createdAt),echoes:(a,b)=>(Number(a.echoCount)||0)-(Number(b.echoCount)||0),due:(a,b)=>Date.parse(a.srs?.due||a.createdAt)-Date.parse(b.srs?.due||b.createdAt),english:(a,b)=>a.source.localeCompare(b.source),japanese:(a,b)=>preferredPlainTarget(a).localeCompare(preferredPlainTarget(b),itemTarget(a))},factor=direction==="asc"?1:-1;items.sort((a,b)=>factor*(comparators[order]||comparators.created)(a,b));list.replaceChildren();$("#empty-history").hidden=all.length>0;renderStarterOffer(all);document.querySelector(".history-tools").hidden=all.length===0;$("#empty-results").hidden=all.length===0||items.length>0;$("#empty-results-count").textContent=all.length===1?"One is in your library.":capitalise(spell(all.length))+" are in your library.";updateDueBadge(due.length);$("#library-count").textContent=items.length===1?"1 sentence":items.length+" sentences";$("#library-order-label").textContent=ORDER_LABELS[order+"-"+direction]||"";$(".list-head").hidden=items.length===0;if(isWide()&&!detail&&items.length)return openDetail(items[0].id);
+  for(const [index,item] of items.entries()){if(index%10===0){await new Promise(resolve=>setTimeout(resolve,0));if(version!==historyRenderVersion)return}const li=document.createElement("li");li.dataset.id=item.id;const state=cardState(item,now);li.innerHTML='<button class="history-open" type="button"><span class="lines"><span lang="'+itemTarget(item)+'">'+rubyHtml(preferredTarget(item))+'</span><span class="source-line">'+escapeText(item.source)+'</span><span class="status-chip '+state+'">'+CARD_STATES[state]+'</span></span><span class="tally"><strong>'+(Number(item.echoCount)||0)+'</strong><span>echoes</span></span></button>';li.querySelector(".history-open").onclick=()=>openDetail(item.id);list.append(li)}markSelectedRow()}
 const formatDate=value=>new Intl.DateTimeFormat(undefined,{day:"numeric",month:"long"}).format(new Date(value));
 const RATING_LABELS={again:"Again",ok:"OK"};
 function untilDue(sentence,now=Date.now()){const due=Date.parse(sentence.srs?.due||"");if(!Number.isFinite(due)||due<=now)return "Now";
@@ -1059,7 +1148,7 @@ async function openDetail(id){const sentence=await getSentence(id);if(!sentence)
 function markSelectedRow(){for(const li of document.querySelectorAll("#history-list li"))li.classList.toggle("selected",li.dataset.id===detail?.id);}
 function renderDetail(){if(!detail)return;closeEditor();markSelectedRow();
   $("#sentence-added").textContent="Added "+formatDate(detail.createdAt);
-  $("#sentence-japanese").innerHTML=rubyHtml(preferredTarget(detail));$("#sentence-japanese").lang=itemTarget(detail);enableVocabulary($("#sentence-japanese"),preferredTarget(detail),itemTarget(detail),detail);
+  $("#sentence-grammar").replaceChildren();$("#sentence-grammar").hidden=true;$("#sentence-japanese").innerHTML=rubyHtml(preferredTarget(detail));$("#sentence-japanese").lang=itemTarget(detail);enableVocabulary($("#sentence-japanese"),preferredTarget(detail),itemTarget(detail),detail,{grammarHost:$("#sentence-grammar"),explain:true});
   $("#sentence-english").textContent=detail.source;
   const registerRow=$("#sentence-register-row"),canChooseRegister=hasRegisters(itemTarget(detail))&&(detail.casualTarget||detail.target)!==(detail.politeTarget||detail.target);
   registerRow.hidden=!canChooseRegister;
@@ -1069,19 +1158,23 @@ function renderDetail(){if(!detail)return;closeEditor();markSelectedRow();
   }
   $("#sentence-view").classList.toggle("hide-furigana",settings.showFurigana===false);
   $("#stat-echoes").textContent=String(Number(detail.echoCount)||0);
-  const trackedDetail=ensureReviewTrack(detail),state=cardState(detail),nextReview=reviewModeMeta(trackedDetail);$("#stat-stage").textContent=CARD_STATES[state]+" · "+nextReview.icon;$("#stat-stage").title="Next review: "+nextReview.label;$("#stat-stage").className="status-chip "+state;for(const mode of ["listening","reading","writing"]){const n=$("#sentence-review-track [data-review-track=\""+mode+"\"] strong");if(n)n.textContent=String(trackedDetail.reviewTrack.completed[mode]||0)}
-  $("#stat-due").textContent=untilDue(detail);
+  const trackedDetail=ensureReviewTrack(detail),state=cardState(detail),next=reviewMode(trackedDetail);$("#stat-stage").textContent=CARD_STATES[state];$("#stat-stage").className="status-chip "+state;
+  // How it has gone: a tile per skill with its passes; the next skill is lit.
+  $("#sentence-review-track").replaceChildren(...["listening","reading","writing"].map(mode=>{const meta=reviewModeMeta(mode),tile=el("span","skill-tile"),count=el("strong","skill-count",String(trackedDetail.reviewTrack.completed[mode]||0)),label=el("span","skill-label",meta.label);if(mode===next)label.append(el("span","skill-next"," · next"));
+    tile.dataset.reviewTrack=mode;tile.append(skillGlyph(mode,{state:mode===next?"current":"default",size:34}),count,label);return tile}));
+  const due=Date.parse(detail.srs?.due||"");$("#stat-due").textContent=dueLine(trackedDetail,!Number.isFinite(due)||due<=Date.now()?"now":"in "+describeGap(due-Date.now()));
   const reviews=Array.isArray(detail.reviews)?[...detail.reviews]:[];
-  const rows=reviews.slice().reverse().map(entry=>{const mode=entry.mode?reviewModeMeta(entry.mode):null;return {when:formatDate(entry.at),echoes:Number(entry.echoes)||0,rating:(mode?mode.icon+" "+mode.label+" · ":"")+(RATING_LABELS[entry.rating]||entry.rating),className:entry.rating==="again"?"again":""}});
+  const rows=reviews.slice().reverse().map(entry=>{const mode=entry.mode?reviewModeMeta(entry.mode):null;return {when:formatDate(entry.at),echoes:Number(entry.echoes)||0,rating:(mode?mode.label+" · ":"")+(RATING_LABELS[entry.rating]||entry.rating),className:entry.rating==="again"?"again":""}});
   rows.push({when:formatDate(detail.createdAt),echoes:null,rating:"First",className:"first"});
   $("#sentence-history").replaceChildren(...rows.map(row=>{const li=document.createElement("li");
     li.innerHTML='<span class="when">'+escapeText(row.when)+'</span><span class="detail">'+(row.echoes===null?"":'<span class="echoes">'+row.echoes+" echoes</span>")+'<span class="rating-chip '+row.className+'">'+escapeText(row.rating)+"</span></span>";return li}));
   const lapses=reviews.filter(entry=>entry.rating==="again").length;
   $("#sentence-history-note").textContent=lapses?"A review was marked Again "+(lapses===1?"once":spell(lapses)+" times")+".":reviews.length?"Reviewed correctly every time so far.":"Not reviewed yet — it is waiting in the queue.";
+  $("#sentence-history-count").textContent=reviews.length===1?"1 session":reviews.length+" sessions";
   $("#sentence-play").disabled=false}
 let editorGeneration=0,rewrittenDraft=null;
-function openEditor(){editorGeneration++;rewrittenDraft=null;$("#sentence-source-draft").value=detail?.source||"";$("#sentence-instruction").value="";$("#sentence-ai").open=false;$("#sentence-rewrite-status").textContent="";$("#sentence-rewrite").disabled=!hasTranslator();if(!detail)return;resetSession();$("#sentence-draft").value=preferredTarget(detail);$("#sentence-edit-error").hidden=true;$("#sentence-editor").hidden=false;$("#sentence-japanese").hidden=true;$("#sentence-english").hidden=true;$("#sentence-register-row").hidden=true;$(".sentence-controls").hidden=true;$("#sentence-draft").focus()}
-function closeEditor(){editorGeneration++;rewrittenDraft=null;$("#sentence-editor").hidden=true;$("#sentence-japanese").hidden=false;$("#sentence-english").hidden=false;const canChoose=detail&&hasRegisters(itemTarget(detail))&&(detail.casualTarget||detail.target)!==(detail.politeTarget||detail.target);$("#sentence-register-row").hidden=!canChoose;$(".sentence-controls").hidden=false}
+function openEditor(){editorGeneration++;rewrittenDraft=null;$("#sentence-source-draft").value=detail?.source||"";$("#sentence-instruction").value="";$("#sentence-ai").open=false;$("#sentence-rewrite-status").textContent="";$("#sentence-rewrite").disabled=!hasTranslator();if(!detail)return;resetSession();$("#sentence-draft").value=preferredTarget(detail);$("#sentence-edit-error").hidden=true;if(!$("#sentence-change").open)$("#sentence-change").open=true;$("#sentence-draft").focus()}
+function closeEditor(){editorGeneration++;rewrittenDraft=null;$("#sentence-change").open=false}
 async function saveEdit(event){event.preventDefault();if(!detail)return;
   const japanese=normalizeFurigana($("#sentence-draft").value.trim());
   if(!japanese||(hasFurigana(itemTarget(detail))&&!/[\u3040-\u30ff\u3400-\u9fff]/.test(japanese))){$("#sentence-edit-error").textContent="That needs to be a Japanese sentence.";$("#sentence-edit-error").hidden=false;return}
@@ -1157,19 +1250,26 @@ function showSetupFields(){const provider=$("#setup-provider").value,local=provi
 // means nothing until there is something to translate with.
 let setupStep=1;
 function showSetupStep(step){setupStep=step;
-  $("#setup-step-1").hidden=step!==1;$("#setup-step-2").hidden=step!==2;
+  $("#setup-step-1").hidden=step!==1;$("#setup-step-2").hidden=step!==2;if(step===2)listSentences().then(renderSetupStarter).catch(()=>renderSetupStarter([]));
   $("#setup-step-label").textContent="Step "+step+" of 2";
-  $("#setup-title").textContent=step===1?"One thing first":"Which languages?";
+  $("#setup-title").textContent=step===1?"One thing first":"Your languages";document.querySelector("#setup-view .note-box").hidden=step!==1;
   $("#setup-copy").textContent=step===1
     ?"Echo needs a translator. Pick a service you have an account with and paste its key — it is saved on this device and goes nowhere else."
-    :"What you write in, and what Echo translates into. Both can change later.";
+    :"Write in the language you think in. Echo answers in the one you are learning.";
   $("#setup-next").hidden=step!==1;$("#setup-save").hidden=step!==2;
   $("#setup-skip").hidden=step!==1;}
 function storeTranslator(){const provider=$("#setup-provider").value;
   settings.provider=provider;
   if(provider==="local")settings.localEndpoint=$("#setup-endpoint").value.trim();
   else settings.providerKeys={...(settings.providerKeys||{}),[provider]:$("#setup-key").value.trim()};}
-function saveSetup(){storeTranslator();finishOnboarding()}
+// The import runs after Start practising and is awaited before routing. If it
+// fails, onboarding still finishes: the learner is told, and Settings offers it.
+async function saveSetup(){storeTranslator();
+  if(!$("#setup-starter").hidden&&$("#setup-starter-add").checked){const button=$("#setup-save");button.disabled=true;$("#setup-starter-status").textContent="Adding the starter sentences…";
+    try{await addStarter();$("#setup-starter-status").textContent=""}
+    catch{toast("The ミニ本語 Minihongo starter could not be downloaded. You can add it later in Settings → Your sentences.",7000);$("#setup-starter-status").textContent=""}
+    finally{button.disabled=false}}
+  finishOnboarding()}
 function finishOnboarding(){settings.onboarded=true;storePreference("jp-echo-settings",JSON.stringify(settings));resetSettingsForm();showView("practice")}
 async function performTranslation(){const english=$("#english-input").value.trim();if(!english)return setStatus(t("Enter a sentence in {language}.",{language:t(languageName(inputLang))}),true);const provider=defaultProvider();if(!hasTranslator())return showView("setup");
   // Swap the label's text, not the button's: textContent would take the arrow
@@ -1290,16 +1390,20 @@ function renderReview(){resetSession();stopReviewListening();const sentence=revi
   const mode=reviewMode(sentence),meta=reviewModeMeta(mode),writing=mode==="writing",listening=mode==="listening";
   $("#review-panel").dataset.reviewMode=mode;
   $("#review-stage").textContent=stageLabel(sentence);$("#review-stage").className="status-chip "+stageClass(sentence);
-  $("#review-mode").textContent=meta.icon+" "+meta.label;
-  $("#review-mode-instruction").textContent=listening?"Listen without reading. Can you understand the sentence?":mode==="reading"?"Read the Japanese without furigana. Can you understand it?":"Write the Japanese sentence from the meaning.";
+  $("#review-skills").replaceChildren(skillTrio(mode,{label:meta.label+" card. This sentence turns through listening, reading and writing."}));
+  $("#review-mode-title").textContent=meta.title;
+  // The reason comes from the sentence's real track (review-modes.js), so it
+  // stays true when Again keeps a skill for another visit.
+  $("#review-mode-instruction").textContent=skillReason(sentence);
+  $("#review-passive-hint").textContent=listening?"Say what it means, out loud or to yourself, then reveal it.":"Say it out loud, then check the meaning.";
   $("#review-prompt").hidden=listening;
   $("#review-prompt").lang=mode==="reading"?targetLang():sourceLang();
   $("#review-prompt").textContent=mode==="reading"?reviewPlainJapanese(sentence):sentence.source;
   $("#review-prompt-echo").textContent=sentence.source;
   $("#review-passive").hidden=writing;$("#review-front-audio").hidden=!listening;$("#review-capture").hidden=!writing;$("#review-answer-tools").hidden=true;
-  $("#review-capture-label").textContent="Write it in Japanese";$("#review-answer").placeholder="Write the Japanese sentence";$("#review-answer").value="";$("#review-listen-state").textContent="";
-  $("#review-result").hidden=true;$("#review-attempt-label").hidden=true;$("#review-attempt").hidden=true;
-  $("#review-check .label").textContent=listening?"Show answer":mode==="reading"?"Show meaning":"Check writing";
+  $("#review-capture-label").textContent="Write it in Japanese";$("#review-answer").lang=itemTarget(sentence);$("#review-answer").placeholder="Write the Japanese sentence";$("#review-answer").value="";$("#review-listen-state").textContent="";
+  $("#review-grammar").replaceChildren();$("#review-grammar").hidden=true;$("#review-result").hidden=true;$("#review-attempt-label").hidden=true;$("#review-attempt").hidden=true;
+  $("#review-check .label").textContent=listening?"Reveal the sentence":mode==="reading"?"Show the meaning":"Check and listen";
   echoesAtCardStart=Number(sentence.echoCount)||0;$("#review-echo-count").textContent=String(echoesAtCardStart);
   updateCheckButton();
   if(listening)requestAnimationFrame(()=>{if(reviewQueue[reviewIndex]?.id===sentence.id&&!reviewRevealed)playReviewAudio()});
@@ -1331,10 +1435,13 @@ async function revealReview(){let sentence=reviewQueue[reviewIndex];if(!sentence
 function reviewVocabularyHits(sentence,target){
   return wordSpans(stripFurigana(target));
 }
-function enableReviewVocabulary(sentence,target){enableVocabulary($("#review-japanese"),target,itemTarget(sentence),sentence)}
+function enableReviewVocabulary(sentence,target){enableVocabulary($("#review-japanese"),target,itemTarget(sentence),sentence,{grammarHost:$("#review-grammar")})}
 // Preserve ruby and review correction marks while attaching the same dictionary
 // action to every fragment of a surface word. Reading annotations aren't offsets.
-function enableVocabulary(root,target,lang=targetLang(),sentence=null){
+// Grammar is shown only where a host is given: the sentence page and the
+// revealed review answer. Lists, sheets, Discussion and Reading keep word
+// lookup but no grammar UI, so nothing is injected into a row or bubble.
+function enableVocabulary(root,target,lang=targetLang(),sentence=null,{grammarHost=null,explain=false}={}){
   if(!root||lang!=="ja")return;
   const plain=stripFurigana(target),analysis=grammarAnalysisCache.get(plain)||(sentence?.grammarAnalysis||[]).find(a=>a.text===plain);
   const vocabulary=wordSpans(plain),grammar=(analysis?.spans||[]).filter(s=>grammarPoint(s.id)&&plain.slice(s.start,s.end)===s.quote);
@@ -1347,30 +1454,53 @@ function enableVocabulary(root,target,lang=targetLang(),sentence=null){
     while(local<data.length){const at=offset+local,index=hits.findIndex(h=>h.start<=at&&at<h.end),hit=hits[index];
       if(!hit){frag.append(document.createTextNode(data[local]));local++;continue}
       const take=Math.min(data.length-local,hit.end-at),span=document.createElement("span");
-      span.className="review-vocab"+(hit.grammarIds.length?" grammar-vocab":"");span.dataset.vocabularyIndex=index;span.tabIndex=0;span.setAttribute("role","button");
-      span.setAttribute("aria-label","Look up "+stripFurigana(target).slice(hit.start,hit.end));
+      // Two marks that can share a segment: a word to look up (grey dotted
+      // border, interactive) and grammar (vermilion dotted underline, explained
+      // in the list below, not interactive here).
+      const isWord=hit.wordStart!==undefined,isGrammar=hit.grammarIds.length>0;span.className=[isWord?"review-vocab":"",isGrammar?"grammar-mark":""].filter(Boolean).join(" ");span.dataset.vocabularyIndex=index;
+      if(isWord){span.tabIndex=0;span.setAttribute("role","button");span.setAttribute("aria-label","Look up "+stripFurigana(target).slice(hit.wordStart,hit.wordEnd))}
       span.textContent=data.slice(local,local+take);frag.append(span);local+=take}
     offset+=data.length;node.replaceWith(frag)}
   const tokenFor=event=>event.target.closest?.(".review-vocab")||event.target.closest?.("ruby")?.querySelector(".review-vocab");
   const open=token=>{const hit=hits[Number(token.dataset.vocabularyIndex)];resetSession();openVocabularyHit(hit,stripFurigana(target))};
   root.onclick=event=>{const token=tokenFor(event);if(token){event.preventDefault();event.stopPropagation();open(token)}};
   root.onkeydown=event=>{if(event.key!=="Enter"&&event.key!==" ")return;const token=tokenFor(event);if(!token)return;event.preventDefault();event.stopPropagation();open(token)};
-  renderSentenceGrammar(root,plain,sentence,analysis);
+  if(grammarHost)renderSentenceGrammar(grammarHost,plain,sentence,analysis,{root,target,lang,explain});
 }
-function renderSentenceGrammar(root,text,sentence,analysis){
-  const panel=document.createElement("span");panel.className="sentence-grammar";
-  const ids=grammarTags([...(analysis?.grammar||[]),...(sentence?.grammar||[])]);
-  for(const id of ids){const point=grammarPoint(id),chip=document.createElement("button");chip.type="button";chip.className="grammar-chip";chip.textContent=point.title;chip.setAttribute("aria-label","Open grammar: "+point.title);chip.onclick=async event=>{event.preventDefault();event.stopPropagation();resetSession();await openGrammar(point,grammarCoverage(await listSentences()),{route:false})};panel.append(chip)}
-  const find=document.createElement("button"),status=document.createElement("span");find.type="button";find.className="grammar-find";find.textContent=analysis?"Refresh grammar":"Find grammar";find.disabled=!hasTranslator();find.title="One AI request; saves grammar links for this sentence.";status.className="hint";status.setAttribute("aria-live","polite");
-  find.onclick=async event=>{event.preventDefault();event.stopPropagation();find.disabled=true;status.textContent="Finding grammar…";
-    try{const found=await analyzeSentenceGrammar(text,GRAMMAR_POINTS,{...settings,targetLang:"ja"});grammarAnalysisCache.set(text,found);
-      if(sentence){sentence.grammarAnalysis=[...(sentence.grammarAnalysis||[]).filter(a=>a.text!==text),found];sentence.grammar=grammarTags(sentence.grammarAnalysis.flatMap(a=>a.grammar));saveWorkspace()}
-      if(sentence?.id){const fresh=await getSentence(sentence.id);if(fresh&&[fresh.target,fresh.casualTarget,fresh.politeTarget].filter(Boolean).map(stripFurigana).includes(text)){const previous=(fresh.grammarAnalysis||[]).filter(a=>a.text!==text);const updated={...fresh,grammarAnalysis:[...previous,found],grammar:grammarTags([...previous.flatMap(a=>a.grammar),...found.grammar]),updatedAt:new Date().toISOString()};await saveSentence(updated);if(detail?.id===fresh.id)detail=updated;if(current?.id===fresh.id)current=updated;sentence=updated}}
-      if(!root.isConnected)return;panel.remove();for(const span of root.querySelectorAll(".review-vocab"))span.replaceWith(...span.childNodes);root.normalize();enableVocabulary(root,text,"ja",sentence);
-      const result=root.querySelector(".sentence-grammar .hint");if(result)result.textContent=found.grammar.length?"Grammar saved.":"No grammar points identified.";
-    }catch(error){status.textContent=error.message;find.disabled=!hasTranslator()}};
-  panel.append(find,status);root.append(panel);
+function renderSentenceGrammar(host,text,sentence,analysis,{root,target,lang,explain}){
+  host.replaceChildren();
+  const ids=grammarTags([...(analysis?.grammar||[]),...(sentence?.grammar||[])]),items=grammarListItems(ids,analysis?.spans||[]);
+  const heading=document.createElement("h3");heading.className="rule-heading grammar-heading";heading.append(t("Grammar in it"));
+  if(items.length){const count=el("span","count",items.length===1?t("1 point"):t("{n} points",{n:items.length}));heading.append(count)}
+  // The answered state: an ordered list that reads as an answer (GrammarList).
+  if(items.length){host.append(heading,grammarList(items,{onOpen:async item=>{resetSession();await openGrammar(grammarPoint(item.id),grammarCoverage(await listSentences()),{route:false})}}))}
+  else if(analysis){host.append(heading,el("p","hint",t("None of the listed grammar points appear in this sentence.")))}
+  // The one priced ask, on the sentence page only. When it cannot run it stays
+  // visible but disabled, with the reason in place of the price.
+  else if(explain&&lang==="ja"&&hasGrammar()){
+    const ask=el("button","link-button",t("Explain the grammar"));ask.type="button";ask.dataset.ui="button";
+    const reason=!hasTranslator()?t("Add an AI key in Settings and Echo can explain the grammar."):!navigator.onLine?t("You are offline. Echo can explain the grammar once you are back online."):"";
+    const status=el("p","hint",reason||t("One request on your AI key. The answer is kept here and shown again on the review answer."));status.setAttribute("aria-live","polite");ask.disabled=!!reason;
+    ask.onclick=async()=>{ask.disabled=true;status.textContent=t("Reading the grammar…");
+      try{const found=await analyzeSentenceGrammar(text,GRAMMAR_POINTS,{...settings,targetLang:"ja"});grammarAnalysisCache.set(text,found);
+        let saved=sentence;
+        if(sentence?.id){const fresh=await getSentence(sentence.id);
+          if(fresh&&[fresh.target,fresh.casualTarget,fresh.politeTarget].filter(Boolean).map(stripFurigana).includes(text)){
+            const previous=(fresh.grammarAnalysis||[]).filter(a=>a.text!==text);
+            saved={...fresh,grammarAnalysis:[...previous,found],grammar:grammarTags([...previous.flatMap(a=>a.grammar),...found.grammar]),updatedAt:new Date().toISOString()};
+            await saveSentence(saved);if(detail?.id===saved.id)detail=saved;if(current?.id===saved.id)current=saved}}
+        if(!root.isConnected)return;
+        for(const span of root.querySelectorAll(".review-vocab,.grammar-mark"))span.replaceWith(...span.childNodes);root.normalize();
+        enableVocabulary(root,target,lang,saved,{grammarHost:host,explain});
+      }catch(error){ask.disabled=false;status.textContent=sheetError(error)}};
+    host.append(heading,ask,status)}
+  host.hidden=!host.childElementCount;
+  updateUnderlineKey(root);
 }
+// The one-line key under the meaning on the sentence page: grey dotted for a
+// word to look up, vermilion dotted for grammar (explained below).
+function updateUnderlineKey(root){const key=$("#sentence-key");if(!key||root?.id!=="sentence-japanese")return;
+  key.hidden=!root.querySelector(".review-vocab,.grammar-mark");$("#sentence-key-grammar").hidden=!root.querySelector(".grammar-mark")}
 let dictionaryLookupGeneration=0;
 async function openVocabularyHit(hit,context){
   const choices=(hit.ids||[hit.id]).map(wordById).filter(Boolean),points=(hit.grammarIds||[]).map(grammarPoint).filter(Boolean);
@@ -1399,11 +1529,17 @@ function startReviewListening(){if(reviewListening)return;
   reviewListening=true;$("#review-mic").setAttribute("aria-pressed","true");$("#review-mic").setAttribute("aria-label","Stop listening");$("#review-panel").classList.add("is-listening");$("#review-listen-state").textContent=DICTATION.listening}
 function stopReviewListening(){if(!reviewListening||!reviewRecognition)return;reviewListening=false;try{reviewRecognition.stop()}catch{}$("#review-mic").setAttribute("aria-pressed","false");$("#review-panel").classList.remove("is-listening")}
 function toggleReviewListening(){reviewListening?stopReviewListening():startReviewListening()}
-async function skipReview(){const sentence=reviewQueue[reviewIndex];if(sentence){const updated={...sentence,skipped:true,skippedAt:new Date().toISOString(),updatedAt:new Date().toISOString()};await saveSentence(updated);reviewQueue[reviewIndex]=updated}reviewIndex++;renderReview()}
+async function skipReview(){const sentence=reviewQueue[reviewIndex];if(!sentence||reviewBusy)return;reviewBusy=true;try{if(sentence){const updated={...sentence,skipped:true,skippedAt:new Date().toISOString(),updatedAt:new Date().toISOString()};await saveSentence(updated);reviewQueue[reviewIndex]=updated}reviewIndex++;renderReview()}finally{reviewBusy=false}}
 function playReviewAudio(){const sentence=reviewQueue[reviewIndex];if(!sentence)return;if(loop.running){loop.togglePause();return}const policy=$("#voice").value,voice=policy==="random"?voices[Math.floor(Math.random()*voices.length)]:(policy==="default"?voices.find(v=>v.default)||voices[0]:voices[Number(policy)])||null;loop.play(reviewPlainJapanese(sentence)||reviewJapanese(sentence).replace(/【[^】]+】/g,""),{voice,rate:Number($("#rate").value),lang:targetLang()})}
-async function rateReview(rating){const sentence=reviewQueue[reviewIndex];if(!sentence||!reviewRevealed)return;resetSession();const now=new Date(),mode=reviewMode(sentence),graded=reviewSentence(sentence,rating,now),progressed=recordReviewMode(graded,rating,now);
-  const updated={...progressed,reviews:[...(Array.isArray(sentence.reviews)?sentence.reviews:[]),{at:now.toISOString(),rating,mode,echoes:Math.max(0,(Number(sentence.echoCount)||0)-echoesAtCardStart)}]};await saveSentence(updated);if(current?.id===updated.id)current=updated;reviewQueue[reviewIndex]=updated;reviewIndex++;renderReview()}
-async function exportHistory(){const data={...exportBackup(await listSentences(),settings,forBackup(await listNotes().catch(()=>[]))),catalogues:importedCatalogues},url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"})),link=Object.assign(document.createElement("a"),{href:url,download:"jp-echo-backup.json"});link.click();URL.revokeObjectURL(url)}
+// One grade per card. The save is awaited before the queue moves on, so a
+// second tap (or a held 2 key) during it would otherwise grade the same card
+// twice: two review entries and an interval pushed out twice.
+let reviewBusy=false;
+async function rateReview(rating){const sentence=reviewQueue[reviewIndex];if(!sentence||!reviewRevealed||reviewBusy)return;reviewBusy=true;try{resetSession();const now=new Date(),mode=reviewMode(sentence),graded=reviewSentence(sentence,rating,now),progressed=recordReviewMode(graded,rating,now);
+  const updated={...progressed,reviews:[...(Array.isArray(sentence.reviews)?sentence.reviews:[]),{at:now.toISOString(),rating,mode,echoes:Math.max(0,(Number(sentence.echoCount)||0)-echoesAtCardStart)}]};await saveSentence(updated);if(current?.id===updated.id)current=updated;reviewQueue[reviewIndex]=updated;reviewIndex++;renderReview()}finally{reviewBusy=false}}
+// The one backup document: the file Export downloads is byte-for-byte what the gist holds.
+async function buildBackup(){return {...exportBackup(await listSentences(),settings,forBackup(await listNotes().catch(()=>[]))),catalogues:importedCatalogues}}
+async function exportHistory(){const data=await buildBackup(),url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"})),link=Object.assign(document.createElement("a"),{href:url,download:"jp-echo-backup.json"});link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);$("#import-status").textContent="Backup saved as jp-echo-backup.json."}
 async function exportAnki(button=$("#export-anki")){const items=await listSentences();const label=button.textContent;button.disabled=true;button.textContent="Building deck…";$("#anki-status").textContent="Creating Echo.apkg on this device…";try{await downloadAnkiDeck(items.map(forAnki));$("#open-anki").hidden=false;const launched=openAnki(true);$("#anki-status").textContent=launched?"Echo.apkg downloaded. Opening Anki… If it stays here, tap Open Anki.":"Echo.apkg downloaded. Open it from Downloads to import it into Anki."}catch(error){$("#anki-status").textContent=error.message||"Anki export failed."}finally{button.disabled=false;button.textContent=label}}
 function openAnki(automatic=false){const android=/android/i.test(navigator.userAgent),ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(android){window.location.href="intent:#Intent;package=com.ichi2.anki;end";return true}if(ios){window.location.href="anki://";return true}if(!automatic)$("#anki-status").textContent="Open Echo.apkg from your Downloads folder to import it into Anki.";return false}
 // Cards filed while the pair was reversed. Only run when the pair itself was
@@ -1438,44 +1574,144 @@ async function repairReversedCards(){
 async function importBackupData(backup){
  backup=validateDeckBackup(backup);
  await startupCleanup;
- if(backup.title==="Mini Hongo starter library"&&![2,3].includes(backup.starterVersion))throw new Error("This is the old oversized Mini Hongo starter. Use the compact starter from Settings instead.");
+ if(backup.title==="Mini Hongo starter library"&&![2,3].includes(backup.starterVersion))throw new Error("This is the old oversized Minihongo starter. Use the compact starter from Settings instead.");
  if(!(Number(backup.schemaVersion)>=1&&Number(backup.schemaVersion)<=SCHEMA_VERSION)||!Array.isArray(backup.sentences))throw new Error("Unsupported backup.");
  const before=await listSentences(),upgrade=planMiniSentenceUpgrade(before,backup),merged=upgrade.sentences,catalogues=mergeCatalogues(importedCatalogues,backup.catalogues);
  if(upgrade.removed.length)await saveImportRecovery({schemaVersion:2,sentences:upgrade.removed,catalogues:importedCatalogues,kind:'Minihongo word cards replaced with sentences'},'minihongo-v2-word-cards');
- saveCatalogues(catalogues);try{await replaceAll(merged)}catch(error){saveCatalogues(importedCatalogues);throw error}importedCatalogues=catalogues;applyCatalogues();
+ saveCatalogues(catalogues);try{await replaceAll(merged)}catch(error){saveCatalogues(importedCatalogues);throw error}markBackupDirty();importedCatalogues=catalogues;applyCatalogues();
  if(Array.isArray(backup.notes))await replaceNotes(mergeNotes(await listNotes().catch(()=>[]),backup.notes));
- const added=merged.length-before.length+upgrade.removed.length,message=`Added ${added} sentence(s). ${backup.sentences.length-added} already present; existing progress kept.${upgrade.removed.length?` Replaced ${upgrade.removed.length} Mini Hongo word cards with sentences.`:""}`;
- $("#import-status").textContent=message;setStatus(message);refreshDueBadge();await renderHistory();return {added,total:merged.length};
+ const added=merged.length-before.length+upgrade.removed.length,message=`Added ${added} sentence(s). ${backup.sentences.length-added} already present; existing progress kept.${upgrade.removed.length?` Replaced ${upgrade.removed.length} Minihongo word cards with sentences.`:""}`;
+ setStatus(message);refreshDueBadge();await renderHistory();return {added,total:merged.length};
 }
-async function importHistory(file){if(!file)return;try{await importBackupData(JSON.parse(await file.text()))}catch(error){$("#import-status").textContent=error.message||"Import failed.";setStatus(error.message||"Import failed.",true)}}
+// Import — a deck or a backup, from a file or a URL — is one merge. Messages go
+// to whichever screen started it: Settings, or the empty Library.
+let importStatus=null;
+const importStatusNode=()=>importStatus||$("#import-status");
+async function importHistory(file){if(!file)return;const status=importStatusNode();status.classList?.remove("error");
+  let data;try{data=JSON.parse(await file.text())}catch{status.textContent="That file is not valid JSON. See DECK-FORMAT.md for the deck format.";return}
+  try{const {added,total}=await importBackupData(data);status.textContent=added?`Imported ${added} sentence${added===1?"":"s"}. ${total.toLocaleString()} in your library.`:"Everything in that file is already in your library."}
+  catch(error){status.textContent=error.message||"Import failed.";setStatus(error.message||"Import failed.",true)}
+  finally{importStatus=null}}
+async function importDeckURL(url,button,status=$("#import-status")){
+  if(!String(url||"").trim()){status.textContent="Paste the deck's URL first.";$("#deck-json-url").focus();return}
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),30000);button.disabled=true;status.textContent="Downloading the deck…";
+  try{const {added,total}=await importBackupData(await fetchDeckBackup(url,{signal:controller.signal}));status.textContent=added?`Imported ${added} sentence${added===1?"":"s"}. ${total.toLocaleString()} in your library.`:"Everything in that deck is already in your library.";$("#deck-json-url").value=""}
+  catch(error){status.textContent=error.message}
+  finally{clearTimeout(timer);button.disabled=false}}
 async function cleanupLegacyMiniHongo(){
  const marker='jp-echo-minihongo-cleanup-v2';
  if(localStorage.getItem(marker)!=='done'){
   const plan=await repairMiniImport(await listSentences(),importedCatalogues,{archive:saveImportRecovery,replace:(kept,removed)=>removeArchivedMiniCards(kept,removed,importedCatalogues),saveCatalogues});
-  if(plan.changed){importedCatalogues=plan.catalogues;applyCatalogues();storePreference('jp-echo-minihongo-cleanup-message',`Removed ${plan.removed.length} old Mini Hongo cards. Kept ${plan.kept.length} existing sentences.`)}
+  if(plan.changed){importedCatalogues=plan.catalogues;applyCatalogues();storePreference('jp-echo-minihongo-cleanup-message',`Removed ${plan.removed.length} old Minihongo cards. Kept ${plan.kept.length} existing sentences.`)}
   storePreference(marker,'done');
  }
  $('#mini-cleanup-status').textContent=localStorage.getItem('jp-echo-minihongo-cleanup-message')||'';
  $('#undo-mini-cleanup').hidden=!(await readImportRecovery());
  await refreshDueBadge();
 }
-async function undoMiniCleanup(){const button=$('#undo-mini-cleanup');button.disabled=true;try{const backup=await readImportRecovery();if(!backup)throw new Error('No cleanup backup is available.');await importBackupData(backup);$('#mini-cleanup-status').textContent='Restored the removed Mini Hongo cards from the recovery copy.'}catch(error){$('#mini-cleanup-status').textContent=error.message}finally{button.disabled=false}}
-async function importDeckURL(url,button,label='deck'){
- const status=$("#import-status"),controller=new AbortController(),timer=setTimeout(()=>controller.abort(),30000);button.disabled=true;status.textContent="Downloading "+label+"…";
- try{await importBackupData(await fetchDeckBackup(url,{signal:controller.signal}))}catch(error){status.textContent=error.message}finally{clearTimeout(timer);button.disabled=false}
+async function undoMiniCleanup(){const button=$('#undo-mini-cleanup');button.disabled=true;try{const backup=await readImportRecovery();if(!backup)throw new Error('No cleanup backup is available.');await importBackupData(backup);$('#mini-cleanup-status').textContent='Restored the removed Minihongo cards from the recovery copy.'}catch(error){$('#mini-cleanup-status').textContent=error.message}finally{button.disabled=false}}
+// Automatic backup to a secret GitHub gist (see gist-backup.js). The token,
+// gist URL and the on/off switch are settings (stripped from every backup);
+// the bookkeeping — dirty, last attempt, last success, last error — is its
+// own key, so Settings' Save/Cancel never rolls it back.
+const GIST_STATE_KEY="jp-echo-gist-state";
+function gistState(){try{const value=JSON.parse(localStorage.getItem(GIST_STATE_KEY)||"{}");return value&&typeof value==="object"?value:{}}catch{return {}}}
+function patchGistState(patch){const next={...gistState(),...patch};storePreference(GIST_STATE_KEY,JSON.stringify(next));return next}
+let gistTimer=null,gistRunning=null,gistWarned=false;
+function scheduleGistBackup(delay){clearTimeout(gistTimer);gistTimer=setTimeout(()=>maybeAutoBackup("change").catch(()=>{}),Math.max(1000,delay))}
+function markBackupDirty(){if(!settings.gistAuto)return;patchGistState({dirty:true,lastChangeAt:Date.now()});scheduleGistBackup(QUIET_MS+500)}
+async function maybeAutoBackup(reason){
+  const state=gistState(),now=Date.now(),ready=!!settings.gistAuto&&!!settings.gistToken&&!!state.dirty;
+  if(!shouldAutoBackup({enabled:!!settings.gistAuto,hasToken:!!settings.gistToken,dirty:!!state.dirty,lastAttemptAt:state.lastAttemptAt,lastChangeAt:state.lastChangeAt,now,reason})){
+    // Too soon after the last upload: come back when the interval allows.
+    if(ready&&reason!=="hidden")scheduleGistBackup(Math.max((Number(state.lastAttemptAt)||0)+MIN_INTERVAL_MS,(Number(state.lastChangeAt)||0)+QUIET_MS)-now+500);
+    return null}
+  return runGistBackup({auto:true})}
+async function runGistBackup({auto=false,token=settings.gistToken,gist=settings.gistUrl}={}){
+  if(gistRunning)return gistRunning;
+  // A URL that does not parse must not silently become "create a new gist".
+  if(String(gist||"").trim()&&!parseGistId(gist))throw new Error("That gist URL is not one Echo recognises. Paste the gist's page URL, or leave it blank.");
+  const startedAt=Date.now();patchGistState({lastAttemptAt:startedAt});
+  gistRunning=(async()=>{
+    try{const result=await uploadBackup({token,gist,backup:await buildBackup()});
+      const state=patchGistState({dirty:(Number(gistState().lastChangeAt)||0)>startedAt,lastSuccessAt:Date.now(),lastError:"",url:result.url});
+      if(settings.gistUrl!==result.url||settings.gistToken!==token){settings.gistUrl=result.url;settings.gistToken=token;storePreference("jp-echo-settings",JSON.stringify(settings));if(document.body.dataset.view==="settings")$("#gist-url").value=result.url;renderSettingsRows()}
+      if(state.dirty)scheduleGistBackup(MIN_INTERVAL_MS+500);
+      return result}
+    catch(error){patchGistState({lastError:error.message||String(error)});
+      if(auto&&!gistWarned){gistWarned=true;toast("Gist backup failed: "+(error.message||error),6000)}
+      throw error}
+    finally{gistRunning=null;renderGistStatus()}})();
+  return gistRunning}
+const gistWhen=value=>new Intl.DateTimeFormat(undefined,{dateStyle:"medium",timeStyle:"short"}).format(new Date(value));
+function renderGistStatus(){
+  const node=$("#gist-status");if(!node)return;const state=gistState();node.replaceChildren();node.classList.remove("error");
+  if(state.lastError){node.classList.add("error");node.textContent="Last backup failed: "+state.lastError;return}
+  if(state.lastSuccessAt){node.append("Backed up "+gistWhen(state.lastSuccessAt)+". ");
+    if(state.url&&parseGistId(state.url)){const link=document.createElement("a");link.href=state.url;link.target="_blank";link.rel="noopener noreferrer";link.textContent="Open the gist";node.append(link)}
+    if(settings.gistAuto&&state.dirty)node.append(" Newer changes are waiting.");return}
+  node.textContent=settings.gistAuto?(settings.gistToken?"Nothing backed up yet — the first backup runs shortly.":"Add a token to start backing up."):"";
 }
+async function gistBackupNow(){
+  const button=$("#gist-now"),token=$("#gist-token").value.trim(),gist=$("#gist-url").value.trim();
+  if(!token){$("#gist-status").textContent="Add a GitHub token first.";$("#gist-token").focus();return}
+  button.disabled=true;$("#gist-status").textContent="Uploading…";
+  try{const result=await runGistBackup({token,gist});$("#gist-status").textContent=(result.created?"Created a secret gist with ":"Updated the gist with ")+result.sentences+(result.sentences===1?" sentence.":" sentences.");setTimeout(renderGistStatus,4000)}
+  catch(error){$("#gist-status").classList.add("error");$("#gist-status").textContent=error.message}
+  finally{button.disabled=false}}
+async function gistRestore(){
+  const button=$("#gist-restore"),gist=$("#gist-url").value.trim(),token=$("#gist-token").value.trim();
+  if(!parseGistId(gist)){$("#gist-status").textContent="Paste the gist's URL to restore from it.";$("#gist-url").focus();return}
+  button.disabled=true;$("#gist-status").classList.remove("error");$("#gist-status").textContent="Downloading the backup…";
+  try{const {backup,url}=await downloadBackup({gist,token});const {added}=await importBackupData(backup);
+    // Continue backing up to the gist this device was restored from.
+    if(url&&!settings.gistUrl){settings.gistUrl=url;storePreference("jp-echo-settings",JSON.stringify(settings));$("#gist-url").value=url}
+    $("#gist-status").textContent=added?`Restored ${added} sentence${added===1?"":"s"} from the gist. Everything already here was kept.`:"Everything in that gist is already on this device."}
+  catch(error){$("#gist-status").classList.add("error");$("#gist-status").textContent=error.message}
+  finally{button.disabled=false}}
+// "Or practise another way": each row goes once the learner has actually used
+// that mode (started a discussion, generated a reading). Discoverability lives
+// in the empty states; the mode switch itself stays quiet.
+const MODES_USED_KEY="jp-echo-modes-used";
+function modesUsed(){try{return JSON.parse(localStorage.getItem(MODES_USED_KEY)||"{}")||{}}catch{return {}}}
+function markModeUsed(mode){if(modesUsed()[mode])return;storePreference(MODES_USED_KEY,JSON.stringify({...modesUsed(),[mode]:true}));renderWelcomeModes()}
+function renderWelcomeModes(){const used=modesUsed();$("#welcome-discussion").hidden=!!used.discussion;$("#welcome-reading").hidden=!!used.reading;$("#welcome-modes").hidden=!!(used.discussion&&used.reading)}
+// "Your sentences with it  2": the count sits at the end of the rule heading.
+function sheetCount(head,n){let count=head.querySelector(".count");if(!count){count=el("span","count","");head.append(count)}count.textContent=String(n);head.classList.add("counted")}
+// Echo has one built-in deck, the ミニ本語 Minihongo starter, offered only to seed an
+// empty or young library. Everything else in a library is the learner's own.
 const MINI_DECK_URL="https://raw.githubusercontent.com/KakkoiDev/minihongo/master/imports/jp-echo.json";
-const EXAMPLE_DECK_URL=new URL("./examples/sentence-deck.json",document.baseURI).href;
-const AI_TEAM_DECK_URL="https://raw.githubusercontent.com/KakkoiDev/nihongo-it-anki/master/imports/agentic-lab-jp-echo.json";
-function importMiniHongo(){return importDeckURL(MINI_DECK_URL,$("#import-minihongo"),"Mini Hongo")}
+// The starter import, shared by Settings, the empty Library and onboarding:
+// download, then the usual merge (duplicates skipped). Resolves {added,total}.
+async function addStarter(){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),30000);
+  try{return await importBackupData(await fetchDeckBackup(MINI_DECK_URL,{signal:controller.signal}))}finally{clearTimeout(timer)}}
+async function seedStarter(button,status=$("#import-status")){
+ const label=button.textContent;button.disabled=true;button.textContent="Adding…";status.textContent="Downloading the ミニ本語 Minihongo starter…";
+ try{const {added}=await addStarter();status.textContent=added?`Added ${added} starter sentences. They are yours now — practise, edit or delete any of them.`:"The starter sentences are already in your library."}
+ catch(error){status.textContent=error.message;button.disabled=false;button.textContent=label}
+ finally{renderStarterOffer(await listSentences())}
+}
+// Onboarding step 2: the starter, unticked, for a Japanese target only and
+// only when it is not already in the library.
+let starterSeeded=false;
+function renderSetupStarter(all){if(all)starterSeeded=isSeeded(all);const show=$("#setup-target")?.value==="ja"&&!starterSeeded;$("#setup-starter").hidden=!show;if(!show)$("#setup-starter-add").checked=false}
+function renderStarterOffer(all){
+ const ja=targetLang()==="ja",seeded=isSeeded(all);renderSetupStarter(all);
+ $("#starter-row").hidden=!ja;$("#starter-link").hidden=!ja;
+ const add=$("#import-minihongo");add.disabled=seeded;add.textContent=seeded?"Added":"Add";
+ for(const id of ["#empty-starter","#empty-starter-copy"])$(id).hidden=!ja||seeded;
+}
 
 
-$("#tabs").addEventListener("click",event=>{const tab=event.target.closest(".tab[data-view]");if(tab)showView(tab.dataset.view)});$("#translate").onclick=()=>discussionMode?(discussionTurns.length?replyDiscussion():beginDiscussion()):readingMode?generateReadingMode():performTranslation();$("#english-input").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")(discussionMode?(discussionTurns.length?replyDiscussion():beginDiscussion()):readingMode?generateReadingMode():performTranslation)()};$("#play-pause").onclick=()=>{if(!current)return;if(loop.running){loop.togglePause();return}const policy=$("#voice").value,voice=policy==="random"?voices[Math.floor(Math.random()*voices.length)]:(policy==="default"?voices.find(v=>v.default)||voices[0]:voices[Number(policy)])||null;loop.play(selectedPlainJapanese(),{voice,rate:Number($("#rate").value),lang:targetLang()})};$("#show-english").onchange=()=>{saveSettings();renderSentence()};$("#show-furigana").onchange=()=>{saveSettings();renderSentence()};$("#show-polite").onchange=async()=>{resetSession();saveSettings();if(current&&hasRegisters(itemTarget(current))){current={...current,reviewRegister:$("#show-polite").checked?"polite":"casual",updatedAt:new Date().toISOString()};await saveSentence(current);if(detail?.id===current.id)detail=current}renderSentence()};$("#rate").oninput=()=>{const rate=Number($("#rate").value);$("#rate-value").textContent=rate.toFixed(1)+"×";resetSession();loop.setRate(rate)};$("#settings-button").onclick=()=>$("#settings-dialog").showModal();$("#close-settings").onclick=()=>{saveSettings();$("#settings-dialog").close();renderPracticeNotices();writeReminderPrefs();syncReminderSchedule()};
+$("#tabs").addEventListener("click",event=>{const tab=event.target.closest(".tab[data-view]");if(tab)showView(tab.dataset.view)});$("#translate").onclick=()=>discussionMode?(discussionTurns.length?replyDiscussion():beginDiscussion()):readingMode?generateReadingMode():performTranslation();$("#english-input").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")(discussionMode?(discussionTurns.length?replyDiscussion():beginDiscussion()):readingMode?generateReadingMode():performTranslation)()};$("#play-pause").onclick=()=>{if(!current)return;if(loop.running){loop.togglePause();return}const policy=$("#voice").value,voice=policy==="random"?voices[Math.floor(Math.random()*voices.length)]:(policy==="default"?voices.find(v=>v.default)||voices[0]:voices[Number(policy)])||null;loop.play(selectedPlainJapanese(),{voice,rate:Number($("#rate").value),lang:targetLang()})};$("#show-english").onchange=()=>{saveSettings();renderSentence()};$("#show-furigana").onchange=()=>{saveSettings();renderSentence()};$("#show-polite").onchange=async()=>{resetSession();saveSettings();if(current&&hasRegisters(itemTarget(current))){current={...current,reviewRegister:$("#show-polite").checked?"polite":"casual",updatedAt:new Date().toISOString()};await saveSentence(current);if(detail?.id===current.id)detail=current}renderSentence()};$("#rate").oninput=()=>{const rate=Number($("#rate").value);$("#rate-value").textContent=rate.toFixed(1)+"×";resetSession();loop.setRate(rate)};// Each preference commits on "change" (never on blur), and everything the
+// old Save also did — notices, reminder schedule — follows the write.
+function commitPreferences(){if(saveSettings()){renderPracticeNotices();writeReminderPrefs();syncReminderSchedule()}else flashSaved("Not saved — this browser blocked storage")}
+for(const id of ["theme","motion","voice","discussion-voice-ai","discussion-voice-user","rate","autotag","remind-time","gist-auto","gist-url"])$("#"+id).addEventListener("change",commitPreferences);
 $("#remind").onchange=async()=>{const wanted=$("#remind").checked;
   if(wanted&&!await enableReminders()){$("#remind").checked=false;$("#remind-hint").textContent="Notifications are blocked for Echo. Allow them in your browser settings, then turn this on again.";$("#remind-hint").classList.add("error");$("#remind-reach").textContent="";return}
   $("#remind-hint").textContent="Your device asks permission the first time you turn this on.";$("#remind-hint").classList.remove("error");
   settings.remind=wanted;$("#remind-reach").textContent=wanted?reminderReach():""};$("#export-anki").onclick=()=>exportAnki($("#export-anki"));$("#open-anki").onclick=()=>openAnki();$("#export").onclick=exportHistory;$("#import").onclick=()=>$("#import-file").click();$("#import-file").onchange=async event=>{await importHistory(event.target.files[0]);event.target.value=""};
-$("#voice-install").onclick=installTargetVoice;$("#voice-manage").onclick=installTargetVoice;$("#settings-swap-langs").onclick=()=>setPair(targetLang(),sourceLang());window.addEventListener("focus",()=>setTimeout(populateVoices,250));document.addEventListener("visibilitychange",()=>{if(!document.hidden)setTimeout(populateVoices,250)});$("#onboard-start").onclick=()=>showView("setup");$("#onboard-restore").onclick=()=>{finishOnboarding();showView("library");$("#import-file").click()};
+$("#voice-install").onclick=installTargetVoice;$("#voice-manage").onclick=installTargetVoice;$("#settings-swap-langs").onclick=()=>setPair(targetLang(),sourceLang());window.addEventListener("focus",()=>setTimeout(populateVoices,250));document.addEventListener("visibilitychange",()=>{if(!document.hidden)setTimeout(populateVoices,250)});$("#onboard-start").onclick=()=>showView("setup");$("#onboard-restore").onclick=()=>{finishOnboarding();showView("library");importStatus=$("#empty-starter-status");$("#import-file").click()};
 $("#setup-next").onclick=()=>{storeTranslator();showSetupStep(2)};
 $("#setup-back").onclick=()=>{if(setupStep===2)return showSetupStep(1);showView(settings.onboarded?"practice":"onboard")};$("#setup-provider").onchange=showSetupFields;$("#setup-save").onclick=saveSetup;$("#setup-skip").onclick=finishOnboarding;
 $("#clear-filters").onclick=()=>{$("#history-search").value="";$("#clear-history-search").hidden=true;$("#history-filter").value="all";settings.historyFilter="all";try{storePreference("jp-echo-settings",JSON.stringify(settings))}catch{}renderHistory()};
@@ -1497,10 +1733,19 @@ function sheetDrag(dialog,close){
 sheetDrag($("#kanji-dialog"),()=>{loop.stop();$("#kanji-dialog").close()});sheetDrag($("#grammar-dialog"),()=>{loop.stop();$("#grammar-dialog").close()});sheetDrag($("#word-dialog"),()=>{loop.stop();$("#word-dialog").close()});
 $("#word-close").onclick=()=>{loop.stop();$("#word-dialog").close()};$("#word-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;wordOpen=null;saveWorkspace({modal:null})});$("#word-compose").onclick=composeForWord;$("#word-say-go").onclick=sayForWord;$("#word-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForWord()};$("#word-note-ask").onclick=askWordNote;$("#word-prev").onclick=()=>wordStep(-1);$("#word-next").onclick=()=>wordStep(1);$("#word-dialog").addEventListener("keydown",event=>{if(!wordOpen?.learn||event.target.tagName==="TEXTAREA"||event.target.isContentEditable)return;if(event.key==="ArrowRight")wordStep(1);else if(event.key==="ArrowLeft")wordStep(-1)});
 $("#mora-open").onclick=()=>showView("mora");$("#mora-back").onclick=()=>showView("library");for(const id of ["#mora-show-emoji","#mora-show-furigana","#mora-show-english"])$(id).onchange=saveMoraDisplay;
-$("#kanji-close").onclick=()=>{loop.stop();$("#kanji-dialog").close()};$("#kanji-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;kanjiOpen=null;saveWorkspace({modal:null})});$("#kanji-compose").onclick=composeForKanji;$("#kanji-say-go").onclick=sayForKanji;$("#library-tool").onclick=()=>showView("map");$("#map-back").onclick=()=>showView("library");for(const button of document.querySelectorAll("#map-toggle [role=tab]"))button.onclick=()=>{settings.mapView=button.dataset.map;storePreference("jp-echo-settings",JSON.stringify(settings));saveWorkspace({mapView:settings.mapView});tool.open=null;tool.chip="all";renderMap()};$("#map-toggle").addEventListener("keydown",event=>{if(event.key!=="ArrowLeft"&&event.key!=="ArrowRight")return;const tabs=[...document.querySelectorAll("#map-toggle [role=tab]")].filter(b=>!b.hidden),at=tabs.findIndex(b=>b.getAttribute("aria-selected")==="true"),next=tabs[(at+(event.key==="ArrowRight"?1:tabs.length-1))%tabs.length];if(next){next.click();next.focus()}});let lookupTimer=0;$("#map-search").oninput=()=>{saveWorkspace();syncRoute({},true);clearTimeout(lookupTimer);lookupTimer=setTimeout(renderMap,150)};$("#map-search").onkeydown=event=>{if(event.key==="Escape"&&$("#map-search").value){$("#map-search").value="";renderMap()}};$("#map-search-clear").onclick=()=>{$("#map-search").value="";$("#map-search").focus();renderMap()};$("#grammar-prev").onclick=()=>grammarStep(-1);$("#grammar-next").onclick=()=>grammarStep(1);$("#grammar-close").onclick=()=>{loop.stop();$("#grammar-dialog").close()};$("#grammar-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;grammarOpen=null;saveWorkspace({modal:null})});$("#grammar-say-go").onclick=sayForGrammar;$("#grammar-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForGrammar()};$("#grammar-compose").onclick=composeForGrammar;$("#kanji-prev").onclick=()=>learnStep(-1);$("#kanji-next").onclick=()=>learnStep(1);$("#kanji-dialog").addEventListener("keydown",event=>{if(!kanjiOpen?.learn||event.target.tagName==="TEXTAREA")return;if(event.key==="ArrowRight")learnStep(1);else if(event.key==="ArrowLeft")learnStep(-1)});$("#kanji-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForKanji()};$("#sentence-back").onclick=()=>{detail=null;showView("library")};$("#sentence-play").onclick=playDetail;$("#sentence-edit").onclick=openEditor;$("#sentence-cancel").onclick=closeEditor;$("#sentence-editor").onsubmit=saveEdit;
+$("#kanji-close").onclick=()=>{loop.stop();$("#kanji-dialog").close()};$("#kanji-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;kanjiOpen=null;saveWorkspace({modal:null})});$("#kanji-compose").onclick=composeForKanji;$("#kanji-say-go").onclick=sayForKanji;$("#library-tool").onclick=()=>showView("map");$("#map-back").onclick=()=>showView("library");for(const button of document.querySelectorAll("#map-toggle [role=tab]"))button.onclick=()=>{settings.mapView=button.dataset.map;storePreference("jp-echo-settings",JSON.stringify(settings));saveWorkspace({mapView:settings.mapView});tool.open=null;tool.chip="all";renderMap()};$("#map-toggle").addEventListener("keydown",event=>{if(event.key!=="ArrowLeft"&&event.key!=="ArrowRight")return;const tabs=[...document.querySelectorAll("#map-toggle [role=tab]")].filter(b=>!b.hidden),at=tabs.findIndex(b=>b.getAttribute("aria-selected")==="true"),next=tabs[(at+(event.key==="ArrowRight"?1:tabs.length-1))%tabs.length];if(next){next.click();next.focus()}});let lookupTimer=0;$("#map-search").oninput=()=>{saveWorkspace();syncRoute({},true);clearTimeout(lookupTimer);lookupTimer=setTimeout(renderMap,150)};$("#map-search").onkeydown=event=>{if(event.key==="Escape"&&$("#map-search").value){$("#map-search").value="";renderMap()}};$("#map-search-clear").onclick=()=>{$("#map-search").value="";$("#map-search").focus();renderMap()};$("#grammar-prev").onclick=()=>grammarStep(-1);$("#grammar-next").onclick=()=>grammarStep(1);$("#grammar-close").onclick=()=>{loop.stop();$("#grammar-dialog").close()};$("#grammar-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;grammarOpen=null;saveWorkspace({modal:null})});$("#grammar-say-go").onclick=sayForGrammar;$("#grammar-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForGrammar()};$("#grammar-compose").onclick=composeForGrammar;$("#kanji-prev").onclick=()=>learnStep(-1);$("#kanji-next").onclick=()=>learnStep(1);$("#kanji-dialog").addEventListener("keydown",event=>{if(!kanjiOpen?.learn||event.target.tagName==="TEXTAREA")return;if(event.key==="ArrowRight")learnStep(1);else if(event.key==="ArrowLeft")learnStep(-1)});$("#kanji-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForKanji()};$("#sentence-back").onclick=()=>{detail=null;showView("library")};$("#sentence-play").onclick=playDetail;// Editing lives in the collapsed "Change this sentence" row (no pencil button).
+// Opening fills the editor; closing it cancels an in-flight rewrite.
+$("#sentence-change").ontoggle=()=>{if($("#sentence-change").open){if(document.activeElement!==$("#sentence-draft"))openEditor()}else editorGeneration++};$("#sentence-cancel").onclick=closeEditor;$("#sentence-editor").onsubmit=saveEdit;
 $("#sentence-delete").onclick=()=>askDelete();$("#delete-cancel").onclick=()=>$("#delete-dialog").close();$("#delete-confirm").onclick=confirmDelete;$("#delete-dialog").onclick=event=>{if(event.target===$("#delete-dialog"))$("#delete-dialog").close()};
 $("#side-start-review").onclick=startReview;$("#side-export-anki").onclick=()=>exportAnki($("#side-export-anki"));
 wide.addEventListener("change",()=>showView(document.body.dataset.view||"practice"));
+// Learn mode in a sheet: ← and → step through the band, like the footer's
+// Previous / Next. Typing stays typing.
+addEventListener("keydown",event=>{
+  if((event.key!=="ArrowLeft"&&event.key!=="ArrowRight")||event.metaKey||event.ctrlKey||event.altKey)return;
+  if(event.target.closest?.("input,textarea,select,[contenteditable]"))return;
+  const sheet=document.querySelector("dialog.tool-sheet[open]"),nav=sheet?.querySelector(".sheet-footer");if(!nav||nav.hidden)return;
+  const step=nav.querySelector(event.key==="ArrowLeft"?".nav-prev":".nav-next");if(step&&!step.disabled){event.preventDefault();step.click()}});
 // Desktop keys, as the sidebar legend promises. Typing must stay typing, so
 // only Escape is honoured while the answer box has focus.
 addEventListener("keydown",event=>{
@@ -1514,10 +1759,13 @@ addEventListener("keydown",event=>{
   else if(event.key==="2"){event.preventDefault();rateReview("ok")}
 });
 $("#start-review").onclick=startReview;$("#review-practice").onclick=()=>showView("practice");$("#review-back").onclick=()=>{stopReviewListening();showView("review")};$("#review-done").onclick=()=>showView("practice");$("#review-home-link").onclick=()=>showView("review");$("#review-check").onclick=revealReview;$("#review-skip").onclick=skipReview;$("#review-mic").onclick=toggleReviewListening;$("#review-answer").oninput=updateCheckButton;$("#review-front-audio").onclick=playReviewAudio;$("#review-audio").onclick=playReviewAudio;$("#review-again").onclick=()=>rateReview("again");$("#review-ok").onclick=()=>rateReview("ok");
-$("#settings-button").onclick=openSettings;$("#settings-nav").onclick=openSettings;$("#dismiss-settings").onclick=cancelSettings;$("#cancel-settings").onclick=cancelSettings;$("#install-app").onclick=installApp;$("#settings-dialog").addEventListener("cancel",event=>{event.preventDefault();cancelSettings()});$("#settings-dialog").onclick=event=>{if(event.target===$("#settings-dialog"))cancelSettings()};$("#voice").onchange=resetSession;$("#discussion-voice-ai").onchange=()=>discussionLoop.stop();$("#discussion-voice-user").onchange=()=>discussionLoop.stop();$("#provider").onchange=showProviderConfig;$("#source-lang").onchange=()=>setPair($("#source-lang").value,targetLang());
+$("#settings-button").onclick=()=>openSettings();$("#settings-nav").onclick=()=>openSettings();$("#settings-back").onclick=leaveSettings;$("#install-app").onclick=installApp;
+for(const row of document.querySelectorAll(".settings-row[data-settings-page]"))row.onclick=()=>showSettingsPage(row.dataset.settingsPage);
+$("#ai-save").onclick=saveAIService;$("#ai-check").onclick=checkAIService;$("#ai-remove").onclick=removeAIKey;$("#speech-save").onclick=saveSpeech;
+$("#ai-show-key").onclick=()=>{const button=$("#ai-show-key"),show=button.getAttribute("aria-pressed")!=="true";button.setAttribute("aria-pressed",String(show));button.textContent=show?"Hide the key":"Show the key";for(const input of document.querySelectorAll("#settings-ai input[id$='-key']"))input.type=show?"text":"password"};$("#voice").onchange=resetSession;$("#discussion-voice-ai").onchange=()=>discussionLoop.stop();$("#discussion-voice-user").onchange=()=>discussionLoop.stop();$("#provider").onchange=showProviderConfig;$("#source-lang").onchange=()=>setPair($("#source-lang").value,targetLang());
 $("#target-lang").onchange=()=>setPair(sourceLang(),$("#target-lang").value);
 $("#setup-source").onchange=()=>setPair($("#setup-source").value,targetLang());
-$("#setup-target").onchange=()=>setPair(sourceLang(),$("#setup-target").value);
+$("#setup-target").onchange=()=>{setPair(sourceLang(),$("#setup-target").value);renderSetupStarter()};
 $("#swap-langs").onclick=()=>{setInputLang(enteringTarget()?sourceLang():targetLang());toast("Typing in "+languageName(inputLang))};for(const swap of document.querySelectorAll("[data-input-swap]"))swap.onclick=()=>{setInputLang(enteringTarget()?sourceLang():targetLang());toast("Typing in "+languageName(inputLang));const field=$("#"+swap.dataset.inputSwap);if(field)field.focus()};
 $("#theme").onchange=()=>applyTheme($("#theme").value);$("#motion").onchange=()=>applyMotion($("#motion").value);window.addEventListener("beforeinstallprompt",event=>{event.preventDefault();installPrompt=event;updateInstallUI()});window.addEventListener("appinstalled",()=>{installPrompt=null;updateInstallUI()});
 $("#history-search").oninput=()=>{$("#clear-history-search").hidden=!$("#history-search").value;saveWorkspace();syncRoute({},true);renderHistory()};$("#clear-history-search").onclick=()=>{$("#history-search").value="";$("#clear-history-search").hidden=true;$("#history-search").focus();renderHistory()};for(const id of ["#history-filter","#history-order","#history-direction"]){$(id).onchange=()=>{settings.historyFilter=$("#history-filter").value;settings.historyOrder=$("#history-order").value;settings.historyDirection=$("#history-direction").value;try{storePreference("jp-echo-settings",JSON.stringify(settings))}catch{}syncRoute({},true);renderHistory()}}
@@ -1534,6 +1782,7 @@ async function applyRoute(route=parseRoute(location.href)){
     if(route.historyFilter)$("#history-filter").value=route.historyFilter;if(route.historyOrder)$("#history-order").value=route.historyOrder;if(route.historyDirection)$("#history-direction").value=route.historyDirection;
     if(route.mapQuery!=null)$("#map-search").value=route.mapQuery;if(route.mapView)settings.mapView=route.mapView;
     if(route.sentenceId){const sentence=await getSentence(route.sentenceId);if(sentence){detail=ensureSchedule(sentence);showView("sentence",{route:false});renderDetail()}else showView("library",{route:false})}
+    else if(route.view==="settings")openSettings(route.settingsPage,{route:false});
     else {showView(route.view||"practice",{route:false});if((route.view||"practice")==="practice")setPracticeMode(route.readingMode?"reading":route.discussionMode?"discussion":"sentence",{route:false})}
     if(route.modal){const sentences=await listSentences();if(route.modal.kind==="word"){const w=wordById(route.modal.id);if(w)await openWord(w,wordCoverage(sentences),{route:false})}else if(route.modal.kind==="kanji")await openKanji(route.modal.id,kanjiCoverage(sentences),{route:false});else if(route.modal.kind==="grammar"){const p=grammarPoint(route.modal.id);if(p)await openGrammar(p,grammarCoverage(sentences),{route:false})}}
   }finally{applyingRoute=false}
@@ -1544,7 +1793,7 @@ async function restoreRoute(){
   await applyRoute();window.echoRouteReady=true;
 }
 window.addEventListener("popstate",()=>applyRoute());
-applyLanguage();startupCleanup=migrateStore().then(()=>cleanupLegacyMiniHongo());startupCleanup.then(async()=>{await repairReversedCards();await restoreRoute()}).catch(error=>{window.echoReportError?.(error);setStatus('Mini Hongo cleanup could not finish: '+error.message,true);restoreRoute().catch(error=>window.echoReportError?.(error))});refreshDueBadge();setupRecognition();updateInstallUI();
+applyLanguage();startupCleanup=migrateStore().then(()=>cleanupLegacyMiniHongo());startupCleanup.then(async()=>{await repairReversedCards();await restoreRoute();maybeAutoBackup("open").catch(()=>{})}).catch(error=>{window.echoReportError?.(error);setStatus('Minihongo cleanup could not finish: '+error.message,true);restoreRoute().catch(error=>window.echoReportError?.(error))});refreshDueBadge();setupRecognition();updateInstallUI();
 // The in-app WaniKani sync is gone (the pull tool feeds the stories instead);
 // what it left in a browser is cleared once, quietly.
 try{localStorage.removeItem("jp-echo-wanikani-token");indexedDB.deleteDatabase("jp-echo-wanikani")}catch{}
@@ -1558,11 +1807,18 @@ $("#dictionary-dialog").addEventListener("close",()=>dictionaryLookupGeneration+
 
 window.addEventListener("echo-before-update",()=>saveWorkspace());
 
-$("#import-minihongo").onclick=importMiniHongo;
-$("#import-example-deck").onclick=()=>importDeckURL(EXAMPLE_DECK_URL,$("#import-example-deck"),"example sentences");
-$("#import-ai-team").onclick=()=>importDeckURL(AI_TEAM_DECK_URL,$("#import-ai-team"),"AI team sentences");
-$("#import-deck-url").onclick=()=>importDeckURL($("#deck-json-url").value,$("#import-deck-url"));
 
 $('#undo-mini-cleanup').onclick=undoMiniCleanup;
+$("#welcome-discussion").onclick=()=>setPracticeMode("discussion");$("#welcome-reading").onclick=()=>setPracticeMode("reading");
+// A starter scene fills the box and never sends: the learner can change it first.
+for(const scene of document.querySelectorAll("#discussion-scenes [data-scene]"))scene.onclick=()=>{const input=$("#english-input");input.value=scene.dataset.scene;input.dispatchEvent(new Event("input",{bubbles:true}));input.focus()};
+$("#import-deck-url").onclick=()=>importDeckURL($("#deck-json-url").value,$("#import-deck-url"));$("#deck-json-url").onkeydown=event=>{if(event.key==="Enter"){event.preventDefault();$("#import-deck-url").click()}};
+$("#empty-import").onclick=()=>{importStatus=$("#empty-starter-status");$("#import-file").click()};
+$("#gist-now").onclick=gistBackupNow;$("#gist-restore").onclick=gistRestore;
+// Leaving the app is the last chance to save pending changes; opening it catches up.
+document.addEventListener("visibilitychange",()=>{if(document.hidden)maybeAutoBackup("hidden").catch(()=>{})});
+$("#import-minihongo").onclick=()=>seedStarter($("#import-minihongo"));
+$("#empty-starter").onclick=()=>seedStarter($("#empty-starter"),$("#empty-starter-status"));
+$("#empty-practice").onclick=()=>{showView("practice");setPracticeMode("sentence");$("#english-input").focus()};
 
 window.echoAppReady=true;

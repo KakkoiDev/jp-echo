@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 2,
+  "title": "Echo example deck — everyday work Japanese",
+  "description": "Six short sentences showing every field a new deck may use. Copy the shape, not the IDs.",
+  "sentences": [
+    {
+      "id": "echo-example-001",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "Today I will study Japanese.",
+      "target": "今日【きょう】は日本語【にほんご】を勉強【べんきょう】します。"
+    },
+    {
+      "id": "echo-example-002",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "This book is easy to read.",
+      "target": "この本【ほん】は読【よ】みやすいです。"
+    },
+    {
+      "id": "echo-example-003",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "Please check this code.",
+      "target": "このコードを確認【かくにん】してください。"
+    },
+    {
+      "id": "echo-example-004",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "Let me know if there is a problem.",
+      "target": "問題【もんだい】があったら教【おし】えて。",
+      "casualTarget": "問題【もんだい】があったら教【おし】えて。",
+      "politeTarget": "問題【もんだい】があれば、教【おし】えてください。"
+    },
+    {
+      "id": "echo-example-005",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "I'll save the changes after the tests finish.",
+      "target": "テストが終【お】わったら、変更【へんこう】を保存【ほぞん】する。",
+      "casualTarget": "テストが終【お】わったら、変更【へんこう】を保存【ほぞん】する。",
+      "politeTarget": "テストが終【お】わったら、変更【へんこう】を保存【ほぞん】します。"
+    },
+    {
+      "id": "echo-example-006",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "Shall we have a meeting tomorrow morning?",
+      "target": "明日【あした】の朝【あさ】、打【う】ち合【あ】わせしない？",
+      "casualTarget": "明日【あした】の朝【あさ】、打【う】ち合【あ】わせしない？",
+      "politeTarget": "明日【あした】の朝【あさ】、打【う】ち合【あ】わせをしませんか。"
+    }
+  ]
+}
