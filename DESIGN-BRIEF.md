@@ -55,7 +55,7 @@ plus Settings (gear).
 | **Kanji, words and grammar** | Three tabs. Each is a wall of everything there is (2,136 jōyō kanji, ~23k words, N5–N1 grammar points), lit up by what the learner's own sentences contain. Banded by JLPT level, with search. Each item opens a bottom **sheet**: facts, the learner's sentences using it, and a composer to "say a sentence using this". | unmet · met · learned |
 | **Mora table** | Kana to fixed mnemonic images (飴, 犬, 牛…) for pronunciation anchoring. | emoji / furigana / English toggles |
 | **Onboarding + setup** | A three-step promise (一 二 三), then a two-step setup: AI service + key, then the language pair. "Look around first" is allowed. | — |
-| **Settings** | A long modal: appearance, audio/voices, grammar auto-read, reminders, languages, AI provider, speech recognition, **Your sentences** (Anki export, backup Export/Restore, automatic GitHub gist backup, Starter sentences), install. Save/Cancel. | — |
+| **Settings** | A long modal: appearance, audio/voices, grammar auto-read, reminders, languages, AI provider, speech recognition, **Your sentences** (Anki export, backup Export, Import by file or URL, automatic GitHub gist backup, Starter sentences), install. Save/Cancel. | — |
 
 ## 5. The visual language — "washi and seal"
 
@@ -124,12 +124,13 @@ what is still safe ("Your sentence is still in the box.").
 
 ## 8. What just changed (so you do not design against stale screens)
 
-- **No deck imports.** Users build their own library. The only bundled content
-  is an optional **Mini Hongo starter** (262 example sentences, Japanese only),
-  offered in Settings → Your sentences and on the **empty Library**, withdrawn
-  once added. Backups can be exported and **restored** (merge).
+- **Decks import by file or URL.** Settings → Your sentences → **Import**:
+  *Choose file* (a deck or a backup) or a URL field with *Import URL*, and a
+  link to `DECK-FORMAT.md`. Echo bundles no decks; the one built-in option is
+  the **Mini Hongo starter** (262 sentences, Japanese only), offered in
+  Settings and on the empty Library and withdrawn once added. Imports merge.
 - **Empty Library** is now a panel: "Your library is empty", a primary "Write a
-  sentence", and a plain "Add 262 Mini Hongo starter sentences".
+  sentence", then plain "Add 262 Mini Hongo starter sentences" and "Import a deck".
 - **Grammar.** The old "Find grammar / Refresh grammar" button that appeared
   under every sentence everywhere is gone. Grammar now shows in **one place
   that may ask** — the sentence page ("Explain the grammar", a quiet link with

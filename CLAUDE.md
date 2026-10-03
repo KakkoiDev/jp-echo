@@ -125,11 +125,13 @@ Before considering the change complete:
 
 ## Product constraints (added October 2026)
 
-- **The library is the learner's own.** There is no general deck import (file
-  or URL). The only built-in content is the optional Mini Hongo starter seed,
-  offered in Settings and on an empty Library for Japanese targets. Restore
-  accepts Echo backups and merges. Do not reintroduce deck marketplaces,
-  URL imports or bundled example decks.
+- **Decks come in by file or URL; Echo bundles none.** Settings → Import takes
+  a deck or a backup file, or a deck URL, and merges. The format is
+  `DECK-FORMAT.md` (with `decks/example-deck.json` and `decks/deck.schema.json`),
+  held to the importer by `test/deck-format.test.js` — change the importer and
+  the page together. The only built-in content is the optional Mini Hongo
+  starter seed (Japanese only). Do not add one-click buttons for third-party
+  decks.
 - **Grammar UI has two hosts and one ask.** Chips and the "Explain the
   grammar" action render only into `#sentence-grammar` (which may ask) and
   `#review-grammar` (which never asks), via `enableVocabulary(...,{grammarHost})`.

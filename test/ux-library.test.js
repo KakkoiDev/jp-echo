@@ -1,5 +1,5 @@
-// The library is the learner's own. Echo seeds it once, on request, with the
-// Mini Hongo starter; there is no general deck import. Grammar is explained on
+// The library is the learner's: their own sentences, decks they import by file
+// or URL, and the optional Mini Hongo seed. Grammar is explained on
 // the sentence page, never injected into rows, bubbles or the sentence itself.
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -12,13 +12,16 @@ const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
 const sw = await readFile(new URL("../sw.js", import.meta.url), "utf8");
 const fn = (from, to) => { const start = app.indexOf(from); return app.slice(start, app.indexOf(to, start + from.length)); };
 
-test("there is no general deck import: only backup restore and the starter seed", () => {
-  for (const gone of ["import-ai-team", "import-example-deck", "deck-json-url", "import-deck-url"]) assert.doesNotMatch(html, new RegExp(`id="${gone}"`), gone);
-  assert.doesNotMatch(app, /AI_TEAM_DECK_URL|EXAMPLE_DECK_URL|importDeckURL/);
-  assert.match(html, /id="import"[^>]*>Restore</);
-  assert.match(html, /id="import-minihongo"/);
-  assert.equal(existsSync(new URL("../examples", import.meta.url)), false);
-  assert.doesNotMatch(sw, /examples\//, "the worker no longer precaches a removed file");
+test("decks import from a file or a URL; no bundled third-party decks", () => {
+  assert.match(html, /id="import"[^>]*>Choose file</);
+  assert.match(html, /id="deck-json-url" type="url"/);
+  assert.match(html, /id="import-deck-url"/);
+  assert.match(html, /href="https:\/\/github\.com\/KakkoiDev\/jp-echo\/blob\/main\/DECK-FORMAT\.md"/, "Settings links the format");
+  assert.match(app, /\$\("#import-deck-url"\)\.onclick=\(\)=>importDeckURL\(/);
+  for (const gone of ["import-ai-team", "import-example-deck"]) assert.doesNotMatch(html, new RegExp(`id="${gone}"`), gone);
+  assert.doesNotMatch(app, /AI_TEAM_DECK_URL|EXAMPLE_DECK_URL/);
+  assert.match(html, /id="import-minihongo"/, "the starter seed stays");
+  assert.match(html, /id="empty-import"/, "an empty library can import a deck");
 });
 
 test("the starter is recognised by provenance, and a seeded library is not offered it again", () => {

@@ -1484,9 +1484,23 @@ async function importBackupData(backup){
  saveCatalogues(catalogues);try{await replaceAll(merged)}catch(error){saveCatalogues(importedCatalogues);throw error}markBackupDirty();importedCatalogues=catalogues;applyCatalogues();
  if(Array.isArray(backup.notes))await replaceNotes(mergeNotes(await listNotes().catch(()=>[]),backup.notes));
  const added=merged.length-before.length+upgrade.removed.length,message=`Added ${added} sentence(s). ${backup.sentences.length-added} already present; existing progress kept.${upgrade.removed.length?` Replaced ${upgrade.removed.length} Mini Hongo word cards with sentences.`:""}`;
- $("#import-status").textContent=message;setStatus(message);refreshDueBadge();await renderHistory();return {added,total:merged.length};
+ setStatus(message);refreshDueBadge();await renderHistory();return {added,total:merged.length};
 }
-async function importHistory(file){if(!file)return;try{await importBackupData(JSON.parse(await file.text()))}catch(error){$("#import-status").textContent=error.message||"Import failed.";setStatus(error.message||"Import failed.",true)}}
+// Import — a deck or a backup, from a file or a URL — is one merge. Messages go
+// to whichever screen started it: Settings, or the empty Library.
+let importStatus=null;
+const importStatusNode=()=>importStatus||$("#import-status");
+async function importHistory(file){if(!file)return;const status=importStatusNode();status.classList?.remove("error");
+  let data;try{data=JSON.parse(await file.text())}catch{status.textContent="That file is not valid JSON. See DECK-FORMAT.md for the deck format.";return}
+  try{const {added,total}=await importBackupData(data);status.textContent=added?`Imported ${added} sentence${added===1?"":"s"}. ${total.toLocaleString()} in your library.`:"Everything in that file is already in your library."}
+  catch(error){status.textContent=error.message||"Import failed.";setStatus(error.message||"Import failed.",true)}
+  finally{importStatus=null}}
+async function importDeckURL(url,button,status=$("#import-status")){
+  if(!String(url||"").trim()){status.textContent="Paste the deck's URL first.";$("#deck-json-url").focus();return}
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),30000);button.disabled=true;status.textContent="Downloading the deck…";
+  try{const {added,total}=await importBackupData(await fetchDeckBackup(url,{signal:controller.signal}));status.textContent=added?`Imported ${added} sentence${added===1?"":"s"}. ${total.toLocaleString()} in your library.`:"Everything in that deck is already in your library.";$("#deck-json-url").value=""}
+  catch(error){status.textContent=error.message}
+  finally{clearTimeout(timer);button.disabled=false}}
 async function cleanupLegacyMiniHongo(){
  const marker='jp-echo-minihongo-cleanup-v2';
  if(localStorage.getItem(marker)!=='done'){
@@ -1580,7 +1594,7 @@ $("#remind").onchange=async()=>{const wanted=$("#remind").checked;
   if(wanted&&!await enableReminders()){$("#remind").checked=false;$("#remind-hint").textContent="Notifications are blocked for Echo. Allow them in your browser settings, then turn this on again.";$("#remind-hint").classList.add("error");$("#remind-reach").textContent="";return}
   $("#remind-hint").textContent="Your device asks permission the first time you turn this on.";$("#remind-hint").classList.remove("error");
   settings.remind=wanted;$("#remind-reach").textContent=wanted?reminderReach():""};$("#export-anki").onclick=()=>exportAnki($("#export-anki"));$("#open-anki").onclick=()=>openAnki();$("#export").onclick=exportHistory;$("#import").onclick=()=>$("#import-file").click();$("#import-file").onchange=async event=>{await importHistory(event.target.files[0]);event.target.value=""};
-$("#voice-install").onclick=installTargetVoice;$("#voice-manage").onclick=installTargetVoice;$("#settings-swap-langs").onclick=()=>setPair(targetLang(),sourceLang());window.addEventListener("focus",()=>setTimeout(populateVoices,250));document.addEventListener("visibilitychange",()=>{if(!document.hidden)setTimeout(populateVoices,250)});$("#onboard-start").onclick=()=>showView("setup");$("#onboard-restore").onclick=()=>{finishOnboarding();showView("library");$("#import-file").click()};
+$("#voice-install").onclick=installTargetVoice;$("#voice-manage").onclick=installTargetVoice;$("#settings-swap-langs").onclick=()=>setPair(targetLang(),sourceLang());window.addEventListener("focus",()=>setTimeout(populateVoices,250));document.addEventListener("visibilitychange",()=>{if(!document.hidden)setTimeout(populateVoices,250)});$("#onboard-start").onclick=()=>showView("setup");$("#onboard-restore").onclick=()=>{finishOnboarding();showView("library");importStatus=$("#empty-starter-status");$("#import-file").click()};
 $("#setup-next").onclick=()=>{storeTranslator();showSetupStep(2)};
 $("#setup-back").onclick=()=>{if(setupStep===2)return showSetupStep(1);showView(settings.onboarded?"practice":"onboard")};$("#setup-provider").onchange=showSetupFields;$("#setup-save").onclick=saveSetup;$("#setup-skip").onclick=finishOnboarding;
 $("#clear-filters").onclick=()=>{$("#history-search").value="";$("#clear-history-search").hidden=true;$("#history-filter").value="all";settings.historyFilter="all";try{storePreference("jp-echo-settings",JSON.stringify(settings))}catch{}renderHistory()};
@@ -1665,6 +1679,8 @@ window.addEventListener("echo-before-update",()=>saveWorkspace());
 
 
 $('#undo-mini-cleanup').onclick=undoMiniCleanup;
+$("#import-deck-url").onclick=()=>importDeckURL($("#deck-json-url").value,$("#import-deck-url"));$("#deck-json-url").onkeydown=event=>{if(event.key==="Enter"){event.preventDefault();$("#import-deck-url").click()}};
+$("#empty-import").onclick=()=>{importStatus=$("#empty-starter-status");$("#import-file").click()};
 $("#gist-now").onclick=gistBackupNow;$("#gist-restore").onclick=gistRestore;
 // Leaving the app is the last chance to save pending changes; opening it catches up.
 document.addEventListener("visibilitychange",()=>{if(document.hidden)maybeAutoBackup("hidden").catch(()=>{})});

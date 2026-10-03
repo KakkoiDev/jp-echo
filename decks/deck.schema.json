@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/KakkoiDev/jp-echo/blob/main/decks/deck.schema.json",
+  "title": "Echo sentence deck",
+  "description": "An importable Echo deck. See DECK-FORMAT.md. Echo also accepts its own backup files, which carry more fields; a new deck needs only these.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "sentences"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 2,
+      "description": "Always 2 for a new deck."
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human-readable deck name."
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "description": "What the deck covers and for whom."
+    },
+    "sentences": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/sentence"
+      }
+    }
+  },
+  "$defs": {
+    "language": {
+      "enum": [
+        "ja",
+        "en",
+        "es",
+        "fr",
+        "de",
+        "it",
+        "pt",
+        "nl",
+        "sv",
+        "nb",
+        "da",
+        "fi",
+        "pl",
+        "cs",
+        "sk",
+        "hu",
+        "ro",
+        "el",
+        "ru",
+        "uk",
+        "tr",
+        "ar",
+        "he",
+        "fa",
+        "hi",
+        "bn",
+        "ta",
+        "th",
+        "vi",
+        "id",
+        "ms",
+        "tl",
+        "ko",
+        "zh",
+        "yue",
+        "ca",
+        "hr",
+        "bg",
+        "sr",
+        "lt",
+        "lv",
+        "et",
+        "is",
+        "af",
+        "sw",
+        "ur"
+      ],
+      "description": "Echo language code (see LANGUAGES in core.js)."
+    },
+    "sentence": {
+      "type": "object",
+      "required": [
+        "id",
+        "source",
+        "target"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^\\S+$",
+          "description": "Stable, unique, deck-prefixed ID, e.g. my-travel-deck-001. Keep it across versions of the deck."
+        },
+        "sourceLang": {
+          "$ref": "#/$defs/language",
+          "description": "Language of source. Omitted means en."
+        },
+        "targetLang": {
+          "$ref": "#/$defs/language",
+          "description": "Language being learned. Omitted means ja."
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1,
+          "description": "What the sentence means, in the learner's language."
+        },
+        "target": {
+          "type": "string",
+          "minLength": 1,
+          "description": "One complete natural sentence in the target language. Japanese may carry readings as 漢字【かんじ】."
+        },
+        "casualTarget": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Japanese only: casual form. Defaults to target."
+        },
+        "politeTarget": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Japanese only: polite form. Defaults to target."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Set to a newer time to replace an already-imported sentence with the same id. Progress is kept."
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

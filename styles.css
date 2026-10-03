@@ -1040,3 +1040,5 @@ html.motion-off #review-progress-bar { transition: none; }
 .gist-backup .gist-actions{flex-wrap:wrap}
 #gist-status a{color:var(--seal-deep)}
 #gist-status.error{color:var(--seal)}
+.deck-url-row{display:flex;gap:8px;padding-bottom:4px}.deck-url-row input{flex:1;min-width:0}.deck-url-row button{flex-shrink:0;height:44px;min-height:44px;padding:0 14px}
+.import-row{border-bottom:0}

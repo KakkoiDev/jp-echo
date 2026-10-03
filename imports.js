@@ -2,7 +2,7 @@ import {isLanguage,migrateSentence,SCHEMA_VERSION} from './core.js';
 
 // Validate the entire file before any catalogue or sentence store is changed.
 export function validateDeckBackup(value){
- if(!value||typeof value!=='object'||Array.isArray(value)||!Number.isInteger(value.schemaVersion)||value.schemaVersion<1||value.schemaVersion>SCHEMA_VERSION||!Array.isArray(value.sentences))throw new Error('This is not an Echo backup file. Choose the .json file Echo exported.');
+ if(!value||typeof value!=='object'||Array.isArray(value)||!Number.isInteger(value.schemaVersion)||value.schemaVersion<1||value.schemaVersion>SCHEMA_VERSION||!Array.isArray(value.sentences))throw new Error('This is not an Echo deck or backup: it needs "schemaVersion": 2 and a "sentences" array. See DECK-FORMAT.md.');
  const sentences=value.sentences.map((record,index)=>{
   if(!record||typeof record!=='object'||Array.isArray(record))throw new Error(`Sentence ${index+1} is invalid.`);
   const sentence=migrateSentence({...record,schemaVersion:record.schemaVersion??value.schemaVersion});

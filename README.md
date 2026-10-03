@@ -16,8 +16,9 @@ More screens, including dark and desktop, are in [`docs/screenshots`](docs/scree
 
 - Provider keys are stored only in the user's browser and are never included
   in an export.
-- The library lives in IndexedDB. A backup file can be exported and restored
-  (restoring merges; nothing already on the device is lost). Backups never
+- The library lives in IndexedDB. A backup file can be exported; a backup or
+  a deck can be imported from a file or a URL (importing merges; nothing
+  already on the device is lost). Backups never
   contain any key — translation or speech.
 - Optional automatic backup to a **secret GitHub gist** (Settings → Your
   sentences), the same approach as webmods/annotate: one `echo-backup.json` in
@@ -143,17 +144,19 @@ grammar UI. With *Read new sentences for grammar automatically* on, every new
 sentence gets the same analysis in the background. Recognition can miss or
 misclassify a point; only known IDs with exact quoted evidence are accepted.
 
-### Your library is yours; the starter is a seed
+### Decks, and the starter seed
 
-Echo does not import other people's decks. Every sentence is one the learner
-chose to say — translated, composed from a kanji, word or grammar point, or
-saved from Discussion or Reading. The single exception is an optional seed:
+Settings → Your sentences → **Import** takes a deck file or a deck URL (or an
+Echo backup) and merges it. **[DECK-FORMAT.md](DECK-FORMAT.md) is the format**,
+written so an AI agent can produce a valid deck from it, with a complete
+[example deck](decks/example-deck.json) and a [JSON Schema](decks/deck.schema.json).
+Echo bundles no decks. The one built-in option is a seed:
 Settings → Your sentences → **Starter sentences**, also offered on an empty
 Library, adds Mini Hongo's 262 example sentences from
 `KakkoiDev/minihongo/master/imports/jp-echo.json` (Japanese targets only).
 Once added they are ordinary sentences. The bundle may include
 `catalogues.words` and `catalogues.grammar` (`minihongo:` IDs), which are
-backed up with sentences. **Restore** accepts an Echo backup file and merges it.
+backed up with sentences.
 
 Vocabulary, kanji and grammar sheets all accept sentence ideas or directions using the same language switch and microphone composer. AI creates a sentence using the chosen item and checks it before saving.
 

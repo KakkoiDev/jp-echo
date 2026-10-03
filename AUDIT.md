@@ -23,11 +23,13 @@ regression test in `test/audit-regressions.test.js` or `test/ux-library.test.js`
 
 ## UX changes
 
-- **No deck imports.** Removed: deck JSON import, URL import, the AI-team
-  deck, the example deck (`examples/`, `IMPORTS.md`). Kept: Export and
-  **Restore** for the learner's own backups, and one optional **Mini Hongo
-  starter** seed (Settings, and on an empty Library; Japanese only; withdrawn
-  once seeded).
+- **Imports simplified.** One **Import** takes a deck or backup file, or a
+  deck URL (GitHub `blob` links become raw links). Removed: the one-click
+  AI-team and example-deck buttons. Kept: one optional **Mini Hongo starter**
+  seed (Settings, and on an empty Library; Japanese only; withdrawn once
+  seeded). The format is now a tested contract: `DECK-FORMAT.md`,
+  `decks/example-deck.json`, `decks/deck.schema.json` (replacing `IMPORTS.md`
+  and `examples/`), with instructions an AI agent can follow.
 - **Empty Library** is an invitation (write a first sentence; starter as the
   secondary option) instead of "No sentences yet.", and hides search and
   filters that cannot do anything yet.
