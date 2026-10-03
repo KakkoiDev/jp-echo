@@ -51,7 +51,11 @@ test("grammar UI renders only into its own host, and only the sentence page can 
   const calls = [...app.matchAll(/enableVocabulary\([^;]*?\{grammarHost:\$\("#([\w-]+)"\)(,explain:true)?\}/g)].map(m => m[1] + (m[2] ? "+explain" : ""));
   assert.deepEqual(calls.sort(), ["review-grammar", "sentence-grammar+explain"]);
   const render = fn("function renderSentenceGrammar", "let dictionaryLookupGeneration");
-  assert.match(render, /if\(explain&&!analysis&&lang==="ja"&&hasGrammar\(\)&&hasTranslator\(\)\)/, "offered once, hidden when it cannot run");
+  assert.match(render, /else if\(explain&&lang==="ja"&&hasGrammar\(\)\)/, "offered once, before an answer exists");
+  assert.match(render, /!hasTranslator\(\)\?t\("Add an AI key/, "no key: disabled, with the reason");
+  assert.match(render, /!navigator\.onLine\?t\("You are offline/, "offline: disabled, with the reason");
+  assert.match(render, /ask\.disabled=!!reason/);
+  assert.match(render, /grammarList\(items,/, "the answer is the GrammarList");
 });
 
 test("a library row opens its sentence: words inside the row are not separate buttons", () => {

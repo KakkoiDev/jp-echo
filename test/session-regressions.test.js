@@ -181,9 +181,9 @@ test("sentence register choice is stored per card and drives every review form",
 
 test("sentence detail exposes cumulative listening reading writing progress",()=>{
   assert.match(html,/id="sentence-review-track"/);
-  assert.match(html,/data-review-track="listening"/);
-  assert.match(html,/data-review-track="reading"/);
-  assert.match(html,/data-review-track="writing"/);
+  // Tiles are built per sentence so the next skill can be lit (design handoff §4).
+  assert.match(app,/\["listening","reading","writing"\]\.map\(mode=>\{const meta=reviewModeMeta\(mode\),tile=el\("span","skill-tile"\)/);
+  assert.match(app,/tile\.dataset\.reviewTrack=mode/);
   assert.match(app,/trackedDetail\.reviewTrack\.completed\[mode\]/);
 });
 

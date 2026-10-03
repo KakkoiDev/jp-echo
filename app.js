@@ -7,7 +7,7 @@ import {isExactMatch,markAttempt,markTarget} from "./diff.js";
 import {removeArchivedMiniCards,readImportRecovery,saveImportRecovery,deleteSentence as dbDeleteSentence,getSentence,listSentences,migrateStore,replaceAll,saveSentence as persistSentence} from "./db.js";
 import {MIN_INTERVAL_MS,QUIET_MS,downloadBackup,parseGistId,shouldAutoBackup,uploadBackup} from "./gist-backup.js";
 import {analyzeSentenceGrammar,askModel,rewriteSentence,adjustNote,carries,compose,composeFromIntent,PROVIDER_DEFAULTS,tagGrammar,translate,discuss,generateReading,writeNotes,writeWordNote,transcribeAudio} from "./api.js";
-import {setImportedGrammar,byLevel as grammarByLevel,cleanTags as grammarTags,coverage as grammarCoverage,hasGrammar,isTagged,learned as grammarLearned,LEVELS as GRAMMAR_LEVELS,point as grammarPoint,POINTS as GRAMMAR_POINTS,summarise as grammarSummarise,untagged as untaggedSentences} from "./grammar.js";
+import {grammarListItems,setImportedGrammar,byLevel as grammarByLevel,cleanTags as grammarTags,coverage as grammarCoverage,hasGrammar,isTagged,learned as grammarLearned,LEVELS as GRAMMAR_LEVELS,point as grammarPoint,POINTS as GRAMMAR_POINTS,summarise as grammarSummarise,untagged as untaggedSentences} from "./grammar.js";
 import {japaneseVoices,recognitionFactory,ShadowLoop,ConversationLoop} from "./speech.js";
 import {STORIES} from "./stories.js";
 import {coverage as kanjiCoverage,facts as kanjiFacts,jlptBands as kanjiBands,learned as kanjiLearned,LEVEL_LABELS,levelOf,nextUnmet,sentenceKanji,TOTAL as KANJI_TOTAL} from "./kanji.js";
@@ -16,11 +16,11 @@ import {setImportedWords,bands as wordBands,carries as carriesWord,coverage as w
 import {deleteNote as dbDeleteNote,forBackup,getNote,listNotes,makeNote,mergeNotes,noteKey,putNote as dbPutNote,replaceNotes as dbReplaceNotes} from "./notes.js";
 import {downloadAnkiDeck} from "./anki-export.js";
 import {dueSentences,ensureSchedule,isDue,reviewSentence} from "./srs.js";
-import {ensureReviewTrack,nextSkill,recordReviewMode,reviewMode,reviewModeMeta,skillMix,skillReason} from "./review-modes.js";
+import {dueLine,ensureReviewTrack,nextSkill,recordReviewMode,reviewMode,reviewModeMeta,skillMix,skillReason} from "./review-modes.js";
 import {DEFAULT_TIME,REMINDER_TAG,reminderText,shouldRemind} from "./reminders.js";
 import {saveDiscussionTurn} from "./actions.js";
 // New shared UI comes from the component library (COMPONENTS.md).
-import {skillGlyph,skillTrio} from "./components.js";
+import {grammarList,skillGlyph,skillTrio} from "./components.js";
 import {parseRoute,routeFor} from "./routes.js";
 import {mergeCatalogues,readCatalogues,saveCatalogues} from "./catalogues.js";
 let importedCatalogues=readCatalogues();
@@ -1093,19 +1093,23 @@ function renderDetail(){if(!detail)return;closeEditor();markSelectedRow();
   }
   $("#sentence-view").classList.toggle("hide-furigana",settings.showFurigana===false);
   $("#stat-echoes").textContent=String(Number(detail.echoCount)||0);
-  const trackedDetail=ensureReviewTrack(detail),state=cardState(detail),nextReview=reviewModeMeta(trackedDetail);$("#stat-stage").textContent=CARD_STATES[state]+" · "+nextReview.icon;$("#stat-stage").title="Next review: "+nextReview.label;$("#stat-stage").className="status-chip "+state;for(const mode of ["listening","reading","writing"]){const n=$("#sentence-review-track [data-review-track=\""+mode+"\"] strong");if(n)n.textContent=String(trackedDetail.reviewTrack.completed[mode]||0)}
-  $("#stat-due").textContent=untilDue(detail);
+  const trackedDetail=ensureReviewTrack(detail),state=cardState(detail),next=reviewMode(trackedDetail);$("#stat-stage").textContent=CARD_STATES[state];$("#stat-stage").className="status-chip "+state;
+  // How it has gone: a tile per skill with its passes; the next skill is lit.
+  $("#sentence-review-track").replaceChildren(...["listening","reading","writing"].map(mode=>{const meta=reviewModeMeta(mode),tile=el("span","skill-tile"),count=el("strong","skill-count",String(trackedDetail.reviewTrack.completed[mode]||0)),label=el("span","skill-label",meta.label);if(mode===next)label.append(el("span","skill-next"," · next"));
+    tile.dataset.reviewTrack=mode;tile.append(skillGlyph(mode,{state:mode===next?"current":"default",size:34}),count,label);return tile}));
+  const due=Date.parse(detail.srs?.due||"");$("#stat-due").textContent=dueLine(trackedDetail,!Number.isFinite(due)||due<=Date.now()?"now":"in "+describeGap(due-Date.now()));
   const reviews=Array.isArray(detail.reviews)?[...detail.reviews]:[];
-  const rows=reviews.slice().reverse().map(entry=>{const mode=entry.mode?reviewModeMeta(entry.mode):null;return {when:formatDate(entry.at),echoes:Number(entry.echoes)||0,rating:(mode?mode.icon+" "+mode.label+" · ":"")+(RATING_LABELS[entry.rating]||entry.rating),className:entry.rating==="again"?"again":""}});
+  const rows=reviews.slice().reverse().map(entry=>{const mode=entry.mode?reviewModeMeta(entry.mode):null;return {when:formatDate(entry.at),echoes:Number(entry.echoes)||0,rating:(mode?mode.label+" · ":"")+(RATING_LABELS[entry.rating]||entry.rating),className:entry.rating==="again"?"again":""}});
   rows.push({when:formatDate(detail.createdAt),echoes:null,rating:"First",className:"first"});
   $("#sentence-history").replaceChildren(...rows.map(row=>{const li=document.createElement("li");
     li.innerHTML='<span class="when">'+escapeText(row.when)+'</span><span class="detail">'+(row.echoes===null?"":'<span class="echoes">'+row.echoes+" echoes</span>")+'<span class="rating-chip '+row.className+'">'+escapeText(row.rating)+"</span></span>";return li}));
   const lapses=reviews.filter(entry=>entry.rating==="again").length;
   $("#sentence-history-note").textContent=lapses?"A review was marked Again "+(lapses===1?"once":spell(lapses)+" times")+".":reviews.length?"Reviewed correctly every time so far.":"Not reviewed yet — it is waiting in the queue.";
+  $("#sentence-history-count").textContent=reviews.length===1?"1 session":reviews.length+" sessions";
   $("#sentence-play").disabled=false}
 let editorGeneration=0,rewrittenDraft=null;
-function openEditor(){editorGeneration++;rewrittenDraft=null;$("#sentence-source-draft").value=detail?.source||"";$("#sentence-instruction").value="";$("#sentence-ai").open=false;$("#sentence-rewrite-status").textContent="";$("#sentence-rewrite").disabled=!hasTranslator();if(!detail)return;resetSession();$("#sentence-draft").value=preferredTarget(detail);$("#sentence-edit-error").hidden=true;$("#sentence-editor").hidden=false;$("#sentence-japanese").hidden=true;$("#sentence-grammar").hidden=true;$("#sentence-english").hidden=true;$("#sentence-register-row").hidden=true;$(".sentence-controls").hidden=true;$("#sentence-draft").focus()}
-function closeEditor(){editorGeneration++;rewrittenDraft=null;$("#sentence-editor").hidden=true;$("#sentence-japanese").hidden=false;$("#sentence-english").hidden=false;const canChoose=detail&&hasRegisters(itemTarget(detail))&&(detail.casualTarget||detail.target)!==(detail.politeTarget||detail.target);$("#sentence-register-row").hidden=!canChoose;$(".sentence-controls").hidden=false}
+function openEditor(){editorGeneration++;rewrittenDraft=null;$("#sentence-source-draft").value=detail?.source||"";$("#sentence-instruction").value="";$("#sentence-ai").open=false;$("#sentence-rewrite-status").textContent="";$("#sentence-rewrite").disabled=!hasTranslator();if(!detail)return;resetSession();$("#sentence-draft").value=preferredTarget(detail);$("#sentence-edit-error").hidden=true;if(!$("#sentence-change").open)$("#sentence-change").open=true;$("#sentence-draft").focus()}
+function closeEditor(){editorGeneration++;rewrittenDraft=null;$("#sentence-change").open=false}
 async function saveEdit(event){event.preventDefault();if(!detail)return;
   const japanese=normalizeFurigana($("#sentence-draft").value.trim());
   if(!japanese||(hasFurigana(itemTarget(detail))&&!/[\u3040-\u30ff\u3400-\u9fff]/.test(japanese))){$("#sentence-edit-error").textContent="That needs to be a Japanese sentence.";$("#sentence-edit-error").hidden=false;return}
@@ -1378,8 +1382,11 @@ function enableVocabulary(root,target,lang=targetLang(),sentence=null,{grammarHo
     while(local<data.length){const at=offset+local,index=hits.findIndex(h=>h.start<=at&&at<h.end),hit=hits[index];
       if(!hit){frag.append(document.createTextNode(data[local]));local++;continue}
       const take=Math.min(data.length-local,hit.end-at),span=document.createElement("span");
-      span.className="review-vocab"+(hit.grammarIds.length?" grammar-vocab":"");span.dataset.vocabularyIndex=index;span.tabIndex=0;span.setAttribute("role","button");
-      span.setAttribute("aria-label","Look up "+stripFurigana(target).slice(hit.start,hit.end));
+      // Two marks that can share a segment: a word to look up (grey dotted
+      // border, interactive) and grammar (vermilion dotted underline, explained
+      // in the list below, not interactive here).
+      const isWord=hit.wordStart!==undefined,isGrammar=hit.grammarIds.length>0;span.className=[isWord?"review-vocab":"",isGrammar?"grammar-mark":""].filter(Boolean).join(" ");span.dataset.vocabularyIndex=index;
+      if(isWord){span.tabIndex=0;span.setAttribute("role","button");span.setAttribute("aria-label","Look up "+stripFurigana(target).slice(hit.wordStart,hit.wordEnd))}
       span.textContent=data.slice(local,local+take);frag.append(span);local+=take}
     offset+=data.length;node.replaceWith(frag)}
   const tokenFor=event=>event.target.closest?.(".review-vocab")||event.target.closest?.("ruby")?.querySelector(".review-vocab");
@@ -1390,17 +1397,18 @@ function enableVocabulary(root,target,lang=targetLang(),sentence=null,{grammarHo
 }
 function renderSentenceGrammar(host,text,sentence,analysis,{root,target,lang,explain}){
   host.replaceChildren();
-  const ids=grammarTags([...(analysis?.grammar||[]),...(sentence?.grammar||[])]);
-  if(ids.length){const chips=el("div","sentence-grammar");
-    for(const id of ids){const point=grammarPoint(id),chip=el("button","grammar-chip",point.title);chip.type="button";chip.lang="ja";chip.setAttribute("aria-label",t("Open grammar: {title}",{title:point.title}));
-      chip.onclick=async()=>{resetSession();await openGrammar(point,grammarCoverage(await listSentences()),{route:false})};chips.append(chip)}
-    host.append(chips)}
-  else if(analysis)host.append(el("p","hint",t("None of the listed grammar points appear in this sentence.")));
-  // One explicit, priced action, offered only once and only where it can run.
-  // After it answers, the chips and highlights replace it: there is no "refresh".
-  if(explain&&!analysis&&lang==="ja"&&hasGrammar()&&hasTranslator()){
-    const ask=el("button","link-button",ids.length?t("Show where each point is used"):t("Explain the grammar"));ask.type="button";
-    const status=el("p","hint",t("One request on your AI key."));status.setAttribute("aria-live","polite");
+  const ids=grammarTags([...(analysis?.grammar||[]),...(sentence?.grammar||[])]),items=grammarListItems(ids,analysis?.spans||[]);
+  const heading=document.createElement("h3");heading.className="rule-heading grammar-heading";heading.append(t("Grammar in it"));
+  if(items.length){const count=el("span","count",items.length===1?t("1 point"):t("{n} points",{n:items.length}));heading.append(count)}
+  // The answered state: an ordered list that reads as an answer (GrammarList).
+  if(items.length){host.append(heading,grammarList(items,{onOpen:async item=>{resetSession();await openGrammar(grammarPoint(item.id),grammarCoverage(await listSentences()),{route:false})}}))}
+  else if(analysis){host.append(heading,el("p","hint",t("None of the listed grammar points appear in this sentence.")))}
+  // The one priced ask, on the sentence page only. When it cannot run it stays
+  // visible but disabled, with the reason in place of the price.
+  else if(explain&&lang==="ja"&&hasGrammar()){
+    const ask=el("button","link-button",t("Explain the grammar"));ask.type="button";ask.dataset.ui="button";
+    const reason=!hasTranslator()?t("Add an AI key in Settings and Echo can explain the grammar."):!navigator.onLine?t("You are offline. Echo can explain the grammar once you are back online."):"";
+    const status=el("p","hint",reason||t("One request on your AI key. The answer is kept here and shown again on the review answer."));status.setAttribute("aria-live","polite");ask.disabled=!!reason;
     ask.onclick=async()=>{ask.disabled=true;status.textContent=t("Reading the grammar…");
       try{const found=await analyzeSentenceGrammar(text,GRAMMAR_POINTS,{...settings,targetLang:"ja"});grammarAnalysisCache.set(text,found);
         let saved=sentence;
@@ -1410,12 +1418,17 @@ function renderSentenceGrammar(host,text,sentence,analysis,{root,target,lang,exp
             saved={...fresh,grammarAnalysis:[...previous,found],grammar:grammarTags([...previous.flatMap(a=>a.grammar),...found.grammar]),updatedAt:new Date().toISOString()};
             await saveSentence(saved);if(detail?.id===saved.id)detail=saved;if(current?.id===saved.id)current=saved}}
         if(!root.isConnected)return;
-        for(const span of root.querySelectorAll(".review-vocab"))span.replaceWith(...span.childNodes);root.normalize();
+        for(const span of root.querySelectorAll(".review-vocab,.grammar-mark"))span.replaceWith(...span.childNodes);root.normalize();
         enableVocabulary(root,target,lang,saved,{grammarHost:host,explain});
       }catch(error){ask.disabled=false;status.textContent=sheetError(error)}};
-    host.append(ask,status)}
+    host.append(heading,ask,status)}
   host.hidden=!host.childElementCount;
+  updateUnderlineKey(root);
 }
+// The one-line key under the meaning on the sentence page: grey dotted for a
+// word to look up, vermilion dotted for grammar (explained below).
+function updateUnderlineKey(root){const key=$("#sentence-key");if(!key||root?.id!=="sentence-japanese")return;
+  key.hidden=!root.querySelector(".review-vocab,.grammar-mark");$("#sentence-key-grammar").hidden=!root.querySelector(".grammar-mark")}
 let dictionaryLookupGeneration=0;
 async function openVocabularyHit(hit,context){
   const choices=(hit.ids||[hit.id]).map(wordById).filter(Boolean),points=(hit.grammarIds||[]).map(grammarPoint).filter(Boolean);
@@ -1628,7 +1641,9 @@ function sheetDrag(dialog,close){
 sheetDrag($("#kanji-dialog"),()=>{loop.stop();$("#kanji-dialog").close()});sheetDrag($("#grammar-dialog"),()=>{loop.stop();$("#grammar-dialog").close()});sheetDrag($("#word-dialog"),()=>{loop.stop();$("#word-dialog").close()});
 $("#word-close").onclick=()=>{loop.stop();$("#word-dialog").close()};$("#word-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;wordOpen=null;saveWorkspace({modal:null})});$("#word-compose").onclick=composeForWord;$("#word-say-go").onclick=sayForWord;$("#word-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForWord()};$("#word-note-ask").onclick=askWordNote;$("#word-prev").onclick=()=>wordStep(-1);$("#word-next").onclick=()=>wordStep(1);$("#word-dialog").addEventListener("keydown",event=>{if(!wordOpen?.learn||event.target.tagName==="TEXTAREA"||event.target.isContentEditable)return;if(event.key==="ArrowRight")wordStep(1);else if(event.key==="ArrowLeft")wordStep(-1)});
 $("#mora-open").onclick=()=>showView("mora");$("#mora-back").onclick=()=>showView("library");for(const id of ["#mora-show-emoji","#mora-show-furigana","#mora-show-english"])$(id).onchange=saveMoraDisplay;
-$("#kanji-close").onclick=()=>{loop.stop();$("#kanji-dialog").close()};$("#kanji-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;kanjiOpen=null;saveWorkspace({modal:null})});$("#kanji-compose").onclick=composeForKanji;$("#kanji-say-go").onclick=sayForKanji;$("#library-tool").onclick=()=>showView("map");$("#map-back").onclick=()=>showView("library");for(const button of document.querySelectorAll("#map-toggle [role=tab]"))button.onclick=()=>{settings.mapView=button.dataset.map;storePreference("jp-echo-settings",JSON.stringify(settings));saveWorkspace({mapView:settings.mapView});tool.open=null;tool.chip="all";renderMap()};$("#map-toggle").addEventListener("keydown",event=>{if(event.key!=="ArrowLeft"&&event.key!=="ArrowRight")return;const tabs=[...document.querySelectorAll("#map-toggle [role=tab]")].filter(b=>!b.hidden),at=tabs.findIndex(b=>b.getAttribute("aria-selected")==="true"),next=tabs[(at+(event.key==="ArrowRight"?1:tabs.length-1))%tabs.length];if(next){next.click();next.focus()}});let lookupTimer=0;$("#map-search").oninput=()=>{saveWorkspace();syncRoute({},true);clearTimeout(lookupTimer);lookupTimer=setTimeout(renderMap,150)};$("#map-search").onkeydown=event=>{if(event.key==="Escape"&&$("#map-search").value){$("#map-search").value="";renderMap()}};$("#map-search-clear").onclick=()=>{$("#map-search").value="";$("#map-search").focus();renderMap()};$("#grammar-prev").onclick=()=>grammarStep(-1);$("#grammar-next").onclick=()=>grammarStep(1);$("#grammar-close").onclick=()=>{loop.stop();$("#grammar-dialog").close()};$("#grammar-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;grammarOpen=null;saveWorkspace({modal:null})});$("#grammar-say-go").onclick=sayForGrammar;$("#grammar-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForGrammar()};$("#grammar-compose").onclick=composeForGrammar;$("#kanji-prev").onclick=()=>learnStep(-1);$("#kanji-next").onclick=()=>learnStep(1);$("#kanji-dialog").addEventListener("keydown",event=>{if(!kanjiOpen?.learn||event.target.tagName==="TEXTAREA")return;if(event.key==="ArrowRight")learnStep(1);else if(event.key==="ArrowLeft")learnStep(-1)});$("#kanji-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForKanji()};$("#sentence-back").onclick=()=>{detail=null;showView("library")};$("#sentence-play").onclick=playDetail;$("#sentence-edit").onclick=openEditor;$("#sentence-cancel").onclick=closeEditor;$("#sentence-editor").onsubmit=saveEdit;
+$("#kanji-close").onclick=()=>{loop.stop();$("#kanji-dialog").close()};$("#kanji-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;kanjiOpen=null;saveWorkspace({modal:null})});$("#kanji-compose").onclick=composeForKanji;$("#kanji-say-go").onclick=sayForKanji;$("#library-tool").onclick=()=>showView("map");$("#map-back").onclick=()=>showView("library");for(const button of document.querySelectorAll("#map-toggle [role=tab]"))button.onclick=()=>{settings.mapView=button.dataset.map;storePreference("jp-echo-settings",JSON.stringify(settings));saveWorkspace({mapView:settings.mapView});tool.open=null;tool.chip="all";renderMap()};$("#map-toggle").addEventListener("keydown",event=>{if(event.key!=="ArrowLeft"&&event.key!=="ArrowRight")return;const tabs=[...document.querySelectorAll("#map-toggle [role=tab]")].filter(b=>!b.hidden),at=tabs.findIndex(b=>b.getAttribute("aria-selected")==="true"),next=tabs[(at+(event.key==="ArrowRight"?1:tabs.length-1))%tabs.length];if(next){next.click();next.focus()}});let lookupTimer=0;$("#map-search").oninput=()=>{saveWorkspace();syncRoute({},true);clearTimeout(lookupTimer);lookupTimer=setTimeout(renderMap,150)};$("#map-search").onkeydown=event=>{if(event.key==="Escape"&&$("#map-search").value){$("#map-search").value="";renderMap()}};$("#map-search-clear").onclick=()=>{$("#map-search").value="";$("#map-search").focus();renderMap()};$("#grammar-prev").onclick=()=>grammarStep(-1);$("#grammar-next").onclick=()=>grammarStep(1);$("#grammar-close").onclick=()=>{loop.stop();$("#grammar-dialog").close()};$("#grammar-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;grammarOpen=null;saveWorkspace({modal:null})});$("#grammar-say-go").onclick=sayForGrammar;$("#grammar-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForGrammar()};$("#grammar-compose").onclick=composeForGrammar;$("#kanji-prev").onclick=()=>learnStep(-1);$("#kanji-next").onclick=()=>learnStep(1);$("#kanji-dialog").addEventListener("keydown",event=>{if(!kanjiOpen?.learn||event.target.tagName==="TEXTAREA")return;if(event.key==="ArrowRight")learnStep(1);else if(event.key==="ArrowLeft")learnStep(-1)});$("#kanji-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForKanji()};$("#sentence-back").onclick=()=>{detail=null;showView("library")};$("#sentence-play").onclick=playDetail;// Editing lives in the collapsed "Change this sentence" row (no pencil button).
+// Opening fills the editor; closing it cancels an in-flight rewrite.
+$("#sentence-change").ontoggle=()=>{if($("#sentence-change").open){if(document.activeElement!==$("#sentence-draft"))openEditor()}else editorGeneration++};$("#sentence-cancel").onclick=closeEditor;$("#sentence-editor").onsubmit=saveEdit;
 $("#sentence-delete").onclick=()=>askDelete();$("#delete-cancel").onclick=()=>$("#delete-dialog").close();$("#delete-confirm").onclick=confirmDelete;$("#delete-dialog").onclick=event=>{if(event.target===$("#delete-dialog"))$("#delete-dialog").close()};
 $("#side-start-review").onclick=startReview;$("#side-export-anki").onclick=()=>exportAnki($("#side-export-anki"));
 wide.addEventListener("change",()=>showView(document.body.dataset.view||"practice"));

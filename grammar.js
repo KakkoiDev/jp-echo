@@ -63,3 +63,15 @@ export function setImportedGrammar(imported=[]){
  LEVELS.splice(0,LEVELS.length,...BASE_LEVELS,...new Set(valid.map(p=>p.level).filter(l=>!BASE_LEVELS.includes(l))));
  INDEX.clear();for(const p of GRAMMAR)INDEX.set(p.id,p);
 }
+
+// Rows for the GrammarList: one per point, in the order it first appears in
+// the sentence (points with no located phrase follow). The phrase is the text
+// as it stands in the sentence when the analysis quoted it; the gloss is the
+// point's bundled hint, so no request is needed to show it again.
+export function grammarListItems(ids=[],spans=[]){
+  const first=new Map();
+  for(const span of [...spans].sort((a,b)=>a.start-b.start))if(!first.has(span.id))first.set(span.id,span);
+  return cleanTags(ids).map(id=>({id,point:point(id),span:first.get(id)})).filter(x=>x.point)
+    .sort((a,b)=>(a.span?.start??Infinity)-(b.span?.start??Infinity))
+    .map(({id,point:p,span})=>({id,phrase:span?.quote||p.title,level:p.level||"",gloss:p.hint||""}));
+}

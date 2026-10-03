@@ -60,3 +60,21 @@ export function hydrateUI(root=document){hydrateRecordButtons(root);for(const el
 const SKILL_GLYPH={listening:"聴",reading:"読",writing:"書"};
 export function skillGlyph(mode,{state="default",size=28}={}){const el=document.createElement("span");el.className="skill-glyph";el.lang="ja";el.dataset.skill=mode;el.dataset.state=state;el.style.setProperty("--skill-size",size+"px");el.textContent=SKILL_GLYPH[mode]||"";el.setAttribute("aria-hidden","true");return el}
 export function skillTrio(current,{size=28,label=""}={}){const el=document.createElement("span");el.className="skill-trio";el.setAttribute("role","img");if(label)el.setAttribute("aria-label",label);for(const mode of Object.keys(SKILL_GLYPH))el.append(skillGlyph(mode,{state:mode===current?"current":"inactive",size}));return el}
+
+// GrammarList — the answered grammar of a sentence, read as an answer, not as
+// controls: a numbered list (一 二 三, the .step-mark look) of the phrase as it
+// appears, its JLPT level and a one-line gloss. A row opens the grammar sheet.
+// Shown on the sentence page and the revealed review answer only.
+const KANJI_DIGITS=["","一","二","三","四","五","六","七","八","九"];
+export function kanjiNumeral(n){n=Math.floor(Number(n));if(!(n>0&&n<100))return String(n);const tens=Math.floor(n/10),ones=n%10;return (tens?(tens>1?KANJI_DIGITS[tens]:"")+"十":"")+KANJI_DIGITS[ones]}
+export function grammarList(items,{onOpen}={}){
+  const list=document.createElement("ol");list.className="grammar-list";
+  items.forEach((item,index)=>{const li=document.createElement("li"),row=document.createElement("button");row.type="button";row.className="grammar-row";row.dataset.ui="button";
+    row.setAttribute("aria-label",`${item.phrase}, ${item.level||""} — ${item.gloss||""}. Open the grammar sheet.`.replace(/ ,/,""));
+    const mark=document.createElement("span");mark.className="step-mark";mark.setAttribute("aria-hidden","true");mark.textContent=kanjiNumeral(index+1);
+    const body=document.createElement("span");body.className="grammar-row-body";
+    const head=document.createElement("span");head.className="grammar-row-head";const phrase=document.createElement("span");phrase.className="grammar-phrase";phrase.lang="ja";phrase.textContent=item.phrase;head.append(phrase);
+    if(item.level){const level=document.createElement("span");level.className="grammar-level";level.textContent=item.level;head.append(level)}
+    body.append(head);if(item.gloss){const gloss=document.createElement("span");gloss.className="grammar-gloss";gloss.textContent=item.gloss;body.append(gloss)}
+    row.append(mark,body);if(onOpen)row.onclick=()=>onOpen(item);li.append(row);list.append(li)});
+  return list}

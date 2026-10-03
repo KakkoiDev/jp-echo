@@ -59,3 +59,8 @@ export function skillMix(sentences=[]){
   for(const sentence of sentences)mix[reviewMode(sentence)]+=1;
   return mix;
 }
+
+// "Due in 3 days, as a writing card — you will see the meaning and type the
+// Japanese." `when` is already in words ("in 3 days", "now").
+const EXPECT={listening:"you will hear it with no text",reading:"you will read the Japanese without furigana",writing:"you will see the meaning and type the Japanese"};
+export function dueLine(sentence,when){const mode=reviewMode(ensureReviewTrack(sentence));return `Due ${when}, as a ${REVIEW_MODE_META[mode].label.toLowerCase()} card — ${EXPECT[mode]}.`}
