@@ -224,9 +224,6 @@ ul{list-style:none;margin:0;padding:0}
 .review-loop-status{display:flex;flex-direction:column;align-items:center;gap:4px}
 .review-loop-status .counter{margin:0}
 #review-progress{margin-left:auto;font-family:var(--display);font-size:16px;letter-spacing:.06em;color:var(--ink-soft)}
-.review-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.review-mode-chip{display:inline-flex;align-items:center;min-height:26px;padding:3px 9px;border:1px solid var(--hairline);border-radius:999px;background:var(--panel-soft);font-size:12px;font-weight:600;letter-spacing:.04em;color:var(--ink-soft)}
-.review-mode-instruction{max-width:36rem;margin:8px auto 18px;text-align:center;color:var(--ink-muted);font-size:13px;line-height:1.55}
 .review-passive{display:flex;justify-content:center;margin:18px 0 8px}
 #review-panel[data-review-mode="reading"] #review-prompt{font-family:var(--display);font-size:clamp(1.55rem,6vw,2.35rem);line-height:1.8;text-align:center;color:var(--sumi)}
 #review-panel[data-review-mode="writing"] #review-prompt{font-size:18px;line-height:1.6;text-align:center;color:var(--ink-soft)}
@@ -1042,3 +1039,20 @@ html.motion-off #review-progress-bar { transition: none; }
 #gist-status.error{color:var(--seal)}
 .deck-url-row{display:flex;gap:8px;padding-bottom:4px}.deck-url-row input{flex:1;min-width:0}.deck-url-row button{flex-shrink:0;height:44px;min-height:44px;padding:0 14px}
 .import-row{border-bottom:0}
+
+/* SkillGlyph (components.js): 聴 読 書 tiles. Size comes from --skill-size. */
+.skill-glyph{--skill-size:28px;width:var(--skill-size);height:var(--skill-size);display:inline-flex;flex-shrink:0;align-items:center;justify-content:center;border:1px solid var(--chip-rev-bd);border-radius:3px;color:var(--ink-soft);font-family:var(--display);font-size:calc(var(--skill-size) * .5);line-height:1}
+.skill-glyph[data-state="current"]{background:var(--seal-tint);border-color:var(--seal-edge);color:var(--seal-deep)}
+.skill-glyph[data-state="inactive"]{border-color:var(--rule);color:var(--faint)}
+.skill-trio{display:inline-flex;align-items:center;gap:4px}
+.skill-mix{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:26px;text-align:center}
+.skill-mix-row{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 18px}
+.skill-mix-item{display:inline-flex;align-items:center;gap:8px;font-size:15px;color:var(--ink-soft)}
+.skill-mix-item strong{font-family:var(--display);font-size:17px;color:var(--sumi)}
+.skill-mix .hint{max-width:320px;margin:0}
+.review-meta{display:flex;align-items:center;gap:10px}.review-skills{margin-left:auto}
+.review-mode-title{margin:28px 0 0;font-family:var(--display);font-weight:600;font-size:26px;line-height:1.35;text-align:center}
+.review-mode-instruction{max-width:320px;margin:8px auto 0;font-size:13px;line-height:1.6;text-align:center;color:var(--ink-muted)}
+.review-passive-hint{max-width:300px;margin:14px auto 0;text-align:center}
+#queue-list li{display:flex;align-items:center;gap:10px}#queue-list li .source-line{flex:1;min-width:0}#queue-list li .skill-glyph{margin-left:auto}
+.queue-legend{margin:10px 0 0}.queue-legend span{font-family:var(--display)}

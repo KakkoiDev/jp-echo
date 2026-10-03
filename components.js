@@ -52,3 +52,11 @@ export function status({className="hint"}={}){const el=document.createElement("p
 
 const icons={mic:micSvg,swap:swapSvg,send:sendSvg};
 export function hydrateUI(root=document){hydrateRecordButtons(root);for(const el of root.querySelectorAll("[data-ui]")){const kind=el.dataset.ui;if(kind==="button"){el.classList.add("ui-button");const v=el.dataset.variant;if(v&&v!=="default")el.classList.add("ui-"+v);const icon=icons[el.dataset.icon];if(icon&&!el.querySelector("svg"))el.insertAdjacentHTML(el.textContent.trim()?"beforeend":"afterbegin",icon)}else if(kind==="input"||kind==="textarea")el.classList.add("ui-field");else if(kind==="status")el.classList.add("ui-status")}return root}
+
+// SkillGlyph — the one mark for a review skill: 聴 listen, 読 read, 書 write.
+// States: "default", "current" (today's or the next skill) and "inactive"
+// (the others in a card's trio). The tile is decorative; callers label the
+// group, so assistive tech hears "Listening card", not three kanji.
+const SKILL_GLYPH={listening:"聴",reading:"読",writing:"書"};
+export function skillGlyph(mode,{state="default",size=28}={}){const el=document.createElement("span");el.className="skill-glyph";el.lang="ja";el.dataset.skill=mode;el.dataset.state=state;el.style.setProperty("--skill-size",size+"px");el.textContent=SKILL_GLYPH[mode]||"";el.setAttribute("aria-hidden","true");return el}
+export function skillTrio(current,{size=28,label=""}={}){const el=document.createElement("span");el.className="skill-trio";el.setAttribute("role","img");if(label)el.setAttribute("aria-label",label);for(const mode of Object.keys(SKILL_GLYPH))el.append(skillGlyph(mode,{state:mode===current?"current":"inactive",size}));return el}

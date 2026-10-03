@@ -16,9 +16,11 @@ import {setImportedWords,bands as wordBands,carries as carriesWord,coverage as w
 import {deleteNote as dbDeleteNote,forBackup,getNote,listNotes,makeNote,mergeNotes,noteKey,putNote as dbPutNote,replaceNotes as dbReplaceNotes} from "./notes.js";
 import {downloadAnkiDeck} from "./anki-export.js";
 import {dueSentences,ensureSchedule,isDue,reviewSentence} from "./srs.js";
-import {ensureReviewTrack,recordReviewMode,reviewMode,reviewModeMeta} from "./review-modes.js";
+import {ensureReviewTrack,nextSkill,recordReviewMode,reviewMode,reviewModeMeta,skillMix,skillReason} from "./review-modes.js";
 import {DEFAULT_TIME,REMINDER_TAG,reminderText,shouldRemind} from "./reminders.js";
 import {saveDiscussionTurn} from "./actions.js";
+// New shared UI comes from the component library (COMPONENTS.md).
+import {skillGlyph,skillTrio} from "./components.js";
 import {parseRoute,routeFor} from "./routes.js";
 import {mergeCatalogues,readCatalogues,saveCatalogues} from "./catalogues.js";
 let importedCatalogues=readCatalogues();
@@ -1021,6 +1023,10 @@ const spell=count=>NUMBER_WORDS[count]||String(count);
 function describeGap(ms){const minutes=Math.round(ms/60000);if(minutes<60)return spell(Math.max(1,minutes))+(minutes===1?" minute":" minutes");const hours=Math.round(minutes/60);if(hours<24)return spell(hours)+(hours===1?" hour":" hours");const days=Math.round(hours/24);return spell(days)+(days===1?" day":" days")}
 function updateDueBadge(count){const badge=$("#due-badge");badge.textContent=String(count);badge.hidden=count===0}
 async function refreshDueBadge(){updateDueBadge(dueSentences((await listSentences()).map(item=>ensureSchedule(item))).length)}
+// "Today you will": each due sentence's next skill, from review-modes.js.
+function renderSkillMix(due){const mix=skillMix(due),row=$("#review-skill-mix-row");$("#review-skill-mix").hidden=due.length===0;
+  row.setAttribute("aria-label","Today you will "+["listening","reading","writing"].map(mode=>reviewModeMeta(mode).verb+" "+mix[mode]).join(", "));
+  row.replaceChildren(...["listening","reading","writing"].map(mode=>{const item=document.createElement("span");item.className="skill-mix-item";item.setAttribute("aria-hidden","true");const count=document.createElement("strong");count.textContent=String(mix[mode]);item.append(skillGlyph(mode,{size:30})," "+reviewModeMeta(mode).verb+" ",count);return item}))}
 async function renderReviewHome(){const all=(await listSentences()).map(item=>ensureSchedule(item)),now=Date.now(),due=dueSentences(all),counts={new:0,learning:0,review:0};
   for(const item of due){const state=item.srs?.state??0;if(state===1||state===3)counts.learning++;else if(state===2)counts.review++;else counts.new++}
   $("#due-count").textContent=String(due.length);$("#due-new").textContent=String(counts.new);$("#due-learning").textContent=String(counts.learning);$("#due-review").textContent=String(counts.review);
@@ -1029,7 +1035,8 @@ async function renderReviewHome(){const all=(await listSentences()).map(item=>en
   $("#review-due-block").hidden=due.length===0;$("#review-rest-block").hidden=due.length>0;
   document.querySelector(".ring-stage").classList.toggle("resting",due.length===0);
   $("#start-review").hidden=due.length===0;$("#review-practice").hidden=due.length>0;
-  if(due.length){$("#review-estimate").textContent="One skill per sentence — listening, reading, or writing. Roughly "+spell(Math.max(1,Math.round(due.length*.55)))+" minutes.";
+  renderSkillMix(due);
+  if(due.length){$("#review-estimate").textContent="About "+spell(Math.max(1,Math.round(due.length*.55)))+" minute"+(Math.round(due.length*.55)>1?"s":"")+", out loud.";
     $("#review-footnote").textContent=next?"Next batch unlocks in "+describeGap(next-now)+".":""}
   else{const at=next?new Intl.DateTimeFormat(undefined,{hour:"2-digit",minute:"2-digit"}).format(new Date(next)):null;
     $("#review-rest-copy").textContent=all.length===0?"Translate a sentence and it joins the queue straight away.":(at?"Your next batch comes back at "+at+". ":"")+spell(all.length)+(all.length===1?" sentence is":" sentences are")+" resting until then.";
@@ -1053,6 +1060,7 @@ function renderQueuePanel(){
   $("#queue-list").replaceChildren(...reviewQueue.map((item,index)=>{const li=document.createElement("li");
     li.className=index===reviewIndex?"now":index<reviewIndex?"done":"";
     li.innerHTML='<span class="dot" aria-hidden="true"></span><span class="source-line">'+escapeText(item.source)+"</span>";
+    const mode=reviewMode(item),glyph=skillGlyph(mode,{state:index===reviewIndex?"current":"default",size:24});li.append(glyph);li.setAttribute("aria-label",item.source+" — "+reviewModeMeta(mode).label.toLowerCase()+" card");
     return li}));
   const left=Math.max(0,reviewQueue.length-reviewIndex),done=reviewIndex;
   $("#queue-note").textContent=left?(done?spell(done)+" done. ":"")+"About "+spell(Math.max(1,Math.round(left*.55)))+" minutes left at your pace.":"All said.";}
@@ -1306,8 +1314,12 @@ function renderReview(){resetSession();stopReviewListening();const sentence=revi
   const mode=reviewMode(sentence),meta=reviewModeMeta(mode),writing=mode==="writing",listening=mode==="listening";
   $("#review-panel").dataset.reviewMode=mode;
   $("#review-stage").textContent=stageLabel(sentence);$("#review-stage").className="status-chip "+stageClass(sentence);
-  $("#review-mode").textContent=meta.icon+" "+meta.label;
-  $("#review-mode-instruction").textContent=listening?"Listen without reading. Can you understand the sentence?":mode==="reading"?"Read the Japanese without furigana. Can you understand it?":"Write the Japanese sentence from the meaning.";
+  $("#review-skills").replaceChildren(skillTrio(mode,{label:meta.label+" card. This sentence turns through listening, reading and writing."}));
+  $("#review-mode-title").textContent=meta.title;
+  // The reason comes from the sentence's real track (review-modes.js), so it
+  // stays true when Again keeps a skill for another visit.
+  $("#review-mode-instruction").textContent=skillReason(sentence);
+  $("#review-passive-hint").textContent=listening?"Say what it means, out loud or to yourself, then reveal it.":"Say it out loud, then check the meaning.";
   $("#review-prompt").hidden=listening;
   $("#review-prompt").lang=mode==="reading"?targetLang():sourceLang();
   $("#review-prompt").textContent=mode==="reading"?reviewPlainJapanese(sentence):sentence.source;
@@ -1315,7 +1327,7 @@ function renderReview(){resetSession();stopReviewListening();const sentence=revi
   $("#review-passive").hidden=writing;$("#review-front-audio").hidden=!listening;$("#review-capture").hidden=!writing;$("#review-answer-tools").hidden=true;
   $("#review-capture-label").textContent="Write it in Japanese";$("#review-answer").lang=itemTarget(sentence);$("#review-answer").placeholder="Write the Japanese sentence";$("#review-answer").value="";$("#review-listen-state").textContent="";
   $("#review-grammar").replaceChildren();$("#review-grammar").hidden=true;$("#review-result").hidden=true;$("#review-attempt-label").hidden=true;$("#review-attempt").hidden=true;
-  $("#review-check .label").textContent=listening?"Show answer":mode==="reading"?"Show meaning":"Check writing";
+  $("#review-check .label").textContent=listening?"Reveal the sentence":mode==="reading"?"Show the meaning":"Check and listen";
   echoesAtCardStart=Number(sentence.echoCount)||0;$("#review-echo-count").textContent=String(echoesAtCardStart);
   updateCheckButton();
   if(listening)requestAnimationFrame(()=>{if(reviewQueue[reviewIndex]?.id===sentence.id&&!reviewRevealed)playReviewAudio()});

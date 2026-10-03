@@ -1,8 +1,10 @@
 export const REVIEW_MODES=Object.freeze(["listening","reading","writing"]);
+// Skill glyphs extend the app's single-kanji motif (休 了 学 音): 聴 listen,
+// 読 read, 書 write. `icon` is the glyph; `title` heads the review card.
 export const REVIEW_MODE_META=Object.freeze({
-  listening:Object.freeze({icon:"👂",label:"Listening"}),
-  reading:Object.freeze({icon:"📖",label:"Reading"}),
-  writing:Object.freeze({icon:"✍️",label:"Writing"})
+  listening:Object.freeze({icon:"聴",label:"Listening",title:"Listen",verb:"hear",past:"heard"}),
+  reading:Object.freeze({icon:"読",label:"Reading",title:"Read it",verb:"read",past:"read"}),
+  writing:Object.freeze({icon:"書",label:"Writing",title:"Write it",verb:"write",past:"wrote"})
 });
 
 const zeroes=()=>({listening:0,reading:0,writing:0});
@@ -33,4 +35,27 @@ export function recordReviewMode(sentence,rating,at=new Date()){
   if(passed)completed[mode]+=1;
   const index=REVIEW_MODES.indexOf(mode),next=passed?REVIEW_MODES[(index+1)%REVIEW_MODES.length]:mode;
   return {...tracked,reviewTrack:{next,completed,attempts,last:{mode,rating,at:new Date(at).toISOString()}}};
+}
+
+// The skill after `mode` — where a sentence goes when it is graded OK. Again
+// keeps the same skill (recordReviewMode), so "next" is always conditional.
+export const nextSkill=mode=>REVIEW_MODES[(REVIEW_MODES.indexOf(validMode(mode))+1)%REVIEW_MODES.length];
+
+const WHAT={listening:"Sound only this time.",reading:"The Japanese only this time, without furigana.",writing:"The meaning only this time — you type the Japanese."};
+
+// The one-line reason under the card title, derived from the real track:
+// what this visit shows, what happened last visit, and where a pass leads.
+export function skillReason(sentence){
+  const tracked=ensureReviewTrack(sentence),mode=reviewMode(tracked),last=tracked?.reviewTrack?.last,then=REVIEW_MODE_META[nextSkill(mode)].verb;
+  const before=!last?"First visit for this sentence"
+    :last.mode===mode?"It did not stick last time, so this skill comes round again"
+    :`You ${REVIEW_MODE_META[last.mode].past} it last time`;
+  return `${WHAT[mode]} ${before}; get it right and next time you will ${then} it.`;
+}
+
+// How many of these sentences each skill will take, for "Today you will".
+export function skillMix(sentences=[]){
+  const mix=Object.fromEntries(REVIEW_MODES.map(mode=>[mode,0]));
+  for(const sentence of sentences)mix[reviewMode(sentence)]+=1;
+  return mix;
 }

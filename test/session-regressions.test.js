@@ -148,7 +148,7 @@ test("review sessions rotate one stored skill per sentence",()=>{
   assert.match(app,/mode==="writing"/);
   assert.match(app,/recordReviewMode\(graded,rating,now\)/);
   assert.match(app,/rating,mode,echoes/);
-  assert.match(html,/id="review-mode"/);
+  assert.match(html,/id="review-skills"/);assert.match(html,/id="review-mode-title"/);
   assert.match(html,/id="review-front-audio"/);
   assert.match(html,/id="review-capture-label"/);
 });
