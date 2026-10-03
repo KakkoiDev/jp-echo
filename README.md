@@ -135,14 +135,28 @@ The linguistic matcher is JP Core’s `browser/japanese-words.js`, copied unchan
 
 ## Grammar in sentences
 
-On a sentence's page, **Explain the grammar** makes one AI request. Exact
-phrases are highlighted and point chips open the grammar sheet; the result is
-saved with the sentence, so the action is offered once and then replaced by
-its answer (editing the sentence clears it). Revealed review answers show the
-saved chips but never ask. Lists, sheets, Discussion and Reading show no
-grammar UI. With *Read new sentences for grammar automatically* on, every new
-sentence gets the same analysis in the background. Recognition can miss or
-misclassify a point; only known IDs with exact quoted evidence are accepted.
+On a sentence's page, **Explain the grammar** makes one AI request. The answer
+is kept with the sentence and shown as a numbered list (一 二 三…): each point's
+phrase as it appears, its JLPT level and a short gloss; a row opens the grammar
+sheet. In the sentence, words you can look up have a grey dotted underline and
+grammar a heavier vermilion one; a key line under the meaning says which is
+which. The same list appears on the revealed review answer, which never asks.
+Without a key, or offline, the action stays visible but disabled with the
+reason. With *Read new sentences for grammar automatically* on, new sentences
+get the same analysis in the background. Only known IDs with exact quoted
+evidence are accepted.
+
+### Review skills
+
+Each sentence takes turns being **聴 heard**, **読 read** and **書 written**, one
+skill per visit, and moves to the next skill when it is graded OK (Again keeps
+the skill). The card says which skill and why, from the sentence's own track.
+
+### Settings
+
+Settings is a page — `/settings`, with sub-pages `/settings/ai`, `speech`,
+`backup`, `import`, `export` and `grammar` — not a dialog. Preferences are
+saved as you change them; keys and endpoints only when you press their Save.
 
 ### Decks, and the starter seed
 

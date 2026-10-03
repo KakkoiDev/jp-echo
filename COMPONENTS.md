@@ -36,6 +36,23 @@ Owns:
 The caller supplies the existing content as model context. Instructions can ask
 for simpler/more complex/more natural/more precise output or any other revision.
 
+### SkillGlyph
+`skillGlyph(mode,{state,size})` and `skillTrio(current,{size,label})`: the one
+mark for a review skill (聴 listen, 読 read, 書 write). States `default`,
+`current`, `inactive`. Tiles are `aria-hidden`; the caller labels the group.
+
+### GrammarList
+`grammarList(items,{onOpen})`, items from `grammarListItems()` in grammar.js:
+the answered grammar of a sentence as a numbered list (`kanjiNumeral`). Used on
+the sentence page and the revealed review answer only.
+
+### SettingsRow
+`.settings-row` (static markup in Settings): title, one-line status, chevron,
+64 px floor, `--rule` divider. Opens a settings sub-page.
+
+Note: the app imports components.js for these three. Older behaviour still has
+inline copies in app.js; move them here as they are touched.
+
 ## Rule for new UI
 
 Before adding controls, ask what action they perform. If the action already

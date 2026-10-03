@@ -132,7 +132,7 @@ Before considering the change complete:
   the page together. The only built-in content is the optional ミニ本語 Minihongo
   starter seed (Japanese only). Do not add one-click buttons for third-party
   decks.
-- **Grammar UI has two hosts and one ask.** Chips and the "Explain the
+- **Grammar UI has two hosts and one ask.** The GrammarList and the "Explain the
   grammar" action render only into `#sentence-grammar` (which may ask) and
   `#review-grammar` (which never asks), via `enableVocabulary(...,{grammarHost})`.
   Never append controls inside a sentence element, a row button or a bubble.
@@ -149,6 +149,19 @@ Before considering the change complete:
   `markBackupDirty`), never straight to `db.js` or `notes.js`.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
+
+## Design handoff decisions (October 2026)
+
+- **Skills are glyphs.** 聴 読 書 via `SkillGlyph` (components.js); never emoji.
+  Skill copy derives from `review-modes.js` (`skillReason`, `skillMix`,
+  `dueLine`) — change the copy to fit the logic, never the logic to fit copy.
+- **Answered grammar is a list, not chips** (`GrammarList`). Word marks
+  (`.review-vocab`, interactive) and grammar marks (`.grammar-mark`, not
+  interactive) differ in weight and colour and may share a segment.
+- **Settings is a route.** Preferences commit on `change` through
+  `saveSettings()`, which must never touch credentials; credentials have their
+  own explicit saves. In-page Back pops history only via `settingsStack`.
+- **Discoverability lives in empty states**, not louder switches.
 
 ## Migration rule
 

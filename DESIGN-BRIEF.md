@@ -1,5 +1,9 @@
 # Echo — brief for the design agent
 
+> **Status:** answered by the October 2026 design handoff, now implemented
+> (see `CLAUDE.md` → *Design handoff decisions*). Sections 8–9 describe the app
+> as it was before that round.
+
 Read this first, then `CLAUDE.md` (the maintainer constitution) and
 `COMPONENTS.md`. Screenshots of the current app are in `docs/screenshots/`
 (light, dark, mobile and desktop). Live app: https://echo.kakkoi.dev/
