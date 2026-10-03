@@ -21,6 +21,9 @@ import {DEFAULT_TIME,REMINDER_TAG,reminderText,shouldRemind} from "./reminders.j
 import {saveDiscussionTurn} from "./actions.js";
 // New shared UI comes from the component library (COMPONENTS.md).
 import {grammarList,skillGlyph,skillTrio} from "./components.js";
+// Settings page state, declared before anything can read it (navigationState).
+const SETTINGS_TITLES={main:"Settings",ai:"AI service",speech:"Speech recognition",backup:"Backup",import:"Import sentences",export:"Export",grammar:"Grammar"};
+let settingsPage="main",settingsReturn="practice";
 import {parseRoute,routeFor} from "./routes.js";
 import {mergeCatalogues,readCatalogues,saveCatalogues} from "./catalogues.js";
 let importedCatalogues=readCatalogues();
@@ -138,12 +141,67 @@ function applyTheme(theme=settings.theme||"system"){document.documentElement.dat
   if(theme==="system"){metas[0].content="#F3F0E7";if(metas[1])metas[1].content="#191712"}
   else for(const meta of metas)meta.content=dark?"#191712":"#F3F0E7"}
 function showProviderConfig(){const provider=$("#provider").value;document.querySelectorAll(".provider-config").forEach(node=>node.hidden=node.dataset.provider!==provider)}
-function saveSettings(){settings.provider=$("#provider").value;settings.speechProvider=$("#speech-provider").value;settings.speechKeys={groq:$("#groq-speech-key").value.trim()};settings.providerKeys={deepseek:$("#deepseek-key").value.trim(),google:$("#google-key").value.trim(),openai:$("#openai-key").value.trim(),anthropic:$("#anthropic-key").value.trim()};settings.providerModels={deepseek:$("#deepseek-model").value.trim(),google:$("#google-model").value.trim(),openai:$("#openai-model").value.trim(),anthropic:$("#anthropic-model").value.trim(),local:$("#local-model").value.trim()};settings.localEndpoint=$("#local-endpoint").value.trim();settings.proxyUrl=$("#proxy-url").value.trim();settings.theme=$("#theme").value;settings.motion=$("#motion").value;settings.voice=$("#voice").value;settings.discussionVoiceAI=$("#discussion-voice-ai").value;settings.discussionVoiceUser=$("#discussion-voice-user").value;settings.rate=Number($("#rate").value);settings.showEnglish=$("#show-english").checked;settings.showFurigana=$("#show-furigana").checked;settings.showPolite=$("#show-polite").checked;settings.autoTag=$("#autotag").checked;settings.remindTime=$("#remind-time").value;const gistWasOn=!!settings.gistAuto;settings.gistAuto=$("#gist-auto").checked;settings.gistToken=$("#gist-token").value.trim();settings.gistUrl=$("#gist-url").value.trim();storePreference("jp-echo-settings",JSON.stringify(settings));applyTheme();applyMotion();
-  // Switching it on backs up everything once, straight away.
-  if(settings.gistAuto&&!gistWasOn){patchGistState({dirty:true,lastChangeAt:0});maybeAutoBackup("open").catch(()=>{})}renderGistStatus()}
+// Preferences apply as they change: each control commits on "change", and the
+// header says so once the write has landed. Credentials never pass through
+// here — they have explicit saves (saveAIService, saveSpeech), so a toggle on
+// the Practice screen can never commit a half-typed key.
+function saveSettings(){settings.theme=$("#theme").value;settings.motion=$("#motion").value;settings.voice=$("#voice").value;settings.discussionVoiceAI=$("#discussion-voice-ai").value;settings.discussionVoiceUser=$("#discussion-voice-user").value;settings.rate=Number($("#rate").value);settings.showEnglish=$("#show-english").checked;settings.showFurigana=$("#show-furigana").checked;settings.showPolite=$("#show-polite").checked;settings.autoTag=$("#autotag").checked;settings.remindTime=$("#remind-time").value;
+  const gistWasOn=!!settings.gistAuto;settings.gistAuto=$("#gist-auto").checked;settings.gistUrl=$("#gist-url").value.trim();
+  // Turning automatic backup on is an explicit act, so it takes the token typed beside it.
+  if(settings.gistAuto&&!gistWasOn)settings.gistToken=$("#gist-token").value.trim();
+  const saved=persistSettings();applyTheme();applyMotion();
+  if(settings.gistAuto&&!gistWasOn){patchGistState({dirty:true,lastChangeAt:0});maybeAutoBackup("open").catch(()=>{})}renderGistStatus();renderSettingsRows();if(saved)flashSaved();return saved}
+// One write path; true only when the browser actually kept it.
+function persistSettings(){try{storePreference("jp-echo-settings",JSON.stringify(settings));return JSON.parse(localStorage.getItem("jp-echo-settings")||"null")!==null}catch{return false}}
+let savedTimer=null;
+function flashSaved(text="Saved"){const note=$("#settings-saved");if(!note)return;note.textContent=text;clearTimeout(savedTimer);savedTimer=setTimeout(()=>note.textContent="Saved as you go",2200)}
 function resetSettingsForm(){const keys=settings.providerKeys||{},models=settings.providerModels||{};$("#provider").value=defaultProvider();$("#speech-provider").value=settings.speechProvider||"auto";$("#groq-speech-key").value=settings.speechKeys?.groq||"";$("#deepseek-key").value=keys.deepseek||settings.apiKey||"";$("#google-key").value=keys.google||"";$("#openai-key").value=keys.openai||"";$("#anthropic-key").value=keys.anthropic||"";for(const provider of Object.keys(PROVIDER_DEFAULTS))$("#"+provider+"-model").value=models[provider]||PROVIDER_DEFAULTS[provider];$("#local-endpoint").value=settings.localEndpoint||"http://localhost:11434/v1/chat/completions";$("#proxy-url").value=settings.proxyUrl||"";$("#theme").value=settings.theme||"system";$("#motion").value=settings.motion||"system";$("#autotag").checked=!!settings.autoTag;$("#remind").checked=!!settings.remind;$("#remind-time").value=settings.remindTime||DEFAULT_TIME;$("#gist-auto").checked=!!settings.gistAuto;$("#gist-token").value=settings.gistToken||"";$("#gist-url").value=settings.gistUrl||"";renderGistStatus();$("#remind-reach").textContent=settings.remind?reminderReach():"";$("#voice").value=settings.voice||"default";$("#discussion-voice-ai").value=settings.discussionVoiceAI||"default";$("#discussion-voice-user").value=settings.discussionVoiceUser||"default";$("#rate").value=settings.rate||1;$("#rate-value").textContent=Number($("#rate").value).toFixed(1)+"×";showProviderConfig()}
-function openSettings(){resetSettingsForm();updateInstallUI();listSentences().then(renderStarterOffer).catch(()=>{});$("#settings-dialog").showModal()}
-function cancelSettings(){settings.remind=!!readSettings().remind;resetSettingsForm();applyTheme();applyMotion();$("#settings-dialog").close()}
+// Settings is a page (/settings, /settings/<sub-page>), not a modal.
+function openSettings(page="main",{route=true}={}){const view=document.body.dataset.view,entering=view!=="settings";if(entering){if(view)settingsReturn=view;settingsStack=route?["out"]:[]}
+  // Browser Back from a sub-page lands here with route:false: drop that push.
+  else if(!route&&page==="main"&&settingsStack[settingsStack.length-1]==="main")settingsStack.pop();
+  resetSettingsForm();updateInstallUI();listSentences().then(renderStarterOffer).catch(()=>{});showView("settings",{route:false});showSettingsPage(page,{route,fresh:entering})}
+function showSettingsPage(page,{route=true,fresh=false}={}){const previous=settingsPage;settingsPage=SETTINGS_TITLES[page]?page:"main";
+  if(route&&!fresh&&previous==="main"&&settingsPage!=="main")settingsStack.push("main");
+  for(const node of document.querySelectorAll("#settings-view .settings-page"))node.hidden=node.dataset.settingsPage!==settingsPage;
+  $("#settings-heading").textContent=t(SETTINGS_TITLES[settingsPage]);$("#settings-saved").hidden=settingsPage!=="main";
+  if(settingsPage==="ai"){$("#ai-status").textContent="";showProviderConfig()}if(settingsPage==="speech")$("#speech-status").textContent="";
+  renderSettingsRows();if(route)syncRoute({view:"settings",settingsPage});document.querySelector("#settings-view")?.scrollTo?.(0,0);scrollTo(0,0)}
+// Back steps back through history when the entry before is where Back leads
+// (so the browser's Back stays in step). settingsStack records the pushes made
+// in this session: "out" = entered Settings from another view, "main" = opened
+// a sub-page from /settings. After a reload or deep link it is empty, and Back
+// navigates instead.
+let settingsStack=[];
+function leaveSettings(){const target=settingsPage!=="main"?"main":"out";
+  if(settingsStack[settingsStack.length-1]===target){settingsStack.pop();history.back();return}
+  // Pushing /settings here means the entry behind is no longer "outside".
+  if(target==="main"){settingsStack=[];return showSettingsPage("main")}settingsStack=[];showView(settingsReturn==="settings"?"practice":settingsReturn)}
+// SettingsRow statuses: one line each, true to what is stored.
+function renderSettingsRows(){if(!$("#settings-status-ai"))return;
+  const provider=defaultProvider(),names={google:"Google Gemini",deepseek:"DeepSeek",openai:"OpenAI",anthropic:"Anthropic",local:"Local AI"};
+  $("#settings-status-ai").textContent=names[provider]+(provider==="local"?(settings.localEndpoint?" · endpoint saved":" · no endpoint yet"):(settings.providerKeys?.[provider]?" · key saved ✓":" · no key yet"));
+  $("#settings-status-speech").textContent={auto:"Auto — browser, then Groq",browser:"Browser only",groq:"Groq Whisper",google:"Gemini"}[settings.speechProvider||"auto"]||"Auto — browser, then Groq";
+  $("#settings-status-grammar").textContent=settings.autoTag?"Read new sentences automatically":"Explained only when I ask";$("#settings-row-grammar").hidden=targetLang()!=="ja";
+  $("#settings-status-import").textContent=targetLang()==="ja"?"A deck file, a URL, or the ミニ本語 Minihongo starter":"A deck file or a URL";
+  $("#settings-status-export").textContent="An Anki deck, or a backup file";
+  const gist=gistState(),status=$("#settings-status-backup");status.classList.toggle("ok",!!(settings.gistAuto&&gist.lastSuccessAt&&!gist.lastError));status.classList.toggle("error",!!gist.lastError);
+  status.textContent=gist.lastError?"Last backup failed — open to see why":settings.gistAuto&&gist.lastSuccessAt?"Backed up to your gist · "+gistWhen(gist.lastSuccessAt):settings.gistAuto?"Gist backup is on — nothing backed up yet":"Off — back up to a GitHub gist"}
+// Credentials: explicit saves. The AI key is checked only when asked (one request).
+function aiFormSettings(){const provider=$("#provider").value,keys={...(settings.providerKeys||{})},models={...(settings.providerModels||{})};
+  if(provider!=="local"){keys[provider]=$("#"+provider+"-key").value.trim()}models[provider]=$("#"+provider+"-model").value.trim();
+  return {...settings,provider,providerKeys:keys,providerModels:models,localEndpoint:provider==="local"?$("#local-endpoint").value.trim():settings.localEndpoint,proxyUrl:$("#proxy-url").value.trim()}}
+function saveAIService(){const next=aiFormSettings();Object.assign(settings,{provider:next.provider,providerKeys:next.providerKeys,providerModels:next.providerModels,localEndpoint:next.localEndpoint,proxyUrl:next.proxyUrl});
+  $("#ai-status").textContent=persistSettings()?(next.provider==="local"?"Saved. Echo will use this endpoint.":"Key saved on this device."):"This browser would not store it. Check that site storage is allowed.";renderSettingsRows();renderPracticeNotices?.()}
+async function checkAIService(){const button=$("#ai-check"),next=aiFormSettings();if(next.provider!=="local"&&!next.providerKeys[next.provider]){$("#ai-status").textContent="Paste a key first.";return}
+  button.disabled=true;$("#ai-status").textContent="Checking…";
+  try{await translate("Good morning.",{...next,sourceLang:"en",targetLang:targetLang()});$("#ai-status").textContent="The key works — checked just now. The check used one request."}
+  catch(error){$("#ai-status").textContent="That did not work: "+(error.message||error)}finally{button.disabled=false}}
+function removeAIKey(){const provider=$("#provider").value;
+  if(provider==="local"){settings.localEndpoint="";$("#local-endpoint").value=""}else{settings.providerKeys={...(settings.providerKeys||{}),[provider]:""};if(provider==="deepseek")delete settings.apiKey;$("#"+provider+"-key").value=""}
+  $("#ai-status").textContent=persistSettings()?"Removed from this device. Your sentences stay.":"This browser would not update its storage.";renderSettingsRows();renderPracticeNotices?.()}
+function saveSpeech(){settings.speechProvider=$("#speech-provider").value;settings.speechKeys={...(settings.speechKeys||{}),groq:$("#groq-speech-key").value.trim()};
+  $("#speech-status").textContent=persistSettings()?"Saved on this device.":"This browser would not store it.";renderSettingsRows();setupRecognition?.()}
 function isInstalled(){return window.matchMedia("(display-mode: standalone)").matches||window.navigator.standalone===true}
 function updateInstallUI(){const installed=isInstalled();$("#install-app").disabled=installed;$("#install-app").textContent=installed?"Installed":"Install";$("#install-status").textContent=installed?"Opened as an installed app.":""}
 async function installApp(){if(isInstalled())return updateInstallUI();if(installPrompt){installPrompt.prompt();const choice=await installPrompt.userChoice;installPrompt=null;$("#install-status").textContent=choice.outcome==="accepted"?"Installation started.":"Installation was cancelled.";return updateInstallUI()}$("#install-status").textContent=/iphone|ipad|ipod/i.test(navigator.userAgent)?"In Safari, tap Share, then Add to Home Screen.":"Open the browser menu and choose Install app or Add to Home screen."}
@@ -248,7 +306,7 @@ function renderPracticeNotices(){const host=$("#practice-notices"),connected=has
     copy:"Echo can play and review what you already have, but it cannot make new sentences yet.",
     link:{label:"Add a key — takes a minute",onClick:()=>showView("setup")}}));
   else if(translationFailure)host.append(notice({icon:"failed",alert:true,title:translationFailure.title,copy:translationFailure.copy,
-    actions:[{label:"Try again",onClick:()=>{translationFailure=null;performTranslation()}},{label:"Check the key",outline:true,onClick:openSettings}]}));
+    actions:[{label:"Try again",onClick:()=>{translationFailure=null;performTranslation()}},{label:"Check the key",outline:true,onClick:()=>openSettings("ai")}]}));
   else if(!navigator.onLine)host.append(notice({icon:"offline",title:"You're offline",
     copy:"Practising and reviewing carry on as normal. New translations will wait until you're back."}));
   // Only after a playback attempt actually failed. An empty getVoices() list is
@@ -273,15 +331,15 @@ function playReading(){if(!readingPassage?.sentences.length)return;if(readingLoo
 
 function saveWorkspace(patch={}){const next={...workspace(),view:document.body.dataset.view||"practice",discussionMode,mapQuery:$("#map-search")?.value||"",historyQuery:$("#history-search")?.value||"",mapView:settings.mapView||"kanji",...patch};try{storePreference(WORKSPACE_KEY,JSON.stringify(next))}catch{/* Navigation must work even when browser storage is full or unavailable. */}return next}
 let applyingRoute=false;
-function navigationState(patch={}){return {view:document.body.dataset.view||"practice",discussionMode,mapView:settings.mapView||"kanji",mapQuery:$("#map-search")?.value||"",historyQuery:$("#history-search")?.value||"",historyFilter:$("#history-filter")?.value||"all",historyOrder:$("#history-order")?.value||"created",historyDirection:$("#history-direction")?.value||"desc",sentenceId:detail?.id||null,...patch}}
+function navigationState(patch={}){return {view:document.body.dataset.view||"practice",discussionMode,mapView:settings.mapView||"kanji",mapQuery:$("#map-search")?.value||"",historyQuery:$("#history-search")?.value||"",historyFilter:$("#history-filter")?.value||"all",historyOrder:$("#history-order")?.value||"created",historyDirection:$("#history-direction")?.value||"desc",sentenceId:detail?.id||null,settingsPage,...patch}}
 function syncRoute(patch={},replace=false){if(applyingRoute)return;const url=routeFor(navigationState(patch));if(location.pathname+location.search===url)return;history[replace?"replaceState":"pushState"]({echo:true},"",url)}
 
 const wide=matchMedia("(min-width:1024px)");
 const isWide=()=>wide.matches;
 const VIEW_TITLES={review:"Review",library:"Library"};
 function showView(name,{route=true}={}){if(name==="map"&&targetLang()!=="ja")name="library";if(name!=="practice")resetSession();speechSynthesis.cancel();
-  $("#main-view").hidden=name!=="practice";$("#review-home").hidden=name!=="review";$("#history-view").hidden=!(name==="library"||(name==="sentence"&&isWide()));$("#review-view").hidden=name!=="session";$("#sentence-view").hidden=name!=="sentence";$("#onboard-view").hidden=name!=="onboard";$("#setup-view").hidden=name!=="setup";$("#map-view").hidden=name!=="map";$("#mora-view").hidden=name!=="mora";
-  const solo=name==="onboard"||name==="setup"||((name==="session"||name==="sentence"||name==="map")&&!isWide());document.querySelector("header").hidden=solo;$("#tabs").hidden=solo;
+  $("#main-view").hidden=name!=="practice";$("#review-home").hidden=name!=="review";$("#history-view").hidden=!(name==="library"||(name==="sentence"&&isWide()));$("#review-view").hidden=name!=="session";$("#sentence-view").hidden=name!=="sentence";$("#onboard-view").hidden=name!=="onboard";$("#setup-view").hidden=name!=="setup";$("#map-view").hidden=name!=="map";$("#mora-view").hidden=name!=="mora";$("#settings-view").hidden=name!=="settings";if(name!=="settings")settingsStack=[];$("#settings-nav")?.toggleAttribute("aria-current",name==="settings");if(name!=="settings"&&$("#ai-show-key")?.getAttribute("aria-pressed")==="true")$("#ai-show-key").click();
+  const solo=name==="onboard"||name==="setup"||((name==="session"||name==="sentence"||name==="map"||name==="settings")&&!isWide());document.querySelector("header").hidden=solo;$("#tabs").hidden=solo;
   $("#view-title").textContent=VIEW_TITLES[name]||"";$("#view-title").hidden=!VIEW_TITLES[name];document.querySelector(".brand").hidden=!!VIEW_TITLES[name];
   $("#mode-sentence").onclick=()=>setPracticeMode("sentence");$("#mode-discussion").onclick=()=>setPracticeMode("discussion");$("#mode-reading").onclick=()=>setPracticeMode("reading");$("#discussion-play").onclick=playDiscussion;$("#discussion-english").onchange=renderDiscussion;$("#discussion-new").onclick=()=>{discussionLoop.stop();discussionTurns=[];discussionScenario="";renderDiscussion();$("#english-input").value="";$("#english-input").focus()};$("#reading-furigana").onchange=renderReading;$("#reading-english").onchange=renderReading;$("#reading-echo").onclick=playReading;$("#reading-new").onclick=()=>{readingLoop.stop();readingPassage=null;readingSelected=-1;renderReading();$("#english-input").focus()};
 for(const tab of document.querySelectorAll(".tab[data-view]")){const on=tab.dataset.view===name||(name==="session"&&tab.dataset.view==="review")||((name==="sentence"||name==="map")&&tab.dataset.view==="library");tab.classList.toggle("current",on);tab.setAttribute("aria-current",on?"page":"false")}
@@ -1577,7 +1635,7 @@ async function runGistBackup({auto=false,token=settings.gistToken,gist=settings.
   gistRunning=(async()=>{
     try{const result=await uploadBackup({token,gist,backup:await buildBackup()});
       const state=patchGistState({dirty:(Number(gistState().lastChangeAt)||0)>startedAt,lastSuccessAt:Date.now(),lastError:"",url:result.url});
-      if(settings.gistUrl!==result.url||settings.gistToken!==token){settings.gistUrl=result.url;settings.gistToken=token;storePreference("jp-echo-settings",JSON.stringify(settings));if($("#settings-dialog").open)$("#gist-url").value=result.url}
+      if(settings.gistUrl!==result.url||settings.gistToken!==token){settings.gistUrl=result.url;settings.gistToken=token;storePreference("jp-echo-settings",JSON.stringify(settings));if(document.body.dataset.view==="settings")$("#gist-url").value=result.url;renderSettingsRows()}
       if(state.dirty)scheduleGistBackup(MIN_INTERVAL_MS+500);
       return result}
     catch(error){patchGistState({lastError:error.message||String(error)});
@@ -1645,7 +1703,10 @@ function renderStarterOffer(all){
 }
 
 
-$("#tabs").addEventListener("click",event=>{const tab=event.target.closest(".tab[data-view]");if(tab)showView(tab.dataset.view)});$("#translate").onclick=()=>discussionMode?(discussionTurns.length?replyDiscussion():beginDiscussion()):readingMode?generateReadingMode():performTranslation();$("#english-input").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")(discussionMode?(discussionTurns.length?replyDiscussion():beginDiscussion()):readingMode?generateReadingMode():performTranslation)()};$("#play-pause").onclick=()=>{if(!current)return;if(loop.running){loop.togglePause();return}const policy=$("#voice").value,voice=policy==="random"?voices[Math.floor(Math.random()*voices.length)]:(policy==="default"?voices.find(v=>v.default)||voices[0]:voices[Number(policy)])||null;loop.play(selectedPlainJapanese(),{voice,rate:Number($("#rate").value),lang:targetLang()})};$("#show-english").onchange=()=>{saveSettings();renderSentence()};$("#show-furigana").onchange=()=>{saveSettings();renderSentence()};$("#show-polite").onchange=async()=>{resetSession();saveSettings();if(current&&hasRegisters(itemTarget(current))){current={...current,reviewRegister:$("#show-polite").checked?"polite":"casual",updatedAt:new Date().toISOString()};await saveSentence(current);if(detail?.id===current.id)detail=current}renderSentence()};$("#rate").oninput=()=>{const rate=Number($("#rate").value);$("#rate-value").textContent=rate.toFixed(1)+"×";resetSession();loop.setRate(rate)};$("#settings-button").onclick=()=>$("#settings-dialog").showModal();$("#close-settings").onclick=()=>{saveSettings();$("#settings-dialog").close();renderPracticeNotices();writeReminderPrefs();syncReminderSchedule()};
+$("#tabs").addEventListener("click",event=>{const tab=event.target.closest(".tab[data-view]");if(tab)showView(tab.dataset.view)});$("#translate").onclick=()=>discussionMode?(discussionTurns.length?replyDiscussion():beginDiscussion()):readingMode?generateReadingMode():performTranslation();$("#english-input").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")(discussionMode?(discussionTurns.length?replyDiscussion():beginDiscussion()):readingMode?generateReadingMode():performTranslation)()};$("#play-pause").onclick=()=>{if(!current)return;if(loop.running){loop.togglePause();return}const policy=$("#voice").value,voice=policy==="random"?voices[Math.floor(Math.random()*voices.length)]:(policy==="default"?voices.find(v=>v.default)||voices[0]:voices[Number(policy)])||null;loop.play(selectedPlainJapanese(),{voice,rate:Number($("#rate").value),lang:targetLang()})};$("#show-english").onchange=()=>{saveSettings();renderSentence()};$("#show-furigana").onchange=()=>{saveSettings();renderSentence()};$("#show-polite").onchange=async()=>{resetSession();saveSettings();if(current&&hasRegisters(itemTarget(current))){current={...current,reviewRegister:$("#show-polite").checked?"polite":"casual",updatedAt:new Date().toISOString()};await saveSentence(current);if(detail?.id===current.id)detail=current}renderSentence()};$("#rate").oninput=()=>{const rate=Number($("#rate").value);$("#rate-value").textContent=rate.toFixed(1)+"×";resetSession();loop.setRate(rate)};// Each preference commits on "change" (never on blur), and everything the
+// old Save also did — notices, reminder schedule — follows the write.
+function commitPreferences(){if(saveSettings()){renderPracticeNotices();writeReminderPrefs();syncReminderSchedule()}else flashSaved("Not saved — this browser blocked storage")}
+for(const id of ["theme","motion","voice","discussion-voice-ai","discussion-voice-user","rate","autotag","remind-time","gist-auto","gist-url"])$("#"+id).addEventListener("change",commitPreferences);
 $("#remind").onchange=async()=>{const wanted=$("#remind").checked;
   if(wanted&&!await enableReminders()){$("#remind").checked=false;$("#remind-hint").textContent="Notifications are blocked for Echo. Allow them in your browser settings, then turn this on again.";$("#remind-hint").classList.add("error");$("#remind-reach").textContent="";return}
   $("#remind-hint").textContent="Your device asks permission the first time you turn this on.";$("#remind-hint").classList.remove("error");
@@ -1698,7 +1759,10 @@ addEventListener("keydown",event=>{
   else if(event.key==="2"){event.preventDefault();rateReview("ok")}
 });
 $("#start-review").onclick=startReview;$("#review-practice").onclick=()=>showView("practice");$("#review-back").onclick=()=>{stopReviewListening();showView("review")};$("#review-done").onclick=()=>showView("practice");$("#review-home-link").onclick=()=>showView("review");$("#review-check").onclick=revealReview;$("#review-skip").onclick=skipReview;$("#review-mic").onclick=toggleReviewListening;$("#review-answer").oninput=updateCheckButton;$("#review-front-audio").onclick=playReviewAudio;$("#review-audio").onclick=playReviewAudio;$("#review-again").onclick=()=>rateReview("again");$("#review-ok").onclick=()=>rateReview("ok");
-$("#settings-button").onclick=openSettings;$("#settings-nav").onclick=openSettings;$("#dismiss-settings").onclick=cancelSettings;$("#cancel-settings").onclick=cancelSettings;$("#install-app").onclick=installApp;$("#settings-dialog").addEventListener("cancel",event=>{event.preventDefault();cancelSettings()});$("#settings-dialog").onclick=event=>{if(event.target===$("#settings-dialog"))cancelSettings()};$("#voice").onchange=resetSession;$("#discussion-voice-ai").onchange=()=>discussionLoop.stop();$("#discussion-voice-user").onchange=()=>discussionLoop.stop();$("#provider").onchange=showProviderConfig;$("#source-lang").onchange=()=>setPair($("#source-lang").value,targetLang());
+$("#settings-button").onclick=()=>openSettings();$("#settings-nav").onclick=()=>openSettings();$("#settings-back").onclick=leaveSettings;$("#install-app").onclick=installApp;
+for(const row of document.querySelectorAll(".settings-row[data-settings-page]"))row.onclick=()=>showSettingsPage(row.dataset.settingsPage);
+$("#ai-save").onclick=saveAIService;$("#ai-check").onclick=checkAIService;$("#ai-remove").onclick=removeAIKey;$("#speech-save").onclick=saveSpeech;
+$("#ai-show-key").onclick=()=>{const button=$("#ai-show-key"),show=button.getAttribute("aria-pressed")!=="true";button.setAttribute("aria-pressed",String(show));button.textContent=show?"Hide the key":"Show the key";for(const input of document.querySelectorAll("#settings-ai input[id$='-key']"))input.type=show?"text":"password"};$("#voice").onchange=resetSession;$("#discussion-voice-ai").onchange=()=>discussionLoop.stop();$("#discussion-voice-user").onchange=()=>discussionLoop.stop();$("#provider").onchange=showProviderConfig;$("#source-lang").onchange=()=>setPair($("#source-lang").value,targetLang());
 $("#target-lang").onchange=()=>setPair(sourceLang(),$("#target-lang").value);
 $("#setup-source").onchange=()=>setPair($("#setup-source").value,targetLang());
 $("#setup-target").onchange=()=>{setPair(sourceLang(),$("#setup-target").value);renderSetupStarter()};
@@ -1718,6 +1782,7 @@ async function applyRoute(route=parseRoute(location.href)){
     if(route.historyFilter)$("#history-filter").value=route.historyFilter;if(route.historyOrder)$("#history-order").value=route.historyOrder;if(route.historyDirection)$("#history-direction").value=route.historyDirection;
     if(route.mapQuery!=null)$("#map-search").value=route.mapQuery;if(route.mapView)settings.mapView=route.mapView;
     if(route.sentenceId){const sentence=await getSentence(route.sentenceId);if(sentence){detail=ensureSchedule(sentence);showView("sentence",{route:false});renderDetail()}else showView("library",{route:false})}
+    else if(route.view==="settings")openSettings(route.settingsPage,{route:false});
     else {showView(route.view||"practice",{route:false});if((route.view||"practice")==="practice")setPracticeMode(route.readingMode?"reading":route.discussionMode?"discussion":"sentence",{route:false})}
     if(route.modal){const sentences=await listSentences();if(route.modal.kind==="word"){const w=wordById(route.modal.id);if(w)await openWord(w,wordCoverage(sentences),{route:false})}else if(route.modal.kind==="kanji")await openKanji(route.modal.id,kanjiCoverage(sentences),{route:false});else if(route.modal.kind==="grammar"){const p=grammarPoint(route.modal.id);if(p)await openGrammar(p,grammarCoverage(sentences),{route:false})}}
   }finally{applyingRoute=false}

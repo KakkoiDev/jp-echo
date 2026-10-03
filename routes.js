@@ -1,3 +1,4 @@
+export const SETTINGS_PAGES=Object.freeze(["ai","speech","backup","import","export","grammar"]);
 const enc=value=>encodeURIComponent(String(value));
 const dec=value=>decodeURIComponent(value);
 
@@ -12,6 +13,8 @@ export function routeFor(state={}){
   else if(view==="library")path="/library";
   else if(view==="map")path=state.mapView==="words"?"/words":state.mapView==="grammar"?"/grammar":"/kanji";
   else if(view==="mora")path="/mora";
+  // Settings is a page with two sub-pages for what lives only on this device.
+  else if(view==="settings")path=SETTINGS_PAGES.includes(state.settingsPage)?"/settings/"+state.settingsPage:"/settings";
   else if(view==="setup")path="/setup";
   else if(view==="onboard")path="/onboard";
   else if(state.readingMode)path="/reading";
@@ -31,6 +34,8 @@ export function parseRoute(input){
   if(p==="/reading")return {...base,readingMode:true};
   if(p==="/review")return {...base,view:"review"};
   if(p==="/mora")return {...base,view:"mora"};
+  if(p==="/settings")return {...base,view:"settings",settingsPage:"main"};
+  { const sm=p.match(/^\/settings\/([a-z]+)$/);if(sm)return SETTINGS_PAGES.includes(sm[1])?{...base,view:"settings",settingsPage:sm[1]}:{...base,notFound:true}; }
   if(p==="/library")return {...base,view:"library",historyQuery:q.get("q")||"",historyFilter:q.get("filter")||"all",historyOrder:q.get("order")||"created",historyDirection:q.get("direction")||"desc"};
   if(p==="/setup")return {...base,view:"setup"};
   if(p==="/onboard")return {...base,view:"onboard"};

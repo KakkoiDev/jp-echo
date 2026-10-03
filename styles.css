@@ -1164,3 +1164,40 @@ html.motion-off #review-progress-bar { transition: none; }
 .starter-offer-copy>span{font-size:13px;line-height:1.55;color:var(--ink-soft)}
 .starter-offer-copy a{margin-top:4px;font-size:13px;color:var(--seal-deep)}
 .starter-offer[hidden]{display:none}
+
+/* Settings page (design §1). SettingsRow = .settings-row: title, one-line
+   status, chevron, 64px floor, --rule divider. */
+#settings-view{max-width:640px;margin:0 auto;padding:0 22px calc(40px + env(safe-area-inset-bottom))}
+#settings-view .session-bar{border-bottom:1px solid var(--hairline);margin-bottom:4px}
+#settings-view .session-bar h2{flex-grow:1;font-size:20px}
+.saved-note{margin:0;font-size:12px;white-space:nowrap}
+#settings-view .settings-section{padding:0}
+#settings-view .install-panel{margin:30px 0 0}
+.settings-page{display:flex;flex-direction:column;gap:12px}
+.settings-page[hidden]{display:none}
+.settings-page-title{margin:14px 0 0}
+.settings-index{display:none}
+.settings-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.settings-row{display:flex;align-items:center;gap:12px;width:100%;min-height:64px;padding:10px 0;border:0;border-bottom:1px solid var(--rule);border-radius:0;background:transparent;color:inherit;text-align:left;letter-spacing:normal;font-size:inherit}
+.settings-row[hidden]{display:none}
+.settings-row-text{flex-grow:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.settings-row-title{font-size:15px;color:var(--sumi)}
+.settings-row-status{font-size:13px;color:var(--ink-muted)}
+.settings-row-status.ok::before{content:"";display:inline-block;width:6px;height:6px;margin-right:8px;border-radius:50%;background:var(--ink-soft);vertical-align:middle}
+.settings-row-status.error{color:var(--seal-deep)}
+.settings-row>svg{flex-shrink:0;color:var(--ink-muted)}
+.settings-row:focus-visible{outline:2px solid var(--seal);outline-offset:2px}
+#settings-device .note-box,.settings-page>.note-box{margin-top:0}
+.settings-advanced>summary{min-height:48px}
+.centered-hint{margin:0;text-align:center}
+#settings-ai .text-danger{margin:18px auto 0}
+@media (min-width:1024px){
+  #settings-view{max-width:none;margin:0;padding:0}
+  #settings-main{display:grid;grid-template-columns:200px minmax(0,600px);column-gap:48px;align-items:start}
+  #settings-main>:not(.settings-index){grid-column:2}
+  .settings-index{display:flex;flex-direction:column;gap:4px;grid-column:1;grid-row:1/span 6;position:sticky;top:24px;padding-top:26px}
+  .settings-index a{padding:8px 10px;border-radius:3px;color:var(--ink-soft);font-size:14px;text-decoration:none}
+  .settings-index a:hover{background:var(--panel);color:var(--sumi)}
+  #settings-view>.settings-page:not(#settings-main){max-width:600px;margin-left:248px}
+  #settings-view:has(> #settings-main:not([hidden])) .session-bar .icon-button{display:none}
+}

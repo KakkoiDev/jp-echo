@@ -120,3 +120,42 @@ test("the starter is named ミニ本語 Minihongo in everything a learner reads"
   const visible = [...app.matchAll(/"[^"\n]*Mini Hongo[^"\n]*"/g)].map(m => m[0]);
   assert.deepEqual(visible, ['"Mini Hongo starter library"'], "only the deck file's own title (data) keeps the old spelling");
 });
+
+test("settings is a route: /settings plus its sub-pages, and they round-trip", async () => {
+  const {parseRoute, routeFor, SETTINGS_PAGES} = await import("../routes.js");
+  assert.deepEqual([...SETTINGS_PAGES], ["ai", "speech", "backup", "import", "export", "grammar"]);
+  assert.equal(routeFor(parseRoute("/settings")), "/settings");
+  for (const page of SETTINGS_PAGES) assert.equal(routeFor(parseRoute("/settings/" + page)), "/settings/" + page);
+  assert.equal(parseRoute("/settings/nope").notFound, true);
+  assert.match(app, /else if\(route\.view==="settings"\)openSettings\(route\.settingsPage,\{route:false\}\)/, "reload and back/forward land on the page");
+  assert.doesNotMatch(html, /id="settings-dialog"|id="close-settings"|id="cancel-settings"/, "no modal, no Save/Cancel");
+});
+
+test("preferences commit on change; credentials only on an explicit save", () => {
+  const prefs = app.slice(app.indexOf("function saveSettings(){"), app.indexOf("// One write path"));
+  for (const credential of ["providerKeys", "speechKeys", "localEndpoint", "proxyUrl", '"#provider"']) assert.equal(prefs.includes(credential), false, credential + " must not be saved with preferences");
+  assert.match(prefs, /if\(settings\.gistAuto&&!gistWasOn\)settings\.gistToken=/, "the gist token only by switching backup on");
+  assert.match(app, /for\(const id of \["theme","motion","voice","discussion-voice-ai","discussion-voice-user","rate","autotag","remind-time","gist-auto","gist-url"\]\)\$\("#"\+id\)\.addEventListener\("change",commitPreferences\)/, "commit on change, never on blur");
+  assert.match(app, /function commitPreferences\(\)\{if\(saveSettings\(\)\)\{renderPracticeNotices\(\);writeReminderPrefs\(\);syncReminderSchedule\(\)\}else flashSaved\("Not saved/, "success is shown only after the write lands");
+  assert.match(app, /return JSON\.parse\(localStorage\.getItem\("jp-echo-settings"\)\|\|"null"\)!==null/);
+  for (const id of ["ai-save", "ai-check", "ai-remove", "speech-save"]) assert.match(html, new RegExp(`id="${id}"`), id);
+  assert.match(app, /The key works — checked just now\. The check used one request\./);
+});
+
+test("Back walks history only when the entry behind is where it leads", () => {
+  const leave = app.slice(app.indexOf("function leaveSettings"), app.indexOf("// SettingsRow statuses"));
+  assert.match(leave, /if\(settingsStack\[settingsStack\.length-1\]===target\)\{settingsStack\.pop\(\);history\.back\(\);return\}/);
+  assert.match(leave, /if\(target==="main"\)\{settingsStack=\[\];return showSettingsPage\("main"\)\}/, "a pushed /settings breaks the chain");
+  assert.match(app, /if\(route&&!fresh&&previous==="main"&&settingsPage!=="main"\)settingsStack\.push\("main"\)/);
+});
+
+test("settings page structure: four groups, SettingsRow rows, lock note, install panel", () => {
+  const view = html.slice(html.indexOf('<section id="settings-view"'), html.indexOf('<section id="map-view"'));
+  const groups = [...view.matchAll(/<section class="settings-section" id="settings-([a-z]+)"><h3>([^<]+)<\/h3>/g)].map(m => m[2]);
+  assert.deepEqual(groups, ["Every day", "Languages", "Your sentences", "On this device only"]);
+  for (const page of ["backup", "import", "export", "ai", "speech", "grammar"]) assert.match(view, new RegExp(`<button data-ui="button" id="settings-row-${page}" class="settings-row" type="button" data-settings-page="${page}">`));
+  assert.match(view, /Keys and endpoints stay in this browser\. They are never in an export, a backup file or your gist\./);
+  assert.match(view, /<span id="settings-saved" class="hint saved-note" aria-live="polite">Saved as you go<\/span>/);
+  assert.match(view, /class="install-panel"/);
+  assert.match(css, /\.settings-row\{display:flex;align-items:center;gap:12px;width:100%;min-height:64px/);
+});
