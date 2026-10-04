@@ -1201,3 +1201,7 @@ html.motion-off #review-progress-bar { transition: none; }
   #settings-view>.settings-page:not(#settings-main){max-width:600px;margin-left:248px}
   #settings-view:has(> #settings-main:not([hidden])) .session-bar .icon-button{display:none}
 }
+
+#sentence-source-draft{font-family:var(--ui);font-size:16px;line-height:1.6}
+#sentence-editor #sentence-ai{margin:0 0 12px}
+#sentence-ai .primary{height:auto;min-height:54px;white-space:normal}

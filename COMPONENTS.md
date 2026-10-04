@@ -109,3 +109,7 @@ create a new primitive.
 the first five items initially. Its shared button toggles the complete list and
 the initial subset, exposes `aria-expanded` / `aria-controls`, and resets when
 the caller opens a new list. Vocabulary sentence lists use this component.
+
+### FitTextArea
+`fitTextArea(field)` expands a generated-content textarea to show its full
+value. Sentence editing uses it for the sentence and its separate meaning.

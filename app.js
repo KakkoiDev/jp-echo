@@ -20,7 +20,7 @@ import {dueLine,ensureReviewTrack,nextSkill,recordReviewMode,reviewMode,reviewMo
 import {DEFAULT_TIME,REMINDER_TAG,reminderText,shouldRemind} from "./reminders.js";
 import {saveDiscussionTurn} from "./actions.js";
 // New shared UI comes from the component library (COMPONENTS.md).
-import {grammarList,skillGlyph,skillTrio,expandableList} from "./components.js";
+import {grammarList,skillGlyph,skillTrio,expandableList,fitTextArea} from "./components.js";
 // Settings page state, declared before anything can read it (navigationState).
 const SETTINGS_TITLES={main:"Settings",ai:"AI service",speech:"Speech recognition",backup:"Backup",import:"Import sentences",export:"Export",grammar:"Grammar"};
 let settingsPage="main",settingsReturn="practice";
@@ -1172,9 +1172,9 @@ function renderDetail(){if(!detail)return;closeEditor();markSelectedRow();
   $("#sentence-history-note").textContent=lapses?"A review was marked Again "+(lapses===1?"once":spell(lapses)+" times")+".":reviews.length?"Reviewed correctly every time so far.":"Not reviewed yet — it is waiting in the queue.";
   $("#sentence-history-count").textContent=reviews.length===1?"1 session":reviews.length+" sessions";
   $("#sentence-play").disabled=false}
-let editorGeneration=0,rewrittenDraft=null;
-function openEditor(){editorGeneration++;rewrittenDraft=null;$("#sentence-source-draft").value=detail?.source||"";$("#sentence-instruction").value="";$("#sentence-ai").open=false;$("#sentence-rewrite-status").textContent="";$("#sentence-rewrite").disabled=!hasTranslator();$("#sentence-save").disabled=false;if(!detail)return;resetSession();$("#sentence-draft").value=preferredTarget(detail);$("#sentence-edit-error").hidden=true;if(!$("#sentence-change").open)$("#sentence-change").open=true;$("#sentence-draft").focus()}
-function closeEditor(){editorGeneration++;rewrittenDraft=null;$("#sentence-change").open=false}
+let editorGeneration=0,rewrittenDraft=null,editorOpenId=null;
+function openEditor(){editorOpenId=detail?.id||null;editorGeneration++;rewrittenDraft=null;$("#sentence-source-draft").value=detail?.source||"";$("#sentence-instruction").value="";$("#sentence-ai").open=false;$("#sentence-rewrite-status").textContent="";$("#sentence-rewrite").disabled=!hasTranslator();$("#sentence-save").disabled=false;if(!detail)return;resetSession();$("#sentence-draft").value=preferredTarget(detail);$("#sentence-edit-error").hidden=true;if(!$("#sentence-change").open)$("#sentence-change").open=true;for(const id of ["#sentence-draft","#sentence-source-draft"])fitTextArea($(id));$("#sentence-instruction").focus()}
+function closeEditor(){editorOpenId=null;editorGeneration++;rewrittenDraft=null;$("#sentence-change").open=false}
 async function saveEdit(event){event.preventDefault();if(!detail)return;
   const japanese=normalizeFurigana($("#sentence-draft").value.trim());
   if(!japanese||(hasFurigana(itemTarget(detail))&&!/[\u3040-\u30ff\u3400-\u9fff]/.test(japanese))){$("#sentence-edit-error").textContent="That needs to be a Japanese sentence.";$("#sentence-edit-error").hidden=false;return}
@@ -1193,7 +1193,7 @@ async function rewriteDetailSentence(){
   const generation=editorGeneration,id=detail.id;button.disabled=true;$("#sentence-save").disabled=true;status.textContent="Rewriting…";
   try{const card=await rewriteSentence({current:$("#sentence-draft").value,source:$("#sentence-source-draft").value,instruction,register:sentenceRegister(detail)},{...settings,sourceLang:detail.sourceLang||sourceLang(),targetLang:itemTarget(detail)});
     if(generation!==editorGeneration||detail?.id!==id)return;
-    rewrittenDraft=card;$("#sentence-draft").value=sentenceRegister(detail)==="polite"?card.polite:card.casual;$("#sentence-source-draft").value=card.source;status.textContent="New draft ready. Review the sentence and meaning above, then Save.";$("#sentence-draft").focus();
+    rewrittenDraft=card;$("#sentence-draft").value=sentenceRegister(detail)==="polite"?card.polite:card.casual;$("#sentence-source-draft").value=card.source;for(const id of ["#sentence-draft","#sentence-source-draft"])fitTextArea($(id));status.textContent="New sentence and meaning are ready below. Save to replace this sentence.";
   }catch(error){if(generation===editorGeneration)status.textContent=error.message||"Could not rewrite. Try again."}
   finally{if(generation===editorGeneration&&detail?.id===id){button.disabled=!hasTranslator();$("#sentence-save").disabled=false}}
 }
@@ -1756,7 +1756,7 @@ $("#word-close").onclick=()=>{loop.stop();$("#word-dialog").close()};$("#word-di
 $("#mora-open").onclick=()=>showView("mora");$("#mora-back").onclick=()=>showView("library");for(const id of ["#mora-show-emoji","#mora-show-furigana","#mora-show-english"])$(id).onchange=saveMoraDisplay;
 $("#kanji-close").onclick=()=>{loop.stop();$("#kanji-dialog").close()};$("#kanji-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;kanjiOpen=null;saveWorkspace({modal:null})});$("#kanji-compose").onclick=composeForKanji;$("#kanji-say-go").onclick=sayForKanji;$("#library-tool").onclick=()=>showView("map");$("#map-back").onclick=()=>showView("library");for(const button of document.querySelectorAll("#map-toggle [role=tab]"))button.onclick=()=>{settings.mapView=button.dataset.map;storePreference("jp-echo-settings",JSON.stringify(settings));saveWorkspace({mapView:settings.mapView});tool.open=null;tool.chip="all";renderMap()};$("#map-toggle").addEventListener("keydown",event=>{if(event.key!=="ArrowLeft"&&event.key!=="ArrowRight")return;const tabs=[...document.querySelectorAll("#map-toggle [role=tab]")].filter(b=>!b.hidden),at=tabs.findIndex(b=>b.getAttribute("aria-selected")==="true"),next=tabs[(at+(event.key==="ArrowRight"?1:tabs.length-1))%tabs.length];if(next){next.click();next.focus()}});let lookupTimer=0;$("#map-search").oninput=()=>{saveWorkspace();syncRoute({},true);clearTimeout(lookupTimer);lookupTimer=setTimeout(renderMap,150)};$("#map-search").onkeydown=event=>{if(event.key==="Escape"&&$("#map-search").value){$("#map-search").value="";renderMap()}};$("#map-search-clear").onclick=()=>{$("#map-search").value="";$("#map-search").focus();renderMap()};$("#grammar-prev").onclick=()=>grammarStep(-1);$("#grammar-next").onclick=()=>grammarStep(1);$("#grammar-close").onclick=()=>{loop.stop();$("#grammar-dialog").close()};$("#grammar-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;grammarOpen=null;saveWorkspace({modal:null})});$("#grammar-say-go").onclick=sayForGrammar;$("#grammar-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForGrammar()};$("#grammar-compose").onclick=composeForGrammar;$("#kanji-prev").onclick=()=>learnStep(-1);$("#kanji-next").onclick=()=>learnStep(1);$("#kanji-dialog").addEventListener("keydown",event=>{if(!kanjiOpen?.learn||event.target.tagName==="TEXTAREA")return;if(event.key==="ArrowRight")learnStep(1);else if(event.key==="ArrowLeft")learnStep(-1)});$("#kanji-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForKanji()};$("#sentence-back").onclick=()=>{detail=null;showView("library")};$("#sentence-play").onclick=playDetail;// Editing lives in the collapsed "Change this sentence" row (no pencil button).
 // Opening fills the editor; closing it cancels an in-flight rewrite.
-$("#sentence-change").ontoggle=()=>{if($("#sentence-change").open){if(document.activeElement!==$("#sentence-draft"))openEditor()}else editorGeneration++};$("#sentence-cancel").onclick=closeEditor;$("#sentence-editor").onsubmit=saveEdit;
+$("#sentence-change").ontoggle=()=>{if($("#sentence-change").open){if(editorOpenId!==detail?.id)openEditor()}else{editorOpenId=null;editorGeneration++}};$("#sentence-cancel").onclick=closeEditor;$("#sentence-editor").onsubmit=saveEdit;
 $("#sentence-delete").onclick=()=>askDelete();$("#delete-cancel").onclick=()=>$("#delete-dialog").close();$("#delete-confirm").onclick=confirmDelete;$("#delete-dialog").onclick=event=>{if(event.target===$("#delete-dialog"))$("#delete-dialog").close()};
 $("#side-start-review").onclick=startReview;$("#side-export-anki").onclick=()=>exportAnki($("#side-export-anki"));
 wide.addEventListener("change",()=>showView(document.body.dataset.view||"practice"));
@@ -1821,6 +1821,7 @@ try{localStorage.removeItem("jp-echo-wanikani-token");indexedDB.deleteDatabase("
 if("serviceWorker"in navigator){writeReminderPrefs();syncReminderSchedule();remindOnOpen()}
 
 $("#sentence-rewrite").onclick=rewriteDetailSentence;
+for(const id of ["#sentence-draft","#sentence-source-draft"])$(id).oninput=()=>fitTextArea($(id));
 $("#sentence-instruction").onkeydown=e=>{if((e.metaKey||e.ctrlKey)&&e.key==="Enter"){e.preventDefault();rewriteDetailSentence()}};
 
 $("#dictionary-close").onclick=()=>$("#dictionary-dialog").close();

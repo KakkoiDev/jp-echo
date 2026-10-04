@@ -6,10 +6,10 @@ import {normalizeFurigana,stripFurigana,replaceSentenceContent} from '../core.js
 const app=readFileSync(new URL('../app.js',import.meta.url),'utf8');
 const editor=app.slice(app.indexOf('let editorGeneration=0'),app.indexOf('function playDetail()'));
 function harness(rewriteSentence){
- const elements=new Map();const $=id=>{if(!elements.has(id))elements.set(id,{value:'',disabled:false,hidden:false,open:false,textContent:'',focus(){}});return elements.get(id)};
+ const elements=new Map();const $=id=>{if(!elements.has(id))elements.set(id,{value:'',disabled:false,hidden:false,open:false,textContent:'',style:{},scrollHeight:100,focus(){}});return elements.get(id)};
  let saved;
  const old={id:'test',source:'Go to the station.',targetLang:'ja',sourceLang:'en',target:'駅に行く。',casualTarget:'駅に行く。',politeTarget:'駅に行きます。',echoCount:12,reviews:[{rating:'ok'}],grammar:['old'],grammarAnalysis:{old:true}};
- const ctx={$,detail:old,current:null,settings:{},hasTranslator:()=>true,resetSession(){},preferredTarget:s=>s.casualTarget,sentenceRegister:()=> 'casual',sourceLang:()=> 'en',itemTarget:s=>s.targetLang,hasFurigana:()=>true,normalizeFurigana,stripFurigana,replaceSentenceContent,rewriteSentence,saveSentence:async s=>{saved=s},renderSentence(){},renderDetail(){}};
+ const ctx={$,detail:old,current:null,settings:{},hasTranslator:()=>true,resetSession(){},preferredTarget:s=>s.casualTarget,sentenceRegister:()=> 'casual',sourceLang:()=> 'en',itemTarget:s=>s.targetLang,hasFurigana:()=>true,normalizeFurigana,stripFurigana,replaceSentenceContent,fitTextArea(){},rewriteSentence,saveSentence:async s=>{saved=s},renderSentence(){},renderDetail(){}};
  vm.createContext(ctx);vm.runInContext(editor+';globalThis.actions={openEditor,closeEditor,saveEdit,rewriteDetailSentence}',ctx);
  return {ctx,$,get saved(){return saved}};
 }
@@ -25,4 +25,12 @@ test('cancelled rewrite cannot overwrite or enable controls belonging to a newer
  h.ctx.actions.closeEditor();h.ctx.actions.openEditor();assert.equal(h.$('#sentence-save').disabled,false);h.$('#sentence-instruction').value='Second rewrite';const second=h.ctx.actions.rewriteDetailSentence();
  completions[0]({source:'Old request',casual:'古い文。',polite:'古い文です。'});await first;assert.equal(h.$('#sentence-draft').value,'駅に行く。');assert.equal(h.$('#sentence-rewrite').disabled,true);assert.equal(h.$('#sentence-save').disabled,true);
  completions[1]({source:'New request',casual:'新しい文。',polite:'新しい文です。'});await second;assert.equal(h.$('#sentence-draft').value,'新しい文。');assert.equal(h.$('#sentence-save').disabled,false);
+});
+test('requirements precede separate visible sentence and meaning fields',()=>{
+ const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+ const form=html.slice(html.indexOf('<form id="sentence-editor">'),html.indexOf('</form>',html.indexOf('<form id="sentence-editor">')));
+ assert.ok(form.indexOf('id="sentence-instruction"')<form.indexOf('id="sentence-draft"'));
+ assert.ok(form.indexOf('id="sentence-draft"')<form.indexOf('id="sentence-source-draft"'));
+ assert.doesNotMatch(form,/<details/);assert.match(form,/Generate new sentence/);assert.match(form,/Meaning of the new sentence/);
+ assert.match(app,/if\(editorOpenId!==detail\?\.id\)openEditor\(\)/);
 });

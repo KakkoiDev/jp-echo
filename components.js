@@ -90,3 +90,6 @@ export function expandableList({host,items,render,limit=5,moreLabel="See more",l
   control.onclick=()=>{expanded=!expanded;refresh()};
   refresh();return control;
 }
+
+// A generated sentence and its meaning stay visible without scrolling inside fields.
+export function fitTextArea(field){field.style.height="auto";field.style.height=Math.max(field.scrollHeight,96)+"px"}
