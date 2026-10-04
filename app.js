@@ -1173,7 +1173,9 @@ function renderDetail(){if(!detail)return;closeEditor();markSelectedRow();
   $("#sentence-history-count").textContent=reviews.length===1?"1 session":reviews.length+" sessions";
   $("#sentence-play").disabled=false}
 let editorGeneration=0,rewrittenDraft=null,editorOpenId=null;
-function openEditor(){editorOpenId=detail?.id||null;editorGeneration++;rewrittenDraft=null;$("#sentence-source-draft").value=detail?.source||"";$("#sentence-instruction").value="";$("#sentence-ai").open=false;$("#sentence-rewrite-status").textContent="";$("#sentence-rewrite").disabled=!hasTranslator();$("#sentence-save").disabled=false;if(!detail)return;resetSession();$("#sentence-draft").value=preferredTarget(detail);$("#sentence-edit-error").hidden=true;if(!$("#sentence-change").open)$("#sentence-change").open=true;for(const id of ["#sentence-draft","#sentence-source-draft"])fitTextArea($(id));$("#sentence-instruction").focus()}
+function openEditor(){editorOpenId=detail?.id||null;editorGeneration++;
+  const meaningLanguage=detail?.sourceLang&&detail.sourceLang!==itemTarget(detail)?detail.sourceLang:(sourceLang()!==itemTarget(detail)?sourceLang():"en");
+  $("#sentence-meaning-language").replaceChildren(...LANGUAGES.map(([code,name])=>new Option(name,code)));$("#sentence-meaning-language").value=meaningLanguage;rewrittenDraft=null;$("#sentence-source-draft").value=detail?.source||"";$("#sentence-instruction").value="";$("#sentence-ai").open=false;$("#sentence-rewrite-status").textContent="";$("#sentence-rewrite").disabled=!hasTranslator();$("#sentence-save").disabled=false;if(!detail)return;resetSession();$("#sentence-draft").value=preferredTarget(detail);$("#sentence-edit-error").hidden=true;if(!$("#sentence-change").open)$("#sentence-change").open=true;for(const id of ["#sentence-draft","#sentence-source-draft"])fitTextArea($(id));$("#sentence-instruction").focus()}
 function closeEditor(){editorOpenId=null;editorGeneration++;rewrittenDraft=null;$("#sentence-change").open=false}
 async function saveEdit(event){event.preventDefault();if(!detail)return;
   const japanese=normalizeFurigana($("#sentence-draft").value.trim());
@@ -1185,13 +1187,13 @@ async function saveEdit(event){event.preventDefault();if(!detail)return;
   else detail={...detail,target:japanese,plainTarget:plain,casualTarget:japanese,plainCasualTarget:plain,updatedAt:new Date().toISOString()};
   if(rewrittenDraft){const forms={...rewrittenDraft,source};forms[sentenceRegister(detail)==="polite"?"polite":"casual"]=japanese;detail=replaceSentenceContent(detail,forms);delete detail.grammar}else detail={...detail,source};
   delete detail.grammarAnalysis;delete detail.grammar;
-  await saveSentence(detail);if(current?.id===detail.id){current=detail;renderSentence()}renderDetail()}
+  detail={...detail,sourceLang:$("#sentence-meaning-language").value||"en"};await saveSentence(detail);if(current?.id===detail.id){current=detail;renderSentence()}renderDetail()}
 async function rewriteDetailSentence(){
   if(!detail||$("#sentence-rewrite").disabled)return;
   const instruction=$("#sentence-instruction").value.trim(),status=$("#sentence-rewrite-status"),button=$("#sentence-rewrite");
   if(!instruction){status.textContent="Tell AI what to change.";$("#sentence-instruction").focus();return}
   const generation=editorGeneration,id=detail.id;button.disabled=true;$("#sentence-save").disabled=true;status.textContent="Rewriting…";
-  try{const card=await rewriteSentence({current:$("#sentence-draft").value,source:$("#sentence-source-draft").value,instruction,register:sentenceRegister(detail)},{...settings,sourceLang:detail.sourceLang||sourceLang(),targetLang:itemTarget(detail)});
+  try{const card=await rewriteSentence({current:$("#sentence-draft").value,source:$("#sentence-source-draft").value,instruction,register:sentenceRegister(detail)},{...settings,sourceLang:$("#sentence-meaning-language").value||"en",targetLang:itemTarget(detail)});
     if(generation!==editorGeneration||detail?.id!==id)return;
     rewrittenDraft=card;$("#sentence-draft").value=sentenceRegister(detail)==="polite"?card.polite:card.casual;$("#sentence-source-draft").value=card.source;for(const id of ["#sentence-draft","#sentence-source-draft"])fitTextArea($(id));status.textContent="New sentence and meaning are ready below. Save to replace this sentence.";
   }catch(error){if(generation===editorGeneration)status.textContent=error.message||"Could not rewrite. Try again."}

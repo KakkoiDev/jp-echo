@@ -6,10 +6,10 @@ import {normalizeFurigana,stripFurigana,replaceSentenceContent} from '../core.js
 const app=readFileSync(new URL('../app.js',import.meta.url),'utf8');
 const editor=app.slice(app.indexOf('let editorGeneration=0'),app.indexOf('function playDetail()'));
 function harness(rewriteSentence){
- const elements=new Map();const $=id=>{if(!elements.has(id))elements.set(id,{value:'',disabled:false,hidden:false,open:false,textContent:'',style:{},scrollHeight:100,focus(){}});return elements.get(id)};
+ const elements=new Map();const $=id=>{if(!elements.has(id))elements.set(id,{value:'',disabled:false,hidden:false,open:false,textContent:'',style:{},scrollHeight:100,replaceChildren(){},focus(){}});return elements.get(id)};
  let saved;
  const old={id:'test',source:'Go to the station.',targetLang:'ja',sourceLang:'en',target:'駅に行く。',casualTarget:'駅に行く。',politeTarget:'駅に行きます。',echoCount:12,reviews:[{rating:'ok'}],grammar:['old'],grammarAnalysis:{old:true}};
- const ctx={$,detail:old,current:null,settings:{},hasTranslator:()=>true,resetSession(){},preferredTarget:s=>s.casualTarget,sentenceRegister:()=> 'casual',sourceLang:()=> 'en',itemTarget:s=>s.targetLang,hasFurigana:()=>true,normalizeFurigana,stripFurigana,replaceSentenceContent,fitTextArea(){},rewriteSentence,saveSentence:async s=>{saved=s},renderSentence(){},renderDetail(){}};
+ const ctx={LANGUAGES:[["en","English"],["fr","French"]],Option:class{},$,detail:old,current:null,settings:{},hasTranslator:()=>true,resetSession(){},preferredTarget:s=>s.casualTarget,sentenceRegister:()=> 'casual',sourceLang:()=> 'en',itemTarget:s=>s.targetLang,hasFurigana:()=>true,normalizeFurigana,stripFurigana,replaceSentenceContent,fitTextArea(){},rewriteSentence,saveSentence:async s=>{saved=s},renderSentence(){},renderDetail(){}};
  vm.createContext(ctx);vm.runInContext(editor+';globalThis.actions={openEditor,closeEditor,saveEdit,rewriteDetailSentence}',ctx);
  return {ctx,$,get saved(){return saved}};
 }
@@ -33,4 +33,9 @@ test('requirements precede separate visible sentence and meaning fields',()=>{
  assert.ok(form.indexOf('id="sentence-draft"')<form.indexOf('id="sentence-source-draft"'));
  assert.doesNotMatch(form,/<details/);assert.match(form,/Generate new sentence/);assert.match(form,/Meaning of the new sentence/);
  assert.match(app,/if\(editorOpenId!==detail\?\.id\)openEditor\(\)/);
+});
+
+test('legacy Japanese meaning-language metadata is corrected before requesting and saving English',async()=>{
+ let options;const h=harness(async(request,settings)=>{options=settings;return {source:'You look at me, and I guide you.',casual:'君が僕を見て、僕が君を導く。',polite:'君が僕を見て、僕が君を導きます。'}});
+ h.ctx.detail.sourceLang='ja';h.ctx.actions.openEditor();assert.equal(h.$('#sentence-meaning-language').value,'en');h.$('#sentence-instruction').value='make the meaning in English';await h.ctx.actions.rewriteDetailSentence();assert.equal(options.sourceLang,'en');assert.equal(h.$('#sentence-source-draft').value,'You look at me, and I guide you.');await h.ctx.actions.saveEdit({preventDefault(){}});assert.equal(h.saved.sourceLang,'en');assert.equal(h.saved.source,'You look at me, and I guide you.');
 });
