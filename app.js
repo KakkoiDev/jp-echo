@@ -1375,13 +1375,13 @@ function setupRecognition(){
   bindDictation($("#sentence-rewrite-mic"),$("#sentence-instruction"),$("#sentence-rewrite-voice"));
   bindDictation($("#word-mic"),$("#word-say"),$("#word-say-status"));
   }
-async function startReview(){const items=await listSentences(),prepared=items.map(item=>ensureReviewTrack(ensureSchedule(item)));await Promise.all(prepared.filter((item,index)=>item!==items[index]).map(saveSentence));reviewQueue=dueSentences(prepared);reviewIndex=0;if(!reviewQueue.length)return showView("review");showView("session");renderReview()}
+async function startReview(){if(reviewBusy)return;const items=await listSentences(),prepared=items.map(item=>ensureReviewTrack(ensureSchedule(item)));await Promise.all(prepared.filter((item,index)=>item!==items[index]).map(saveSentence));reviewQueue=dueSentences(prepared);reviewIndex=0;reviewUndo=[];if(!reviewQueue.length)return showView("review");showView("session");renderReview()}
 function reviewJapanese(sentence){return hasRegisters(itemTarget(sentence))?preferredTarget(sentence):(sentence.target||"")}
 function reviewPlainJapanese(sentence){return hasRegisters(itemTarget(sentence))?preferredPlainTarget(sentence):(sentence.plainTarget||stripFurigana(sentence.target||""))}
 const STAGE_LABELS={0:"New",1:"Learning",2:"Review",3:"Relearning"};
 function stageLabel(sentence){const state=sentence.srs?.state??0,reps=Number(sentence.srs?.reps)||0;return STAGE_LABELS[state]+(reps?" · seen "+reps+(reps===1?" time":" times"):"")}
 function stageClass(sentence){const state=sentence.srs?.state??0;return state===0?"new":state===2?"review":"learning"}
-function renderReview(){resetSession();stopReviewListening();const sentence=reviewQueue[reviewIndex],complete=!sentence;
+function renderReview(){updateReviewPrevious();resetSession();stopReviewListening();const sentence=reviewQueue[reviewIndex],complete=!sentence;
   $("#review-panel").hidden=complete;$("#review-prompt-actions").hidden=complete;$("#review-actions").hidden=true;$("#review-complete").hidden=!complete;
   $("#review-progress").textContent=complete?`${reviewQueue.length} / ${reviewQueue.length}`:`${reviewIndex+1} / ${reviewQueue.length}`;
   renderSidePanel();$("#review-progress-bar").style.width=(reviewQueue.length?Math.round((complete?reviewQueue.length:reviewIndex)/reviewQueue.length*100):0)+"%";
@@ -1529,14 +1529,35 @@ function startReviewListening(){if(reviewListening)return;
   reviewListening=true;$("#review-mic").setAttribute("aria-pressed","true");$("#review-mic").setAttribute("aria-label","Stop listening");$("#review-panel").classList.add("is-listening");$("#review-listen-state").textContent=DICTATION.listening}
 function stopReviewListening(){if(!reviewListening||!reviewRecognition)return;reviewListening=false;try{reviewRecognition.stop()}catch{}$("#review-mic").setAttribute("aria-pressed","false");$("#review-panel").classList.remove("is-listening")}
 function toggleReviewListening(){reviewListening?stopReviewListening():startReviewListening()}
-async function skipReview(){const sentence=reviewQueue[reviewIndex];if(!sentence||reviewBusy)return;reviewBusy=true;try{if(sentence){const updated={...sentence,skipped:true,skippedAt:new Date().toISOString(),updatedAt:new Date().toISOString()};await saveSentence(updated);reviewQueue[reviewIndex]=updated}reviewIndex++;renderReview()}finally{reviewBusy=false}}
+async function skipReview(){const sentence=reviewQueue[reviewIndex];if(!sentence||reviewBusy)return;reviewBusy=true;updateReviewPrevious();const snapshot=reviewSnapshot(sentence);try{if(sentence){const updated={...sentence,skipped:true,skippedAt:new Date().toISOString(),updatedAt:new Date().toISOString()};await saveSentence(updated);reviewUndo.push(snapshot);reviewQueue[reviewIndex]=updated}reviewIndex++;renderReview()}finally{reviewBusy=false;updateReviewPrevious()}}
 function playReviewAudio(){const sentence=reviewQueue[reviewIndex];if(!sentence)return;if(loop.running){loop.togglePause();return}const policy=$("#voice").value,voice=policy==="random"?voices[Math.floor(Math.random()*voices.length)]:(policy==="default"?voices.find(v=>v.default)||voices[0]:voices[Number(policy)])||null;loop.play(reviewPlainJapanese(sentence)||reviewJapanese(sentence).replace(/【[^】]+】/g,""),{voice,rate:Number($("#rate").value),lang:targetLang()})}
 // One grade per card. The save is awaited before the queue moves on, so a
 // second tap (or a held 2 key) during it would otherwise grade the same card
 // twice: two review entries and an interval pushed out twice.
-let reviewBusy=false;
-async function rateReview(rating){const sentence=reviewQueue[reviewIndex];if(!sentence||!reviewRevealed||reviewBusy)return;reviewBusy=true;try{resetSession();const now=new Date(),mode=reviewMode(sentence),graded=reviewSentence(sentence,rating,now),progressed=recordReviewMode(graded,rating,now);
-  const updated={...progressed,reviews:[...(Array.isArray(sentence.reviews)?sentence.reviews:[]),{at:now.toISOString(),rating,mode,echoes:Math.max(0,(Number(sentence.echoCount)||0)-echoesAtCardStart)}]};await saveSentence(updated);if(current?.id===updated.id)current=updated;reviewQueue[reviewIndex]=updated;reviewIndex++;renderReview()}finally{reviewBusy=false}}
+let reviewBusy=false,reviewUndo=[];
+function updateReviewPrevious(){$("#review-previous").disabled=reviewBusy||!reviewUndo.length}
+function reviewSnapshot(sentence){return {index:reviewIndex,sentence:structuredClone(sentence),answer:$("#review-answer").value,revealed:reviewRevealed,echoes:echoesAtCardStart}}
+async function previousReview(){
+  if(reviewBusy||!reviewUndo.length)return;
+  reviewBusy=true;updateReviewPrevious();resetSession();stopReviewListening();
+  const entry=reviewUndo.at(-1);
+  try{
+    const latest=await getSentence(entry.sentence.id);
+    if(!latest)throw new Error("This sentence is no longer in your library.");
+    const restored={...latest,updatedAt:new Date().toISOString()};
+    for(const key of ["srs","reviews","reviewTrack","lastRating","skipped","skippedAt"]){if(Object.hasOwn(entry.sentence,key))restored[key]=structuredClone(entry.sentence[key]);else delete restored[key]}
+    await saveSentence(restored);
+    reviewUndo.pop();reviewIndex=entry.index;reviewQueue[reviewIndex]=restored;
+    if(current?.id===restored.id)current=restored;
+    if(detail?.id===restored.id)detail=restored;
+    renderReview();$("#review-answer").value=entry.answer;echoesAtCardStart=entry.echoes;updateCheckButton();
+    if(entry.revealed)await revealReview();
+    refreshDueBadge();toast("Previous review restored. Choose Again or OK.");
+  }catch(error){toast(error.message||"Could not undo the review. Try again.")}
+  finally{reviewBusy=false;updateReviewPrevious()}
+}
+async function rateReview(rating){const sentence=reviewQueue[reviewIndex];if(!sentence||!reviewRevealed||reviewBusy)return;reviewBusy=true;updateReviewPrevious();const snapshot=reviewSnapshot(sentence);try{resetSession();const now=new Date(),mode=reviewMode(sentence),graded=reviewSentence(sentence,rating,now),progressed=recordReviewMode(graded,rating,now);
+  const updated={...progressed,reviews:[...(Array.isArray(sentence.reviews)?sentence.reviews:[]),{at:now.toISOString(),rating,mode,echoes:Math.max(0,(Number(sentence.echoCount)||0)-echoesAtCardStart)}]};await saveSentence(updated);reviewUndo.push(snapshot);if(current?.id===updated.id)current=updated;reviewQueue[reviewIndex]=updated;reviewIndex++;renderReview()}finally{reviewBusy=false;updateReviewPrevious()}}
 // The one backup document: the file Export downloads is byte-for-byte what the gist holds.
 async function buildBackup(){return {...exportBackup(await listSentences(),settings,forBackup(await listNotes().catch(()=>[]))),catalogues:importedCatalogues}}
 async function exportHistory(){const data=await buildBackup(),url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"})),link=Object.assign(document.createElement("a"),{href:url,download:"jp-echo-backup.json"});link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);$("#import-status").textContent="Backup saved as jp-echo-backup.json."}
@@ -1758,7 +1779,7 @@ addEventListener("keydown",event=>{
   if(event.key==="1"){event.preventDefault();rateReview("again")}
   else if(event.key==="2"){event.preventDefault();rateReview("ok")}
 });
-$("#start-review").onclick=startReview;$("#review-practice").onclick=()=>showView("practice");$("#review-back").onclick=()=>{stopReviewListening();showView("review")};$("#review-done").onclick=()=>showView("practice");$("#review-home-link").onclick=()=>showView("review");$("#review-check").onclick=revealReview;$("#review-skip").onclick=skipReview;$("#review-mic").onclick=toggleReviewListening;$("#review-answer").oninput=updateCheckButton;$("#review-front-audio").onclick=playReviewAudio;$("#review-audio").onclick=playReviewAudio;$("#review-again").onclick=()=>rateReview("again");$("#review-ok").onclick=()=>rateReview("ok");
+$("#start-review").onclick=startReview;$("#review-practice").onclick=()=>showView("practice");$("#review-back").onclick=()=>{stopReviewListening();showView("review")};$("#review-done").onclick=()=>showView("practice");$("#review-home-link").onclick=()=>showView("review");$("#review-previous").onclick=previousReview;$("#review-check").onclick=revealReview;$("#review-skip").onclick=skipReview;$("#review-mic").onclick=toggleReviewListening;$("#review-answer").oninput=updateCheckButton;$("#review-front-audio").onclick=playReviewAudio;$("#review-audio").onclick=playReviewAudio;$("#review-again").onclick=()=>rateReview("again");$("#review-ok").onclick=()=>rateReview("ok");
 $("#settings-button").onclick=()=>openSettings();$("#settings-nav").onclick=()=>openSettings();$("#settings-back").onclick=leaveSettings;$("#install-app").onclick=installApp;
 for(const row of document.querySelectorAll(".settings-row[data-settings-page]"))row.onclick=()=>showSettingsPage(row.dataset.settingsPage);
 $("#ai-save").onclick=saveAIService;$("#ai-check").onclick=checkAIService;$("#ai-remove").onclick=removeAIKey;$("#speech-save").onclick=saveSpeech;

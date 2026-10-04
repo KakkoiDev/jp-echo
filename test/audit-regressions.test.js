@@ -44,10 +44,10 @@ test("starting a discussion cannot be sent twice while the first request runs", 
 
 test("a second tap on a grade or skip cannot act on the same card twice", () => {
   const rate = block("async function rateReview", "async function exportHistory");
-  assert.match(rate, /reviewBusy\)return;reviewBusy=true;try\{/);
-  assert.match(rate, /finally\{reviewBusy=false\}/);
+  assert.match(rate, /reviewBusy\)return;reviewBusy=true;[\s\S]*?try\{/);
+  assert.match(rate, /finally\{reviewBusy=false;/);
   const skip = block("async function skipReview", "let reviewBusy");
-  assert.match(skip, /if\(!sentence\|\|reviewBusy\)return;reviewBusy=true;try\{/);
+  assert.match(skip, /if\(!sentence\|\|reviewBusy\)return;reviewBusy=true;[\s\S]*?try\{/);
 });
 
 test("reading the library for grammar re-reads each sentence before writing it", () => {
