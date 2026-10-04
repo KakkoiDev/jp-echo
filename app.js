@@ -1827,7 +1827,7 @@ $("#sentence-instruction").onkeydown=e=>{if((e.metaKey||e.ctrlKey)&&e.key==="Ent
 $("#dictionary-close").onclick=()=>$("#dictionary-dialog").close();
 $("#dictionary-dialog").addEventListener("close",()=>dictionaryLookupGeneration++);
 
-window.addEventListener("echo-before-update",()=>saveWorkspace());
+
 
 
 $('#undo-mini-cleanup').onclick=undoMiniCleanup;

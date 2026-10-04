@@ -7,3 +7,30 @@ test('offline installed PWA opens sentence, grammar and dictionary deep links',a
 test('installed modules stay in the same version even with cache-busting query',async()=>{const w=worker();assert.equal(await w.fetch('/api.js?v=old'),'installed-api');assert.equal(w.network(),0)});
 test('upgrading retains reminder preferences and other application caches',async()=>{const w=worker();let completion;w.handlers.activate({waitUntil:p=>completion=p});await completion;assert.deepEqual(w.deleted,[PREVIOUS])});
 test('installation refreshes every shell asset and all assets exist',async()=>{const w=worker();let completion;w.handlers.install({waitUntil:p=>completion=p});await completion;for(const request of w.added){assert.equal(request.cache,'reload');const path=new URL(request.url).pathname;assert.ok(path==='/'||existsSync(new URL('..'+path,import.meta.url)),path)}});
+
+const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+const registration=html.slice(html.indexOf("if('serviceWorker' in navigator){"),html.indexOf('</script>',html.indexOf("if('serviceWorker' in navigator){")));
+test('worker installation waits for open app clients instead of forcing activation',async()=>{
+ let install,skipCalls=0;
+ const self={addEventListener:(name,handler)=>{if(name==='install')install=handler},skipWaiting:()=>{skipCalls++}};
+ vm.runInNewContext(script,{self,caches:{open:async()=>({addAll:async()=>{}})},Request:class{constructor(){}}});
+ let pending;install({waitUntil:p=>pending=p});await pending;assert.equal(skipCalls,0);
+});
+test('delayed controller changes and update checks preserve the route and unsaved session',async()=>{
+ for(const path of ['/sentences/test','/words/-1','/review','/settings']){
+  for(const controlled of [false,true]){
+   const listeners={},state={path,answer:'unsaved typed answer',reviewIndex:2,modal:'vocabulary'},before={...state};let reloads=0,updates=0,registrations=0;
+   const location={pathname:path,search:'',reload:()=>{reloads++;state.answer='';state.path='/'}};
+   const window={dispatchEvent:()=>{throw Error('Worker must not dispatch navigation or reload events')}};
+   const navigator={serviceWorker:{controller:controlled?{}:null,addEventListener:(name,handler)=>listeners[name]=handler,register:async(url,options)=>{registrations++;assert.equal(url,'/sw.js');assert.equal(options.updateViaCache,'none');return {update:async()=>{updates++}}}}};
+   vm.runInNewContext(registration,{navigator,window,location});await window.echoWorker;
+   // Activation may arrive seconds after opening, and may fire more than once.
+   for(let i=0;i<3;i++)listeners.controllerchange?.();
+   assert.equal(reloads,0);assert.deepEqual(state,before);assert.equal(registrations,1);assert.equal(updates,1);
+  }
+ }
+});
+test('failed worker update cannot reload or navigate the open page',async()=>{
+ const window={},navigator={serviceWorker:{register:async()=>({update:()=>Promise.reject(Error('offline'))})}};
+ vm.runInNewContext(registration,{navigator,window,location:{reload:()=>assert.fail('unexpected reload')}});await window.echoWorker;
+});

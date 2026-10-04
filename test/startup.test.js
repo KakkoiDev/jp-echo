@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {runInNewContext} from 'node:vm';
 const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
-const code=html.slice(html.indexOf('window.echoReportError='),html.indexOf('// Run before module imports'));
+const code=html.slice(html.indexOf('window.echoReportError='),html.indexOf("if('serviceWorker' in navigator){"));
 // Errors are shown as text, so a thrown message cannot inject HTML.
 test('startup diagnostics remain usable when the app module fails',()=>{
  const panel={hidden:true},message={},listeners={},window={addEventListener:(name,fn)=>listeners[name]=fn};let timeout;

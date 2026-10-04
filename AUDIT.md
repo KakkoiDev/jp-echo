@@ -45,10 +45,9 @@ regression test in `test/audit-regressions.test.js` or `test/ux-library.test.js`
 
 ## Not changed — worth a decision
 
-- `index.html` reloads the page on service-worker `controllerchange`, which
-  `CLAUDE.md` forbids ("never force page reload"). It looks deliberate (it
-  prevents mixing module versions), but it can reload mid-review and lose a
-  typed answer. Option: defer the reload until the next navigation.
+- Service-worker reload regression fixed: registration never reloads a running
+  client; updated workers wait for existing windows to close before activation.
+  Lifecycle and open-page state are covered in `test/pwa.test.js`.
 - Reading-mode sentences are `<button>`s containing tappable word spans
   (nested interactive content; screen readers announce it poorly).
 - `markPattern` splits rendered ruby HTML on the pattern text, so a short
