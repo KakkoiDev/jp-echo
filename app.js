@@ -20,7 +20,7 @@ import {dueLine,ensureReviewTrack,nextSkill,recordReviewMode,reviewMode,reviewMo
 import {DEFAULT_TIME,REMINDER_TAG,reminderText,shouldRemind} from "./reminders.js";
 import {saveDiscussionTurn} from "./actions.js";
 // New shared UI comes from the component library (COMPONENTS.md).
-import {grammarList,skillGlyph,skillTrio} from "./components.js";
+import {grammarList,skillGlyph,skillTrio,expandableList} from "./components.js";
 // Settings page state, declared before anything can read it (navigationState).
 const SETTINGS_TITLES={main:"Settings",ai:"AI service",speech:"Speech recognition",backup:"Backup",import:"Import sentences",export:"Export",grammar:"Grammar"};
 let settingsPage="main",settingsReturn="practice";
@@ -993,7 +993,7 @@ async function openWord(w,cover,{learn=null,route=true}={}){
   $("#word-say-status").textContent="";$("#word-status").textContent=hasTranslator()?"":t("Add a translator and this starts working.");$("#word-loop-state").textContent="";
   $("#word-compose").textContent=t("Or let Echo write one with {word}",{word:w.w});$("#word-compose").disabled=!hasTranslator();
   const byId=new Map(all.map(s=>[s.id,s])),mine=ids.map(id=>byId.get(id)).filter(Boolean);
-  renderSheetSentences($("#word-sentences"),mine,{deletable:true,onDelete:deleteFromWordSheet,mark:wordMarks(w).join("・")});
+  expandableList({host:$("#word-sentences"),items:mine,moreLabel:t("See more"),lessLabel:t("See less"),render:shown=>renderSheetSentences($("#word-sentences"),shown,{deletable:true,onDelete:deleteFromWordSheet,mark:wordMarks(w).join("・")})});
   $("#word-mine-head").hidden=!mine.length;sheetCount($("#word-mine-head"),mine.length);
   if(!$("#word-dialog").open)$("#word-dialog").showModal();
   await renderWordNote(w);

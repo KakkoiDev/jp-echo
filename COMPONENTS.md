@@ -103,3 +103,9 @@ screen-specific implementation of a generic control is not.
 During migration, legacy CSS classes may remain on component hosts to preserve
 the established visual design. They are compatibility styling, not permission to
 create a new primitive.
+
+### ExpandableList
+`expandableList({host,items,render,limit=5,moreLabel,lessLabel})` renders only
+the first five items initially. Its shared button toggles the complete list and
+the initial subset, exposes `aria-expanded` / `aria-controls`, and resets when
+the caller opens a new list. Vocabulary sentence lists use this component.

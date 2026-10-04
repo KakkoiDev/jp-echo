@@ -78,3 +78,15 @@ export function grammarList(items,{onOpen}={}){
     body.append(head);if(item.gloss){const gloss=document.createElement("span");gloss.className="grammar-gloss";gloss.textContent=item.gloss;body.append(gloss)}
     row.append(mark,body);if(onOpen)row.onclick=()=>onOpen(item);li.append(row);list.append(li)});
   return list}
+
+// Render only the initial items until the learner explicitly expands the list.
+export function expandableList({host,items,render,limit=5,moreLabel="See more",lessLabel="See less"}){
+  host.querySelector('[data-component="list-toggle"]')?.remove();
+  let expanded=false;
+  const control=button({label:moreLabel});control.className="show-more";control.dataset.component="list-toggle";
+  control.setAttribute("aria-controls",host.id);
+  const refresh=()=>{render(expanded?items:items.slice(0,limit));control.textContent=expanded?lessLabel:moreLabel;control.setAttribute("aria-expanded",String(expanded));if(items.length>limit)host.append(controlRow)};
+  const controlRow=document.createElement("li");controlRow.dataset.component="list-toggle";controlRow.append(control);
+  control.onclick=()=>{expanded=!expanded;refresh()};
+  refresh();return control;
+}
