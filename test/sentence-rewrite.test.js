@@ -29,3 +29,16 @@ test('non-Japanese rewrites also reject an unchanged draft',async()=>{
  mockReplies([{source:'Hello.',translation:'Bonjour !'}],requests);
  try{await assert.rejects(rewriteSentence({current:'Bonjour.',source:'Hello.',instruction:'Use a different greeting'},{...local,targetLang:'fr'}),/original sentence twice/)}finally{global.fetch=original}
 });
+test('Japanese instructions cannot make the meaning Japanese: retry in the source language',async()=>{
+ const original=global.fetch,requests=[];
+ mockReplies([{source:'君【きみ】が僕【ぼく】を見【み】て、僕【ぼく】が君【きみ】を導【みちび】く。',casual:'君が僕を見て、僕が君を導く。',polite:'君が僕を見て、僕が君を導きます。'},{source:'You look at me, and I guide you.',casual:'君が僕を見て、僕が君を導く。',polite:'君が僕を見て、僕が君を導きます。'}],requests);
+ try{const result=await rewriteSentence({current:'僕をある方向で見つめてるのに気づいてる。',source:'I notice you are looking at me.',instruction:'短くしてください'},local);assert.equal(result.source,'You look at me, and I guide you.');assert.equal(requests.length,2);const request=JSON.parse(requests[1].messages[1].content);assert.equal(request.sourceLang,'en');assert.equal(request.targetLang,'ja');assert.match(request.feedback,/meaning in English/)}finally{global.fetch=original}
+});
+test('wrong-language meaning is rejected instead of being saved as a successful rewrite',async()=>{
+ const original=global.fetch,requests=[];mockReplies([{source:'君が僕を見ている。',casual:'君が僕を見ている。',polite:'君が僕を見ています。'}],requests);
+ try{await assert.rejects(rewriteSentence({current:'僕が君を見る。',source:'I look at you.',instruction:'Reverse who looks at whom'},local),/meaning in English/)}finally{global.fetch=original}
+});
+test('French meanings can mention a quoted Japanese word',async()=>{
+ const original=global.fetch,requests=[];mockReplies([{source:'Je vais à la gare (駅).',casual:'駅に行く。',polite:'駅に行きます。'}],requests);
+ try{assert.equal((await rewriteSentence({current:'学校に行く。',source:'Je vais à école.',instruction:'Utilise 駅'},{...local,sourceLang:'fr'})).source,'Je vais à la gare (駅).');assert.equal(requests.length,1)}finally{global.fetch=original}
+});

@@ -297,15 +297,27 @@ export async function rewriteSentence({current,source,instruction,register="casu
   if(!current?.trim()||!instruction?.trim())throw new Error("Enter a sentence and directions for the rewrite.");
   const pair={sourceLang:settings.sourceLang||DEFAULT_PAIR.sourceLang,targetLang:settings.targetLang||DEFAULT_PAIR.targetLang};
   const format=hasRegisters(pair.targetLang)?'Return JSON only: {"source":"...","casual":"...","polite":"..."}. Both registers express the same revised meaning. Add readings after every kanji run as 漢字【かんじ】, never after kana.':'Return JSON only: {"source":"...","translation":"..."}.';
-  const system=`Generate one new natural ${languageName(pair.targetLang)} sentence that satisfies the learner's requirements. The instruction field is the controlling request: follow its requested meaning, length, vocabulary, grammar, tone and topic. The current sentence and its source meaning are context only, not constraints. Retain only what the learner wants to keep; remove or change anything they ask to change. For example, "keep only the second part" means omit the first clause entirely, and "make a different example" means create a different situation. Do not preserve the old meaning when that conflicts with the requirements. Before responding, check the sentence against every requirement. The source field must be the accurate natural meaning of the NEW sentence in ${languageName(pair.sourceLang)}, never a copy of the old source if the meaning changed. Return one natural sentence and its updated meaning. ${format} No explanations, alternatives, or markdown.`;
+  const system=`Generate one new natural ${languageName(pair.targetLang)} sentence that satisfies the learner's requirements. The instruction field is the controlling request: follow its requested meaning, length, vocabulary, grammar, tone and topic. The current sentence and its source meaning are context only, not constraints. Retain only what the learner wants to keep; remove or change anything they ask to change. For example, "keep only the second part" means omit the first clause entirely, and "make a different example" means create a different situation. Do not preserve the old meaning when that conflicts with the requirements. Before responding, check the sentence against every requirement. The source field must be the accurate natural meaning of the NEW sentence in ${languageName(pair.sourceLang)}, never a copy of the old source if the meaning changed. The language used for instructions does not change the output languages. source must be in ${languageName(pair.sourceLang)}; casual, polite or translation must be in ${languageName(pair.targetLang)}. Never put Japanese furigana or a duplicate of the target sentence into source. Return one natural sentence and its updated meaning. ${format} No explanations, alternatives, or markdown.`;
   const comparable=text=>stripFurigana(text).normalize("NFKC").replace(/[\s\p{P}]/gu,"");
   const chosen=chosenProvider(settings),selected=register==="polite"?"polite":"casual";
+  let failure="unchanged";
+  const invalidMeaning=card=>{
+    if(pair.sourceLang===pair.targetLang)return false;
+    if(comparable(card.source)===comparable(card.casual)||comparable(card.source)===comparable(card.polite))return true;
+    if(pair.targetLang!=="ja"||!["en","fr","es","de","it","pt"].includes(pair.sourceLang))return false;
+    const japanese=(card.source.match(/[\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}]/gu)||[]).length;
+    const latin=(card.source.match(/\p{Script=Latin}/gu)||[]).length;
+    return japanese>latin;
+  };
   for(let attempt=0;attempt<2;attempt++){
-    const request={current,source,instruction,register:selected};
-    if(attempt)request.feedback="Your previous answer repeated the original sentence. Rewrite the wording according to the directions; changing only furigana, spacing or punctuation is not a rewrite.";
+    const request={current,source,instruction,register:selected,sourceLang:pair.sourceLang,targetLang:pair.targetLang};
+    if(attempt)request.feedback=failure==="meaning"?`Your previous source was in the wrong language or copied the Japanese sentence. Write the meaning in ${languageName(pair.sourceLang)} and the revised sentence in ${languageName(pair.targetLang)}. Follow the original instructions.`:"Your previous answer repeated the original sentence. Rewrite the wording according to the directions; changing only furigana, spacing or punctuation is not a rewrite.";
     const card=shapeComposed(await ask(JSON.stringify(request),system,chosen,settings),pair);
+    if(invalidMeaning(card)){failure="meaning";continue}
     if(comparable(card[selected])!==comparable(current))return card;
+    failure="unchanged";
   }
+  if(failure==="meaning")throw new Error(`The AI did not return the meaning in ${languageName(pair.sourceLang)}. Your sentence has not been changed. Try again.`);
   throw new Error("The AI returned the original sentence twice. Try more specific rewrite directions; your sentence has not been changed.");
 }
 
