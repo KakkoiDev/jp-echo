@@ -17,17 +17,17 @@ function mockReplies(replies,requests){global.fetch=async(url,options)=>{request
 test('unchanged wording triggers a retry even when readings and punctuation differ',async()=>{
  const original=global.fetch,requests=[];
  mockReplies([{source:'Go to the station.',casual:'駅【えき】 に 行【い】く！',polite:'駅に行きます。'},{source:'Walk to the station.',casual:'駅まで歩く。',polite:'駅まで歩きます。'}],requests);
- try{const result=await rewriteSentence({current:'駅に行く。',source:'Go to the station.',instruction:'Use walking instead'},local);assert.equal(requests.length,2);assert.equal(result.casual,'駅まで歩く。');assert.match(requests[1].messages[1].content,/repeated the original/)}finally{global.fetch=original}
+ try{const result=await rewriteSentence({current:'駅に行く。',source:'Go to the station.',instruction:'Use walking instead'},local);assert.equal(requests.length,2);assert.equal(result.casual,'駅まで歩く。');assert.match(requests[1].messages[1].content,/repeated both/)}finally{global.fetch=original}
 });
 test('a change to the hidden casual form cannot mask an unchanged polite draft',async()=>{
  const original=global.fetch,requests=[];
  mockReplies([{source:'Go to the station.',casual:'駅まで向かう。',polite:'駅に行きます。'}],requests);
- try{await assert.rejects(rewriteSentence({current:'駅に行きます。',source:'Go to the station.',instruction:'Make a different example',register:'polite'},local),/original sentence twice/);assert.equal(requests.length,2)}finally{global.fetch=original}
+ try{await assert.rejects(rewriteSentence({current:'駅に行きます。',source:'Go to the station.',instruction:'Make a different example',register:'polite'},local),/unchanged twice/);assert.equal(requests.length,2)}finally{global.fetch=original}
 });
 test('non-Japanese rewrites also reject an unchanged draft',async()=>{
  const original=global.fetch,requests=[];
  mockReplies([{source:'Hello.',translation:'Bonjour !'}],requests);
- try{await assert.rejects(rewriteSentence({current:'Bonjour.',source:'Hello.',instruction:'Use a different greeting'},{...local,targetLang:'fr'}),/original sentence twice/)}finally{global.fetch=original}
+ try{await assert.rejects(rewriteSentence({current:'Bonjour.',source:'Hello.',instruction:'Use a different greeting'},{...local,targetLang:'fr'}),/unchanged twice/)}finally{global.fetch=original}
 });
 test('Japanese instructions cannot make the meaning Japanese: retry in the source language',async()=>{
  const original=global.fetch,requests=[];
@@ -41,4 +41,10 @@ test('wrong-language meaning is rejected instead of being saved as a successful 
 test('French meanings can mention a quoted Japanese word',async()=>{
  const original=global.fetch,requests=[];mockReplies([{source:'Je vais à la gare (駅).',casual:'駅に行く。',polite:'駅に行きます。'}],requests);
  try{assert.equal((await rewriteSentence({current:'学校に行く。',source:'Je vais à école.',instruction:'Utilise 駅'},{...local,sourceLang:'fr'})).source,'Je vais à la gare (駅).');assert.equal(requests.length,1)}finally{global.fetch=original}
+});
+
+test('meaning-only repair keeps Japanese and replaces its Japanese duplicate with English',async()=>{
+ const original=global.fetch,requests=[];const current='君【きみ】が僕【ぼく】を見【み】て、僕【ぼく】が君【きみ】を導【みちび】く。';
+ mockReplies([{source:'You look at me, and I guide you.',casual:current,polite:'君が僕を見て、僕が君を導きます。'}],requests);
+ try{const result=await rewriteSentence({current,source:current,instruction:'make the meaning in English. right now the meaning is in Japanese I want it to be in English'},local);assert.equal(result.casual,current);assert.equal(result.source,'You look at me, and I guide you.');assert.equal(requests.length,1);assert.match(requests[0].messages[0].content,/correct only source/)}finally{global.fetch=original}
 });
