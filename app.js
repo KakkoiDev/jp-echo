@@ -1173,7 +1173,7 @@ function renderDetail(){if(!detail)return;closeEditor();markSelectedRow();
   $("#sentence-history-count").textContent=reviews.length===1?"1 session":reviews.length+" sessions";
   $("#sentence-play").disabled=false}
 let editorGeneration=0,rewrittenDraft=null;
-function openEditor(){editorGeneration++;rewrittenDraft=null;$("#sentence-source-draft").value=detail?.source||"";$("#sentence-instruction").value="";$("#sentence-ai").open=false;$("#sentence-rewrite-status").textContent="";$("#sentence-rewrite").disabled=!hasTranslator();if(!detail)return;resetSession();$("#sentence-draft").value=preferredTarget(detail);$("#sentence-edit-error").hidden=true;if(!$("#sentence-change").open)$("#sentence-change").open=true;$("#sentence-draft").focus()}
+function openEditor(){editorGeneration++;rewrittenDraft=null;$("#sentence-source-draft").value=detail?.source||"";$("#sentence-instruction").value="";$("#sentence-ai").open=false;$("#sentence-rewrite-status").textContent="";$("#sentence-rewrite").disabled=!hasTranslator();$("#sentence-save").disabled=false;if(!detail)return;resetSession();$("#sentence-draft").value=preferredTarget(detail);$("#sentence-edit-error").hidden=true;if(!$("#sentence-change").open)$("#sentence-change").open=true;$("#sentence-draft").focus()}
 function closeEditor(){editorGeneration++;rewrittenDraft=null;$("#sentence-change").open=false}
 async function saveEdit(event){event.preventDefault();if(!detail)return;
   const japanese=normalizeFurigana($("#sentence-draft").value.trim());
@@ -1191,11 +1191,11 @@ async function rewriteDetailSentence(){
   const instruction=$("#sentence-instruction").value.trim(),status=$("#sentence-rewrite-status"),button=$("#sentence-rewrite");
   if(!instruction){status.textContent="Tell AI what to change.";$("#sentence-instruction").focus();return}
   const generation=editorGeneration,id=detail.id;button.disabled=true;$("#sentence-save").disabled=true;status.textContent="Rewriting…";
-  try{const card=await rewriteSentence({current:$("#sentence-draft").value,source:$("#sentence-source-draft").value,instruction},{...settings,sourceLang:detail.sourceLang||sourceLang(),targetLang:itemTarget(detail)});
+  try{const card=await rewriteSentence({current:$("#sentence-draft").value,source:$("#sentence-source-draft").value,instruction,register:sentenceRegister(detail)},{...settings,sourceLang:detail.sourceLang||sourceLang(),targetLang:itemTarget(detail)});
     if(generation!==editorGeneration||detail?.id!==id)return;
-    rewrittenDraft=card;$("#sentence-draft").value=sentenceRegister(detail)==="polite"?card.polite:card.casual;$("#sentence-source-draft").value=card.source;status.textContent="Review the rewrite, then Save. Cancel keeps the original.";
+    rewrittenDraft=card;$("#sentence-draft").value=sentenceRegister(detail)==="polite"?card.polite:card.casual;$("#sentence-source-draft").value=card.source;status.textContent="New draft ready. Review the sentence and meaning above, then Save.";$("#sentence-draft").focus();
   }catch(error){if(generation===editorGeneration)status.textContent=error.message||"Could not rewrite. Try again."}
-  finally{button.disabled=!hasTranslator();$("#sentence-save").disabled=false}
+  finally{if(generation===editorGeneration&&detail?.id===id){button.disabled=!hasTranslator();$("#sentence-save").disabled=false}}
 }
 function playDetail(){if(!detail)return;if(loop.running){loop.togglePause();return}
   const voice=voices[Number($("#voice").value)]||voices[0]||null;loop.play(preferredPlainTarget(detail),{voice,rate:Number($("#rate").value),lang:targetLang()})}

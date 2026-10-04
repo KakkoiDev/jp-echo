@@ -293,12 +293,20 @@ export async function transcribeAudio(blob,lang,settings={}){
   const text=payload.candidates?.[0]?.content?.parts?.map(part=>part.text||"").join("").trim();if(!text)throw new Error("Nothing heard.");return text
 }
 
-export async function rewriteSentence({current,source,instruction},settings={}){
+export async function rewriteSentence({current,source,instruction,register="casual"},settings={}){
   if(!current?.trim()||!instruction?.trim())throw new Error("Enter a sentence and directions for the rewrite.");
   const pair={sourceLang:settings.sourceLang||DEFAULT_PAIR.sourceLang,targetLang:settings.targetLang||DEFAULT_PAIR.targetLang};
   const format=hasRegisters(pair.targetLang)?'Return JSON only: {"source":"...","casual":"...","polite":"..."}. Both registers express the same revised meaning. Add readings after every kanji run as 漢字【かんじ】, never after kana.':'Return JSON only: {"source":"...","translation":"..."}.';
-  const system=`Rewrite the existing ${languageName(pair.targetLang)} sentence according to the learner's directions, which may be in either language. They may request a shorter sentence, only the first or second part, or a particular word. Follow those changes while keeping the remaining intent. Return one natural sentence and its updated meaning in ${languageName(pair.sourceLang)}. ${format} No explanations, alternatives, or markdown.`;
-  return shapeComposed(await ask(JSON.stringify({current,source,instruction}),system,chosenProvider(settings),settings),pair);
+  const system=`Rewrite the existing ${languageName(pair.targetLang)} sentence according to the learner's directions, which may be in either language. They may request a shorter sentence, only the first or second part, or a particular word. Follow those changes while keeping the remaining intent. Produce a genuinely revised sentence, not a copy with only readings, spacing or punctuation changed. If asked for a new sentence or different example, create one following the requested topic or vocabulary. Return one natural sentence and its updated meaning in ${languageName(pair.sourceLang)}. ${format} No explanations, alternatives, or markdown.`;
+  const comparable=text=>stripFurigana(text).normalize("NFKC").replace(/[\s\p{P}]/gu,"");
+  const chosen=chosenProvider(settings),selected=register==="polite"?"polite":"casual";
+  for(let attempt=0;attempt<2;attempt++){
+    const request={current,source,instruction,register:selected};
+    if(attempt)request.feedback="Your previous answer repeated the original sentence. Rewrite the wording according to the directions; changing only furigana, spacing or punctuation is not a rewrite.";
+    const card=shapeComposed(await ask(JSON.stringify(request),system,chosen,settings),pair);
+    if(comparable(card[selected])!==comparable(current))return card;
+  }
+  throw new Error("The AI returned the original sentence twice. Try more specific rewrite directions; your sentence has not been changed.");
 }
 
 export async function analyzeSentenceGrammar(text,points,settings={}){
