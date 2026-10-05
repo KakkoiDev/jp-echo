@@ -33,7 +33,7 @@ applyCatalogues();
 let startupCleanup=Promise.resolve();
 const grammarAnalysisCache=new Map();
 async function saveSentence(sentence){
-  Object.assign(sentence,dictionaryReadings(sentence));
+  const normalized=dictionaryReadings(sentence);if(!Object.hasOwn(normalized,"readingVersion"))delete sentence.readingVersion;Object.assign(sentence,normalized);
   const texts=[sentence.target,sentence.casualTarget,sentence.politeTarget].filter(Boolean).map(stripFurigana);
   const analyses=texts.map(text=>grammarAnalysisCache.get(text)||(sentence.grammarAnalysis||[]).find(a=>a.text===text)).filter(Boolean);
   if(analyses.length){sentence={...sentence,grammarAnalysis:[...new Map(analyses.map(a=>[a.text,a])).values()],grammar:grammarTags([...(sentence.grammar||[]),...analyses.flatMap(a=>a.grammar)])}}

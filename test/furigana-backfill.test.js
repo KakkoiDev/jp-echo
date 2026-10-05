@@ -27,3 +27,7 @@ test('model correction validates every returned register before the application 
 test('learner reading overrides take precedence over dictionary preference',()=>{
  assert.equal(resolve('重複【ちょうふく】',{重複:'じゅうふく'}).text,'重複【じゅうふく】');assert.equal(resolve('食べた',{食:'た'}).text,'食【た】べた');
 });
+test('editing a checked sentence invalidates its completed reading check',()=>{
+ const original={id:'a',targetLang:'ja',target:'駅【えき】',readingVersion:READING_VERSION};original.readingSignature=readingSignature(original);
+ const changed=dictionaryReadings({...original,target:'学校【がっこう】'});assert.equal(changed.readingVersion,undefined);
+});
