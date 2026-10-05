@@ -55,7 +55,7 @@ test('navigation badge reflects session limits rather than the entire backlog',a
  }
 });
 
-test('settings and Review controls share saved values including zero',async()=>{
+test('Settings controls save review limits including zero',async()=>{
  const {readFileSync}=await import('node:fs');
  const source=readFileSync(new URL('../app.js',import.meta.url),'utf8');
  const sync=source.match(/function syncReviewLimitInputs\(\)\{([^\n]*)\}/)[1];
@@ -66,11 +66,20 @@ test('settings and Review controls share saved values including zero',async()=>{
  const synchronize=new Function('$','settings','sessionLimit',sync);
  synchronize($,settings,sessionLimit);
  assert.equal($('#settings-review-new-limit').value,0);
- assert.equal($('#review-existing-limit').value,7);
+ assert.equal($('#settings-review-existing-limit').value,7);
  const change=new Function('input','key','settings','sessionLimit','persistSettings','syncReviewLimitInputs','document','flashSaved','renderReviewHome','renderSidePanel','refreshDueBadge',save);
  change({value:'33'},'reviewExistingLimit',settings,sessionLimit,()=>{persisted={...settings};return true},()=>synchronize($,settings,sessionLimit),{body:{dataset:{view:'settings'}}},()=>{},()=>{},()=>{},()=>{});
  assert.equal(persisted.reviewExistingLimit,33);
- assert.equal($('#review-existing-limit').value,33);
+ assert.equal(fields.has('#review-existing-limit'),false);
  assert.equal($('#settings-review-existing-limit').value,33);
  assert.equal(settings.reviewNewLimit,0);
 });
+
+ test('review limit controls appear only in Settings',async()=>{
+ const {readFileSync}=await import('node:fs');
+ const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+ assert.ok(html.includes('id="settings-review-new-limit"'));
+ assert.ok(html.includes('id="settings-review-existing-limit"'));
+ assert.ok(!html.includes('id="review-new-limit"'));
+ assert.ok(!html.includes('id="review-existing-limit"'));
+ });

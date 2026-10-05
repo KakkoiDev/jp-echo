@@ -203,4 +203,4 @@ All playback modes speak the same reading annotations displayed on screen.
 
 Shared reading helper revision: `78a5fa3661292be083b07775e9c3d0e59e4f75e0`.
 
-Review session limits are saved on this device from the Review screen. New cards and existing reviews each default to 20 per session; either can be set to any nonnegative whole number, including 0. Learning and relearning count toward the existing review limit. Excess due cards stay available for the next session.
+Review session limits are saved on this device from Settings → Every day → Review limits. New cards and existing reviews each default to 20 per session; either can be set to any nonnegative whole number, including 0. Learning and relearning count toward the existing review limit. Excess due cards stay available for the next session.
