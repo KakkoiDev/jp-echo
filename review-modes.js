@@ -64,3 +64,14 @@ export function skillMix(sentences=[]){
 // Japanese." `when` is already in words ("in 3 days", "now").
 const EXPECT={listening:"you will hear it with no text",reading:"you will read the Japanese without furigana",writing:"you will see the meaning and type the Japanese"};
 export function dueLine(sentence,when){const mode=reviewMode(ensureReviewTrack(sentence));return `Due ${when}, as a ${REVIEW_MODE_META[mode].label.toLowerCase()} card — ${EXPECT[mode]}.`}
+
+// Limits apply to each newly started session; learning/relearning are reviews.
+export function sessionLimit(value){
+  if(value==null||String(value).trim()==="")return 20;
+  const number=Number(value);
+  return Number.isFinite(number)?Math.max(0,Math.floor(number)):20;
+}
+export function limitReviewSession(due,settings={}){
+  let fresh=sessionLimit(settings.reviewNewLimit),reviews=sessionLimit(settings.reviewExistingLimit);
+  return due.filter(item=>(item.srs?.state??0)===0?fresh-->0:reviews-->0);
+}

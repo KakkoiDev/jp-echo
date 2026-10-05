@@ -24,7 +24,7 @@ test("the review card names its skill and why, from the track", () => {
   assert.match(app, /\$\("#review-skills"\)\.replaceChildren\(skillTrio\(mode,\{label:meta\.label\+" card\./);
   assert.match(app, /\$\("#review-mode-instruction"\)\.textContent=skillReason\(sentence\)/);
   assert.match(app, /listening\?"Reveal the sentence"/);
-  assert.match(html, /id="review-skill-mix"[\s\S]*Today you will/);
+  assert.match(html, /id="review-skill-mix"[\s\S]*In this session you will/);
 });
 
 test("GrammarList numbers rows with kanji and orders them as they appear", () => {

@@ -17,7 +17,7 @@ import {setImportedWords,bands as wordBands,carries as carriesWord,coverage as w
 import {deleteNote as dbDeleteNote,forBackup,getNote,listNotes,makeNote,mergeNotes,noteKey,putNote as dbPutNote,replaceNotes as dbReplaceNotes} from "./notes.js";
 import {downloadAnkiDeck} from "./anki-export.js";
 import {dueSentences,ensureSchedule,isDue,reviewSentence} from "./srs.js";
-import {dueLine,ensureReviewTrack,nextSkill,recordReviewMode,reviewMode,reviewModeMeta,skillMix,skillReason} from "./review-modes.js";
+import {sessionLimit,limitReviewSession,dueLine,ensureReviewTrack,nextSkill,recordReviewMode,reviewMode,reviewModeMeta,skillMix,skillReason} from "./review-modes.js";
 import {DEFAULT_TIME,REMINDER_TAG,reminderText,shouldRemind} from "./reminders.js";
 import {saveDiscussionTurn} from "./actions.js";
 // New shared UI comes from the component library (COMPONENTS.md).
@@ -1089,11 +1089,12 @@ async function refreshDueBadge(){updateDueBadge(dueSentences((await listSentence
 function renderSkillMix(due){const mix=skillMix(due),row=$("#review-skill-mix-row");$("#review-skill-mix").hidden=due.length===0;
   row.setAttribute("aria-label","Today you will "+["listening","reading","writing"].map(mode=>reviewModeMeta(mode).verb+" "+mix[mode]).join(", "));
   row.replaceChildren(...["listening","reading","writing"].map(mode=>{const item=document.createElement("span");item.className="skill-mix-item";item.setAttribute("aria-hidden","true");const count=document.createElement("strong");count.textContent=String(mix[mode]);item.append(skillGlyph(mode,{size:30})," "+reviewModeMeta(mode).verb+" ",count);return item}))}
-async function renderReviewHome(){const all=(await listSentences()).map(item=>ensureSchedule(item)),now=Date.now(),due=dueSentences(all),counts={new:0,learning:0,review:0};
+async function renderReviewHome(){const all=(await listSentences()).map(item=>ensureSchedule(item)),now=Date.now(),available=dueSentences(all),due=limitReviewSession(available,settings),counts={new:0,learning:0,review:0};
   for(const item of due){const state=item.srs?.state??0;if(state===1||state===3)counts.learning++;else if(state===2)counts.review++;else counts.new++}
   $("#due-count").textContent=String(due.length);$("#due-new").textContent=String(counts.new);$("#due-learning").textContent=String(counts.learning);$("#due-review").textContent=String(counts.review);
-  updateDueBadge(due.length);
-  const waiting=all.filter(item=>!due.includes(item)),next=waiting.map(item=>Date.parse(item.srs.due)).filter(Number.isFinite).sort((a,b)=>a-b)[0];
+  for(const [id,key] of [["review-new-limit","reviewNewLimit"],["review-existing-limit","reviewExistingLimit"]])$("#"+id).value=sessionLimit(settings[key]);
+  updateDueBadge(available.length);
+  const waiting=all.filter(item=>!available.includes(item)),next=waiting.map(item=>Date.parse(item.srs.due)).filter(Number.isFinite).sort((a,b)=>a-b)[0];
   $("#review-due-block").hidden=due.length===0;$("#review-rest-block").hidden=due.length>0;
   document.querySelector(".ring-stage").classList.toggle("resting",due.length===0);
   $("#start-review").hidden=due.length===0;$("#review-practice").hidden=due.length>0;
@@ -1101,8 +1102,8 @@ async function renderReviewHome(){const all=(await listSentences()).map(item=>en
   if(due.length){$("#review-estimate").textContent="About "+spell(Math.max(1,Math.round(due.length*.55)))+" minute"+(Math.round(due.length*.55)>1?"s":"")+", out loud.";
     $("#review-footnote").textContent=next?"Next batch unlocks in "+describeGap(next-now)+".":""}
   else{const at=next?new Intl.DateTimeFormat(undefined,{hour:"2-digit",minute:"2-digit"}).format(new Date(next)):null;
-    $("#review-rest-copy").textContent=all.length===0?"Translate a sentence and it joins the queue straight away.":(at?"Your next batch comes back at "+at+". ":"")+spell(all.length)+(all.length===1?" sentence is":" sentences are")+" resting until then.";
-    $("#review-footnote").textContent=all.length?"Reviewing early doesn't help — the gap is the point.":""}}
+    $("#review-rest-copy").textContent=available.length?"Cards are due, but your session limits exclude them. Increase a limit to start.":all.length===0?"Translate a sentence and it joins the queue straight away.":(at?"Your next batch comes back at "+at+". ":"")+spell(all.length)+(all.length===1?" sentence is":" sentences are")+" resting until then.";
+    $("#review-footnote").textContent=available.length?"Limits apply separately to each session.":all.length?"Reviewing early doesn't help — the gap is the point.":""}}
 async function renderSidePanel(){
   const view=document.body.dataset.view;
   $("#side-panel").hidden=!isWide()||(view!=="practice"&&view!=="session");
@@ -1110,7 +1111,7 @@ async function renderSidePanel(){
   $("#queue-panel").hidden=view!=="session";
   if($("#side-panel").hidden)return;
   if(view==="session")return renderQueuePanel();
-  const due=dueSentences((await listSentences()).map(item=>ensureSchedule(item)));
+  const due=limitReviewSession(dueSentences((await listSentences()).map(item=>ensureSchedule(item))),settings);
   $("#side-due-count").textContent=String(due.length);
   // 聴4 · 読3 · 書2 — the same mix as review home, in one line.
   const mix=skillMix(due),minutes=Math.max(1,Math.round(due.length*.55));$("#side-skill-mix").hidden=due.length===0;
@@ -1381,7 +1382,7 @@ function setupRecognition(){
   bindDictation($("#sentence-rewrite-mic"),$("#sentence-instruction"),$("#sentence-rewrite-voice"));
   bindDictation($("#word-mic"),$("#word-say"),$("#word-say-status"));
   }
-async function startReview(){if(reviewBusy)return;const items=await listSentences(),prepared=items.map(item=>ensureReviewTrack(ensureSchedule(item)));await Promise.all(prepared.filter((item,index)=>item!==items[index]).map(saveSentence));reviewQueue=dueSentences(prepared);reviewIndex=0;reviewUndo=[];if(!reviewQueue.length)return showView("review");showView("session");renderReview()}
+async function startReview(){if(reviewBusy)return;const items=await listSentences(),prepared=items.map(item=>ensureReviewTrack(ensureSchedule(item)));await Promise.all(prepared.filter((item,index)=>item!==items[index]).map(saveSentence));reviewQueue=limitReviewSession(dueSentences(prepared),settings);reviewIndex=0;reviewUndo=[];if(!reviewQueue.length)return showView("review");showView("session");renderReview()}
 function reviewJapanese(sentence){return hasRegisters(itemTarget(sentence))?preferredTarget(sentence):(sentence.target||"")}
 function reviewPlainJapanese(sentence){return hasRegisters(itemTarget(sentence))?preferredPlainTarget(sentence):(sentence.plainTarget||stripFurigana(sentence.target||""))}
 const STAGE_LABELS={0:"New",1:"Learning",2:"Review",3:"Relearning"};
@@ -1785,6 +1786,7 @@ addEventListener("keydown",event=>{
   if(event.key==="1"){event.preventDefault();rateReview("again")}
   else if(event.key==="2"){event.preventDefault();rateReview("ok")}
 });
+for(const [id,key] of [["review-new-limit","reviewNewLimit"],["review-existing-limit","reviewExistingLimit"]])$("#"+id).onchange=()=>{settings[key]=sessionLimit($("#"+id).value);persistSettings();renderReviewHome();renderSidePanel()};
 $("#start-review").onclick=startReview;$("#review-practice").onclick=()=>showView("practice");$("#review-back").onclick=()=>{stopReviewListening();showView("review")};$("#review-done").onclick=()=>showView("practice");$("#review-home-link").onclick=()=>showView("review");$("#review-previous").onclick=previousReview;$("#review-check").onclick=revealReview;$("#review-skip").onclick=skipReview;$("#review-mic").onclick=toggleReviewListening;$("#review-answer").oninput=updateCheckButton;$("#review-front-audio").onclick=playReviewAudio;$("#review-audio").onclick=playReviewAudio;$("#review-again").onclick=()=>rateReview("again");$("#review-ok").onclick=()=>rateReview("ok");
 $("#settings-button").onclick=()=>openSettings();$("#settings-nav").onclick=()=>openSettings();$("#settings-back").onclick=leaveSettings;$("#install-app").onclick=installApp;
 for(const row of document.querySelectorAll(".settings-row[data-settings-page]"))row.onclick=()=>showSettingsPage(row.dataset.settingsPage);
