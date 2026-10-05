@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
-import {normalizeFurigana,stripFurigana,replaceSentenceContent} from '../core.js';
+import {normalizeFurigana,stripFurigana,rubySegments,replaceSentenceContent} from '../core.js';
 const app=readFileSync(new URL('../app.js',import.meta.url),'utf8');
 const editor=app.slice(app.indexOf('let editorGeneration=0'),app.indexOf('function playDetail()'));
 function harness(rewriteSentence){

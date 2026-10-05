@@ -37,3 +37,19 @@ export async function removeArchivedMiniCards(kept,removed,catalogues){
  const db=await openDb(),ids=new Set(removed.map(s=>s.id));
  try{await new Promise((resolve,reject)=>{const tx=db.transaction(STORE,'readwrite'),store=tx.objectStore(STORE),request=store.getAll();request.onsuccess=()=>{const records=request.result,clean=new Map(planMiniCleanup(records,catalogues).kept.map(s=>[s.id,s]));for(const record of records){if(ids.has(record.id))store.delete(record.id);else if(clean.has(record.id))store.put(clean.get(record.id))}};tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error)})}finally{db.close()}
 }
+
+// Apply readings against the CURRENT record in one transaction, preserving reviews
+// and concurrent changes. A sentence edited during the model request is deferred.
+export async function applyReadingCorrection(id,expected,correction){
+ const db=await openDb();let saved=null;
+ try{await new Promise((resolve,reject)=>{
+  const tx=db.transaction(STORE,'readwrite'),store=tx.objectStore(STORE),request=store.get(id);
+  request.onsuccess=()=>{const raw=request.result;if(!raw)return;const record=migrateSentence(raw);
+   const signature=JSON.stringify([record.targetLang||'ja',record.target,record.casualTarget,record.politeTarget]);if(signature!==expected)return;
+   saved={...record,furiganaRecovery:record.furiganaRecovery||Object.fromEntries(['target','casualTarget','politeTarget'].map(k=>[k,record[k]])),updatedAt:new Date().toISOString()};
+   for(const key of ['target','casualTarget','politeTarget','readingVersion','readingSignature','readingIssues'])if(Object.hasOwn(correction,key))saved[key]=correction[key];
+   store.put(saved);
+  };
+  tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error);
+ });return saved}finally{db.close()}
+}

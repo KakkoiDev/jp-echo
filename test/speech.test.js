@@ -183,3 +183,9 @@ test("an unnamed language still gets one, rather than undefined", () => {
 
 
 test("conversation loop speaks accumulated turns in order with per-speaker voices",()=>{spoken.length=0;const timers=[];const ai={name:"AI"},user={name:"User"};const loop=new ConversationLoop({onEcho:()=>{},onState:()=>{},setTimer:fn=>{timers.push(fn);return timers.length},clearTimer:()=>{},setWatchdogTimer:()=>1,clearWatchdogTimer:()=>{}});loop.playConversation([{text:"first",role:"ai"},{text:"second",role:"user"}],{voiceFor:t=>t.role==="ai"?ai:user,lang:"ja"});assert.equal(spoken[0].text,"first");assert.equal(spoken[0].voice,ai);spoken[0].onend();timers.shift()();assert.equal(spoken[1].text,"second");assert.equal(spoken[1].voice,user);spoken[1].onend();timers.shift()();assert.equal(spoken[2].text,"first","latest turn loops back to the beginning")});
+
+test('Japanese playback and discussion utterances use the displayed furigana',()=>{
+ spoken.length=0;const loop=new ShadowLoop({onEcho(){},onState(){}});
+ loop.play('重複【ちょうふく】はない。',{lang:'ja'});assert.equal(spoken[0].text,'ちょうふくはない。');loop.stop();
+ const discussion=new ConversationLoop({onEcho(){},onState(){}});discussion.playConversation([{text:'重複【じゅうふく】はない。',role:'ai'}],{lang:'ja'});assert.equal(spoken.at(-1).text,'じゅうふくはない。');discussion.stop();
+});

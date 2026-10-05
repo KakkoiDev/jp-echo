@@ -345,3 +345,18 @@ export async function composeFromIntent({kanji,grammar,word,intent,check=null},s
  }
  throw new Error('The model did not include the required item. Try different directions.');
 }
+
+export async function correctSentenceReadings(sentence,settings={}){
+ const {validateReadingCorrection}=await import('./japanese-readings.js');
+ const texts=[...new Set([sentence.target,sentence.casualTarget,sentence.politeTarget].filter(Boolean))];
+ const system='Correct the furigana of the supplied Japanese sentences using the full sentence context. Return JSON only: {"sentences":["annotated sentence",...]}, one item per input in exactly the same order. Keep every original character, punctuation and space unchanged after readings are removed. Add a correct kana reading after EVERY kanji run as 漢字【かんじ】. Never annotate kana. Consider grammar, proper names, counters and ambiguous readings in context. requiredReadings are explicit learner corrections and must be retained exactly. Dictionary candidate readings are supplied as evidence; choose a contextually valid reading. Do not rewrite, shorten, translate or change register. 重複 may be read ちょうふく or じゅうふく; prefer ちょうふく consistently.';
+ let error;
+ for(let attempt=0;attempt<2;attempt++)try{
+  const raw=await askModel(JSON.stringify({sentences:texts,candidates:sentence.readingIssues||[],requiredReadings:sentence.readingOverrides||{},feedback:attempt?error.message:undefined}),system,settings);
+  if(!Array.isArray(raw.sentences)||raw.sentences.length!==texts.length)throw Error('The AI did not return every sentence reading.');
+  const {rubySegments}=await import('./core.js');
+  const map=new Map(texts.map((text,i)=>{const corrected=validateReadingCorrection(text,raw.sentences[i]);for(const part of rubySegments(corrected)){const wanted=sentence.readingOverrides?.[part.text];if(wanted&&part.reading!==wanted)throw Error('Reading correction ignored your saved reading for '+part.text)}return [text,corrected]}));
+  return Object.fromEntries(['target','casualTarget','politeTarget'].filter(k=>sentence[k]).map(k=>[k,map.get(sentence[k])]));
+ }catch(e){error=e}
+ throw error;
+}

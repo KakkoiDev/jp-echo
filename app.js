@@ -1,12 +1,13 @@
+import {dictionaryReadings,backfillReadings} from "./readings.js";
 import {validateDeckBackup,fetchDeckBackup} from './imports.js';
 import {isSeeded,planMiniSentenceUpgrade,repairMiniImport} from './mini-imports.js';
 import {applyI18n,setDictionary,t} from "./i18n.js";
 import {earliestPair,flipSentence,isReversed,pairLooksSwapped,repairPair} from "./repair.js";
-import {DEFAULT_PAIR,LANGUAGES,safeLanguage,MORA_MNEMONIC_META,createSentence,replaceSentenceContent,exportBackup,forAnki,hasFurigana,hasRegisters,languageName,mergeSentences,normalizeFurigana,rubyHtml,SCHEMA_VERSION,stripFurigana} from "./core.js";
+import {DEFAULT_PAIR,LANGUAGES,safeLanguage,MORA_MNEMONIC_META,createSentence,replaceSentenceContent,exportBackup,forAnki,hasFurigana,hasRegisters,languageName,mergeSentences,normalizeFurigana,rubySegments,rubyHtml,SCHEMA_VERSION,stripFurigana} from "./core.js";
 import {isExactMatch,markAttempt,markTarget} from "./diff.js";
-import {removeArchivedMiniCards,readImportRecovery,saveImportRecovery,deleteSentence as dbDeleteSentence,getSentence,listSentences,migrateStore,replaceAll,saveSentence as persistSentence} from "./db.js";
+import {applyReadingCorrection,removeArchivedMiniCards,readImportRecovery,saveImportRecovery,deleteSentence as dbDeleteSentence,getSentence,listSentences,migrateStore,replaceAll,saveSentence as persistSentence} from "./db.js";
 import {MIN_INTERVAL_MS,QUIET_MS,downloadBackup,parseGistId,shouldAutoBackup,uploadBackup} from "./gist-backup.js";
-import {analyzeSentenceGrammar,askModel,rewriteSentence,adjustNote,carries,compose,composeFromIntent,PROVIDER_DEFAULTS,tagGrammar,translate,discuss,generateReading,writeNotes,writeWordNote,transcribeAudio} from "./api.js";
+import {correctSentenceReadings,analyzeSentenceGrammar,askModel,rewriteSentence,adjustNote,carries,compose,composeFromIntent,PROVIDER_DEFAULTS,tagGrammar,translate,discuss,generateReading,writeNotes,writeWordNote,transcribeAudio} from "./api.js";
 import {grammarListItems,setImportedGrammar,byLevel as grammarByLevel,cleanTags as grammarTags,coverage as grammarCoverage,hasGrammar,isTagged,learned as grammarLearned,LEVELS as GRAMMAR_LEVELS,point as grammarPoint,POINTS as GRAMMAR_POINTS,summarise as grammarSummarise,untagged as untaggedSentences} from "./grammar.js";
 import {japaneseVoices,recognitionFactory,ShadowLoop,ConversationLoop} from "./speech.js";
 import {STORIES} from "./stories.js";
@@ -32,10 +33,11 @@ applyCatalogues();
 let startupCleanup=Promise.resolve();
 const grammarAnalysisCache=new Map();
 async function saveSentence(sentence){
+  Object.assign(sentence,dictionaryReadings(sentence));
   const texts=[sentence.target,sentence.casualTarget,sentence.politeTarget].filter(Boolean).map(stripFurigana);
   const analyses=texts.map(text=>grammarAnalysisCache.get(text)||(sentence.grammarAnalysis||[]).find(a=>a.text===text)).filter(Boolean);
   if(analyses.length){sentence={...sentence,grammarAnalysis:[...new Map(analyses.map(a=>[a.text,a])).values()],grammar:grammarTags([...(sentence.grammar||[]),...analyses.flatMap(a=>a.grammar)])}}
-  const saved=await persistSentence(sentence);markBackupDirty();return saved;
+  const saved=await persistSentence(sentence);markBackupDirty();if(!sentence.readingVersion)scheduleReadingBackfill();return saved;
 }
 // Every write that changes what a backup would contain goes through one of
 // these, so the gist backup knows there is something new to upload.
@@ -222,7 +224,7 @@ function setPracticeMode(mode,{route=true}={}){discussionMode=mode==="discussion
 // One place for the composer label: Discussion asks for a scene until it starts.
 function composerLabel(){return discussionMode?(discussionTurns.length?"Reply to the conversation":"Describe the conversation"):readingMode?"What do you want to read?":"What do you want to say?"}
 function renderDiscussion(){if(discussionMode)$("#composer-label").textContent=composerLabel();const list=$("#discussion-turns");list.replaceChildren(...discussionTurns.map(turn=>{const li=document.createElement("li");li.className="discussion-turn "+turn.role;const bubble=document.createElement("div");bubble.className="discussion-bubble";const ja=document.createElement("p");ja.className="discussion-japanese";ja.lang=targetLang();ja.innerHTML=rubyHtml(turn.target);enableVocabulary(ja,turn.target,targetLang(),turn);const en=document.createElement("p");en.className="discussion-translation";en.textContent=turn.source;en.hidden=!$("#discussion-english").checked;const actions=document.createElement("div");actions.className="discussion-message-actions";const save=document.createElement("button");save.type="button";save.className="plain discussion-save";save.textContent=turn.saved?"Saved":"Save";save.disabled=!!turn.saved;save.onclick=async()=>{save.disabled=true;const previous=save.textContent;save.textContent="Saving…";try{await saveDiscussionTurn(turn,{sourceLang:sourceLang(),targetLang:targetLang(),save:saveSentence});turn.saved=true;save.textContent="Saved";refreshDueBadge();toast("Saved to your library.")}catch(error){save.disabled=false;save.textContent=previous;toast(sheetError(error),5000)}};actions.append(save);bubble.append(ja,en,actions);li.append(bubble);return li}));$("#discussion-live").hidden=!discussionTurns.length;$("#discussion-setup").hidden=!!discussionTurns.length;$("#discussion-title").textContent=discussionScenario;requestAnimationFrame(()=>{if(discussionTurns.length)list.lastElementChild?.scrollIntoView({block:"nearest",behavior:"smooth"})})}
-function playDiscussion(){if(discussionLoop.running){discussionLoop.togglePause();return}const pick=policy=>{if(!voices.length)return null;if(policy==="random")return voices[Math.floor(Math.random()*voices.length)];if(policy==="default")return voices.find(v=>v.default)||voices[0];return voices[Number(policy)]||voices[0]};discussionLoop.playConversation(discussionTurns.map(t=>({text:stripFurigana(t.target),role:t.role})),{voiceFor:turn=>pick(turn.role==="ai"?$("#discussion-voice-ai").value:$("#discussion-voice-user").value),rate:Number($("#rate").value),lang:targetLang()})}
+function playDiscussion(){if(discussionLoop.running){discussionLoop.togglePause();return}const pick=policy=>{if(!voices.length)return null;if(policy==="random")return voices[Math.floor(Math.random()*voices.length)];if(policy==="default")return voices.find(v=>v.default)||voices[0];return voices[Number(policy)]||voices[0]};discussionLoop.playConversation(discussionTurns.map(t=>({text:t.target,role:t.role})),{voiceFor:turn=>pick(turn.role==="ai"?$("#discussion-voice-ai").value:$("#discussion-voice-user").value),rate:Number($("#rate").value),lang:targetLang()})}
 async function beginDiscussion(){if($("#translate").disabled)return;const typed=$("#english-input").value;discussionScenario=$("#english-input").value.trim()||"An everyday conversation";$("#english-input").value="";$("#discussion-status").textContent="Starting…";$("#translate").disabled=true;try{const out=await discuss({scenario:discussionScenario,history:[]},{...settings,sourceLang:sourceLang(),targetLang:targetLang()});discussionTurns=[{role:"ai",...out.ai}];renderDiscussion();playDiscussion();markModeUsed("discussion");$("#discussion-status").textContent=""}catch(e){if(!$("#english-input").value.trim())$("#english-input").value=typed;$("#discussion-status").textContent=e.message}finally{$("#translate").disabled=false}}
 async function replyDiscussion(){const message=$("#english-input").value.trim();if(!message)return;discussionLoop.stop();$("#discussion-status").textContent="Replying…";$("#translate").disabled=true;try{const out=await discuss({scenario:discussionScenario,message,history:discussionTurns},{...settings,sourceLang:sourceLang(),targetLang:targetLang()});discussionTurns.push({role:"user",...out.user},{role:"ai",...out.ai});$("#english-input").value="";renderDiscussion();playDiscussion();$("#discussion-status").textContent=""}catch(e){$("#discussion-status").textContent=e.message}finally{$("#translate").disabled=false}}
 const PREFS_CACHE="jp-echo-prefs",PREFS_KEY="./reminder";
@@ -327,7 +329,7 @@ const workspace=()=>{try{return JSON.parse(localStorage.getItem(WORKSPACE_KEY)||
 function renderReading(){const host=$("#reading-text");host.innerHTML="";$("#reading-empty").hidden=!!readingPassage;$("#reading-controls").hidden=!readingPassage;if(!readingPassage)return;$("#reading-title").textContent=readingPassage.title;readingPassage.sentences.forEach((sentence,index)=>{const row=document.createElement("div");row.className="reading-sentence"+(readingSelected===index?" selected":"");row.dataset.index=index;const text=document.createElement("button");text.type="button";text.className="reading-sentence-text";const target=$("#reading-furigana").checked?rubyHtml(sentence.target):escapeText(stripFurigana(sentence.target));text.innerHTML='<span class="reading-japanese">'+target+'</span>'+($("#reading-english").checked?'<span class="reading-english">'+escapeText(sentence.source)+'</span>':"");enableVocabulary(text.querySelector(".reading-japanese"),sentence.target,targetLang(),sentence);text.onclick=()=>{readingSelected=index;renderReading()};row.append(text);if(sentence.saved){const saved=document.createElement("span");saved.className="reading-save saved";saved.textContent="Saved";row.append(saved)}else if(readingSelected===index){const save=document.createElement("button");save.type="button";save.className="reading-save primary";save.textContent="Save to Library";save.onclick=async()=>{save.disabled=true;save.textContent="Saving…";try{await saveReadingSentence(index)}catch(e){save.disabled=false;save.textContent="Save to Library";$("#reading-status").textContent=e.message}};row.append(save)}host.append(row)})}
 async function saveReadingSentence(index){const s=readingPassage?.sentences[index];if(!s||s.saved)return;const made=createSentence(s.source,{casual:s.target,polite:s.target},new Date(),undefined,{sourceLang:sourceLang(),targetLang:targetLang()});await saveSentence(made);s.saved=true;renderReading();toast("Saved to your library.")}
 async function generateReadingMode(){const prompt=$("#english-input").value.trim();if(!prompt)return;$("#translate").disabled=true;$("#reading-status").textContent="Writing…";try{readingPassage=await generateReading({prompt},{...settings,sourceLang:sourceLang(),targetLang:targetLang()});readingSelected=-1;$("#english-input").value="";renderReading();$("#reading-status").textContent="";markModeUsed("reading")}catch(e){$("#reading-status").textContent=e.message}finally{$("#translate").disabled=false}}
-function playReading(){if(!readingPassage?.sentences.length)return;if(readingLoop.running){readingLoop.togglePause();return}const policy=settings.voice||"default",pick=()=>{if(!voices.length)return null;if(policy==="random")return voices[Math.floor(Math.random()*voices.length)];if(policy==="default")return voices.find(v=>v.default)||voices[0];return voices[Number(policy)]||voices[0]};readingLoop.playConversation(readingPassage.sentences.map(s=>({role:"ai",text:stripFurigana(s.target)})),{lang:targetLang(),rate:Number($("#rate").value),voiceFor:pick})}
+function playReading(){if(!readingPassage?.sentences.length)return;if(readingLoop.running){readingLoop.togglePause();return}const policy=settings.voice||"default",pick=()=>{if(!voices.length)return null;if(policy==="random")return voices[Math.floor(Math.random()*voices.length)];if(policy==="default")return voices.find(v=>v.default)||voices[0];return voices[Number(policy)]||voices[0]};readingLoop.playConversation(readingPassage.sentences.map(s=>({role:"ai",text:s.target})),{lang:targetLang(),rate:Number($("#rate").value),voiceFor:pick})}
 
 function saveWorkspace(patch={}){const next={...workspace(),view:document.body.dataset.view||"practice",discussionMode,mapQuery:$("#map-search")?.value||"",historyQuery:$("#history-search")?.value||"",mapView:settings.mapView||"kanji",...patch};try{storePreference(WORKSPACE_KEY,JSON.stringify(next))}catch{/* Navigation must work even when browser storage is full or unavailable. */}return next}
 let applyingRoute=false;
@@ -542,7 +544,7 @@ function playKanjiSentence(sentence){
   if(loop.running&&kanjiPlaying?.id===sentence.id){loop.togglePause();return}
   kanjiPlaying=sentence;
   const voice=voices[Number($("#voice").value)]||voices[0]||null;
-  loop.play(preferredPlainTarget(sentence),{voice,rate:Number($("#rate").value),lang:targetLang()});
+  loop.play(preferredTarget(sentence),{voice,rate:Number($("#rate").value),lang:targetLang()});
 }
 // Practise walks one band, in its taught order, and shows only what you have
 // not met. `learnAt` is where you stopped; if it is in this band, you pick up
@@ -1146,9 +1148,10 @@ function untilDue(sentence,now=Date.now()){const due=Date.parse(sentence.srs?.du
   const minutes=Math.round((due-now)/60000);if(minutes<60)return minutes+"m";const hours=Math.round(minutes/60);if(hours<24)return hours+"h";return Math.round(hours/24)+"d"}
 async function openDetail(id){const sentence=await getSentence(id);if(!sentence)return showView("library");resetSession();detail=ensureSchedule(sentence);showView("sentence");renderDetail()}
 function markSelectedRow(){for(const li of document.querySelectorAll("#history-list li"))li.classList.toggle("selected",li.dataset.id===detail?.id);}
+function renderDetailLearningText(){$("#sentence-grammar").replaceChildren();$("#sentence-grammar").hidden=true;$("#sentence-japanese").innerHTML=rubyHtml(preferredTarget(detail));$("#sentence-japanese").lang=itemTarget(detail);enableVocabulary($("#sentence-japanese"),preferredTarget(detail),itemTarget(detail),detail,{grammarHost:$("#sentence-grammar"),explain:true});}
 function renderDetail(){if(!detail)return;closeEditor();markSelectedRow();
   $("#sentence-added").textContent="Added "+formatDate(detail.createdAt);
-  $("#sentence-grammar").replaceChildren();$("#sentence-grammar").hidden=true;$("#sentence-japanese").innerHTML=rubyHtml(preferredTarget(detail));$("#sentence-japanese").lang=itemTarget(detail);enableVocabulary($("#sentence-japanese"),preferredTarget(detail),itemTarget(detail),detail,{grammarHost:$("#sentence-grammar"),explain:true});
+  renderDetailLearningText();
   $("#sentence-english").textContent=detail.source;
   const registerRow=$("#sentence-register-row"),canChooseRegister=hasRegisters(itemTarget(detail))&&(detail.casualTarget||detail.target)!==(detail.politeTarget||detail.target);
   registerRow.hidden=!canChooseRegister;
@@ -1183,6 +1186,7 @@ async function saveEdit(event){event.preventDefault();if(!detail)return;
   const source=$("#sentence-source-draft").value.trim();
   if(!source){$("#sentence-edit-error").textContent="Enter the sentence meaning.";$("#sentence-edit-error").hidden=false;return}
   const plain=stripFurigana(japanese).trim();
+  if(!rewrittenDraft&&plain===stripFurigana(preferredTarget(detail)).trim()&&japanese!==preferredTarget(detail))detail={...detail,readingOverrides:{...(detail.readingOverrides||{}),...Object.fromEntries(rubySegments(japanese).filter(p=>p.reading).map(p=>[p.text,p.reading]))}};
   if(sentenceRegister(detail)==="polite")detail={...detail,politeTarget:japanese,plainPoliteTarget:plain,updatedAt:new Date().toISOString()};
   else detail={...detail,target:japanese,plainTarget:plain,casualTarget:japanese,plainCasualTarget:plain,updatedAt:new Date().toISOString()};
   if(rewrittenDraft){const forms={...rewrittenDraft,source};forms[sentenceRegister(detail)==="polite"?"polite":"casual"]=japanese;detail=replaceSentenceContent(detail,forms);delete detail.grammar}else detail={...detail,source};
@@ -1200,7 +1204,7 @@ async function rewriteDetailSentence(){
   finally{if(generation===editorGeneration&&detail?.id===id){button.disabled=!hasTranslator();$("#sentence-save").disabled=false}}
 }
 function playDetail(){if(!detail)return;if(loop.running){loop.togglePause();return}
-  const voice=voices[Number($("#voice").value)]||voices[0]||null;loop.play(preferredPlainTarget(detail),{voice,rate:Number($("#rate").value),lang:targetLang()})}
+  const voice=voices[Number($("#voice").value)]||voices[0]||null;loop.play(preferredTarget(detail),{voice,rate:Number($("#rate").value),lang:targetLang()})}
 // One confirm sheet for every delete — the detail page and the rows on the
 // kanji and grammar sheets — so a slip of the thumb costs a second tap, and
 // the consequence line is read the same way everywhere.
@@ -1532,7 +1536,7 @@ function startReviewListening(){if(reviewListening)return;
 function stopReviewListening(){if(!reviewListening||!reviewRecognition)return;reviewListening=false;try{reviewRecognition.stop()}catch{}$("#review-mic").setAttribute("aria-pressed","false");$("#review-panel").classList.remove("is-listening")}
 function toggleReviewListening(){reviewListening?stopReviewListening():startReviewListening()}
 async function skipReview(){const sentence=reviewQueue[reviewIndex];if(!sentence||reviewBusy)return;reviewBusy=true;updateReviewPrevious();const snapshot=reviewSnapshot(sentence);try{if(sentence){const updated={...sentence,skipped:true,skippedAt:new Date().toISOString(),updatedAt:new Date().toISOString()};await saveSentence(updated);reviewUndo.push(snapshot);reviewQueue[reviewIndex]=updated}reviewIndex++;renderReview()}finally{reviewBusy=false;updateReviewPrevious()}}
-function playReviewAudio(){const sentence=reviewQueue[reviewIndex];if(!sentence)return;if(loop.running){loop.togglePause();return}const policy=$("#voice").value,voice=policy==="random"?voices[Math.floor(Math.random()*voices.length)]:(policy==="default"?voices.find(v=>v.default)||voices[0]:voices[Number(policy)])||null;loop.play(reviewPlainJapanese(sentence)||reviewJapanese(sentence).replace(/【[^】]+】/g,""),{voice,rate:Number($("#rate").value),lang:targetLang()})}
+function playReviewAudio(){const sentence=reviewQueue[reviewIndex];if(!sentence)return;if(loop.running){loop.togglePause();return}const policy=$("#voice").value,voice=policy==="random"?voices[Math.floor(Math.random()*voices.length)]:(policy==="default"?voices.find(v=>v.default)||voices[0]:voices[Number(policy)])||null;loop.play(reviewJapanese(sentence),{voice,rate:Number($("#rate").value),lang:targetLang()})}
 // One grade per card. The save is awaited before the queue moves on, so a
 // second tap (or a held 2 key) during it would otherwise grade the same card
 // twice: two review entries and an interval pushed out twice.
@@ -1601,7 +1605,7 @@ async function importBackupData(backup){
  if(!(Number(backup.schemaVersion)>=1&&Number(backup.schemaVersion)<=SCHEMA_VERSION)||!Array.isArray(backup.sentences))throw new Error("Unsupported backup.");
  const before=await listSentences(),upgrade=planMiniSentenceUpgrade(before,backup),merged=upgrade.sentences,catalogues=mergeCatalogues(importedCatalogues,backup.catalogues);
  if(upgrade.removed.length)await saveImportRecovery({schemaVersion:2,sentences:upgrade.removed,catalogues:importedCatalogues,kind:'Minihongo word cards replaced with sentences'},'minihongo-v2-word-cards');
- saveCatalogues(catalogues);try{await replaceAll(merged)}catch(error){saveCatalogues(importedCatalogues);throw error}markBackupDirty();importedCatalogues=catalogues;applyCatalogues();
+ saveCatalogues(catalogues);try{await replaceAll(merged)}catch(error){saveCatalogues(importedCatalogues);throw error}markBackupDirty();importedCatalogues=catalogues;applyCatalogues();scheduleReadingBackfill();
  if(Array.isArray(backup.notes))await replaceNotes(mergeNotes(await listNotes().catch(()=>[]),backup.notes));
  const added=merged.length-before.length+upgrade.removed.length,message=`Added ${added} sentence(s). ${backup.sentences.length-added} already present; existing progress kept.${upgrade.removed.length?` Replaced ${upgrade.removed.length} Minihongo word cards with sentences.`:""}`;
  setStatus(message);refreshDueBadge();await renderHistory();return {added,total:merged.length};
@@ -1726,7 +1730,7 @@ function renderStarterOffer(all){
 }
 
 
-$("#tabs").addEventListener("click",event=>{const tab=event.target.closest(".tab[data-view]");if(tab)showView(tab.dataset.view)});$("#translate").onclick=()=>discussionMode?(discussionTurns.length?replyDiscussion():beginDiscussion()):readingMode?generateReadingMode():performTranslation();$("#english-input").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")(discussionMode?(discussionTurns.length?replyDiscussion():beginDiscussion()):readingMode?generateReadingMode():performTranslation)()};$("#play-pause").onclick=()=>{if(!current)return;if(loop.running){loop.togglePause();return}const policy=$("#voice").value,voice=policy==="random"?voices[Math.floor(Math.random()*voices.length)]:(policy==="default"?voices.find(v=>v.default)||voices[0]:voices[Number(policy)])||null;loop.play(selectedPlainJapanese(),{voice,rate:Number($("#rate").value),lang:targetLang()})};$("#show-english").onchange=()=>{saveSettings();renderSentence()};$("#show-furigana").onchange=()=>{saveSettings();renderSentence()};$("#show-polite").onchange=async()=>{resetSession();saveSettings();if(current&&hasRegisters(itemTarget(current))){current={...current,reviewRegister:$("#show-polite").checked?"polite":"casual",updatedAt:new Date().toISOString()};await saveSentence(current);if(detail?.id===current.id)detail=current}renderSentence()};$("#rate").oninput=()=>{const rate=Number($("#rate").value);$("#rate-value").textContent=rate.toFixed(1)+"×";resetSession();loop.setRate(rate)};// Each preference commits on "change" (never on blur), and everything the
+$("#tabs").addEventListener("click",event=>{const tab=event.target.closest(".tab[data-view]");if(tab)showView(tab.dataset.view)});$("#translate").onclick=()=>discussionMode?(discussionTurns.length?replyDiscussion():beginDiscussion()):readingMode?generateReadingMode():performTranslation();$("#english-input").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")(discussionMode?(discussionTurns.length?replyDiscussion():beginDiscussion()):readingMode?generateReadingMode():performTranslation)()};$("#play-pause").onclick=()=>{if(!current)return;if(loop.running){loop.togglePause();return}const policy=$("#voice").value,voice=policy==="random"?voices[Math.floor(Math.random()*voices.length)]:(policy==="default"?voices.find(v=>v.default)||voices[0]:voices[Number(policy)])||null;loop.play(selectedJapanese(),{voice,rate:Number($("#rate").value),lang:targetLang()})};$("#show-english").onchange=()=>{saveSettings();renderSentence()};$("#show-furigana").onchange=()=>{saveSettings();renderSentence()};$("#show-polite").onchange=async()=>{resetSession();saveSettings();if(current&&hasRegisters(itemTarget(current))){current={...current,reviewRegister:$("#show-polite").checked?"polite":"casual",updatedAt:new Date().toISOString()};await saveSentence(current);if(detail?.id===current.id)detail=current}renderSentence()};$("#rate").oninput=()=>{const rate=Number($("#rate").value);$("#rate-value").textContent=rate.toFixed(1)+"×";resetSession();loop.setRate(rate)};// Each preference commits on "change" (never on blur), and everything the
 // old Save also did — notices, reminder schedule — follows the write.
 function commitPreferences(){if(saveSettings()){renderPracticeNotices();writeReminderPrefs();syncReminderSchedule()}else flashSaved("Not saved — this browser blocked storage")}
 for(const id of ["theme","motion","voice","discussion-voice-ai","discussion-voice-user","rate","autotag","remind-time","gist-auto","gist-url"])$("#"+id).addEventListener("change",commitPreferences);
@@ -1816,7 +1820,7 @@ async function restoreRoute(){
   await applyRoute();window.echoRouteReady=true;
 }
 window.addEventListener("popstate",()=>applyRoute());
-applyLanguage();startupCleanup=migrateStore().then(()=>cleanupLegacyMiniHongo());startupCleanup.then(async()=>{await repairReversedCards();await restoreRoute();maybeAutoBackup("open").catch(()=>{})}).catch(error=>{window.echoReportError?.(error);setStatus('Minihongo cleanup could not finish: '+error.message,true);restoreRoute().catch(error=>window.echoReportError?.(error))});refreshDueBadge();setupRecognition();updateInstallUI();
+applyLanguage();startupCleanup=migrateStore().then(()=>cleanupLegacyMiniHongo());startupCleanup.then(async()=>{await repairReversedCards();await restoreRoute();maybeAutoBackup("open").catch(()=>{});scheduleReadingBackfill()}).catch(error=>{window.echoReportError?.(error);setStatus('Minihongo cleanup could not finish: '+error.message,true);restoreRoute().catch(error=>window.echoReportError?.(error))});refreshDueBadge();setupRecognition();updateInstallUI();
 // The in-app WaniKani sync is gone (the pull tool feeds the stories instead);
 // what it left in a browser is cleared once, quietly.
 try{localStorage.removeItem("jp-echo-wanikani-token");indexedDB.deleteDatabase("jp-echo-wanikani")}catch{}
@@ -1846,3 +1850,21 @@ $("#empty-starter").onclick=()=>seedStarter($("#empty-starter"),$("#empty-starte
 $("#empty-practice").onclick=()=>{showView("practice");setPracticeMode("sentence");$("#english-input").focus()};
 
 window.echoAppReady=true;
+
+let readingBackfillRunning=false,readingBackfillTimer=null,readingBackfillRequested=false;
+function scheduleReadingBackfill(){if(readingBackfillRunning){readingBackfillRequested=true;return}if(readingBackfillTimer)return;readingBackfillTimer=setTimeout(()=>{readingBackfillTimer=null;runReadingBackfill()},500)}
+async function runReadingBackfill(){
+ if(readingBackfillRunning)return;
+ const status=$("#reading-backfill-status");
+ if(!hasTranslator()){status.textContent="Connect a translator to correct all existing furigana. Original sentences are kept.";return}
+ readingBackfillRunning=true;$("#reading-backfill").disabled=true;
+ try{await backfillReadings({list:listSentences,read:getSentence,correct:s=>correctSentenceReadings(s,settings),
+  write:async(id,expected,next)=>{const saved=await applyReadingCorrection(id,expected,next);if(!saved){readingBackfillRequested=true;return}markBackupDirty();
+   if(current?.id===id){Object.assign(current,saved);if(!$("#main-view").hidden)renderSentence()}if(detail?.id===id){Object.assign(detail,saved);if(!$("#sentence-change").open){renderDetailLearningText()}}
+   reviewQueue=reviewQueue.map(s=>s.id===id?saved:s);
+   if(!$("#review-view").hidden&&reviewQueue[reviewIndex]?.id===id&&reviewRevealed){const target=reviewJapanese(saved);$("#review-japanese").innerHTML=reviewMode(saved)==="writing"?markTarget($("#review-answer").value,target).map(p=>p.changed?"<mark>"+p.html+"</mark>":p.html).join(""):rubyHtml(target);enableReviewVocabulary(saved,target)}
+  },onProgress:(done,total)=>status.textContent=`Furigana checked: ${done} / ${total} sentences. Original readings are kept in your backup.`});
+ }catch(error){status.textContent="Furigana correction paused: "+error.message+". Reopen Echo or tap Resume to continue."}
+ finally{readingBackfillRunning=false;$("#reading-backfill").disabled=false;if(readingBackfillRequested){readingBackfillRequested=false;scheduleReadingBackfill()}}
+}
+$("#reading-backfill").onclick=runReadingBackfill;

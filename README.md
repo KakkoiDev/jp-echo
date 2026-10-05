@@ -183,3 +183,22 @@ Starter-import JP Core revision: ee9bfdb8a5b3fc38903ef6fcbcd50fa65d75bdf3.
 The starter contains 274 cards: the 231 main vocabulary entries as words/glosses, plus one short authored example per each of 43 grammar points. Advanced vocabulary, compounds, expressions, stories and extra examples are excluded.
 
 On the first v119 launch, Echo archives and removes only recognizable v1 Minihongo import cards, restores the personal library, and strips imported-only dictionary links. Existing personal IDs, content and review progress remain intact. Settings shows the removed/kept counts and an **Undo Minihongo cleanup** recovery action. No new starter cards are added during cleanup; import the compact bundle separately when wanted. Old oversized starter files are rejected.
+
+## Correcting existing furigana
+On opening Echo, all Japanese sentences receive an offline dictionary pass and
+a contextual reading check using the configured translator. Both registers are
+checked; completed records are skipped on subsequent opens. Settings → Your
+sentences shows progress and a Resume button. Interrupted or failed requests
+resume on the next open, without navigating away from the current page.
+The original readings are retained as `furiganaRecovery` in exported backups.
+Sentence text, meanings, review history, identity and scheduling stay unchanged.
+Manual reading corrections in the sentence editor become `readingOverrides`
+and are retained in subsequent checks. Unknown names still require human
+judgment: a model check is not a guarantee of a correct name pronunciation.
+
+`japanese-readings.js` is copied from JP Core's browser distribution (only its
+module import path differs). `readings.js` supplies Echo's dictionary and the
+resumable backfill; the model request and persistence remain Echo-owned.
+All playback modes speak the same reading annotations displayed on screen.
+
+Shared reading helper revision: `78a5fa3661292be083b07775e9c3d0e59e4f75e0`.
