@@ -40,3 +40,17 @@ test('starting a session applies saved limits to the real due queue',async()=>{
  const queue=await run(async()=>items,x=>x,x=>x,async()=>{},dueSentences,limitReviewSession,{reviewNewLimit:0,reviewExistingLimit:1},x=>shown=x,()=>{});
  assert.deepEqual(queue.map(x=>x.id),['r']);assert.equal(shown,'session');
 });
+
+test('navigation badge reflects session limits rather than the entire backlog',async()=>{
+ const {readFileSync}=await import('node:fs');
+ const {dueSentences}=await import('../srs.js');
+ const source=readFileSync(new URL('../app.js',import.meta.url),'utf8');
+ const body=source.match(/async function refreshDueBadge\(\)\{([^\n]*)\}/)[1];
+ const items=Array.from({length:100},(_,id)=>({...card(id,2),srs:{state:2,due:'2020-01-01T00:00:00Z'}}));
+ const run=new Function('listSentences','ensureSchedule','dueSentences','limitReviewSession','settings','updateDueBadge',`return (async()=>{${body}})()`);
+ for(const limit of [undefined,0,5,200]){
+  let count;
+  await run(async()=>items,x=>x,dueSentences,limitReviewSession,{reviewExistingLimit:limit},x=>count=x);
+  assert.equal(count,Math.min(100,limit??20));
+ }
+});
