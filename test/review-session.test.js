@@ -54,3 +54,23 @@ test('navigation badge reflects session limits rather than the entire backlog',a
   assert.equal(count,Math.min(100,limit??20));
  }
 });
+
+test('settings and Review controls share saved values including zero',async()=>{
+ const {readFileSync}=await import('node:fs');
+ const source=readFileSync(new URL('../app.js',import.meta.url),'utf8');
+ const sync=source.match(/function syncReviewLimitInputs\(\)\{([^\n]*)\}/)[1];
+ const save=source.match(/function saveReviewLimit\(input,key\)\{([^\n]*)\}/)[1];
+ const fields=new Map();
+ const $=id=>{if(!fields.has(id))fields.set(id,{value:''});return fields.get(id)};
+ const settings={reviewNewLimit:0,reviewExistingLimit:7};let persisted;
+ const synchronize=new Function('$','settings','sessionLimit',sync);
+ synchronize($,settings,sessionLimit);
+ assert.equal($('#settings-review-new-limit').value,0);
+ assert.equal($('#review-existing-limit').value,7);
+ const change=new Function('input','key','settings','sessionLimit','persistSettings','syncReviewLimitInputs','document','flashSaved','renderReviewHome','renderSidePanel','refreshDueBadge',save);
+ change({value:'33'},'reviewExistingLimit',settings,sessionLimit,()=>{persisted={...settings};return true},()=>synchronize($,settings,sessionLimit),{body:{dataset:{view:'settings'}}},()=>{},()=>{},()=>{},()=>{});
+ assert.equal(persisted.reviewExistingLimit,33);
+ assert.equal($('#review-existing-limit').value,33);
+ assert.equal($('#settings-review-existing-limit').value,33);
+ assert.equal(settings.reviewNewLimit,0);
+});
