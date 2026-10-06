@@ -88,3 +88,11 @@ export function reviewStats(sentences,now=Date.now()){
   modes:Object.fromEntries(REVIEW_MODES.map(mode=>[mode,recent.filter(e=>e.mode===mode).length])),
   days:Array.from({length:7},(_,i)=>({label:i===0?'Past 24 hours':`${i*24}–${(i+1)*24} hours ago`,count:events.filter(e=>e.at>end-(i+1)*day&&e.at<=end-i*day).length}))};
 }
+
+export function reviewAvailabilityMessage(dueCount,sessionCount,nextDue,now=Date.now()){
+ const remaining=Math.max(0,dueCount-sessionCount);
+ if(remaining)return `${remaining} more ${remaining===1?'card is':'cards are'} due now. Session limits apply to each session.`;
+ if(dueCount)return 'These cards are due now. Grading them will set their next review dates.';
+ if(Number.isFinite(nextDue)&&nextDue>now){const at=new Intl.DateTimeFormat(undefined,{dateStyle:'medium',timeStyle:'short'}).format(new Date(nextDue));return `The next scheduled card is due ${at}.`;}
+ return 'No cards are due now.';
+}

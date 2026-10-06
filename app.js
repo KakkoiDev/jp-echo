@@ -17,7 +17,7 @@ import {setImportedWords,bands as wordBands,carries as carriesWord,coverage as w
 import {deleteNote as dbDeleteNote,forBackup,getNote,listNotes,makeNote,mergeNotes,noteKey,putNote as dbPutNote,replaceNotes as dbReplaceNotes} from "./notes.js";
 import {downloadAnkiDeck} from "./anki-export.js";
 import {dueSentences,ensureSchedule,isDue,reviewSentence} from "./srs.js";
-import {reviewStats,sessionLimit,limitReviewSession,dueLine,ensureReviewTrack,nextSkill,recordReviewMode,reviewMode,reviewModeMeta,skillMix,skillReason} from "./review-modes.js";
+import {reviewAvailabilityMessage,reviewStats,sessionLimit,limitReviewSession,dueLine,ensureReviewTrack,nextSkill,recordReviewMode,reviewMode,reviewModeMeta,skillMix,skillReason} from "./review-modes.js";
 import {DEFAULT_TIME,REMINDER_TAG,reminderText,shouldRemind} from "./reminders.js";
 import {saveDiscussionTurn} from "./actions.js";
 // New shared UI comes from the component library (COMPONENTS.md).
@@ -1109,9 +1109,9 @@ async function renderReviewHome(){const all=(await listSentences()).map(item=>en
   $("#start-review").hidden=due.length===0;$("#review-practice").hidden=due.length>0;
   renderSkillMix(due);
   if(due.length){$("#review-estimate").textContent="About "+spell(Math.max(1,Math.round(due.length*.55)))+" minute"+(Math.round(due.length*.55)>1?"s":"")+", out loud.";
-    $("#review-footnote").textContent=next?"Next batch unlocks in "+describeGap(next-now)+".":""}
-  else{const at=next?new Intl.DateTimeFormat(undefined,{hour:"2-digit",minute:"2-digit"}).format(new Date(next)):null;
-    $("#review-rest-copy").textContent=available.length?"Cards are due, but your session limits exclude them. Increase a limit to start.":all.length===0?"Translate a sentence and it joins the queue straight away.":(at?"Your next batch comes back at "+at+". ":"")+spell(all.length)+(all.length===1?" sentence is":" sentences are")+" resting until then.";
+    $("#review-footnote").textContent=reviewAvailabilityMessage(available.length,due.length,next,now)}
+  else{const schedule=reviewAvailabilityMessage(0,0,next,now);
+    $("#review-rest-copy").textContent=available.length?"Cards are due, but your session limits exclude them. Increase a limit to start.":all.length===0?"Translate a sentence and it joins the queue straight away.":schedule;
     $("#review-footnote").textContent=available.length?"Limits apply separately to each session.":all.length?"Reviewing early doesn't help — the gap is the point.":""}}
 async function renderSidePanel(){
   const view=document.body.dataset.view;
@@ -1426,7 +1426,7 @@ function renderReview(){refreshReviewStats();updateReviewPrevious();resetSession
   else if(writing)$("#review-answer").focus()}
 async function renderReviewComplete(){const done=reviewQueue.length;let copy=done?spell(done)+(done===1?" review":" reviews")+" completed.":"Nothing was due.";
   const all=(await listSentences()).map(item=>ensureSchedule(item)),next=all.filter(item=>!isDue(item)).map(item=>Date.parse(item.srs.due)).filter(Number.isFinite).sort((a,b)=>a-b)[0];
-  if(next)copy+=" The next batch comes back in "+describeGap(next-Date.now())+".";
+  const remaining=dueSentences(all);copy+=" "+reviewAvailabilityMessage(remaining.length,0,next);
   $("#review-complete-copy").textContent=copy;refreshDueBadge()}
 function updateCheckButton(){const sentence=reviewQueue[reviewIndex];if(!sentence)return $("#review-check").disabled=true;$("#review-check").disabled=reviewMode(sentence)==="writing"&&!$("#review-answer").value.trim()}
 async function revealReview(){let sentence=reviewQueue[reviewIndex];if(!sentence||reviewRevealed)return;
