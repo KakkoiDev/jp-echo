@@ -88,3 +88,8 @@ test('kana おきます is clickable as a verb, not the prefix お',()=>{
 test('Rambo stays one unknown name instead of run and bow',()=>{
  const hit=wordSpans('ランボーは映画の主人公。')[0];assert.equal(hit.dictionary,'ランボー');assert.equal(hit.end,4);assert.equal(hit.id,null);assert.ok(!wordsIn('ランボー').has(ALL.find(w=>w.w==='ラン').id));
 });
+
+test('ざっくり is a whole vocabulary target rather than the substring くり',()=>{
+ const hits=wordSpans('ざっくり言うと、移行は半分終わっています。');
+ assert.equal(hits[0].start,0);assert.equal(hits[0].end,4);assert.equal(hits[0].dictionary,'ざっくり');
+});

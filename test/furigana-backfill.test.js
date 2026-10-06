@@ -31,3 +31,16 @@ test('editing a checked sentence invalidates its completed reading check',()=>{
  const original={id:'a',targetLang:'ja',target:'駅【えき】',readingVersion:READING_VERSION};original.readingSignature=readingSignature(original);
  const changed=dictionaryReadings({...original,target:'学校【がっこう】'});assert.equal(changed.readingVersion,undefined);
 });
+
+test('exact reported sentence repairs 言う even when marked checked',()=>{
+ const target='ざっくり言【げん】うと、移行【いこう】は半分【はんぶん】終【お】わっています。';
+ const record={target,readingVersion:READING_VERSION};record.readingSignature=readingSignature(record);
+ assert.equal(dictionaryReadings(record).target,'ざっくり言【い】うと、移行【いこう】は半分【はんぶん】終【お】わっています。');
+});
+
+test('backfill rejects an AI regression of the dictionary reading for 言う',async()=>{
+ const original={id:'say',target:'ざっくり言【げん】うと、移行【いこう】は半分【はんぶん】終【お】わっています。'};
+ let saved;
+ await backfillReadings({list:async()=>[original],read:async()=>original,correct:async()=>({target:original.target}),write:async(id,signature,next)=>{saved=next},yieldTask:async()=>{}});
+ assert.ok(saved.target.includes('言【い】う'));assert.equal(saved.readingVersion,READING_VERSION);
+});

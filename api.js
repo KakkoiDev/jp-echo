@@ -355,7 +355,9 @@ export async function correctSentenceReadings(sentence,settings={}){
   const raw=await askModel(JSON.stringify({sentences:texts,candidates:sentence.readingIssues||[],requiredReadings:sentence.readingOverrides||{},feedback:attempt?error.message:undefined}),system,settings);
   if(!Array.isArray(raw.sentences)||raw.sentences.length!==texts.length)throw Error('The AI did not return every sentence reading.');
   const {rubySegments}=await import('./core.js');
-  const map=new Map(texts.map((text,i)=>{const corrected=validateReadingCorrection(text,raw.sentences[i]);for(const part of rubySegments(corrected)){const wanted=sentence.readingOverrides?.[part.text];if(wanted&&part.reading!==wanted)throw Error('Reading correction ignored your saved reading for '+part.text)}return [text,corrected]}));
+  const {dictionaryReadings}=await import('./readings.js');
+  const map=new Map(texts.map((text,i)=>{const checked=dictionaryReadings({...sentence,target:raw.sentences[i],casualTarget:undefined,politeTarget:undefined,readingVersion:undefined});
+  const corrected=validateReadingCorrection(text,checked.target);for(const part of rubySegments(corrected)){const wanted=sentence.readingOverrides?.[part.text];if(wanted&&part.reading!==wanted)throw Error('Reading correction ignored your saved reading for '+part.text)}return [text,corrected]}));
   return Object.fromEntries(['target','casualTarget','politeTarget'].filter(k=>sentence[k]).map(k=>[k,map.get(sentence[k])]));
  }catch(e){error=e}
  throw error;

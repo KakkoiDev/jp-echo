@@ -1383,7 +1383,7 @@ function setupRecognition(){
   bindDictation($("#word-mic"),$("#word-say"),$("#word-say-status"));
   }
 async function startReview(){if(reviewBusy)return;const items=await listSentences(),prepared=items.map(item=>ensureReviewTrack(ensureSchedule(item)));await Promise.all(prepared.filter((item,index)=>item!==items[index]).map(saveSentence));reviewQueue=limitReviewSession(dueSentences(prepared),settings);reviewIndex=0;reviewUndo=[];if(!reviewQueue.length)return showView("review");showView("session");renderReview()}
-function reviewJapanese(sentence){return hasRegisters(itemTarget(sentence))?preferredTarget(sentence):(sentence.target||"")}
+function reviewJapanese(sentence){sentence=dictionaryReadings(sentence);return hasRegisters(itemTarget(sentence))?preferredTarget(sentence):(sentence.target||"")}
 function reviewPlainJapanese(sentence){return hasRegisters(itemTarget(sentence))?preferredPlainTarget(sentence):(sentence.plainTarget||stripFurigana(sentence.target||""))}
 const STAGE_LABELS={0:"New",1:"Learning",2:"Review",3:"Relearning"};
 function stageLabel(sentence){const state=sentence.srs?.state??0,reps=Number(sentence.srs?.reps)||0;return STAGE_LABELS[state]+(reps?" · seen "+reps+(reps===1?" time":" times"):"")}
