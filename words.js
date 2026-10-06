@@ -15,8 +15,6 @@
 import {stripFurigana} from "./core.js";
 import {createJapaneseWordMatcher} from "./japanese-words.js";
 import {WORDS} from "./words-data.js";
-// Echo-owned supplemental IDs; these are not JMdict entry numbers.
-if(!WORDS.some(w=>w.w==="ざっくり"))WORDS.push({id:900000001,w:"ざっくり",r:"ざっくり",en:["roughly; broadly; approximately"],pos:["adv","adv-to"]});
 
 export const LEVELS = ["N5", "N4", "N3", "N2", "N1", "+"];
 export const LEVEL_LABELS = {N5: "Getting around", N4: "Everyday talk", N3: "Newspapers, forms", N2: "Work and study", N1: "The long tail", "+": "Common, on no list"};
