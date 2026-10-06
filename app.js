@@ -17,7 +17,7 @@ import {setImportedWords,bands as wordBands,carries as carriesWord,coverage as w
 import {deleteNote as dbDeleteNote,forBackup,getNote,listNotes,makeNote,mergeNotes,noteKey,putNote as dbPutNote,replaceNotes as dbReplaceNotes} from "./notes.js";
 import {downloadAnkiDeck} from "./anki-export.js";
 import {dueSentences,ensureSchedule,isDue,reviewSentence} from "./srs.js";
-import {sessionLimit,limitReviewSession,dueLine,ensureReviewTrack,nextSkill,recordReviewMode,reviewMode,reviewModeMeta,skillMix,skillReason} from "./review-modes.js";
+import {reviewStats,sessionLimit,limitReviewSession,dueLine,ensureReviewTrack,nextSkill,recordReviewMode,reviewMode,reviewModeMeta,skillMix,skillReason} from "./review-modes.js";
 import {DEFAULT_TIME,REMINDER_TAG,reminderText,shouldRemind} from "./reminders.js";
 import {saveDiscussionTurn} from "./actions.js";
 // New shared UI comes from the component library (COMPONENTS.md).
@@ -1089,7 +1089,16 @@ async function refreshDueBadge(){updateDueBadge(limitReviewSession(dueSentences(
 function renderSkillMix(due){const mix=skillMix(due),row=$("#review-skill-mix-row");$("#review-skill-mix").hidden=due.length===0;
   row.setAttribute("aria-label","Today you will "+["listening","reading","writing"].map(mode=>reviewModeMeta(mode).verb+" "+mix[mode]).join(", "));
   row.replaceChildren(...["listening","reading","writing"].map(mode=>{const item=document.createElement("span");item.className="skill-mix-item";item.setAttribute("aria-hidden","true");const count=document.createElement("strong");count.textContent=String(mix[mode]);item.append(skillGlyph(mode,{size:30})," "+reviewModeMeta(mode).verb+" ",count);return item}))}
+function showReviewTab(tab){settings.reviewTab=tab;persistSettings();const stats=tab==="stats";$("#review-overview").hidden=stats;$("#review-stats").hidden=!stats;$("#review-tab-session").setAttribute("aria-selected",String(!stats));$("#review-tab-stats").setAttribute("aria-selected",String(stats))}
+function renderReviewStats(items){const stats=reviewStats(items),counter=stats.last24h+" reviews completed in the past 24 hours";$("#review-24h").textContent=counter;$("#session-review-24h").textContent=counter;
+ const table=(headers,rows)=>{const node=document.createElement("table"),head=document.createElement("thead"),body=document.createElement("tbody");const line=(cells,tag)=>{const tr=document.createElement("tr");for(const text of cells){const td=document.createElement(tag);td.textContent=String(text);tr.append(td)}return tr};head.append(line(headers,"th"));for(const row of rows)body.append(line(row,"td"));node.className="data-table";node.append(head,body);return node};
+ $("#review-stats-summary").replaceChildren(table(["Period","Reviews"],[["Past 24 hours",stats.last24h],["Past 7 days",stats.last7d],["All saved history",stats.total],["Distinct cards, past 24 hours",stats.unique24h],["OK, past 24 hours",stats.ok24h],["Again, past 24 hours",stats.again24h]]));
+ $("#review-stats-modes").replaceChildren(table(["Skill","Reviews"],REVIEW_MODES_FOR_STATS.map(mode=>[reviewModeMeta(mode).label,stats.modes[mode]])));
+ $("#review-stats-days").replaceChildren(table(["Period","Reviews"],stats.days.map(day=>[day.label,day.count])))}
+const REVIEW_MODES_FOR_STATS=["listening","reading","writing"];
+async function refreshReviewStats(){renderReviewStats(await listSentences())}
 async function renderReviewHome(){const all=(await listSentences()).map(item=>ensureSchedule(item)),now=Date.now(),available=dueSentences(all),due=limitReviewSession(available,settings),counts={new:0,learning:0,review:0};
+  renderReviewStats(all);showReviewTab(settings.reviewTab||"session");
   for(const item of due){const state=item.srs?.state??0;if(state===1||state===3)counts.learning++;else if(state===2)counts.review++;else counts.new++}
   $("#due-count").textContent=String(due.length);$("#due-new").textContent=String(counts.new);$("#due-learning").textContent=String(counts.learning);$("#due-review").textContent=String(counts.review);
   syncReviewLimitInputs();
@@ -1388,7 +1397,7 @@ function reviewPlainJapanese(sentence){return hasRegisters(itemTarget(sentence))
 const STAGE_LABELS={0:"New",1:"Learning",2:"Review",3:"Relearning"};
 function stageLabel(sentence){const state=sentence.srs?.state??0,reps=Number(sentence.srs?.reps)||0;return STAGE_LABELS[state]+(reps?" · seen "+reps+(reps===1?" time":" times"):"")}
 function stageClass(sentence){const state=sentence.srs?.state??0;return state===0?"new":state===2?"review":"learning"}
-function renderReview(){updateReviewPrevious();resetSession();stopReviewListening();const sentence=reviewQueue[reviewIndex],complete=!sentence;
+function renderReview(){refreshReviewStats();updateReviewPrevious();resetSession();stopReviewListening();const sentence=reviewQueue[reviewIndex],complete=!sentence;
   $("#review-panel").hidden=complete;$("#review-prompt-actions").hidden=complete;$("#review-actions").hidden=true;$("#review-complete").hidden=!complete;
   $("#review-progress").textContent=complete?`${reviewQueue.length} / ${reviewQueue.length}`:`${reviewIndex+1} / ${reviewQueue.length}`;
   renderSidePanel();$("#review-progress-bar").style.width=(reviewQueue.length?Math.round((complete?reviewQueue.length:reviewIndex)/reviewQueue.length*100):0)+"%";
@@ -1789,6 +1798,7 @@ addEventListener("keydown",event=>{
 function syncReviewLimitInputs(){for(const [suffix,key] of [["new","reviewNewLimit"],["existing","reviewExistingLimit"]])for(const prefix of ["settings-"])$("#"+prefix+"review-"+suffix+"-limit").value=sessionLimit(settings[key])}
 function saveReviewLimit(input,key){settings[key]=sessionLimit(input.value);const saved=persistSettings();syncReviewLimitInputs();if(document.body.dataset.view==="settings")flashSaved(saved?undefined:"Not saved — this browser blocked storage");renderReviewHome();renderSidePanel();refreshDueBadge()}
 for(const [suffix,key] of [["new","reviewNewLimit"],["existing","reviewExistingLimit"]])for(const prefix of ["settings-"]){const input=$("#"+prefix+"review-"+suffix+"-limit");input.onchange=()=>saveReviewLimit(input,key)}
+$("#review-tab-session").onclick=()=>showReviewTab("session");$("#review-tab-stats").onclick=()=>showReviewTab("stats");
 $("#start-review").onclick=startReview;$("#review-practice").onclick=()=>showView("practice");$("#review-back").onclick=()=>{stopReviewListening();showView("review")};$("#review-done").onclick=()=>showView("practice");$("#review-home-link").onclick=()=>showView("review");$("#review-previous").onclick=previousReview;$("#review-check").onclick=revealReview;$("#review-skip").onclick=skipReview;$("#review-mic").onclick=toggleReviewListening;$("#review-answer").oninput=updateCheckButton;$("#review-front-audio").onclick=playReviewAudio;$("#review-audio").onclick=playReviewAudio;$("#review-again").onclick=()=>rateReview("again");$("#review-ok").onclick=()=>rateReview("ok");
 $("#settings-button").onclick=()=>openSettings();$("#settings-nav").onclick=()=>openSettings();$("#settings-back").onclick=leaveSettings;$("#install-app").onclick=installApp;
 for(const row of document.querySelectorAll(".settings-row[data-settings-page]"))row.onclick=()=>showSettingsPage(row.dataset.settingsPage);

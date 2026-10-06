@@ -204,3 +204,5 @@ All playback modes speak the same reading annotations displayed on screen.
 Shared reading helper revision: `78a5fa3661292be083b07775e9c3d0e59e4f75e0`.
 
 Review session limits are saved on this device from Settings → Every day → Review limits. New cards and existing reviews each default to 20 per session; either can be set to any nonnegative whole number, including 0. Learning and relearning count toward the existing review limit. Excess due cards stay available for the next session.
+
+Review → Stats summarizes saved grades over rolling 24-hour and 7-day windows, with ratings and skill counts. Again and OK each count once; skips do not count and undo restores the previous history. Review events remain in each sentence’s `reviews` array and are included in backups.

@@ -75,3 +75,16 @@ export function limitReviewSession(due,settings={}){
   let fresh=sessionLimit(settings.reviewNewLimit),reviews=sessionLimit(settings.reviewExistingLimit);
   return due.filter(item=>(item.srs?.state??0)===0?fresh-->0:reviews-->0);
 }
+
+export function reviewStats(sentences,now=Date.now()){
+ const end=Number(now),day=86400000,events=[];
+ for(const sentence of sentences)for(const review of Array.isArray(sentence.reviews)?sentence.reviews:[]){
+  const at=Date.parse(review.at);
+  if(Number.isFinite(at)&&at<=end&&['ok','again'].includes(review.rating))events.push({...review,at,sentenceId:sentence.id});
+ }
+ const recent=events.filter(e=>e.at>end-day),week=events.filter(e=>e.at>end-7*day);
+ return {total:events.length,last24h:recent.length,last7d:week.length,unique24h:new Set(recent.map(e=>e.sentenceId)).size,
+  ok24h:recent.filter(e=>e.rating==='ok').length,again24h:recent.filter(e=>e.rating==='again').length,
+  modes:Object.fromEntries(REVIEW_MODES.map(mode=>[mode,recent.filter(e=>e.mode===mode).length])),
+  days:Array.from({length:7},(_,i)=>({label:i===0?'Past 24 hours':`${i*24}–${(i+1)*24} hours ago`,count:events.filter(e=>e.at>end-(i+1)*day&&e.at<=end-i*day).length}))};
+}
