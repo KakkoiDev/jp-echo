@@ -28,3 +28,19 @@ export async function fetchDeckBackup(input,{fetchImpl=fetch,signal}={}){
  let data;try{data=await response.json()}catch{throw new Error('The download is not a JSON file. Use a direct JSON link or import the downloaded file.');}
  return validateDeckBackup(data);
 }
+
+// Yield before parsing/merging so the browser can paint the pending status.
+export async function runImportFeedback({status,buttons=[],label='file',load,save,onComplete=()=>{},yieldUI=()=>new Promise(resolve=>setTimeout(resolve,0))}){
+ const previous=buttons.map(button=>button.disabled);
+ const show=(message,state)=>{status.textContent=message;status.dataset.state=state;status.classList.toggle('error',state==='error')};
+ buttons.forEach(button=>button.disabled=true);status.setAttribute('aria-busy','true');
+ try{
+  show(`Reading ${label}…`,'pending');await yieldUI();
+  const data=await load();
+  show(`Importing ${(data.sentences?.length||0).toLocaleString()} sentences…`,'pending');await yieldUI();
+  const result=await save(data);
+  const message=`Import complete. ${result.added.toLocaleString()} new sentences added; existing sentences merged. ${result.total.toLocaleString()} in your library.`;
+  show(message,'success');onComplete(message);return result;
+ }catch(error){show(`Import failed: ${error.message||'Please try again.'}`,'error');return null}
+ finally{status.setAttribute('aria-busy','false');buttons.forEach((button,index)=>button.disabled=previous[index])}
+}

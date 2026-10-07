@@ -1,5 +1,5 @@
 import {dictionaryReadings,backfillReadings} from "./readings.js";
-import {validateDeckBackup,fetchDeckBackup} from './imports.js';
+import {validateDeckBackup,fetchDeckBackup,runImportFeedback} from './imports.js';
 import {isSeeded,planMiniSentenceUpgrade,repairMiniImport} from './mini-imports.js';
 import {applyI18n,setDictionary,t} from "./i18n.js";
 import {earliestPair,flipSentence,isReversed,pairLooksSwapped,repairPair} from "./repair.js";
@@ -1624,17 +1624,17 @@ async function importBackupData(backup){
 // to whichever screen started it: Settings, or the empty Library.
 let importStatus=null;
 const importStatusNode=()=>importStatus||$("#import-status");
-async function importHistory(file){if(!file)return;const status=importStatusNode();status.classList?.remove("error");
-  let data;try{data=JSON.parse(await file.text())}catch{status.textContent="That file is not valid JSON. See DECK-FORMAT.md for the deck format.";return}
-  try{const {added,total}=await importBackupData(data);status.textContent=added?`Imported ${added} sentence${added===1?"":"s"}. ${total.toLocaleString()} in your library.`:"Everything in that file is already in your library."}
-  catch(error){status.textContent=error.message||"Import failed.";setStatus(error.message||"Import failed.",true)}
-  finally{importStatus=null}}
+async function importHistory(file){if(!file)return;
+ const status=importStatusNode();
+ try{await runImportFeedback({status,buttons:[$("#import"),$("#empty-import"),$("#import-deck-url")].filter(Boolean),label:file.name,
+  load:async()=>{try{return JSON.parse(await file.text())}catch{throw new Error("That file is not valid JSON. See DECK-FORMAT.md for the deck format.")}},
+  save:importBackupData,onComplete:message=>toast(message,6000)});
+ }finally{importStatus=null}}
 async function importDeckURL(url,button,status=$("#import-status")){
-  if(!String(url||"").trim()){status.textContent="Paste the deck's URL first.";$("#deck-json-url").focus();return}
-  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),30000);button.disabled=true;status.textContent="Downloading the deck…";
-  try{const {added,total}=await importBackupData(await fetchDeckBackup(url,{signal:controller.signal}));status.textContent=added?`Imported ${added} sentence${added===1?"":"s"}. ${total.toLocaleString()} in your library.`:"Everything in that deck is already in your library.";$("#deck-json-url").value=""}
-  catch(error){status.textContent=error.message}
-  finally{clearTimeout(timer);button.disabled=false}}
+ if(!String(url||"").trim()){status.textContent="Paste the deck's URL first.";$("#deck-json-url").focus();return}
+ const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),30000);
+ try{const result=await runImportFeedback({status,buttons:[button,$("#import")],label:"deck",load:()=>fetchDeckBackup(url,{signal:controller.signal}),save:importBackupData,onComplete:message=>toast(message,6000)});if(result)$("#deck-json-url").value=""}
+ finally{clearTimeout(timer)}}
 async function cleanupLegacyMiniHongo(){
  const marker='jp-echo-minihongo-cleanup-v2';
  if(localStorage.getItem(marker)!=='done'){
