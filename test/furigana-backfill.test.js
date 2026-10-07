@@ -51,3 +51,9 @@ test('話し合う in the reported sharing sentence corrects both kanji readings
  assert.equal(corrected,'どこが共有【きょうゆう】して話【はな】し合【あ】うのに一番【いちばん】いい場所【ばしょ】なの？');
  assert.ok(readingText(corrected).includes('はなしあう'));
 });
+
+test('shared longest compound matching handles polite and past 話し合う',()=>{
+ for(const [wrong,right] of [['話【はなし】し合【ごう】います','話【はな】し合【あ】います'],['話【はなし】し合【ごう】った','話【はな】し合【あ】った']]){
+  assert.equal(dictionaryReadings({target:wrong}).target,right);
+ }
+});
