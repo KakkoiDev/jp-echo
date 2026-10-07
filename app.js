@@ -211,7 +211,7 @@ async function installApp(){if(isInstalled())return updateInstallUI();if(install
 // ticks twice in a row restarts the animation instead of swallowing it.
 function tickCount(node,value){const text=String(value);if(!node||node.textContent===text)return;node.textContent=text;node.classList.remove("just-ticked");void node.offsetWidth;node.classList.add("just-ticked");node.addEventListener("animationend",()=>node.classList.remove("just-ticked"),{once:true})}
 function renderCount(){tickCount($("#echo-count"),current?.echoCount??0)}
-function selectedJapanese(){return current&&hasRegisters(itemTarget(current))?preferredTarget(current):(current?.target||"")}
+function selectedJapanese(){const sentence=current?dictionaryReadings(current):null;return sentence&&hasRegisters(itemTarget(sentence))?preferredTarget(sentence):(sentence?.target||"")}
 function selectedPlainJapanese(){return current&&hasRegisters(itemTarget(current))?preferredPlainTarget(current):(current?.plainTarget||stripFurigana(current?.target||""))}
 function resetSession(){loop.stop()}
 function renderSentence(){const panel=$("#practice");panel.hidden=!current;$("#welcome").hidden=!!current;document.body.classList.toggle("has-sentence",!!current);if(!current)return;$("#japanese").innerHTML=rubyHtml(selectedJapanese());enableVocabulary($("#japanese"),selectedJapanese(),itemTarget(current),current);$("#english-display").textContent=current.source;$("#english-display").hidden=!$("#show-english").checked;panel.classList.toggle("hide-furigana",!$("#show-furigana").checked);renderCount();populateVoices()}

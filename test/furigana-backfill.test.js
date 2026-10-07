@@ -44,3 +44,10 @@ test('backfill rejects an AI regression of the dictionary reading for 言う',as
  await backfillReadings({list:async()=>[original],read:async()=>original,correct:async()=>({target:original.target}),write:async(id,signature,next)=>{saved=next},yieldTask:async()=>{}});
  assert.ok(saved.target.includes('言【い】う'));assert.equal(saved.readingVersion,READING_VERSION);
 });
+
+test('話し合う in the reported sharing sentence corrects both kanji readings',()=>{
+ const target='どこが共有【きょうゆう】して話【はなし】し合【ごう】うのに一番【いちばん】いい場所【ばしょ】なの？';
+ const corrected=dictionaryReadings({target}).target;
+ assert.equal(corrected,'どこが共有【きょうゆう】して話【はな】し合【あ】うのに一番【いちばん】いい場所【ばしょ】なの？');
+ assert.ok(readingText(corrected).includes('はなしあう'));
+});
