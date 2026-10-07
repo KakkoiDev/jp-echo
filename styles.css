@@ -1215,3 +1215,5 @@ html.motion-off #review-progress-bar { transition: none; }
 #import-status:not(:empty){padding:1rem;border:1px solid currentColor;border-radius:8px;font-size:1rem}#import-status[data-state="pending"]{font-weight:700}#import-status[data-state="success"]{font-weight:700}
 
 .custom-reference-text{white-space:pre-wrap;overflow-wrap:anywhere}.custom-reference-card{margin:1rem 0;padding:1rem;border:1px solid currentColor;border-radius:8px}#custom-references>summary{font-weight:700;cursor:pointer}#custom-references{margin-block:1rem}
+
+#extract-text{padding:1rem 0 5rem}#extract-selection{display:flex;flex-wrap:wrap;gap:.5rem;position:sticky;top:0;background:var(--paper,#f3f0e7);padding:.75rem;z-index:2}.extraction-card{border:1px solid currentColor;border-radius:8px;padding:1rem;margin:1rem 0}.extraction-choice{display:flex;align-items:center;gap:.75rem}.extraction-choice input{width:1.5rem;height:1.5rem}.extraction-japanese{font-size:1.5rem;line-height:1.8}.extraction-japanese mark{background:#f6df9b;color:#292318;border-radius:.2rem}.practice-mode{flex-wrap:wrap}
