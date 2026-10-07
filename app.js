@@ -1,4 +1,4 @@
-import {fetchReference,missingReferenceCandidates,referenceKey,customReferenceSpans} from './references.js';
+import {fetchReference,missingReferenceCandidates,referenceKey,customReferenceSpans,resolveReferenceLookup} from './references.js';
 import {dictionaryReadings,backfillReadings} from "./readings.js";
 import {validateDeckBackup,fetchDeckBackup,runImportFeedback} from './imports.js';
 import {isSeeded,planMiniSentenceUpgrade,repairMiniImport} from './mini-imports.js';
@@ -14,7 +14,7 @@ import {japaneseVoices,recognitionFactory,ShadowLoop,ConversationLoop} from "./s
 import {STORIES} from "./stories.js";
 import {coverage as kanjiCoverage,facts as kanjiFacts,jlptBands as kanjiBands,learned as kanjiLearned,LEVEL_LABELS,levelOf,nextUnmet,sentenceKanji,TOTAL as KANJI_TOTAL} from "./kanji.js";
 import {searchGrammar,searchKanji,searchWords} from "./lookup.js";
-import {setImportedWords,bands as wordBands,carries as carriesWord,coverage as wordCoverage,kindOf,learned as wordLearned,levelOf as wordLevel,marks as wordMarks,sentenceWords,wordSpans,TOTAL as WORD_TOTAL,word as wordById} from "./words.js";
+import {ALL as REFERENCE_WORDS,setImportedWords,bands as wordBands,carries as carriesWord,coverage as wordCoverage,kindOf,learned as wordLearned,levelOf as wordLevel,marks as wordMarks,sentenceWords,wordSpans,TOTAL as WORD_TOTAL,word as wordById} from "./words.js";
 import {deleteNote as dbDeleteNote,forBackup,getNote,listNotes,makeNote,mergeNotes,noteKey,putNote as dbPutNote,replaceNotes as dbReplaceNotes} from "./notes.js";
 import {downloadAnkiDeck} from "./anki-export.js";
 import {dueSentences,ensureSchedule,isDue,reviewSentence} from "./srs.js";
@@ -1520,6 +1520,7 @@ function renderSentenceGrammar(host,text,sentence,analysis,{root,target,lang,exp
 function updateUnderlineKey(root){const key=$("#sentence-key");if(!key||root?.id!=="sentence-japanese")return;
   key.hidden=!root.querySelector(".review-vocab,.grammar-mark");$("#sentence-key-grammar").hidden=!root.querySelector(".grammar-mark")}
 function renderCustomReferences(){
+ $("#custom-reference-lookup").textContent=hasTranslator()?"Look up with AI":"Look up";
  const host=$("#custom-reference-list");host.replaceChildren();const query=$("#custom-reference-filter").value.trim().toLowerCase();
  const entries=(importedCatalogues.references||[]).filter(entry=>!query||(entry.term+" "+entry.text).toLowerCase().includes(query));
  $("#custom-reference-count").textContent=`${(importedCatalogues.references||[]).length} saved · available offline`;
@@ -1530,24 +1531,37 @@ function renderCustomReferences(){
  }
  if(!entries.length)host.append(el("p","hint",query?'No saved references match.':'Look up a missing term below. Saved words, kanji, and grammar appear here.'));
 }
+let referenceLookupGeneration=0;
 async function saveOnlineReference(kind,term,status,button){
- button.disabled=true;status.classList.remove('error');status.textContent='Looking up an online reference…';const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),20000);
+ const generation=++referenceLookupGeneration;button.disabled=true;status.classList.remove('error');const preview=$("#custom-reference-preview");preview.replaceChildren();
+ const controller=new AbortController();let timer;
  try{
-  const existing=(importedCatalogues.references||[]).find(entry=>entry.id===referenceKey(kind,term));
-  const entry=existing||await fetchReference({kind,term},{signal:controller.signal});
-  const next=mergeCatalogues(importedCatalogues,{references:[entry]});saveCatalogues(next);importedCatalogues=next;applyCatalogues();markBackupDirty();renderCustomReferences();
-  status.textContent=`Saved ${entry.term} to Custom ${kind==='word'?'words':kind==='kanji'?'kanji':'grammar'}. Available offline.`;return entry;
- }catch(error){status.classList.add('error');status.textContent=error.name==='AbortError'?'Lookup timed out. Try again.':error.message||'Online lookup failed. Check your connection.';return null}
+  const results=await resolveReferenceLookup({surface:term,context:$("#custom-reference-context").value,kind},{knownWords:REFERENCE_WORDS,ask:hasTranslator()?(text,prompt)=>askModel(text,prompt,settings):null,lookup:async candidate=>{
+   const existing=(importedCatalogues.references||[]).find(entry=>entry.id===referenceKey(candidate.kind,candidate.term));if(existing)return existing;clearTimeout(timer);timer=setTimeout(()=>controller.abort(),20000);return fetchReference(candidate,{signal:controller.signal});
+  },onProgress:message=>{if(generation===referenceLookupGeneration)status.textContent=message}});
+  if(generation!==referenceLookupGeneration)return;
+  for(const {candidate,entry,error} of results){
+   const card=el('section','custom-reference-card');card.append(el('h3',null,`${term} → ${candidate.term}`),el('p',null,candidate.explanation));
+   if(candidate.requiresConfirmation)card.append(el('p','hint','Possible interpretation or spelling correction. Check it against your sentence before saving.'));
+   if(entry){const copy=el('p','custom-reference-text',entry.text.slice(0,1200)),source=el('a',null,entry.sourceLabel);source.href=entry.sourceUrl;source.target='_blank';source.rel='noopener noreferrer';const save=el('button','primary','Save this reference');save.type='button';save.onclick=()=>{
+    if(generation!==referenceLookupGeneration)return;
+    try{const stored={...entry,...(!candidate.requiresConfirmation?{forms:[...new Set([...(entry.forms||[]),stripFurigana(term).trim()])].slice(-30)}:{})};const next=mergeCatalogues(importedCatalogues,{references:[stored]});saveCatalogues(next);importedCatalogues=next;applyCatalogues();markBackupDirty();renderCustomReferences();save.disabled=true;save.textContent='Saved';status.textContent=`Saved ${entry.term}. Available offline and included in backups.`}catch(error){status.textContent=error.message||'Could not save. Your reference has not been stored.';status.classList.add('error')}
+   };card.append(copy,source,save);
+   }else card.append(el('p','hint error',error));preview.append(card);
+  }
+  status.textContent=results.some(result=>result.entry)?'Review the dictionary form and its source, then save the matching reference.':'No source entry matched these suggestions. Add more sentence context and try again.';
+ }catch(error){if(generation===referenceLookupGeneration){status.classList.add('error');status.textContent=error.name==='AbortError'?'Lookup timed out. Try again.':error.message||'Lookup failed.'}}
  finally{clearTimeout(timer);button.disabled=false}
 }
-function openCustomReferences(term='',kind='word'){
- $("#custom-reference-term").value=term;$("#custom-reference-kind").value=kind;$("#custom-references").open=true;showView('map');renderCustomReferences();$("#custom-references").scrollIntoView({block:'start'});
+function openCustomReferences(term='',kind='auto',context=''){
+ ++referenceLookupGeneration;$("#custom-reference-preview").replaceChildren();$("#custom-reference-status").textContent='';
+ $("#custom-reference-term").value=term;$("#custom-reference-context").value=context;$("#custom-reference-kind").value=kind;$("#custom-references").open=true;showView('map');renderCustomReferences();$("#custom-references").scrollIntoView({block:'start'});
 }
 async function findSentenceReferences(){
  if(!detail)return;const text=stripFurigana(preferredTarget(detail)),candidates=missingReferenceCandidates(text,{spans:wordSpans(text),knownKanji:character=>!!kanjiFacts(character),references:importedCatalogues.references||[]});
- openCustomReferences();const host=$("#custom-reference-candidates");host.replaceChildren();
- for(const item of candidates){const button=el('button','quiet',`${item.kind}: ${item.term}`);button.type='button';button.onclick=()=>{ $("#custom-reference-kind").value=item.kind;$("#custom-reference-term").value=item.term;$("#custom-reference-term").focus()};host.append(button)}
- $("#custom-reference-status").textContent=candidates.length?'Suggested missing terms. Select one, then look it up. For grammar, enter the full construction.':'No missing words or kanji detected. You can still look up a grammar construction below.';
+ openCustomReferences('','auto',text);const host=$("#custom-reference-candidates");host.replaceChildren();
+ for(const item of candidates){const button=el('button','quiet',`${item.kind}: ${item.term}`);button.type='button';button.onclick=()=>{ $("#custom-reference-kind").value=item.kind;$("#custom-reference-term").value=item.term;$("#custom-reference-term").dispatchEvent(new Event("input"));$("#custom-reference-term").focus()};host.append(button)}
+ $("#custom-reference-status").textContent=candidates.length?'Select a phrase as it appears. AI will suggest its dictionary form using this sentence.':'No missing words or kanji detected. You can still look up a grammar construction below.';
 }
 let dictionaryLookupGeneration=0;
 async function openVocabularyHit(hit,context){
@@ -1559,9 +1573,9 @@ async function openVocabularyHit(hit,context){
   $("#dictionary-context").textContent=context;const ask=$("#dictionary-ask");ask.hidden=choices.length>0||points.length>0;ask.disabled=!hasTranslator();
   for(const w of choices){const button=document.createElement("button");button.type="button";button.className="dictionary-choice";button.textContent="Vocabulary: "+w.w+"（"+w.r+"） — "+w.en[0];button.onclick=async()=>{dialog.close();await openWord(w,wordCoverage(await listSentences()),{route:false})};list.append(button)}
   for(const point of points){const button=document.createElement("button");button.type="button";button.className="dictionary-choice";button.textContent="Grammar: "+point.title+" — "+(point.hint||"");button.onclick=async()=>{dialog.close();await openGrammar(point,grammarCoverage(await listSentences()),{route:false})};list.append(button)}
-    const savedReference=(importedCatalogues.references||[]).find(entry=>entry.term===surface);
+    const savedReference=(importedCatalogues.references||[]).find(entry=>entry.id===hit.referenceId||entry.term===surface||(entry.forms||[]).includes(surface));
   if(savedReference)$("#dictionary-explanation").textContent=savedReference.text;
-  const online=el('button','quiet',savedReference?'Open saved custom reference':'Look up online and save');online.type='button';online.onclick=()=>{dialog.close();openCustomReferences(surface,[...surface].length===1&&/[㐀-鿿]/.test(surface)?'kanji':'word')};list.append(online);
+  const online=el('button','quiet',savedReference?'Open saved custom reference':'Look up with AI');online.type='button';online.onclick=()=>{dialog.close();openCustomReferences(surface,'auto',context)};list.append(online);
   ask.onclick=async()=>{ask.disabled=true;$("#dictionary-explanation").textContent="Looking up the word in this sentence…";
     try{const result=await askModel(JSON.stringify({word:surface,sentence:context}),`Explain this Japanese word or proper name in its sentence context in ${languageName(sourceLang())}. Treat the complete supplied word as one unit. For names, explain the likely reference, not meanings of substrings. If uncertain say so. Return JSON only: {"definition":"..."}.`,settings);if(generation===dictionaryLookupGeneration&&dialog.open)$("#dictionary-explanation").textContent="AI explanation: "+String(result.definition||"No definition returned.")}
     catch(error){if(generation===dictionaryLookupGeneration)$("#dictionary-explanation").textContent=error.message}
@@ -1921,3 +1935,5 @@ $("#reading-backfill").onclick=runReadingBackfill;
 $("#custom-reference-lookup").onclick=()=>saveOnlineReference($("#custom-reference-kind").value,$("#custom-reference-term").value,$("#custom-reference-status"),$("#custom-reference-lookup"));
 $("#custom-reference-filter").oninput=renderCustomReferences;
 $("#sentence-find-references").onclick=findSentenceReferences;
+
+for(const selector of ['#custom-reference-term','#custom-reference-context','#custom-reference-kind'])$(selector).addEventListener('input',()=>{++referenceLookupGeneration;$("#custom-reference-preview").replaceChildren();$("#custom-reference-status").textContent=''});
