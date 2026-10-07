@@ -1213,3 +1213,5 @@ html.motion-off #review-progress-bar { transition: none; }
 .data-table th:last-child,.data-table td:last-child{text-align:right;font-variant-numeric:tabular-nums}
 
 #import-status:not(:empty){padding:1rem;border:1px solid currentColor;border-radius:8px;font-size:1rem}#import-status[data-state="pending"]{font-weight:700}#import-status[data-state="success"]{font-weight:700}
+
+.custom-reference-text{white-space:pre-wrap;overflow-wrap:anywhere}.custom-reference-card{margin:1rem 0;padding:1rem;border:1px solid currentColor;border-radius:8px}#custom-references>summary{font-weight:700;cursor:pointer}#custom-references{margin-block:1rem}

@@ -58,7 +58,7 @@ export function summarise(cover, points = GRAMMAR) {
 
 const BASE_POINTS=[...GRAMMAR],BASE_LEVELS=[...LEVELS];
 export function setImportedGrammar(imported=[]){
- const valid=imported.filter(p=>typeof p.id==="string"&&p.id.startsWith("minihongo:")&&p.title);
+ const valid=imported.filter(p=>typeof p.id==="string"&&(p.id.startsWith("minihongo:")||p.id.startsWith("custom:grammar:"))&&p.title);
  GRAMMAR.splice(0,GRAMMAR.length,...BASE_POINTS,...valid);
  LEVELS.splice(0,LEVELS.length,...BASE_LEVELS,...new Set(valid.map(p=>p.level).filter(l=>!BASE_LEVELS.includes(l))));
  INDEX.clear();for(const p of GRAMMAR)INDEX.set(p.id,p);
