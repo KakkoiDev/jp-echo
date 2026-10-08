@@ -1921,9 +1921,8 @@ function scheduleReadingBackfill(){if(readingBackfillRunning){readingBackfillReq
 async function runReadingBackfill(){
  if(readingBackfillRunning)return;
  const status=$("#reading-backfill-status");
- if(!hasTranslator()){status.textContent="Connect a translator to correct all existing furigana. Original sentences are kept.";return}
  readingBackfillRunning=true;$("#reading-backfill").disabled=true;
- try{await backfillReadings({list:listSentences,read:getSentence,correct:s=>correctSentenceReadings(s,settings),
+ try{await backfillReadings({list:listSentences,read:getSentence,correct:hasTranslator()?(s=>correctSentenceReadings(s,settings)):undefined,
   write:async(id,expected,next)=>{const saved=await applyReadingCorrection(id,expected,next);if(!saved){readingBackfillRequested=true;return}markBackupDirty();
    if(current?.id===id){Object.assign(current,saved);if(!$("#main-view").hidden)renderSentence()}if(detail?.id===id){Object.assign(detail,saved);if(!$("#sentence-change").open){renderDetailLearningText()}}
    reviewQueue=reviewQueue.map(s=>s.id===id?saved:s);

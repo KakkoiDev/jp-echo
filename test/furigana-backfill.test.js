@@ -16,7 +16,7 @@ test('reading correction cannot rewrite text or omit kanji readings',()=>{
 test('backfill covers both registers, skips non-Japanese, resumes and leaves review data alone',async()=>{
  const records=new Map([['a',{id:'a',targetLang:'ja',source:'No duplicates.',target:'重複【じゅうふく】はない。',casualTarget:'重複【じゅうふく】はない。',politeTarget:'重複【じゅうふく】はありません。',srs:{reps:4},reviews:[{rating:'ok'}],echoCount:12}],['b',{id:'b',targetLang:'fr',target:'Bonjour'}]]);let calls=0;
  const options={list:async()=>[...records.values()],read:async id=>records.get(id),correct:async s=>{calls++;return Object.fromEntries(['target','casualTarget','politeTarget'].map(k=>[k,s[k].replaceAll('じゅうふく','ちょうふく')]))},write:async(id,expected,next)=>{assert.equal(expected,readingSignature(records.get(id)));records.set(id,next)},yieldTask:async()=>{}};
- await backfillReadings(options);assert.equal(calls,1);assert.equal(records.get('a').source,'No duplicates.');assert.deepEqual(records.get('a').reviews,[{rating:'ok'}]);assert.equal(records.get('a').echoCount,12);await backfillReadings(options);assert.equal(calls,1);
+ await backfillReadings(options);assert.equal(calls,0);assert.equal(records.get('a').source,'No duplicates.');assert.deepEqual(records.get('a').reviews,[{rating:'ok'}]);assert.equal(records.get('a').echoCount,12);await backfillReadings(options);assert.equal(calls,0);
  const modified={...records.get('a'),target:'駅【えき】だ。'};assert.equal(dictionaryReadings(modified).readingVersion,undefined);
 });
 test('model correction validates every returned register before the application writes it',async()=>{
@@ -56,4 +56,14 @@ test('shared longest compound matching handles polite and past 話し合う',()=
  for(const [wrong,right] of [['話【はなし】し合【ごう】います','話【はな】し合【あ】います'],['話【はなし】し合【ごう】った','話【はな】し合【あ】った']]){
   assert.equal(dictionaryReadings({target:wrong}).target,right);
  }
+});
+
+test('startup backfill repairs every dictionary-backed sentence without a model',async()=>{
+ const originals=[{id:'a',target:'判断【はんだん】が難【なん】しいところです。',reviews:[{rating:'ok'}]},{id:'b',target:'行【ぎょう】きます',echoCount:7}];
+ const saved=[];
+ await backfillReadings({list:async()=>originals,read:async id=>originals.find(s=>s.id===id),write:async(id,signature,next)=>saved.push(next),yieldTask:async()=>{}});
+ assert.equal(saved[0].target,'判断【はんだん】が難【むずか】しいところです。');
+ assert.deepEqual(saved[0].reviews,originals[0].reviews);
+ assert.equal(saved[1].target,'行【い】きます');assert.equal(saved[1].echoCount,7);
+ assert.ok(saved.every(s=>s.readingVersion===READING_VERSION));
 });

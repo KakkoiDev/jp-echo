@@ -11,3 +11,8 @@ test('real dictionary repairs persisted iku readings without changing history',(
  }
  assert.equal(dictionaryReadings({target:'行【おこな】った'}).target,'行【おこな】った');
 });
+
+test('real dictionary fixes the reported difficult judgment and adjective inflections',()=>{
+ assert.equal(dictionaryReadings({target:'判断【はんだん】が難【なん】しいところです。'}).target,'判断【はんだん】が難【むずか】しいところです。');
+ for(const ending of ['い','くない','かった','ければ'])assert.equal(dictionaryReadings({target:`難【なん】し${ending}`}).target,`難【むずか】し${ending}`);
+});

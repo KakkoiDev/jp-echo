@@ -19,12 +19,12 @@ export function createReadingResolver(words){
  }
  const trie={};
  const put=(key,value)=>{let node=trie;for(const char of key)node=node[char]||(node[char]={});(node.matches||(node.matches=[])).push(value)};
- const endings={v1:"るたてなまられよず",v5u:"わいうえおっ",v5k:"かきくけこい","v5k-s":"かきくけこっ",v5g:"がぎぐげごい",v5s:"さしすせそ",v5t:"たちつてとっ",v5n:"なにぬねのん",v5b:"ばびぶべぼん",v5m:"まみむめもん",v5r:"らりるれろっ"};
+ const endings={v1:"るたてなまられよず","v1-s":"るたてなまられよず",v5u:"わいうえおっ","v5u-s":"わいうえおっ",v5k:"かきくけこい","v5k-s":"かきくけこっ",v5g:"がぎぐげごい",v5s:"さしすせそ",v5t:"たちつてとっ",v5n:"なにぬねのん",v5b:"ばびぶべぼん",v5m:"まみむめもん",v5r:"らりるれろっ","v5r-i":"らりるれろっ",v5aru:"らりるれろっい","adj-i":"いくかけ","adj-ix":"いくかけ"};
  for(const [key,readings] of exact)put(key,{key,readings});
  for(const word of words){const ending=(word.pos||[]).map(pos=>endings[pos]).find(Boolean);
   if(!ending||!word.w||!word.r||!KANJI.test(word.w))continue;
   const key=word.w.slice(0,-1),reading=word.r.slice(0,-1);
-  if(key&&reading)put(key,{key,readings:new Set([reading]),ending,defaultReading:(word.pos||[]).includes("v5k-s")});
+  if(key&&reading&&word.r.endsWith(word.w.slice(-1)))put(key,{key,readings:new Set([reading]),ending,defaultReading:(word.pos||[]).includes("v5k-s")});
  }
  const segmenter=typeof Intl.Segmenter==='function'?new Intl.Segmenter('ja',{granularity:'word'}):{segment:text=>[{segment:text,index:0}]};
  return function resolve(text,overrides={}){
@@ -40,7 +40,7 @@ export function createReadingResolver(words){
     if(matches.length)best={length,matches};
    }
    if(best){
-    // A conjugated verb outranks a noun with the same kanji stem.
+    // A conjugated word outranks a noun with the same kanji stem.
     const inflected=best.matches.filter(m=>m.ending);
     const matches=inflected.length?inflected:best.matches;
     let readings=new Set(matches.flatMap(m=>[...m.readings]));

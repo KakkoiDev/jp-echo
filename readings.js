@@ -17,8 +17,11 @@ export async function backfillReadings({list,read,correct,write,onProgress=()=>{
   const latest=await read(item.id);if(!latest)continue;
   const prepared=dictionaryReadings(latest);
   if(prepared.readingVersion===READING_VERSION&&prepared.readingSignature===readingSignature(prepared)){onProgress(++done,total);continue}
-  const corrected=dictionaryReadings({...prepared,...await correct(prepared),readingVersion:undefined});
-  const next={...prepared,...corrected,readingVersion:READING_VERSION,readingIssues:[]};next.readingSignature=readingSignature(next);
+  // Dictionary-backed repairs are local. Only unresolved context needs a model.
+  const needsModel=prepared.readingIssues.length>0;
+  const usedModel=needsModel&&typeof correct==='function';
+  const corrected=usedModel?dictionaryReadings({...prepared,...await correct(prepared),readingVersion:undefined}):prepared;
+  const next={...prepared,...corrected,readingVersion:needsModel&&!usedModel?undefined:READING_VERSION,readingIssues:usedModel?[]:corrected.readingIssues};next.readingSignature=readingSignature(next);
   await write(item.id,readingSignature(latest),next);onProgress(++done,total);await yieldTask();
  }
  return {done,total};
