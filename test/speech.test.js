@@ -186,6 +186,17 @@ test("conversation loop speaks accumulated turns in order with per-speaker voice
 
 test('Japanese playback and discussion utterances use the displayed furigana',()=>{
  spoken.length=0;const loop=new ShadowLoop({onEcho(){},onState(){}});
- loop.play('重複【ちょうふく】はない。',{lang:'ja'});assert.equal(spoken[0].text,'ちょうふくはない。');loop.stop();
- const discussion=new ConversationLoop({onEcho(){},onState(){}});discussion.playConversation([{text:'重複【じゅうふく】はない。',role:'ai'}],{lang:'ja'});assert.equal(spoken.at(-1).text,'じゅうふくはない。');discussion.stop();
+ loop.play('重複【ちょうふく】はない。',{lang:'ja'});assert.equal(spoken[0].text,'チョウフクはない。');loop.stop();
+ const discussion=new ConversationLoop({onEcho(){},onState(){}});discussion.playConversation([{text:'重複【じゅうふく】はない。',role:'ai'}],{lang:'ja'});assert.equal(spoken.at(-1).text,'ジュウフクはない。');discussion.stop();
+});
+
+test('both speech modes use explicit ruby pronunciation hints',()=>{
+ spoken.length=0;
+ const options={setTimer:()=>0,clearTimer:()=>{},onState:()=>{}};
+ const loop=new ShadowLoop(options);
+ loop.play('ログ吐【は】いてる？',{});
+ assert.equal(spoken.at(-1).text,'ログハいてる？');loop.stop();
+ const conversation=new ConversationLoop(options);
+ conversation.playConversation(['彼【かれ】は吐【は】いてる'],{});
+ assert.equal(spoken.at(-1).text,'カレはハいてる');conversation.stop();
 });

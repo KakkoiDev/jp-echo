@@ -2,6 +2,11 @@
 import {rubySegments,segmentsToNotation,stripFurigana,readingsToNotation,KANJI} from './core.js';
 export const READING_VERSION=2;
 export const readingText=text=>rubySegments(text).map(part=>part.reading||part.text).join('');
+// Explicit ruby is a pronunciation hint, not a grammatical particle. Katakana
+// keeps browser voices from interpreting a supplied は/へ as wa/e.
+export const speechText=text=>rubySegments(text).map(part=>part.reading
+ ?part.reading.replace(/[ぁ-ゖ]/g,char=>String.fromCharCode(char.charCodeAt(0)+0x60))
+ :part.text).join('');
 export function createReadingResolver(words){
  const exact=new Map(),stems=new Map();
  const add=(map,key,value)=>{if(!map.has(key))map.set(key,new Set());map.get(key).add(value)};
