@@ -34,7 +34,7 @@ test('editing a checked sentence invalidates its completed reading check',()=>{
 
 test('exact reported sentence repairs 言う even when marked checked',()=>{
  const target='ざっくり言【げん】うと、移行【いこう】は半分【はんぶん】終【お】わっています。';
- const record={target,readingVersion:READING_VERSION};record.readingSignature=readingSignature(record);
+ const record={target,readingVersion:READING_VERSION-1};record.readingSignature=readingSignature(record);
  assert.equal(dictionaryReadings(record).target,'ざっくり言【い】うと、移行【いこう】は半分【はんぶん】終【お】わっています。');
 });
 
@@ -66,4 +66,26 @@ test('startup backfill repairs every dictionary-backed sentence without a model'
  assert.deepEqual(saved[0].reviews,originals[0].reviews);
  assert.equal(saved[1].target,'行【い】きます');assert.equal(saved[1].echoCount,7);
  assert.ok(saved.every(s=>s.readingVersion===READING_VERSION));
+});
+
+test('subsequent startups skip reads, writes and AI even for unresolved checked sentences',async()=>{
+ const item={id:'cached',target:'未知【みち】',readingVersion:READING_VERSION,readingIssues:[{surface:'未知'}]};item.readingSignature=readingSignature(item);
+ assert.equal(dictionaryReadings(item),item,'checked render returns immediately');
+ await backfillReadings({list:async()=>[item],read:async()=>assert.fail('should not read'),correct:async()=>assert.fail('should not use AI'),write:async()=>assert.fail('should not write')});
+});
+test('manual override changes invalidate only that record',()=>{
+ const item={target:'重複【ちょうふく】',readingVersion:READING_VERSION};item.readingSignature=readingSignature(item);
+ const result=dictionaryReadings({...item,readingOverrides:{重複:'じゅうふく'}});
+ assert.equal(result.target,'重複【じゅうふく】');assert.equal(result.readingVersion,undefined);
+});
+test('explicit resume can force a new check of cached readings',async()=>{
+ const item={id:'force',target:'同【どう】じ',readingVersion:READING_VERSION};item.readingSignature=readingSignature(item);let saved;
+ await backfillReadings({force:true,list:async()=>[item],read:async()=>item,write:async(id,expected,next)=>saved=next,yieldTask:async()=>{}});
+ assert.equal(saved.target,'同【おな】じ');
+});
+test('editor correction changes brackets while preserving the sentence text',async()=>{
+ const {correctReadingDraft}=await import('../readings.js');
+ const result=await correctReadingDraft('判断【はんだん】が難【なん】しい。',{correct:async()=>assert.fail('local correction does not need AI')});
+ assert.equal(result.target,'判断【はんだん】が難【むずか】しい。');
+ await assert.rejects(()=>correctReadingDraft('生【なま】',{correct:async()=>({target:'別【べつ】'})}),/changed/);
 });

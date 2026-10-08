@@ -1,7 +1,7 @@
 import {readEpub} from './epub-import.js';
 import {passageCandidates,analyzePassage,vocabularyInventory,classifyExtraction,extractionIdentity} from './text-extraction.js';
 import {fetchReference,missingReferenceCandidates,referenceKey,customReferenceSpans,resolveReferenceLookup} from './references.js';
-import {dictionaryReadings,backfillReadings} from "./readings.js";
+import {dictionaryReadings,backfillReadings,correctReadingDraft} from "./readings.js";
 import {validateDeckBackup,fetchDeckBackup,runImportFeedback} from './imports.js';
 import {isSeeded,planMiniSentenceUpgrade,repairMiniImport} from './mini-imports.js';
 import {applyI18n,setDictionary,t} from "./i18n.js";
@@ -1189,7 +1189,7 @@ function renderDetail(){if(!detail)return;closeEditor();markSelectedRow();
   $("#sentence-history-count").textContent=reviews.length===1?"1 session":reviews.length+" sessions";
   $("#sentence-play").disabled=false}
 let editorGeneration=0,rewrittenDraft=null,editorOpenId=null;
-function openEditor(){editorOpenId=detail?.id||null;editorGeneration++;
+function openEditor(){$("#sentence-reading-status").textContent="";editorOpenId=detail?.id||null;editorGeneration++;
   const meaningLanguage=detail?.sourceLang&&detail.sourceLang!==itemTarget(detail)?detail.sourceLang:(sourceLang()!==itemTarget(detail)?sourceLang():"en");
   $("#sentence-meaning-language").replaceChildren(...LANGUAGES.map(([code,name])=>new Option(name,code)));$("#sentence-meaning-language").value=meaningLanguage;rewrittenDraft=null;$("#sentence-source-draft").value=detail?.source||"";$("#sentence-instruction").value="";$("#sentence-ai").open=false;$("#sentence-rewrite-status").textContent="";$("#sentence-rewrite").disabled=!hasTranslator();$("#sentence-save").disabled=false;if(!detail)return;resetSession();$("#sentence-draft").value=preferredTarget(detail);$("#sentence-edit-error").hidden=true;if(!$("#sentence-change").open)$("#sentence-change").open=true;for(const id of ["#sentence-draft","#sentence-source-draft"])fitTextArea($(id));$("#sentence-instruction").focus()}
 function closeEditor(){editorOpenId=null;editorGeneration++;rewrittenDraft=null;$("#sentence-change").open=false}
@@ -1205,6 +1205,19 @@ async function saveEdit(event){event.preventDefault();if(!detail)return;
   if(rewrittenDraft){const forms={...rewrittenDraft,source};forms[sentenceRegister(detail)==="polite"?"polite":"casual"]=japanese;detail=replaceSentenceContent(detail,forms);delete detail.grammar}else detail={...detail,source};
   delete detail.grammarAnalysis;delete detail.grammar;
   detail={...detail,sourceLang:$("#sentence-meaning-language").value||"en"};await saveSentence(detail);if(current?.id===detail.id){current=detail;renderSentence()}renderDetail()}
+async function correctEditorReadings(){
+ if(!detail)return;
+ const generation=editorGeneration,id=detail.id,original=$("#sentence-draft").value;
+ const status=$("#sentence-reading-status"),button=$("#sentence-correct-readings");
+ button.disabled=true;$("#sentence-save").disabled=true;status.textContent="Checking furigana…";
+ try{
+  const result=await correctReadingDraft(original,{correct:hasTranslator()?(s=>correctSentenceReadings(s,settings)):undefined});
+  if(generation!==editorGeneration||detail?.id!==id||$("#sentence-draft").value!==original)return;
+  $("#sentence-draft").value=result.target;fitTextArea($("#sentence-draft"));
+  status.textContent=result.readingIssues.length?"Some readings need context. Edit the kana inside 【 】, then Save.":"Furigana corrected. Review the readings, then Save.";
+ }catch(error){if(generation===editorGeneration)status.textContent=error.message}
+ finally{button.disabled=false;if(generation===editorGeneration)$("#sentence-save").disabled=false}
+}
 async function rewriteDetailSentence(){
   if(!detail||$("#sentence-rewrite").disabled)return;
   const instruction=$("#sentence-instruction").value.trim(),status=$("#sentence-rewrite-status"),button=$("#sentence-rewrite");
@@ -1892,6 +1905,8 @@ try{localStorage.removeItem("jp-echo-wanikani-token");indexedDB.deleteDatabase("
 if("serviceWorker"in navigator){writeReminderPrefs();syncReminderSchedule();remindOnOpen()}
 
 $("#sentence-rewrite").onclick=rewriteDetailSentence;
+$("#sentence-correct-readings").onclick=correctEditorReadings;
+$("#sentence-edit-readings").onclick=()=>{$("#sentence-draft").focus();$("#sentence-reading-status").textContent="Change the kana inside 【 】, then Save. Your manual readings take priority."};
 for(const id of ["#sentence-draft","#sentence-source-draft"])$(id).oninput=()=>fitTextArea($(id));
 $("#sentence-instruction").onkeydown=e=>{if((e.metaKey||e.ctrlKey)&&e.key==="Enter"){e.preventDefault();rewriteDetailSentence()}};
 
@@ -1918,11 +1933,11 @@ window.echoAppReady=true;
 
 let readingBackfillRunning=false,readingBackfillTimer=null,readingBackfillRequested=false;
 function scheduleReadingBackfill(){if(readingBackfillRunning){readingBackfillRequested=true;return}if(readingBackfillTimer)return;readingBackfillTimer=setTimeout(()=>{readingBackfillTimer=null;runReadingBackfill()},500)}
-async function runReadingBackfill(){
+async function runReadingBackfill(force=false){
  if(readingBackfillRunning)return;
  const status=$("#reading-backfill-status");
  readingBackfillRunning=true;$("#reading-backfill").disabled=true;
- try{await backfillReadings({list:listSentences,read:getSentence,correct:hasTranslator()?(s=>correctSentenceReadings(s,settings)):undefined,
+ try{await backfillReadings({force,list:listSentences,read:getSentence,correct:hasTranslator()?(s=>correctSentenceReadings(s,settings)):undefined,
   write:async(id,expected,next)=>{const saved=await applyReadingCorrection(id,expected,next);if(!saved){readingBackfillRequested=true;return}markBackupDirty();
    if(current?.id===id){Object.assign(current,saved);if(!$("#main-view").hidden)renderSentence()}if(detail?.id===id){Object.assign(detail,saved);if(!$("#sentence-change").open){renderDetailLearningText()}}
    reviewQueue=reviewQueue.map(s=>s.id===id?saved:s);
@@ -1931,7 +1946,7 @@ async function runReadingBackfill(){
  }catch(error){status.textContent="Furigana correction paused: "+error.message+". Reopen Echo or tap Resume to continue."}
  finally{readingBackfillRunning=false;$("#reading-backfill").disabled=false;if(readingBackfillRequested){readingBackfillRequested=false;scheduleReadingBackfill()}}
 }
-$("#reading-backfill").onclick=runReadingBackfill;
+$("#reading-backfill").onclick=()=>runReadingBackfill(true);
 
 $("#custom-reference-lookup").onclick=()=>saveOnlineReference($("#custom-reference-kind").value,$("#custom-reference-term").value,$("#custom-reference-status"),$("#custom-reference-lookup"));
 $("#custom-reference-filter").oninput=renderCustomReferences;

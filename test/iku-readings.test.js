@@ -16,3 +16,10 @@ test('real dictionary fixes the reported difficult judgment and adjective inflec
  assert.equal(dictionaryReadings({target:'判断【はんだん】が難【なん】しいところです。'}).target,'判断【はんだん】が難【むずか】しいところです。');
  for(const ending of ['い','くない','かった','ければ'])assert.equal(dictionaryReadings({target:`難【なん】し${ending}`}).target,`難【むずか】し${ending}`);
 });
+
+test('reported onaji sentence is repaired for display and browser speech',async()=>{
+ const {speechText}=await import('../japanese-readings.js');
+ const target=dictionaryReadings({target:'同【どう】じような経験【けいけん】が何度【なんど】かあります。'}).target;
+ assert.equal(target,'同【おな】じような経験【けいけん】が何度【なんど】かあります。');
+ assert.equal(speechText(target),'オナじようなケイケンがナンドかあります。');
+});

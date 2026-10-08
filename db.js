@@ -45,7 +45,7 @@ export async function applyReadingCorrection(id,expected,correction){
  try{await new Promise((resolve,reject)=>{
   const tx=db.transaction(STORE,'readwrite'),store=tx.objectStore(STORE),request=store.get(id);
   request.onsuccess=()=>{const raw=request.result;if(!raw)return;const record=migrateSentence(raw);
-   const signature=JSON.stringify([record.targetLang||'ja',record.target,record.casualTarget,record.politeTarget]);if(signature!==expected)return;
+   const signature=JSON.stringify([record.targetLang||'ja',record.target,record.casualTarget,record.politeTarget,record.readingOverrides||{}]);if(signature!==expected)return;
    saved={...record,furiganaRecovery:record.furiganaRecovery||Object.fromEntries(['target','casualTarget','politeTarget'].map(k=>[k,record[k]])),updatedAt:new Date().toISOString()};
    for(const key of ['target','casualTarget','politeTarget','readingVersion','readingSignature','readingIssues'])if(Object.hasOwn(correction,key))saved[key]=correction[key];
    store.put(saved);
