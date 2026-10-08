@@ -14,12 +14,12 @@ export function createReadingResolver(words){
  }
  const trie={};
  const put=(key,value)=>{let node=trie;for(const char of key)node=node[char]||(node[char]={});(node.matches||(node.matches=[])).push(value)};
- const endings={v1:"るたてなまられよず",v5u:"わいうえおっ",v5k:"かきくけこい",v5g:"がぎぐげごい",v5s:"さしすせそ",v5t:"たちつてとっ",v5n:"なにぬねのん",v5b:"ばびぶべぼん",v5m:"まみむめもん",v5r:"らりるれろっ"};
+ const endings={v1:"るたてなまられよず",v5u:"わいうえおっ",v5k:"かきくけこい","v5k-s":"かきくけこっ",v5g:"がぎぐげごい",v5s:"さしすせそ",v5t:"たちつてとっ",v5n:"なにぬねのん",v5b:"ばびぶべぼん",v5m:"まみむめもん",v5r:"らりるれろっ"};
  for(const [key,readings] of exact)put(key,{key,readings});
  for(const word of words){const ending=(word.pos||[]).map(pos=>endings[pos]).find(Boolean);
   if(!ending||!word.w||!word.r||!KANJI.test(word.w))continue;
   const key=word.w.slice(0,-1),reading=word.r.slice(0,-1);
-  if(key&&reading)put(key,{key,readings:new Set([reading]),ending});
+  if(key&&reading)put(key,{key,readings:new Set([reading]),ending,defaultReading:(word.pos||[]).includes("v5k-s")});
  }
  const segmenter=typeof Intl.Segmenter==='function'?new Intl.Segmenter('ja',{granularity:'word'}):{segment:text=>[{segment:text,index:0}]};
  return function resolve(text,overrides={}){
@@ -34,7 +34,17 @@ export function createReadingResolver(words){
     const matches=(node.matches||[]).filter(m=>m.ending?m.ending.includes(plain[cursor+length]||"!"):boundaries.has(cursor+length));
     if(matches.length)best={length,matches};
    }
-   if(best){const readings=new Set(best.matches.flatMap(m=>[...m.readings]));tokens.push({segment:plain.slice(cursor,cursor+best.length),index:cursor,dictionaryReadings:readings});cursor+=best.length;continue}
+   if(best){
+    // A conjugated verb outranks a noun with the same kanji stem.
+    const inflected=best.matches.filter(m=>m.ending);
+    const matches=inflected.length?inflected:best.matches;
+    let readings=new Set(matches.flatMap(m=>[...m.readings]));
+    if(readings.size>1&&inflected.length){
+     const supplied=readingText(retained(cursor,cursor+best.length));
+     if(readings.has(supplied))readings=new Set([supplied]);
+     else {const preferred=matches.find(m=>m.defaultReading);if(preferred)readings=preferred.readings}
+    }
+tokens.push({segment:plain.slice(cursor,cursor+best.length),index:cursor,dictionaryReadings:readings});cursor+=best.length;continue}
    const token=originalTokens.find(t=>t.index<=cursor&&cursor<t.index+t.segment.length);
    const end=token?token.index+token.segment.length:cursor+1;
    tokens.push({segment:plain.slice(cursor,end),index:cursor});cursor=end;
