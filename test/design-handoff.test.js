@@ -174,3 +174,20 @@ test("the stylesheet uses the palette: no undefined tokens, no raw colours, no e
   assert.match(css, /\n\.reading-sentence-text\{/, "the reading line rule applies");
   assert.doesNotMatch(css, /border:1px solid currentColor;border-radius:8px/, "generic web-app boxes are panels with a 4px radius");
 });
+
+test("the echo animation is docs/design/motion.css whole, and the live rings move with the loop", async () => {
+  const motion = await readFile(new URL("../docs/design/motion.css", import.meta.url), "utf8");
+  assert.ok(css.includes(motion.trim()), "styles.css carries motion.css verbatim");
+  assert.doesNotMatch(css, /\.arcs:not\(\.small\)\{height:42px/, "the 42px crop that cut the outer arc is gone");
+  assert.match(app, /document\.querySelectorAll\("\.arcs > \.echo, \.ripple\.echo\.live"\)\)echo\.classList\.toggle\("is-playing",active\)/, "one selector in the loop's onState");
+  assert.match(app, /function loopArcs\(scope,state\)\{const active=!\["stopped","error","paused"\]\.includes\(state\)/);
+  assert.match(app, /onState:\(state,index\)=>\{loopArcs\("#discussion-live",state\)/);
+  assert.match(app, /onState:\(state,index\)=>\{loopArcs\("#reading",state\)/);
+  for (const host of ['<article id="practice" hidden>', '<div id="review-result" hidden>', '<section id="sentence-view" hidden>']) {
+    const at = html.indexOf(host), live = html.indexOf('<svg class="ripple echo live"', at);
+    assert.ok(at >= 0 && live > at && live - at < 700, host + " carries the live ripple behind the sentence");
+  }
+  assert.equal((html.match(/<svg class="echo" width="96" height="96" viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="1\.6"/g) || []).length, 5, "five compact arc pairs: practice, sentence, review answer, discussion, reading");
+  assert.doesNotMatch(html, /<svg class="echo" width="76"/);
+  assert.equal((html.match(/<svg class="ripple echo"/g) || []).length, 3, "welcome, onboarding and review home rings stay still and never carry .live");
+});
