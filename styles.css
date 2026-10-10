@@ -794,7 +794,7 @@ html.motion-off #review-progress-bar { transition: none; }
 #practice, #review-result, #sentence-view { position: relative; }
 .ripple.live { right: -96px; top: 20px; }
 .ripple.live ~ * { position: relative; }
-.discussion-controls .arcs, .reading-controls .arcs { margin-top: 0; }
+.discussion-loop .arcs, .reading-loop .arcs { margin-top: 0; }
 
 
 /* Kanji and grammar — the study tool behind the Library. Coverage is read
@@ -1009,38 +1009,50 @@ html.motion-off #review-progress-bar { transition: none; }
    screen — one navigation, the "Or practise another way" rows — each with the
    study tool's back-arrow header. There is no mode bar. */
 .mode-lede{margin:14px 0 0}
-#discussion{max-width:44rem;margin:0 auto;padding:1rem;padding-bottom:calc(14rem + env(safe-area-inset-bottom))}
 #discussion textarea{width:100%;box-sizing:border-box}
-.discussion-turns{list-style:none;margin:1rem 0;padding:0;display:flex;flex-direction:column;gap:.7rem}
-.discussion-turn{display:flex;width:100%;padding:0;border:0}
-.discussion-turn.ai{justify-content:flex-start}
-.discussion-turn.user{justify-content:flex-end}
-.discussion-bubble{max-width:min(82%,32rem);padding:.7rem .9rem;border:1px solid var(--hairline);border-radius:.8rem .8rem .8rem .2rem;background:var(--panel)}
-.discussion-turn.user .discussion-bubble{border-radius:.8rem .8rem .2rem .8rem;background:var(--seal-tint);border-color:var(--seal-edge)}
-.discussion-japanese{font-size:1.08rem;line-height:1.65;margin:0}
-.discussion-translation{margin:.25rem 0 0;font-size:.86rem;opacity:.68}
-.discussion-message-actions{display:flex;justify-content:flex-end;margin-top:.2rem}
-.discussion-message-actions button{font-size:.75rem;padding:.2rem .35rem;opacity:.65}
-.discussion-controls{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;margin:.8rem 0}
-.discussion-controls #discussion-loop-state{flex-basis:100%;margin:0}
-@media(max-width:480px){#discussion{padding:.7rem .7rem calc(14rem + env(safe-area-inset-bottom))}.discussion-bubble{max-width:88%}}
+/* Discussion (Discussion.dc.html): learning material, not chat — Echo's turns on the left, yours on the right, each labelled; the loop controls above. */
+#discussion{padding-bottom:calc(14rem + env(safe-area-inset-bottom))}
+.discussion-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 0 0}
+#discussion-play{display:inline-flex;align-items:center;gap:10px;height:40px;min-height:40px;padding:0 14px;font-size:14px;font-weight:500;letter-spacing:.04em;white-space:nowrap}
+#discussion-new{margin-left:auto;min-height:0;padding:0;font-size:13px;letter-spacing:normal;color:var(--seal-deep);text-decoration:underline;text-underline-offset:3px}
+.discussion-turns{list-style:none;margin:4px 0 0;padding:0;display:flex;flex-direction:column}
+.discussion-turn{display:flex;flex-direction:column;align-items:flex-start;margin-top:14px;padding:0;border:0}
+.discussion-turn.user{align-items:flex-end}
+.discussion-turn::before{content:"Echo";margin:0 4px 5px;font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-muted)}
+.discussion-turn.user::before{content:"You"}
+.discussion-bubble{max-width:min(300px,100%);padding:13px 15px 10px;border:1px solid var(--hairline);border-radius:4px 10px 10px 10px;background:var(--panel)}
+.discussion-turn.user .discussion-bubble{border-radius:10px 4px 10px 10px;background:var(--washi);border-color:var(--rule)}
+.discussion-japanese{margin:0;font-family:var(--display);font-size:18px;line-height:1.9}
+.discussion-translation{margin:6px 0 0;font-size:12px;line-height:1.5;color:var(--ink-muted)}
+.discussion-message-actions{display:flex;justify-content:flex-end;margin-top:6px}
+.discussion-message-actions button{min-height:0;padding:0;font-size:11px;letter-spacing:normal;color:var(--seal-deep);text-decoration:underline;text-underline-offset:3px}
+.discussion-message-actions button:disabled{color:var(--ink-muted);text-decoration:none}
+.discussion-loop,.reading-loop{display:flex;align-items:center;gap:12px;margin-top:12px}
+.discussion-loop p,.reading-loop p{display:flex;align-items:center;gap:8px;margin:0;font-size:12px;text-transform:uppercase;letter-spacing:.18em;color:var(--ink-muted)}
+.discussion-loop p:empty{display:none}
+.discussion-loop p::before,.reading-loop p::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--hairline)}
+.playing>.discussion-loop p::before,.playing>.reading-loop p::before{background:var(--seal)}
+@media(max-width:480px){.discussion-bubble{max-width:88%}}
 
 
 
 /* Reading is paper, not a second app: sentences reuse Echo's quiet surfaces. */
 .reading-toggles{margin:14px 0 0}
 .mode-hint{max-width:34rem;margin:1.2rem auto;color:var(--ink-muted);line-height:1.65}
-.reading-text{display:flex;flex-direction:column;gap:.35rem;max-width:42rem;margin:0 auto 1.25rem}
-.reading-sentence{width:100%;text-align:left;border:1px solid transparent;background:transparent;padding:.35rem;border-radius:.35rem;color:var(--sumi)}
-.reading-sentence-text{appearance:none;width:100%;text-align:left;border:0;background:transparent;padding:.4rem .5rem;color:inherit}
+/* Reading (Reading.dc.html): tap a line to pick it; the picked line is outlined in sumi on paper. */
+.reading-toggles .spacer{flex-grow:1}
+#reading-echo{display:inline-flex;align-items:center;gap:10px;height:40px;min-height:40px;padding:0 16px;font-size:14px;white-space:nowrap}
+#reading-hint{margin-top:10px}
+.reading-text{display:flex;flex-direction:column;margin:12px 0 0}
+.reading-sentence{width:100%;margin-top:6px;padding:10px 12px;border:1px solid transparent;border-radius:4px;background:transparent;text-align:left;color:var(--sumi)}
+.reading-sentence-text{appearance:none;width:100%;padding:0;border:0;background:transparent;text-align:left;color:inherit}
 .reading-sentence:hover,.reading-sentence:focus-within{background:var(--panel-soft);border-color:var(--hairline)}
-.reading-sentence.selected{background:var(--seal-tint);border-color:var(--seal-edge)}
-.reading-japanese{display:block;font-family:var(--display);font-size:1.18rem;line-height:1.9}
-.reading-english{display:block;margin-top:.2rem;color:var(--ink-muted);line-height:1.5}
-.reading-save{display:block;margin:.35rem .5rem .4rem;font-family:var(--ui);font-size:.78rem;letter-spacing:.05em}.reading-save.primary{width:auto;padding:.55rem .8rem}.reading-save.saved{color:var(--quiet-title)}
-.reading-controls{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;max-width:42rem;margin:0 auto 1rem}.reading-controls-top{margin-top:-.25rem;margin-bottom:1.25rem}
-.reading-controls p{margin:0;color:var(--ink-muted)}
-@media(max-width:640px){.reading-sentence{padding:.3rem}.reading-sentence-text{padding:.4rem .2rem}}
+.reading-sentence.selected{background:var(--panel);border-color:var(--sumi)}
+.reading-japanese{display:block;font-family:var(--display);font-size:19px;line-height:2}
+.reading-english{display:block;margin-top:4px;font-size:12px;line-height:1.5;color:var(--ink-muted)}
+.reading-save{display:inline-flex;align-items:center;margin:10px 0 0;height:36px;min-height:36px;padding:0 14px;border:1px solid var(--sumi);background:var(--panel);color:var(--sumi);font-family:var(--ui);font-size:14px;font-weight:500;letter-spacing:.04em}
+.reading-save.saved{display:inline-block;margin-top:6px;height:auto;min-height:0;padding:0;border:0;background:transparent;font-size:11px;font-weight:400;letter-spacing:normal;color:var(--ink-muted)}
+
 
 /* Word learning: content first; adjustment is a compact shared action. */
 #word-note .adjust-panel{padding:10px 0 0;border:0;border-top:1px solid var(--rule);border-radius:0}
@@ -1303,4 +1315,28 @@ html.motion-off #review-progress-bar { transition: none; }
 
 .custom-reference-text{white-space:pre-wrap;overflow-wrap:anywhere}.custom-reference-card{margin:1rem 0;padding:1rem;border:1px solid var(--hairline);border-radius:4px;background:var(--panel)}#custom-references>summary{font-weight:700;cursor:pointer}#custom-references{margin-block:1rem}
 
-#extract-text{padding:1rem 0 5rem}#extract-selection{display:flex;flex-wrap:wrap;gap:.5rem;position:sticky;top:0;background:var(--washi);padding:.75rem;z-index:2}.extraction-card{border:1px solid var(--hairline);border-radius:4px;background:var(--panel);padding:1rem;margin:1rem 0}.extraction-choice{display:flex;align-items:center;gap:.75rem}.extraction-choice input{width:1.5rem;height:1.5rem}.extraction-japanese{font-size:1.5rem;line-height:1.8}.extraction-japanese mark{background:var(--seal-wash);color:var(--seal-deep);border-radius:2px}
+/* Extract from text (Extract.dc.html): sources, the passage, one outlined Find, cards, and Import as the only filled button. */
+#extract-text{padding:0 0 5rem}
+.extract-sources{display:flex;align-items:flex-end;gap:8px;margin-top:14px}
+.file-button{display:flex;align-items:center;justify-content:center;height:40px;padding:0 14px;border:1px solid var(--sumi);border-radius:4px;background:var(--panel);color:var(--sumi);font-size:14px;font-weight:500;letter-spacing:.04em;white-space:nowrap;cursor:pointer}
+.extract-find{flex-grow:1;display:flex;flex-direction:column;gap:5px}
+.extract-find .overline{font-size:10px}
+.extract-find select{height:40px;min-height:40px;padding:0 28px 0 10px;font-size:13px;border-radius:3px}
+#extract-passage{margin-top:10px;font-family:var(--display);font-size:15px;line-height:1.8}
+.extract-analyze{width:100%;margin-top:10px;height:46px;min-height:46px;font-size:14px;font-weight:500;letter-spacing:.04em}
+#extract-status{margin-top:10px}
+.extract-found{display:flex;align-items:baseline;justify-content:space-between;margin-top:22px;padding-bottom:9px;border-bottom:1px solid var(--sumi);font-family:var(--display);font-size:17px}
+.extract-pick{display:flex;gap:12px}
+.extract-pick .plain{min-height:0;padding:0;font-family:var(--ui);font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-muted)}
+.extraction-card{margin:10px 0 0;padding:13px 14px 12px;border:1px solid var(--hairline);border-radius:4px;background:var(--panel)}
+.extraction-choice{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--ink-soft);cursor:pointer}
+.extraction-choice input{width:20px;height:20px}
+.extraction-japanese{margin:9px 0 0;font-family:var(--display);font-size:17px;line-height:1.8}
+.extraction-japanese mark{background:var(--seal-wash);color:var(--seal-deep);border-radius:2px;padding:0 1px}
+.extraction-card>p{margin:4px 0 0;font-size:12px;line-height:1.5;color:var(--ink-muted)}
+.extraction-card ul{margin:8px 0 0;padding-left:16px;font-size:12px;line-height:1.6;color:var(--ink-soft)}
+.extraction-card details{margin-top:8px}
+.extraction-card summary{display:inline;font-size:11px;color:var(--ink-muted);text-decoration:underline;text-underline-offset:3px;cursor:pointer;list-style:none}
+.extraction-card summary::-webkit-details-marker{display:none}
+#extract-foot{margin-top:12px}
+#extract-foot .primary{width:100%;margin-top:12px;min-height:52px}

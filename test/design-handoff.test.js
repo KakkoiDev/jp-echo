@@ -77,6 +77,16 @@ test("practice: one navigation — three rows that never hide, pushed screens wi
   assert.match(app, /function showStart\(\)\{loop\.stop\(\);current=null;renderSentence\(\);setPracticeMode\("sentence"\)\}/, "back lands on the start screen, where the rows are");
   assert.match(app, /if\(tab\.dataset\.view==="practice"&&document\.body\.dataset\.view==="practice"\)showStart\(\)/, "the Practice tab, tapped again, is the way back from a pushed screen");
   assert.match(app, /function composerVerb\(\)\{return discussionMode\?\(discussionTurns\.length\?"Send":"Begin"\):readingMode\?"Write":"Translate"\}/, "one composer; only its verb changes");
+  // The three bodies follow their boards.
+  assert.match(html, /<option value="new">Words never met<\/option><option value="unlearned">Met but not learned<\/option>/);
+  assert.match(html, /id="extract-analyze" data-ui="button" class="outline extract-analyze"/, "Find sentences is outlined; Import is the only filled button");
+  assert.match(html, /<div id="extract-foot" hidden><p class="hint">Nothing has been imported\. The sentences you keep join your library and reviews like your own\.<\/p><button id="extract-import" type="button" class="primary"/);
+  assert.match(app, /\$\('#extract-import'\)\.textContent=`Import \$\{count\} selected`/);
+  assert.match(app, /row\.fresh\.length===1\?'word':'words'/, "1 new word, not 1 new words");
+  assert.match(app, /save\.textContent=turn\.saved\?"Saved ✓":"Save to Library"/);
+  assert.match(css, /\.discussion-turn::before\{content:"Echo"/, "turns are labelled Echo and You");
+  assert.doesNotMatch(html, /id="reading-new"/, "another text comes from the composer, not a New text button");
+  assert.match(css, /\.reading-sentence\.selected\{background:var\(--panel\);border-color:var\(--sumi\)\}/);
 });
 
 test("discussion: starter scenes fill the box and never send", () => {

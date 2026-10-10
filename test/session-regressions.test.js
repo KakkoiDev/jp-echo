@@ -29,7 +29,7 @@ test("library exposes skipped filter and review persists then clears skipped sta
 
 test("URL restoration keeps page searches practice mode and open tool modal",()=>{assert.match(app,/async function applyRoute/);assert.match(app,/historyQuery/);assert.match(app,/mapQuery/);assert.match(app,/discussionMode/);assert.match(app,/route\.modal\.kind==="word"/);assert.match(app,/route\.modal\.kind==="kanji"/);assert.match(app,/route\.modal\.kind==="grammar"/)});
 
-test("discussion uses shared composer and explicit sentence saving",()=>{assert.doesNotMatch(html,/id="discussion-scenario-mic"/);assert.match(app,/discussionScenario=\$\("#english-input"\)\.value\.trim/);assert.match(app,/save\.textContent=turn\.saved\?"Saved":"Save"/);assert.match(app,/saveDiscussionTurn\(turn/)});
+test("discussion uses shared composer and explicit sentence saving",()=>{assert.doesNotMatch(html,/id="discussion-scenario-mic"/);assert.match(app,/discussionScenario=\$\("#english-input"\)\.value\.trim/);assert.match(app,/save\.textContent=turn\.saved\?"Saved ✓":"Save to Library"/);assert.match(app,/saveDiscussionTurn\(turn/)});
 
 test("settings support same-language pairs swap and three voice policies",()=>{
   assert.match(html,/id="settings-swap-langs"/);
