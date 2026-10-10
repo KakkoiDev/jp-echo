@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Echo — fix, field first</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;800&amp;family=Zen+Kaku+Gothic+New:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Zen Kaku Gothic New','Hiragino Sans','Yu Gothic',system-ui,sans-serif;background:#F3F0E7;color:#1C1A17;-webkit-font-smoothing:antialiased}
+a{color:#B8342A}a:hover{color:#8F2820}
+::placeholder{color:#9A9287}
+ruby rt{font-size:.38em;font-weight:400;color:#6B645B;letter-spacing:.04em}
+select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'><path d='M1 1l4 4 4-4' stroke='%2355504A' stroke-width='1.4' fill='none' stroke-linecap='round'/></svg>");background-repeat:no-repeat;background-position:right 11px center}
+x-dc>div>*{flex-shrink:0}
+
+</style>
+</helmet>
+<div style="width: 390px; height: 760px; box-sizing: border-box; position: relative; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; background-color: #F3F0E7; background-image: repeating-linear-gradient(90deg, rgba(28,26,23,.022) 0 1px, transparent 1px 3px), repeating-linear-gradient(0deg, rgba(28,26,23,.014) 0 1px, transparent 1px 4px);">
+<div style="position: absolute; inset: 0; opacity: .5;">
+<div style="display: flex; align-items: center; gap: 12px; padding: 24px 18px 14px; border-bottom: 1px solid #D9D2C1;"><a href="History.dc.html" aria-label="Close" style="width: 44px; height: 44px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border: 1px solid #D9D2C1; border-radius: 4px; background: #FBF9F3; text-decoration: none;"><svg width="18" height="14" viewBox="0 0 18 14" fill="none" aria-hidden="true"><path d="M17 7H1M6.5 1.5 1 7l5.5 5.5" stroke="#1C1A17" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></a><span style="flex-grow: 1; font-size: 11px; text-transform: uppercase; letter-spacing: .18em; color: #6B645B;">Added 14 September</span><span style="display: inline-flex; padding: 3px 8px; border: 1px solid #C8C0AE; border-radius: 2px; background: #F1EDE2; color: #55504A; font-size: 10px; text-transform: uppercase; letter-spacing: .12em; white-space: nowrap;">Review</span></div>
+
+<div style="padding: 66px 22px 0; position: relative;"><p lang="ja" style="margin: 0; font-family: 'Shippori Mincho','Hiragino Mincho ProN',serif; font-weight: 500; font-size: 30px; line-height: 2; letter-spacing: .01em;"><ruby>今日<rt>きょう</rt></ruby>は<mark style="background: #F6E4E0; color: #8F2820; padding: 2px 1px; border-radius: 2px; outline: 1.5px solid #B8342A;"><ruby>電車<rt>でんしゃ</rt></ruby></mark>が<ruby>遅<rt>おく</rt></ruby>れています。</p><p style="margin: 12px 0 0; padding-left: 13px; border-left: 2px solid #D9D2C1; font-size: 15px; line-height: 1.6; color: #55504A;">The train is running late today.</p></div></div><a href="EchoSelect.dc.html" aria-label="Close" style="position: absolute; inset: 0; background: rgba(28,26,23,.34);"></a>
+<div role="dialog" aria-label="Fix" style="position: relative; display: flex; flex-direction: column; border-top: 1px solid #D9D2C1; border-radius: 10px 10px 0 0; background-color: #FBF9F3; background-image: repeating-linear-gradient(90deg, rgba(28,26,23,.02) 0 1px, transparent 1px 3px); box-shadow: 0 -14px 40px rgba(28,26,23,.14);"><div style="display: flex; justify-content: center; padding: 10px 0 0;"><span style="width: 38px; height: 4px; border-radius: 2px; background: #D9D2C1;"></span></div>
+
+<div style="display: flex; align-items: center; gap: 12px; padding: 12px 22px 0;"><span style="flex-grow: 1; display: flex; flex-direction: column; gap: 3px;"><span style="font-family: 'Shippori Mincho','Hiragino Mincho ProN',serif; font-weight: 600; font-size: 20px;">Fix <span lang="ja">電車</span></span><span style="font-size: 11px; text-transform: uppercase; letter-spacing: .16em; color: #6B645B;">Reading · meaning · both</span></span><a href="EchoSelect.dc.html" aria-label="Close" style="width: 34px; height: 34px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border: 1px solid #D9D2C1; border-radius: 4px; background: #F3F0E7; text-decoration: none;"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="m1 1 12 12M13 1 1 13" stroke="#1C1A17" stroke-width="1.5" stroke-linecap="round"></path></svg></a></div><div style="margin: 18px 22px 0;"><p style="margin: 0 0 7px; font-size: 10px; text-transform: uppercase; letter-spacing: .16em; color: #6B645B;">Reading</p><div style="display: flex; align-items: stretch; gap: 8px;"><input lang="ja" type="text" value="でんしゃ" style="flex-grow: 1; min-width: 0; height: 48px; box-sizing: border-box; padding: 0 13px; font-family: 'Shippori Mincho','Hiragino Mincho ProN',serif; font-size: 20px; color: #1C1A17; background: #FBF9F3; border: 1px solid #1C1A17; border-radius: 4px; outline: none;"><button type="button" style="height: 44px; padding: 0 14px 0 10px; display: inline-flex; align-items: center; gap: 9px; border-radius: 4px; font-family: inherit; font-size: 14px; font-weight: 500; letter-spacing: .03em; cursor: pointer; white-space: nowrap; background: #FBF9F3; color: #8F2820; border: 1px solid #C9705F;"><span aria-hidden="true" style="width: 22px; height: 22px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: 3px; background: #B8342A; color: #FCF7EE; font-family: 'Shippori Mincho','Hiragino Mincho ProN',serif; font-size: 13px; line-height: 1;">響</span>Let Echo propose</button></div></div><div style="margin: 14px 22px 0;"><p style="margin: 0 0 7px; font-size: 10px; text-transform: uppercase; letter-spacing: .16em; color: #6B645B;">Meaning</p><input type="text" value="train (electric)" style="width: 100%; height: 48px; box-sizing: border-box; padding: 0 13px; font-family: inherit; font-size: 15px; color: #1C1A17; background: #FBF9F3; border: 1px solid #D9D2C1; border-radius: 4px; outline: none;"></div><p style="margin: 12px 22px 0; font-size: 12px; line-height: 1.6; color: #6B645B; text-wrap: pretty;">Type the correction and save — that is the whole thing. The seal is an offer: press it and Echo proposes a fix here, in this field, for you to keep or change. Nothing is sent until you do.</p><div style="margin: 18px 22px 0; display: flex; align-items: center; gap: 10px;"><span style="display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px; border: 1px solid #1C1A17; border-radius: 2px; background: transparent; color: #1C1A17; font-size: 10px; text-transform: uppercase; letter-spacing: .12em; white-space: nowrap;">You</span><span style="font-size: 11px; color: #6B645B;">This will be your reading. Echo never overwrites what you typed.</span></div><div style="margin: 20px 22px 26px; display: flex; gap: 10px;"><a href="EchoSelect.dc.html" style="margin: 0; height: 48px; display: flex; flex-grow: 1; flex-basis: 0; align-items: center; justify-content: center; gap: 10px; background: #FBF9F3; white-space: nowrap; color: #1C1A17; border: 1px solid #1C1A17; border-radius: 4px; font-family: inherit; font-size: 14px; font-weight: 500; letter-spacing: .04em; text-decoration: none; cursor: pointer;">Cancel</a><a href="Sentence.dc.html" style="margin: 0; height: 48px; display: flex; flex-grow: 1; flex-basis: 0; align-items: center; justify-content: center; gap: 10px; background: #B8342A; color: #FCF7EE; border: none; border-radius: 4px; font-family: inherit; font-size: 15px; font-weight: 500; letter-spacing: .05em; text-decoration: none; cursor: pointer;">Save</a></div></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":760}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+/* Echo — design tokens. Source of truth: REDESIGN-HANDOFF.md, section Tokens. */
+
+:root {
+  --washi:     #F3F0E7;  /* page ground */
+  --panel:     #FBF9F3;  /* raised paper */
+  --sumi:      #1C1A17;  /* text */
+  --ink-muted: #6B645B;
+  --ink-soft:  #55504A;
+  --hairline:  #D9D2C1;
+  --rule:      #E2DCCE;  /* list separators */
+  --seal:      #B8342A;  /* the one accent */
+  --seal-deep: #8F2820;  /* seal text on tint */
+  --seal-tint: #FAEDE9;
+  --seal-edge: #C9705F;
+  --indigo:    #2E4A6B;  /* Learning chip only */
+  --disabled-bg: #DFD9CB;
+  --disabled-fg: #9A9287;
+}
+[data-theme="dark"] {
+  --washi: #191712; --panel: #221F19; --sumi: #F2EEE3;
+  --ink-muted: #A49B8C; --ink-soft: #C4BCAC;
+  --hairline: #363028; --rule: #2C2820;
+  --seal: #E0614B; --seal-deep: #EE8672; --seal-tint: #2A1E1A; --seal-edge: #7A3A30;
+}

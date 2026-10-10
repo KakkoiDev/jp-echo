@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>First run — connect a translator</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;800&amp;family=Zen+Kaku+Gothic+New:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Zen Kaku Gothic New','Hiragino Sans','Yu Gothic',system-ui,sans-serif;background:#F3F0E7;color:#1C1A17;-webkit-font-smoothing:antialiased}
+a{color:#B8342A}a:hover{color:#8F2820}
+::placeholder{color:#9A9287}
+select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'><path d='M1 1l4 4 4-4' stroke='%2355504A' stroke-width='1.4' fill='none' stroke-linecap='round'/></svg>");background-repeat:no-repeat;background-position:right 13px center}
+x-dc>div>*{flex-shrink:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; background-color: #F3F0E7; background-image: repeating-linear-gradient(90deg, rgba(28,26,23,.022) 0 1px, transparent 1px 3px), repeating-linear-gradient(0deg, rgba(28,26,23,.014) 0 1px, transparent 1px 4px);">
+
+<div style="display: flex; align-items: center; gap: 12px; padding: 24px 18px 14px;">
+<a href="Welcome.dc.html" aria-label="Back" style="width: 44px; height: 44px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border: 1px solid #D9D2C1; border-radius: 4px; background: #FBF9F3; text-decoration: none;">
+<svg width="18" height="14" viewBox="0 0 18 14" fill="none" aria-hidden="true"><path d="M17 7H1M6.5 1.5 1 7l5.5 5.5" stroke="#1C1A17" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+</a>
+<span style="font-size: 11px; text-transform: uppercase; letter-spacing: .18em; color: #6B645B;">Step 1 of 2</span>
+</div>
+
+<div style="display: flex; flex-direction: column; flex-grow: 1; padding: 16px 26px 0;">
+
+<h2 style="margin: 0; font-family: 'Shippori Mincho','Hiragino Mincho ProN',serif; font-weight: 600; font-size: 34px; line-height: 1.3; letter-spacing: -.01em;">One thing first</h2>
+<p style="margin: 14px 0 0; font-size: 15px; line-height: 1.75; color: #55504A; text-wrap: pretty;">Echo needs a translator. Pick a service you have an account with and paste its key — it is saved on this device and goes nowhere else.</p>
+
+<label for="provider" style="display: flex; flex-direction: column; gap: 8px; margin-top: 28px;"><span style="font-size: 11px; text-transform: uppercase; letter-spacing: .16em; color: #6B645B;">Service</span><select id="provider" style="height: 52px; padding: 0 36px 0 14px; font-family: inherit; font-size: 16px; color: #1C1A17; background-color: #FBF9F3; border: 1px solid #D9D2C1; border-radius: 4px;"><option>DeepSeek</option><option>Google Gemini</option><option>OpenAI</option><option>Anthropic</option><option>Something running on my own machine</option></select></label>
+
+<label for="key" style="display: flex; flex-direction: column; gap: 8px; margin-top: 18px;"><span style="font-size: 11px; text-transform: uppercase; letter-spacing: .16em; color: #6B645B;">Key</span><input id="key" type="password" placeholder="Paste it here" autocomplete="off" style="height: 52px; box-sizing: border-box; padding: 0 14px; font-family: inherit; font-size: 16px; color: #1C1A17; background: #FBF9F3; border: 1px solid #D9D2C1; border-radius: 4px; outline: none;"></label>
+<p style="margin: 10px 0 0; font-size: 12px; line-height: 1.6; color: #6B645B; text-wrap: pretty;">Your service gives you a key in its own dashboard, usually under API keys.</p>
+
+<div style="display: flex; gap: 11px; margin-top: 26px; padding: 15px 16px; border: 1px solid #D9D2C1; border-radius: 4px; background: #FBF9F3;">
+<svg width="16" height="19" viewBox="0 0 14 16" fill="none" aria-hidden="true" style="flex-shrink: 0; margin-top: 2px;"><path d="M7 1 1 3.4v4.2C1 11.3 3.6 14.2 7 15c3.4-.8 6-3.7 6-7.4V3.4L7 1Z" stroke="#8F2820" stroke-width="1.2" stroke-linejoin="round"></path></svg>
+<p style="margin: 0; font-size: 13px; line-height: 1.6; color: #55504A; text-wrap: pretty;">Keys are stored in this browser only, and are never included in an export or a backup file.</p>
+</div>
+
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 16px 26px 34px;">
+<a href="Main.dc.html" style="height: 58px; display: flex; align-items: center; justify-content: center; background: #B8342A; color: #FCF7EE; border-radius: 4px; text-decoration: none; font-size: 17px; font-weight: 500; letter-spacing: .06em;">Start practising</a>
+<a href="PracticeNoKey.dc.html" style="height: 48px; display: flex; align-items: center; justify-content: center; color: #55504A; text-decoration: none; font-size: 15px; letter-spacing: .04em;">Look around first</a>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

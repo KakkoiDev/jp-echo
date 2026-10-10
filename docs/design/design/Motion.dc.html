@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Focus and motion</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;800&amp;family=Zen+Kaku+Gothic+New:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Zen Kaku Gothic New','Hiragino Sans','Yu Gothic',system-ui,sans-serif;background:#F3F0E7;color:#1C1A17;-webkit-font-smoothing:antialiased}
+a{color:#B8342A}a:hover{color:#8F2820}
+.ring:focus-visible{outline:2px solid #B8342A;outline-offset:3px}
+.ring-dark:focus-visible{outline:2px solid #E0614B;outline-offset:3px}
+.em{transform-box:view-box;transform-origin:center;animation:em 2.4s ease-out infinite}
+.d1{animation-delay:.6s}.d2{animation-delay:1.2s}.d3{animation-delay:1.8s}
+.a1{animation-delay:.8s}.a2{animation-delay:1.6s}
+@keyframes em{0%{transform:scale(.24);opacity:.9}65%{opacity:.3}100%{transform:scale(1);opacity:0}}
+.pulse{animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.tick{animation:tick 2.4s ease-out infinite}
+@keyframes tick{0%{transform:translateY(6px);opacity:0}12%{transform:translateY(0);opacity:1}100%{transform:translateY(0);opacity:1}}
+@media (prefers-reduced-motion: reduce){.em,.pulse,.tick{animation:none}}
+x-dc>div>*{flex-shrink:0}
+</style>
+</helmet>
+<div style="width: 1080px; height: 1140px; box-sizing: border-box; padding: 46px 52px; display: flex; flex-direction: column; gap: 24px; background-color: #F3F0E7; background-image: repeating-linear-gradient(90deg, rgba(28,26,23,.022) 0 1px, transparent 1px 3px), repeating-linear-gradient(0deg, rgba(28,26,23,.014) 0 1px, transparent 1px 4px);">
+
+<div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; padding-bottom: 20px; border-bottom: 1px solid #D9D2C1;">
+<span style="display: flex; flex-direction: column; gap: 6px;">
+<span style="font-family: 'Shippori Mincho','Hiragino Mincho ProN',serif; font-size: 30px; letter-spacing: .02em;">Focus and motion</span>
+<span style="font-size: 12px; text-transform: uppercase; letter-spacing: .2em; color: #8F2820;">One gesture, one meaning</span>
+</span>
+<p style="margin: 0; max-width: 420px; font-size: 13px; line-height: 1.7; color: #55504A; text-wrap: pretty;">Movement in this app means exactly one thing: <strong style="font-weight: 500;">audio is playing right now.</strong> Everywhere else the ripple is drawn and still. Nothing moves to be pretty.</p>
+</div>
+
+<div style="display: flex; gap: 40px;">
+
+<div style="width: 470px; flex-shrink: 0; display: flex; flex-direction: column; gap: 14px;">
+<h3 style="margin: 0; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .2em; color: #8F2820;">The gesture — emanate</h3>
+<p style="margin: 0; font-size: 13px; line-height: 1.7; color: #55504A; text-wrap: pretty;">One ring leaves the centre on each pass of the loop, grows, and fades to nothing. Two forms of the same motion: full rings where there is room, an arc pair where it sits in a row of text. Same clock, same easing, same fade — so they read as one idea, not two.</p>
+
+<div style="display: flex; gap: 20px; align-items: center; padding: 20px; border: 1px solid #D9D2C1; border-radius: 4px; background: #FBF9F3;">
+<svg width="196" height="196" viewBox="0 0 196 196" fill="none" aria-hidden="true" style="flex-shrink: 0;">
+<g fill="none" stroke="#B8342A" stroke-width="1.2">
+<circle class="em" cx="98" cy="98" r="84"></circle>
+<circle class="em d1" cx="98" cy="98" r="84"></circle>
+<circle class="em d2" cx="98" cy="98" r="84"></circle>
+<circle class="em d3" cx="98" cy="98" r="84"></circle>
+</g>
+<rect x="80" y="80" width="36" height="36" rx="3" fill="#B8342A"></rect>
+<text x="98" y="105" text-anchor="middle" font-family="'Shippori Mincho',serif" font-size="21" fill="#FCF7EE">響</text>
+</svg>
+<span style="display: flex; flex-direction: column; gap: 10px; font-size: 12px; line-height: 1.6; color: #55504A;">
+<span><strong style="font-weight: 500; color: #1C1A17;">Full rings</strong><br>Four, because four is what the canvas draws.</span>
+<span style="display: flex; flex-direction: column; gap: 3px; padding-top: 10px; border-top: 1px solid #E2DCCE;">
+<span>Cycle <span style="color: #8F2820;">2.4s</span> · ease-out</span>
+<span>Stagger <span style="color: #8F2820;">0.6s</span> — 2.4 ÷ 4, so the cadence is even</span>
+<span>Scale <span style="color: #8F2820;">0.24 → 1</span></span>
+<span>Opacity <span style="color: #8F2820;">0.9 → 0.3</span> at 65% <span style="color: #8F2820;">→ 0</span></span>
+<span style="padding-top: 8px; color: #8F2820;">Origin: the centre. In SVG that is not the default — set <span style="font-family: 'Shippori Mincho','Hiragino Mincho ProN',serif;">transform-box: view-box</span> and <span style="font-family: 'Shippori Mincho','Hiragino Mincho ProN',serif;">transform-origin: center</span> on the animated element itself, or the rings fly out of the top-left corner. It is not inherited from a parent group.</span>
+</span>
+</span>
+</div>
+
+<div style="display: flex; gap: 20px; align-items: center; padding: 20px; border: 1px solid #D9D2C1; border-radius: 4px; background: #FBF9F3;">
+<svg width="140" height="72" viewBox="0 0 86 44" fill="none" aria-hidden="true" style="flex-shrink: 0;">
+<g fill="none" stroke="#B8342A" stroke-width="1.2">
+<g class="em"><path d="M79 22a36 36 0 0 0-12-27"></path><path d="M7 22a36 36 0 0 1 12-27"></path></g>
+<g class="em a1"><path d="M79 22a36 36 0 0 0-12-27"></path><path d="M7 22a36 36 0 0 1 12-27"></path></g>
+<g class="em a2"><path d="M79 22a36 36 0 0 0-12-27"></path><path d="M7 22a36 36 0 0 1 12-27"></path></g>
+</g>
+</svg>
+<span style="display: flex; flex-direction: column; gap: 10px; font-size: 12px; line-height: 1.6; color: #55504A;">
+<span><strong style="font-weight: 500; color: #1C1A17;">Arc pair</strong><br>Three copies of one arc, scaling outward — not three arcs breathing.</span>
+<span style="padding-top: 10px; border-top: 1px solid #E2DCCE;">Same 2.4s, stagger <span style="color: #8F2820;">0.8s</span>. The arcs no longer pulse in place; that was a second gesture doing the same job and the two never agreed.</span>
+</span>
+</div>
+</div>
+
+<div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 14px;">
+<h3 style="margin: 0; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .2em; color: #8F2820;">Moving, or drawn still</h3>
+<div style="display: flex; flex-direction: column; border-top: 1px solid #D9D2C1;">
+<span style="display: flex; gap: 14px; padding: 11px 0; border-bottom: 1px solid #E2DCCE; font-size: 12.5px;"><span style="width: 150px; flex-shrink: 0; color: #1C1A17;">Practice, looping</span><span style="width: 74px; flex-shrink: 0; color: #8F2820;">moves</span><span style="flex-grow: 1; color: #55504A;">Rings behind the sentence <em style="font-style: normal; color: #8F2820;">and</em> the arc pair beside the count</span></span>
+<span style="display: flex; gap: 14px; padding: 11px 0; border-bottom: 1px solid #E2DCCE; font-size: 12.5px;"><span style="width: 150px; flex-shrink: 0; color: #1C1A17;">Review, checked</span><span style="width: 74px; flex-shrink: 0; color: #8F2820;">moves</span><span style="flex-grow: 1; color: #55504A;">Rings behind the sentence and the arc pair, while the loop runs</span></span>
+<span style="display: flex; gap: 14px; padding: 11px 0; border-bottom: 1px solid #E2DCCE; font-size: 12.5px;"><span style="width: 150px; flex-shrink: 0; color: #1C1A17;">Paused</span><span style="width: 74px; flex-shrink: 0; color: #55504A;">still</span><span style="flex-grow: 1; color: #55504A;">The same arcs, frozen at 0.24 / 0.6 / 1</span></span>
+<span style="display: flex; gap: 14px; padding: 11px 0; border-bottom: 1px solid #E2DCCE; font-size: 12.5px;"><span style="width: 150px; flex-shrink: 0; color: #1C1A17;">Welcome, Practice start</span><span style="width: 74px; flex-shrink: 0; color: #55504A;">still</span><span style="flex-grow: 1; color: #55504A;">Rings as ornament, behind the title</span></span>
+<span style="display: flex; gap: 14px; padding: 11px 0; border-bottom: 1px solid #E2DCCE; font-size: 12.5px;"><span style="width: 150px; flex-shrink: 0; color: #1C1A17;">Review home, empties</span><span style="width: 74px; flex-shrink: 0; color: #55504A;">still</span><span style="flex-grow: 1; color: #55504A;">Rings behind the count or the mark</span></span>
+<span style="display: flex; gap: 14px; padding: 11px 0; border-bottom: 1px solid #E2DCCE; font-size: 12.5px;"><span style="width: 150px; flex-shrink: 0; color: #1C1A17;">Listening for an answer</span><span style="width: 74px; flex-shrink: 0; color: #8F2820;">moves</span><span style="flex-grow: 1; color: #55504A;">Mic glyph only — 1.4s, 1 → 0.4</span></span>
+<span style="display: flex; gap: 14px; padding: 11px 0; border-bottom: 1px solid #E2DCCE; font-size: 12.5px;"><span style="width: 150px; flex-shrink: 0; color: #1C1A17;">The count going up</span><span style="width: 74px; flex-shrink: 0; color: #8F2820;">moves</span><span style="flex-grow: 1; color: #55504A;">280ms, rises 6px and fades in</span></span>
+</div>
+
+<p style="margin: 6px 0 0; font-size: 12.5px; line-height: 1.7; color: #55504A; text-wrap: pretty;"><strong style="font-weight: 500; color: #1C1A17;">A still screen stays still.</strong> The rings behind a title or a due count are ornament — part of the drawing, like the paper texture. They do not animate, ever. If everything ripples all the time, a moving ring stops meaning anything, and the one place movement is information — the loop — loses its signal.</p>
+
+<div style="display: flex; flex-direction: column; gap: 8px; margin-top: 4px; padding: 16px 18px; border: 1px solid #C9705F; border-radius: 4px; background: #FAEDE9;">
+<span style="font-size: 13px; font-weight: 500; color: #8F2820;">Why nobody saw it — and the weights that fix it</span>
+<span style="font-size: 12px; line-height: 1.6; color: #55504A; text-wrap: pretty;">The build shipped this CSS verbatim and it runs. It was invisible, not absent: the only moving echo on a playing screen was the arc pair — 76px wide, cropped to 42px, a 2px stroke at 0.234 — and the rings only ever appeared on screens where nothing plays. Two rules, both measured:</span>
+<span style="display: flex; flex-direction: column; gap: 4px; font-size: 12px; line-height: 1.6; color: #55504A;">
+<span><strong style="font-weight: 500; color: #1C1A17;">Full rings</strong> (1px, 196px and up): <strong style="font-weight: 500;">0.16</strong> still, <strong style="font-weight: 500;">0.234</strong> moving — a ring spends most of its cycle fading, so moving strokes carry more. On a phone, behind a sentence, <strong style="font-weight: 500;">0.30</strong>.</span>
+<span><strong style="font-weight: 500; color: #1C1A17;">Arc pair</strong> (1.6px, 96 × 48, never cropped below 48px): <strong style="font-weight: 500;">0.5</strong> still, <strong style="font-weight: 500;">0.7</strong> moving, and its fade ends at <strong style="font-weight: 500;">0.15</strong>, not 0 — three arcs on a 0.8s stagger otherwise all vanish together once a cycle.</span>
+<span><strong style="font-weight: 500; color: #1C1A17;">Where:</strong> every screen where audio can play carries the rings behind the sentence and gets <span style="font-family: 'Shippori Mincho','Hiragino Mincho ProN',serif;">.is-playing</span> — Practice, the checked review, the sentence page, Discussion, Reading. Rings on a screen where nothing plays stay ornament.</span>
+</span>
+</div>
+</div>
+
+</div>
+
+<div style="display: flex; gap: 40px; align-items: flex-start; padding-top: 22px; border-top: 1px solid #D9D2C1;">
+
+<div style="width: 470px; flex-shrink: 0; display: flex; flex-direction: column; gap: 14px;">
+<h3 style="margin: 0; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .2em; color: #8F2820;">Focus ring</h3>
+<p style="margin: 0; font-size: 13px; line-height: 1.7; color: #55504A; text-wrap: pretty;">A 2px seal-red ring, 3px clear of the control, on <span style="font-family: 'Shippori Mincho','Hiragino Mincho ProN',serif;">:focus-visible</span> only — outside the border, so nothing shifts when focus lands. Tab through this board to see the real thing.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 18px; align-items: center; padding: 20px 18px; border: 1px solid #D9D2C1; border-radius: 4px; background: #FBF9F3;">
+<button type="button" class="ring" style="height: 46px; padding: 0 20px; background: #B8342A; color: #FCF7EE; border: none; border-radius: 4px; font-family: inherit; font-size: 15px; font-weight: 500; letter-spacing: .06em; cursor: pointer; box-shadow: 0 0 0 3px #FBF9F3, 0 0 0 5px #B8342A;">Focused</button>
+<button type="button" class="ring" style="height: 46px; padding: 0 20px; background: #FBF9F3; color: #1C1A17; border: 1px solid #1C1A17; border-radius: 4px; font-family: inherit; font-size: 15px; letter-spacing: .06em; cursor: pointer;">Not focused</button>
+<input class="ring" type="text" value="今日は" aria-label="Example field" style="width: 120px; height: 46px; box-sizing: border-box; padding: 0 13px; font-family: 'Shippori Mincho','Hiragino Mincho ProN',serif; font-size: 17px; color: #1C1A17; background: #F3F0E7; border: 1px solid #D9D2C1; border-radius: 4px; outline: none;">
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 18px; align-items: center; padding: 20px 18px; border: 1px solid #3D362D; border-radius: 4px; background: #191712;">
+<button type="button" class="ring-dark" style="height: 46px; padding: 0 20px; background: #E0614B; color: #1A1611; border: none; border-radius: 4px; font-family: inherit; font-size: 15px; font-weight: 700; letter-spacing: .06em; cursor: pointer; box-shadow: 0 0 0 3px #191712, 0 0 0 5px #E0614B;">Focused</button>
+<span style="font-size: 12px; line-height: 1.6; color: #A49B8C; max-width: 190px;">On dark the ring lifts to #E0614B — same 2px, same 3px gap.</span>
+</div>
+</div>
+
+<div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 14px;">
+<h3 style="margin: 0; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .2em; color: #8F2820;">When motion is off</h3>
+
+<div style="display: flex; gap: 22px; align-items: center; padding: 18px 20px; border: 1px solid #D9D2C1; border-radius: 4px; background: #FBF9F3;">
+<svg width="120" height="62" viewBox="0 0 86 44" fill="none" aria-hidden="true" style="flex-shrink: 0;"><g fill="none" stroke="#B8342A" stroke-opacity=".5" stroke-width="1.2"><path d="M79 22a36 36 0 0 0-12-27"></path><path d="M7 22a36 36 0 0 1 12-27"></path><path d="M64.6 22a21.6 21.6 0 0 0-7.2-16.2"></path><path d="M21.4 22a21.6 21.6 0 0 1 7.2-16.2"></path><path d="M51.6 22a8.6 8.6 0 0 0-2.9-6.5"></path><path d="M34.4 22a8.6 8.6 0 0 1 2.9-6.5"></path></g></svg>
+<span style="font-size: 12.5px; line-height: 1.7; color: #55504A; text-wrap: pretty;"><strong style="font-weight: 500; color: #1C1A17;">Nothing is lost.</strong> Under <span style="font-family: 'Shippori Mincho','Hiragino Mincho ProN',serif;">prefers-reduced-motion</span> the arcs freeze at the three positions above — which is simply how they are drawn on every other artboard. Playback is still announced by the seal-red dot, the word Playing, and the Pause label. Motion was never the only carrier.</span>
+</div>
+
+<p style="margin: 0; font-size: 12.5px; line-height: 1.7; color: #55504A; text-wrap: pretty;">This also settles the platforms. Android's battery saver turns the whole OS down to reduced motion below roughly 15% battery, and some browsers drop CSS animation entirely — on those devices Echo is a still app, and a still app is a complete one. No fallback animation, no JavaScript path.</p>
+
+<div style="display: flex; flex-direction: column; gap: 10px; margin-top: 4px; padding: 18px 20px; border: 1px solid #D9D2C1; border-radius: 4px; background: #FBF9F3;">
+<span style="font-size: 11px; text-transform: uppercase; letter-spacing: .18em; color: #6B645B;">Settings · Appearance</span>
+<label for="motion" style="display: flex; align-items: center; justify-content: space-between; gap: 16px;"><span style="font-size: 14px; color: #1C1A17;">Motion</span><span style="display: flex; align-items: center; height: 44px; padding: 0 34px 0 13px; background: #F3F0E7; border: 1px solid #D9D2C1; border-radius: 4px; font-size: 15px; color: #1C1A17;">Follow my device</span></label>
+<span style="font-size: 12px; line-height: 1.6; color: #6B645B; text-wrap: pretty;">Three values: follow my device, always on, off. It exists so a phone in battery saver can still be asked for the movement back — the device setting is a good default, not a verdict.</span>
+</div>
+</div>
+
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1080,"height":1140}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>
