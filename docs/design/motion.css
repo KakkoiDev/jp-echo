@@ -1,0 +1,206 @@
+/* Echo — the echo animation. Copy this file verbatim into styles.css.
+ *
+ * ── October note: it shipped, and nobody saw it ────────────────────
+ * The first edition of this file went into the build unchanged and the
+ * animation runs — but it was invisible. Two reasons, both fixed below:
+ *   1. The only moving echo on a playing screen was the arc pair: 76px
+ *      wide, cropped to 42px, a 2px stroke at 0.234. The weights in
+ *      sections 1–3 were measured on 196px+ rings with a 1px stroke;
+ *      they are far too light for the compact form. Section 4 now has
+ *      its own weights.
+ *   2. The ring ripple only existed on screens where nothing plays
+ *      (Welcome, Review home). Section 8 puts it behind the sentence on
+ *      every screen where audio can play, and names the elements that
+ *      must receive .is-playing.
+ * A third, outside this file: Settings → Motion defaults to "Device",
+ * and Android's battery saver reports prefers-reduced-motion, which
+ * section 7 honours. That is correct behaviour, not a bug — but say so
+ * in the Settings copy, and let "Always on" override it.
+ *
+ * This is the spec, not an illustration of it. Every number here was
+ * measured on the canvas; do not re-derive them from prose.
+ *
+ * ── The whole idea ──────────────────────────────────────────────────
+ * The resting state IS the drawn ripple: rings sitting at their final
+ * radii, exactly as every artboard draws them. Playing does not add a
+ * new graphic — it animates the one already there. So "not playing",
+ * "paused" and "reduced motion" are all the same state, for free, and
+ * there is no second thing to keep in sync.
+ *
+ * Movement means one thing: audio is playing right now. Nothing else
+ * in the app moves.
+ */
+
+/* ── 1. The container ──────────────────────────────────────────────
+ * One element wraps the rings. Its stroke-opacity is the ripple's
+ * weight, and it is NOT the same still and moving: a ring is at full
+ * strength for an instant and spends most of its cycle fading, so
+ * .16 measures as an effective .144 in motion. Lift it while playing.
+ * (Element opacity in the keyframes multiplies with this: .234 × .9
+ * = .21 at the peak.)
+ */
+.echo {
+  stroke-opacity: 0.16;
+}
+.echo.is-playing {
+  stroke-opacity: 0.234;
+}
+
+/* ── 2. Resting: the drawn ripple ───────────────────────────────────
+ * Four rings at .34 / .55 / .78 / 1 of the outer radius — the ratios
+ * the artboards use. Author every ring at the OUTER radius in the
+ * markup and scale it down here, so one animation can drive all four.
+ *
+ * transform-origin is the trap. SVG's default puts it at the corner of
+ * the coordinate system, not the middle of the shape, and it is NOT
+ * inherited — setting it on the parent <g> does nothing. Both the
+ * design and the build shipped rings flying out of the top-left before
+ * catching this. It must sit on the animated element itself.
+ */
+.echo-ring {
+  transform-box: view-box;
+  transform-origin: center;
+}
+.echo-ring:nth-of-type(1) { transform: scale(0.34); }
+.echo-ring:nth-of-type(2) { transform: scale(0.55); }
+.echo-ring:nth-of-type(3) { transform: scale(0.78); }
+.echo-ring:nth-of-type(4) { transform: scale(1); }
+
+/* ── 3. Playing: one ring leaves the centre per pass ────────────────
+ * 2.4s ÷ 4 rings = 0.6s stagger, so the cadence is even. 0.8s across
+ * four rings leaves a 0.8s hole in every cycle — that was the first
+ * build's bug, and it is why the number is 0.6 and not 0.8.
+ */
+@keyframes echo-emanate {
+  0%   { transform: scale(0.24); opacity: 0.9; }
+  65%  {                         opacity: 0.3; }
+  100% { transform: scale(1);    opacity: 0;   }
+}
+
+.echo.is-playing .echo-ring {
+  animation: echo-emanate 2.4s ease-out infinite;
+}
+.echo.is-playing .echo-ring:nth-of-type(2) { animation-delay: 0.6s; }
+.echo.is-playing .echo-ring:nth-of-type(3) { animation-delay: 1.2s; }
+.echo.is-playing .echo-ring:nth-of-type(4) { animation-delay: 1.8s; }
+
+/* ── 4. The arc pair — same motion, compact form, its own weights ───
+ * Used inline, beside the echo count. Three copies of ONE arc pair,
+ * not three arcs at different radii: author all three at the outer
+ * radius, rest them at .24 / .6 / 1, animate the same gesture.
+ * Stagger 0.8s (2.4 ÷ 3).
+ *
+ * Size and weight are not optional here. The SVG is 96 × 96 in a
+ * viewBox of 120, cropped to its top 48px — never 42, which cut the
+ * outer arc. Stroke 1.6. And because this is a 2px-class stroke at
+ * phone size, the opacities are NOT the ring opacities: 0.5 still,
+ * 0.7 moving. (Measured on-device; 0.234 is invisible at this size.)
+ *
+ * The fade ends at 0.15, not 0: with three arcs on a 0.8s stagger a
+ * fade to 0 leaves a moment once per cycle where all three are gone,
+ * and the pair reads as flickering rather than emanating.
+ */
+.arcs { height: 48px; overflow: hidden; }
+.arcs > .echo { width: 96px; height: 96px; stroke-width: 1.6; stroke-opacity: 0.5; }
+.arcs > .echo.is-playing { stroke-opacity: 0.7; }
+
+@keyframes echo-emanate-arc {
+  0%   { transform: scale(0.24); opacity: 0.95; }
+  65%  {                         opacity: 0.45; }
+  100% { transform: scale(1);    opacity: 0.15; }
+}
+
+.echo-arc {
+  transform-box: view-box;
+  transform-origin: center;
+}
+.echo-arc:nth-of-type(1) { transform: scale(0.24); }
+.echo-arc:nth-of-type(2) { transform: scale(0.6); }
+.echo-arc:nth-of-type(3) { transform: scale(1); }
+
+.echo.is-playing .echo-arc {
+  animation: echo-emanate-arc 2.4s ease-out infinite;
+}
+.echo.is-playing .echo-arc:nth-of-type(2) { animation-delay: 0.8s; }
+.echo.is-playing .echo-arc:nth-of-type(3) { animation-delay: 1.6s; }
+
+/* ── 5. Listening ──────────────────────────────────────────────────
+ * The mic GLYPH fades; the button itself never moves or resizes.
+ */
+@keyframes echo-listening {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.4; }
+}
+.is-listening .mic-glyph {
+  animation: echo-listening 1.4s ease-in-out infinite;
+}
+
+/* ── 6. The count going up ─────────────────────────────────────────
+ * Add .just-ticked when the number changes, remove it on animationend.
+ * Rises and fades in. No bounce, no colour flash, no scale.
+ */
+@keyframes echo-tick {
+  from { transform: translateY(6px); opacity: 0; }
+  to   { transform: translateY(0);   opacity: 1; }
+}
+.echo-count.just-ticked {
+  animation: echo-tick 280ms ease-out;
+}
+
+/* ── 7. Motion off ─────────────────────────────────────────────────
+ * Everything falls back to section 2 — the drawn ripple — because that
+ * is the base state. Nothing disappears, nothing collapses into a
+ * single overlapping ring.
+ *
+ * Do not add a reduced-motion "alternative" animation. A still Echo is
+ * a complete Echo: playback is announced by the seal-red dot, the word
+ * Playing, and the Pause label. Movement is the fourth, redundant
+ * carrier — which is also the answer to Android rendering no CSS
+ * animation at all.
+ *
+ * .motion-off is the Settings → Appearance → Motion = Off class, set on
+ * <html>. "Always on" omits both and wins over the device preference.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .echo.is-playing { stroke-opacity: 0.16; }
+  .echo.is-playing .echo-ring,
+  .echo.is-playing .echo-arc,
+  .is-listening .mic-glyph,
+  .echo-count.just-ticked { animation: none; }
+}
+html.motion-off .echo.is-playing { stroke-opacity: 0.16; }
+html.motion-off .echo.is-playing .echo-ring,
+html.motion-off .echo.is-playing .echo-arc,
+html.motion-off .is-listening .mic-glyph,
+html.motion-off .echo-count.just-ticked { animation: none; }
+
+/* ── 8. Where the moving echo lives ────────────────────────────────
+ * Every screen where audio can play carries the ring ripple behind the
+ * sentence — the same <svg class="ripple echo"> Welcome uses — and the
+ * arc pair beside the count. Both get .is-playing from the loop's
+ * onState: active = playing && state !== "paused". Rings on a screen
+ * where nothing plays (Welcome, Review home, the empties) stay still
+ * and never carry the class.
+ *
+ *   #practice        .ripple.echo behind the sentence   + .arcs > .echo
+ *   #review-result   .ripple.echo behind the sentence   + .arcs > .echo
+ *   #sentence-view   .ripple.echo behind the sentence   + .arcs > .echo
+ *   #discussion-live, #reading   the arc pair beside the loop state
+ *
+ * The one line of JS that matters, in the loop's onState handler:
+ *   for (const echo of document.querySelectorAll(".arcs > .echo, .ripple.echo.live"))
+ *     echo.classList.toggle("is-playing", active);
+ * Mark the playing-screen ripples with .live so the ornament ones are
+ * never selected. Behind text on a phone the live rings carry 0.30.
+ */
+.ripple.echo.live { stroke-opacity: 0.16; }
+.ripple.echo.live.is-playing { stroke-opacity: 0.30; }
+
+/* Reduced motion and .motion-off, extended to the compact weights and
+ * the live rings — everything falls back to the drawn state. */
+@media (prefers-reduced-motion: reduce) {
+  .arcs > .echo.is-playing { stroke-opacity: 0.5; }
+  .ripple.echo.live.is-playing { stroke-opacity: 0.16; }
+}
+html.motion-off .arcs > .echo.is-playing { stroke-opacity: 0.5; }
+html.motion-off .ripple.echo.live.is-playing { stroke-opacity: 0.16; }

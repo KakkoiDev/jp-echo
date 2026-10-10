@@ -1,0 +1,25 @@
+{
+ "comment": "Light -> dark hex substitution used to generate every *Dark artboard from its light twin. Mechanical: apply to the token values, not per element. Paper texture: rgba(28,26,23,a) -> rgba(242,238,227,a); raised paper rgba(251,249,243,a) -> rgba(34,31,25,a).",
+ "map": {
+  "#F3F0E7": "#191712",
+  "#FBF9F3": "#221F19",
+  "#1C1A17": "#F2EEE3",
+  "#55504A": "#C4BCAC",
+  "#6B645B": "#A49B8C",
+  "#B0A99C": "#7D7568",
+  "#D9D2C1": "#3D362D",
+  "#E2DCCE": "#363028",
+  "#B8342A": "#E0614B",
+  "#8F2820": "#EE8672",
+  "#FCF7EE": "#1A1611",
+  "#F1EDE2": "#2C2820",
+  "#F6E4E0": "#3A241F",
+  "#C8C0AE": "#4A443A",
+  "#C9705F": "#7A3A30",
+  "#FAEDE9": "#2A1E1A",
+  "#ECEFF4": "#1E242E",
+  "#9BA8B8": "#4C6182",
+  "#2E4A6B": "#9DB4D4",
+  "#9A9287": "#7D7568"
+ }
+}

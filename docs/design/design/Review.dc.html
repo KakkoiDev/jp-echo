@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Review — say it</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;800&amp;family=Zen+Kaku+Gothic+New:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Zen Kaku Gothic New','Hiragino Sans','Yu Gothic',system-ui,sans-serif;background:#F3F0E7;color:#1C1A17;-webkit-font-smoothing:antialiased}
+a{color:#B8342A}a:hover{color:#8F2820}
+::placeholder{color:#9A9287}
+x-dc>div>*{flex-shrink:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 930px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; background-color: #F3F0E7; background-image: repeating-linear-gradient(90deg, rgba(28,26,23,.022) 0 1px, transparent 1px 3px), repeating-linear-gradient(0deg, rgba(28,26,23,.014) 0 1px, transparent 1px 4px);">
+
+<div style="display: flex; align-items: center; gap: 12px; padding: 24px 18px 14px;">
+<a href="ReviewHome.dc.html" aria-label="End review" style="width: 44px; height: 44px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border: 1px solid #D9D2C1; border-radius: 4px; background: #FBF9F3; text-decoration: none;">
+<svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="m1 1 12 12M13 1 1 13" stroke="#1C1A17" stroke-width="1.5" stroke-linecap="round"></path></svg>
+</a>
+<h2 style="margin: 0; flex-grow: 1; font-family: 'Shippori Mincho','Hiragino Mincho ProN',serif; font-weight: 600; font-size: 20px; letter-spacing: .04em;">Review</h2>
+<span style="font-family: 'Shippori Mincho','Hiragino Mincho ProN',serif; font-size: 16px; color: #55504A; letter-spacing: .06em;">3 / 7</span>
+</div>
+
+<div style="height: 3px; margin: 0 22px; background: #E2DCCE;"><div style="width: 43%; height: 3px; background: #B8342A;"></div></div>
+
+<div style="display: flex; flex-direction: column; flex-grow: 1; padding: 24px 22px 0;">
+
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;"><span style="display: inline-flex; padding: 3px 8px; border: 1px solid #C8C0AE; border-radius: 2px; background: #F1EDE2; color: #55504A; font-size: 10px; text-transform: uppercase; letter-spacing: .12em; white-space: nowrap;">Review · seen 4 times</span><span style="display: inline-flex; gap: 4px;" aria-label="書 card"><span lang="ja" aria-hidden="true" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; border-radius: 3px; border: 1px solid #E2DCCE; background: #FBF9F3; color: #B0A99C; font-family: 'Shippori Mincho','Hiragino Mincho ProN',serif; font-size: 14px;">聴</span><span lang="ja" aria-hidden="true" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; border-radius: 3px; border: 1px solid #E2DCCE; background: #FBF9F3; color: #B0A99C; font-family: 'Shippori Mincho','Hiragino Mincho ProN',serif; font-size: 14px;">読</span><span lang="ja" aria-hidden="true" style="width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; border-radius: 3px; border: 1px solid #B8342A; background: #B8342A; color: #FCF7EE; font-family: 'Shippori Mincho','Hiragino Mincho ProN',serif; font-size: 14px;">書</span></span></div><h3 style="margin: 18px 0 0; font-family: 'Shippori Mincho','Hiragino Mincho ProN',serif; font-weight: 600; font-size: 22px; line-height: 1.25;">Write it</h3><p style="margin: 6px 0 0; font-size: 13px; line-height: 1.6; color: #6B645B;">You have heard it and read it. This time the Japanese comes from you — say it, or write it, before you look.</p>
+
+<p style="margin: 22px 0 0; font-family: 'Shippori Mincho','Hiragino Mincho ProN',serif; font-weight: 500; font-size: 28px; line-height: 1.5; letter-spacing: -.01em; text-wrap: pretty;">The train is running late today.</p>
+
+<label for="attempt" style="margin: 26px 0 9px; font-size: 11px; text-transform: uppercase; letter-spacing: .16em; color: #6B645B;">Write it in Japanese</label>
+
+<div style="display: flex; flex-direction: column; gap: 12px; padding: 14px 14px 12px; border: 1px solid #C9705F; border-radius: 5px; background: #FBF9F3;">
+<textarea id="attempt" rows="2" lang="ja" placeholder="Speak, or type it here" style="width: 100%; box-sizing: border-box; resize: none; border: none; outline: none; background: transparent; font-family: 'Shippori Mincho','Hiragino Mincho ProN',serif; font-size: 23px; line-height: 1.7; color: #1C1A17;">今日は電車が遅れました。</textarea>
+<div style="display: flex; align-items: center; gap: 12px; padding-top: 10px; border-top: 1px solid #E2DCCE;">
+<button type="button" aria-pressed="true" aria-label="Stop listening" style="width: 46px; height: 46px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: #B8342A; border: none; border-radius: 50%; cursor: pointer;">
+<svg width="16" height="20" viewBox="0 0 16 20" fill="none" aria-hidden="true"><rect x="5" y="1" width="6" height="11" rx="3" stroke="#FCF7EE" stroke-width="1.5"></rect><path d="M2 9.2a6 6 0 0 0 12 0M8 15.4V19M5.2 19h5.6" stroke="#FCF7EE" stroke-width="1.5" stroke-linecap="round"></path></svg>
+</button>
+<span style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px;">
+<span style="font-size: 13px; color: #8F2820; letter-spacing: .02em;">Listening — keep going</span>
+<span style="font-size: 11px; line-height: 1.5; color: #6B645B;">Edit anything it mishears before you check.</span>
+</span>
+<svg width="34" height="20" viewBox="0 0 86 44" fill="none" aria-hidden="true" style="flex-shrink: 0;"><g stroke="#B8342A" stroke-opacity=".5" stroke-width="2"><path d="M79 22a36 36 0 0 0-12-27"></path><path d="M65 22a22 22 0 0 0-7.4-16.5"></path><path d="M51 22a8 8 0 0 0-2.6-6"></path></g></svg>
+</div>
+</div>
+
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 16px 22px 30px;">
+<a href="ReviewAnswer.dc.html" style="height: 60px; display: flex; align-items: center; justify-content: center; gap: 11px; background: #B8342A; color: #FCF7EE; border-radius: 4px; text-decoration: none; font-size: 17px; font-weight: 500; letter-spacing: .06em;">
+<svg width="18" height="14" viewBox="0 0 18 14" fill="none" aria-hidden="true"><path d="M1 7s3-5.4 8-5.4S17 7 17 7s-3 5.4-8 5.4S1 7 1 7Z" stroke="#FCF7EE" stroke-width="1.3"></path><circle cx="9" cy="7" r="2.2" stroke="#FCF7EE" stroke-width="1.3"></circle></svg>
+Said it — check and listen</a>
+<button type="button" style="height: 46px; background: transparent; border: none; font-family: inherit; font-size: 14px; letter-spacing: .04em; color: #6B645B; cursor: pointer;">Skip this one</button>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":930}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

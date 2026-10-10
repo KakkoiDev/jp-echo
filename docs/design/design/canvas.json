@@ -1,0 +1,620 @@
+{
+  "v": 3,
+  "attachments": {},
+  "createdOnFiles": {
+    "at": "2026-09-21T06:00:00Z",
+    "v": 1
+  },
+  "title": "Echo — redesign",
+  "launch": {
+    "view": "canvas"
+  },
+  "pages": [],
+  "designSystems": [],
+  "boards": {
+    "Welcome.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Welcome",
+      "w": 390,
+      "x": 0,
+      "y": 0
+    },
+    "Setup.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "One thing first",
+      "w": 390,
+      "x": 470,
+      "y": 0
+    },
+    "Setup2.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Which way round",
+      "w": 390,
+      "x": 940,
+      "y": 0
+    },
+    "PracticeNoKey.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Practice — no translator",
+      "w": 390,
+      "x": 1410,
+      "y": 0
+    },
+    "Main.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "title": "Practice — start",
+      "w": 390,
+      "x": 1880,
+      "y": 0
+    },
+    "Practice.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Practice — loop running",
+      "w": 390,
+      "x": 2350,
+      "y": 0
+    },
+    "DiscussionSetup.dc.html": {
+      "h": 930,
+      "is_interactive": true,
+      "title": "Discussion — set a scene",
+      "w": 390,
+      "x": 2820,
+      "y": 0
+    },
+    "Discussion.dc.html": {
+      "h": 960,
+      "is_interactive": true,
+      "title": "Discussion — live",
+      "w": 390,
+      "x": 3290,
+      "y": 0
+    },
+    "Reading.dc.html": {
+      "h": 1060,
+      "is_interactive": true,
+      "title": "Reading practice",
+      "w": 390,
+      "x": 3760,
+      "y": 0
+    },
+    "Extract.dc.html": {
+      "h": 1360,
+      "is_interactive": true,
+      "title": "Extract from text",
+      "w": 390,
+      "x": 4230,
+      "y": 0
+    },
+    "ReviewHome.dc.html": {
+      "h": 1010,
+      "is_interactive": true,
+      "title": "Review — due today",
+      "w": 390,
+      "x": 0,
+      "y": 1760
+    },
+    "ReviewStats.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "title": "Review — stats",
+      "w": 390,
+      "x": 470,
+      "y": 1760
+    },
+    "ReviewListen.dc.html": {
+      "h": 860,
+      "is_interactive": true,
+      "title": "Review — listen (聴)",
+      "w": 390,
+      "x": 940,
+      "y": 1760
+    },
+    "Review.dc.html": {
+      "h": 930,
+      "is_interactive": true,
+      "title": "Review — write it (書)",
+      "w": 390,
+      "x": 1410,
+      "y": 1760
+    },
+    "ReviewAnswer.dc.html": {
+      "h": 1010,
+      "is_interactive": true,
+      "title": "Review — check and grade",
+      "w": 390,
+      "x": 1880,
+      "y": 1760
+    },
+    "ReviewDone.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "All said",
+      "w": 390,
+      "x": 2350,
+      "y": 1760
+    },
+    "ReviewEmpty.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Review — nothing due",
+      "w": 390,
+      "x": 2820,
+      "y": 1760
+    },
+    "History.dc.html": {
+      "h": 1220,
+      "is_interactive": true,
+      "title": "Library",
+      "w": 390,
+      "x": 0,
+      "y": 3170
+    },
+    "EmptyLibrary.dc.html": {
+      "h": 960,
+      "is_interactive": true,
+      "title": "Library — nothing yet",
+      "w": 390,
+      "x": 470,
+      "y": 3170
+    },
+    "Map.dc.html": {
+      "h": 2020,
+      "is_interactive": true,
+      "title": "Kanji, words and grammar — kanji",
+      "w": 390,
+      "x": 940,
+      "y": 3170
+    },
+    "MapWords.dc.html": {
+      "h": 1960,
+      "is_interactive": true,
+      "title": "— words",
+      "w": 390,
+      "x": 1410,
+      "y": 3170
+    },
+    "MapGrammar.dc.html": {
+      "h": 2070,
+      "is_interactive": true,
+      "title": "— grammar",
+      "w": 390,
+      "x": 1880,
+      "y": 3170
+    },
+    "MapSearch.dc.html": {
+      "h": 850,
+      "is_interactive": true,
+      "title": "— looking one up",
+      "w": 390,
+      "x": 2350,
+      "y": 3170
+    },
+    "MapKanji.dc.html": {
+      "h": 1400,
+      "is_interactive": true,
+      "title": "One kanji",
+      "w": 390,
+      "x": 2820,
+      "y": 3170
+    },
+    "MapWord.dc.html": {
+      "h": 1130,
+      "is_interactive": true,
+      "title": "One word",
+      "w": 390,
+      "x": 3290,
+      "y": 3170
+    },
+    "MapPoint.dc.html": {
+      "h": 1640,
+      "is_interactive": true,
+      "title": "One grammar point",
+      "w": 390,
+      "x": 3760,
+      "y": 3170
+    },
+    "Mora.dc.html": {
+      "h": 1500,
+      "is_interactive": true,
+      "title": "Mora memory table",
+      "w": 390,
+      "x": 4230,
+      "y": 3170
+    },
+    "Sentence.dc.html": {
+      "h": 1070,
+      "is_interactive": true,
+      "title": "One sentence",
+      "w": 390,
+      "x": 0,
+      "y": 5640
+    },
+    "SentenceEdit.dc.html": {
+      "h": 1130,
+      "is_interactive": true,
+      "title": "One sentence — change it",
+      "w": 390,
+      "x": 470,
+      "y": 5640
+    },
+    "Dictionary.dc.html": {
+      "h": 760,
+      "is_interactive": true,
+      "title": "A word, looked up",
+      "w": 390,
+      "x": 940,
+      "y": 5640
+    },
+    "SentenceDelete.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Delete a sentence",
+      "w": 390,
+      "x": 1410,
+      "y": 5640
+    },
+    "Settings.dc.html": {
+      "h": 2150,
+      "is_interactive": true,
+      "title": "Settings",
+      "w": 390,
+      "x": 1880,
+      "y": 5640
+    },
+    "SettingsBackup.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "title": "Settings — backup",
+      "w": 390,
+      "x": 2350,
+      "y": 5640
+    },
+    "SettingsImport.dc.html": {
+      "h": 960,
+      "is_interactive": true,
+      "title": "Settings — import",
+      "w": 390,
+      "x": 2820,
+      "y": 5640
+    },
+    "SettingsAI.dc.html": {
+      "h": 860,
+      "is_interactive": true,
+      "title": "Settings — AI service",
+      "w": 390,
+      "x": 3290,
+      "y": 5640
+    },
+    "EchoSelect.dc.html": {
+      "h": 1040,
+      "is_interactive": true,
+      "title": "Echo — select anything",
+      "w": 390,
+      "x": 0,
+      "y": 8190
+    },
+    "EchoFix.dc.html": {
+      "h": 760,
+      "is_interactive": true,
+      "title": "Echo — fix, field first",
+      "w": 390,
+      "x": 470,
+      "y": 8190
+    },
+    "EchoFixProposed.dc.html": {
+      "h": 1120,
+      "is_interactive": true,
+      "title": "Echo — fix, proposed",
+      "w": 390,
+      "x": 940,
+      "y": 8190
+    },
+    "EchoGuide.dc.html": {
+      "h": 980,
+      "is_interactive": true,
+      "title": "Echo — show me how",
+      "w": 390,
+      "x": 1410,
+      "y": 8190
+    },
+    "EchoSources.dc.html": {
+      "h": 1110,
+      "is_interactive": true,
+      "title": "Echo — sources",
+      "w": 390,
+      "x": 1880,
+      "y": 8190
+    },
+    "EchoPreference.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "title": "Echo — the preference",
+      "w": 390,
+      "x": 2350,
+      "y": 8190
+    },
+    "PracticeDark.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Practice — dark",
+      "w": 390,
+      "x": 0,
+      "y": 9710
+    },
+    "ReviewHomeDark.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Review home — dark",
+      "w": 390,
+      "x": 470,
+      "y": 9710
+    },
+    "ReviewDark.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Review say it — dark",
+      "w": 390,
+      "x": 940,
+      "y": 9710
+    },
+    "ReviewAnswerDark.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Review check — dark",
+      "w": 390,
+      "x": 1410,
+      "y": 9710
+    },
+    "HistoryDark.dc.html": {
+      "h": 1010,
+      "is_interactive": true,
+      "title": "Library — dark",
+      "w": 390,
+      "x": 1880,
+      "y": 9710
+    },
+    "MapDark.dc.html": {
+      "h": 2020,
+      "is_interactive": true,
+      "title": "Kanji, words and grammar — dark",
+      "w": 390,
+      "x": 2350,
+      "y": 9710
+    },
+    "SettingsDark.dc.html": {
+      "h": 2150,
+      "is_interactive": true,
+      "title": "Settings — dark",
+      "w": 390,
+      "x": 2820,
+      "y": 9710
+    },
+    "Foundations.dc.html": {
+      "h": 980,
+      "title": "Foundations",
+      "w": 1080,
+      "x": 0,
+      "y": 12260
+    },
+    "Messages.dc.html": {
+      "h": 780,
+      "title": "When something is wrong",
+      "w": 1080,
+      "x": 1160,
+      "y": 12260
+    },
+    "Motion.dc.html": {
+      "h": 1140,
+      "is_interactive": true,
+      "title": "Focus and motion",
+      "w": 1080,
+      "x": 2320,
+      "y": 12260
+    },
+    "AppIcon.dc.html": {
+      "h": 980,
+      "title": "App icon and splash",
+      "w": 1080,
+      "x": 3480,
+      "y": 12260
+    },
+    "Desktop.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "title": "Desktop — practice",
+      "w": 1280,
+      "x": 0,
+      "y": 13800
+    },
+    "DesktopReview.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "title": "Desktop — review session",
+      "w": 1280,
+      "x": 1360,
+      "y": 13800
+    },
+    "DesktopLibrary.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "title": "Desktop — library",
+      "w": 1280,
+      "x": 2720,
+      "y": 13800
+    },
+    "Landing.dc.html": {
+      "h": 1700,
+      "is_interactive": true,
+      "title": "Landing page",
+      "w": 1280,
+      "x": 4080,
+      "y": 13800
+    }
+  },
+  "order": [
+    "Welcome.dc.html",
+    "Setup.dc.html",
+    "Setup2.dc.html",
+    "PracticeNoKey.dc.html",
+    "Main.dc.html",
+    "Practice.dc.html",
+    "DiscussionSetup.dc.html",
+    "Discussion.dc.html",
+    "Reading.dc.html",
+    "Extract.dc.html",
+    "ReviewHome.dc.html",
+    "ReviewStats.dc.html",
+    "ReviewListen.dc.html",
+    "Review.dc.html",
+    "ReviewAnswer.dc.html",
+    "ReviewDone.dc.html",
+    "ReviewEmpty.dc.html",
+    "History.dc.html",
+    "EmptyLibrary.dc.html",
+    "Map.dc.html",
+    "MapWords.dc.html",
+    "MapGrammar.dc.html",
+    "MapSearch.dc.html",
+    "MapKanji.dc.html",
+    "MapWord.dc.html",
+    "MapPoint.dc.html",
+    "Mora.dc.html",
+    "Sentence.dc.html",
+    "SentenceEdit.dc.html",
+    "Dictionary.dc.html",
+    "SentenceDelete.dc.html",
+    "Settings.dc.html",
+    "SettingsBackup.dc.html",
+    "SettingsImport.dc.html",
+    "SettingsAI.dc.html",
+    "EchoSelect.dc.html",
+    "EchoFix.dc.html",
+    "EchoFixProposed.dc.html",
+    "EchoGuide.dc.html",
+    "EchoSources.dc.html",
+    "EchoPreference.dc.html",
+    "PracticeDark.dc.html",
+    "ReviewHomeDark.dc.html",
+    "ReviewDark.dc.html",
+    "ReviewAnswerDark.dc.html",
+    "HistoryDark.dc.html",
+    "MapDark.dc.html",
+    "SettingsDark.dc.html",
+    "Foundations.dc.html",
+    "Messages.dc.html",
+    "Motion.dc.html",
+    "AppIcon.dc.html",
+    "Desktop.dc.html",
+    "DesktopReview.dc.html",
+    "DesktopLibrary.dc.html",
+    "Landing.dc.html"
+  ],
+  "notes": {
+    "n1": {
+      "kind": "title1",
+      "maxW": 4620,
+      "text": "Getting started, and practising",
+      "w": 240,
+      "x": 0,
+      "y": -280
+    },
+    "n2": {
+      "kind": "title1",
+      "maxW": 3210,
+      "text": "Review",
+      "w": 240,
+      "x": 0,
+      "y": 1480
+    },
+    "n3": {
+      "kind": "title1",
+      "maxW": 4620,
+      "text": "Library, and the study tool",
+      "w": 240,
+      "x": 0,
+      "y": 2890
+    },
+    "n4": {
+      "kind": "title1",
+      "maxW": 3680,
+      "text": "One sentence, and settings",
+      "w": 240,
+      "x": 0,
+      "y": 5360
+    },
+    "n5": {
+      "kind": "title1",
+      "maxW": 2740,
+      "text": "Echo anywhere — a proposal",
+      "w": 240,
+      "x": 0,
+      "y": 7910
+    },
+    "n6": {
+      "kind": "title1",
+      "maxW": 3210,
+      "text": "Dark theme",
+      "w": 240,
+      "x": 0,
+      "y": 9430
+    },
+    "n7": {
+      "kind": "title1",
+      "maxW": 4560,
+      "text": "The system",
+      "w": 240,
+      "x": 0,
+      "y": 11980
+    },
+    "n8": {
+      "kind": "title1",
+      "maxW": 5360,
+      "text": "Desktop, and the landing page",
+      "w": 240,
+      "x": 0,
+      "y": 13520
+    },
+    "n9": {
+      "color": "gray",
+      "text": "Dark theme",
+      "w": 440,
+      "x": 4640,
+      "y": 12260
+    },
+    "n10": {
+      "color": "gray",
+      "text": "Desktop, and the landing page",
+      "w": 440,
+      "x": 4700,
+      "y": 3170
+    },
+    "n11": {
+      "color": "gray",
+      "text": "Practice has four ways in, and three of them are pushed screens with a back arrow, not a mode bar: Discussion (set a scene, Echo speaks first, Save any turn), Reading (a text at your level, keep the lines you like), Extract from text (paste or an EPUB, keep the sentences with words you have not met). The composer at the bottom is the same one everywhere — field, swap, mic, send — only its label and verb change. Nothing that Echo writes enters your library until you Save or Keep it.",
+      "w": 440,
+      "x": 4700,
+      "y": 0
+    },
+    "n12": {
+      "color": "gray",
+      "text": "Echo is a prefill, not a mode. Every verb opens the editor a person would use, live from the first moment, with the seal beside it; nothing is sent until the seal is pressed. Both versions survive, the chip says whose words you are reading and swaps them, and a human edit is never overwritten — a newer suggestion is a quiet line. One preference, I write first / Echo offers first, and each verb can be switched off; with all six off the toolbar is gone and the app is the same app.",
+      "w": 440,
+      "x": 2820,
+      "y": 8190
+    },
+    "n13": {
+      "color": "gray",
+      "text": "Review skills: each sentence takes turns being 聴 heard, 読 read and 書 written, one per visit, moving on when graded OK. The three glyphs sit on the card, the active one filled; the card title and one line under it say which and why. The listening card has no answer box — play, say it back, show. Stats is a second tab on Review home, not a screen of its own, and never asks for anything.",
+      "w": 440,
+      "x": 3290,
+      "y": 1760
+    }
+  }
+}
