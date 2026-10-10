@@ -270,3 +270,25 @@ test("identity: the maskable icon is its own file, the glyph inside the safe zon
   assert.ok(manifest.icons.some(i => i.src === "./icon-maskable-512.png" && i.purpose === "maskable"));
   assert.ok(manifest.icons.some(i => i.src === "./icon-512.png" && i.purpose === "any"));
 });
+
+test("settings is the page the boards draw: chips, rows, honest reminders, sub-pages, first run", () => {
+  assert.match(css, /\.settings-index\{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 0\}/, "the section index is four chips on a phone");
+  assert.match(html, /<a href="#settings-device">This device <span aria-hidden="true">🔒<\/span><\/a>/);
+  assert.match(css, /\.settings-row-title\{font-family:var\(--display\);font-size:17px;color:var\(--sumi\)\}/);
+  assert.match(html, /<span>Speaker 1 — Echo<\/span>/);
+  assert.match(app, /const tail=" — Echo has no server and sends nothing\.";/, "the reminders line never promises a push");
+  assert.match(app, /return "On this device: Echo checks when it is opened\. This browser does not wake it in the background, so a reminder can only arrive on a day you open the app"\+tail;/);
+  assert.doesNotMatch(app, /\$\("#remind-reach"\)\.textContent=settings\.remind\?/, "the line shows whether or not the toggle is on");
+  assert.doesNotMatch(html, /settings-page-title/, "a sub-page's title lives in the header only");
+  assert.match(html, /<span class="collapse-title">Advanced<\/span><span class="collapse-meta">Optional translation proxy, for browsers a provider blocks<\/span>/);
+  assert.match(app, /settings\.aiCheckedAt=new Date\(\)\.toISOString\(\);persistSettings\(\)/, "the check time is remembered, not the key");
+  assert.match(app, /"Key checked "\+gistWhen\(checked\)\+" · working"/);
+  assert.match(html, /<h3 class="rule-heading">Backup file<\/h3><div class="asset-row"><span class="asset-copy"><strong>Export a file<\/strong><span class="hint">Every sentence, note and review as JSON\. No keys, ever\.<\/span>/);
+  assert.match(app, /\$\("#export"\)\.onclick=exportHistory;\$\("#export-file"\)\.onclick=exportHistory;/, "one action, one implementation: both export buttons run exportHistory");
+  assert.match(html, /<h3 class="rule-heading">From a book or a passage<\/h3><button data-ui="button" id="settings-extract" class="library-tool two-line"/);
+  assert.match(html, /<h3 class="rule-heading">Furigana check<\/h3>/);
+  assert.match(html, /id="reading-backfill" type="button">Resume<\/button>/);
+  assert.match(html, /id="onboard-restore" class="plain" type="button">I have a backup file, or a gist<\/button>/);
+  assert.match(app, /#onboard-restore"\)\.onclick=\(\)=>\{finishOnboarding\(\);openSettings\(\)\}/, "both restore paths live in Settings");
+  assert.match(app, /\$\("#setup-title"\)\.textContent=step===1\?"One thing first":"Which way round\?"/);
+});

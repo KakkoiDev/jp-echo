@@ -99,7 +99,7 @@ test("every write that changes a backup marks it dirty, and imports do too", () 
 test("the gist holds the same document Export downloads", () => {
   assert.match(app, /async function buildBackup\(\)\{return \{\.\.\.exportBackup\(/);
   assert.match(app, /async function exportHistory\(\)\{const data=await buildBackup\(\)/);
-  assert.match(app, /uploadBackup\(\{token,gist,backup:await buildBackup\(\)\}\)/);
+  assert.match(app, /const backup=await buildBackup\(\),result=await uploadBackup\(\{token,gist,backup\}\)/, "the gist receives buildBackup() and nothing else");
 });
 
 test("an unrecognised gist URL is an error, never a silent new gist", () => {
