@@ -438,7 +438,7 @@ function renderKanjiBand(band,cover,known){
   const unmet=total-metN;
   section.append(bandHead(band,learnedN,metN,total,unmet===1?t("1 to meet"):t("{n} to meet",{n:unmet.toLocaleString()})));
   if(tool.open!==band.key)return section;
-  section.classList.add("open");section.setAttribute("aria-busy","");
+  section.classList.add("open");section.dataset.open="";
   const body=el("div","band-body");body.id="band-"+band.key;
   const chips=el("div","chips");
   const sets={all:band.chars,unmet:band.chars.filter(c=>!cover.has(c)),met:band.chars.filter(c=>cover.has(c)&&!known.has(c)),learned:band.chars.filter(c=>known.has(c))};
@@ -684,7 +684,7 @@ function renderGrammarBand(band,cover,known){
   const total=band.points.length,metN=band.points.filter(p=>cover.has(p.id)).length,learnedN=band.points.filter(p=>known.has(p.id)).length,unused=total-metN;
   section.append(bandHead(band,learnedN,metN,total,unused===1?t("1 to use"):t("{n} to use",{n:unused.toLocaleString()})));
   if(tool.open!==band.key)return section;
-  section.classList.add("open");section.setAttribute("aria-busy","");
+  section.classList.add("open");section.dataset.open="";
   const body=el("div","band-body");body.id="band-"+band.key;
   const chips=el("div","chips");
   const sets={all:band.points,unmet:band.points.filter(p=>!cover.has(p.id)),met:band.points.filter(p=>cover.has(p.id))};
@@ -841,13 +841,12 @@ function noteBlock(block,{about,kind,note,onSave,onReset,echoLine,yoursLine,rend
     finally{rewrite.disabled=false}};
   reset.onclick=async()=>{note=await onReset();show(note);pstatus.textContent=t("Echo’s version is back.")};
   // Editing by hand: the text becomes editable while the panel is open, and
-  // what you leave in it is saved on the way out.
-  for(const p of block.querySelectorAll(".note-text")){
-    p.contentEditable="false";
-    p.onfocus=null;
-    p.onblur=async()=>{if(p.contentEditable!=="true")return;const edited=block.currentText?block.currentText():p.textContent.trim();if(edited===(block.currentText?block.savedText:note.text)||!edited)return;note=await onSave(edited,"you");show(note);pstatus.textContent=t("Saved. Yours now.")};
-  }
-  const editable=on=>{for(const p of block.querySelectorAll(".note-text"))p.contentEditable=on?"true":"false"};
+  // an explicit Save keeps it — never on blur (CLAUDE.md), which raced the
+  // panel's other actions and could save a half-made edit.
+  for(const p of block.querySelectorAll(".note-text")){p.contentEditable="false";p.onfocus=null;p.onblur=null}
+  const saveLink=panel.querySelector(".save-link");
+  const editable=on=>{for(const p of block.querySelectorAll(".note-text"))p.contentEditable=on?"true":"false";if(saveLink)saveLink.hidden=!on};
+  if(saveLink)saveLink.onclick=async()=>{const edited=block.currentText?block.currentText():block.querySelector(".note-text").textContent.trim();if(!edited||edited===(block.currentText?block.savedText:note.text)){pstatus.textContent=t("Nothing changed.");return}note=await onSave(edited,"you");if(block.currentText)block.savedText=edited;show(note);pstatus.textContent=t("Saved. Yours now.")};
   adjust.onclick=()=>{panel.hidden=!panel.hidden;editable(!panel.hidden);if(!panel.hidden)input.focus()};
 }
 // The bundled story, or your version of it: an override in the notes store,
@@ -956,7 +955,7 @@ function renderWordBand(band,cover,known){
   const total=band.words.length,metN=band.words.filter(w=>cover.has(w.id)).length,learnedN=band.words.filter(w=>known.has(w.id)).length,unmet=total-metN;
   section.append(bandHead(band,learnedN,metN,total,unmet===1?t("1 to meet"):t("{n} to meet",{n:unmet.toLocaleString()})));
   if(tool.open!==band.key)return section;
-  section.classList.add("open");section.setAttribute("aria-busy","");
+  section.classList.add("open");section.dataset.open="";
   const body=el("div","band-body");body.id="band-"+band.key;
   const chips=el("div","chips");
   const sets={all:band.words,unmet:band.words.filter(w=>!cover.has(w.id)),met:band.words.filter(w=>cover.has(w.id)&&!known.has(w.id)),learned:band.words.filter(w=>known.has(w.id))};
@@ -1184,8 +1183,6 @@ async function renderHistory(){const version=++historyRenderVersion,all=await li
   for(const [index,item] of items.entries()){if(index%10===0){await new Promise(resolve=>setTimeout(resolve,0));if(version!==historyRenderVersion)return}const li=document.createElement("li");li.dataset.id=item.id;const state=cardState(item,now);li.innerHTML='<button class="history-open" type="button"><span class="lines"><span lang="'+itemTarget(item)+'">'+rubyHtml(preferredTarget(item))+'</span><span class="source-line">'+escapeText(item.source)+'</span><span class="status-chip '+state+'">'+CARD_STATES[state]+'</span></span><span class="tally"><strong>'+(Number(item.echoCount)||0)+'</strong><span>echoes</span></span></button>';li.querySelector(".history-open").onclick=()=>openDetail(item.id);list.append(li)}markSelectedRow()}
 const formatDate=value=>new Intl.DateTimeFormat(undefined,{day:"numeric",month:"long"}).format(new Date(value));
 const RATING_LABELS={again:"Again",ok:"OK"};
-function untilDue(sentence,now=Date.now()){const due=Date.parse(sentence.srs?.due||"");if(!Number.isFinite(due)||due<=now)return "Now";
-  const minutes=Math.round((due-now)/60000);if(minutes<60)return minutes+"m";const hours=Math.round(minutes/60);if(hours<24)return hours+"h";return Math.round(hours/24)+"d"}
 async function openDetail(id){const sentence=await getSentence(id);if(!sentence)return showView("library");resetSession();detail=ensureSchedule(sentence);showView("sentence");renderDetail()}
 function markSelectedRow(){for(const li of document.querySelectorAll("#history-list li"))li.classList.toggle("selected",li.dataset.id===detail?.id);}
 function renderDetailLearningText(){$("#sentence-grammar").replaceChildren();$("#sentence-grammar").hidden=true;$("#sentence-japanese").innerHTML=rubyHtml(preferredTarget(detail));$("#sentence-japanese").lang=itemTarget(detail);enableVocabulary($("#sentence-japanese"),preferredTarget(detail),itemTarget(detail),detail,{grammarHost:$("#sentence-grammar"),explain:true});}

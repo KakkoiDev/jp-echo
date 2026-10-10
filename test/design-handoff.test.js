@@ -310,3 +310,14 @@ test("library and the study tool: the empty library, the tool rows, grammar and 
   assert.match(app, /echoLine:t\("Bundled with the app for 2,131 of the 2,136\./);
   assert.match(app, /name==="map"\|\|name==="mora"\|\|name==="settings"\)&&!isWide\(\)/, "the Mora table is a pushed screen like the study tool: no brand header, no tabs");
 });
+
+test("notes save on an explicit action, never on blur; bands mark open state without aria-busy; dead code is gone", () => {
+  const block = app.slice(app.indexOf("function noteBlock("), app.indexOf("async function renderStory("));
+  assert.doesNotMatch(block, /onblur=async/, "no save-on-blur in the shared note block");
+  assert.match(block, /saveLink\.onclick=async\(\)=>/);
+  assert.equal((html.match(/class="save-link hit"/g) || []).length, 3, "the story and the two grammar note blocks carry Save my edit");
+  assert.doesNotMatch(app, /setAttribute\("aria-busy",""\)/, "a band that is open is not busy");
+  assert.match(css, /\.band\[data-open\] svg\{transform:rotate\(180deg\)\}/);
+  assert.doesNotMatch(app, /function untilDue/);
+  assert.doesNotMatch(css, /^\.stats\{/m);
+});
