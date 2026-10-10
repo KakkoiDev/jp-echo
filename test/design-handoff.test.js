@@ -207,7 +207,7 @@ test("the echo animation is docs/design/motion.css whole, and the live rings mov
   }
   assert.equal((html.match(/<svg class="echo" width="96" height="96" viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="1\.6"/g) || []).length, 5, "five compact arc pairs: practice, sentence, review answer, discussion, reading");
   assert.doesNotMatch(html, /<svg class="echo" width="76"/);
-  assert.equal((html.match(/<svg class="ripple echo"/g) || []).length, 3, "welcome, onboarding and review home rings stay still and never carry .live");
+  assert.equal((html.match(/<svg class="ripple echo"/g) || []).length, 4, "welcome, onboarding, review home and the empty library rings stay still and never carry .live");
 });
 
 test("review: the skill-mix card, the listening panel, the answer and the stats follow the October boards", () => {
@@ -291,4 +291,22 @@ test("settings is the page the boards draw: chips, rows, honest reminders, sub-p
   assert.match(html, /id="onboard-restore" class="plain" type="button">I have a backup file, or a gist<\/button>/);
   assert.match(app, /#onboard-restore"\)\.onclick=\(\)=>\{finishOnboarding\(\);openSettings\(\)\}/, "both restore paths live in Settings");
   assert.match(app, /\$\("#setup-title"\)\.textContent=step===1\?"One thing first":"Which way round\?"/);
+});
+
+test("library and the study tool: the empty library, the tool rows, grammar and word rows, the word sheet, the mora table", () => {
+  assert.match(html, /<div id="empty-history" class="empty-panel" hidden><svg class="ripple echo" width="300"/, "a still ripple behind the empty library");
+  assert.match(html, /<span class="empty-glyph" lang="ja" aria-hidden="true">空<\/span><strong>No sentences yet<\/strong><span>Everything you translate lands here, with its readings and its review history\.<\/span><button data-ui="button" id="empty-practice" class="primary" type="button">Write your first one<svg/);
+  assert.match(html, /id="empty-starter" class="plain library-tool two-line"[\s\S]*Add 262 starter sentences[\s\S]*id="empty-import" class="plain library-tool two-line"[\s\S]*Import a deck or a backup/);
+  assert.doesNotMatch(app, /\.join\(" · "\)\+" "\+t\("learned"\)/, "the tool row tally is three numbers");
+  assert.match(css, /\.library-tool\.mora-open\{margin-top:0\}/);
+  assert.match(css, /\.point-row:not\(:has\(\.reading\)\)\{display:grid;grid-template-columns:20px minmax\(0,1fr\) auto/, "a grammar row is its title over its gloss");
+  assert.match(app, /chunkHead\(i\+1,Math\.min\(i\+20,limit\),i===0&&tool\.chip==="all",t\("most common first"\)\)/);
+  assert.match(app, /const mark=el\("span","sense-mark",kanjiNumeral\(i\+1\)\)/, "senses are numbered 一 二");
+  assert.match(css, /\.mora-table\.labelled \.mora-row\{grid-template-columns:22px repeat\(5,minmax\(0,1fr\)\)\}/);
+  assert.match(app, /host\.classList\.toggle\("labelled",english\)/);
+  assert.match(app, /\$\("#mora-show-english"\)\.checked=settings\.moraEnglish\?\?true/, "English is on by default; it draws the headings");
+  assert.match(html, /<small lang="en">fuses with the i-row before it<\/small>/);
+  assert.doesNotMatch(html, /【まえ】/, "no raw bracket furigana on the mora cards");
+  assert.match(app, /echoLine:t\("Bundled with the app for 2,131 of the 2,136\./);
+  assert.match(app, /name==="map"\|\|name==="mora"\|\|name==="settings"\)&&!isWide\(\)/, "the Mora table is a pushed screen like the study tool: no brand header, no tabs");
 });

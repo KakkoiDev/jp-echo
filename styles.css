@@ -265,10 +265,23 @@ html.motion-on .toast{animation:toast-in .18s ease-out}
 .mic.swap.is-swapped{border-color:var(--seal);background:var(--seal-tint);color:var(--seal)}
 .dock{position:fixed;z-index:3;left:50%;bottom:calc(72px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(760px,100%)}
 #practice-notices:not(:empty){padding:0 22px 14px}
+/* Empty states. The empty Library (EmptyLibrary.dc.html) is a still ripple, the 空 tile, one seal button, and two tool rows under "Not sure where to start?". */
 .empty-panel{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:24px;padding:20px 18px;border:1px solid var(--hairline);border-radius:4px;background:var(--panel);text-align:center}
 .empty-panel strong{font-family:var(--display);font-weight:400;font-size:18px}
 .empty-panel span{font-size:13px;color:var(--ink-soft)}
 .empty-panel button{min-height:38px;height:38px;margin-top:4px;padding:0 16px;border-radius:3px;font-size:13px;letter-spacing:normal;background:transparent}
+#empty-history{position:relative;gap:0;margin-top:26px;padding:34px 0 0;border:0;background:transparent}
+#empty-history .ripple{top:-70px;left:50%;transform:translateX(-50%)}
+.empty-glyph{position:relative;width:62px;height:62px;display:flex;align-items:center;justify-content:center;border:1px solid var(--seal-edge);border-radius:4px;background:var(--panel);font-family:var(--display);font-size:30px;color:var(--seal-deep)}
+#empty-history>strong{position:relative;margin-top:18px;font-weight:600;font-size:28px;line-height:1.2}
+#empty-history>span{position:relative;max-width:250px;margin-top:10px;font-family:var(--ui);font-size:15px;line-height:1.7;color:var(--ink-soft)}
+#empty-history>button.primary{position:relative;display:inline-flex;align-items:center;gap:10px;margin-top:22px;min-height:52px;height:52px;padding:0 26px;font-size:16px;font-weight:500}
+.empty-start{position:relative;width:100%;margin-top:34px;padding-top:18px;border-top:1px solid var(--hairline);text-align:left}
+.empty-start .overline{display:block;margin-bottom:4px;font-size:10px}
+#empty-history .library-tool.two-line{min-height:60px;margin-top:0;padding:8px 0;border-bottom:1px solid var(--rule);border-radius:0;color:inherit;font-size:inherit;text-decoration:none}
+#empty-history .library-tool.two-line:last-child{border-bottom:0}
+#empty-history .library-tool.two-line strong{margin:0;font-family:var(--ui);font-weight:500;font-size:15px}
+#empty-history .library-tool.two-line .library-tool-label span{margin:0;max-width:none;font-size:13px;line-height:1.45;text-align:left}
 /* The empty library leads with the one action that fills it. */
 .empty-panel button.primary{background:var(--seal);min-height:44px;height:44px;font-size:14px}
 .empty-panel button.plain{text-decoration:underline;text-underline-offset:3px}
@@ -858,7 +871,7 @@ html.motion-off #review-progress-bar { transition: none; }
 .band-head svg{flex-shrink:0;color:var(--ink-muted);transition:transform .2s}
 .band[aria-busy] svg{transform:rotate(180deg)}
 .band-body{padding-bottom:24px}
-.chips{display:flex;flex-wrap:wrap;gap:12px 7px;margin-top:13px}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:13px}
 .chips button{height:34px;min-height:34px;padding:0 12px;border-radius:3px;font-size:12px;letter-spacing:.04em;white-space:nowrap;background:var(--panel);border:1px solid var(--hairline);color:var(--ink-soft)}
 .chips button[aria-pressed=true]{background:var(--seal-tint);border-color:var(--seal-edge);color:var(--seal-deep)}
 .chunk-head{display:flex;align-items:center;gap:10px;margin:16px 0 0;font-size:10px;text-transform:uppercase;letter-spacing:.16em;color:var(--ink-muted)}
@@ -876,6 +889,12 @@ html.motion-off #review-progress-bar { transition: none; }
 .point-row b{font-family:var(--display);font-weight:400;font-size:16px;color:var(--sumi);flex-shrink:0;max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .point-row.unused b{color:var(--faint)}
 .point-row .gloss{flex-grow:1;min-width:0;font-size:12px;color:var(--ink-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.point-row:not(:has(.reading)){display:grid;grid-template-columns:20px minmax(0,1fr) auto;column-gap:12px;row-gap:3px;padding:11px 0}
+.point-row:not(:has(.reading)) .swatch,.point-row:not(:has(.reading)) i{grid-row:1/3;align-self:center}
+.point-row:not(:has(.reading)) b{max-width:none;white-space:normal}
+.point-row:not(:has(.reading)) .gloss{grid-column:2;white-space:normal}
+.point-row:has(.reading) b{font-size:17px}
+.point-row .reading{color:var(--ink-muted)}
 .point-row i{flex-shrink:0;font-style:normal;font-size:11px;color:var(--ink-muted);font-variant-numeric:tabular-nums}
 .point-row .reading{flex-shrink:0;max-width:30%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;color:var(--ink-soft)}
 .show-more{width:100%;height:44px;min-height:44px;margin-top:12px;background:transparent;border:1px dashed var(--hairline);border-radius:4px;font-size:13px;letter-spacing:normal;color:var(--ink-soft)}
@@ -902,6 +921,7 @@ html.motion-off #review-progress-bar { transition: none; }
 .library-tool-glyph{width:30px;height:30px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:1px solid var(--hairline);border-radius:3px;background:var(--panel);font-family:var(--display);font-size:16px;color:var(--seal-deep)}
 .library-tool-label{flex-grow:1;min-width:0;font-size:13px;color:var(--ink-soft)}
 .library-tool-tally{flex-shrink:0;font-size:12px;color:var(--ink-muted);font-variant-numeric:tabular-nums}
+.library-tool.mora-open{margin-top:0}
 .library-tool svg{flex-shrink:0;color:var(--ink-muted)}
 /* The sheets: one kanji, one point. Bottom-anchored on a phone, a card on a
    wider screen; the wall is long and tapping a cell must not cost your place. */
@@ -925,7 +945,7 @@ html.motion-off #review-progress-bar { transition: none; }
 .sheet-titles{flex-grow:1;min-width:0;display:flex;flex-direction:column;gap:7px;padding-top:3px}
 .chip-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
 .level-chip,.state-chip{padding:3px 8px;border:1px solid var(--sumi);border-radius:2px;font-size:10px;text-transform:uppercase;letter-spacing:.12em;line-height:1.4}
-.kind-chip{padding:3px 8px;border:1px solid var(--rule);border-radius:2px;font-size:10px;text-transform:uppercase;letter-spacing:.12em;line-height:1.4;color:var(--ink-muted)}
+.kind-chip{padding:3px 8px;border:1px solid var(--hairline);border-radius:2px;background:var(--panel);font-size:10px;text-transform:uppercase;letter-spacing:.12em;line-height:1.4;color:var(--ink-soft)}
 .level-chip:empty,.state-chip:empty,.kind-chip:empty{display:none}
 .state-chip[data-state=learned]{background:var(--seal);border-color:var(--seal);color:var(--seal-on)}
 .state-chip[data-state=met]{border:1.5px solid var(--seal);color:var(--seal-deep)}
@@ -938,8 +958,11 @@ html.motion-off #review-progress-bar { transition: none; }
 .point-title{font-family:var(--display);font-weight:600;font-size:30px;line-height:1.2;margin:0}
 .point-gloss{font-size:14px;color:var(--ink-soft)}
 /* The word sheet: senses as a numbered list, the dictionary's order */
-.word-senses{margin:14px 22px 0;padding-left:22px;font-size:15px;line-height:1.55}
+.word-senses{list-style:none;margin:14px 22px 0;padding:0;font-size:15px;line-height:1.55}
+.word-senses li{display:flex;gap:6px}
 .word-senses li+li{margin-top:4px}
+.sense-mark{flex-shrink:0;font-family:var(--display);color:var(--seal-deep)}
+#word-title{font-size:32px}
 .word-senses:empty{display:none}
 #word-also{margin-top:-2px}
 #kanji-meta,#grammar-meta{margin-top:12px;font-size:12px}
@@ -1084,27 +1107,33 @@ html.motion-off #review-progress-bar { transition: none; }
 #mora-view{padding:24px 20px 110px;max-width:760px;margin:0 auto}
 .mora-intro{color:var(--ink-muted);line-height:1.65;max-width:42rem}
 .mora-controls{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
-.mora-controls label{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--hairline);border-radius:4px;padding:9px 12px;background:var(--panel);font-family:var(--ui);font-size:13px}
-.mora-controls input{width:18px;height:18px;margin:0;accent-color:var(--seal)}
+.mora-controls label{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--hairline);border-radius:3px;padding:9px 12px;background:var(--panel);font-family:var(--ui);font-size:13px;cursor:pointer}
+.mora-controls label:has(:checked){background:var(--seal-tint);border-color:var(--seal-edge);color:var(--seal-deep)}
+.mora-controls input{width:14px;height:14px;margin:0;accent-color:var(--seal)}
+.mora-hint{margin:-6px 0 14px}
 .mora-table{width:100%;overflow:hidden;border:1px solid var(--hairline);background:var(--panel)}
 .mora-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border-bottom:1px solid var(--hairline)}
+.mora-table.labelled .mora-row{grid-template-columns:22px repeat(5,minmax(0,1fr))}
 .mora-row:last-child{border-bottom:0}
-.mora-cell{min-width:0;min-height:116px;padding:12px 8px;text-align:center;border-right:1px solid var(--hairline);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:3px;overflow:hidden}
+.mora-head{background:var(--panel-soft)}
+.mora-head span,.mora-row-label{display:flex;align-items:center;justify-content:center;min-height:26px;font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-muted)}
+.mora-row-label{font-family:var(--display);font-size:12px;text-transform:none;letter-spacing:normal;color:var(--ink-muted);border-right:1px solid var(--hairline)}
+.mora-cell{min-width:0;min-height:62px;padding:6px 4px;text-align:center;border-right:1px solid var(--hairline);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;overflow:hidden}
 .mora-cell:last-child{border-right:0}
 .mora-cell.empty{background:var(--panel-soft)}
-.mora-kana{font-family:var(--display);font-size:13px;color:var(--seal);line-height:1.2}
-.mora-word{display:block;font-family:var(--display);font-size:20px;line-height:1.35;overflow-wrap:anywhere}
-.mora-emoji{display:block;font-size:23px;line-height:1.25}
-.mora-reading{display:block;font-family:var(--display);font-size:12px;color:var(--ink-muted);line-height:1.25}
-.mora-english{display:block;font-family:var(--ui);font-size:10px;color:var(--ink-muted);line-height:1.2;overflow-wrap:anywhere}
+.mora-kana{font-family:var(--display);font-size:18px;color:var(--sumi);line-height:1.2}
+.mora-word{display:block;font-family:var(--display);font-size:11px;color:var(--seal-deep);line-height:1.3;overflow-wrap:anywhere}
+.mora-emoji{display:block;font-size:16px;line-height:1.2}
+.mora-reading{display:block;font-family:var(--display);font-size:10px;color:var(--ink-muted);line-height:1.25}
+.mora-english{display:block;font-family:var(--ui);font-size:9px;color:var(--ink-muted);line-height:1.2;overflow-wrap:anywhere}
 .mora-small-title{margin:18px 0 8px;color:var(--quiet-title)}
 .mora-small-rules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 .mora-small-card{border:1px solid var(--hairline);border-radius:4px;background:var(--panel);padding:10px 12px;display:grid;grid-template-columns:28px 1fr;gap:2px 8px;align-items:baseline}
 .mora-small-card strong{grid-row:1 / span 2;font-family:var(--display);font-size:22px;color:var(--seal)}
 .mora-small-card span{font-family:var(--display);font-size:14px}
 .mora-small-card small{color:var(--ink-muted);font-size:10px;line-height:1.35}
-.mora-modifiers{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;color:var(--ink-muted);font-size:12px}
-.mora-modifiers span{border:1px solid var(--hairline);padding:8px 10px;border-radius:4px;background:var(--panel)}
+.mora-modifiers{display:flex;gap:16px;flex-wrap:wrap;margin:14px 0 0;color:var(--ink-soft);font-size:13px}
+.mora-modifiers strong{font-family:var(--display);color:var(--seal)}
 @media(max-width:520px){
  #mora-view{padding:18px 10px 100px}
  .mora-intro{font-size:13px}

@@ -39,7 +39,7 @@ test("the starter is recognised by provenance, and a seeded library is not offer
 test("an empty library invites a first sentence, with the starter as the secondary option", () => {
   assert.match(html, /id="empty-history" class="empty-panel"/);
   assert.match(html, /id="empty-practice" class="primary"/);
-  assert.match(html, /id="empty-starter" class="plain"/);
+  assert.match(html, /id="empty-starter" class="plain library-tool two-line"/);
   assert.match(app, /\$\("#empty-practice"\)\.onclick=/);
   assert.match(app, /\$\("#empty-starter"\)\.onclick=\(\)=>seedStarter/);
 });
