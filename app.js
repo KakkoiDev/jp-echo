@@ -1199,8 +1199,10 @@ function renderDetail(){if(!detail)return;closeEditor();markSelectedRow();
   $("#stat-echoes").textContent=String(Number(detail.echoCount)||0);
   const trackedDetail=ensureReviewTrack(detail),state=cardState(detail),next=reviewMode(trackedDetail);$("#stat-stage").textContent=CARD_STATES[state];$("#stat-stage").className="status-chip "+state;
   // How it has gone: a tile per skill with its passes; the next skill is lit.
-  $("#sentence-review-track").replaceChildren(...["listening","reading","writing"].map(mode=>{const meta=reviewModeMeta(mode),tile=el("span","skill-tile"),count=el("strong","skill-count",String(trackedDetail.reviewTrack.completed[mode]||0)),label=el("span","skill-label",meta.label);if(mode===next)label.append(el("span","skill-next"," · next"));
-    tile.dataset.reviewTrack=mode;tile.append(skillGlyph(mode,{state:mode===next?"current":"default",size:34}),count,label);return tile}));
+  // How it has gone (Sentence artboard): a boxed tile per skill. Done = the
+  // filled mark and the past tense; next = seal outline, "next: write it".
+  $("#sentence-review-track").replaceChildren(...["listening","reading","writing"].map(mode=>{const meta=reviewModeMeta(mode),tile=el("span","skill-tile"),done=trackedDetail.reviewTrack.completed[mode]||0,count=el("strong","skill-count",String(done)),label=el("span","skill-label",done?meta.past:mode===next?"next: "+meta.title.toLowerCase():meta.verb);
+    tile.dataset.reviewTrack=mode;if(mode===next)tile.dataset.next="";tile.title=meta.label+": "+done+(done===1?" pass":" passes");tile.append(skillGlyph(mode,{state:done?"filled":mode===next?"inactive":"default",size:30}),count,label);return tile}));
   const due=Date.parse(detail.srs?.due||"");$("#stat-due").textContent=dueLine(trackedDetail,!Number.isFinite(due)||due<=Date.now()?"now":"in "+describeGap(due-Date.now()));
   const reviews=Array.isArray(detail.reviews)?[...detail.reviews]:[];
   const rows=reviews.slice().reverse().map(entry=>{const mode=entry.mode?reviewModeMeta(entry.mode):null;return {when:formatDate(entry.at),echoes:Number(entry.echoes)||0,rating:(mode?mode.label+" · ":"")+(RATING_LABELS[entry.rating]||entry.rating),className:entry.rating==="again"?"again":""}});
@@ -1209,7 +1211,7 @@ function renderDetail(){if(!detail)return;closeEditor();markSelectedRow();
     li.innerHTML='<span class="when">'+escapeText(row.when)+'</span><span class="detail">'+(row.echoes===null?"":'<span class="echoes">'+row.echoes+" echoes</span>")+'<span class="rating-chip '+row.className+'">'+escapeText(row.rating)+"</span></span>";return li}));
   const lapses=reviews.filter(entry=>entry.rating==="again").length;
   $("#sentence-history-note").textContent=lapses?"A review was marked Again "+(lapses===1?"once":spell(lapses)+" times")+".":reviews.length?"Reviewed correctly every time so far.":"Not reviewed yet — it is waiting in the queue.";
-  $("#sentence-history-count").textContent=reviews.length===1?"1 session":reviews.length+" sessions";
+  {const last=reviews[reviews.length-1];$("#sentence-history-count").textContent=(reviews.length?reviews.length+(reviews.length===1?" review":" reviews"):"No reviews yet")+" · "+(Number(detail.echoCount)||0)+" echoes"+(last?" · last "+formatDate(last.at):"")}
   $("#sentence-play").disabled=false}
 let editorGeneration=0,rewrittenDraft=null,editorOpenId=null;
 function openEditor(){$("#sentence-reading-status").textContent="";editorOpenId=detail?.id||null;editorGeneration++;
@@ -1557,7 +1559,7 @@ function renderSentenceGrammar(host,text,sentence,analysis,{root,target,lang,exp
 // The one-line key under the meaning on the sentence page: grey dotted for a
 // word to look up, vermilion dotted for grammar (explained below).
 function updateUnderlineKey(root){const key=$("#sentence-key");if(!key||root?.id!=="sentence-japanese")return;
-  key.hidden=!root.querySelector(".review-vocab,.grammar-mark");$("#sentence-key-grammar").hidden=!root.querySelector(".grammar-mark")}
+  key.hidden=!root.querySelector(".review-vocab,.grammar-mark")}
 function renderCustomReferences(){
  $("#custom-reference-lookup").textContent=hasTranslator()?"Look up with AI":"Look up";
  const host=$("#custom-reference-list");host.replaceChildren();const query=$("#custom-reference-filter").value.trim().toLowerCase();

@@ -31,7 +31,7 @@ test('requirements precede separate visible sentence and meaning fields',()=>{
  const form=html.slice(html.indexOf('<form id="sentence-editor">'),html.indexOf('</form>',html.indexOf('<form id="sentence-editor">')));
  assert.ok(form.indexOf('id="sentence-instruction"')<form.indexOf('id="sentence-draft"'));
  assert.ok(form.indexOf('id="sentence-draft"')<form.indexOf('id="sentence-source-draft"'));
- assert.doesNotMatch(form,/<details/);assert.match(form,/Generate new sentence/);assert.match(form,/Meaning of the new sentence/);
+ assert.doesNotMatch(form,/<details/);assert.match(form,/id="sentence-rewrite" class="primary" type="button">Generate</);assert.match(form,/Meaning of the new sentence/);
  assert.match(app,/if\(editorOpenId!==detail\?\.id\)openEditor\(\)/);
 });
 
