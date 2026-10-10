@@ -51,7 +51,7 @@ header.site .button{height:44px;padding:0 22px}
 .button.big{height:56px;padding:0 30px;font-size:17px}
 
 .hero{overflow:hidden;position:relative;display:flex;align-items:center;gap:clamp(32px,5vw,72px);padding:clamp(48px,7vw,84px) clamp(22px,5vw,72px) clamp(56px,7vw,92px);flex-wrap:wrap}
-.hero .ripple{position:absolute;left:-120px;top:-40px;color:var(--seal);opacity:.13;pointer-events:none}
+.hero .ripple{position:absolute;left:-180px;top:30px;color:var(--seal);opacity:.13;pointer-events:none}
 .hero .ripple circle{fill:none;stroke-width:1}
 .hero-copy{flex:1 1 380px;min-width:0;position:relative}
 .badge{display:inline-flex;align-items:center;gap:9px;padding:6px 12px;border:1px solid var(--seal-edge);border-radius:2px;background:var(--seal-tint);color:var(--seal-deep);font-size:11px;text-transform:uppercase;letter-spacing:.18em}
