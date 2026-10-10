@@ -39,8 +39,8 @@ test("GrammarList numbers rows with kanji and orders them as they appear", () =>
 
 test("pill chips are replaced by the list; the two underline styles both exist", () => {
   assert.doesNotMatch(css, /\.grammar-chip/);
-  assert.match(css, /\.review-vocab\{cursor:pointer;border-bottom:1px dotted var\(--ink-muted\)/);
-  assert.match(css, /\.grammar-mark\{text-decoration:underline dotted var\(--seal\);text-decoration-thickness:2px;text-underline-offset:8px/);
+  assert.match(css, /\.review-vocab\{cursor:pointer;text-decoration:underline dotted var\(--quiet-edge\);text-decoration-thickness:1\.5px;text-underline-offset:5px/, "a word: dotted grey, 1.5px");
+  assert.match(css, /\.grammar-mark\{text-decoration:underline var\(--seal\);text-decoration-thickness:2px;text-underline-offset:5px/, "grammar: solid vermilion, 2px");
   assert.match(app, /if\(isWord\)\{span\.tabIndex=0;span\.setAttribute\("role","button"\)/, "only words are interactive");
   assert.match(html, /id="sentence-key" class="underline-key"/);
 });
@@ -236,4 +236,29 @@ test("review: the skill-mix card, the listening panel, the answer and the stats 
   assert.match(app, /\.reverse\(\)\);/, "day cells run oldest first, today last");
   assert.match(app, /label\.textContent=reviewModeMeta\(mode\)\.past/, "tile labels come from the track's own words");
   assert.match(html, /nothing here is a streak, and nothing is lost by missing a day\./);
+});
+
+test("sentence page: the key, the echo row, the tiles, the rows and the foot follow the Sentence board", () => {
+  assert.match(html, /<span class="key-word"><span class="key-sample-word">a word<\/span> — tap to look it up<\/span><span id="sentence-key-grammar" class="key-grammar"><span class="key-sample-grammar">grammar<\/span> — explained below<\/span>/, "the underline itself is the sample, and both items always show");
+  assert.doesNotMatch(app, /\$\("#sentence-key-grammar"\)\.hidden=/);
+  assert.match(css, /\.sentence-play-row\{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-top:20px\}/);
+  assert.match(css, /\.sentence-echoes \.counter strong\{font-size:22px\}/);
+  assert.match(css, /\.register-label\{font-size:11px;text-transform:uppercase;letter-spacing:\.16em;color:var\(--ink-muted\)\}/);
+  assert.match(html, /<p id="sentence-grammar-note" class="hint">One request, when you asked\. Kept with the sentence; shown again on the review answer without asking\.<\/p>/);
+  assert.match(css, /#sentence-grammar:not\(:has\(\.grammar-list\)\)\+#sentence-grammar-note\{display:none\}/);
+  assert.match(app, /label=el\("span","skill-label",done\?meta\.past:mode===next\?"next: "\+meta\.title\.toLowerCase\(\):meta\.verb\)/, "tile labels: heard / read / next: write it");
+  assert.match(app, /skillGlyph\(mode,\{state:done\?"filled":mode===next\?"inactive":"default",size:30\}\)/);
+  assert.match(css, /\.skill-tile\[data-next\]\{border-color:var\(--seal\)\}/);
+  assert.match(app, /\(reviews\.length\?reviews\.length\+\(reviews\.length===1\?" review":" reviews"\):"No reviews yet"\)\+" · "\+\(Number\(detail\.echoCount\)\|\|0\)\+" echoes"/, "History meta: reviews · echoes · last date");
+  assert.match(html, /<span class="collapse-meta">Generate a new one from your directions, or fix the furigana<\/span>/);
+  assert.match(css, /\.collapse-title\{grid-column:1;font-size:14px;color:var\(--sumi\)\}/);
+  const page = html.slice(html.indexOf('<section id="sentence-view"'), html.indexOf("</section>", html.indexOf('<section id="sentence-view"')));
+  assert.match(page, /<div class="sentence-foot"><button id="sentence-find-references" class="plain" type="button" data-ui="button">Find missing references<\/button><button data-ui="button" id="sentence-delete" class="text-danger" type="button">/, "a quiet text link and the delete, on one row at the bottom");
+  assert.ok(page.indexOf('id="sentence-find-references"') > page.indexOf('id="sentence-change"'), "Find missing references is no longer above the sentence");
+  assert.match(css, /#sentence-view:has\(#sentence-change\[open\]\) :is\(\.sentence-play-row,#sentence-grammar/, "with Change this sentence open, the page is the editor");
+  assert.match(page, /id="sentence-rewrite" class="primary" type="button">Generate<svg/);
+  assert.match(page, /<div class="furigana-actions"><button data-ui="button" id="sentence-edit-readings" type="button" class="plain">Edit furigana<\/button>/);
+  assert.match(page, /id="sentence-cancel" class="outline"/);
+  assert.match(html, /<dialog id="dictionary-dialog" class="tool-sheet"><div class="sheet-handle" aria-hidden="true"><\/div><div class="dictionary-head"><h2 id="dictionary-title" lang="ja"><\/h2><button data-ui="button" id="dictionary-close" class="icon-button" type="button" aria-label="Close">/);
+  assert.match(html, /id="dictionary-ask" type="button" class="plain">Ask Echo what it means here<\/button><p class="hint">Readings and senses are JMdict’s, on the device\. Only the question to Echo needs the network\.<\/p>/);
 });
