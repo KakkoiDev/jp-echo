@@ -125,14 +125,12 @@ rt{font-size:.38em;font-weight:400;color:var(--ink-muted);letter-spacing:.04em}
 .counter{display:flex;align-items:baseline;justify-content:center;gap:10px;margin-top:2px}
 .counter strong{font-family:var(--display);font-weight:600;font-size:34px;line-height:1}
 .counter span{font-size:11px;text-transform:uppercase;letter-spacing:.2em;color:var(--ink-muted)}
-/* The mark is the top half of the rings, cut at the horizontal midline — it
-   was authored that way in an 86x44 box until the motion spec arrived and
-   needed a square viewBox centred on the middle so the rings scale about
-   their own centre. The paths are top halves again; this crops the empty
-   lower half the square box leaves behind. 42px rather than 38 keeps the
-   round stroke caps sitting on the cut. */
+/* The mark is the top half of the rings, cut at the horizontal midline. The
+   paths are authored at the outer radius in a square viewBox centred on the
+   middle, so the rings scale about their own centre; motion.css section 4
+   sets the size (96px) and the crop (48px, never 42, which cut the outer
+   arc), the stroke and the weights. */
 .arcs{display:flex;justify-content:center;margin-top:26px;color:var(--seal)}
-.arcs:not(.small){height:42px;overflow:hidden}
 /* The Practice artboard sets the loop button 18px below the state line. .controls
    carries no margin of its own, so the button sat flush against "READY". */
 #practice .controls{margin-top:18px}
@@ -551,6 +549,23 @@ kbd{padding:2px 7px;border:1px solid var(--chip-rev-bd);border-radius:3px;backgr
 
 /* Echo — the echo animation. Copy this file verbatim into styles.css.
  *
+ * ── October note: it shipped, and nobody saw it ────────────────────
+ * The first edition of this file went into the build unchanged and the
+ * animation runs — but it was invisible. Two reasons, both fixed below:
+ *   1. The only moving echo on a playing screen was the arc pair: 76px
+ *      wide, cropped to 42px, a 2px stroke at 0.234. The weights in
+ *      sections 1–3 were measured on 196px+ rings with a 1px stroke;
+ *      they are far too light for the compact form. Section 4 now has
+ *      its own weights.
+ *   2. The ring ripple only existed on screens where nothing plays
+ *      (Welcome, Review home). Section 8 puts it behind the sentence on
+ *      every screen where audio can play, and names the elements that
+ *      must receive .is-playing.
+ * A third, outside this file: Settings → Motion defaults to "Device",
+ * and Android's battery saver reports prefers-reduced-motion, which
+ * section 7 honours. That is correct behaviour, not a bug — but say so
+ * in the Settings copy, and let "Always on" override it.
+ *
  * This is the spec, not an illustration of it. Every number here was
  * measured on the canvas; do not re-derive them from prose.
  *
@@ -618,16 +633,32 @@ kbd{padding:2px 7px;border:1px solid var(--chip-rev-bd);border-radius:3px;backgr
 .echo.is-playing .echo-ring:nth-of-type(3) { animation-delay: 1.2s; }
 .echo.is-playing .echo-ring:nth-of-type(4) { animation-delay: 1.8s; }
 
-/* ── 4. The arc pair — same motion, compact form ────────────────────
+/* ── 4. The arc pair — same motion, compact form, its own weights ───
  * Used inline, beside the echo count. Three copies of ONE arc pair,
  * not three arcs at different radii: author all three at the outer
- * radius, rest them at .24 / .6 / 1, animate the same keyframes.
+ * radius, rest them at .24 / .6 / 1, animate the same gesture.
  * Stagger 0.8s (2.4 ÷ 3).
  *
- * The arcs must be arcs of circles centred on the middle of their
- * viewBox — then `transform-origin: center` is the right point and the
- * rule above serves them too.
+ * Size and weight are not optional here. The SVG is 96 × 96 in a
+ * viewBox of 120, cropped to its top 48px — never 42, which cut the
+ * outer arc. Stroke 1.6. And because this is a 2px-class stroke at
+ * phone size, the opacities are NOT the ring opacities: 0.5 still,
+ * 0.7 moving. (Measured on-device; 0.234 is invisible at this size.)
+ *
+ * The fade ends at 0.15, not 0: with three arcs on a 0.8s stagger a
+ * fade to 0 leaves a moment once per cycle where all three are gone,
+ * and the pair reads as flickering rather than emanating.
  */
+.arcs { height: 48px; overflow: hidden; }
+.arcs > .echo { width: 96px; height: 96px; stroke-width: 1.6; stroke-opacity: 0.5; }
+.arcs > .echo.is-playing { stroke-opacity: 0.7; }
+
+@keyframes echo-emanate-arc {
+  0%   { transform: scale(0.24); opacity: 0.95; }
+  65%  {                         opacity: 0.45; }
+  100% { transform: scale(1);    opacity: 0.15; }
+}
+
 .echo-arc {
   transform-box: view-box;
   transform-origin: center;
@@ -637,7 +668,7 @@ kbd{padding:2px 7px;border:1px solid var(--chip-rev-bd);border-radius:3px;backgr
 .echo-arc:nth-of-type(3) { transform: scale(1); }
 
 .echo.is-playing .echo-arc {
-  animation: echo-emanate 2.4s ease-out infinite;
+  animation: echo-emanate-arc 2.4s ease-out infinite;
 }
 .echo.is-playing .echo-arc:nth-of-type(2) { animation-delay: 0.8s; }
 .echo.is-playing .echo-arc:nth-of-type(3) { animation-delay: 1.6s; }
@@ -692,20 +723,54 @@ html.motion-off .echo.is-playing .echo-arc,
 html.motion-off .is-listening .mic-glyph,
 html.motion-off .echo-count.just-ticked { animation: none; }
 
+/* ── 8. Where the moving echo lives ────────────────────────────────
+ * Every screen where audio can play carries the ring ripple behind the
+ * sentence — the same <svg class="ripple echo"> Welcome uses — and the
+ * arc pair beside the count. Both get .is-playing from the loop's
+ * onState: active = playing && state !== "paused". Rings on a screen
+ * where nothing plays (Welcome, Review home, the empties) stay still
+ * and never carry the class.
+ *
+ *   #practice        .ripple.echo behind the sentence   + .arcs > .echo
+ *   #review-result   .ripple.echo behind the sentence   + .arcs > .echo
+ *   #sentence-view   .ripple.echo behind the sentence   + .arcs > .echo
+ *   #discussion-live, #reading   the arc pair beside the loop state
+ *
+ * The one line of JS that matters, in the loop's onState handler:
+ *   for (const echo of document.querySelectorAll(".arcs > .echo, .ripple.echo.live"))
+ *     echo.classList.toggle("is-playing", active);
+ * Mark the playing-screen ripples with .live so the ornament ones are
+ * never selected. Behind text on a phone the live rings carry 0.30.
+ */
+.ripple.echo.live { stroke-opacity: 0.16; }
+.ripple.echo.live.is-playing { stroke-opacity: 0.30; }
+
+/* Reduced motion and .motion-off, extended to the compact weights and
+ * the live rings — everything falls back to the drawn state. */
+@media (prefers-reduced-motion: reduce) {
+  .arcs > .echo.is-playing { stroke-opacity: 0.5; }
+  .ripple.echo.live.is-playing { stroke-opacity: 0.16; }
+}
+html.motion-off .arcs > .echo.is-playing { stroke-opacity: 0.5; }
+html.motion-off .ripple.echo.live.is-playing { stroke-opacity: 0.16; }
+
 /* ── Integration ────────────────────────────────────────────────────
  * Not part of motion.css; the rules above are verbatim and unedited.
  *
  * Appearance > Motion = "Always on" has to beat the device preference,
  * and a media query cannot be talked out of applying — so html.motion-on
  * re-states the animations at a higher specificity than section 7's
- * block. "Follow my device" sets neither class.
+ * block, including the compact arc weights (section 4) and the live
+ * rings (section 8). "Follow my device" sets neither class.
  *
  * The review progress bar is the app's only other moving thing; it stops
  * with everything else, which the blanket rule used to do for it.
  */
 html.motion-on .echo.is-playing { stroke-opacity: 0.234; }
-html.motion-on .echo.is-playing .echo-ring,
-html.motion-on .echo.is-playing .echo-arc { animation: echo-emanate 2.4s ease-out infinite; }
+html.motion-on .arcs > .echo.is-playing { stroke-opacity: 0.7; }
+html.motion-on .ripple.echo.live.is-playing { stroke-opacity: 0.30; }
+html.motion-on .echo.is-playing .echo-ring { animation: echo-emanate 2.4s ease-out infinite; }
+html.motion-on .echo.is-playing .echo-arc { animation: echo-emanate-arc 2.4s ease-out infinite; }
 html.motion-on .echo.is-playing .echo-ring:nth-of-type(2) { animation-delay: 0.6s; }
 html.motion-on .echo.is-playing .echo-ring:nth-of-type(3) { animation-delay: 1.2s; }
 html.motion-on .echo.is-playing .echo-ring:nth-of-type(4) { animation-delay: 1.8s; }
@@ -717,6 +782,19 @@ html.motion-on .echo-count.just-ticked { animation: echo-tick 280ms ease-out; }
   html:not(.motion-on) #review-progress-bar { transition: none; }
 }
 html.motion-off #review-progress-bar { transition: none; }
+/* The listening indicator beside the review mic is a 30px arc pair of its
+ * own, shown only while dictation runs; section 4's weights are for the
+ * 96px pair beside the echo count, so it keeps its size and stroke here. */
+.arcs.small { height: 30px; }
+.arcs.small > .echo { width: 30px; height: 30px; stroke-width: 3; }
+/* Where the moving echo lives (section 8): the live ripple sits behind the
+ * sentence, as the Practice artboard draws it, and what follows it in the
+ * flow paints above it. The arc pair beside a conversation or reading loop
+ * state sits in its controls row, not under a count. */
+#practice, #review-result, #sentence-view { position: relative; }
+.ripple.live { right: -96px; top: 20px; }
+.ripple.live ~ * { position: relative; }
+.discussion-controls .arcs, .reading-controls .arcs { margin-top: 0; }
 
 
 /* Kanji and grammar — the study tool behind the Library. Coverage is read
