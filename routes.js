@@ -17,6 +17,7 @@ export function routeFor(state={}){
   else if(view==="settings")path=SETTINGS_PAGES.includes(state.settingsPage)?"/settings/"+state.settingsPage:"/settings";
   else if(view==="setup")path="/setup";
   else if(view==="onboard")path="/onboard";
+  else if(state.extractMode)path="/extract";
   else if(state.readingMode)path="/reading";
   else if(state.discussionMode)path="/discussion";
   const q=new URLSearchParams();
@@ -32,6 +33,7 @@ export function parseRoute(input){
   if(p==="/")return base;
   if(p==="/discussion")return {...base,discussionMode:true};
   if(p==="/reading")return {...base,readingMode:true};
+  if(p==="/extract")return {...base,extractMode:true};
   if(p==="/review")return {...base,view:"review"};
   if(p==="/mora")return {...base,view:"mora"};
   if(p==="/settings")return {...base,view:"settings",settingsPage:"main"};

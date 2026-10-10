@@ -73,9 +73,11 @@ A change must not:
 - break narrow mobile layouts;
 - depend on hover to expose a required action.
 
-Sentence and Discussion are two modes of the same Practice experience. Their
-mode switch must be a quiet Echo-native control, not a foreign segmented-control
-visual. Discussion messages are learning material, not social-media chat:
+Practice has one start screen and three other ways in — Discussion, Reading and
+Extract from text — reached only from the "Or practise another way" rows and
+pushed with the study tool's back-arrow header (`.tool-head`). There is no
+mode bar, and the rows never hide. The Practice tab, tapped again, returns to
+the start screen. Discussion messages are learning material, not social-media chat:
 alignment may distinguish speakers, but typography, paper surfaces, borders and
 accent remain Echo's.
 
@@ -161,7 +163,9 @@ Before considering the change complete:
 - **Settings is a route.** Preferences commit on `change` through
   `saveSettings()`, which must never touch credentials; credentials have their
   own explicit saves. In-page Back pops history only via `settingsStack`.
-- **Discoverability lives in empty states**, not louder switches.
+- **Discoverability lives in empty states**, not louder switches. The three
+  "Or practise another way" rows are the one navigation for the other modes;
+  Extract from text has its own route, `/extract`.
 
 ## Migration rule
 
