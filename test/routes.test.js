@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {parseRoute,routeFor} from "../routes.js";
 
-test("top-level routes round trip",()=>{for(const [path,state] of [["/",{view:"practice"}],["/discussion",{view:"practice",discussionMode:true}],["/review",{view:"review"}],["/mora",{view:"mora"}],["/library",{view:"library"}],["/words",{view:"map",mapView:"words"}],["/kanji",{view:"map",mapView:"kanji"}],["/grammar",{view:"map",mapView:"grammar"}]])assert.equal(routeFor(parseRoute(path)),path)});
+test("top-level routes round trip",()=>{for(const [path,state] of [["/",{view:"practice"}],["/discussion",{view:"practice",discussionMode:true}],["/reading",{view:"practice",readingMode:true}],["/extract",{view:"practice",extractMode:true}],["/review",{view:"review"}],["/mora",{view:"mora"}],["/library",{view:"library"}],["/words",{view:"map",mapView:"words"}],["/kanji",{view:"map",mapView:"kanji"}],["/grammar",{view:"map",mapView:"grammar"}]])assert.equal(routeFor(parseRoute(path)),path)});
 
 test("resource paths preserve unicode and ids",()=>{assert.deepEqual(parseRoute("/kanji/%E8%B1%8A").modal,{kind:"kanji",id:"豊"});assert.equal(routeFor({view:"map",mapView:"kanji",modal:{kind:"kanji",id:"豊"}}),"/kanji/%E8%B1%8A");assert.equal(routeFor({view:"map",mapView:"words",modal:{kind:"word",id:"word:123"}}),"/words/word%3A123");assert.equal(parseRoute("/sentences/a%2Fb").sentenceId,"a/b")});
 

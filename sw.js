@@ -1,6 +1,6 @@
-const CACHE="jp-echo-v161";
+const CACHE="jp-echo-v162";
 const PREFS_CACHE="jp-echo-prefs",PREFS_KEY="./reminder",REMINDER_TAG="echo-due";
-const ASSETS=["./","./index.html","./404.html","./styles.css","./styles.css?v=127","./app.js","./components.js","./actions.js","./routes.js","./anki-export.js","./srs.js","./review-modes.js","./vendor/sql-wasm.wasm","./core.js","./japanese-readings.js","./readings.js","./catalogues.js","./references.js","./text-extraction.js","./epub-import.js","./mini-imports.js","./imports.js","./gist-backup.js","./diff.js","./reminders.js","./db.js","./api.js","./speech.js","./repair.js","./kanji.js","./kanji-data.js","./kanji-readings.js","./grammar.js","./grammar-spans.js","./grammar-data.js","./lookup.js","./notes.js","./stories.js","./words.js","./japanese-words.js","./words-data.js","./i18n.js","./i18n/ja.js","./manifest.webmanifest","./icon.svg","./icon-192.png","./icon-512.png","./icon-maskable-512.png","./apple-touch-icon.png","./favicon.ico","./mask-icon.svg"];
+const ASSETS=["./","./index.html","./404.html","./styles.css","./styles.css?v=128","./app.js","./components.js","./actions.js","./routes.js","./anki-export.js","./srs.js","./review-modes.js","./vendor/sql-wasm.wasm","./core.js","./japanese-readings.js","./readings.js","./catalogues.js","./references.js","./text-extraction.js","./epub-import.js","./mini-imports.js","./imports.js","./gist-backup.js","./diff.js","./reminders.js","./db.js","./api.js","./speech.js","./repair.js","./kanji.js","./kanji-data.js","./kanji-readings.js","./grammar.js","./grammar-spans.js","./grammar-data.js","./lookup.js","./notes.js","./stories.js","./words.js","./japanese-words.js","./words-data.js","./i18n.js","./i18n/ja.js","./manifest.webmanifest","./icon.svg","./icon-192.png","./icon-512.png","./icon-maskable-512.png","./apple-touch-icon.png","./favicon.ico","./mask-icon.svg"];
 
 // Keep an update waiting while existing clients use their installed version.
 // Never skipWaiting: activation must not replace assets during an open session.
@@ -23,7 +23,7 @@ self.addEventListener("fetch",event=>{
   if(event.request.method!=="GET"||url.origin!==self.location.origin)return;
   event.respondWith((async()=>{
     const cache=await caches.open(CACHE);
-    const route=/^\/(?:$|index\.html$|(?:sentences|words|kanji|grammar)(?:\/|$)|(?:review|library|mora|setup|onboard|reading|discussion)\/?$)/.test(url.pathname);
+    const route=/^\/(?:$|index\.html$|(?:sentences|words|kanji|grammar)(?:\/|$)|(?:review|library|mora|setup|onboard|reading|discussion|extract)\/?$)/.test(url.pathname);
     if(event.request.mode==="navigate"&&route){const shell=await cache.match("./index.html");if(shell)return shell}
     const asset=ASSETS.some(path=>new URL(path,self.registration.scope).pathname===url.pathname);
     if(asset){const installed=await cache.match(event.request,{ignoreSearch:true});if(installed)return installed}

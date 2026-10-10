@@ -65,11 +65,28 @@ test("the due line names the next card and what it will ask", async () => {
   assert.equal(dueLine(s, "in 3 days"), "Due in 3 days, as a writing card — you will see the meaning and type the Japanese.");
 });
 
-test("practice: empty states carry discoverability; the mode switch stays quiet", () => {
-  assert.match(html, /id="welcome-modes"[\s\S]*Or practise another way[\s\S]*id="welcome-discussion" class="library-tool two-line"[\s\S]*id="welcome-reading" class="library-tool two-line"/);
-  assert.match(app, /function renderWelcomeModes\(\)\{const used=modesUsed\(\);\$\("#welcome-discussion"\)\.hidden=!!used\.discussion/);
-  assert.match(app, /discussionTurns=\[\{role:"ai",\.\.\.out\.ai\}\];renderDiscussion\(\);playDiscussion\(\);markModeUsed\("discussion"\)/, "a row goes after the mode is really used");
-  assert.match(app, /renderReading\(\);\$\("#reading-status"\)\.textContent="";markModeUsed\("reading"\)/);
+test("practice: one navigation — three rows that never hide, pushed screens with a back arrow, no mode bar", () => {
+  assert.match(html, /id="welcome-modes"[\s\S]*Or practise another way[\s\S]*id="welcome-discussion" class="library-tool two-line"[\s\S]*id="welcome-reading" class="library-tool two-line"[\s\S]*id="welcome-extract" class="library-tool two-line"/);
+  for (const gone of ["practice-mode", "mode-sentence", "mode-discussion", "mode-reading", "mode-extract", "modesUsed", "markModeUsed", "renderWelcomeModes"]) { assert.equal(html.includes(gone), false, gone); assert.equal(app.includes(gone), false, gone); assert.equal(css.includes(gone), false, gone); }
+  for (const [section, back] of [['<section id="discussion" hidden>', "discussion-back"], ['<section id="reading" hidden>', "reading-back"], ['<section id="extract-text" hidden>', "extract-back"]]) {
+    const at = html.indexOf(section);
+    assert.ok(at >= 0, section);
+    assert.match(html.slice(at, at + 700), new RegExp('<div class="tool-head"><button data-ui="button" id="' + back + '" class="icon-button" type="button" aria-label="Back to Practice">'), back + " is the study tool's back-arrow header");
+  }
+  assert.match(app, /\$\("#extract-back"\)\.onclick=showStart;\$\("#discussion-back"\)\.onclick=showStart;\$\("#reading-back"\)\.onclick=showStart;/);
+  assert.match(app, /function showStart\(\)\{loop\.stop\(\);current=null;renderSentence\(\);setPracticeMode\("sentence"\)\}/, "back lands on the start screen, where the rows are");
+  assert.match(app, /if\(tab\.dataset\.view==="practice"&&document\.body\.dataset\.view==="practice"\)showStart\(\)/, "the Practice tab, tapped again, is the way back from a pushed screen");
+  assert.match(app, /function composerVerb\(\)\{return discussionMode\?\(discussionTurns\.length\?"Send":"Begin"\):readingMode\?"Write":"Translate"\}/, "one composer; only its verb changes");
+  // The three bodies follow their boards.
+  assert.match(html, /<option value="new">Words never met<\/option><option value="unlearned">Met but not learned<\/option>/);
+  assert.match(html, /id="extract-analyze" data-ui="button" class="outline extract-analyze"/, "Find sentences is outlined; Import is the only filled button");
+  assert.match(html, /<div id="extract-foot" hidden><p class="hint">Nothing has been imported\. The sentences you keep join your library and reviews like your own\.<\/p><button id="extract-import" type="button" class="primary"/);
+  assert.match(app, /\$\('#extract-import'\)\.textContent=`Import \$\{count\} selected`/);
+  assert.match(app, /row\.fresh\.length===1\?'word':'words'/, "1 new word, not 1 new words");
+  assert.match(app, /save\.textContent=turn\.saved\?"Saved ✓":"Save to Library"/);
+  assert.match(css, /\.discussion-turn::before\{content:"Echo"/, "turns are labelled Echo and You");
+  assert.doesNotMatch(html, /id="reading-new"/, "another text comes from the composer, not a New text button");
+  assert.match(css, /\.reading-sentence\.selected\{background:var\(--panel\);border-color:var\(--sumi\)\}/);
 });
 
 test("discussion: starter scenes fill the box and never send", () => {
@@ -78,7 +95,8 @@ test("discussion: starter scenes fill the box and never send", () => {
   const wire = app.slice(app.indexOf('document.querySelectorAll("#discussion-scenes [data-scene]")'), app.indexOf("\n", app.indexOf('document.querySelectorAll("#discussion-scenes [data-scene]")')));
   assert.match(wire, /input\.value=scene\.dataset\.scene/);
   assert.doesNotMatch(wire, /beginDiscussion|replyDiscussion|\.click\(\)/, "filling is not sending");
-  assert.match(app, /function composerLabel\(\)\{return discussionMode\?\(discussionTurns\.length\?"Reply to the conversation":"Describe the conversation"\)/);
+  assert.match(app, /function composerLabel\(\)\{return discussionMode\?\(discussionTurns\.length\?"Your reply":"The scene"\)/);
+  assert.match(wire, /other\.setAttribute\("aria-pressed",String\(other===scene\)\)/, "the chosen scene is the tinted chip");
   assert.doesNotMatch(css, /reply to the conversation"\}/, "no CSS-appended second label");
 });
 
