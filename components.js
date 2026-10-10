@@ -54,16 +54,18 @@ const icons={mic:micSvg,swap:swapSvg,send:sendSvg};
 export function hydrateUI(root=document){hydrateRecordButtons(root);for(const el of root.querySelectorAll("[data-ui]")){const kind=el.dataset.ui;if(kind==="button"){el.classList.add("ui-button");const v=el.dataset.variant;if(v&&v!=="default")el.classList.add("ui-"+v);const icon=icons[el.dataset.icon];if(icon&&!el.querySelector("svg"))el.insertAdjacentHTML(el.textContent.trim()?"beforeend":"afterbegin",icon)}else if(kind==="input"||kind==="textarea")el.classList.add("ui-field");else if(kind==="status")el.classList.add("ui-status")}return root}
 
 // SkillGlyph — the one mark for a review skill: 聴 listen, 読 read, 書 write.
-// States: "default", "current" (today's or the next skill) and "inactive"
-// (the others in a card's trio). The tile is decorative; callers label the
-// group, so assistive tech hears "Listening card", not three kanji.
+// States: "default", "current" (today's or the next skill), "inactive" (the
+// others in a card's trio) and "filled" (a seal mark in a figure: the skill
+// mix, the stats tiles, a skill already done). The tile is decorative; callers
+// label the group, so assistive tech hears "Listening card", not three kanji.
 const SKILL_GLYPH={listening:"聴",reading:"読",writing:"書"};
 export function skillGlyph(mode,{state="default",size=28}={}){const el=document.createElement("span");el.className="skill-glyph";el.lang="ja";el.dataset.skill=mode;el.dataset.state=state;el.style.setProperty("--skill-size",size+"px");el.textContent=SKILL_GLYPH[mode]||"";el.setAttribute("aria-hidden","true");return el}
 export function skillTrio(current,{size=28,label=""}={}){const el=document.createElement("span");el.className="skill-trio";el.setAttribute("role","img");if(label)el.setAttribute("aria-label",label);for(const mode of Object.keys(SKILL_GLYPH))el.append(skillGlyph(mode,{state:mode===current?"current":"inactive",size}));return el}
 
 // GrammarList — the answered grammar of a sentence, read as an answer, not as
 // controls: a numbered list (一 二 三, the .step-mark look) of the phrase as it
-// appears, its JLPT level and a one-line gloss. A row opens the grammar sheet.
+// appears over its one-line gloss, the JLPT level as a chip at the row end,
+// and a chevron. A row opens the grammar sheet.
 // Shown on the sentence page and the revealed review answer only.
 const KANJI_DIGITS=["","一","二","三","四","五","六","七","八","九"];
 export function kanjiNumeral(n){n=Math.floor(Number(n));if(!(n>0&&n<100))return String(n);const tens=Math.floor(n/10),ones=n%10;return (tens?(tens>1?KANJI_DIGITS[tens]:"")+"十":"")+KANJI_DIGITS[ones]}
@@ -73,10 +75,12 @@ export function grammarList(items,{onOpen}={}){
     row.setAttribute("aria-label",`${item.phrase}, ${item.level||""} — ${item.gloss||""}. Open the grammar sheet.`.replace(/ ,/,""));
     const mark=document.createElement("span");mark.className="step-mark";mark.setAttribute("aria-hidden","true");mark.textContent=kanjiNumeral(index+1);
     const body=document.createElement("span");body.className="grammar-row-body";
-    const head=document.createElement("span");head.className="grammar-row-head";const phrase=document.createElement("span");phrase.className="grammar-phrase";phrase.lang="ja";phrase.textContent=item.phrase;head.append(phrase);
-    if(item.level){const level=document.createElement("span");level.className="grammar-level";level.textContent=item.level;head.append(level)}
-    body.append(head);if(item.gloss){const gloss=document.createElement("span");gloss.className="grammar-gloss";gloss.textContent=item.gloss;body.append(gloss)}
-    row.append(mark,body);if(onOpen)row.onclick=()=>onOpen(item);li.append(row);list.append(li)});
+    const phrase=document.createElement("span");phrase.className="grammar-phrase";phrase.lang="ja";phrase.textContent=item.phrase;body.append(phrase);
+    if(item.gloss){const gloss=document.createElement("span");gloss.className="grammar-gloss";gloss.textContent=item.gloss;body.append(gloss)}
+    row.append(mark,body);
+    if(item.level){const level=document.createElement("span");level.className="grammar-level";level.textContent=item.level;row.append(level)}
+    row.insertAdjacentHTML("beforeend",'<svg width="8" height="13" viewBox="0 0 8 13" fill="none" aria-hidden="true"><path d="m1.5 1.5 5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+    if(onOpen)row.onclick=()=>onOpen(item);li.append(row);list.append(li)});
   return list}
 
 // Render only the initial items until the learner explicitly expands the list.

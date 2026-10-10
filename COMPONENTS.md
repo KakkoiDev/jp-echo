@@ -39,11 +39,14 @@ for simpler/more complex/more natural/more precise output or any other revision.
 ### SkillGlyph
 `skillGlyph(mode,{state,size})` and `skillTrio(current,{size,label})`: the one
 mark for a review skill (聴 listen, 読 read, 書 write). States `default`,
-`current`, `inactive`. Tiles are `aria-hidden`; the caller labels the group.
+`current`, `inactive`, and `filled` (a seal mark in a figure: the skill mix,
+the stats tiles, a skill already done). Tiles are `aria-hidden`; the caller
+labels the group.
 
 ### GrammarList
 `grammarList(items,{onOpen})`, items from `grammarListItems()` in grammar.js:
-the answered grammar of a sentence as a numbered list (`kanjiNumeral`). Used on
+the answered grammar of a sentence as a numbered list (`kanjiNumeral`): the
+phrase over its gloss, the level as a chip at the row end, a chevron. Used on
 the sentence page and the revealed review answer only.
 
 ### SettingsRow

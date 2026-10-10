@@ -222,10 +222,10 @@ ul{list-style:none;margin:0;padding:0}
 .review-loop-status{display:flex;flex-direction:column;align-items:center;gap:4px}
 .review-loop-status .counter{margin:0}
 #review-progress{margin-left:auto;font-family:var(--display);font-size:16px;letter-spacing:.06em;color:var(--ink-soft)}
-.review-passive{display:flex;justify-content:center;margin:18px 0 8px}
+.review-passive{display:flex;flex-direction:column;align-items:center;gap:12px;margin:22px 0 0;padding:18px 16px;background:var(--panel);border:1px solid var(--hairline);border-radius:4px}
 #review-panel[data-review-mode="reading"] #review-prompt{font-family:var(--display);font-size:clamp(1.55rem,6vw,2.35rem);line-height:1.8;text-align:center;color:var(--sumi)}
-#review-panel[data-review-mode="writing"] #review-prompt{font-size:18px;line-height:1.6;text-align:center;color:var(--ink-soft)}
-#review-front-audio{min-width:150px}
+#review-front-audio{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:0 22px;background:var(--panel);border:1px solid var(--sumi);color:var(--sumi);font-size:14px;font-weight:500;letter-spacing:.04em}
+#review-audio{display:inline-flex;align-items:center;justify-content:center;gap:10px}
 
 .review-actions{position:fixed;z-index:4;left:50%;bottom:0;transform:translateX(-50%);width:min(760px,100%);display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px max(22px,env(safe-area-inset-right)) calc(16px + env(safe-area-inset-bottom)) max(22px,env(safe-area-inset-left));border-top:1px solid var(--hairline);background:var(--panel-soft);backdrop-filter:blur(12px)}
 .review-actions button{min-height:58px;font-size:16px;font-weight:500}
@@ -469,6 +469,9 @@ dialog::backdrop{background:rgba(28,26,23,.34)}
 #review-japanese mark{background:var(--diff-target-bg);color:var(--seal-deep)}
 #review-result .arcs{margin-top:20px}
 #review-result .counter{margin-top:2px}
+#review-result .counter strong{font-size:28px}
+#review-grammar[hidden]+#review-grammar-note{display:none}
+#review-grammar-note{margin-top:8px}
 #review-result .controls{margin-top:16px}
 #review-result .controls button{min-height:50px;font-size:15px;font-weight:500}
 #review-empty-answer{margin:18px 0 0}
@@ -1134,16 +1137,51 @@ html.motion-off #review-progress-bar { transition: none; }
 .skill-glyph{--skill-size:28px;width:var(--skill-size);height:var(--skill-size);display:inline-flex;flex-shrink:0;align-items:center;justify-content:center;border:1px solid var(--chip-rev-bd);border-radius:3px;color:var(--ink-soft);font-family:var(--display);font-size:calc(var(--skill-size) * .5);line-height:1}
 .skill-glyph[data-state="current"]{background:var(--seal-tint);border-color:var(--seal-edge);color:var(--seal-deep)}
 .skill-glyph[data-state="inactive"]{border-color:var(--rule);color:var(--faint)}
+.skill-glyph[data-state="filled"]{background:var(--seal);border-color:var(--seal);color:var(--seal-on)}
 .skill-trio{display:inline-flex;align-items:center;gap:4px}
-.skill-mix{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:26px;text-align:center}
-.skill-mix-row{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 18px}
-.skill-mix-item{display:inline-flex;align-items:center;gap:8px;font-size:15px;color:var(--ink-soft)}
-.skill-mix-item strong{font-family:var(--display);font-size:17px;color:var(--sumi)}
-.skill-mix .hint{max-width:320px;margin:0}
-.review-meta{display:flex;align-items:center;gap:10px}.review-skills{margin-left:auto}
-.review-mode-title{margin:28px 0 0;font-family:var(--display);font-weight:600;font-size:26px;line-height:1.35;text-align:center}
-.review-mode-instruction{max-width:320px;margin:8px auto 0;font-size:13px;line-height:1.6;text-align:center;color:var(--ink-muted)}
-.review-passive-hint{max-width:300px;margin:14px auto 0;text-align:center}
+/* The skill-mix card (ReviewHome artboard): a panel between the ring and the sheet. */
+.skill-mix{display:flex;flex-direction:column;margin:20px 0 0;padding:14px 16px 15px;background:var(--panel);border:1px solid var(--hairline);border-radius:4px;text-align:left}
+.skill-mix .overline{margin-bottom:10px;font-size:10px}
+.skill-mix-row{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px}
+.skill-mix-item{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-soft)}
+.skill-mix-item strong{font-family:var(--display);font-size:18px;color:var(--sumi)}
+.skill-mix .hint{margin:10px 0 0;text-align:left}
+.review-meta{display:flex;align-items:center;justify-content:space-between;gap:10px}.review-skills{margin-left:auto}
+.review-mode-title{margin:18px 0 0;font-family:var(--display);font-weight:600;font-size:22px;line-height:1.25}
+.review-mode-instruction{margin:6px 0 0;font-size:13px;line-height:1.6;color:var(--ink-muted)}
+.review-passive-hint{margin:0;text-align:center}
+/* Stats (ReviewStats artboard): a figure, three filled skill tiles, seven day cells. */
+#review-stats{padding-top:22px}
+#review-stats>.overline{font-size:10px}
+.stats-figure{margin:8px 0 0;display:flex;align-items:baseline;gap:10px}
+.stats-figure strong{font-family:var(--display);font-weight:600;font-size:40px;line-height:1}
+.stats-figure span{font-size:14px;color:var(--ink-soft)}
+.stats-figure b{font-weight:500;color:var(--sumi)}
+.stats-figure b.again{color:var(--seal-deep)}
+.stats-figure.small{margin-top:14px}
+.stats-figure.small strong{font-size:22px}
+.stats-figure.small span{font-size:13px}
+.stats-tiles{display:flex;gap:8px;margin-top:16px}
+.stats-tiles>span{flex:1 1 0;display:flex;align-items:center;gap:10px;padding:11px 12px;background:var(--panel);border:1px solid var(--hairline);border-radius:4px}
+.stats-tiles .stats-count{display:flex;flex-direction:column;gap:1px}
+.stats-tiles strong{font-family:var(--display);font-size:20px;line-height:1}
+.stats-tiles small{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-muted)}
+#review-stats .rule-heading{margin-top:26px}
+.week-cells{display:flex;justify-content:space-between;margin-top:14px}
+.week-cells>span{display:flex;flex-direction:column;align-items:center;gap:6px}
+.week-cell{width:42px;height:46px;display:flex;align-items:center;justify-content:center;border-radius:3px;font-family:var(--display);font-size:18px;background:var(--panel);border:1px solid var(--rule);color:var(--ink-muted)}
+.week-cell[data-level="some"]{border:1.5px solid var(--seal);color:var(--seal-deep)}
+.week-cell[data-level="full"]{background:var(--seal);border-color:var(--seal);color:var(--seal-on)}
+.week-cells>span.today .week-cell{outline:2px solid var(--sumi);outline-offset:2px}
+.week-cells small{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-muted)}
+.week-legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:12px}
+.week-legend span{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--ink-muted)}
+.week-legend i{width:14px;height:14px;border-radius:2px;background:var(--panel);border:1px solid var(--rule)}
+.week-legend i.full{background:var(--seal);border-color:var(--seal)}
+.week-legend i.some{border:1.5px solid var(--seal)}
+#review-stats>.hint{margin-top:14px}
+#review-practice{min-height:56px;border:1px solid var(--sumi);color:var(--sumi)}
+.ring-stage.resting .breakdown strong{color:var(--ink-soft)}
 #queue-list li{display:flex;align-items:center;gap:10px}#queue-list li .source-line{flex:1;min-width:0}#queue-list li .skill-glyph{margin-left:auto}
 .queue-legend{margin:10px 0 0}.queue-legend span{font-family:var(--display)}
 
@@ -1158,13 +1196,16 @@ html.motion-off #review-progress-bar { transition: none; }
 .rule-heading:has(> .count)::after{order:1}.rule-heading>.count{order:2;font-size:11px;letter-spacing:.12em;color:var(--ink-muted)}
 .grammar-list{list-style:none;margin:6px 0 0;padding:0}
 .grammar-list li{border-bottom:1px solid var(--rule)}
-.grammar-row{all:unset;box-sizing:border-box;display:flex;align-items:flex-start;gap:14px;width:100%;padding:13px 0;cursor:pointer;color:var(--sumi)}
+.grammar-row{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:12px;width:100%;padding:10px 0;cursor:pointer;color:var(--sumi)}
+.grammar-row .step-mark{width:22px;height:auto;justify-content:flex-start;border:0;font-size:16px}
+.grammar-level{display:inline-flex;padding:3px 8px;border:1px solid var(--sumi);border-radius:2px;color:var(--sumi);font-size:10px;text-transform:uppercase;letter-spacing:.12em;white-space:nowrap}
+.grammar-row>svg{flex-shrink:0;color:var(--ink-muted)}
 .grammar-row:focus-visible{outline:2px solid var(--seal);outline-offset:3px}
-.grammar-row-body{display:flex;flex-direction:column;gap:3px;min-width:0}
+.grammar-row-body{flex-grow:1;display:flex;flex-direction:column;gap:2px;min-width:0}
 .grammar-row-head{display:flex;align-items:baseline;gap:10px}
-.grammar-phrase{font-family:var(--display);font-size:18px}
+.grammar-phrase{font-family:var(--display);font-size:15px}
 .grammar-level{font-size:10px;letter-spacing:.12em;color:var(--ink-muted)}
-.grammar-gloss{font-size:13px;line-height:1.5;color:var(--ink-soft)}
+.grammar-gloss{font-size:12px;line-height:1.5;color:var(--ink-muted)}
 
 /* Sentence page (design handoff §3): sentence → meaning → key → echoes → play →
    register → grammar | how it has gone → history / change (collapsed) → delete. */
