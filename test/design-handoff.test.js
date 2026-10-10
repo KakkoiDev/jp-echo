@@ -262,3 +262,11 @@ test("sentence page: the key, the echo row, the tiles, the rows and the foot fol
   assert.match(html, /<dialog id="dictionary-dialog" class="tool-sheet"><div class="sheet-handle" aria-hidden="true"><\/div><div class="dictionary-head"><h2 id="dictionary-title" lang="ja"><\/h2><button data-ui="button" id="dictionary-close" class="icon-button" type="button" aria-label="Close">/);
   assert.match(html, /id="dictionary-ask" type="button" class="plain">Ask Echo what it means here<\/button><p class="hint">Readings and senses are JMdict’s, on the device\. Only the question to Echo needs the network\.<\/p>/);
 });
+
+test("identity: the maskable icon is its own file, the glyph inside the safe zone", async () => {
+  const any = await readFile(new URL("../icon-512.png", import.meta.url)), maskable = await readFile(new URL("../icon-maskable-512.png", import.meta.url));
+  assert.equal(any.equals(maskable), false, "decision 2: never one file for both purposes");
+  const manifest = JSON.parse(await readFile(new URL("../manifest.webmanifest", import.meta.url), "utf8"));
+  assert.ok(manifest.icons.some(i => i.src === "./icon-maskable-512.png" && i.purpose === "maskable"));
+  assert.ok(manifest.icons.some(i => i.src === "./icon-512.png" && i.purpose === "any"));
+});
