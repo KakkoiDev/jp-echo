@@ -372,7 +372,7 @@ dialog::backdrop{background:rgba(28,26,23,.34)}
 .switch input{flex-shrink:0;width:22px}
 .time-row{justify-content:space-between}
 .time-row>span{font-size:13px;color:var(--ink-soft)}
-.time-row select{width:160px;min-height:44px;height:44px}
+.time-row select{width:160px}
 #remind-reach:empty{display:none}
 .settings-section h3{display:flex;align-items:center;gap:12px;margin:0;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.2em;color:var(--seal-deep)}
 .settings-section h3::after{content:"";flex-grow:1;height:1px;background:var(--hairline)}
@@ -1129,7 +1129,7 @@ html.motion-off #review-progress-bar { transition: none; }
 .sentence-grammar .hint{width:100%}
 
 /* Gist backup: a sub-block of Your sentences, using the settings field and switch styles. */
-.gist-backup{display:flex;flex-direction:column;gap:10px;padding:13px 0;border-bottom:1px solid var(--rule)}
+.gist-backup{display:flex;flex-direction:column;gap:10px}
 .gist-backup .gist-actions{flex-wrap:wrap}
 #gist-status a{color:var(--seal-deep)}
 #gist-status.error{color:var(--seal)}
@@ -1318,12 +1318,14 @@ html.motion-off #review-progress-bar { transition: none; }
 .sheet-more:not(:has(> :not(summary):not([hidden]))){display:none}
 
 /* Onboarding starter offer (design §7): one panel label, unticked. */
-.starter-offer{display:flex;align-items:flex-start;gap:14px;margin-top:22px;padding:18px;border:1px solid var(--hairline);border-radius:4px;background:var(--panel);cursor:pointer}
+.starter-offer{display:flex;align-items:flex-start;gap:14px;margin-top:22px;padding:14px 15px;border:1px solid var(--hairline);border-radius:4px;background:var(--panel);cursor:pointer}
 .starter-offer input{flex-shrink:0;width:22px;height:22px;margin:2px 0 0;accent-color:var(--seal)}
 .starter-offer-copy{display:flex;flex-direction:column;gap:6px}
-.starter-offer-copy strong{font-family:var(--display);font-weight:500;font-size:17px;color:var(--sumi)}
-.starter-offer-copy>span{font-size:13px;line-height:1.55;color:var(--ink-soft)}
-.starter-offer-copy a{margin-top:4px;font-size:13px;color:var(--seal-deep)}
+.starter-offer-copy strong{font-family:var(--ui);font-weight:500;font-size:15px;color:var(--sumi)}
+.starter-offer-copy>span{font-size:12px;line-height:1.6;color:var(--ink-muted)}
+.starter-offer-copy a{margin-top:4px;font-size:12px;color:var(--ink-muted)}
+#setup-step-2 .setup-title,#setup-view[data-step="2"] #setup-title{font-size:28px}
+#setup-save{min-height:52px}
 .starter-offer[hidden]{display:none}
 
 /* Settings page (design §1). SettingsRow = .settings-row: title, one-line
@@ -1337,13 +1339,36 @@ html.motion-off #review-progress-bar { transition: none; }
 .settings-page{display:flex;flex-direction:column;gap:12px}
 .settings-page[hidden]{display:none}
 .settings-page-title{margin:14px 0 0}
-.settings-index{display:none}
+/* Settings (Settings.dc.html): the section index as chips on a phone, rows in the display face, 46px fields. */
+.settings-index{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 0}
+.settings-index a{height:32px;padding:0 11px;display:inline-flex;align-items:center;border:1px solid var(--hairline);border-radius:3px;background:var(--panel);font-size:12px;color:var(--ink-soft);text-decoration:none;white-space:nowrap}
+#settings-view .session-bar h2{font-size:21px}
+#settings-view select,#settings-view input:not([type=checkbox]):not([type=range]){min-height:46px;height:46px}
+#settings-view select{background-position:right 11px center}
+#settings-view textarea{height:auto}
+.settings-section:has(>.settings-row){gap:0}
+.conversation-voices{display:flex;flex-direction:column;gap:10px;padding:12px 14px;border:1px solid var(--rule);border-radius:4px;background:var(--panel)}
+.conversation-voices strong{font-size:13px;font-weight:500}
+#settings-swap-langs{align-self:flex-start;min-height:40px;padding:0;font-size:13px;letter-spacing:normal;color:var(--ink-soft);text-decoration:underline;text-underline-offset:3px}
+#settings-view .note-box{gap:9px;padding:11px 13px}
+#settings-view .note-box p{font-size:12px}
+#settings-view .note-box>svg{width:14px;height:16px}
+#settings-ai .editor-actions{gap:10px}
+#settings-ai .editor-actions button{min-height:48px;font-size:15px}
+#settings-ai .text-danger{text-decoration:underline;text-underline-offset:3px}
+#settings-ai .link-button{text-decoration:underline;text-underline-offset:3px}
+.settings-advanced>summary{min-height:52px}
+#ai-status.checked::before{content:"";display:inline-block;width:7px;height:7px;margin-right:8px;border-radius:50%;background:var(--seal);vertical-align:middle}
+.settings-page .asset-actions button,.settings-page .deck-url-row button{height:48px;min-height:48px;padding:0 16px;font-size:14px;font-weight:500}
+.gist-actions button{flex:1 1 0}
+.settings-page .library-tool.two-line{min-height:60px;margin-top:0;border-bottom:0}
+#gist-status.ok::before{content:"";display:inline-block;width:7px;height:7px;margin-right:8px;border-radius:50%;background:var(--seal);vertical-align:middle}
 .settings-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
-.settings-row{display:flex;align-items:center;gap:12px;width:100%;min-height:64px;padding:10px 0;border:0;border-bottom:1px solid var(--rule);border-radius:0;background:transparent;color:inherit;text-align:left;letter-spacing:normal;font-size:inherit}
+.settings-row{display:flex;align-items:center;gap:12px;width:100%;min-height:64px;padding:13px 0;border:0;border-bottom:1px solid var(--rule);border-radius:0;background:transparent;color:inherit;text-align:left;letter-spacing:normal;font-size:inherit}
 .settings-row[hidden]{display:none}
 .settings-row-text{flex-grow:1;min-width:0;display:flex;flex-direction:column;gap:3px}
-.settings-row-title{font-size:15px;color:var(--sumi)}
-.settings-row-status{font-size:13px;color:var(--ink-muted)}
+.settings-row-title{font-family:var(--display);font-size:17px;color:var(--sumi)}
+.settings-row-status{font-size:12px;color:var(--ink-muted)}
 .settings-row-status.ok::before{content:"";display:inline-block;width:6px;height:6px;margin-right:8px;border-radius:50%;background:var(--ink-soft);vertical-align:middle}
 .settings-row-status.error{color:var(--seal-deep)}
 .settings-row>svg{flex-shrink:0;color:var(--ink-muted)}

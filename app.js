@@ -160,7 +160,7 @@ function saveSettings(){settings.theme=$("#theme").value;settings.motion=$("#mot
 function persistSettings(){try{storePreference("jp-echo-settings",JSON.stringify(settings));return JSON.parse(localStorage.getItem("jp-echo-settings")||"null")!==null}catch{return false}}
 let savedTimer=null;
 function flashSaved(text="Saved"){const note=$("#settings-saved");if(!note)return;note.textContent=text;clearTimeout(savedTimer);savedTimer=setTimeout(()=>note.textContent="Saved as you go",2200)}
-function resetSettingsForm(){syncReviewLimitInputs();const keys=settings.providerKeys||{},models=settings.providerModels||{};$("#provider").value=defaultProvider();$("#speech-provider").value=settings.speechProvider||"auto";$("#groq-speech-key").value=settings.speechKeys?.groq||"";$("#deepseek-key").value=keys.deepseek||settings.apiKey||"";$("#google-key").value=keys.google||"";$("#openai-key").value=keys.openai||"";$("#anthropic-key").value=keys.anthropic||"";for(const provider of Object.keys(PROVIDER_DEFAULTS))$("#"+provider+"-model").value=models[provider]||PROVIDER_DEFAULTS[provider];$("#local-endpoint").value=settings.localEndpoint||"http://localhost:11434/v1/chat/completions";$("#proxy-url").value=settings.proxyUrl||"";$("#theme").value=settings.theme||"system";$("#motion").value=settings.motion||"system";$("#autotag").checked=!!settings.autoTag;$("#remind").checked=!!settings.remind;$("#remind-time").value=settings.remindTime||DEFAULT_TIME;$("#gist-auto").checked=!!settings.gistAuto;$("#gist-token").value=settings.gistToken||"";$("#gist-url").value=settings.gistUrl||"";renderGistStatus();$("#remind-reach").textContent=settings.remind?reminderReach():"";$("#voice").value=settings.voice||"default";$("#discussion-voice-ai").value=settings.discussionVoiceAI||"default";$("#discussion-voice-user").value=settings.discussionVoiceUser||"default";$("#rate").value=settings.rate||1;$("#rate-value").textContent=Number($("#rate").value).toFixed(1)+"×";showProviderConfig()}
+function resetSettingsForm(){syncReviewLimitInputs();const keys=settings.providerKeys||{},models=settings.providerModels||{};$("#provider").value=defaultProvider();$("#speech-provider").value=settings.speechProvider||"auto";$("#groq-speech-key").value=settings.speechKeys?.groq||"";$("#deepseek-key").value=keys.deepseek||settings.apiKey||"";$("#google-key").value=keys.google||"";$("#openai-key").value=keys.openai||"";$("#anthropic-key").value=keys.anthropic||"";for(const provider of Object.keys(PROVIDER_DEFAULTS))$("#"+provider+"-model").value=models[provider]||PROVIDER_DEFAULTS[provider];$("#local-endpoint").value=settings.localEndpoint||"http://localhost:11434/v1/chat/completions";$("#proxy-url").value=settings.proxyUrl||"";$("#theme").value=settings.theme||"system";$("#motion").value=settings.motion||"system";$("#autotag").checked=!!settings.autoTag;$("#remind").checked=!!settings.remind;$("#remind-time").value=settings.remindTime||DEFAULT_TIME;$("#gist-auto").checked=!!settings.gistAuto;$("#gist-token").value=settings.gistToken||"";$("#gist-url").value=settings.gistUrl||"";renderGistStatus();$("#remind-reach").textContent=reminderReach();$("#voice").value=settings.voice||"default";$("#discussion-voice-ai").value=settings.discussionVoiceAI||"default";$("#discussion-voice-user").value=settings.discussionVoiceUser||"default";$("#rate").value=settings.rate||1;$("#rate-value").textContent=Number($("#rate").value).toFixed(1)+"×";showProviderConfig()}
 // Settings is a page (/settings, /settings/<sub-page>), not a modal.
 function openSettings(page="main",{route=true}={}){const view=document.body.dataset.view,entering=view!=="settings";if(entering){if(view)settingsReturn=view;settingsStack=route?["out"]:[]}
   // Browser Back from a sub-page lands here with route:false: drop that push.
@@ -170,7 +170,7 @@ function showSettingsPage(page,{route=true,fresh=false}={}){const previous=setti
   if(route&&!fresh&&previous==="main"&&settingsPage!=="main")settingsStack.push("main");
   for(const node of document.querySelectorAll("#settings-view .settings-page"))node.hidden=node.dataset.settingsPage!==settingsPage;
   $("#settings-heading").textContent=t(SETTINGS_TITLES[settingsPage]);$("#settings-saved").hidden=settingsPage!=="main";
-  if(settingsPage==="ai"){$("#ai-status").textContent="";showProviderConfig()}if(settingsPage==="speech")$("#speech-status").textContent="";
+  if(settingsPage==="ai"){const checked=Date.parse(settings.aiCheckedAt||"");$("#ai-status").textContent=Number.isFinite(checked)?"Key checked "+gistWhen(checked)+" · working":"";$("#ai-status").classList.toggle("checked",Number.isFinite(checked));showProviderConfig()}if(settingsPage==="speech")$("#speech-status").textContent="";
   renderSettingsRows();if(route)syncRoute({view:"settings",settingsPage});document.querySelector("#settings-view")?.scrollTo?.(0,0);scrollTo(0,0)}
 // Back steps back through history when the entry before is where Back leads
 // (so the browser's Back stays in step). settingsStack records the pushes made
@@ -185,13 +185,13 @@ function leaveSettings(){const target=settingsPage!=="main"?"main":"out";
 // SettingsRow statuses: one line each, true to what is stored.
 function renderSettingsRows(){if(!$("#settings-status-ai"))return;
   const provider=defaultProvider(),names={google:"Google Gemini",deepseek:"DeepSeek",openai:"OpenAI",anthropic:"Anthropic",local:"Local AI"};
-  $("#settings-status-ai").textContent=names[provider]+(provider==="local"?(settings.localEndpoint?" · endpoint saved":" · no endpoint yet"):(settings.providerKeys?.[provider]?" · key saved ✓":" · no key yet"));
+  $("#settings-status-ai").textContent=names[provider]+(provider==="local"?(settings.localEndpoint?" · endpoint saved":" · no endpoint yet"):(settings.providerKeys?.[provider]?" · key saved":" · no key yet"));
   $("#settings-status-speech").textContent={auto:"Auto — browser, then Groq",browser:"Browser only",groq:"Groq Whisper",google:"Gemini"}[settings.speechProvider||"auto"]||"Auto — browser, then Groq";
-  $("#settings-status-grammar").textContent=settings.autoTag?"Read new sentences automatically":"Explained only when I ask";$("#settings-row-grammar").hidden=targetLang()!=="ja";
-  $("#settings-status-import").textContent=targetLang()==="ja"?"A deck file, a URL, or the ミニ本語 Minihongo starter":"A deck file or a URL";
-  $("#settings-status-export").textContent="An Anki deck, or a backup file";
+  $("#settings-status-grammar").textContent="Reads new sentences automatically: "+(settings.autoTag?"on":"off");$("#settings-row-grammar").hidden=targetLang()!=="ja";
+  $("#settings-status-import").textContent=targetLang()==="ja"?"A deck, a URL, or the Minihongo starter":"A deck, or a URL";
+  $("#settings-status-export").textContent="Anki deck · backup file";
   const gist=gistState(),status=$("#settings-status-backup");status.classList.toggle("ok",!!(settings.gistAuto&&gist.lastSuccessAt&&!gist.lastError));status.classList.toggle("error",!!gist.lastError);
-  status.textContent=gist.lastError?"Last backup failed — open to see why":settings.gistAuto&&gist.lastSuccessAt?"Backed up to your gist · "+gistWhen(gist.lastSuccessAt):settings.gistAuto?"Gist backup is on — nothing backed up yet":"Off — back up to a GitHub gist"}
+  status.textContent=gist.lastError?"Last backup failed — open to see why":settings.gistAuto&&gist.lastSuccessAt?"Gist · backed up "+gistWhen(gist.lastSuccessAt):settings.gistAuto?"Gist backup is on — nothing backed up yet":"Off — back up to a GitHub gist"}
 // Credentials: explicit saves. The AI key is checked only when asked (one request).
 function aiFormSettings(){const provider=$("#provider").value,keys={...(settings.providerKeys||{})},models={...(settings.providerModels||{})};
   if(provider!=="local"){keys[provider]=$("#"+provider+"-key").value.trim()}models[provider]=$("#"+provider+"-model").value.trim();
@@ -200,7 +200,7 @@ function saveAIService(){const next=aiFormSettings();Object.assign(settings,{pro
   $("#ai-status").textContent=persistSettings()?(next.provider==="local"?"Saved. Echo will use this endpoint.":"Key saved on this device."):"This browser would not store it. Check that site storage is allowed.";renderSettingsRows();renderPracticeNotices?.()}
 async function checkAIService(){const button=$("#ai-check"),next=aiFormSettings();if(next.provider!=="local"&&!next.providerKeys[next.provider]){$("#ai-status").textContent="Paste a key first.";return}
   button.disabled=true;$("#ai-status").textContent="Checking…";
-  try{await translate("Good morning.",{...next,sourceLang:"en",targetLang:targetLang()});$("#ai-status").textContent="The key works — checked just now. The check used one request."}
+  try{await translate("Good morning.",{...next,sourceLang:"en",targetLang:targetLang()});$("#ai-status").textContent="The key works — checked just now. The check used one request.";settings.aiCheckedAt=new Date().toISOString();persistSettings()}
   catch(error){$("#ai-status").textContent="That did not work: "+(error.message||error)}finally{button.disabled=false}}
 function removeAIKey(){const provider=$("#provider").value;
   if(provider==="local"){settings.localEndpoint="";$("#local-endpoint").value=""}else{settings.providerKeys={...(settings.providerKeys||{}),[provider]:""};if(provider==="deepseek")delete settings.apiKey;$("#"+provider+"-key").value=""}
@@ -249,11 +249,14 @@ const canSyncInBackground=()=>"serviceWorker" in navigator&&"PeriodicSyncManager
 // Echo has no server, so nothing can be pushed. The service worker is woken by
 // Periodic Background Sync where that exists; everywhere else the check runs
 // when the app is opened. Say which, rather than promise either.
+// The line under the toggle says what this device can do (decision 1, revised
+// in October): never a promised push — Echo has no server and sends nothing.
 function reminderReach(){
-  if(!("Notification" in window))return "This browser cannot show notifications, so this does nothing here.";
-  if(canSyncInBackground())return isStandalone()?"Your device wakes Echo to check, so a reminder arrives near the time you picked.":"Install Echo and your device will wake it to check. Until then it can only check when you open it.";
-  if(/iphone|ipad|ipod/i.test(navigator.userAgent)&&!isStandalone())return "On iPhone, add Echo to the Home Screen first. Even then this browser only checks when Echo is open, so a reminder waits for you there.";
-  return "This browser only checks when Echo is open, so a reminder waits for you the next time you open it.";
+  const tail=" — Echo has no server and sends nothing.";
+  if(!("Notification" in window))return "On this device: this browser cannot show notifications, so this does nothing here"+tail;
+  if(canSyncInBackground())return isStandalone()?"On this device: your device wakes Echo to check, so a reminder arrives near the time you picked"+tail:"On this device: install Echo and your device will wake it to check. Until then it can only check when you open it"+tail;
+  if(/iphone|ipad|ipod/i.test(navigator.userAgent)&&!isStandalone())return "On this device: add Echo to the Home Screen first. Even then this browser only checks when Echo is open, so a reminder can only arrive on a day you open the app"+tail;
+  return "On this device: Echo checks when it is opened. This browser does not wake it in the background, so a reminder can only arrive on a day you open the app"+tail;
 }
 async function readReminderPrefs(){try{const cache=await caches.open(PREFS_CACHE),response=await cache.match(PREFS_KEY);return response?await response.json():null}catch{return null}}
 async function writeReminderPrefs(){try{const cache=await caches.open(PREFS_CACHE);
@@ -1309,10 +1312,10 @@ let setupStep=1;
 function showSetupStep(step){setupStep=step;
   $("#setup-step-1").hidden=step!==1;$("#setup-step-2").hidden=step!==2;if(step===2)listSentences().then(renderSetupStarter).catch(()=>renderSetupStarter([]));
   $("#setup-step-label").textContent="Step "+step+" of 2";
-  $("#setup-title").textContent=step===1?"One thing first":"Your languages";document.querySelector("#setup-view .note-box").hidden=step!==1;
+  $("#setup-title").textContent=step===1?"One thing first":"Which way round?";$("#setup-view").dataset.step=String(step);document.querySelector("#setup-view .note-box").hidden=step!==1;
   $("#setup-copy").textContent=step===1
     ?"Echo needs a translator. Pick a service you have an account with and paste its key — it is saved on this device and goes nowhere else."
-    :"Write in the language you think in. Echo answers in the one you are learning.";
+    :"";
   $("#setup-next").hidden=step!==1;$("#setup-save").hidden=step!==2;
   $("#setup-skip").hidden=step!==1;}
 function storeTranslator(){const provider=$("#setup-provider").value;
@@ -1760,8 +1763,8 @@ async function runGistBackup({auto=false,token=settings.gistToken,gist=settings.
   if(String(gist||"").trim()&&!parseGistId(gist))throw new Error("That gist URL is not one Echo recognises. Paste the gist's page URL, or leave it blank.");
   const startedAt=Date.now();patchGistState({lastAttemptAt:startedAt});
   gistRunning=(async()=>{
-    try{const result=await uploadBackup({token,gist,backup:await buildBackup()});
-      const state=patchGistState({dirty:(Number(gistState().lastChangeAt)||0)>startedAt,lastSuccessAt:Date.now(),lastError:"",url:result.url});
+    try{const backup=await buildBackup(),result=await uploadBackup({token,gist,backup});
+      const state=patchGistState({dirty:(Number(gistState().lastChangeAt)||0)>startedAt,lastSuccessAt:Date.now(),lastError:"",url:result.url,sentences:Array.isArray(backup.sentences)?backup.sentences.length:0,notes:Array.isArray(backup.notes)?backup.notes.length:Object.keys(backup.notes||{}).length});
       if(settings.gistUrl!==result.url||settings.gistToken!==token){settings.gistUrl=result.url;settings.gistToken=token;storePreference("jp-echo-settings",JSON.stringify(settings));if(document.body.dataset.view==="settings")$("#gist-url").value=result.url;renderSettingsRows()}
       if(state.dirty)scheduleGistBackup(MIN_INTERVAL_MS+500);
       return result}
@@ -1772,9 +1775,9 @@ async function runGistBackup({auto=false,token=settings.gistToken,gist=settings.
   return gistRunning}
 const gistWhen=value=>new Intl.DateTimeFormat(undefined,{dateStyle:"medium",timeStyle:"short"}).format(new Date(value));
 function renderGistStatus(){
-  const node=$("#gist-status");if(!node)return;const state=gistState();node.replaceChildren();node.classList.remove("error");
+  const node=$("#gist-status");if(!node)return;const state=gistState();node.replaceChildren();node.classList.remove("error","ok");
   if(state.lastError){node.classList.add("error");node.textContent="Last backup failed: "+state.lastError;return}
-  if(state.lastSuccessAt){node.append("Backed up "+gistWhen(state.lastSuccessAt)+". ");
+  if(state.lastSuccessAt){node.classList.add("ok");node.append("Backed up "+gistWhen(state.lastSuccessAt)+(Number.isFinite(state.sentences)?" · "+state.sentences+(state.sentences===1?" sentence":" sentences")+", "+(state.notes||0)+(state.notes===1?" note":" notes"):"")+". ");
     if(state.url&&parseGistId(state.url)){const link=document.createElement("a");link.href=state.url;link.target="_blank";link.rel="noopener noreferrer";link.textContent="Open the gist";node.append(link)}
     if(settings.gistAuto&&state.dirty)node.append(" Newer changes are waiting.");return}
   node.textContent=settings.gistAuto?(settings.gistToken?"Nothing backed up yet — the first backup runs shortly.":"Add a token to start backing up."):"";
@@ -1828,10 +1831,10 @@ $("#tabs").addEventListener("click",event=>{const tab=event.target.closest(".tab
 function commitPreferences(){if(saveSettings()){renderPracticeNotices();writeReminderPrefs();syncReminderSchedule()}else flashSaved("Not saved — this browser blocked storage")}
 for(const id of ["theme","motion","voice","discussion-voice-ai","discussion-voice-user","rate","autotag","remind-time","gist-auto","gist-url"])$("#"+id).addEventListener("change",commitPreferences);
 $("#remind").onchange=async()=>{const wanted=$("#remind").checked;
-  if(wanted&&!await enableReminders()){$("#remind").checked=false;$("#remind-hint").textContent="Notifications are blocked for Echo. Allow them in your browser settings, then turn this on again.";$("#remind-hint").classList.add("error");$("#remind-reach").textContent="";return}
-  $("#remind-hint").textContent="Your device asks permission the first time you turn this on.";$("#remind-hint").classList.remove("error");
-  settings.remind=wanted;$("#remind-reach").textContent=wanted?reminderReach():""};$("#export-anki").onclick=()=>exportAnki($("#export-anki"));$("#open-anki").onclick=()=>openAnki();$("#export").onclick=exportHistory;$("#import").onclick=()=>$("#import-file").click();$("#import-file").onchange=async event=>{await importHistory(event.target.files[0]);event.target.value=""};
-$("#voice-install").onclick=installTargetVoice;$("#voice-manage").onclick=installTargetVoice;$("#settings-swap-langs").onclick=()=>setPair(targetLang(),sourceLang());window.addEventListener("focus",()=>setTimeout(populateVoices,250));document.addEventListener("visibilitychange",()=>{if(!document.hidden)setTimeout(populateVoices,250)});$("#onboard-start").onclick=()=>showView("setup");$("#onboard-restore").onclick=()=>{finishOnboarding();showView("library");importStatus=$("#empty-starter-status");$("#import-file").click()};
+  if(wanted&&!await enableReminders()){$("#remind").checked=false;$("#remind-hint").textContent="Notifications are blocked for Echo. Allow them in your browser settings, then turn this on again.";$("#remind-hint").hidden=false;$("#remind-hint").classList.add("error");$("#remind-reach").textContent="";return}
+  $("#remind-hint").textContent="";$("#remind-hint").hidden=true;$("#remind-hint").classList.remove("error");
+  settings.remind=wanted;$("#remind-reach").textContent=reminderReach()};$("#export-anki").onclick=()=>exportAnki($("#export-anki"));$("#open-anki").onclick=()=>openAnki();$("#export").onclick=exportHistory;$("#export-file").onclick=exportHistory;$("#settings-extract").onclick=()=>{settingsStack=[];openTextExtraction()};$("#import").onclick=()=>$("#import-file").click();$("#import-file").onchange=async event=>{await importHistory(event.target.files[0]);event.target.value=""};
+$("#voice-install").onclick=installTargetVoice;$("#voice-manage").onclick=installTargetVoice;$("#settings-swap-langs").onclick=()=>setPair(targetLang(),sourceLang());window.addEventListener("focus",()=>setTimeout(populateVoices,250));document.addEventListener("visibilitychange",()=>{if(!document.hidden)setTimeout(populateVoices,250)});$("#onboard-start").onclick=()=>showView("setup");$("#onboard-restore").onclick=()=>{finishOnboarding();openSettings()};
 $("#setup-next").onclick=()=>{storeTranslator();showSetupStep(2)};
 $("#setup-back").onclick=()=>{if(setupStep===2)return showSetupStep(1);showView(settings.onboarded?"practice":"onboard")};$("#setup-provider").onchange=showSetupFields;$("#setup-save").onclick=saveSetup;$("#setup-skip").onclick=finishOnboarding;
 $("#clear-filters").onclick=()=>{$("#history-search").value="";$("#clear-history-search").hidden=true;$("#history-filter").value="all";settings.historyFilter="all";try{storePreference("jp-echo-settings",JSON.stringify(settings))}catch{}renderHistory()};
@@ -1963,7 +1966,7 @@ async function runReadingBackfill(force=false){
    if(current?.id===id){Object.assign(current,saved);if(!$("#main-view").hidden)renderSentence()}if(detail?.id===id){Object.assign(detail,saved);if(!$("#sentence-change").open){renderDetailLearningText()}}
    reviewQueue=reviewQueue.map(s=>s.id===id?saved:s);
    if(!$("#review-view").hidden&&reviewQueue[reviewIndex]?.id===id&&reviewRevealed){const target=reviewJapanese(saved);$("#review-japanese").innerHTML=reviewMode(saved)==="writing"?markTarget($("#review-answer").value,target).map(p=>p.changed?"<mark>"+p.html+"</mark>":p.html).join(""):rubyHtml(target);enableReviewVocabulary(saved,target)}
-  },onProgress:(done,total)=>status.textContent=`Furigana checked: ${done} / ${total} sentences. Original readings are kept in your backup.`});
+  },onProgress:(done,total)=>status.textContent=`On opening, every Japanese sentence gets a dictionary pass and a contextual reading check with your AI. ${done} of ${total} done. Originals are kept in your backup.`});
  }catch(error){status.textContent="Furigana correction paused: "+error.message+". Reopen Echo or tap Resume to continue."}
  finally{readingBackfillRunning=false;$("#reading-backfill").disabled=false;if(readingBackfillRequested){readingBackfillRequested=false;scheduleReadingBackfill()}}
 }
