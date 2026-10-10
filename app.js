@@ -65,8 +65,8 @@ const pairWasRepaired=repairPair(settings);
 if(pairWasRepaired||settings.basePair===undefined)storePreference("jp-echo-settings",JSON.stringify(settings));
 const PLAY_ICON="M2 1.4 12 8 2 14.6V1.4Z",PAUSE_ICON="M2.5 1.5h3v13h-3zM7.5 1.5h3v13h-3z";
 let current=null,detail=null,kanjiPlaying=null,translationFailure=null,voiceFailed=false,dictationReady=false,echoesAtCardStart=0,voices=[],installPrompt=null,reviewQueue=[],reviewIndex=0,reviewRevealed=false,reviewRecognition=null,reviewListening=false;
-const loop=new ShadowLoop({onEcho:async()=>{const sheet=($("#kanji-dialog").open||$("#grammar-dialog").open||$("#word-dialog").open)&&kanjiPlaying,reviewing=!$("#review-view").hidden,viewingDetail=!$("#sentence-view").hidden,target=sheet?kanjiPlaying:reviewing?reviewQueue[reviewIndex]:viewingDetail?detail:current;if(!target||target.transient)return;target.echoCount=(Number(target.echoCount)||0)+1;target.updatedAt=new Date().toISOString();await saveSentence(target);if(reviewing){reviewQueue[reviewIndex]=target;tickCount($("#review-echo-count"),target.echoCount)}if(viewingDetail)tickCount($("#stat-echoes"),target.echoCount);if(current?.id===target.id){current=target;renderCount()}},onState:state=>{const label=({speaking:"Playing — say it with the voice",imitate:"Your turn — echo it",paused:"Paused",stopped:"Ready",error:"That voice could not play"})[state]||state,playing=state!=="stopped"&&state!=="error",text=state==="paused"?"Play":playing?"Pause":"Play";$("#review-loop-state").textContent=label;$("#sentence-loop-state").textContent=label;const active=playing&&state!=="paused";for(const echo of document.querySelectorAll(".arcs > .echo, .ripple.echo.live"))echo.classList.toggle("is-playing",active);$("#practice").classList.toggle("playing",active);$("#review-panel").classList.toggle("playing",active);$("#loop-state").textContent=label;$("#play-pause").textContent=text;$("#play-pause").setAttribute("aria-pressed",String(playing));$("#review-audio").textContent=state==="paused"||!playing?"Play the loop":"Pause the loop";$("#review-audio").setAttribute("aria-pressed",String(playing));
-  const reviewFrontAudio=$("#review-front-audio");if(reviewFrontAudio){reviewFrontAudio.textContent=state==="paused"||!playing?"Play sentence":"Pause";reviewFrontAudio.setAttribute("aria-pressed",String(playing))}
+const loop=new ShadowLoop({onEcho:async()=>{const sheet=($("#kanji-dialog").open||$("#grammar-dialog").open||$("#word-dialog").open)&&kanjiPlaying,reviewing=!$("#review-view").hidden,viewingDetail=!$("#sentence-view").hidden,target=sheet?kanjiPlaying:reviewing?reviewQueue[reviewIndex]:viewingDetail?detail:current;if(!target||target.transient)return;target.echoCount=(Number(target.echoCount)||0)+1;target.updatedAt=new Date().toISOString();await saveSentence(target);if(reviewing){reviewQueue[reviewIndex]=target;tickCount($("#review-echo-count"),target.echoCount)}if(viewingDetail)tickCount($("#stat-echoes"),target.echoCount);if(current?.id===target.id){current=target;renderCount()}},onState:state=>{const label=({speaking:"Playing — say it with the voice",imitate:"Your turn — echo it",paused:"Paused",stopped:"Ready",error:"That voice could not play"})[state]||state,playing=state!=="stopped"&&state!=="error",text=state==="paused"?"Play":playing?"Pause":"Play";$("#review-loop-state").textContent=label;$("#sentence-loop-state").textContent=label;const active=playing&&state!=="paused";for(const echo of document.querySelectorAll(".arcs > .echo, .ripple.echo.live"))echo.classList.toggle("is-playing",active);$("#practice").classList.toggle("playing",active);$("#review-panel").classList.toggle("playing",active);$("#loop-state").textContent=label;$("#play-pause").textContent=text;$("#play-pause").setAttribute("aria-pressed",String(playing));$("#review-audio .label").textContent=state==="paused"||!playing?"Play the loop":"Pause the loop";$("#review-audio svg path").setAttribute("d",state==="paused"||!playing?PLAY_ICON:PAUSE_ICON);$("#review-audio").setAttribute("aria-pressed",String(playing));
+  const reviewFrontAudio=$("#review-front-audio");if(reviewFrontAudio){reviewFrontAudio.querySelector(".label").textContent=state==="paused"||!playing?"Play sentence":"Pause";reviewFrontAudio.querySelector("svg path").setAttribute("d",state==="paused"||!playing?PLAY_ICON:PAUSE_ICON);reviewFrontAudio.setAttribute("aria-pressed",String(playing))}
   $("#sentence-play").setAttribute("aria-pressed",String(playing));const showPlay=state==="paused"||!playing;$("#sentence-play").lastChild.textContent=showPlay?"Play the loop":"Pause the loop";$("#sentence-play").querySelector("path").setAttribute("d",showPlay?PLAY_ICON:PAUSE_ICON);$("#sentence-view").classList.toggle("playing",active);
   for(const [dialog,state] of [["#kanji-dialog","#kanji-loop-state"],["#grammar-dialog","#grammar-loop-state"],["#word-dialog","#word-loop-state"]])if($(dialog).open){$(state).textContent=playing?label:"";
     // The row's button shows what a press will do: pause while it plays, play
@@ -1103,14 +1103,24 @@ function updateDueBadge(count){const badge=$("#due-badge");badge.textContent=Str
 async function refreshDueBadge(){updateDueBadge(limitReviewSession(dueSentences((await listSentences()).map(item=>ensureSchedule(item))),settings).length)}
 // "Today you will": each due sentence's next skill, from review-modes.js.
 function renderSkillMix(due){const mix=skillMix(due),row=$("#review-skill-mix-row");$("#review-skill-mix").hidden=due.length===0;
-  row.setAttribute("aria-label","Today you will "+["listening","reading","writing"].map(mode=>reviewModeMeta(mode).verb+" "+mix[mode]).join(", "));
-  row.replaceChildren(...["listening","reading","writing"].map(mode=>{const item=document.createElement("span");item.className="skill-mix-item";item.setAttribute("aria-hidden","true");const count=document.createElement("strong");count.textContent=String(mix[mode]);item.append(skillGlyph(mode,{size:30})," "+reviewModeMeta(mode).verb+" ",count);return item}))}
+  row.setAttribute("aria-label","In this session you will "+["listening","reading","writing"].map(mode=>reviewModeMeta(mode).verb+" "+mix[mode]).join(", "));
+  row.replaceChildren(...["listening","reading","writing"].map(mode=>{const item=document.createElement("span");item.className="skill-mix-item";item.setAttribute("aria-hidden","true");const count=document.createElement("strong");count.textContent=String(mix[mode]);item.append(skillGlyph(mode,{state:"filled",size:30})," "+reviewModeMeta(mode).verb+" ",count);return item}))}
 function showReviewTab(tab){settings.reviewTab=tab;persistSettings();const stats=tab==="stats";$("#review-overview").hidden=stats;$("#review-stats").hidden=!stats;$("#review-tab-session").setAttribute("aria-selected",String(!stats));$("#review-tab-stats").setAttribute("aria-selected",String(stats))}
-function renderReviewStats(items){const stats=reviewStats(items),counter=stats.last24h+" reviews completed in the past 24 hours";$("#review-24h").textContent=counter;$("#session-review-24h").textContent=counter;
- const table=(headers,rows)=>{const node=document.createElement("table"),head=document.createElement("thead"),body=document.createElement("tbody");const line=(cells,tag)=>{const tr=document.createElement("tr");for(const text of cells){const td=document.createElement(tag);td.textContent=String(text);tr.append(td)}return tr};head.append(line(headers,"th"));for(const row of rows)body.append(line(row,"td"));node.className="data-table";node.append(head,body);return node};
- $("#review-stats-summary").replaceChildren(table(["Period","Reviews"],[["Past 24 hours",stats.last24h],["Past 7 days",stats.last7d],["All saved history",stats.total],["Distinct cards, past 24 hours",stats.unique24h],["OK, past 24 hours",stats.ok24h],["Again, past 24 hours",stats.again24h]]));
- $("#review-stats-modes").replaceChildren(table(["Skill","Reviews"],REVIEW_MODES_FOR_STATS.map(mode=>[reviewModeMeta(mode).label,stats.modes[mode]])));
- $("#review-stats-days").replaceChildren(table(["Period","Reviews"],stats.days.map(day=>[day.label,day.count])))}
+// Stats as the ReviewStats artboard draws them: the past 24 hours as a figure,
+// one filled tile per skill, and the seven rolling 24-hour bins of
+// reviewStats() as day cells — each labelled by the weekday its window ends on,
+// oldest first, today last. The fill is a visual bucket (8 or more fills a
+// cell), not a target; the copy says so.
+function renderReviewStats(items){const stats=reviewStats(items),now=Date.now();
+ $("#stats-24h").textContent=String(stats.last24h);
+ const bold=(n,cls)=>{const b=document.createElement("b");if(cls)b.className=cls;b.textContent=String(n);return b};
+ $("#stats-24h-detail").replaceChildren("said · ",bold(stats.ok24h)," OK · ",bold(stats.again24h,"again")," again · "+stats.unique24h+" different "+(stats.unique24h===1?"sentence":"sentences"));
+ $("#review-stats-modes").replaceChildren(...REVIEW_MODES_FOR_STATS.map(mode=>{const tile=document.createElement("span"),count=el("span","stats-count"),n=document.createElement("strong"),label=document.createElement("small");n.textContent=String(stats.modes[mode]);label.textContent=reviewModeMeta(mode).past;count.append(n,label);tile.append(skillGlyph(mode,{state:"filled",size:30}),count);return tile}));
+ const weekday=new Intl.DateTimeFormat(undefined,{weekday:"short"});
+ $("#review-stats-days").replaceChildren(...stats.days.map((day,i)=>{const wrap=document.createElement("span");if(i===0)wrap.className="today";const cell=el("span","week-cell",day.count?String(day.count):"·");cell.dataset.level=day.count>=8?"full":day.count?"some":"none";cell.title=day.label;const label=document.createElement("small");label.textContent=weekday.format(new Date(now-i*86400000));wrap.append(cell,label);return wrap}).reverse());
+ const first=Math.min(...items.flatMap(s=>(Array.isArray(s.reviews)?s.reviews:[]).map(r=>Date.parse(r.at)).filter(Number.isFinite)));
+ $("#stats-week").textContent=String(stats.last7d);
+ $("#stats-week-detail").textContent="this week"+(Number.isFinite(first)?" · "+stats.total+" since "+new Intl.DateTimeFormat(undefined,{day:"numeric",month:"long"}).format(new Date(first)):"")}
 const REVIEW_MODES_FOR_STATS=["listening","reading","writing"];
 async function refreshReviewStats(){renderReviewStats(await listSentences())}
 async function renderReviewHome(){const all=(await listSentences()).map(item=>ensureSchedule(item)),now=Date.now(),available=dueSentences(all),due=limitReviewSession(available,settings),counts={new:0,learning:0,review:0};
@@ -1124,7 +1134,7 @@ async function renderReviewHome(){const all=(await listSentences()).map(item=>en
   document.querySelector(".ring-stage").classList.toggle("resting",due.length===0);
   $("#start-review").hidden=due.length===0;$("#review-practice").hidden=due.length>0;
   renderSkillMix(due);
-  if(due.length){$("#review-estimate").textContent="About "+spell(Math.max(1,Math.round(due.length*.55)))+" minute"+(Math.round(due.length*.55)>1?"s":"")+", out loud.";
+  if(due.length){$("#review-estimate").textContent="Say each one out loud before you check. Roughly "+spell(Math.max(1,Math.round(due.length*.55)))+" minute"+(Math.round(due.length*.55)>1?"s":"")+".";
     $("#review-footnote").textContent=reviewAvailabilityMessage(available.length,due.length,next,now)}
   else{const schedule=reviewAvailabilityMessage(0,0,next,now);
     $("#review-rest-copy").textContent=available.length?"Cards are due, but your session limits exclude them. Increase a limit to start.":all.length===0?"Translate a sentence and it joins the queue straight away.":schedule;
@@ -1424,23 +1434,23 @@ async function startReview(){if(reviewBusy)return;const items=await listSentence
 function reviewJapanese(sentence){sentence=dictionaryReadings(sentence);return hasRegisters(itemTarget(sentence))?preferredTarget(sentence):(sentence.target||"")}
 function reviewPlainJapanese(sentence){return hasRegisters(itemTarget(sentence))?preferredPlainTarget(sentence):(sentence.plainTarget||stripFurigana(sentence.target||""))}
 const STAGE_LABELS={0:"New",1:"Learning",2:"Review",3:"Relearning"};
-function stageLabel(sentence){const state=sentence.srs?.state??0,reps=Number(sentence.srs?.reps)||0;return STAGE_LABELS[state]+(reps?" · seen "+reps+(reps===1?" time":" times"):"")}
+function stageLabel(sentence){const state=sentence.srs?.state??0,reps=Number(sentence.srs?.reps)||0;return STAGE_LABELS[state]+(reps?" · seen "+reps+(reps===1?" time":" times"):state===0?" · first time":"")}
 function stageClass(sentence){const state=sentence.srs?.state??0;return state===0?"new":state===2?"review":"learning"}
 function renderReview(){refreshReviewStats();updateReviewPrevious();resetSession();stopReviewListening();const sentence=reviewQueue[reviewIndex],complete=!sentence;
   $("#review-panel").hidden=complete;$("#review-prompt-actions").hidden=complete;$("#review-actions").hidden=true;$("#review-complete").hidden=!complete;
   $("#review-progress").textContent=complete?`${reviewQueue.length} / ${reviewQueue.length}`:`${reviewIndex+1} / ${reviewQueue.length}`;
-  renderSidePanel();$("#review-progress-bar").style.width=(reviewQueue.length?Math.round((complete?reviewQueue.length:reviewIndex)/reviewQueue.length*100):0)+"%";
+  renderSidePanel();$("#review-progress-bar").style.width=(reviewQueue.length?Math.round((complete?reviewQueue.length:reviewIndex+1)/reviewQueue.length*100):0)+"%";
   if(complete)return renderReviewComplete();
   reviewRevealed=false;
   const mode=reviewMode(sentence),meta=reviewModeMeta(mode),writing=mode==="writing",listening=mode==="listening";
   $("#review-panel").dataset.reviewMode=mode;
   $("#review-stage").textContent=stageLabel(sentence);$("#review-stage").className="status-chip "+stageClass(sentence);
-  $("#review-skills").replaceChildren(skillTrio(mode,{label:meta.label+" card. This sentence turns through listening, reading and writing."}));
+  $("#review-skills").replaceChildren(skillTrio(mode,{label:meta.label+" card. This sentence turns through listening, reading and writing.",size:26}));for(const id of [".review-meta","#review-mode-title","#review-mode-instruction"])document.querySelector(id).hidden=false;
   $("#review-mode-title").textContent=meta.title;
   // The reason comes from the sentence's real track (review-modes.js), so it
   // stays true when Again keeps a skill for another visit.
   $("#review-mode-instruction").textContent=skillReason(sentence);
-  $("#review-passive-hint").textContent=listening?"Say what it means, out loud or to yourself, then reveal it.":"Say it out loud, then check the meaning.";
+  $("#review-passive-hint").textContent=listening?"Plays the sentence once. Say it with the voice, then check — the Japanese is shown after.":"Say it out loud, then check the meaning.";
   $("#review-prompt").hidden=listening;
   $("#review-prompt").lang=mode==="reading"?targetLang():sourceLang();
   $("#review-prompt").textContent=mode==="reading"?reviewPlainJapanese(sentence):sentence.source;
@@ -1448,12 +1458,12 @@ function renderReview(){refreshReviewStats();updateReviewPrevious();resetSession
   $("#review-passive").hidden=writing;$("#review-front-audio").hidden=!listening;$("#review-capture").hidden=!writing;$("#review-answer-tools").hidden=true;
   $("#review-capture-label").textContent="Write it in Japanese";$("#review-answer").lang=itemTarget(sentence);$("#review-answer").placeholder="Write the Japanese sentence";$("#review-answer").value="";$("#review-listen-state").textContent="";
   $("#review-grammar").replaceChildren();$("#review-grammar").hidden=true;$("#review-result").hidden=true;$("#review-attempt-label").hidden=true;$("#review-attempt").hidden=true;
-  $("#review-check .label").textContent=listening?"Reveal the sentence":mode==="reading"?"Show the meaning":"Check and listen";
+  $("#review-check .label").textContent=listening?"Said it — show me":mode==="reading"?"Show the meaning":"Said it — check and listen";
   echoesAtCardStart=Number(sentence.echoCount)||0;$("#review-echo-count").textContent=String(echoesAtCardStart);
   updateCheckButton();
   if(listening)requestAnimationFrame(()=>{if(reviewQueue[reviewIndex]?.id===sentence.id&&!reviewRevealed)playReviewAudio()});
   else if(writing)$("#review-answer").focus()}
-async function renderReviewComplete(){const done=reviewQueue.length;let copy=done?spell(done)+(done===1?" review":" reviews")+" completed.":"Nothing was due.";
+async function renderReviewComplete(){const done=reviewQueue.length;let copy=done?capitalise(spell(done))+(done===1?" sentence":" sentences")+" out loud.":"Nothing was due.";
   const all=(await listSentences()).map(item=>ensureSchedule(item)),next=all.filter(item=>!isDue(item)).map(item=>Date.parse(item.srs.due)).filter(Number.isFinite).sort((a,b)=>a-b)[0];
   const remaining=dueSentences(all);copy+=" "+reviewAvailabilityMessage(remaining.length,0,next);
   $("#review-complete-copy").textContent=copy;refreshDueBadge()}
@@ -1473,6 +1483,8 @@ async function revealReview(){let sentence=reviewQueue[reviewIndex];if(!sentence
     $("#review-japanese").innerHTML=rubyHtml(target);
   }
   enableReviewVocabulary(sentence,target);
+  // The checked answer is the whole card now: the chip, the trio and the reason go.
+  for(const id of [".review-meta","#review-mode-title","#review-mode-instruction"])document.querySelector(id).hidden=true;
   $("#review-panel").classList.toggle("hide-furigana",mode==="writing"&&settings.showFurigana===false);
   $("#review-capture").hidden=true;$("#review-passive").hidden=true;$("#review-result").hidden=false;
   $("#review-prompt").hidden=true;$("#review-prompt-actions").hidden=true;$("#review-actions").hidden=false;
@@ -1517,7 +1529,6 @@ function renderSentenceGrammar(host,text,sentence,analysis,{root,target,lang,exp
   host.replaceChildren();
   const ids=grammarTags([...(analysis?.grammar||[]),...(sentence?.grammar||[])]),items=grammarListItems(ids,analysis?.spans||[]);
   const heading=document.createElement("h3");heading.className="rule-heading grammar-heading";heading.append(t("Grammar in it"));
-  if(items.length){const count=el("span","count",items.length===1?t("1 point"):t("{n} points",{n:items.length}));heading.append(count)}
   // The answered state: an ordered list that reads as an answer (GrammarList).
   if(items.length){host.append(heading,grammarList(items,{onOpen:async item=>{resetSession();await openGrammar(grammarPoint(item.id),grammarCoverage(await listSentences()),{route:false})}}))}
   else if(analysis){host.append(heading,el("p","hint",t("None of the listed grammar points appear in this sentence.")))}

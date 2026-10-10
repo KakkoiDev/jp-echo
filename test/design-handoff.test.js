@@ -23,7 +23,7 @@ test("SkillGlyph is one component with three states, and the emoji are gone", ()
 test("the review card names its skill and why, from the track", () => {
   assert.match(app, /\$\("#review-skills"\)\.replaceChildren\(skillTrio\(mode,\{label:meta\.label\+" card\./);
   assert.match(app, /\$\("#review-mode-instruction"\)\.textContent=skillReason\(sentence\)/);
-  assert.match(app, /listening\?"Reveal the sentence"/);
+  assert.match(app, /listening\?"Said it — show me":mode==="reading"\?"Show the meaning":"Said it — check and listen"/, "the check button says what you did and what comes next");
   assert.match(html, /id="review-skill-mix"[\s\S]*In this session you will/);
 });
 
@@ -208,4 +208,32 @@ test("the echo animation is docs/design/motion.css whole, and the live rings mov
   assert.equal((html.match(/<svg class="echo" width="96" height="96" viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="1\.6"/g) || []).length, 5, "five compact arc pairs: practice, sentence, review answer, discussion, reading");
   assert.doesNotMatch(html, /<svg class="echo" width="76"/);
   assert.equal((html.match(/<svg class="ripple echo"/g) || []).length, 3, "welcome, onboarding and review home rings stay still and never carry .live");
+});
+
+test("review: the skill-mix card, the listening panel, the answer and the stats follow the October boards", () => {
+  assert.doesNotMatch(html, /id="review-24h"|id="session-review-24h"/, "the 24-hour counter line is gone from Review home and the session");
+  const home = html.slice(html.indexOf('<section id="review-home"'), html.indexOf('<section id="review-view"'));
+  assert.ok(home.indexOf('<div id="review-skill-mix" class="skill-mix"') > home.indexOf('<div class="breakdown">') && home.indexOf('<div id="review-skill-mix"') < home.indexOf('<div class="sheet">'), "the skill mix is a card between the ring and the sheet");
+  assert.match(css, /\.skill-mix\{display:flex;flex-direction:column;margin:20px 0 0;padding:14px 16px 15px;background:var\(--panel\);border:1px solid var\(--hairline\);border-radius:4px;text-align:left\}/);
+  assert.match(app, /item\.append\(skillGlyph\(mode,\{state:"filled",size:30\}\)/, "the mix glyphs are filled marks");
+  assert.match(css, /\.skill-glyph\[data-state="filled"\]\{background:var\(--seal\);border-color:var\(--seal\);color:var\(--seal-on\)\}/);
+  assert.match(app, /"Say each one out loud before you check\. Roughly "\+spell/);
+  assert.match(css, /\.review-mode-title\{margin:18px 0 0;font-family:var\(--display\);font-weight:600;font-size:22px;line-height:1\.25\}/, "card title: 22px, left");
+  assert.match(app, /skillTrio\(mode,\{label:meta\.label\+" card\. This sentence turns through listening, reading and writing\.",size:26\}\)/);
+  assert.match(html, /<div id="review-passive" class="review-passive" hidden><button data-ui="button" id="review-front-audio" type="button" aria-pressed="false"><svg/, "the listening card's Play is outlined, with a play icon, in a panel");
+  assert.doesNotMatch(html, /id="review-front-audio" class="primary"/);
+  assert.match(app, /"Plays the sentence once\. Say it with the voice, then check — the Japanese is shown after\."/);
+  assert.match(app, /state===0\?" · first time":""/, "a new card says it is the first time");
+  assert.match(app, /for\(const id of \[".review-meta","#review-mode-title","#review-mode-instruction"\]\)document\.querySelector\(id\)\.hidden=true/, "the checked answer drops the chip, trio, title and reason");
+  assert.match(html, /<p id="review-grammar-note" class="hint">Read off the sentence when it was explained\. A row opens the grammar point\. The review never asks the model\.<\/p>/);
+  assert.match(css, /#review-grammar\[hidden\]\+#review-grammar-note\{display:none\}/);
+  assert.doesNotMatch(app, /t\("\{n\} points"/, "Grammar in it carries no count");
+  assert.match(app, /capitalise\(spell\(done\)\)\+\(done===1\?" sentence":" sentences"\)\+" out loud\."/, "the finished screen starts with a capital and says what was done");
+  assert.match(app, /Math\.round\(\(complete\?reviewQueue\.length:reviewIndex\+1\)\/reviewQueue\.length\*100\)/, "the progress bar counts the card in hand");
+  assert.match(html, /<div id="review-stats" role="tabpanel" aria-labelledby="review-tab-stats" hidden><p class="overline">Past 24 hours<\/p><p class="stats-figure"><strong id="stats-24h">0<\/strong>/);
+  assert.doesNotMatch(html, /review-stats-summary|Review history/);
+  assert.match(app, /cell\.dataset\.level=day\.count>=8\?"full":day\.count\?"some":"none"/);
+  assert.match(app, /\.reverse\(\)\);/, "day cells run oldest first, today last");
+  assert.match(app, /label\.textContent=reviewModeMeta\(mode\)\.past/, "tile labels come from the track's own words");
+  assert.match(html, /nothing here is a streak, and nothing is lost by missing a day\./);
 });
