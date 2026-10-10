@@ -159,3 +159,18 @@ test("settings page structure: four groups, SettingsRow rows, lock note, install
   assert.match(view, /class="install-panel"/);
   assert.match(css, /\.settings-row\{display:flex;align-items:center;gap:12px;width:100%;min-height:64px/);
 });
+
+test("a chosen segment, chip or register is seal-tinted, never a sumi block", () => {
+  assert.match(css, /\.segmented \[role=tab\]\[aria-selected=true\]\{background:var\(--seal-tint\);color:var\(--seal-deep\);font-weight:500;box-shadow:inset 0 -2px 0 var\(--seal\)\}/);
+  assert.match(css, /#sentence-register button\.selected\{background:var\(--seal-tint\);color:var\(--seal-deep\);font-weight:500;box-shadow:inset 0 -2px 0 var\(--seal\)\}/);
+  assert.match(css, /\.chips button\[aria-pressed=true\]\{background:var\(--seal-tint\);border-color:var\(--seal-edge\);color:var\(--seal-deep\)\}/);
+  assert.doesNotMatch(css, /background:var\(--sumi\);color:var\(--seal-on\)/, "sumi fill is reserved for states, not for a chosen option");
+});
+
+test("the stylesheet uses the palette: no undefined tokens, no raw colours, no escaped newline", () => {
+  assert.doesNotMatch(css, /var\(--paper/, "--paper was never defined; the panel token is the paper");
+  assert.doesNotMatch(css, /#f6df9b|#292318/i, "extract marks use --seal-wash and --seal-deep");
+  assert.equal(css.includes("\\n"), false, "a literal \\n in a stylesheet is an escape, not a newline");
+  assert.match(css, /\n\.reading-sentence-text\{/, "the reading line rule applies");
+  assert.doesNotMatch(css, /border:1px solid currentColor;border-radius:8px/, "generic web-app boxes are panels with a 4px radius");
+});
