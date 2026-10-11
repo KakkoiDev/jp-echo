@@ -321,3 +321,9 @@ test("notes save on an explicit action, never on blur; bands mark open state wit
   assert.doesNotMatch(app, /function untilDue/);
   assert.doesNotMatch(css, /^\.stats\{/m);
 });
+
+test("the settings section index scrolls within the page instead of navigating away", () => {
+  assert.match(app, /for\(const link of document\.querySelectorAll\("\.settings-index a\[href\^='#'\]"\)\)link\.onclick=event=>\{event\.preventDefault\(\)/, "base href=/ would turn #settings-… into /#…");
+  assert.match(app, /target\.scrollIntoView\(\{behavior:reduce\?"auto":"smooth",block:"start"\}\)/, "smooth only when motion is allowed");
+  for (const id of ["settings-everyday", "settings-languages", "settings-sentences", "settings-device"]) assert.match(html, new RegExp(`<a href="#${id}">[\\s\\S]*?id="${id}"`), id + " has a target");
+});

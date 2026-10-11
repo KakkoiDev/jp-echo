@@ -1362,6 +1362,8 @@ html.motion-off #review-progress-bar { transition: none; }
 .settings-page-title{margin:14px 0 0}
 /* Settings (Settings.dc.html): the section index as chips on a phone, rows in the display face, 46px fields. */
 .settings-index{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 0}
+#settings-view .settings-section{scroll-margin-top:16px}
+.settings-section h3:focus{outline:none}
 .settings-index a{height:32px;padding:0 11px;display:inline-flex;align-items:center;border:1px solid var(--hairline);border-radius:3px;background:var(--panel);font-size:12px;color:var(--ink-soft);text-decoration:none;white-space:nowrap}
 #settings-view .session-bar h2{font-size:21px}
 #settings-view select,#settings-view input:not([type=checkbox]):not([type=range]){min-height:46px;height:46px}
