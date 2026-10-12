@@ -26,6 +26,24 @@
           "reading": "ぎんこう",
           "role": "derived",
           "exampleSentenceId": "kanji-families-001-03"
+        },
+        {
+          "term": "行う",
+          "reading": "おこなう",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-001-04"
+        },
+        {
+          "term": "行列",
+          "reading": "ぎょうれつ",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-001-05"
+        },
+        {
+          "term": "改行",
+          "reading": "かいぎょう",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-001-06"
         }
       ],
       "exampleSentenceId": "kanji-families-001-01"
@@ -53,6 +71,18 @@
           "reading": "みかんせい",
           "role": "derived",
           "exampleSentenceId": "kanji-families-002-03"
+        },
+        {
+          "term": "未満",
+          "reading": "みまん",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-002-04"
+        },
+        {
+          "term": "未経験",
+          "reading": "みけいけん",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-002-05"
         }
       ],
       "exampleSentenceId": "kanji-families-002-01"
@@ -80,6 +110,18 @@
           "reading": "はっぴょう",
           "role": "derived",
           "exampleSentenceId": "kanji-families-003-03"
+        },
+        {
+          "term": "開発",
+          "reading": "かいはつ",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-003-04"
+        },
+        {
+          "term": "発音",
+          "reading": "はつおん",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-003-05"
         }
       ],
       "exampleSentenceId": "kanji-families-003-01"
@@ -2356,7 +2398,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "Please close the window.",
-      "target": "窓を閉めてください。"
+      "target": "窓を閉【し】めてください。"
     },
     {
       "id": "kanji-families-015-02",
@@ -2713,7 +2755,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "We set a new rule.",
-      "target": "新しい規則を定めた。"
+      "target": "新しい規則を定【さだ】めた。"
     },
     {
       "id": "kanji-families-032-02",
@@ -2776,7 +2818,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "I collect old stamps.",
-      "target": "古い切手を集めている。"
+      "target": "古い切手を集【あつ】めている。"
     },
     {
       "id": "kanji-families-035-02",
@@ -2860,7 +2902,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "I grow vegetables in the garden.",
-      "target": "庭で野菜を育てている。"
+      "target": "庭で野菜を育【そだ】てている。"
     },
     {
       "id": "kanji-families-039-02",
@@ -3448,7 +3490,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "The meeting took only ten minutes.",
-      "target": "会議は十分で済んだ。"
+      "target": "会議は十分【じゅっぷん】で済【す】んだ。"
     },
     {
       "id": "kanji-families-067-02",
@@ -3616,7 +3658,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "We set aside time for questions.",
-      "target": "質問の時間を設けた。"
+      "target": "質問の時間を設【もう】けた。"
     },
     {
       "id": "kanji-families-075-02",
@@ -3652,6 +3694,55 @@
       "targetLang": "ja",
       "source": "I received payment for the work.",
       "target": "仕事の報酬【ほうしゅう】を受け取った。"
+    },
+    {
+      "id": "kanji-families-001-04",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "We will hold an event in the park tomorrow.",
+      "target": "明日、公園でイベントを行【おこな】う。"
+    },
+    {
+      "id": "kanji-families-001-05",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "A long queue formed in front of the station.",
+      "target": "駅【えき】の前【まえ】に長【なが】い行列【ぎょうれつ】ができた。"
+    },
+    {
+      "id": "kanji-families-001-06",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "Please insert a line break here.",
+      "target": "ここで改行【かいぎょう】してください。"
+    },
+    {
+      "id": "kanji-families-002-04",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "People under eighteen cannot enter.",
+      "target": "十八歳【じゅうはっさい】未満【みまん】の人【ひと】は入【はい】れません。"
+    },
+    {
+      "id": "kanji-families-002-05",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "I have no prior experience in this kind of work.",
+      "target": "この仕事【しごと】は未経験【みけいけん】です。"
+    },
+    {
+      "id": "kanji-families-003-04",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "I am developing a new app.",
+      "target": "新【あたら】しいアプリを開発【かいはつ】している。"
+    },
+    {
+      "id": "kanji-families-003-05",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "This word's pronunciation is difficult.",
+      "target": "この単語【たんご】の発音【はつおん】は難【むずか】しい。"
     }
   ]
 }
