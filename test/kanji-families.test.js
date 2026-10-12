@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import {readFile} from "node:fs/promises";
 import {validateDeckBackup} from "../imports.js";
 import {validateFamilyCurriculum,loadFamilyCurriculum,findFamilies,familyThemes,
-  familyProgress,exampleLibraryIndex,exampleState} from "../kanji-families.js";
+  familyProgress,exampleLibraryIndex,exampleState,familyVocabulary} from "../kanji-families.js";
 
 const raw=JSON.parse(await readFile(new URL("../decks/kanji-families-curriculum.json",import.meta.url),"utf8"));
 const curriculum=validateFamilyCurriculum(raw);
@@ -15,7 +15,7 @@ test("the complete families deck is valid Echo material with linked vocabulary e
   assert.equal(new Set(curriculum.families.map(f=>f.kanji)).size,206);
   for(const family of curriculum.families) {
     assert.ok(family.dictionaryRadical&&family.dictionaryRadicalName&&family.meaning&&family.theme);
-    assert.ok(family.words.length>=3);
+    assert.ok(Array.isArray(family.words)); // the curriculum has no 3-word requirement
     for(const word of family.words) {
       const sentence=curriculum.byId.get(word.exampleSentenceId);
       assert.ok(sentence&&word.reading&&word.term.includes(family.kanji));
@@ -82,4 +82,28 @@ test("each family exposes all other JMdict words, not just the authored sample",
     assert.equal(new Set(other.map(w=>w.w+" / "+w.r)).size,other.length,parent.kanji);
     assert.ok(other.every(w=>w.w.includes(parent.kanji)),parent.kanji);
   }
+});
+
+
+test("families may have fewer than three prepared words but still have full vocabulary",()=>{
+  const one=structuredClone(raw);
+  one.kanjiFamilies[0].words=one.kanjiFamilies[0].words.slice(0,1);
+  assert.equal(validateFamilyCurriculum(one).byKanji.get("行").words.length,1);
+  const none=structuredClone(raw);
+  none.kanjiFamilies[0].words=[];
+  assert.equal(validateFamilyCurriculum(none).byKanji.get("行").words.length,0);
+  // A new family with no authored sentence cards still has dictionary words.
+  assert.ok(familyVocabulary(none.kanjiFamilies[0],DICTIONARY).length>10);
+});
+test("all dictionary words are available, including prepared words, with no cap",()=>{
+  const family=curriculum.byKanji.get("行");
+  const all=familyVocabulary(family,DICTIONARY);
+  assert.ok(all.length>100);
+  assert.ok(all.some(word=>word.w==="行く"));
+  assert.ok(all.some(word=>word.w==="行動"));
+  assert.ok(all.some(word=>word.w==="飛行機"));
+  assert.equal(all.length,new Set(all.map(word=>word.w+" / "+word.r)).size);
+  assert.ok(familyVocabulary(family,DICTIONARY,{query:"こうどう"}).some(w=>w.w==="行動"));
+  const large=Array.from({length:350},(_,i)=>({id:i,w:"発"+String(i),r:"はつ"+i,en:["test"]}));
+  assert.equal(familyVocabulary(curriculum.byKanji.get("発"),large).length,350);
 });
