@@ -116,3 +116,15 @@ the caller opens a new list. Vocabulary sentence lists use this component.
 ### FitTextArea
 `fitTextArea(field)` expands a generated-content textarea to show its full
 value. Sentence editing uses it for the sentence and its separate meaning.
+
+### KanjiFamilyBrowser
+
+The Kanji tab's semantic-family catalogue uses the existing `Button`, `Input`,
+`Select` and tappable sentence/loop primitives; it does not create new review
+or speech controls. `kanji-families.js` owns read-only validation, search and
+derived progress. `app.js` orchestrates the existing Kanji sheet, the theme
+filter and one-at-a-time **Add sentence** via `importBackupData`.
+
+The family JSON file is precached in the service worker. Never insert all
+catalogue sentences into the local library automatically. Sentence reviews,
+playback, dictionary lookup and backup retain their existing owners.
