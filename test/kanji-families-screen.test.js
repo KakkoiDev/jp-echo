@@ -41,7 +41,7 @@ test("offline install caches the data, module and matching stylesheet version",(
 
 test("additional dictionary words open the existing Word sheet, without fake sentences",()=>{
  assert.match(app,/function renderKanjiFamilyDictionary\(family\)/);
- assert.match(app,/familyDictionaryMatches\(family,REFERENCE_WORDS/);
+ assert.match(app,/familyVocabulary\(family,REFERENCE_WORDS/);
  assert.match(app,/openWord\(entry,wordCoverage\(await listSentences\(\)\),\{route:false\}\)/);
  const source=app.slice(app.indexOf("function renderKanjiFamilyDictionary"),app.indexOf("async function addFamilySentence"));
  assert.doesNotMatch(source,/importBackupData\(/);
