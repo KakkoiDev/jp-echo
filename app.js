@@ -16,6 +16,7 @@ import {japaneseVoices,recognitionFactory,ShadowLoop,ConversationLoop} from "./s
 import {STORIES} from "./stories.js";
 import {coverage as kanjiCoverage,facts as kanjiFacts,jlptBands as kanjiBands,learned as kanjiLearned,LEVEL_LABELS,levelOf,nextUnmet,sentenceKanji,TOTAL as KANJI_TOTAL} from "./kanji.js";
 import {searchGrammar,searchKanji,searchWords} from "./lookup.js";
+import {loadFamilyCurriculum,findFamilies,familyThemes,exampleLibraryIndex,exampleState,familyProgress} from "./kanji-families.js";
 import {ALL as REFERENCE_WORDS,setImportedWords,bands as wordBands,carries as carriesWord,coverage as wordCoverage,kindOf,learned as wordLearned,levelOf as wordLevel,marks as wordMarks,sentenceWords,wordSpans,TOTAL as WORD_TOTAL,word as wordById} from "./words.js";
 import {deleteNote as dbDeleteNote,forBackup,getNote,listNotes,makeNote,mergeNotes,noteKey,putNote as dbPutNote,replaceNotes as dbReplaceNotes} from "./notes.js";
 import {downloadAnkiDeck} from "./anki-export.js";
@@ -375,6 +376,7 @@ const MORA_ROWS=[["あ","い","う","え","お"],["か","き","く","け","こ"]
 function renderMora(){const host=$("#mora-table"),emoji=$("#mora-show-emoji").checked,furigana=$("#mora-show-furigana").checked,english=$("#mora-show-english").checked;host.classList.toggle("labelled",english);const head=document.createElement("div");head.className="mora-row mora-head";head.setAttribute("aria-hidden","true");head.innerHTML='<span></span>'+["a","i","u","e","o"].map(v=>"<span>"+v+"</span>").join("");host.replaceChildren(...(english?[head]:[]),...MORA_ROWS.map(row=>{const line=document.createElement("div");line.className="mora-row";if(english){const label=document.createElement("span");label.className="mora-row-label";label.textContent=row.find(Boolean)||"";line.append(label)}for(const mora of row){const cell=document.createElement("div");cell.className="mora-cell";if(!mora){cell.classList.add("empty");line.append(cell);continue}const [kanji,reading,gloss,icon]=MORA_MNEMONIC_META[mora];cell.innerHTML=`<span class="mora-kana">${mora}</span><span class="mora-word">${kanji}</span>${icon&&emoji?`<span class="mora-emoji" aria-hidden="true">${icon}</span>`:""}${furigana?`<span class="mora-reading">${reading}</span>`:""}${english?`<span class="mora-english" lang="en">${gloss}</span>`:""}`;line.append(cell)}return line}))}
 function saveMoraDisplay(){settings.moraEmoji=$("#mora-show-emoji").checked;settings.moraFurigana=$("#mora-show-furigana").checked;settings.moraEnglish=$("#mora-show-english").checked;storePreference("jp-echo-settings",JSON.stringify(settings));renderMora()}
 const tool={open:null,chip:"all",more:new Set()};
+const familyBrowse={theme:"all",limit:12,sentences:[]};
 const el=(tag,cls,text)=>{const node=document.createElement(tag);if(cls)node.className=cls;if(text!=null)node.textContent=text;return node};
 const CHEVRON='<svg width="14" height="9" viewBox="0 0 14 9" fill="none" aria-hidden="true"><path d="m1.5 1.5 5.5 5.5 5.5-5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const TICK='<svg width="12" height="10" viewBox="0 0 12 10" fill="none" aria-hidden="true"><path d="m1.5 5 3 3 6-6.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -415,7 +417,58 @@ function renderKanjiWall(sentences){
   card.append(copy);
   const host=$("#map-bands");host.replaceChildren();
   for(const band of kanjiBands())host.append(renderKanjiBand(band,cover,known));
+  // Families are an optional learning layer above the existing JLPT wall.
+  // Browsing never creates review cards.
+  void renderKanjiFamilies(sentences);
 }
+
+async function renderKanjiFamilies(sentences){
+  familyBrowse.sentences=sentences;
+  const list=$("#family-list"),error=$("#family-error");
+  try{
+    const catalogue=await loadFamilyCurriculum();
+    error.textContent="";
+    const select=$("#family-theme");
+    if(!select.dataset.ready){
+      select.replaceChildren(new Option("All themes","all"),
+        ...familyThemes(catalogue).map(theme=>new Option(theme,theme)));
+      select.dataset.ready="true";
+    }
+    select.value=familyBrowse.theme;
+    const filtered=findFamilies(catalogue,{theme:familyBrowse.theme,query:$("#family-search").value});
+    const status=exampleLibraryIndex(sentences),shown=filtered.slice(0,familyBrowse.limit);
+    $("#family-count").textContent=filtered.length+" of "+catalogue.families.length+" families · "+
+      "examples enter review only when you add them";
+    list.replaceChildren();
+    const cover=kanjiCoverage(sentences);
+    for(const family of shown){
+      const progress=familyProgress(catalogue,family,status);
+      const row=el("button","family-row");row.type="button";
+      row.setAttribute("aria-label",family.kanji+": "+family.meaning+". "+
+        progress.met+" of "+progress.total+" examples in your library");
+      const glyph=el("span","family-glyph",family.kanji);glyph.lang="ja";
+      const details=el("span","family-row-info");
+      details.append(el("strong",null,family.meaning),
+        el("span",null,"Radical "+family.dictionaryRadical+" · "+
+          family.words.map(word=>word.term).join(" · ")));
+      const count=el("span","family-row-count",progress.met+"/"+progress.total);
+      count.title=progress.learned+" reviewed";
+      row.append(glyph,details,count);row.insertAdjacentHTML("beforeend",RIGHT);
+      row.onclick=()=>openKanji(family.kanji,cover);
+      list.append(row);
+    }
+    if(!shown.length)list.append(el("p","hint","No families match this search."));
+    $("#family-more").hidden=shown.length>=filtered.length;
+    $("#family-more").textContent="Show more families ("+(filtered.length-shown.length)+" remaining)";
+  }catch(error){
+    list.replaceChildren();
+    $("#family-more").hidden=true;
+    $("#family-count").textContent="";
+    error.textContent="The curriculum could not be opened: "+(error.message||"unknown error")+
+      ". Reopen Kanji to retry.";
+  }
+}
+
 function bandHead(band,learnedN,metN,total,sub){
   const head=el("button","band-head");head.type="button";head.setAttribute("aria-expanded",String(tool.open===band.key));head.setAttribute("aria-controls","band-"+band.key);
   head.append(el("span","band-level",band.level));
@@ -520,8 +573,72 @@ async function openKanji(character,cover,{learn=null,route=true}={}){
   renderSheetSentences($("#kanji-sentences"),mine,{deletable:true,onDelete:deleteFromSheet,mark:character});
   $("#kanji-mine-head").hidden=!mine.length;sheetCount($("#kanji-mine-head"),mine.length);
   await renderKanjiInfo(character);
+  await renderKanjiFamily(character,all);
   if(!$("#kanji-dialog").open)$("#kanji-dialog").showModal();
 }
+
+async function renderKanjiFamily(character,sentences){
+  const panel=$("#kanji-family-detail"),host=$("#kanji-family-sentences");
+  try{
+    const catalogue=await loadFamilyCurriculum(),family=catalogue.byKanji.get(character);
+    panel.hidden=!family;
+    host.replaceChildren();
+    if(!family)return;
+    $("#kanji-family-meaning").textContent=family.meaning;
+    $("#kanji-family-radical").textContent=family.dictionaryRadical+
+      " · "+(family.dictionaryRadicalName||"dictionary indexing radical");
+    $("#kanji-family-progress").textContent=family.theme+" · "+
+      family.words.length+" related words";
+    $("#kanji-family-message").textContent="";
+    const index=exampleLibraryIndex(sentences);
+    const previews=family.words.map(word=>{
+      const card=catalogue.byId.get(word.exampleSentenceId);
+      return {...card,transient:true,word:word.term,reading:word.reading};
+    });
+    // Reuse the same tappable dictionary and TTS sentence rows as other
+    // kanji sheet examples. The transient flag prevents preview plays from
+    // accidentally counting as library practice.
+    renderSheetSentences(host,previews,{mark:character});
+    for(const [i,word] of family.words.entries()){
+      const card=catalogue.byId.get(word.exampleSentenceId);
+      const state=exampleState(card,index),row=host.children[i];
+      const add=el("button","family-add",state==="unmet"?"Add sentence":
+        state==="learned"?"Learned":"In library");
+      add.type="button";
+      add.disabled=state!=="unmet";
+      if(state!=="unmet")add.setAttribute("aria-label",word.term+" already in library");
+      add.onclick=()=>addFamilySentence(card,character,add);
+      row.append(add);
+    }
+  }catch(error){
+    panel.hidden=false;
+    host.replaceChildren();
+    $("#kanji-family-meaning").textContent="Kanji family";
+    $("#kanji-family-radical").textContent="";
+    $("#kanji-family-progress").textContent="";
+    $("#kanji-family-message").textContent="Could not load the family examples: "+
+      (error.message||"unknown error");
+  }
+}
+async function addFamilySentence(card,character,button){
+  button.disabled=true;
+  const status=$("#kanji-family-message");
+  status.textContent="Adding sentence…";
+  try{
+    // Import through the normal Echo pipeline. It keeps duplicate detection,
+    // existing FSRS state, grammar/reading normalization and backup dirtiness.
+    const outcome=await importBackupData({schemaVersion:2,sentences:[card]});
+    const sentences=await listSentences();
+    await openKanji(character,kanjiCoverage(sentences),{learn:kanjiOpen?.learn,route:false});
+    await renderMap();
+    $("#kanji-family-message").textContent=outcome.added?
+      "Added to your Library and normal review queue.":"This sentence is already in your Library.";
+  }catch(error){
+    status.textContent="Could not add sentence: "+(error.message||"unknown error");
+    button.disabled=false;
+  }
+}
+
 async function renderKanjiInfo(character){
   // Echo's own story: the facts, the parts and the reading, in its own words.
   await renderStory(character);
@@ -1854,7 +1971,11 @@ function sheetDrag(dialog,close){
 sheetDrag($("#kanji-dialog"),()=>{loop.stop();$("#kanji-dialog").close()});sheetDrag($("#grammar-dialog"),()=>{loop.stop();$("#grammar-dialog").close()});sheetDrag($("#word-dialog"),()=>{loop.stop();$("#word-dialog").close()});
 $("#word-close").onclick=()=>{loop.stop();$("#word-dialog").close()};$("#word-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;wordOpen=null;saveWorkspace({modal:null})});$("#word-compose").onclick=composeForWord;$("#word-say-go").onclick=sayForWord;$("#word-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForWord()};$("#word-note-ask").onclick=askWordNote;$("#word-prev").onclick=()=>wordStep(-1);$("#word-next").onclick=()=>wordStep(1);$("#word-dialog").addEventListener("keydown",event=>{if(!wordOpen?.learn||event.target.tagName==="TEXTAREA"||event.target.isContentEditable)return;if(event.key==="ArrowRight")wordStep(1);else if(event.key==="ArrowLeft")wordStep(-1)});
 $("#mora-open").onclick=()=>showView("mora");$("#mora-back").onclick=()=>showView("library");for(const id of ["#mora-show-emoji","#mora-show-furigana","#mora-show-english"])$(id).onchange=saveMoraDisplay;
-$("#kanji-close").onclick=()=>{loop.stop();$("#kanji-dialog").close()};$("#kanji-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;kanjiOpen=null;saveWorkspace({modal:null})});$("#kanji-compose").onclick=composeForKanji;$("#kanji-say-go").onclick=sayForKanji;$("#library-tool").onclick=()=>showView("map");$("#map-back").onclick=()=>showView("library");for(const button of document.querySelectorAll("#map-toggle [role=tab]"))button.onclick=()=>{settings.mapView=button.dataset.map;storePreference("jp-echo-settings",JSON.stringify(settings));saveWorkspace({mapView:settings.mapView});tool.open=null;tool.chip="all";renderMap()};$("#map-toggle").addEventListener("keydown",event=>{if(event.key!=="ArrowLeft"&&event.key!=="ArrowRight")return;const tabs=[...document.querySelectorAll("#map-toggle [role=tab]")].filter(b=>!b.hidden),at=tabs.findIndex(b=>b.getAttribute("aria-selected")==="true"),next=tabs[(at+(event.key==="ArrowRight"?1:tabs.length-1))%tabs.length];if(next){next.click();next.focus()}});let lookupTimer=0;$("#map-search").oninput=()=>{saveWorkspace();syncRoute({},true);clearTimeout(lookupTimer);lookupTimer=setTimeout(renderMap,150)};$("#map-search").onkeydown=event=>{if(event.key==="Escape"&&$("#map-search").value){$("#map-search").value="";renderMap()}};$("#map-search-clear").onclick=()=>{$("#map-search").value="";$("#map-search").focus();renderMap()};$("#grammar-prev").onclick=()=>grammarStep(-1);$("#grammar-next").onclick=()=>grammarStep(1);$("#grammar-close").onclick=()=>{loop.stop();$("#grammar-dialog").close()};$("#grammar-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;grammarOpen=null;saveWorkspace({modal:null})});$("#grammar-say-go").onclick=sayForGrammar;$("#grammar-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForGrammar()};$("#grammar-compose").onclick=composeForGrammar;$("#kanji-prev").onclick=()=>learnStep(-1);$("#kanji-next").onclick=()=>learnStep(1);$("#kanji-dialog").addEventListener("keydown",event=>{if(!kanjiOpen?.learn||event.target.tagName==="TEXTAREA")return;if(event.key==="ArrowRight")learnStep(1);else if(event.key==="ArrowLeft")learnStep(-1)});$("#kanji-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForKanji()};$("#sentence-back").onclick=()=>{detail=null;showView("library")};$("#sentence-play").onclick=playDetail;// Editing lives in the collapsed "Change this sentence" row (no pencil button).
+$("#kanji-close").onclick=()=>{loop.stop();$("#kanji-dialog").close()};$("#kanji-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;kanjiOpen=null;saveWorkspace({modal:null})});$("#kanji-compose").onclick=composeForKanji;$("#kanji-say-go").onclick=sayForKanji;$("#library-tool").onclick=()=>showView("map");
+$("#family-search").oninput=()=>{familyBrowse.limit=12;void renderKanjiFamilies(familyBrowse.sentences)};
+$("#family-theme").onchange=()=>{familyBrowse.theme=$("#family-theme").value;familyBrowse.limit=12;void renderKanjiFamilies(familyBrowse.sentences)};
+$("#family-more").onclick=()=>{familyBrowse.limit+=12;void renderKanjiFamilies(familyBrowse.sentences)};
+$("#map-back").onclick=()=>showView("library");for(const button of document.querySelectorAll("#map-toggle [role=tab]"))button.onclick=()=>{settings.mapView=button.dataset.map;storePreference("jp-echo-settings",JSON.stringify(settings));saveWorkspace({mapView:settings.mapView});tool.open=null;tool.chip="all";renderMap()};$("#map-toggle").addEventListener("keydown",event=>{if(event.key!=="ArrowLeft"&&event.key!=="ArrowRight")return;const tabs=[...document.querySelectorAll("#map-toggle [role=tab]")].filter(b=>!b.hidden),at=tabs.findIndex(b=>b.getAttribute("aria-selected")==="true"),next=tabs[(at+(event.key==="ArrowRight"?1:tabs.length-1))%tabs.length];if(next){next.click();next.focus()}});let lookupTimer=0;$("#map-search").oninput=()=>{saveWorkspace();syncRoute({},true);clearTimeout(lookupTimer);lookupTimer=setTimeout(renderMap,150)};$("#map-search").onkeydown=event=>{if(event.key==="Escape"&&$("#map-search").value){$("#map-search").value="";renderMap()}};$("#map-search-clear").onclick=()=>{$("#map-search").value="";$("#map-search").focus();renderMap()};$("#grammar-prev").onclick=()=>grammarStep(-1);$("#grammar-next").onclick=()=>grammarStep(1);$("#grammar-close").onclick=()=>{loop.stop();$("#grammar-dialog").close()};$("#grammar-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;grammarOpen=null;saveWorkspace({modal:null})});$("#grammar-say-go").onclick=sayForGrammar;$("#grammar-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForGrammar()};$("#grammar-compose").onclick=composeForGrammar;$("#kanji-prev").onclick=()=>learnStep(-1);$("#kanji-next").onclick=()=>learnStep(1);$("#kanji-dialog").addEventListener("keydown",event=>{if(!kanjiOpen?.learn||event.target.tagName==="TEXTAREA")return;if(event.key==="ArrowRight")learnStep(1);else if(event.key==="ArrowLeft")learnStep(-1)});$("#kanji-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForKanji()};$("#sentence-back").onclick=()=>{detail=null;showView("library")};$("#sentence-play").onclick=playDetail;// Editing lives in the collapsed "Change this sentence" row (no pencil button).
 // Opening fills the editor; closing it cancels an in-flight rewrite.
 $("#sentence-change").ontoggle=()=>{if($("#sentence-change").open){if(editorOpenId!==detail?.id)openEditor()}else{editorOpenId=null;editorGeneration++}};$("#sentence-cancel").onclick=closeEditor;$("#sentence-editor").onsubmit=saveEdit;
 $("#sentence-delete").onclick=()=>askDelete();$("#delete-cancel").onclick=()=>$("#delete-dialog").close();$("#delete-confirm").onclick=confirmDelete;$("#delete-dialog").onclick=event=>{if(event.target===$("#delete-dialog"))$("#delete-dialog").close()};
