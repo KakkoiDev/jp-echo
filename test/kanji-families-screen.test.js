@@ -10,6 +10,8 @@ test("Kanji screen provides a searchable family browser and linked character she
   for(const id of ["family-panel","family-search","family-theme","family-list",
     "family-count","family-error","family-more","kanji-family-detail",
     "kanji-family-meaning","kanji-family-radical","kanji-family-sentences",
+    "family-dictionary-query","family-dictionary-level","family-dictionary-list",
+    "family-dictionary-more","family-dictionary-count",
     "kanji-family-message"])assert.match(html,new RegExp('id="'+id+'"'),id);
   assert.match(app,/function renderKanjiFamilies\(sentences\)/);
   assert.match(app,/function renderKanjiFamily\(character,sentences\)/);
@@ -35,4 +37,13 @@ test("offline install caches the data, module and matching stylesheet version",(
   const htmlVersion=html.match(/styles\.css\?v=(\d+)/)?.[1];
   assert.ok(htmlVersion);
   assert.ok(worker.includes('"./styles.css?v='+htmlVersion+'"'));
+});
+
+test("additional dictionary words open the existing Word sheet, without fake sentences",()=>{
+ assert.match(app,/function renderKanjiFamilyDictionary\(family\)/);
+ assert.match(app,/familyDictionaryMatches\(family,REFERENCE_WORDS/);
+ assert.match(app,/openWord\(entry,wordCoverage\(await listSentences\(\)\),\{route:false\}\)/);
+ const source=app.slice(app.indexOf("function renderKanjiFamilyDictionary"),app.indexOf("async function addFamilySentence"));
+ assert.doesNotMatch(source,/importBackupData\(/);
+ assert.doesNotMatch(source,/saveSentence\(/);
 });
