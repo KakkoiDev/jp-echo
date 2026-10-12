@@ -130,3 +130,5 @@ catalogue sentences into the local library automatically. Sentence reviews,
 playback, dictionary lookup and backup retain their existing owners.
 
 The Kanji Family screen separates **authored example sentences** from **other JMdict words containing the same kanji**. The latter are indexed by `dictionaryIndex` from `words-data.js` and paginated in the detail sheet, linking to Echo's existing Word modal. Dictionary-only words are not assigned synthetic example sentences or SRS state. See `decks/KANJI-FAMILIES-COVERAGE-AUDIT.md` for all-family coverage.
+
+The Kanji Families panel uses native nested `<details>`/`<summary>`: the outer section is collapsed on Kanji navigation, and topic groups inside use JLPT-wall `kanjiCell` buttons. Search renders matching character cells directly; the browser only loads its family data when expanded. No extra family-row cards or fixed initial expansion.
