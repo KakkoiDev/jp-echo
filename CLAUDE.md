@@ -127,7 +127,7 @@ Before considering the change complete:
 
 ## Product constraints (added October 2026)
 
-- **Decks come in by file or URL; Echo bundles none.** Settings → Import takes
+- **Sentence decks come in by file or URL; Echo never automatically imports a built-in deck.** The Kanji view precaches one read-only meaning-family teaching catalogue, with example sentences available individually via explicit Add. It never injects all catalogue cards into the user library. Settings → Import takes
   a deck or a backup file, or a deck URL, and merges. The format is
   `DECK-FORMAT.md` (with `decks/example-deck.json` and `decks/deck.schema.json`),
   held to the importer by `test/deck-format.test.js` — change the importer and
