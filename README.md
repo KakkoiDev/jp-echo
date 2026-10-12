@@ -211,7 +211,7 @@ Review → Stats summarizes saved grades over rolling 24-hour and 7-day windows,
 
 Library → **Kanji, words and grammar** → **Kanji** now includes a searchable
 **Kanji families** panel. The [206-family curriculum](decks/kanji-families-curriculum.json)
-contains 625 word associations and 623 distinct contextual Japanese sentences.
+now includes 696 manually linked vocabulary entries and 694 distinct original Japanese example sentences, with more than 10,000 additional family–word matches available from Echo’s existing dictionary. These extra matches do not all have prepared examples.
 Filter by meaning, parent kanji, radical, word, reading or topic. Open a family
 to see its dictionary indexing radical, words, JMdict glosses where available,
 and playable/tappable example sentences. **Add sentence** imports that one card
@@ -223,3 +223,8 @@ backups. Tests cover links, search, progress and the deck import contract.
 The dictionary radical is used for character indexing; it is not the semantic
 parent of a word family. Curriculum data and default examples are editorial
 learning content, not official JLPT frequency rankings.
+
+
+### Dictionary coverage audit
+
+[Coverage report for all 206 families](decks/KANJI-FAMILIES-COVERAGE-AUDIT.md) compares the curated examples with the existing 22,954-entry JMdict-derived dictionary. The Kanji sheet now also lists **all other dictionary entries containing the selected kanji**, with reading, definition, JLPT filter and a link into the normal Word sheet to create a contextual sentence. Dictionary grouping is based on the written character, not a guarantee of a shared etymology. The core set covers 206 kanji (99 distinct index radicals); it is not the entire 214-radical Kangxi indexing system.
