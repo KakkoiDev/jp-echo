@@ -2062,7 +2062,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "I will go to school tomorrow.",
-      "target": "明日、学校へ行く。"
+      "target": "明日、学校へ行【い】く。"
     },
     {
       "id": "kanji-families-001-02",
@@ -2230,7 +2230,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "The temperature will exceed thirty degrees.",
-      "target": "気温は三十度を超える。"
+      "target": "気温は三十度を超【こ】える。"
     },
     {
       "id": "kanji-families-009-02",
@@ -2272,7 +2272,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "The two work together.",
-      "target": "二人は共に働いている。"
+      "target": "二人は共【とも】に働いている。"
     },
     {
       "id": "kanji-families-011-02",
@@ -2293,7 +2293,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "I leave home at eight each morning.",
-      "target": "毎朝八時に家を出る。"
+      "target": "毎朝八時に家を出【で】る。"
     },
     {
       "id": "kanji-families-012-02",
@@ -2314,7 +2314,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "I enter the room first.",
-      "target": "先に部屋に入る。"
+      "target": "先に部屋に入【はい】る。"
     },
     {
       "id": "kanji-families-013-02",
@@ -2335,7 +2335,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "The shop opens at nine.",
-      "target": "店は九時に開く。"
+      "target": "店は九時に開【ひら】く。"
     },
     {
       "id": "kanji-families-014-02",
@@ -2377,7 +2377,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "Living healthily is important.",
-      "target": "健康に生きることが大切だ。"
+      "target": "健康に生【い】きることが大切だ。"
     },
     {
       "id": "kanji-families-016-02",
@@ -2398,7 +2398,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "It's a story in which a fox turns into a person.",
-      "target": "狐が人に化ける物語だ。"
+      "target": "狐が人に化【ば】ける物語だ。"
     },
     {
       "id": "kanji-families-017-02",
@@ -2419,7 +2419,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "The town's scenery changes dramatically.",
-      "target": "町の景色が大きく変わる。"
+      "target": "町の景色が大きく変【か】わる。"
     },
     {
       "id": "kanji-families-018-02",
@@ -2461,7 +2461,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "I make dinner on weekends.",
-      "target": "週末に夕食を作る。"
+      "target": "週末に夕食を作【つく】る。"
     },
     {
       "id": "kanji-families-020-02",
@@ -2482,7 +2482,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "I stand up from my seat.",
-      "target": "席から立つ。"
+      "target": "席から立【た】つ。"
     },
     {
       "id": "kanji-families-021-02",
@@ -2503,7 +2503,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "Construction proceeds as planned.",
-      "target": "工事は予定通り進む。"
+      "target": "工事は予定通り進【すす】む。"
     },
     {
       "id": "kanji-families-022-02",
@@ -2524,7 +2524,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "I pass along this road every day.",
-      "target": "毎日この道を通る。"
+      "target": "毎日この道を通【とお】る。"
     },
     {
       "id": "kanji-families-023-02",
@@ -2545,7 +2545,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "This clock still works.",
-      "target": "この時計はまだ動く。"
+      "target": "この時計はまだ動【うご】く。"
     },
     {
       "id": "kanji-families-024-02",
@@ -2566,7 +2566,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "I fall on the road on rainy days.",
-      "target": "雨の日に道で転ぶ。"
+      "target": "雨の日に道で転【ころ】ぶ。"
     },
     {
       "id": "kanji-families-025-02",
@@ -2587,7 +2587,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "I send photos to my mother.",
-      "target": "母に写真を送る。"
+      "target": "母に写真を送【おく】る。"
     },
     {
       "id": "kanji-families-026-02",
@@ -2608,7 +2608,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "I will take an exam next month.",
-      "target": "来月、試験を受ける。"
+      "target": "来月、試験を受【う】ける。"
     },
     {
       "id": "kanji-families-027-02",
@@ -2629,7 +2629,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "I take a book from the desk.",
-      "target": "机から本を取る。"
+      "target": "机から本を取【と】る。"
     },
     {
       "id": "kanji-families-028-02",
@@ -2650,7 +2650,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "The number of tourists increases in spring.",
-      "target": "春になると観光客が増える。"
+      "target": "春になると観光客が増【ふ】える。"
     },
     {
       "id": "kanji-families-029-02",
@@ -2671,7 +2671,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "There are fewer customers on rainy days.",
-      "target": "雨の日は客が減る。"
+      "target": "雨の日は客が減【へ】る。"
     },
     {
       "id": "kanji-families-030-02",
@@ -2692,7 +2692,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "I decide the travel dates.",
-      "target": "旅行の日程を決める。"
+      "target": "旅行の日程を決【き】める。"
     },
     {
       "id": "kanji-families-031-02",
@@ -2734,7 +2734,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "I solve a difficult problem.",
-      "target": "難しい問題を解く。"
+      "target": "難しい問題を解【と】く。"
     },
     {
       "id": "kanji-families-033-02",
@@ -2755,7 +2755,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "These clothes suit me well.",
-      "target": "この服は私によく合う。"
+      "target": "この服は私によく合【あ】う。"
     },
     {
       "id": "kanji-families-034-02",
@@ -2797,7 +2797,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "I keep studying every day.",
-      "target": "毎日勉強を続ける。"
+      "target": "毎日勉強を続【つづ】ける。"
     },
     {
       "id": "kanji-families-036-02",
@@ -2818,7 +2818,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "The train stops suddenly.",
-      "target": "電車が急に止まる。"
+      "target": "電車が急に止【と】まる。"
     },
     {
       "id": "kanji-families-037-02",
@@ -2839,7 +2839,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "The river flows slowly.",
-      "target": "川の水がゆっくり流れる。"
+      "target": "川の水がゆっくり流【なが】れる。"
     },
     {
       "id": "kanji-families-038-02",
@@ -2881,7 +2881,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "I learn the news today.",
-      "target": "今日そのニュースを知る。"
+      "target": "今日そのニュースを知【し】る。"
     },
     {
       "id": "kanji-families-040-02",
@@ -2902,7 +2902,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "I take some time to think.",
-      "target": "少し時間をかけて考える。"
+      "target": "少し時間をかけて考【かんが】える。"
     },
     {
       "id": "kanji-families-041-02",
@@ -2923,7 +2923,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "I think that film is interesting.",
-      "target": "その映画は面白いと思う。"
+      "target": "その映画は面白いと思【おも】う。"
     },
     {
       "id": "kanji-families-042-02",
@@ -2965,7 +2965,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "I feel the wind near the sea.",
-      "target": "海の近くで風を感じる。"
+      "target": "海の近くで風を感【かん】じる。"
     },
     {
       "id": "kanji-families-044-02",
@@ -3007,7 +3007,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "He admits his mistake.",
-      "target": "彼は自分の間違いを認める。"
+      "target": "彼は自分の間違いを認【みと】める。"
     },
     {
       "id": "kanji-families-046-02",
@@ -3028,7 +3028,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "I learn new words every day.",
-      "target": "毎日新しい単語を覚える。"
+      "target": "毎日新しい単語を覚【おぼ】える。"
     },
     {
       "id": "kanji-families-047-02",
@@ -3049,7 +3049,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "I record events in my diary.",
-      "target": "出来事を日記に記す。"
+      "target": "出来事を日記に記【しる】す。"
     },
     {
       "id": "kanji-families-048-02",
@@ -3070,7 +3070,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "I believe in my own ability.",
-      "target": "自分の力を信じる。"
+      "target": "自分の力を信【しん】じる。"
     },
     {
       "id": "kanji-families-049-02",
@@ -3112,7 +3112,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "This painting represents peace.",
-      "target": "この絵は平和を表す。"
+      "target": "この絵は平和を表【あらわ】す。"
     },
     {
       "id": "kanji-families-051-02",
@@ -3217,7 +3217,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "I saw Mount Fuji for the first time.",
-      "target": "初めて富士山を見た。"
+      "target": "初【はじ】めて富士山を見た。"
     },
     {
       "id": "kanji-families-056-02",
@@ -3238,7 +3238,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "Work ends at six.",
-      "target": "仕事は六時に終わる。"
+      "target": "仕事は六時に終【お】わる。"
     },
     {
       "id": "kanji-families-057-02",
@@ -3259,7 +3259,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "I bought new shoes.",
-      "target": "新しい靴を買った。"
+      "target": "新【あたら】しい靴を買った。"
     },
     {
       "id": "kanji-families-058-02",
@@ -3280,7 +3280,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "We live in the same town.",
-      "target": "私たちは同じ町に住む。"
+      "target": "私たちは同【おな】じ町に住む。"
     },
     {
       "id": "kanji-families-059-02",
@@ -3322,7 +3322,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "I do work related to education.",
-      "target": "教育に関わる仕事をする。"
+      "target": "教育に関【かか】わる仕事をする。"
     },
     {
       "id": "kanji-families-061-02",
@@ -3343,7 +3343,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "This is the easiest method.",
-      "target": "これが最も簡単な方法です。"
+      "target": "これが最【もっと】も簡単な方法です。"
     },
     {
       "id": "kanji-families-062-02",
@@ -3364,7 +3364,7 @@
       "sourceLang": "en",
       "targetLang": "ja",
       "source": "I meet friends on weekends.",
-      "target": "週末に友達と会う。"
+      "target": "週末に友達と会【あ】う。"
     },
     {
       "id": "kanji-families-063-02",
