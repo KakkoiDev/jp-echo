@@ -16,7 +16,7 @@ import {japaneseVoices,recognitionFactory,ShadowLoop,ConversationLoop} from "./s
 import {STORIES} from "./stories.js";
 import {coverage as kanjiCoverage,facts as kanjiFacts,jlptBands as kanjiBands,learned as kanjiLearned,LEVEL_LABELS,levelOf,nextUnmet,sentenceKanji,TOTAL as KANJI_TOTAL} from "./kanji.js";
 import {searchGrammar,searchKanji,searchWords} from "./lookup.js";
-import {loadFamilyCurriculum,findFamilies,familyThemes,exampleLibraryIndex,exampleState,familyProgress,familyDictionaryMatches,familyVocabulary} from "./kanji-families.js";
+import {loadFamilyCurriculum,findFamilies,familyThemes,exampleLibraryIndex,exampleState,familyProgress,familyVocabulary} from "./kanji-families.js";
 import {ALL as REFERENCE_WORDS,setImportedWords,bands as wordBands,carries as carriesWord,coverage as wordCoverage,kindOf,learned as wordLearned,levelOf as wordLevel,marks as wordMarks,sentenceWords,wordSpans,TOTAL as WORD_TOTAL,word as wordById} from "./words.js";
 import {deleteNote as dbDeleteNote,forBackup,getNote,listNotes,makeNote,mergeNotes,noteKey,putNote as dbPutNote,replaceNotes as dbReplaceNotes} from "./notes.js";
 import {downloadAnkiDeck} from "./anki-export.js";
