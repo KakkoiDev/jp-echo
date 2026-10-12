@@ -164,7 +164,7 @@ Settings → Your sentences → **Import** takes a deck file or a deck URL (or a
 Echo backup) and merges it. **[DECK-FORMAT.md](DECK-FORMAT.md) is the format**,
 written so an AI agent can produce a valid deck from it, with a complete
 [example deck](decks/example-deck.json) and a [JSON Schema](decks/deck.schema.json).
-Echo bundles no decks. The one built-in option is a seed:
+Echo does not automatically add example decks to the library. One read-only Kanji Families curriculum is precached for exploration and one-at-a-time sentence imports. The other built-in option is a seed:
 Settings → Your sentences → **Starter sentences**, also offered on an empty
 Library, adds ミニ本語 Minihongo's 262 example sentences from
 `KakkoiDev/minihongo/master/imports/jp-echo.json` (Japanese targets only).
