@@ -1479,3 +1479,4 @@ html.motion-off #review-progress-bar { transition: none; }
 .family-add{min-height:40px;padding:6px 10px;margin:0 0 0 auto;border:1px solid var(--seal-edge);border-radius:3px;background:var(--seal-tint);color:var(--seal-deep);font-size:12px}
 .family-add:disabled{background:var(--panel);color:var(--ink-muted);border-color:var(--rule)}
 @media(max-width:480px){.family-controls{grid-template-columns:1fr}.family-row{gap:9px}.family-row-info>span{font-size:10px}.family-add{min-height:44px}}
+.kanji-family-detail .family-word-gloss{display:block;font-size:11px;color:var(--ink-soft);margin:-1px 0 4px;line-height:1.45}
