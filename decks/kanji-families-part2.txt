@@ -1,0 +1,71 @@
+食|食|eat|Everyday|食べる:たべる:朝はパンを食べる。:I eat bread in the morning.;食事:しょくじ:家族と食事をする。:I eat with my family.;食品:しょくひん:食品の値段が上がった。:Food prices have risen.
+飲|食|drink|Everyday|飲む:のむ:冷たい水を飲む。:I drink cold water.;飲料:いんりょう:飲料を冷蔵庫に入れた。:I put drinks in the refrigerator.;飲食店:いんしょくてん:この通りには飲食店が多い。:This street has many restaurants.
+買|貝|buy|Everyday|買う:かう:駅で切符を買う。:I buy a ticket at the station.;買い物:かいもの:午後に買い物へ行く。:I go shopping in the afternoon.;買主:かいぬし:買主に書類を渡した。:I handed the documents to the buyer.
+売|士|sell|Everyday|売る:うる:古い自転車を売る。:I sell an old bicycle.;発売:はつばい:新しい本は明日発売される。:The new book goes on sale tomorrow.;売上:うりあげ:今月の売上が増えた。:Sales rose this month.
+休|亻|rest|Everyday|休む:やすむ:今日は仕事を休む。:I take a day off work today.;休日:きゅうじつ:休日は公園へ行く。:I go to the park on days off.;休憩:きゅうけい:少し休憩しましょう。:Let's take a short break.
+住|亻|live|Everyday|住む:すむ:出雲に住んでいる。:I live in Izumo.;住所:じゅうしょ:住所を入力してください。:Please enter your address.;住宅:じゅうたく:この地域には住宅が多い。:There are many homes in this area.
+家|宀|home, family|Everyday|家:いえ:家に帰ろう。:Let's go home.;家族:かぞく:家族と夕食を食べた。:I ate dinner with my family.;作家:さっか:彼は有名な作家です。:He is a famous author.
+室|宀|room|Everyday|教室:きょうしつ:教室は二階です。:The classroom is on the second floor.;会議室:かいぎしつ:会議室を予約した。:I reserved a meeting room.;室内:しつない:今日は室内で運動する。:I will exercise indoors today.
+場|土|place|Places|場所:ばしょ:集合場所を確認しよう。:Let's confirm the meeting place.;会場:かいじょう:会場には早く着いた。:I arrived early at the venue.;工場:こうじょう:工場を見学した。:I toured the factory.
+所|戸|place|Places|住所:じゅうしょ:住所が変わった。:My address has changed.;場所:ばしょ:静かな場所を探している。:I am looking for a quiet place.;近所:きんじょ:近所に新しい店ができた。:A new shop opened nearby.
+道|辶|road, way|Places|道:みち:この道をまっすぐ進む。:Go straight along this road.;道路:どうろ:道路が混んでいる。:The roads are congested.;北海道:ほっかいどう:いつか北海道へ行きたい。:I want to visit Hokkaido someday.
+路|足|road, route|Places|道路:どうろ:この道路は広い。:This road is wide.;線路:せんろ:線路の近くに住んでいる。:I live near railway tracks.;経路:けいろ:一番短い経路を調べた。:I checked the shortest route.
+学|子|learn|Learning|学ぶ:まなぶ:毎日新しいことを学ぶ。:I learn something new every day.;学校:がっこう:学校まで歩いて行く。:I walk to school.;科学:かがく:科学の本を読んだ。:I read a science book.
+教|攵|teach|Learning|教える:おしえる:日本語を友達に教える。:I teach Japanese to a friend.;教師:きょうし:彼は高校の教師です。:He is a high school teacher.;教育:きょういく:教育について話し合った。:We discussed education.
+習|羽|learn, practice|Learning|習う:ならう:ピアノを習っている。:I am taking piano lessons.;練習:れんしゅう:毎日発音を練習する。:I practice pronunciation every day.;復習:ふくしゅう:寝る前に復習しよう。:Let's review before bed.
+問|口|ask, question|Learning|質問:しつもん:質問があります。:I have a question.;問題:もんだい:この問題を解いてください。:Please solve this problem.;訪問:ほうもん:昨日、友達の家を訪問した。:I visited a friend's house yesterday.
+答|竹|answer|Learning|答える:こたえる:質問に答えてください。:Please answer the question.;回答:かいとう:回答を送ってください。:Please send your answer.;返答:へんとう:返答を待っています。:I am waiting for a reply.
+題|頁|topic, problem|Learning|問題:もんだい:この問題は難しい。:This problem is difficult.;話題:わだい:話題を変えよう。:Let's change the topic.;宿題:しゅくだい:宿題を全部終えた。:I finished all my homework.
+試|言|test, attempt|Learning|試す:ためす:新しい方法を試す。:I try a new method.;試験:しけん:明日は日本語の試験だ。:I have a Japanese test tomorrow.;試合:しあい:週末に試合がある。:There is a match this weekend.
+験|馬|experience, test|Learning|経験:けいけん:海外で働いた経験がある。:I have experience working abroad.;受験:じゅけん:来年大学を受験する。:I will take university entrance exams next year.;実験:じっけん:実験の結果を見た。:I looked at the experiment results.
+用|用|use, purpose|Work|用事:ようじ:午後に用事がある。:I have an errand this afternoon.;利用:りよう:図書館をよく利用する。:I often use the library.;使用:しよう:この機械の使用は禁止です。:Using this machine is prohibited.
+使|亻|use, send|Work|使う:つかう:この道具を使う。:I use this tool.;使用:しよう:新しい材料を使用した。:I used new materials.;使者:ししゃ:使者が手紙を届けた。:A messenger delivered a letter.
+持|扌|hold|Actions|持つ:もつ:重い荷物を持つ。:I carry heavy luggage.;気持ち:きもち:彼の気持ちが分かる。:I understand his feelings.;維持:いじ:健康を維持したい。:I want to maintain my health.
+待|彳|wait|Actions|待つ:まつ:駅で友達を待つ。:I wait for my friend at the station.;期待:きたい:新しい映画に期待している。:I am looking forward to the new film.;招待:しょうたい:友達を食事に招待した。:I invited a friend to dinner.
+歩|止|walk|Actions|歩く:あるく:毎朝三十分歩く。:I walk for thirty minutes every morning.;散歩:さんぽ:公園を散歩した。:I took a walk in the park.;一歩:いっぽ:一歩前に進もう。:Let's take one step forward.
+走|走|run|Actions|走る:はしる:駅まで走った。:I ran to the station.;競走:きょうそう:子供たちが競走した。:The children raced.;暴走:ぼうそう:車が暴走した。:The car ran out of control.
+帰|巾|return|Actions|帰る:かえる:今日は早く帰る。:I will go home early today.;帰国:きこく:来月日本に帰国する。:I will return to Japan next month.;日帰り:ひがえり:日帰りで旅行した。:I took a day trip.
+来|木|come|Actions|来る:くる:友達が家に来る。:A friend comes to my house.;未来:みらい:未来について語り合った。:We talked about the future.;来週:らいしゅう:来週また会おう。:Let's meet again next week.
+去|厶|go away|Actions|去年:きょねん:去年は忙しかった。:I was busy last year.;過去:かこ:過去を変えることはできない。:You cannot change the past.;除去:じょきょ:古いファイルを除去した。:I removed old files.
+始|女|begin|Actions|始まる:はじまる:映画は七時に始まる。:The movie starts at seven.;開始:かいし:新しい計画を開始した。:We started a new project.;始発:しはつ:始発電車に乗った。:I took the first train.
+働|亻|work|Work|働く:はたらく:東京の会社で働く。:I work for a company in Tokyo.;労働:ろうどう:労働時間を記録する。:I record working hours.;共働き:ともばたらき:両親は共働きです。:Both my parents work.
+仕|亻|serve, do|Work|仕事:しごと:今日の仕事が終わった。:Today's work is finished.;仕組み:しくみ:この仕組みを理解したい。:I want to understand how this system works.;仕方:しかた:ほかに仕方がない。:There is no other way.
+事|亅|matter, event|Work|仕事:しごと:新しい仕事を探している。:I am looking for a new job.;事故:じこ:道路で事故があった。:There was an accident on the road.;事件:じけん:その事件はニュースになった。:That incident made the news.
+職|耳|employment|Work|職業:しょくぎょう:職業は何ですか。:What is your occupation.;転職:てんしょく:来年転職する予定です。:I plan to change jobs next year.;就職:しゅうしょく:卒業して就職した。:I found a job after graduation.
+工|工|craft, construction|Work|工事:こうじ:道路工事が始まった。:Road construction started.;工場:こうじょう:父は工場で働く。:My father works in a factory.;人工:じんこう:人工知能について学ぶ。:I study artificial intelligence.
+商|口|trade, commerce|Money|商品:しょうひん:新しい商品を買った。:I bought a new product.;商売:しょうばい:父は商売をしている。:My father runs a business.;商店:しょうてん:駅前の商店に行った。:I went to a shop by the station.
+店|广|shop|Everyday|店:みせ:新しい店が開いた。:A new shop opened.;書店:しょてん:書店で本を探した。:I searched for a book in a bookshop.;店員:てんいん:店員に質問した。:I asked the shop clerk.
+品|口|goods, quality|Money|商品:しょうひん:この商品は人気がある。:This product is popular.;品質:ひんしつ:品質を確認してください。:Please check the quality.;作品:さくひん:新しい作品を公開した。:I published a new work.
+物|牜|thing, object|Everyday|物:もの:大切な物をなくした。:I lost an important thing.;動物:どうぶつ:子供は動物が好きだ。:Children like animals.;荷物:にもつ:荷物を駅に預けた。:I left my luggage at the station.
+種|禾|kind, seed|Concepts|種類:しゅるい:三種類の茶があります。:There are three kinds of tea.;種:たね:庭に種をまいた。:I planted seeds in the garden.;人種:じんしゅ:人種による差別をなくそう。:Let's eliminate racial discrimination.
+類|頁|kind, category|Concepts|種類:しゅるい:どの種類が好きですか。:Which kind do you prefer.;分類:ぶんるい:資料を種類別に分類した。:I classified materials by type.;人類:じんるい:人類の歴史を学んだ。:I studied human history.
+量|里|amount|Concepts|量:りょう:砂糖の量を減らした。:I reduced the amount of sugar.;数量:すうりょう:商品の数量を確認する。:I check the number of items.;大量:たいりょう:大量の雨が降った。:A large amount of rain fell.
+数|攵|number|Concepts|数字:すうじ:数字をよく見てください。:Please look at the numbers carefully.;数学:すうがく:数学を勉強している。:I study mathematics.;人数:にんずう:参加人数を数えた。:I counted the participants.
+多|夕|many|Descriptions|多い:おおい:今日は人が多い。:There are many people today.;多数:たすう:多数の人が賛成した。:Many people agreed.;多分:たぶん:多分明日は晴れる。:It will probably be sunny tomorrow.
+少|小|few|Descriptions|少ない:すくない:今日は車が少ない。:There are few cars today.;少し:すこし:少し休みましょう。:Let's rest a little.;少年:しょうねん:少年が公園で遊んでいる。:A boy is playing in the park.
+大|大|big|Descriptions|大きい:おおきい:この犬は大きい。:This dog is big.;大学:だいがく:大学で文学を学んだ。:I studied literature at university.;大切:たいせつ:家族は大切です。:Family is important.
+小|小|small|Descriptions|小さい:ちいさい:小さい猫がいる。:There is a small cat.;小学校:しょうがっこう:小学校は家の近くです。:The elementary school is near home.;小説:しょうせつ:日本語で小説を読む。:I read novels in Japanese.
+高|高|high|Descriptions|高い:たかい:この店は値段が高い。:This shop is expensive.;高校:こうこう:高校で英語を習った。:I learned English in high school.;最高:さいこう:今日は最高の気分だ。:I feel fantastic today.
+低|亻|low|Descriptions|低い:ひくい:この椅子は少し低い。:This chair is a little low.;最低:さいてい:最低気温は五度です。:The low temperature is five degrees.;低下:ていか:集中力が低下している。:My concentration is decreasing.
+長|長|long, leader|Descriptions|長い:ながい:今日は長い一日だった。:It was a long day.;社長:しゃちょう:社長と話した。:I spoke with the company president.;成長:せいちょう:子供の成長は早い。:Children grow quickly.
+短|矢|short|Descriptions|短い:みじかい:短い文章を書こう。:Let's write a short passage.;短期:たんき:短期の仕事を探している。:I am looking for short-term work.;短縮:たんしゅく:会議の時間を短縮した。:We shortened the meeting.
+強|弓|strong|Descriptions|強い:つよい:今日は風が強い。:The wind is strong today.;勉強:べんきょう:日本語を勉強している。:I am studying Japanese.;強調:きょうちょう:重要な点を強調した。:I emphasized an important point.
+弱|弓|weak|Descriptions|弱い:よわい:私は暑さに弱い。:I do not handle heat well.;弱点:じゃくてん:自分の弱点を知る。:I know my weaknesses.;弱者:じゃくしゃ:弱者を支える制度が必要だ。:We need a system that supports vulnerable people.
+早|日|early|Descriptions|早い:はやい:今日は早く起きた。:I woke up early today.;早朝:そうちょう:早朝に散歩した。:I took a walk early in the morning.;早速:さっそく:早速始めましょう。:Let's get started right away.
+遅|辶|late|Descriptions|遅い:おそい:電車が少し遅い。:The train is a little late.;遅刻:ちこく:今日は遅刻しなかった。:I was not late today.;遅延:ちえん:電車に遅延が発生した。:There was a train delay.
+近|辶|near|Descriptions|近い:ちかい:駅は家から近い。:The station is close to home.;最近:さいきん:最近忙しいです。:I have been busy recently.;近所:きんじょ:近所に公園がある。:There is a park nearby.
+遠|辶|far|Descriptions|遠い:とおい:その駅は少し遠い。:That station is a bit far.;遠足:えんそく:子供たちは遠足に行った。:The children went on a field trip.;遠慮:えんりょ:遠慮なく質問してください。:Please feel free to ask questions.
+広|广|wide|Descriptions|広い:ひろい:この部屋は広い。:This room is spacious.;広場:ひろば:広場でイベントがある。:There is an event in the square.;広告:こうこく:新しい広告を作った。:I made a new advertisement.
+狭|犭|narrow|Descriptions|狭い:せまい:この道は狭い。:This road is narrow.;狭小:きょうしょう:狭小住宅が増えている。:Small-footprint homes are increasingly common.;狭間:はざま:建物の狭間に小さな庭がある。:There is a small garden between the buildings.
+明|日|bright, clear|Descriptions|明るい:あかるい:この部屋は明るい。:This room is bright.;説明:せつめい:説明を聞いてください。:Please listen to the explanation.;明日:あした:明日は休みです。:Tomorrow is a day off.
+暗|日|dark|Descriptions|暗い:くらい:夜の道は暗い。:The road is dark at night.;暗記:あんき:単語を暗記した。:I memorized vocabulary words.;暗号:あんごう:この文章は暗号になっている。:This text is in code.
+重|里|heavy|Descriptions|重い:おもい:この箱は重い。:This box is heavy.;重要:じゅうよう:これは重要な問題だ。:This is an important issue.;重複:ちょうふく:同じ情報が重複している。:The same information is duplicated.
+軽|車|light|Descriptions|軽い:かるい:この荷物は軽い。:This luggage is light.;軽食:けいしょく:昼に軽食を食べた。:I had a light meal at noon.;軽減:けいげん:仕事の負担を軽減した。:We reduced the workload.
+安|宀|safe, cheap|Descriptions|安い:やすい:この店は値段が安い。:This shop has low prices.;安全:あんぜん:安全を第一に考えよう。:Let's put safety first.;安心:あんしん:家族の無事を知って安心した。:I was relieved to learn my family was safe.
+危|卩|danger|Descriptions|危ない:あぶない:ここで泳ぐのは危ない。:Swimming here is dangerous.;危険:きけん:この道は夜になると危険だ。:This road is dangerous at night.;危機:きき:会社は危機を乗り越えた。:The company overcame the crisis.
+難|隹|difficult|Descriptions|難しい:むずかしい:この問題は難しい。:This problem is difficult.;困難:こんなん:困難な状況を乗り越えた。:We overcame a difficult situation.;避難:ひなん:地震の後で避難した。:We evacuated after the earthquake.
+易|日|easy, trade|Descriptions|易しい:やさしい:この本は易しい日本語で書かれている。:This book is written in easy Japanese.;貿易:ぼうえき:日本は多くの国と貿易する。:Japan trades with many countries.;容易:ようい:この操作は容易です。:This operation is easy.
+正|止|correct|Concepts|正しい:ただしい:正しい答えを選ぼう。:Let's choose the correct answer.;正確:せいかく:正確な情報が必要だ。:We need accurate information.;正月:しょうがつ:正月は家族と過ごす。:I spend New Year with my family.
+良|艮|good|Concepts|良い:よい:それは良い考えですね。:That is a good idea.;改良:かいりょう:この道具を改良した。:I improved this tool.;良心:りょうしん:良心に従って行動する。:I act according to my conscience.
+悪|心|bad|Concepts|悪い:わるい:今日は気分が悪い。:I do not feel well today.;最悪:さいあく:それは最悪の結果だった。:That was the worst outcome.;悪化:あっか:天気が急に悪化した。:The weather suddenly worsened.
+好|女|like, favorable|Concepts|好き:すき:私は日本語が好きだ。:I like Japanese.;好意:こうい:彼女の好意に感謝した。:I appreciated her kindness.;好調:こうちょう:最近は仕事が好調だ。:Work has been going well recently.
