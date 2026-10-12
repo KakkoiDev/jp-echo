@@ -18,7 +18,7 @@ export function validateFamilyCurriculum(deck){
   for(const family of deck.kanjiFamilies){
     if(!family?.kanji||[...family.kanji].length!==1||!family.meaning||
       !family.dictionaryRadical||!family.theme||!Array.isArray(family.words)||
-      family.words.length<3||byKanji.has(family.kanji))
+      byKanji.has(family.kanji))
       throw new Error("The kanji-family curriculum has an invalid or repeated family.");
     for(const word of family.words){
       const sentence=byId.get(word.exampleSentenceId);
@@ -91,6 +91,14 @@ export function familyDictionaryMatches(family,dictionary,{level="all",query="",
     found.add(key);
     return true;
   });
+}
+
+// All dictionary entries containing this kanji, including headwords that
+// already have prepared examples. The curriculum never limits a family to
+// three words (or any other fixed number); it only provides optional example
+// sentences for some of the dictionary vocabulary.
+export function familyVocabulary(family,dictionary,options={}){
+  return familyDictionaryMatches(family,dictionary,{...options,includeExamples:true});
 }
 
 export function findFamilies(curriculum,{theme="all",query="",dictionary=null}={}){
