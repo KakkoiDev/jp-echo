@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "title": "Kanji Meaning Families — Complete Core Curriculum",
-  "description": "206 productive Japanese kanji meaning families; each has a dictionary radical, three or more related vocabulary items and a contextual Japanese sentence per item. Importable in Echo; families can be studied individually.",
+  "title": "Kanji Meaning Families — Curated Examples and Full Dictionary Browse",
+  "description": "206 kanji families with dictionary radicals and selected original sentence examples. Echo's built-in JMdict list additionally provides all matching dictionary words dynamically, but these do not all have prepared example sentences.",
   "kanjiFamilies": [
     {
       "kanji": "行",
@@ -44,6 +44,30 @@
           "reading": "かいぎょう",
           "role": "derived",
           "exampleSentenceId": "kanji-families-001-06"
+        },
+        {
+          "term": "実行",
+          "reading": "じっこう",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-001-07"
+        },
+        {
+          "term": "急行",
+          "reading": "きゅうこう",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-001-08"
+        },
+        {
+          "term": "行動",
+          "reading": "こうどう",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-001-09"
+        },
+        {
+          "term": "飛行",
+          "reading": "ひこう",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-001-10"
         }
       ],
       "exampleSentenceId": "kanji-families-001-01",
@@ -85,6 +109,36 @@
           "reading": "みけいけん",
           "role": "derived",
           "exampleSentenceId": "kanji-families-002-05"
+        },
+        {
+          "term": "未婚",
+          "reading": "みこん",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-002-06"
+        },
+        {
+          "term": "未知",
+          "reading": "みち",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-002-07"
+        },
+        {
+          "term": "未熟",
+          "reading": "みじゅく",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-002-08"
+        },
+        {
+          "term": "未払い",
+          "reading": "みはらい",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-002-09"
+        },
+        {
+          "term": "未解決",
+          "reading": "みかいけつ",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-002-10"
         }
       ],
       "exampleSentenceId": "kanji-families-002-01",
@@ -126,6 +180,78 @@
           "reading": "はつおん",
           "role": "derived",
           "exampleSentenceId": "kanji-families-003-05"
+        },
+        {
+          "term": "発生",
+          "reading": "はっせい",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-003-06"
+        },
+        {
+          "term": "発展",
+          "reading": "はってん",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-003-07"
+        },
+        {
+          "term": "発達",
+          "reading": "はったつ",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-003-08"
+        },
+        {
+          "term": "発明",
+          "reading": "はつめい",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-003-09"
+        },
+        {
+          "term": "発売",
+          "reading": "はつばい",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-003-10"
+        },
+        {
+          "term": "発行",
+          "reading": "はっこう",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-003-11"
+        },
+        {
+          "term": "爆発",
+          "reading": "ばくはつ",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-003-12"
+        },
+        {
+          "term": "発電",
+          "reading": "はつでん",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-003-13"
+        },
+        {
+          "term": "発想",
+          "reading": "はっそう",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-003-14"
+        },
+        {
+          "term": "発車",
+          "reading": "はっしゃ",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-003-15"
+        },
+        {
+          "term": "発射",
+          "reading": "はっしゃ",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-003-16"
+        },
+        {
+          "term": "発言",
+          "reading": "はつげん",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-003-17"
         }
       ],
       "exampleSentenceId": "kanji-families-003-01",
@@ -155,6 +281,30 @@
           "reading": "ふべん",
           "role": "derived",
           "exampleSentenceId": "kanji-families-004-03"
+        },
+        {
+          "term": "不足",
+          "reading": "ふそく",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-004-04"
+        },
+        {
+          "term": "不満",
+          "reading": "ふまん",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-004-05"
+        },
+        {
+          "term": "不正",
+          "reading": "ふせい",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-004-06"
+        },
+        {
+          "term": "不自由",
+          "reading": "ふじゆう",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-004-07"
         }
       ],
       "exampleSentenceId": "kanji-families-004-01",
@@ -387,6 +537,30 @@
           "reading": "ていしゅつ",
           "role": "derived",
           "exampleSentenceId": "kanji-families-012-03"
+        },
+        {
+          "term": "出す",
+          "reading": "だす",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-012-04"
+        },
+        {
+          "term": "出かける",
+          "reading": "でかける",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-012-05"
+        },
+        {
+          "term": "出席",
+          "reading": "しゅっせき",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-012-06"
+        },
+        {
+          "term": "輸出",
+          "reading": "ゆしゅつ",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-012-07"
         }
       ],
       "exampleSentenceId": "kanji-families-012-01",
@@ -445,6 +619,30 @@
           "reading": "こうかい",
           "role": "derived",
           "exampleSentenceId": "kanji-families-014-03"
+        },
+        {
+          "term": "開ける",
+          "reading": "あける",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-014-04"
+        },
+        {
+          "term": "開発",
+          "reading": "かいはつ",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-014-05"
+        },
+        {
+          "term": "開催",
+          "reading": "かいさい",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-014-06"
+        },
+        {
+          "term": "展開",
+          "reading": "てんかい",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-014-07"
         }
       ],
       "exampleSentenceId": "kanji-families-014-01",
@@ -503,6 +701,36 @@
           "reading": "せいさん",
           "role": "derived",
           "exampleSentenceId": "kanji-families-016-03"
+        },
+        {
+          "term": "学生",
+          "reading": "がくせい",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-016-04"
+        },
+        {
+          "term": "生徒",
+          "reading": "せいと",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-016-05"
+        },
+        {
+          "term": "生まれる",
+          "reading": "うまれる",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-016-06"
+        },
+        {
+          "term": "人生",
+          "reading": "じんせい",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-016-07"
+        },
+        {
+          "term": "誕生日",
+          "reading": "たんじょうび",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-016-08"
         }
       ],
       "exampleSentenceId": "kanji-families-016-01",
@@ -735,6 +963,36 @@
           "reading": "じどう",
           "role": "derived",
           "exampleSentenceId": "kanji-families-024-03"
+        },
+        {
+          "term": "動物",
+          "reading": "どうぶつ",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-024-04"
+        },
+        {
+          "term": "運動",
+          "reading": "うんどう",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-024-05"
+        },
+        {
+          "term": "活動",
+          "reading": "かつどう",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-024-06"
+        },
+        {
+          "term": "移動",
+          "reading": "いどう",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-024-07"
+        },
+        {
+          "term": "動かす",
+          "reading": "うごかす",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-024-08"
         }
       ],
       "exampleSentenceId": "kanji-families-024-01",
@@ -1286,6 +1544,30 @@
           "reading": "いしき",
           "role": "derived",
           "exampleSentenceId": "kanji-families-043-03"
+        },
+        {
+          "term": "注意",
+          "reading": "ちゅうい",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-043-04"
+        },
+        {
+          "term": "用意",
+          "reading": "ようい",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-043-05"
+        },
+        {
+          "term": "意外",
+          "reading": "いがい",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-043-06"
+        },
+        {
+          "term": "得意",
+          "reading": "とくい",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-043-07"
         }
       ],
       "exampleSentenceId": "kanji-families-043-01",
@@ -1808,6 +2090,30 @@
           "reading": "かんれん",
           "role": "derived",
           "exampleSentenceId": "kanji-families-061-03"
+        },
+        {
+          "term": "玄関",
+          "reading": "げんかん",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-061-04"
+        },
+        {
+          "term": "関心",
+          "reading": "かんしん",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-061-05"
+        },
+        {
+          "term": "関する",
+          "reading": "かんする",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-061-06"
+        },
+        {
+          "term": "関西",
+          "reading": "かんさい",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-061-07"
         }
       ],
       "exampleSentenceId": "kanji-families-061-01",
@@ -1866,6 +2172,36 @@
           "reading": "かいしゃ",
           "role": "derived",
           "exampleSentenceId": "kanji-families-063-03"
+        },
+        {
+          "term": "社会",
+          "reading": "しゃかい",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-063-04"
+        },
+        {
+          "term": "会話",
+          "reading": "かいわ",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-063-05"
+        },
+        {
+          "term": "会員",
+          "reading": "かいいん",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-063-06"
+        },
+        {
+          "term": "会場",
+          "reading": "かいじょう",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-063-07"
+        },
+        {
+          "term": "機会",
+          "reading": "きかい",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-063-08"
         }
       ],
       "exampleSentenceId": "kanji-families-063-01",
@@ -2156,6 +2492,30 @@
           "reading": "きょうぎ",
           "role": "derived",
           "exampleSentenceId": "kanji-families-073-03"
+        },
+        {
+          "term": "技師",
+          "reading": "ぎし",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-073-04"
+        },
+        {
+          "term": "技術者",
+          "reading": "ぎじゅつしゃ",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-073-05"
+        },
+        {
+          "term": "特技",
+          "reading": "とくぎ",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-073-06"
+        },
+        {
+          "term": "演技",
+          "reading": "えんぎ",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-073-07"
         }
       ],
       "exampleSentenceId": "kanji-families-073-01",
@@ -2273,6 +2633,30 @@
           "reading": "がいこくじん",
           "role": "derived",
           "exampleSentenceId": "kanji-families-077-03"
+        },
+        {
+          "term": "一人",
+          "reading": "ひとり",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-077-04"
+        },
+        {
+          "term": "二人",
+          "reading": "ふたり",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-077-05"
+        },
+        {
+          "term": "大人",
+          "reading": "おとな",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-077-06"
+        },
+        {
+          "term": "人形",
+          "reading": "にんぎょう",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-077-07"
         }
       ],
       "exampleSentenceId": "kanji-families-077-01",
@@ -3433,6 +3817,30 @@
           "reading": "てつだう",
           "role": "derived",
           "exampleSentenceId": "kanji-families-117-03"
+        },
+        {
+          "term": "手紙",
+          "reading": "てがみ",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-117-04"
+        },
+        {
+          "term": "切手",
+          "reading": "きって",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-117-05"
+        },
+        {
+          "term": "下手",
+          "reading": "へた",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-117-06"
+        },
+        {
+          "term": "お手洗い",
+          "reading": "おてあらい",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-117-07"
         }
       ],
       "exampleSentenceId": "kanji-families-117-01",
@@ -4332,6 +4740,24 @@
           "reading": "かがく",
           "role": "derived",
           "exampleSentenceId": "kanji-families-148-03"
+        },
+        {
+          "term": "学生",
+          "reading": "がくせい",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-148-04"
+        },
+        {
+          "term": "大学",
+          "reading": "だいがく",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-148-05"
+        },
+        {
+          "term": "留学生",
+          "reading": "りゅうがくせい",
+          "role": "derived",
+          "exampleSentenceId": "kanji-families-148-06"
         }
       ],
       "exampleSentenceId": "kanji-families-148-01",
@@ -10381,7 +10807,504 @@
       "targetLang": "ja",
       "source": "Work has been going well recently.",
       "target": "最近は仕事が好調【こうちょう】だ。"
+    },
+    {
+      "id": "kanji-families-003-06",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "A power outage occurred because of heavy rain.",
+      "target": "大雨による停電が発生【はっせい】した。"
+    },
+    {
+      "id": "kanji-families-003-07",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "This town developed through tourism.",
+      "target": "この町は観光によって発展【はってん】した。"
+    },
+    {
+      "id": "kanji-families-003-08",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "Children's language ability develops gradually.",
+      "target": "子供の言語能力は少しずつ発達【はったつ】する。"
+    },
+    {
+      "id": "kanji-families-003-09",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "She invented a useful tool.",
+      "target": "彼女は便利な道具を発明【はつめい】した。"
+    },
+    {
+      "id": "kanji-families-003-10",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "The new game goes on sale on Friday.",
+      "target": "新しいゲームは金曜日に発売【はつばい】される。"
+    },
+    {
+      "id": "kanji-families-003-11",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "I had a certificate issued at city hall.",
+      "target": "市役所で証明書を発行【はっこう】してもらった。"
+    },
+    {
+      "id": "kanji-families-003-12",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "A large explosion occurred in the distance.",
+      "target": "遠くで大きな爆発【ばくはつ】が起きた。"
+    },
+    {
+      "id": "kanji-families-003-13",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "This area generates electricity using wind power.",
+      "target": "この地域では風力で発電【はつでん】している。"
+    },
+    {
+      "id": "kanji-families-003-14",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "That idea is very interesting.",
+      "target": "その発想【はっそう】はとても面白い。"
+    },
+    {
+      "id": "kanji-families-003-15",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "The train will depart shortly.",
+      "target": "電車は間もなく発車【はっしゃ】します。"
+    },
+    {
+      "id": "kanji-families-003-16",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "The rocket was launched as scheduled.",
+      "target": "ロケットが予定通り発射【はっしゃ】された。"
+    },
+    {
+      "id": "kanji-families-003-17",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "Please speak freely at the meeting.",
+      "target": "会議で自由に発言【はつげん】してください。"
+    },
+    {
+      "id": "kanji-families-001-07",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "We put the plan into action.",
+      "target": "計画を実行【じっこう】に移した。"
+    },
+    {
+      "id": "kanji-families-001-08",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "The express train does not stop at this station.",
+      "target": "急行【きゅうこう】電車はこの駅に止まらない。"
+    },
+    {
+      "id": "kanji-families-001-09",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "It is better to act than hesitate.",
+      "target": "迷うより行動【こうどう】したほうがいい。"
+    },
+    {
+      "id": "kanji-families-001-10",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "I observed birds in flight.",
+      "target": "鳥の飛行【ひこう】を観察した。"
+    },
+    {
+      "id": "kanji-families-002-06",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "I checked the unmarried box on the application.",
+      "target": "申込書の未婚【みこん】の欄に印を付けた。"
+    },
+    {
+      "id": "kanji-families-002-07",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "Unknown worlds stretch out across space.",
+      "target": "宇宙には未知【みち】の世界が広がっている。"
+    },
+    {
+      "id": "kanji-families-002-08",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "I am still inexperienced as an engineer.",
+      "target": "私はまだ技術者として未熟【みじゅく】です。"
+    },
+    {
+      "id": "kanji-families-002-09",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "I checked the unpaid invoice.",
+      "target": "未払【みはら】いの請求書を確認した。"
+    },
+    {
+      "id": "kanji-families-002-10",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "That problem remains unresolved.",
+      "target": "その問題は今も未解決【みかいけつ】だ。"
+    },
+    {
+      "id": "kanji-families-016-04",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "There are many international students at this university.",
+      "target": "この大学には外国人の学生【がくせい】が多い。"
+    },
+    {
+      "id": "kanji-families-016-05",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "The teacher answered the pupils' questions.",
+      "target": "先生は生徒【せいと】の質問に答えた。"
+    },
+    {
+      "id": "kanji-families-016-06",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "A new company will be born in this town.",
+      "target": "この町で新しい会社が生【う】まれる。"
+    },
+    {
+      "id": "kanji-families-016-07",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "Life brings unexpected encounters.",
+      "target": "人生【じんせい】には思いがけない出会いがある。"
+    },
+    {
+      "id": "kanji-families-016-08",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "Today is my younger sister's birthday.",
+      "target": "今日は妹の誕生日【たんじょうび】です。"
+    },
+    {
+      "id": "kanji-families-063-04",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "We discussed changes in society.",
+      "target": "社会【しゃかい】の変化について話し合った。"
+    },
+    {
+      "id": "kanji-families-063-05",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "Let's converse in Japanese a little every day.",
+      "target": "毎日少しでも日本語で会話【かいわ】しよう。"
+    },
+    {
+      "id": "kanji-families-063-06",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "Members can receive discounts.",
+      "target": "会員【かいいん】になると割引を受けられる。"
+    },
+    {
+      "id": "kanji-families-063-07",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "The presentation venue is near the station.",
+      "target": "発表会の会場【かいじょう】は駅の近くです。"
+    },
+    {
+      "id": "kanji-families-063-08",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "I want more opportunities to speak Japanese.",
+      "target": "日本語を話す機会【きかい】をもっと増やしたい。"
+    },
+    {
+      "id": "kanji-families-024-04",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "Rare animals live in this forest.",
+      "target": "この森には珍しい動物【どうぶつ】がいる。"
+    },
+    {
+      "id": "kanji-families-024-05",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "I exercise every morning for my health.",
+      "target": "健康のために毎朝運動【うんどう】している。"
+    },
+    {
+      "id": "kanji-families-024-06",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "I participate in community activities.",
+      "target": "地域の活動【かつどう】に参加している。"
+    },
+    {
+      "id": "kanji-families-024-07",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "I moved from the meeting room to another room.",
+      "target": "会議室から別の部屋へ移動【いどう】した。"
+    },
+    {
+      "id": "kanji-families-024-08",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "The screen changes when you move the mouse.",
+      "target": "マウスを動【うご】かすと画面が変わる。"
+    },
+    {
+      "id": "kanji-families-014-04",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "I open the window because the room is hot.",
+      "target": "部屋が暑いので窓を開【あ】ける。"
+    },
+    {
+      "id": "kanji-families-014-05",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "Our team is developing a new app.",
+      "target": "チームで新しいアプリを開発【かいはつ】している。"
+    },
+    {
+      "id": "kanji-families-014-06",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "We will hold a technology event next week.",
+      "target": "来週、技術イベントを開催【かいさい】する。"
+    },
+    {
+      "id": "kanji-families-014-07",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "The story developed in an unexpected direction.",
+      "target": "物語が意外な方向へ展開【てんかい】した。"
+    },
+    {
+      "id": "kanji-families-043-04",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "Please watch out for cars at the crosswalk.",
+      "target": "横断歩道では車に注意【ちゅうい】してください。"
+    },
+    {
+      "id": "kanji-families-043-05",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "I prepared the meeting materials.",
+      "target": "会議の資料を用意【ようい】しました。"
+    },
+    {
+      "id": "kanji-families-043-06",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "That answer was unexpected.",
+      "target": "その答えは意外【いがい】だった。"
+    },
+    {
+      "id": "kanji-families-043-07",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "I am better at languages than mathematics.",
+      "target": "私は数学より言語が得意【とくい】です。"
+    },
+    {
+      "id": "kanji-families-061-04",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "Please remove your shoes in the entryway.",
+      "target": "玄関【げんかん】で靴を脱いでください。"
+    },
+    {
+      "id": "kanji-families-061-05",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "I have a strong interest in education and technology.",
+      "target": "教育と技術に強い関心【かんしん】がある。"
+    },
+    {
+      "id": "kanji-families-061-06",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "I read materials relating to the new rules.",
+      "target": "新しい規則に関【かん】する資料を読んだ。"
+    },
+    {
+      "id": "kanji-families-061-07",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "I will travel to Kansai next month.",
+      "target": "来月、関西【かんさい】へ旅行する。"
+    },
+    {
+      "id": "kanji-families-073-04",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "A specialist technician repaired the machine.",
+      "target": "専門の技師【ぎし】が機械を修理した。"
+    },
+    {
+      "id": "kanji-families-073-05",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "A young engineer devised a new method.",
+      "target": "若い技術者【ぎじゅつしゃ】が新しい方法を考えた。"
+    },
+    {
+      "id": "kanji-families-073-06",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "My special skill is drawing.",
+      "target": "私の特技【とくぎ】は絵を描くことです。"
+    },
+    {
+      "id": "kanji-families-073-07",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "I was moved by the actor's performance.",
+      "target": "俳優の演技【えんぎ】に感動した。"
+    },
+    {
+      "id": "kanji-families-004-04",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "There is a shortage of doctors in this area.",
+      "target": "この地域では医師が不足【ふそく】している。"
+    },
+    {
+      "id": "kanji-families-004-05",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "If you are dissatisfied with the result, please say so.",
+      "target": "結果に不満【ふまん】があるなら話してください。"
+    },
+    {
+      "id": "kanji-families-004-06",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "We detected unauthorized access.",
+      "target": "不正【ふせい】なアクセスを検出した。"
+    },
+    {
+      "id": "kanji-families-004-07",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "Life is somewhat inconvenient without a car.",
+      "target": "車がないと生活が少し不自由【ふじゆう】だ。"
+    },
+    {
+      "id": "kanji-families-077-04",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "I went to the library alone today.",
+      "target": "今日は一人【ひとり】で図書館へ行った。"
+    },
+    {
+      "id": "kanji-families-077-05",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "We walked to the station together.",
+      "target": "二人【ふたり】で駅まで歩いた。"
+    },
+    {
+      "id": "kanji-families-077-06",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "This is a movie that both adults and children can enjoy.",
+      "target": "大人【おとな】も子供も楽しめる映画だ。"
+    },
+    {
+      "id": "kanji-families-077-07",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "I bought a small doll at the shop.",
+      "target": "店で小さな人形【にんぎょう】を買った。"
+    },
+    {
+      "id": "kanji-families-117-04",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "I wrote a letter to a friend.",
+      "target": "友達に手紙【てがみ】を書いた。"
+    },
+    {
+      "id": "kanji-families-117-05",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "I bought stamps at the post office.",
+      "target": "郵便局で切手【きって】を買った。"
+    },
+    {
+      "id": "kanji-families-117-06",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "I am still bad at singing.",
+      "target": "私はまだ歌が下手【へた】です。"
+    },
+    {
+      "id": "kanji-families-117-07",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "Where is the restroom?",
+      "target": "お手洗いはどこですか。"
+    },
+    {
+      "id": "kanji-families-012-04",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "I will submit the application by tomorrow.",
+      "target": "明日までに申請書を出【だ】す。"
+    },
+    {
+      "id": "kanji-families-012-05",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "I am going out shopping this afternoon.",
+      "target": "午後は買い物に出【で】かける。"
+    },
+    {
+      "id": "kanji-families-012-06",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "I will attend next week's meeting.",
+      "target": "来週の会議に出席【しゅっせき】する。"
+    },
+    {
+      "id": "kanji-families-012-07",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "This company exports cars overseas.",
+      "target": "この会社は車を海外へ輸出【ゆしゅつ】する。"
+    },
+    {
+      "id": "kanji-families-148-04",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "Students are studying in the library.",
+      "target": "学生【がくせい】は図書館で勉強している。"
+    },
+    {
+      "id": "kanji-families-148-05",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "My older brother attends university in Tokyo.",
+      "target": "兄は東京の大学【だいがく】に通っている。"
+    },
+    {
+      "id": "kanji-families-148-06",
+      "sourceLang": "en",
+      "targetLang": "ja",
+      "source": "I spoke to an exchange student studying Japanese.",
+      "target": "日本語を勉強する留学生【りゅうがくせい】と話した。"
     }
   ],
-  "curriculumVersion": 1
+  "curriculumVersion": 2
 }
