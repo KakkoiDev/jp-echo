@@ -53,13 +53,54 @@ export async function loadKanjiCurriculum(fetchImpl=fetch){
 export const familyFor=(curriculum,kanji)=>(curriculum.byKanji||new Map(curriculum.kanjiFamilies.map(f=>[f.kanji,f]))).get(kanji)||null;
 export const cardsById=curriculum=>curriculum.byId||new Map(curriculum.sentences.map(s=>[s.id,s]));
 export const familyThemes=curriculum=>[...new Set((curriculum.families||curriculum.kanjiFamilies).map(f=>f.theme))];
-export function findFamilies(curriculum,{theme="all",query=""}={}){
+// Build a reverse index of the already-bundled JMdict word list once. The
+// index is a character-membership index, not a claim that every homograph or
+// compound has the same semantic origin. Keep the dictionary's readings,
+// English glosses, and JLPT labels; do not synthesize words or pronunciations.
+const wordIndices=new WeakMap();
+export function dictionaryIndex(dictionary){
+  if(!Array.isArray(dictionary))throw new TypeError("Expected Echo dictionary words.");
+  const cached=wordIndices.get(dictionary);
+  if(cached&&cached.length===dictionary.length)return cached.byKanji;
+  const byKanji=new Map();
+  for(const entry of dictionary){
+    if(!entry?.w||!entry.r||!Array.isArray(entry.en))continue;
+    for(const character of new Set([...entry.w])){
+      if(!/[一-鿿]/u.test(character))continue;
+      if(!byKanji.has(character))byKanji.set(character,[]);
+      byKanji.get(character).push(entry);
+    }
+  }
+  wordIndices.set(dictionary,{length:dictionary.length,byKanji});
+  return byKanji;
+}
+export function familyDictionaryMatches(family,dictionary,{level="all",query="",includeExamples=false}={}){
+  if(!family)return [];
+  const already=new Set((family.words||[]).map(w=>w.term));
+  const q=String(query).normalize("NFKC").trim().toLocaleLowerCase();
+  const matches=dictionaryIndex(dictionary).get(family.kanji)||[];
+  const found=new Set();
+  return matches.filter(word=>{
+    if(!includeExamples&&already.has(word.w))return false;
+    if(level!=="all"&&(word.jlpt||"+")!==level)return false;
+    // JMdict can contain multiple senses/representations; list each written
+    // word + reading once, not its repeated dictionary variants.
+    const key=word.w+"\u0000"+word.r;
+    if(found.has(key))return false;
+    if(q&&![word.w,word.r,...word.en].join(" ").normalize("NFKC").toLocaleLowerCase().includes(q))return false;
+    found.add(key);
+    return true;
+  });
+}
+
+export function findFamilies(curriculum,{theme="all",query="",dictionary=null}={}){
   const q=String(query).normalize("NFKC").trim().toLocaleLowerCase();
   return (curriculum.families||curriculum.kanjiFamilies).filter(f=>{
     if(theme!=="all"&&f.theme!==theme)return false;
     if(!q)return true;
-    return [f.kanji,f.meaning,f.theme,f.dictionaryRadical,f.dictionaryRadicalName,
-      ...f.words.flatMap(w=>[w.term,w.reading])].join(" ").normalize("NFKC").toLocaleLowerCase().includes(q);
+    const authored=[f.kanji,f.meaning,f.theme,f.dictionaryRadical,f.dictionaryRadicalName,
+      ...f.words.flatMap(w=>[w.term,w.reading])].join(" ").normalize("NFKC").toLocaleLowerCase();
+    return authored.includes(q) || !!dictionary&&familyDictionaryMatches(f,dictionary,{query:q}).length>0;
   });
 }
 export function exampleLibraryIndex(sentences=[]){
