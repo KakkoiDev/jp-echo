@@ -128,3 +128,5 @@ filter and one-at-a-time **Add sentence** via `importBackupData`.
 The family JSON file is precached in the service worker. Never insert all
 catalogue sentences into the local library automatically. Sentence reviews,
 playback, dictionary lookup and backup retain their existing owners.
+
+The Kanji Family screen separates **authored example sentences** from **other JMdict words containing the same kanji**. The latter are indexed by `dictionaryIndex` from `words-data.js` and paginated in the detail sheet, linking to Echo's existing Word modal. Dictionary-only words are not assigned synthetic example sentences or SRS state. See `decks/KANJI-FAMILIES-COVERAGE-AUDIT.md` for all-family coverage.
