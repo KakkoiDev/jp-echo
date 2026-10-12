@@ -10,8 +10,8 @@ const curriculum=validateFamilyCurriculum(raw);
 
 test("the complete families deck is valid Echo material with linked vocabulary examples",()=>{
   assert.equal(curriculum.families.length,206);
-  assert.equal(raw.sentences.length,623);
-  assert.equal(validateDeckBackup(raw).sentences.length,623);
+  assert.equal(raw.sentences.length,694);
+  assert.equal(validateDeckBackup(raw).sentences.length,694);
   assert.equal(new Set(curriculum.families.map(f=>f.kanji)).size,206);
   for(const family of curriculum.families) {
     assert.ok(family.dictionaryRadical&&family.dictionaryRadicalName&&family.meaning&&family.theme);
@@ -52,4 +52,34 @@ test("one sentence is counted once and no catalogue cards are automatically sche
   assert.deepEqual(familyProgress(curriculum,family,scheduled),{met:1,learned:1,total:family.words.length});
   const alternate=exampleLibraryIndex([{id:"personal",target:first.target,srs:{state:0}}]);
   assert.equal(exampleState(first,alternate),"met");
+});
+
+import {ALL as DICTIONARY} from "../words.js";
+import {familyDictionaryMatches,dictionaryIndex} from "../kanji-families.js";
+
+test("missed high-value compounds, including 発生, have prepared examples",()=>{
+  const prepared=curriculum.byKanji.get("発").words;
+  for(const word of ["発生","発展","発達","発明","発売","発行","爆発","発電"])
+    assert.ok(prepared.some(entry=>entry.term===word&&curriculum.byId.has(entry.exampleSentenceId)),word);
+  assert.equal(curriculum.kanjiFamilies?.length||curriculum.families.length,206);
+});
+
+test("each family exposes all other JMdict words, not just the authored sample",()=>{
+  const parents=curriculum.families;
+  const map=dictionaryIndex(DICTIONARY);
+  assert.ok((map.get("発")||[]).some(word=>word.w==="発生"));
+  const family=curriculum.byKanji.get("発");
+  const extras=familyDictionaryMatches(family,DICTIONARY);
+  assert.ok(extras.length>50);
+  assert.ok(!extras.some(word=>word.w==="発生")); // already has a prepared sentence
+  assert.ok(extras.some(word=>word.w==="発揮"));
+  assert.ok(extras.some(word=>word.w==="蒸発"));
+  assert.ok(familyDictionaryMatches(family,DICTIONARY,{level:"N2"}).every(w=>w.jlpt==="N2"));
+  assert.ok(familyDictionaryMatches(family,DICTIONARY,{query:"はっき"}).some(w=>w.w==="発揮"));
+  assert.ok(findFamilies(curriculum,{query:"蒸発",dictionary:DICTIONARY}).some(f=>f.kanji==="発"));
+  for(const parent of parents){
+    const other=familyDictionaryMatches(parent,DICTIONARY);
+    assert.equal(new Set(other.map(w=>w.w+" / "+w.r)).size,other.length,parent.kanji);
+    assert.ok(other.every(w=>w.w.includes(parent.kanji)),parent.kanji);
+  }
 });
