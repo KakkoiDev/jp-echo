@@ -210,7 +210,7 @@ Review → Stats summarizes saved grades over rolling 24-hour and 7-day windows,
 ## Kanji meaning families
 
 Library → **Kanji, words and grammar** → **Kanji** now includes a searchable
-**Kanji families** panel. The [206-family curriculum](decks/kanji-families-curriculum.json)
+**Kanji families** panel, **collapsed by default** to keep the JLPT kanji wall visible. Open it to browse the 206 parent characters grouped in topic accordions, each with compact kanji tiles using the same seen/learned state styling as the JLPT levels. Search finds matching families directly. The [206-family curriculum](decks/kanji-families-curriculum.json)
 now includes 696 manually linked vocabulary entries and 694 distinct original Japanese example sentences, with more than 10,000 additional family–word matches available from Echo’s existing dictionary. There is **no fixed number of words per family**: the Kanji screen displays every attested word containing the selected character from its bundled JMdict-based dictionary, not only the manually prepared examples. Only some of those words have prepared sentence cards.
 Filter by meaning, parent kanji, radical, word, reading or topic. Open a family
 to see its dictionary indexing radical, words, JMdict glosses where available,
