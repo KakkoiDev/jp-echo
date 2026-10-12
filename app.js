@@ -16,7 +16,7 @@ import {japaneseVoices,recognitionFactory,ShadowLoop,ConversationLoop} from "./s
 import {STORIES} from "./stories.js";
 import {coverage as kanjiCoverage,facts as kanjiFacts,jlptBands as kanjiBands,learned as kanjiLearned,LEVEL_LABELS,levelOf,nextUnmet,sentenceKanji,TOTAL as KANJI_TOTAL} from "./kanji.js";
 import {searchGrammar,searchKanji,searchWords} from "./lookup.js";
-import {loadFamilyCurriculum,findFamilies,familyThemes,exampleLibraryIndex,exampleState,familyProgress,familyDictionaryMatches} from "./kanji-families.js";
+import {loadFamilyCurriculum,findFamilies,familyThemes,exampleLibraryIndex,exampleState,familyProgress,familyDictionaryMatches,familyVocabulary} from "./kanji-families.js";
 import {ALL as REFERENCE_WORDS,setImportedWords,bands as wordBands,carries as carriesWord,coverage as wordCoverage,kindOf,learned as wordLearned,levelOf as wordLevel,marks as wordMarks,sentenceWords,wordSpans,TOTAL as WORD_TOTAL,word as wordById} from "./words.js";
 import {deleteNote as dbDeleteNote,forBackup,getNote,listNotes,makeNote,mergeNotes,noteKey,putNote as dbPutNote,replaceNotes as dbReplaceNotes} from "./notes.js";
 import {downloadAnkiDeck} from "./anki-export.js";
@@ -377,7 +377,7 @@ function renderMora(){const host=$("#mora-table"),emoji=$("#mora-show-emoji").ch
 function saveMoraDisplay(){settings.moraEmoji=$("#mora-show-emoji").checked;settings.moraFurigana=$("#mora-show-furigana").checked;settings.moraEnglish=$("#mora-show-english").checked;storePreference("jp-echo-settings",JSON.stringify(settings));renderMora()}
 const tool={open:null,chip:"all",more:new Set()};
 const familyBrowse={theme:"all",limit:12,sentences:[]};
-const familyDictionaryState={character:null,level:"all",limit:15};
+const familyDictionaryState={character:null,level:"all"};
 const el=(tag,cls,text)=>{const node=document.createElement(tag);if(cls)node.className=cls;if(text!=null)node.textContent=text;return node};
 const CHEVRON='<svg width="14" height="9" viewBox="0 0 14 9" fill="none" aria-hidden="true"><path d="m1.5 1.5 5.5 5.5 5.5-5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const TICK='<svg width="12" height="10" viewBox="0 0 12 10" fill="none" aria-hidden="true"><path d="m1.5 5 3 3 6-6.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -451,7 +451,8 @@ async function renderKanjiFamilies(sentences){
       const details=el("span","family-row-info");
       details.append(el("strong",null,family.meaning),
         el("span",null,"Radical "+family.dictionaryRadical+" · "+
-          family.words.map(word=>word.term).join(" · ")));
+          familyVocabulary(family,REFERENCE_WORDS).length+" dictionary words · "+
+          family.words.length+" example words")));
       const count=el("span","family-row-count",progress.met+"/"+progress.total);
       count.title=progress.learned+" reviewed";
       row.append(glyph,details,count);row.insertAdjacentHTML("beforeend",RIGHT);
@@ -589,8 +590,8 @@ async function renderKanjiFamily(character,sentences){
     $("#kanji-family-radical").textContent=family.dictionaryRadical+
       " · "+(family.dictionaryRadicalName||"dictionary indexing radical");
     $("#kanji-family-progress").textContent=family.theme+" · "+
-      family.words.length+" prepared examples · "+
-      familyDictionaryMatches(family,REFERENCE_WORDS).length+" other dictionary words";
+      familyVocabulary(family,REFERENCE_WORDS).length+" dictionary words · "+
+      family.words.length+" with prepared example sentences";
     $("#kanji-family-message").textContent="";
     const index=exampleLibraryIndex(sentences);
     const previews=family.words.map(word=>{
@@ -631,27 +632,29 @@ async function renderKanjiFamily(character,sentences){
   }
 }
 
-// A full, searchable word index alongside the authored example sentences.
-// Dictionary matches have attested readings/glosses but no fabricated example
-// cards. Click to open the existing Word sheet and compose a real sentence.
+// A complete character-based vocabulary index alongside the authored cards.
+// Do not cap family size or invent contextual example sentences for dictionary
+// words: learners can open any word in Echo's existing Word sheet.
 function renderKanjiFamilyDictionary(family){
-  const list=$("#family-dictionary-list"),more=$("#family-dictionary-more");
+  if(!family)return;
+  const list=$("#family-dictionary-list");
   if(familyDictionaryState.character!==family.kanji){
     familyDictionaryState.character=family.kanji;
     familyDictionaryState.level="all";
-    familyDictionaryState.limit=15;
     $("#family-dictionary-query").value="";
     $("#family-dictionary-level").value="all";
   }
-  const matches=familyDictionaryMatches(family,REFERENCE_WORDS,{
+  const matches=familyVocabulary(family,REFERENCE_WORDS,{
     level:familyDictionaryState.level,query:$("#family-dictionary-query").value
   });
-  const shown=matches.slice(0,familyDictionaryState.limit);
-  const total=familyDictionaryMatches(family,REFERENCE_WORDS).length;
-  $("#family-dictionary-count").textContent=matches.length+" matching words · "+
-    total+" dictionary words beyond "+family.words.length+" prepared examples";
-  list.replaceChildren();
-  for(const entry of shown){
+  const total=familyVocabulary(family,REFERENCE_WORDS).length;
+  $("#family-dictionary-count").textContent=matches.length+" of "+total+
+    " dictionary words · "+family.words.length+" with prepared examples";
+  const authored=new Set(family.words.map(word=>word.term+"\u0000"+word.reading));
+  // The largest family has only a few hundred words. Render the entire
+  // filtered result; no fixed three-, fifteen- or other word ceiling.
+  const fragment=document.createDocumentFragment();
+  for(const entry of matches){
     const li=el("li");
     const button=el("button","family-dictionary-word");
     button.type="button";
@@ -659,7 +662,8 @@ function renderKanjiFamilyDictionary(family){
     const label=el("span","family-dictionary-name",entry.w);
     label.lang="ja";
     const info=el("span","family-dictionary-info");
-    info.append(el("span",null,entry.r+(entry.jlpt?" · "+entry.jlpt:"")),
+    info.append(el("span",null,entry.r+(entry.jlpt?" · "+entry.jlpt:"")+
+      (authored.has(entry.w+"\u0000"+entry.r)?" · Example available":"")),
       el("span",null,entry.en?.[0]||""));
     button.append(label,info);
     button.insertAdjacentHTML("beforeend",RIGHT);
@@ -667,11 +671,10 @@ function renderKanjiFamilyDictionary(family){
       try{await openWord(entry,wordCoverage(await listSentences()),{route:false})}
       catch(error){$("#kanji-family-message").textContent="Could not open the word: "+(error.message||"unknown error")}
     };
-    li.append(button);list.append(li);
+    li.append(button);fragment.append(li);
   }
-  if(!matches.length)list.append(el("li","hint","No dictionary words match this filter."));
-  more.hidden=shown.length>=matches.length;
-  more.textContent="Show more words ("+(matches.length-shown.length)+" left)";
+  if(!matches.length)fragment.append(el("li","hint","No dictionary words match this filter."));
+  list.replaceChildren(fragment);
 }
 async function addFamilySentence(card,character,button){
   button.disabled=true;
@@ -2029,20 +2032,12 @@ $("#family-search").oninput=()=>{familyBrowse.limit=12;void renderKanjiFamilies(
 $("#family-theme").onchange=()=>{familyBrowse.theme=$("#family-theme").value;familyBrowse.limit=12;void renderKanjiFamilies(familyBrowse.sentences)};
 $("#family-more").onclick=()=>{familyBrowse.limit+=12;void renderKanjiFamilies(familyBrowse.sentences)};
 $("#family-dictionary-query").oninput=()=>{
-  familyDictionaryState.limit=15;
   const family=kanjiOpen?.character;
   if(!family)return;
   void loadFamilyCurriculum().then(c=>renderKanjiFamilyDictionary(c.byKanji.get(family)));
 };
 $("#family-dictionary-level").onchange=()=>{
   familyDictionaryState.level=$("#family-dictionary-level").value;
-  familyDictionaryState.limit=15;
-  const character=kanjiOpen?.character;
-  if(!character)return;
-  void loadFamilyCurriculum().then(c=>renderKanjiFamilyDictionary(c.byKanji.get(character)));
-};
-$("#family-dictionary-more").onclick=()=>{
-  familyDictionaryState.limit+=15;
   const character=kanjiOpen?.character;
   if(!character)return;
   void loadFamilyCurriculum().then(c=>renderKanjiFamilyDictionary(c.byKanji.get(character)));
