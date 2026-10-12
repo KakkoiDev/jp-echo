@@ -211,7 +211,7 @@ Review → Stats summarizes saved grades over rolling 24-hour and 7-day windows,
 
 Library → **Kanji, words and grammar** → **Kanji** now includes a searchable
 **Kanji families** panel. The [206-family curriculum](decks/kanji-families-curriculum.json)
-now includes 696 manually linked vocabulary entries and 694 distinct original Japanese example sentences, with more than 10,000 additional family–word matches available from Echo’s existing dictionary. These extra matches do not all have prepared examples.
+now includes 696 manually linked vocabulary entries and 694 distinct original Japanese example sentences, with more than 10,000 additional family–word matches available from Echo’s existing dictionary. There is **no fixed number of words per family**: the Kanji screen displays every attested word containing the selected character from its bundled JMdict-based dictionary, not only the manually prepared examples. Only some of those words have prepared sentence cards.
 Filter by meaning, parent kanji, radical, word, reading or topic. Open a family
 to see its dictionary indexing radical, words, JMdict glosses where available,
 and playable/tappable example sentences. **Add sentence** imports that one card
@@ -228,3 +228,5 @@ learning content, not official JLPT frequency rankings.
 ### Dictionary coverage audit
 
 [Coverage report for all 206 families](decks/KANJI-FAMILIES-COVERAGE-AUDIT.md) compares the curated examples with the existing 22,954-entry JMdict-derived dictionary. The Kanji sheet now also lists **all other dictionary entries containing the selected kanji**, with reading, definition, JLPT filter and a link into the normal Word sheet to create a contextual sentence. Dictionary grouping is based on the written character, not a guarantee of a shared etymology. The core set covers 206 kanji (99 distinct index radicals); it is not the entire 214-radical Kangxi indexing system.
+
+**No 3-word cap:** `kanji-families.js` derives the entire per-kanji vocabulary from the already bundled dictionary. Kanji details show the complete, searchable vocabulary list with JLPT filters, pronunciation and English meanings. The authored example-sentence selection is separate and can grow independently; no synthetic cards are created when a word has no sentence. A word containing a kanji is not automatically a semantic derivative of that kanji.
