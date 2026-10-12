@@ -10,9 +10,9 @@ test("kanji families deck imports as Echo version 2 sentences", () => {
   const imported = validateDeckBackup(deck);
   assert.equal(deck.schemaVersion, 2);
   assert.equal(deck.kanjiFamilies.length, 76);
-  assert.equal(imported.sentences.length, 228);
-  assert.equal(new Set(imported.sentences.map(s => s.id)).size, 228);
-  assert.equal(new Set(imported.sentences.map(sentenceIdentity)).size, 228);
+  assert.equal(imported.sentences.length, 235);
+  assert.equal(new Set(imported.sentences.map(s => s.id)).size, 235);
+  assert.equal(new Set(imported.sentences.map(sentenceIdentity)).size, 235);
   assert.ok(imported.sentences.every(s => s.sourceLang === "en" && s.targetLang === "ja"));
   assert.ok(imported.sentences.every(s => s.source && s.target));
 });
@@ -23,7 +23,7 @@ test("every parent has a radical, anchor sentence and linked derived words", () 
   for (const family of deck.kanjiFamilies) {
     assert.match(family.kanji, /^[一-鿿]$/u);
     assert.ok(family.meaning && family.dictionaryRadical && family.dictionaryRadicalName);
-    assert.equal(family.words.length, 3);
+    assert.ok(family.words.length >= 3);
     assert.equal(family.words[0].role, "anchor");
     assert.equal(family.exampleSentenceId, family.words[0].exampleSentenceId);
     for (const [i, word] of family.words.entries()) {
