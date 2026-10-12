@@ -6,7 +6,7 @@
 https://raw.githubusercontent.com/KakkoiDev/jp-echo/main/decks/kanji-families-core.json
 ```
 
-The file follows [DECK-FORMAT.md](../DECK-FORMAT.md), schema version 2, and provides **228 distinct sentences** across **76 kanji meaning families**. Each sentence enters Echo's usual listening, reading and writing reviews **once**; there are no duplicated review-mode cards.
+The file follows [DECK-FORMAT.md](../DECK-FORMAT.md), schema version 2, and provides **235 distinct sentences** across **76 kanji meaning families**. Each sentence enters Echo's usual listening, reading and writing reviews **once**; there are no duplicated review-mode cards.
 
 Each `kanjiFamilies` record gives:
 
@@ -15,7 +15,7 @@ Each `kanjiFamilies` record gives:
 - `dictionaryRadical`: the Japanese printed form of its indexing radical (e.g. `癶` for `発`, or `氵` for `法`)
 - `dictionaryRadicalName`: an English mnemonic for the radical
 - `exampleSentenceId`: the parent/anchor example sentence
-- `words`: one anchor entry and two derived words, each including its correct word reading and linked `exampleSentenceId`
+- `words`: one anchor entry and at least two derived words, each including its correct word reading and linked `exampleSentenceId`
 
 To see the target sentences, look up the word's `exampleSentenceId` in the top-level `sentences` list. Some words appear in an inflected form inside their examples; the canonical headword is preserved under `words[].term`. Furigana is inserted for unambiguous whole written kanji compounds; remaining readings are intentionally omitted rather than guessed. Echo can add contextual readings separately.
 
