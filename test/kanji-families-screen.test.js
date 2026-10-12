@@ -63,14 +63,14 @@ test("kanji screen renders every matching vocabulary word without pagination",()
 test("Kanji families are collapsed by default and organised like JLPT bands",()=>{
   const panel=html.match(/<details id="family-panel"[^>]*>/)?.[0];
   assert.ok(panel,"the family accordion exists");
-  assert.doesNotMatch(panel,/\\sopen(?:\\s|>|=)/,"the family section must not expand at startup");
-  assert.match(app,/if\\(\\$\\("#family-panel"\\)\\.open\\)void renderKanjiFamilies\\(sentences\\)/);
-  assert.match(app,/familyBrowse\\.openTheme/);
-  assert.match(app,/el\\("details","family-theme-group"\\)/);
-  assert.match(app,/el\\("summary","family-theme-summary"\\)/);
-  assert.match(app,/kanjiCell\\(family\\.kanji,cover,known\\)/);
-  assert.match(app,/const grid=el\\("div","kanji-grid family-kanji-grid"\\)/);
-  assert.match(app,/if\\(!\\$\\("#family-panel"\\)\\.open\\)return/);
+  assert.doesNotMatch(panel,/\sopen(?:\s|>|=)/,"the family section must not expand at startup");
+  assert.match(app,/if\(\$\("#family-panel"\)\.open\)void renderKanjiFamilies\(sentences\)/);
+  assert.match(app,/familyBrowse\.openTheme/);
+  assert.match(app,/el\("details","family-theme-group"\)/);
+  assert.match(app,/el\("summary","family-theme-summary"\)/);
+  assert.match(app,/kanjiCell\(family\.kanji,cover,known\)/);
+  assert.match(app,/const grid=el\("div","kanji-grid family-kanji-grid"\)/);
+  assert.match(app,/if\(!\$\("#family-panel"\)\.open\)return/);
   assert.doesNotMatch(html,/id="family-more"/);
-  assert.match(css,/\\.family-theme-group\\[open\\]/);
+  assert.match(css,/\.family-theme-group\[open\]/);
 });
