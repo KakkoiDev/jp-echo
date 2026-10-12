@@ -8,7 +8,7 @@ const css=read("styles.css");
 
 test("Kanji screen provides a searchable family browser and linked character sheet",()=>{
   for(const id of ["family-panel","family-search","family-theme","family-list",
-    "family-count","family-error","family-more","kanji-family-detail",
+    "family-count","family-error","kanji-family-detail",
     "kanji-family-meaning","kanji-family-radical","kanji-family-sentences",
     "family-dictionary-query","family-dictionary-level","family-dictionary-list",
     "family-dictionary-count",
@@ -16,7 +16,7 @@ test("Kanji screen provides a searchable family browser and linked character she
   assert.match(app,/function renderKanjiFamilies\(sentences\)/);
   assert.match(app,/function renderKanjiFamily\(character,sentences\)/);
   assert.match(app,/await renderKanjiFamily\(character,all\)/);
-  assert.match(css,/\.family-row\s*\{/);
+  assert.match(css,/\.family-theme-group\s*\{/);
   assert.match(css,/\.kanji-family-detail\s*\{/);
 });
 test("Kanji families import one requested sentence via the existing Echo pipeline",()=>{
@@ -58,4 +58,19 @@ test("kanji screen renders every matching vocabulary word without pagination",()
   assert.doesNotMatch(ui,/\.limit|\.length\s*<\s*3/);
   assert.doesNotMatch(html,/id="family-dictionary-more"/);
   assert.match(html,/All vocabulary containing this kanji/);
+});
+
+test("Kanji families are collapsed by default and organised like JLPT bands",()=>{
+  const panel=html.match(/<details id="family-panel"[^>]*>/)?.[0];
+  assert.ok(panel,"the family accordion exists");
+  assert.doesNotMatch(panel,/\\sopen(?:\\s|>|=)/,"the family section must not expand at startup");
+  assert.match(app,/if\\(\\$\\("#family-panel"\\)\\.open\\)void renderKanjiFamilies\\(sentences\\)/);
+  assert.match(app,/familyBrowse\\.openTheme/);
+  assert.match(app,/el\\("details","family-theme-group"\\)/);
+  assert.match(app,/el\\("summary","family-theme-summary"\\)/);
+  assert.match(app,/kanjiCell\\(family\\.kanji,cover,known\\)/);
+  assert.match(app,/const grid=el\\("div","kanji-grid family-kanji-grid"\\)/);
+  assert.match(app,/if\\(!\\$\\("#family-panel"\\)\\.open\\)return/);
+  assert.doesNotMatch(html,/id="family-more"/);
+  assert.match(css,/\\.family-theme-group\\[open\\]/);
 });
