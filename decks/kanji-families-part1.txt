@@ -1,0 +1,59 @@
+人|人|person|People|人:ひと:あの人は先生です。:That person is a teacher.;人口:じんこう:この町の人口は増えている。:The town population is growing.;外国人:がいこくじん:外国人の友達ができた。:I made a friend from abroad.
+日|日|sun, day|Time|日:ひ:今日はいい日だ。:Today is a good day.;毎日:まいにち:毎日少しずつ勉強する。:I study a little every day.;日記:にっき:寝る前に日記を書く。:I write in my diary before bed.
+月|月|moon, month|Time|月:つき:今夜は月が明るい。:The moon is bright tonight.;今月:こんげつ:今月は仕事が忙しい。:I am busy with work this month.;来月:らいげつ:来月旅行に行く。:I will travel next month.
+年|干|year|Time|年:とし:新しい年が始まった。:A new year began.;去年:きょねん:去年日本に引っ越した。:I moved to Japan last year.;来年:らいねん:来年は京都へ行きたい。:I want to visit Kyoto next year.
+時|日|time, hour|Time|時間:じかん:今日は時間がない。:I have no time today.;時計:とけい:新しい時計を買った。:I bought a new clock.;同時:どうじ:二人が同時に話した。:Two people spoke at once.
+分|刀|divide, portion|Time|分ける:わける:ケーキを三つに分ける。:I divide the cake into three pieces.;自分:じぶん:自分で決めてください。:Please decide for yourself.;十分:じゅうぶん:準備は十分です。:The preparations are sufficient.
+今|人|now|Time|今:いま:今は家にいる。:I am home now.;今日:きょう:今日は雨が降っている。:It is raining today.;今回:こんかい:今回は私が料理する。:I will cook this time.
+毎|毋|every|Time|毎日:まいにち:毎日運動している。:I exercise every day.;毎週:まいしゅう:毎週水曜日に集まる。:We meet every Wednesday.;毎月:まいつき:毎月本を二冊読む。:I read two books each month.
+間|門|between, interval|Time|間:あいだ:昼休みの間に散歩した。:I took a walk during lunch break.;時間:じかん:あと一時間待つ。:I will wait another hour.;人間:にんげん:人間は間違えることがある。:Human beings make mistakes.
+週|辶|week|Time|今週:こんしゅう:今週は予定が多い。:I have many plans this week.;来週:らいしゅう:来週会いましょう。:Let's meet next week.;週末:しゅうまつ:週末は家で休む。:I rest at home on weekends.
+朝|月|morning|Time|朝:あさ:朝は早く起きる。:I wake up early in the morning.;朝食:ちょうしょく:朝食にパンを食べた。:I ate bread for breakfast.;毎朝:まいあさ:毎朝コーヒーを飲む。:I drink coffee every morning.
+夜|夕|night|Time|夜:よる:夜になると静かになる。:It becomes quiet at night.;今夜:こんや:今夜は映画を見よう。:Let's watch a movie tonight.;深夜:しんや:深夜まで働かないで。:Don't work until late at night.
+昼|日|noon|Time|昼:ひる:昼は外で食べる。:I eat out at noon.;昼食:ちゅうしょく:昼食は一時からです。:Lunch starts at one.;昼休み:ひるやすみ:昼休みに公園へ行く。:I go to the park during lunch break.
+春|日|spring|Nature|春:はる:春には桜が咲く。:Cherry blossoms bloom in spring.;春休み:はるやすみ:春休みに旅行する。:I travel during spring break.;青春:せいしゅん:青春の思い出を話した。:We talked about memories of youth.
+夏|夂|summer|Nature|夏:なつ:夏は海で泳ぐ。:I swim in the sea in summer.;夏休み:なつやすみ:夏休みは家族と過ごす。:I spend summer vacation with my family.;真夏:まなつ:真夏はとても暑い。:Midsummer is very hot.
+秋|禾|autumn|Nature|秋:あき:秋は紅葉がきれいだ。:Autumn leaves are beautiful in fall.;秋風:あきかぜ:秋風が気持ちいい。:The autumn breeze feels good.;秋分:しゅうぶん:秋分の日に墓参りをした。:I visited a grave on the autumn equinox.
+冬|冫|winter|Nature|冬:ふゆ:冬は雪が降る。:It snows in winter.;冬休み:ふゆやすみ:冬休みに実家へ帰る。:I go to my parents' home during winter vacation.;真冬:まふゆ:真冬の朝は寒い。:Mornings are cold in midwinter.
+天|大|sky, heavens|Nature|天気:てんき:明日の天気を調べる。:I check tomorrow's weather.;天国:てんごく:彼は天国を信じている。:He believes in heaven.;天然:てんねん:これは天然の水です。:This is natural spring water.
+気|气|air, spirit|Nature|元気:げんき:今日は元気ですか。:Are you feeling well today?;空気:くうき:外の空気が冷たい。:The air outside is cold.;気分:きぶん:今日は気分がいい。:I feel good today.
+雨|雨|rain|Nature|雨:あめ:午後から雨が降る。:It will rain from the afternoon.;大雨:おおあめ:昨夜は大雨だった。:It rained heavily last night.;雨天:うてん:雨天の場合は中止です。:It will be canceled if it rains.
+空|穴|sky, emptiness|Nature|空:そら:空に雲が見える。:I see clouds in the sky.;空港:くうこう:空港までバスで行く。:I take a bus to the airport.;空席:くうせき:まだ空席があります。:There are still vacant seats.
+海|氵|sea|Nature|海:うみ:海の近くに住んでいる。:I live near the sea.;海外:かいがい:海外で働きたい。:I want to work abroad.;海岸:かいがん:海岸をゆっくり歩いた。:I walked slowly along the coast.
+山|山|mountain|Nature|山:やま:山に登るのが好きだ。:I enjoy climbing mountains.;火山:かざん:この島には火山がある。:This island has a volcano.;登山:とざん:週末に登山をする。:I go mountaineering on weekends.
+川|巛|river|Nature|川:かわ:川で魚を見つけた。:I found a fish in the river.;河川:かせん:河川の水位が上がった。:The river level rose.;川岸:かわぎし:川岸に花が咲いている。:Flowers bloom on the riverbank.
+水|水|water|Nature|水:みず:水を一杯ください。:Please give me a glass of water.;水道:すいどう:水道の水は飲めますか。:Can you drink tap water?;水泳:すいえい:子供は水泳を習っている。:My child is learning to swim.
+火|火|fire|Nature|火:ひ:火を消してください。:Please put out the fire.;火事:かじ:近くで火事があった。:There was a fire nearby.;火力:かりょく:火力を弱くしてください。:Please lower the heat.
+土|土|earth, soil|Nature|土:つち:庭の土が乾いている。:The soil in the garden is dry.;土地:とち:この土地は広い。:This plot of land is spacious.;土曜日:どようび:土曜日は休みです。:Saturday is a day off.
+金|金|gold, money|Money|お金:おかね:お金を少し貯める。:I save a little money.;料金:りょうきん:料金はいくらですか。:How much is the fee?;金額:きんがく:合計金額を確認した。:I checked the total amount.
+石|石|stone|Nature|石:いし:道に大きな石がある。:There is a large stone in the road.;宝石:ほうせき:その宝石は青い。:That gemstone is blue.;石油:せきゆ:石油の価格が上がった。:Oil prices have risen.
+花|艹|flower|Nature|花:はな:庭に花を植えた。:I planted flowers in the garden.;花見:はなみ:友達と花見をした。:I went cherry blossom viewing with friends.;花火:はなび:夏に花火を見た。:I watched fireworks in summer.
+草|艹|grass|Nature|草:くさ:庭に草が生えている。:Grass is growing in the garden.;草原:そうげん:広い草原を歩いた。:I walked across a wide grassland.;雑草:ざっそう:庭の雑草を抜いた。:I pulled weeds from the garden.
+木|木|tree, wood|Nature|木:き:庭に大きな木がある。:There is a big tree in the garden.;木材:もくざい:木材で机を作った。:I made a desk from wood.;木曜日:もくようび:木曜日に会議があります。:There is a meeting on Thursday.
+林|木|woods|Nature|林:はやし:林の中を歩いた。:I walked through the woods.;森林:しんりん:森林を守ることが大切だ。:Protecting forests is important.;林業:りんぎょう:彼は林業の仕事をしている。:He works in forestry.
+森|木|forest|Nature|森:もり:森に鳥が住んでいる。:Birds live in the forest.;森林:しんりん:この地域には森林が多い。:This area has many forests.;森の中:もりのなか:森の中は静かだった。:It was quiet inside the forest.
+風|風|wind, style|Nature|風:かぜ:風が強くなってきた。:The wind has become stronger.;台風:たいふう:台風が近づいている。:A typhoon is approaching.;風景:ふうけい:美しい風景を写真に撮った。:I photographed a beautiful landscape.
+音|音|sound|Senses|音:おと:外から変な音がした。:I heard a strange sound outside.;音楽:おんがく:毎日音楽を聞く。:I listen to music every day.;発音:はつおん:日本語の発音を練習する。:I practice Japanese pronunciation.
+声|士|voice|Senses|声:こえ:遠くから声が聞こえる。:I can hear a voice in the distance.;音声:おんせい:音声を再生してください。:Please play the audio.;大声:おおごえ:図書館では大声で話さないで。:Don't speak loudly in the library.
+色|色|color|Senses|色:いろ:この色が好きだ。:I like this color.;色々:いろいろ:色々な本を読んだ。:I read various books.;景色:けしき:窓から海の景色が見える。:I can see the sea through the window.
+光|儿|light|Nature|光:ひかり:朝の光が部屋に入る。:Morning light enters the room.;観光:かんこう:京都へ観光に行く。:I go sightseeing in Kyoto.;日光:にっこう:植物には日光が必要だ。:Plants need sunlight.
+心|心|heart, mind|People|心:こころ:心が落ち着いた。:My mind became calm.;安心:あんしん:無事だと聞いて安心した。:I felt relieved when I heard everyone was safe.;中心:ちゅうしん:町の中心に駅がある。:There is a station in the town center.
+手|手|hand|People|手:て:手を洗ってください。:Please wash your hands.;上手:じょうず:妹は絵が上手だ。:My younger sister is good at drawing.;手伝う:てつだう:料理を手伝ってください。:Please help with cooking.
+足|足|foot, enough|People|足:あし:長く歩いて足が痛い。:My feet hurt after a long walk.;不足:ふそく:睡眠が不足している。:I am not getting enough sleep.;満足:まんぞく:この結果には満足している。:I am satisfied with this result.
+目|目|eye, item|People|目:め:目が疲れた。:My eyes are tired.;目的:もくてき:旅行の目的を説明した。:I explained the purpose of the trip.;注目:ちゅうもく:この問題に注目してください。:Please pay attention to this issue.
+耳|耳|ear|People|耳:みみ:耳が痛くなった。:My ear started hurting.;耳鼻科:じびか:耳鼻科で診てもらった。:I saw an ear nose and throat doctor.;耳元:みみもと:耳元で小さな声がした。:I heard a quiet voice by my ear.
+口|口|mouth, opening|People|口:くち:口を開けてください。:Please open your mouth.;人口:じんこう:日本の人口は減っている。:Japan's population is declining.;入口:いりぐち:入口はあちらです。:The entrance is over there.
+顔|頁|face|People|顔:かお:朝、顔を洗う。:I wash my face in the morning.;笑顔:えがお:彼女の笑顔が好きだ。:I like her smile.;顔色:かおいろ:今日は顔色が悪いね。:You look pale today.
+頭|頁|head|People|頭:あたま:頭が少し痛い。:My head hurts a little.;頭痛:ずつう:朝から頭痛がする。:I have had a headache since morning.;先頭:せんとう:先頭の車両に乗った。:I boarded the first carriage.
+体|亻|body|People|体:からだ:体を大切にしてください。:Please take care of your body.;体育:たいいく:今日は体育の授業がある。:We have PE class today.;体験:たいけん:初めて茶道を体験した。:I experienced tea ceremony for the first time.
+力|力|power|People|力:ちから:この荷物は力が必要だ。:This luggage requires strength.;協力:きょうりょく:友達に協力してもらった。:My friends helped me.;努力:どりょく:毎日の努力が大切だ。:Daily effort matters.
+名|口|name|Language|名前:なまえ:名前を教えてください。:Please tell me your name.;有名:ゆうめい:この店は有名です。:This shop is famous.;名刺:めいし:名刺を交換した。:We exchanged business cards.
+字|子|character|Language|文字:もじ:小さい文字は読みにくい。:Small letters are hard to read.;漢字:かんじ:漢字を毎日練習する。:I practice kanji every day.;数字:すうじ:数字を確認してください。:Please check the numbers.
+文|文|writing|Language|文章:ぶんしょう:短い文章を書いた。:I wrote a short passage.;文化:ぶんか:日本の文化に興味がある。:I am interested in Japanese culture.;文法:ぶんぽう:文法をもう一度復習した。:I reviewed the grammar once more.
+本|木|book, origin|Language|本:ほん:新しい本を買った。:I bought a new book.;日本:にほん:日本に住んでいる。:I live in Japan.;基本:きほん:まず基本を覚えよう。:Let's learn the basics first.
+書|曰|write|Language|書く:かく:手紙を書くのが好きだ。:I like writing letters.;読書:どくしょ:読書は楽しい。:Reading books is fun.;辞書:じしょ:辞書で言葉を調べた。:I looked up the word in a dictionary.
+読|言|read|Language|読む:よむ:毎晩少し本を読む。:I read a little every evening.;読者:どくしゃ:この雑誌は若い読者が多い。:This magazine has many young readers.;音読:おんどく:毎朝日本語を音読する。:I read Japanese aloud every morning.
+話|言|speak|Language|話す:はなす:友達と日本語で話す。:I speak Japanese with friends.;会話:かいわ:会話の練習をしよう。:Let's practice conversation.;電話:でんわ:あとで電話してください。:Please call me later.
+言|言|say, language|Language|言う:いう:正直に言ってください。:Please tell me honestly.;言語:げんご:新しい言語を学ぶ。:I learn a new language.;方言:ほうげん:この地方の方言を調べた。:I researched the dialect of this region.
+聞|耳|hear, ask|Language|聞く:きく:先生の説明を聞く。:I listen to the teacher's explanation.;新聞:しんぶん:毎朝新聞を読む。:I read a newspaper every morning.;聞き取り:ききとり:聞き取りの練習が必要だ。:I need listening practice.
+見|見|see|Senses|見る:みる:毎晩ニュースを見る。:I watch the news every evening.;意見:いけん:違う意見を聞いた。:I heard a different opinion.;発見:はっけん:新しい発見があった。:There was a new discovery.
