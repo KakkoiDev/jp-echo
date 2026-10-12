@@ -206,3 +206,20 @@ Shared reading helper revision: `78a5fa3661292be083b07775e9c3d0e59e4f75e0`.
 Review session limits are saved on this device from Settings → Every day → Review limits. New cards and existing reviews each default to 20 per session; either can be set to any nonnegative whole number, including 0. Learning and relearning count toward the existing review limit. Excess due cards stay available for the next session.
 
 Review → Stats summarizes saved grades over rolling 24-hour and 7-day windows, with ratings and skill counts. Again and OK each count once; skips do not count and undo restores the previous history. Review events remain in each sentence’s `reviews` array and are included in backups.
+
+## Kanji meaning families
+
+Library → **Kanji, words and grammar** → **Kanji** now includes a searchable
+**Kanji families** panel. The [206-family curriculum](decks/kanji-families-curriculum.json)
+contains 625 word associations and 623 distinct contextual Japanese sentences.
+Filter by meaning, parent kanji, radical, word, reading or topic. Open a family
+to see its dictionary indexing radical, words, JMdict glosses where available,
+and playable/tappable example sentences. **Add sentence** imports that one card
+through the ordinary Echo import/FSRS path, deduplicates against existing
+sentences, and retains personal review progress. Merely browsing creates no
+reviews. The catalogue is a versioned offline PWA resource, not stored in user
+backups. Tests cover links, search, progress and the deck import contract.
+
+The dictionary radical is used for character indexing; it is not the semantic
+parent of a word family. Curriculum data and default examples are editorial
+learning content, not official JLPT frequency rankings.
