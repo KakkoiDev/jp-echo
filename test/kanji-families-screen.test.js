@@ -11,7 +11,7 @@ test("Kanji screen provides a searchable family browser and linked character she
     "family-count","family-error","family-more","kanji-family-detail",
     "kanji-family-meaning","kanji-family-radical","kanji-family-sentences",
     "family-dictionary-query","family-dictionary-level","family-dictionary-list",
-    "family-dictionary-more","family-dictionary-count",
+    "family-dictionary-count",
     "kanji-family-message"])assert.match(html,new RegExp('id="'+id+'"'),id);
   assert.match(app,/function renderKanjiFamilies\(sentences\)/);
   assert.match(app,/function renderKanjiFamily\(character,sentences\)/);
@@ -46,4 +46,16 @@ test("additional dictionary words open the existing Word sheet, without fake sen
  const source=app.slice(app.indexOf("function renderKanjiFamilyDictionary"),app.indexOf("async function addFamilySentence"));
  assert.doesNotMatch(source,/importBackupData\(/);
  assert.doesNotMatch(source,/saveSentence\(/);
+});
+
+test("kanji screen renders every matching vocabulary word without pagination",()=>{
+  const ui=app.slice(app.indexOf("function renderKanjiFamilyDictionary("),
+    app.indexOf("async function addFamilySentence("));
+  assert.match(ui,/familyVocabulary\(family,REFERENCE_WORDS/);
+  assert.match(ui,/for\(const entry of matches\)/);
+  assert.match(ui,/list\.replaceChildren\(fragment\)/);
+  assert.doesNotMatch(ui,/\.slice\(/);
+  assert.doesNotMatch(ui,/\.limit|\.length\s*<\s*3/);
+  assert.doesNotMatch(html,/id="family-dictionary-more"/);
+  assert.match(html,/All vocabulary containing this kanji/);
 });
