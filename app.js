@@ -602,6 +602,13 @@ async function renderKanjiFamily(character,sentences){
     for(const [i,word] of family.words.entries()){
       const card=catalogue.byId.get(word.exampleSentenceId);
       const state=exampleState(card,index),row=host.children[i];
+      // The existing offline JMdict catalogue supplies word glosses when
+      // available. The full sentence translation remains the fallback.
+      const wordLabel=row.querySelector(".kanji-sentence-text i");
+      const dictionary=REFERENCE_WORDS.find(w=>w.w===word.term&&w.r===word.reading)||
+        REFERENCE_WORDS.find(w=>w.w===word.term);
+      if(wordLabel&&dictionary?.en?.length)
+        wordLabel.after(el("span","family-word-gloss",dictionary.en[0]));
       const add=el("button","family-add",state==="unmet"?"Add sentence":
         state==="learned"?"Learned":"In library");
       add.type="button";
