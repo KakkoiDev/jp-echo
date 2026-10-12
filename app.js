@@ -452,7 +452,7 @@ async function renderKanjiFamilies(sentences){
       details.append(el("strong",null,family.meaning),
         el("span",null,"Radical "+family.dictionaryRadical+" · "+
           familyVocabulary(family,REFERENCE_WORDS).length+" dictionary words · "+
-          family.words.length+" example words")));
+          family.words.length+" example words"));
       const count=el("span","family-row-count",progress.met+"/"+progress.total);
       count.title=progress.learned+" reviewed";
       row.append(glyph,details,count);row.insertAdjacentHTML("beforeend",RIGHT);
