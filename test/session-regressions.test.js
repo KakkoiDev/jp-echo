@@ -157,8 +157,8 @@ test("Listening is audio-only, Reading is bare Japanese, and Writing requires ty
   const start=app.indexOf("function renderReview"),end=app.indexOf("async function renderReviewComplete",start),block=app.slice(start,end);
   assert.match(block,/review-prompt"\)\.hidden=listening/);
   assert.match(block,/mode==="reading"\?reviewPlainJapanese\(sentence\):sentence\.source/);
-  assert.match(block,/review-capture"\)\.hidden=!writing/);
-  assert.match(block,/review-answer-tools"\)\.hidden=true/);
+  assert.match(block,/review-capture"\)\.hidden=listening/);
+  assert.match(block,/review-answer-tools"\)\.hidden=mode!=="reading"/);
   assert.match(block,/if\(listening\)requestAnimationFrame/);
 });
 

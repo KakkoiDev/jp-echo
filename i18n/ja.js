@@ -4,6 +4,17 @@
 // ——製品名（DeepSeek、OpenAI、Echo）、キー名（Esc、Space）、モデル名
 // （qwen3:4b）、入力例のURL、端末が返す音声の名前。
 export default {
+  "Record your reading (optional)": "音読を録音（任意）",
+  "Record your reading": "音読を録音",
+  "Stop recording": "録音を停止",
+  "Recording… Tap again to stop.": "録音中…もう一度タップすると停止します。",
+  "Transcribing…": "文字起こし中…",
+  "Ready to check.": "答え合わせができます。",
+  "No recording to check.": "確認する録音がありません。",
+  "✓ Recognized speech matches the sentence.": "✓ 認識された音声が文と一致しています。",
+  "Some recognized words differ. Compare your reading below.": "認識された言葉に違いがあります。下で読み方を確認してください。",
+  "Could not confidently check this reading. Compare it with the expected reading.": "読み方を確実に判定できませんでした。正しい読み方と比べてください。",
+  "Tap the microphone, read aloud, then tap again to stop. Show the meaning to check your reading.": "マイクをタップして音読し、もう一度タップして停止します。「意味を表示」で読み方を確認できます。",
   "Sentence order": "文の順番",
   "Scheduled order": "予定順",
   "Shortest first": "短い文から",

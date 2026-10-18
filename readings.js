@@ -1,5 +1,6 @@
+import {stripFurigana,toHiragana} from './core.js';
 import {WORDS} from './words-data.js';
-import {createReadingResolver,READING_VERSION,validateReadingCorrection} from './japanese-readings.js';
+import {createReadingResolver,READING_VERSION,validateReadingCorrection,readingText} from './japanese-readings.js';
 const resolve=createReadingResolver(WORDS);
 export const readingSignature=s=>JSON.stringify([s.targetLang||'ja',s.target,s.casualTarget,s.politeTarget,s.readingOverrides||{}]);
 export function dictionaryReadings(record,force=false){
@@ -33,4 +34,14 @@ export async function correctReadingDraft(text,{correct}={}){
  const result=prepared.readingIssues.length&&correct?await correct(prepared):prepared;
  validateReadingCorrection(text,result.target);
  return dictionaryReadings({...prepared,target:result.target},true);
+}
+
+// Recognition checks the spoken reading, not punctuation or kanji spelling.
+export function checkReadingSpeech(heard,target,lang='ja'){
+ const normalize=value=>toHiragana(String(value).normalize('NFKC')).toLocaleLowerCase().replace(/[^\p{L}\p{N}]/gu,'');
+ if(!normalize(heard))return {status:'empty',heard:'',expected:lang==='ja'?readingText(target):stripFurigana(target)};
+ if(lang!=='ja')return {status:normalize(heard)===normalize(stripFurigana(target))?'match':'different',heard,expected:stripFurigana(target)};
+ const resolved=resolve(heard),spoken=readingText(resolved.text),expected=readingText(target);
+ const matches=normalize(heard)===normalize(stripFurigana(target))||normalize(spoken)===normalize(expected);
+ return {status:matches?'match':resolved.issues.length?'uncertain':'different',heard:spoken,expected};
 }

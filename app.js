@@ -1,7 +1,8 @@
+import {createReviewSpeechCapture} from './review-speech.js';
 import {readEpub} from './epub-import.js';
 import {passageCandidates,analyzePassage,vocabularyInventory,classifyExtraction,extractionIdentity} from './text-extraction.js';
 import {fetchReference,missingReferenceCandidates,referenceKey,customReferenceSpans,resolveReferenceLookup} from './references.js';
-import {dictionaryReadings,backfillReadings,correctReadingDraft} from "./readings.js";
+import {dictionaryReadings,backfillReadings,correctReadingDraft,checkReadingSpeech} from "./readings.js";
 import {validateDeckBackup,fetchDeckBackup,runImportFeedback} from './imports.js';
 import {isSeeded,planMiniSentenceUpgrade,repairMiniImport} from './mini-imports.js';
 import {applyI18n,setDictionary,t} from "./i18n.js";
@@ -359,7 +360,7 @@ function syncRoute(patch={},replace=false){if(applyingRoute)return;const url=rou
 const wide=matchMedia("(min-width:1024px)");
 const isWide=()=>wide.matches;
 const VIEW_TITLES={review:"Review",library:"Library"};
-function showView(name,{route=true}={}){if(name==="map"&&targetLang()!=="ja")name="library";if(name!=="practice")resetSession();speechSynthesis.cancel();
+function showView(name,{route=true}={}){if(name==="map"&&targetLang()!=="ja")name="library";if(name!=="practice")resetSession();if(name!=="session")stopReviewListening();speechSynthesis.cancel();
   $("#main-view").hidden=name!=="practice";$("#review-home").hidden=name!=="review";$("#history-view").hidden=!(name==="library"||(name==="sentence"&&isWide()));$("#review-view").hidden=name!=="session";$("#sentence-view").hidden=name!=="sentence";$("#onboard-view").hidden=name!=="onboard";$("#setup-view").hidden=name!=="setup";$("#map-view").hidden=name!=="map";$("#mora-view").hidden=name!=="mora";$("#settings-view").hidden=name!=="settings";if(name!=="settings")settingsStack=[];$("#settings-nav")?.toggleAttribute("aria-current",name==="settings");if(name!=="settings"&&$("#ai-show-key")?.getAttribute("aria-pressed")==="true")$("#ai-show-key").click();
   const solo=name==="onboard"||name==="setup"||((name==="session"||name==="sentence"||name==="map"||name==="mora"||name==="settings")&&!isWide());document.querySelector("header").hidden=solo||(name==="practice"&&(discussionMode||readingMode||extractMode)&&!isWide());$("#tabs").hidden=solo;
   $("#view-title").textContent=VIEW_TITLES[name]||"";$("#view-title").hidden=!VIEW_TITLES[name];document.querySelector(".brand").hidden=!!VIEW_TITLES[name];
@@ -1658,12 +1659,12 @@ function renderReview(){refreshReviewStats();updateReviewPrevious();resetSession
   $("#review-mode-instruction").textContent=skillReason(sentence);
   $("#review-passive-hint").textContent=listening?"Plays the sentence once. Say it with the voice, then check — the Japanese is shown after.":"Say it out loud, then check the meaning.";
   $("#review-prompt").hidden=listening;
-  $("#review-prompt").lang=mode==="reading"?targetLang():sourceLang();
+  $("#review-prompt").lang=mode==="reading"?itemTarget(sentence):sourceLang();
   $("#review-prompt").textContent=mode==="reading"?reviewPlainJapanese(sentence):sentence.source;
   $("#review-prompt-echo").textContent=sentence.source;
-  $("#review-passive").hidden=writing;$("#review-front-audio").hidden=!listening;$("#review-capture").hidden=!writing;$("#review-answer-tools").hidden=true;
-  $("#review-capture-label").textContent="Write it in Japanese";$("#review-answer").lang=itemTarget(sentence);$("#review-answer").placeholder="Write the Japanese sentence";$("#review-answer").value="";$("#review-listen-state").textContent="";
-  $("#review-grammar").replaceChildren();$("#review-grammar").hidden=true;$("#review-result").hidden=true;$("#review-attempt-label").hidden=true;$("#review-attempt").hidden=true;
+  $("#review-passive").hidden=writing;$("#review-front-audio").hidden=!listening;$("#review-capture").hidden=listening;$("#review-answer-tools").hidden=mode!=="reading";$("#review-answer").hidden=mode==="reading";
+  $("#review-capture-label").textContent=mode==="reading"?"Record your reading (optional)":"Write it in Japanese";$("#review-answer").lang=itemTarget(sentence);$("#review-answer").placeholder="Write the Japanese sentence";$("#review-answer").value="";$("#review-listen-state").textContent="";
+  $("#review-speech-feedback").hidden=true;$("#review-speech-feedback").textContent="";$("#review-grammar").replaceChildren();$("#review-grammar").hidden=true;$("#review-result").hidden=true;$("#review-attempt-label").hidden=true;$("#review-attempt").hidden=true;
   $("#review-check .label").textContent=listening?"Said it — show me":mode==="reading"?"Show the meaning":"Said it — check and listen";
   echoesAtCardStart=Number(sentence.echoCount)||0;$("#review-echo-count").textContent=String(echoesAtCardStart);
   updateCheckButton();
@@ -1675,11 +1676,19 @@ async function renderReviewComplete(){const done=reviewQueue.length;let copy=don
   $("#review-complete-copy").textContent=copy;refreshDueBadge()}
 function updateCheckButton(){const sentence=reviewQueue[reviewIndex];if(!sentence)return $("#review-check").disabled=true;$("#review-check").disabled=reviewMode(sentence)==="writing"&&!$("#review-answer").value.trim()}
 async function revealReview(){let sentence=reviewQueue[reviewIndex];if(!sentence||reviewRevealed)return;
-  const mode=reviewMode(sentence),attempt=$("#review-answer").value.trim();if(mode==="writing"&&!attempt)return;
+  const mode=reviewMode(sentence),capture=reviewRecognition;
+  if(mode==="reading"&&capture){$("#review-check").disabled=true;await capture.finish();if(reviewQueue[reviewIndex]!==sentence||reviewRecognition!==capture||reviewRevealed)return}
+  const attempt=$("#review-answer").value.trim();if(mode==="writing"&&!attempt)return;
   reviewRevealed=true;stopReviewListening();resetSession();
   if(sentence.skipped){sentence={...sentence,skipped:false,skippedAt:null,updatedAt:new Date().toISOString()};reviewQueue[reviewIndex]=sentence;await saveSentence(sentence)}
   const target=reviewJapanese(sentence);
   $("#review-prompt-echo").textContent=sentence.source;
+  if(mode==="reading"){
+    const feedback=$("#review-speech-feedback"),check=checkReadingSpeech(attempt,target,itemTarget(sentence));
+    feedback.hidden=false;feedback.textContent=check.status==='empty'?"No recording to check.":check.status==='match'?"✓ Recognized speech matches the sentence.":check.status==='uncertain'?"Could not confidently check this reading. Compare it with the expected reading.":"Some recognized words differ. Compare your reading below.";
+    if(attempt){feedback.append(document.createElement("br"),"Recognized: "+attempt,document.createElement("br"),"Expected reading: "+check.expected,document.createElement("br"),"Speech recognition can mishear. Choose Again or OK yourself.")}
+  }
+  $("#review-attempt-label").textContent=mode==="reading"?"What was recognized":"Your attempt";
   if(mode==="writing"){
     $("#review-attempt-label").hidden=false;$("#review-attempt").hidden=false;
     $("#review-attempt").innerHTML=markAttempt(attempt,target).map(part=>part.changed?"<mark>"+escapeText(part.text)+"</mark>":escapeText(part.text)).join("");
@@ -1827,20 +1836,22 @@ async function openVocabularyHit(hit,context){
     finally{if(generation===dictionaryLookupGeneration)ask.disabled=!hasTranslator()}};
   if(!dialog.open)dialog.showModal();
 }
-function reviewRecognitionLang(){return targetLang()}
-function startReviewListening(){if(reviewListening)return;
-  if(reviewRecognition&&reviewRecognition.lang!==reviewRecognitionLang())reviewRecognition=null;
-  if(!reviewRecognition){reviewRecognition=recognitionFactory(reviewRecognitionLang());
-    if(!reviewRecognition){$("#review-mic").disabled=true;$("#review-listen-state").textContent=DICTATION.unavailable;$("#review-answer").focus();return}
-    reviewRecognition.onresult=event=>{appendHeard($("#review-answer"),event.results[0][0].transcript);updateCheckButton()};
-    reviewRecognition.onerror=event=>{$("#review-listen-state").textContent=dictationError(event.error)};
-    reviewRecognition.onend=()=>{reviewListening=false;$("#review-mic").setAttribute("aria-pressed","false");$("#review-mic").setAttribute("aria-label","Start listening");$("#review-panel").classList.remove("is-listening");if($("#review-listen-state").textContent===DICTATION.listening)$("#review-listen-state").textContent=""}}
-  try{reviewRecognition.start()}catch{return}
-  reviewListening=true;$("#review-mic").setAttribute("aria-pressed","true");$("#review-mic").setAttribute("aria-label","Stop listening");$("#review-panel").classList.add("is-listening");$("#review-listen-state").textContent=DICTATION.listening}
-function stopReviewListening(){if(!reviewListening||!reviewRecognition)return;reviewListening=false;try{reviewRecognition.stop()}catch{}$("#review-mic").setAttribute("aria-pressed","false");$("#review-panel").classList.remove("is-listening")}
-function toggleReviewListening(){reviewListening?stopReviewListening():startReviewListening()}
+function reviewRecognitionLang(){return itemTarget(reviewQueue[reviewIndex])}
+function startReviewListening(){
+ if(reviewListening||reviewRevealed)return;
+ stopReviewListening();resetSession();
+ const sentence=reviewQueue[reviewIndex];if(!sentence)return;
+ $("#review-answer").value="";
+ const capture=createReviewSpeechCapture({lang:reviewRecognitionLang(),recognitionFactory,transcribe:(blob,lang)=>transcribeAudio(blob,lang,settings),
+  onText:text=>{if(reviewRecognition!==capture||reviewQueue[reviewIndex]!==sentence)return;$("#review-answer").value=text;updateCheckButton()},
+  onState:state=>{if(reviewRecognition!==capture)return;$("#review-listen-state").textContent=state;reviewListening=state.startsWith("Recording")||state.startsWith("Starting");$("#review-mic").disabled=state==="Transcribing…";$("#review-mic").setAttribute("aria-pressed",String(reviewListening));$("#review-mic").setAttribute("aria-label",reviewListening?"Stop recording":"Record your reading");$("#review-panel").classList.toggle("is-listening",reviewListening)}
+ });
+ reviewRecognition=capture;capture.start();
+}
+function stopReviewListening(){reviewRecognition?.cancel();reviewRecognition=null;reviewListening=false;$("#review-mic").disabled=false;$("#review-mic").setAttribute("aria-pressed","false");$("#review-mic").setAttribute("aria-label","Record your reading");$("#review-panel").classList.remove("is-listening")}
+function toggleReviewListening(){reviewListening?reviewRecognition?.finish():startReviewListening()}
 async function skipReview(){const sentence=reviewQueue[reviewIndex];if(!sentence||reviewBusy)return;reviewBusy=true;updateReviewPrevious();const snapshot=reviewSnapshot(sentence);try{if(sentence){const updated={...sentence,skipped:true,skippedAt:new Date().toISOString(),updatedAt:new Date().toISOString()};await saveSentence(updated);reviewUndo.push(snapshot);reviewQueue[reviewIndex]=updated}reviewIndex++;renderReview()}finally{reviewBusy=false;updateReviewPrevious()}}
-function playReviewAudio(){const sentence=reviewQueue[reviewIndex];if(!sentence)return;if(loop.running){loop.togglePause();return}const policy=$("#voice").value,voice=policy==="random"?voices[Math.floor(Math.random()*voices.length)]:(policy==="default"?voices.find(v=>v.default)||voices[0]:voices[Number(policy)])||null;loop.play(reviewJapanese(sentence),{voice,rate:Number($("#rate").value),lang:targetLang()})}
+function playReviewAudio(){const sentence=reviewQueue[reviewIndex];if(!sentence)return;if(loop.running){loop.togglePause();return}const policy=$("#voice").value,voice=policy==="random"?voices[Math.floor(Math.random()*voices.length)]:(policy==="default"?voices.find(v=>v.default)||voices[0]:voices[Number(policy)])||null;loop.play(reviewJapanese(sentence),{voice,rate:Number($("#rate").value),lang:itemTarget(sentence)})}
 // One grade per card. The save is awaited before the queue moves on, so a
 // second tap (or a held 2 key) during it would otherwise grade the same card
 // twice: two review entries and an interval pushed out twice.
