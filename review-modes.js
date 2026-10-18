@@ -1,3 +1,4 @@
+import {stripFurigana} from "./core.js";
 export const REVIEW_MODES=Object.freeze(["listening","reading","writing"]);
 // Skill glyphs extend the app's single-kanji motif (休 了 学 音): 聴 listen,
 // 読 read, 書 write. `icon` is the glyph; `title` heads the review card.
@@ -71,9 +72,21 @@ export function sessionLimit(value){
   const number=Number(value);
   return Number.isFinite(number)?Math.max(0,Math.floor(number)):20;
 }
+export function reviewOrder(value){return ['shortest','longest'].includes(value)?value:'scheduled'}
+export function reviewSentenceLength(item){
+ const text=item.reviewRegister==='polite'?(item.politeTarget||item.target||''):(item.casualTarget||item.target||'');
+ return (stripFurigana(text).match(/[\p{L}\p{N}]/gu)||[]).length;
+}
+export function orderReviewSentences(due,order){
+ const direction=reviewOrder(order);
+ if(direction==='scheduled')return due;
+ const factor=direction==='shortest'?1:-1;
+ // Stable ties preserve scheduling priority; never reorder the source array.
+ return due.map(item=>({item,length:reviewSentenceLength(item)})).sort((a,b)=>factor*(a.length-b.length)).map(entry=>entry.item);
+}
 export function limitReviewSession(due,settings={}){
   let fresh=sessionLimit(settings.reviewNewLimit),reviews=sessionLimit(settings.reviewExistingLimit);
-  return due.filter(item=>(item.srs?.state??0)===0?fresh-->0:reviews-->0);
+  return orderReviewSentences(due,settings.reviewOrder).filter(item=>(item.srs?.state??0)===0?fresh-->0:reviews-->0);
 }
 
 export function reviewStats(sentences,now=Date.now()){

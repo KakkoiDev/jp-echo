@@ -4,6 +4,11 @@
 // ——製品名（DeepSeek、OpenAI、Echo）、キー名（Esc、Space）、モデル名
 // （qwen3:4b）、入力例のURL、端末が返す音声の名前。
 export default {
+  "Sentence order": "文の順番",
+  "Scheduled order": "予定順",
+  "Shortest first": "短い文から",
+  "Longest first": "長い文から",
+  "Applies when you start a session. Sentence length excludes furigana and punctuation.": "セッション開始時に適用されます。文の長さには、ふりがなと句読点を含めません。",
   // ナビゲーション
   "Practice": "練習",
   "Review": "復習",
