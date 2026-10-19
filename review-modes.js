@@ -112,6 +112,13 @@ export function limitReviewSession(due,settings={},all=due,now=Date.now()){
   return orderReviewSentences(due,settings.reviewOrder).filter(item=>(item.srs?.state??0)===0?fresh-->0:reviews-->0);
 }
 
+// Extra study is an explicit one-session bypass, never a settings change.
+export function extraStudySession(due,all,settings={}){
+ const ready=due.filter(item=>!item.skipped),eligible=all.filter(item=>!item.skipped);
+ const candidates=ready.length?ready:[...eligible].sort((a,b)=>(Date.parse(a.srs?.due)||0)-(Date.parse(b.srs?.due)||0));
+ return orderReviewSentences(candidates,settings.reviewOrder).slice(0,20);
+}
+
 export function reviewStats(sentences,now=Date.now()){
  const end=Number(now),day=86400000,events=[];
  for(const sentence of sentences)for(const review of Array.isArray(sentence.reviews)?sentence.reviews:[]){

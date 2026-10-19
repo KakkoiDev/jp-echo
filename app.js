@@ -22,7 +22,7 @@ import {ALL as REFERENCE_WORDS,setImportedWords,bands as wordBands,carries as ca
 import {deleteNote as dbDeleteNote,forBackup,getNote,listNotes,makeNote,mergeNotes,noteKey,putNote as dbPutNote,replaceNotes as dbReplaceNotes} from "./notes.js";
 import {downloadAnkiDeck} from "./anki-export.js";
 import {dueSentences,ensureSchedule,isDue,reviewSentence} from "./srs.js";
-import {reviewAvailabilityMessage,reviewStats,dailyReviewBudget,reviewOrder,sessionLimit,limitReviewSession,dueLine,ensureReviewTrack,nextSkill,recordReviewMode,reviewMode,reviewModeMeta,skillMix,skillReason} from "./review-modes.js";
+import {reviewAvailabilityMessage,reviewStats,dailyReviewBudget,reviewOrder,sessionLimit,limitReviewSession,extraStudySession,dueLine,ensureReviewTrack,nextSkill,recordReviewMode,reviewMode,reviewModeMeta,skillMix,skillReason} from "./review-modes.js";
 import {DEFAULT_TIME,REMINDER_TAG,reminderText,shouldRemind} from "./reminders.js";
 import {saveDiscussionTurn} from "./actions.js";
 // New shared UI comes from the component library (COMPONENTS.md).
@@ -1340,13 +1340,19 @@ async function renderReviewHome(){const all=(await listSentences()).map(item=>en
   $("#review-due-block").hidden=due.length===0;$("#review-rest-block").hidden=due.length>0;
   document.querySelector(".ring-stage").classList.toggle("resting",due.length===0);
   $("#start-review").hidden=due.length===0;$("#review-practice").hidden=due.length>0;
+  const extra=extraStudySession(available,all,settings),early=extra.length&&!available.some(item=>!item.skipped);
+  $("#review-extra-study").hidden=due.length>0||!extra.length;
+  $("#review-extra-study").textContent=early?"Extra study — review early":"Extra study — 20 more sentences";
+  $("#review-extra-note").hidden=due.length>0||!extra.length;
+  $("#review-extra-note").textContent=early?"Review up to 20 sentences before they are due. Grading updates their next review dates.":"Study up to 20 more due sentences. Your daily limits stay unchanged; grades are saved normally.";
+  document.querySelector("#review-rest-block .rest-title").textContent=available.length?"Daily limit reached":"Nothing due";
   renderSkillMix(due);
   if(due.length){$("#review-estimate").textContent="Say each one out loud before you check. Roughly "+spell(Math.max(1,Math.round(due.length*.55)))+" minute"+(Math.round(due.length*.55)>1?"s":"")+".";
     $("#review-footnote").textContent=reviewAvailabilityMessage(available.length,due.length,next,now)}
   else{const schedule=reviewAvailabilityMessage(0,0,next,now),budget=dailyReviewBudget(all,settings,now);
     const nextAllowance=budget.nextAvailable?" More allowance becomes available "+new Intl.DateTimeFormat(undefined,{dateStyle:'medium',timeStyle:'short'}).format(new Date(budget.nextAvailable))+".":"";
     $("#review-rest-copy").textContent=available.length?"Your daily allowance is used up or set to zero."+nextAllowance:all.length===0?"Translate a sentence and it joins the queue straight away.":schedule;
-    $("#review-footnote").textContent=available.length?"Limits count reviews completed in the past 24 hours, across all sessions.":all.length?"Reviewing early doesn't help — the gap is the point.":""}}
+    $("#review-footnote").textContent=available.length?"Limits count reviews completed in the past 24 hours, across all sessions.":all.length?"You can rest now, or choose extra study.":""}}
 async function renderSidePanel(){
   const view=document.body.dataset.view;
   $("#side-panel").hidden=!isWide()||(view!=="practice"&&view!=="session");
@@ -1641,6 +1647,8 @@ function setupRecognition(){
 async function startReview(){if(reviewBusy)return;const items=await listSentences(),prepared=items.map(item=>ensureReviewTrack(ensureSchedule(item)));await Promise.all(prepared.filter((item,index)=>item!==items[index]).map(saveSentence));reviewQueue=limitReviewSession(dueSentences(prepared),settings,prepared);reviewIndex=0;reviewUndo=[];if(!reviewQueue.length)return showView("review");showView("session");renderReview()}
 function reviewJapanese(sentence){sentence=dictionaryReadings(sentence);return hasRegisters(itemTarget(sentence))?preferredTarget(sentence):(sentence.target||"")}
 function reviewPlainJapanese(sentence){return hasRegisters(itemTarget(sentence))?preferredPlainTarget(sentence):(sentence.plainTarget||stripFurigana(sentence.target||""))}
+async function startExtraStudy(){if(reviewBusy)return;const items=await listSentences(),prepared=items.map(item=>ensureReviewTrack(ensureSchedule(item)));await Promise.all(prepared.filter((item,index)=>item!==items[index]).map(saveSentence));reviewQueue=extraStudySession(dueSentences(prepared),prepared,settings);reviewIndex=0;reviewUndo=[];if(!reviewQueue.length)return showView("review");showView("session");renderReview()}
+
 const STAGE_LABELS={0:"New",1:"Learning",2:"Review",3:"Relearning"};
 function stageLabel(sentence){const state=sentence.srs?.state??0,reps=Number(sentence.srs?.reps)||0;return STAGE_LABELS[state]+(reps?" · seen "+reps+(reps===1?" time":" times"):state===0?" · first time":"")}
 function stageClass(sentence){const state=sentence.srs?.state??0;return state===0?"new":state===2?"review":"learning"}
@@ -1674,7 +1682,11 @@ function renderReview(){refreshReviewStats();updateReviewPrevious();resetSession
 async function renderReviewComplete(){const done=reviewQueue.length;let copy=done?capitalise(spell(done))+(done===1?" sentence":" sentences")+" out loud.":"Nothing was due.";
   const all=(await listSentences()).map(item=>ensureSchedule(item)),next=all.filter(item=>!isDue(item)).map(item=>Date.parse(item.srs.due)).filter(Number.isFinite).sort((a,b)=>a-b)[0];
   const remaining=dueSentences(all);copy+=" "+reviewAvailabilityMessage(remaining.length,0,next);
-  $("#review-complete-copy").textContent=copy;refreshDueBadge()}
+  $("#review-complete-copy").textContent=copy;
+  const extra=extraStudySession(remaining,all,settings),early=extra.length&&!remaining.some(item=>!item.skipped);
+  $("#review-extra-more").hidden=!extra.length;$("#review-extra-more").textContent=early?"Extra study — review early":"Extra study — 20 more sentences";
+  $("#review-extra-more-note").hidden=!extra.length;$("#review-extra-more-note").textContent=early?"These sentences are not due yet. Grading updates their next review dates.":"Your daily limits stay unchanged; extra grades are saved normally.";
+  refreshDueBadge()}
 function updateCheckButton(){const sentence=reviewQueue[reviewIndex];if(!sentence)return $("#review-check").disabled=true;$("#review-check").disabled=reviewMode(sentence)==="writing"&&!$("#review-answer").value.trim()}
 async function revealReview(){let sentence=reviewQueue[reviewIndex];if(!sentence||reviewRevealed)return;
   const mode=reviewMode(sentence),capture=reviewRecognition;
@@ -2122,7 +2134,7 @@ $("#settings-review-order").onchange=()=>saveReviewOrder($("#settings-review-ord
 function saveReviewLimit(input,key){settings[key]=sessionLimit(input.value);const saved=persistSettings();syncReviewLimitInputs();if(document.body.dataset.view==="settings")flashSaved(saved?undefined:"Not saved — this browser blocked storage");renderReviewHome();renderSidePanel();refreshDueBadge()}
 for(const [suffix,key] of [["new","reviewNewLimit"],["existing","reviewExistingLimit"]])for(const prefix of ["settings-"]){const input=$("#"+prefix+"review-"+suffix+"-limit");input.onchange=()=>saveReviewLimit(input,key)}
 $("#review-tab-session").onclick=()=>showReviewTab("session");$("#review-tab-stats").onclick=()=>showReviewTab("stats");
-$("#start-review").onclick=startReview;$("#review-practice").onclick=()=>showView("practice");$("#review-back").onclick=()=>{stopReviewListening();showView("review")};$("#review-done").onclick=()=>showView("practice");$("#review-home-link").onclick=()=>showView("review");$("#review-previous").onclick=previousReview;$("#review-check").onclick=revealReview;$("#review-skip").onclick=skipReview;$("#review-mic").onclick=toggleReviewListening;$("#review-answer").oninput=updateCheckButton;$("#review-front-audio").onclick=playReviewAudio;$("#review-audio").onclick=playReviewAudio;$("#review-again").onclick=()=>rateReview("again");$("#review-ok").onclick=()=>rateReview("ok");
+$("#review-extra-study").onclick=startExtraStudy;$("#review-extra-more").onclick=startExtraStudy;$("#start-review").onclick=startReview;$("#review-practice").onclick=()=>showView("practice");$("#review-back").onclick=()=>{stopReviewListening();showView("review")};$("#review-done").onclick=()=>showView("practice");$("#review-home-link").onclick=()=>showView("review");$("#review-previous").onclick=previousReview;$("#review-check").onclick=revealReview;$("#review-skip").onclick=skipReview;$("#review-mic").onclick=toggleReviewListening;$("#review-answer").oninput=updateCheckButton;$("#review-front-audio").onclick=playReviewAudio;$("#review-audio").onclick=playReviewAudio;$("#review-again").onclick=()=>rateReview("again");$("#review-ok").onclick=()=>rateReview("ok");
 // The section index jumps within the page. With <base href="/"> a bare
 // "#settings-…" href resolves to "/#…" and would leave /settings, so the click
 // scrolls instead; the URL stays the route.

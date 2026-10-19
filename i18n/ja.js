@@ -4,6 +4,14 @@
 // ——製品名（DeepSeek、OpenAI、Echo）、キー名（Esc、Space）、モデル名
 // （qwen3:4b）、入力例のURL、端末が返す音声の名前。
 export default {
+  "Extra study — 20 more sentences": "追加学習 — さらに20文",
+  "Extra study — review early": "追加学習 — 期日前に復習",
+  "Daily limit reached": "24時間の上限に達しました",
+  "Study up to 20 more due sentences. Your daily limits stay unchanged; grades are saved normally.": "復習期日を迎えた文を最大20文、追加で学習します。1日の上限は変わらず、結果は通常どおり保存されます。",
+  "Review up to 20 sentences before they are due. Grading updates their next review dates.": "最大20文を期日前に復習します。評価すると次の復習日が更新されます。",
+  "These sentences are not due yet. Grading updates their next review dates.": "これらの文はまだ復習期日前です。評価すると次の復習日が更新されます。",
+  "Your daily limits stay unchanged; extra grades are saved normally.": "1日の上限は変わらず、追加学習の結果は通常どおり保存されます。",
+  "You can rest now, or choose extra study.": "ここで休むか、追加学習を選べます。",
   "New cards per 24 hours": "24時間あたりの新規カード数",
   "Reviews per 24 hours": "24時間あたりの復習数",
   "Each defaults to 20. Set 0 to skip a category. Learning cards count as reviews. Completed reviews count toward these limits for 24 hours, across all sessions.": "初期値はそれぞれ20です。0にするとその種類をスキップします。学習中のカードは復習に含まれます。完了した復習は、セッションに関係なく24時間、この上限に数えられます。",
