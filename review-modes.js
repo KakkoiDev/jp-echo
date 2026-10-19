@@ -66,7 +66,7 @@ export function skillMix(sentences=[]){
 const EXPECT={listening:"you will hear it with no text",reading:"you will read the Japanese without furigana",writing:"you will see the meaning and type the Japanese"};
 export function dueLine(sentence,when){const mode=reviewMode(ensureReviewTrack(sentence));return `Due ${when}, as a ${REVIEW_MODE_META[mode].label.toLowerCase()} card — ${EXPECT[mode]}.`}
 
-// Limits apply to each newly started session; learning/relearning are reviews.
+// New and existing review allowances span the past 24 hours, across sessions.
 export function sessionLimit(value){
   if(value==null||String(value).trim()==="")return 20;
   const number=Number(value);
@@ -84,8 +84,31 @@ export function orderReviewSentences(due,order){
  // Stable ties preserve scheduling priority; never reorder the source array.
  return due.map(item=>({item,length:reviewSentenceLength(item)})).sort((a,b)=>factor*(a.length-b.length)).map(entry=>entry.item);
 }
-export function limitReviewSession(due,settings={}){
-  let fresh=sessionLimit(settings.reviewNewLimit),reviews=sessionLimit(settings.reviewExistingLimit);
+export function dailyReviewBudget(sentences,settings={},now=Date.now()){
+ const end=Number(now),cutoff=end-86400000,used={new:0,review:0},expires={new:[],review:[]};
+ for(const sentence of sentences){
+  // Older logs did not record the pre-review state. Their first historical
+  // attempt introduced the card; later attempts count as existing reviews.
+  const history=(Array.isArray(sentence.reviews)?sentence.reviews:[]).filter(r=>['ok','again'].includes(r.rating)&&Number.isFinite(Date.parse(r.at))).sort((a,b)=>Date.parse(a.at)-Date.parse(b.at));
+  history.forEach((review,index)=>{
+   const at=Date.parse(review.at);if(at<=cutoff||at>end)return;
+   const kind=(review.state===0||(review.state==null&&index===0))?'new':'review';
+   used[kind]++;expires[kind].push(at+86400000);
+  });
+ }
+ const limits={new:sessionLimit(settings.reviewNewLimit),review:sessionLimit(settings.reviewExistingLimit)};
+ const remaining={new:Math.max(0,limits.new-used.new),review:Math.max(0,limits.review-used.review)};
+ const releases=Object.keys(limits).flatMap(kind=>{
+  if(!limits[kind]||remaining[kind]>0)return [];
+  const times=expires[kind].sort((a,b)=>a-b);
+  // Lowering a limit may require several older attempts to expire first.
+  return times.length?[times[Math.max(0,times.length-limits[kind])]]:[];
+ });
+ return {used,remaining,nextAvailable:releases.length?Math.min(...releases):null};
+}
+export function limitReviewSession(due,settings={},all=due,now=Date.now()){
+  const budget=dailyReviewBudget(all,settings,now);
+  let fresh=budget.remaining.new,reviews=budget.remaining.review;
   return orderReviewSentences(due,settings.reviewOrder).filter(item=>(item.srs?.state??0)===0?fresh-->0:reviews-->0);
 }
 
@@ -104,7 +127,7 @@ export function reviewStats(sentences,now=Date.now()){
 
 export function reviewAvailabilityMessage(dueCount,sessionCount,nextDue,now=Date.now()){
  const remaining=Math.max(0,dueCount-sessionCount);
- if(remaining)return `${remaining} more ${remaining===1?'card is':'cards are'} due now. Session limits apply to each session.`;
+ if(remaining)return `${remaining} more ${remaining===1?'card is':'cards are'} due now. Daily limits apply across sessions.`;
  if(dueCount)return 'These cards are due now. Grading them will set their next review dates.';
  if(Number.isFinite(nextDue)&&nextDue>now){const at=new Intl.DateTimeFormat(undefined,{dateStyle:'medium',timeStyle:'short'}).format(new Date(nextDue));return `The next scheduled card is due ${at}.`;}
  return 'No cards are due now.';

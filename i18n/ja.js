@@ -4,6 +4,10 @@
 // ——製品名（DeepSeek、OpenAI、Echo）、キー名（Esc、Space）、モデル名
 // （qwen3:4b）、入力例のURL、端末が返す音声の名前。
 export default {
+  "New cards per 24 hours": "24時間あたりの新規カード数",
+  "Reviews per 24 hours": "24時間あたりの復習数",
+  "Each defaults to 20. Set 0 to skip a category. Learning cards count as reviews. Completed reviews count toward these limits for 24 hours, across all sessions.": "初期値はそれぞれ20です。0にするとその種類をスキップします。学習中のカードは復習に含まれます。完了した復習は、セッションに関係なく24時間、この上限に数えられます。",
+  "Limits count reviews completed in the past 24 hours, across all sessions.": "上限には、すべてのセッションで過去24時間に完了した復習が含まれます。",
   "Record your reading (optional)": "音読を録音（任意）",
   "Record your reading": "音読を録音",
   "Stop recording": "録音を停止",

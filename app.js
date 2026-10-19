@@ -22,7 +22,7 @@ import {ALL as REFERENCE_WORDS,setImportedWords,bands as wordBands,carries as ca
 import {deleteNote as dbDeleteNote,forBackup,getNote,listNotes,makeNote,mergeNotes,noteKey,putNote as dbPutNote,replaceNotes as dbReplaceNotes} from "./notes.js";
 import {downloadAnkiDeck} from "./anki-export.js";
 import {dueSentences,ensureSchedule,isDue,reviewSentence} from "./srs.js";
-import {reviewAvailabilityMessage,reviewStats,reviewOrder,sessionLimit,limitReviewSession,dueLine,ensureReviewTrack,nextSkill,recordReviewMode,reviewMode,reviewModeMeta,skillMix,skillReason} from "./review-modes.js";
+import {reviewAvailabilityMessage,reviewStats,dailyReviewBudget,reviewOrder,sessionLimit,limitReviewSession,dueLine,ensureReviewTrack,nextSkill,recordReviewMode,reviewMode,reviewModeMeta,skillMix,skillReason} from "./review-modes.js";
 import {DEFAULT_TIME,REMINDER_TAG,reminderText,shouldRemind} from "./reminders.js";
 import {saveDiscussionTurn} from "./actions.js";
 // New shared UI comes from the component library (COMPONENTS.md).
@@ -1307,7 +1307,7 @@ const NUMBER_WORDS=["no","one","two","three","four","five","six","seven","eight"
 const spell=count=>NUMBER_WORDS[count]||String(count);
 function describeGap(ms){const minutes=Math.round(ms/60000);if(minutes<60)return spell(Math.max(1,minutes))+(minutes===1?" minute":" minutes");const hours=Math.round(minutes/60);if(hours<24)return spell(hours)+(hours===1?" hour":" hours");const days=Math.round(hours/24);return spell(days)+(days===1?" day":" days")}
 function updateDueBadge(count){const badge=$("#due-badge");badge.textContent=String(count);badge.hidden=count===0}
-async function refreshDueBadge(){updateDueBadge(limitReviewSession(dueSentences((await listSentences()).map(item=>ensureSchedule(item))),settings).length)}
+async function refreshDueBadge(){const all=(await listSentences()).map(item=>ensureSchedule(item));updateDueBadge(limitReviewSession(dueSentences(all),settings,all).length)}
 // "Today you will": each due sentence's next skill, from review-modes.js.
 function renderSkillMix(due){const mix=skillMix(due),row=$("#review-skill-mix-row");$("#review-skill-mix").hidden=due.length===0;
   row.setAttribute("aria-label","In this session you will "+["listening","reading","writing"].map(mode=>reviewModeMeta(mode).verb+" "+mix[mode]).join(", "));
@@ -1329,8 +1329,8 @@ function renderReviewStats(items){const stats=reviewStats(items),now=Date.now();
  $("#stats-week").textContent=String(stats.last7d);
  $("#stats-week-detail").textContent="this week"+(Number.isFinite(first)?" · "+stats.total+" since "+new Intl.DateTimeFormat(undefined,{day:"numeric",month:"long"}).format(new Date(first)):"")}
 const REVIEW_MODES_FOR_STATS=["listening","reading","writing"];
-async function refreshReviewStats(){renderReviewStats(await listSentences())}
-async function renderReviewHome(){const all=(await listSentences()).map(item=>ensureSchedule(item)),now=Date.now(),available=dueSentences(all),due=limitReviewSession(available,settings),counts={new:0,learning:0,review:0};
+async function refreshReviewStats(){const all=(await listSentences()).map(item=>ensureSchedule(item));renderReviewStats(all);updateDueBadge(limitReviewSession(dueSentences(all),settings,all).length)}
+async function renderReviewHome(){const all=(await listSentences()).map(item=>ensureSchedule(item)),now=Date.now(),available=dueSentences(all),due=limitReviewSession(available,settings,all,now),counts={new:0,learning:0,review:0};
   renderReviewStats(all);showReviewTab(settings.reviewTab||"session");
   for(const item of due){const state=item.srs?.state??0;if(state===1||state===3)counts.learning++;else if(state===2)counts.review++;else counts.new++}
   $("#due-count").textContent=String(due.length);$("#due-new").textContent=String(counts.new);$("#due-learning").textContent=String(counts.learning);$("#due-review").textContent=String(counts.review);
@@ -1343,9 +1343,10 @@ async function renderReviewHome(){const all=(await listSentences()).map(item=>en
   renderSkillMix(due);
   if(due.length){$("#review-estimate").textContent="Say each one out loud before you check. Roughly "+spell(Math.max(1,Math.round(due.length*.55)))+" minute"+(Math.round(due.length*.55)>1?"s":"")+".";
     $("#review-footnote").textContent=reviewAvailabilityMessage(available.length,due.length,next,now)}
-  else{const schedule=reviewAvailabilityMessage(0,0,next,now);
-    $("#review-rest-copy").textContent=available.length?"Cards are due, but your session limits exclude them. Increase a limit to start.":all.length===0?"Translate a sentence and it joins the queue straight away.":schedule;
-    $("#review-footnote").textContent=available.length?"Limits apply separately to each session.":all.length?"Reviewing early doesn't help — the gap is the point.":""}}
+  else{const schedule=reviewAvailabilityMessage(0,0,next,now),budget=dailyReviewBudget(all,settings,now);
+    const nextAllowance=budget.nextAvailable?" More allowance becomes available "+new Intl.DateTimeFormat(undefined,{dateStyle:'medium',timeStyle:'short'}).format(new Date(budget.nextAvailable))+".":"";
+    $("#review-rest-copy").textContent=available.length?"Your daily allowance is used up or set to zero."+nextAllowance:all.length===0?"Translate a sentence and it joins the queue straight away.":schedule;
+    $("#review-footnote").textContent=available.length?"Limits count reviews completed in the past 24 hours, across all sessions.":all.length?"Reviewing early doesn't help — the gap is the point.":""}}
 async function renderSidePanel(){
   const view=document.body.dataset.view;
   $("#side-panel").hidden=!isWide()||(view!=="practice"&&view!=="session");
@@ -1353,7 +1354,7 @@ async function renderSidePanel(){
   $("#queue-panel").hidden=view!=="session";
   if($("#side-panel").hidden)return;
   if(view==="session")return renderQueuePanel();
-  const due=limitReviewSession(dueSentences((await listSentences()).map(item=>ensureSchedule(item))),settings);
+  const all=(await listSentences()).map(item=>ensureSchedule(item)),due=limitReviewSession(dueSentences(all),settings,all);
   $("#side-due-count").textContent=String(due.length);
   // 聴4 · 読3 · 書2 — the same mix as review home, in one line.
   const mix=skillMix(due),minutes=Math.max(1,Math.round(due.length*.55));$("#side-skill-mix").hidden=due.length===0;
@@ -1383,7 +1384,7 @@ function renderLibraryTool(all){const row=$("#library-tool");row.hidden=targetLa
   $("#library-tool-tally").textContent=[k,w,g].filter(n=>n!==null).map(n=>n.toLocaleString()).join(" · ");
   row.setAttribute("aria-label",t("Kanji, words and grammar")+": "+(g===null?t("{k} kanji and {w} words learned",{k:k.toLocaleString(),w:w.toLocaleString()}):t("{k} kanji, {w} words and {g} points learned",{k:k.toLocaleString(),w:w.toLocaleString(),g:g.toLocaleString()})))}
 let historyRenderVersion=0;
-async function renderHistory(){const version=++historyRenderVersion,all=await listSentences();if(version!==historyRenderVersion)return;renderLibraryTool(all);const list=$("#history-list"),due=dueSentences(all),query=$("#history-search").value.trim().toLocaleLowerCase(),filter=$("#history-filter").value,order=$("#history-order").value,direction=$("#history-direction").value,now=Date.now();let items=all.filter(item=>{const haystack=[item.source,item.target,item.plainTarget,item.casualTarget,item.politeTarget].filter(Boolean).join(" ").toLocaleLowerCase();if(query&&!haystack.includes(query))return false;const state=item.srs?.state??0;if(filter==="due")return !item.srs?.due||Date.parse(item.srs.due)<=now;if(filter==="new")return state===0;if(filter==="learning")return state===1||state===3;if(filter==="review")return state===2;if(filter==="skipped")return item.skipped===true;return true});const comparators={created:(a,b)=>a.createdAt.localeCompare(b.createdAt),echoes:(a,b)=>(Number(a.echoCount)||0)-(Number(b.echoCount)||0),due:(a,b)=>Date.parse(a.srs?.due||a.createdAt)-Date.parse(b.srs?.due||b.createdAt),english:(a,b)=>a.source.localeCompare(b.source),japanese:(a,b)=>preferredPlainTarget(a).localeCompare(preferredPlainTarget(b),itemTarget(a))},factor=direction==="asc"?1:-1;items.sort((a,b)=>factor*(comparators[order]||comparators.created)(a,b));list.replaceChildren();$("#empty-history").hidden=all.length>0;renderStarterOffer(all);document.querySelector(".history-tools").hidden=all.length===0;$("#empty-results").hidden=all.length===0||items.length>0;$("#empty-results-count").textContent=all.length===1?"One is in your library.":capitalise(spell(all.length))+" are in your library.";updateDueBadge(limitReviewSession(due,settings).length);$("#library-count").textContent=items.length===1?"1 sentence":items.length+" sentences";$("#library-order-label").textContent=ORDER_LABELS[order+"-"+direction]||"";$(".list-head").hidden=items.length===0;if(isWide()&&!detail&&items.length)return openDetail(items[0].id);
+async function renderHistory(){const version=++historyRenderVersion,all=await listSentences();if(version!==historyRenderVersion)return;renderLibraryTool(all);const list=$("#history-list"),due=dueSentences(all),query=$("#history-search").value.trim().toLocaleLowerCase(),filter=$("#history-filter").value,order=$("#history-order").value,direction=$("#history-direction").value,now=Date.now();let items=all.filter(item=>{const haystack=[item.source,item.target,item.plainTarget,item.casualTarget,item.politeTarget].filter(Boolean).join(" ").toLocaleLowerCase();if(query&&!haystack.includes(query))return false;const state=item.srs?.state??0;if(filter==="due")return !item.srs?.due||Date.parse(item.srs.due)<=now;if(filter==="new")return state===0;if(filter==="learning")return state===1||state===3;if(filter==="review")return state===2;if(filter==="skipped")return item.skipped===true;return true});const comparators={created:(a,b)=>a.createdAt.localeCompare(b.createdAt),echoes:(a,b)=>(Number(a.echoCount)||0)-(Number(b.echoCount)||0),due:(a,b)=>Date.parse(a.srs?.due||a.createdAt)-Date.parse(b.srs?.due||b.createdAt),english:(a,b)=>a.source.localeCompare(b.source),japanese:(a,b)=>preferredPlainTarget(a).localeCompare(preferredPlainTarget(b),itemTarget(a))},factor=direction==="asc"?1:-1;items.sort((a,b)=>factor*(comparators[order]||comparators.created)(a,b));list.replaceChildren();$("#empty-history").hidden=all.length>0;renderStarterOffer(all);document.querySelector(".history-tools").hidden=all.length===0;$("#empty-results").hidden=all.length===0||items.length>0;$("#empty-results-count").textContent=all.length===1?"One is in your library.":capitalise(spell(all.length))+" are in your library.";updateDueBadge(limitReviewSession(due,settings,all).length);$("#library-count").textContent=items.length===1?"1 sentence":items.length+" sentences";$("#library-order-label").textContent=ORDER_LABELS[order+"-"+direction]||"";$(".list-head").hidden=items.length===0;if(isWide()&&!detail&&items.length)return openDetail(items[0].id);
   for(const [index,item] of items.entries()){if(index%10===0){await new Promise(resolve=>setTimeout(resolve,0));if(version!==historyRenderVersion)return}const li=document.createElement("li");li.dataset.id=item.id;const state=cardState(item,now);li.innerHTML='<button class="history-open" type="button"><span class="lines"><span lang="'+itemTarget(item)+'">'+rubyHtml(preferredTarget(item))+'</span><span class="source-line">'+escapeText(item.source)+'</span><span class="status-chip '+state+'">'+CARD_STATES[state]+'</span></span><span class="tally"><strong>'+(Number(item.echoCount)||0)+'</strong><span>echoes</span></span></button>';li.querySelector(".history-open").onclick=()=>openDetail(item.id);list.append(li)}markSelectedRow()}
 const formatDate=value=>new Intl.DateTimeFormat(undefined,{day:"numeric",month:"long"}).format(new Date(value));
 const RATING_LABELS={again:"Again",ok:"OK"};
@@ -1637,7 +1638,7 @@ function setupRecognition(){
   bindDictation($("#sentence-rewrite-mic"),$("#sentence-instruction"),$("#sentence-rewrite-voice"));
   bindDictation($("#word-mic"),$("#word-say"),$("#word-say-status"));
   }
-async function startReview(){if(reviewBusy)return;const items=await listSentences(),prepared=items.map(item=>ensureReviewTrack(ensureSchedule(item)));await Promise.all(prepared.filter((item,index)=>item!==items[index]).map(saveSentence));reviewQueue=limitReviewSession(dueSentences(prepared),settings);reviewIndex=0;reviewUndo=[];if(!reviewQueue.length)return showView("review");showView("session");renderReview()}
+async function startReview(){if(reviewBusy)return;const items=await listSentences(),prepared=items.map(item=>ensureReviewTrack(ensureSchedule(item)));await Promise.all(prepared.filter((item,index)=>item!==items[index]).map(saveSentence));reviewQueue=limitReviewSession(dueSentences(prepared),settings,prepared);reviewIndex=0;reviewUndo=[];if(!reviewQueue.length)return showView("review");showView("session");renderReview()}
 function reviewJapanese(sentence){sentence=dictionaryReadings(sentence);return hasRegisters(itemTarget(sentence))?preferredTarget(sentence):(sentence.target||"")}
 function reviewPlainJapanese(sentence){return hasRegisters(itemTarget(sentence))?preferredPlainTarget(sentence):(sentence.plainTarget||stripFurigana(sentence.target||""))}
 const STAGE_LABELS={0:"New",1:"Learning",2:"Review",3:"Relearning"};
@@ -1878,7 +1879,7 @@ async function previousReview(){
   finally{reviewBusy=false;updateReviewPrevious()}
 }
 async function rateReview(rating){const sentence=reviewQueue[reviewIndex];if(!sentence||!reviewRevealed||reviewBusy)return;reviewBusy=true;updateReviewPrevious();const snapshot=reviewSnapshot(sentence);try{resetSession();const now=new Date(),mode=reviewMode(sentence),graded=reviewSentence(sentence,rating,now),progressed=recordReviewMode(graded,rating,now);
-  const updated={...progressed,reviews:[...(Array.isArray(sentence.reviews)?sentence.reviews:[]),{at:now.toISOString(),rating,mode,echoes:Math.max(0,(Number(sentence.echoCount)||0)-echoesAtCardStart)}]};await saveSentence(updated);reviewUndo.push(snapshot);if(current?.id===updated.id)current=updated;reviewQueue[reviewIndex]=updated;reviewIndex++;renderReview()}finally{reviewBusy=false;updateReviewPrevious()}}
+  const updated={...progressed,reviews:[...(Array.isArray(sentence.reviews)?sentence.reviews:[]),{at:now.toISOString(),rating,mode,state:sentence.srs?.state??0,echoes:Math.max(0,(Number(sentence.echoCount)||0)-echoesAtCardStart)}]};await saveSentence(updated);reviewUndo.push(snapshot);if(current?.id===updated.id)current=updated;reviewQueue[reviewIndex]=updated;reviewIndex++;renderReview()}finally{reviewBusy=false;updateReviewPrevious()}}
 // The one backup document: the file Export downloads is byte-for-byte what the gist holds.
 async function buildBackup(){return {...exportBackup(await listSentences(),settings,forBackup(await listNotes().catch(()=>[]))),catalogues:importedCatalogues}}
 async function exportHistory(){const data=await buildBackup(),url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"})),link=Object.assign(document.createElement("a"),{href:url,download:"jp-echo-backup.json"});link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);$("#import-status").textContent="Backup saved as jp-echo-backup.json."}
@@ -2188,7 +2189,7 @@ $("#import-deck-url").onclick=()=>importDeckURL($("#deck-json-url").value,$("#im
 $("#empty-import").onclick=()=>{importStatus=$("#empty-starter-status");$("#import-file").click()};
 $("#gist-now").onclick=gistBackupNow;$("#gist-restore").onclick=gistRestore;
 // Leaving the app is the last chance to save pending changes; opening it catches up.
-document.addEventListener("visibilitychange",()=>{if(document.hidden)maybeAutoBackup("hidden").catch(()=>{})});
+document.addEventListener("visibilitychange",()=>{if(document.hidden)maybeAutoBackup("hidden").catch(()=>{});else{refreshDueBadge();if(document.body.dataset.view==="review")renderReviewHome()}});
 $("#import-minihongo").onclick=()=>seedStarter($("#import-minihongo"));
 $("#empty-starter").onclick=()=>seedStarter($("#empty-starter"),$("#empty-starter-status"));
 $("#empty-practice").onclick=()=>{showView("practice");setPracticeMode("sentence");$("#english-input").focus()};
