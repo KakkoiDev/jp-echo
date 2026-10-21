@@ -16,11 +16,11 @@ test('cancellation settles immediately and ignores stale native results',async()
  capture.start();capture.cancel();recognizer.onresult({results:[[{transcript:'stale'}]]});recognizer.onend();
  assert.equal(await capture.done,'');assert.deepEqual(text,[]);
 });
-function recordedHarness(transcribe=async()=> '読みました'){
+function recordedHarness(transcribe=async()=> '読みました',options={}){
  let recorder,stops=0;const states=[],texts=[];
  const tracks=[{stop(){stops++}}];
  class Recorder{constructor(){recorder=this;this.state='inactive';this.mimeType='audio/webm'}start(){this.state='recording'}stop(){this.state='inactive';this.ondataavailable({data:new Blob(['audio'])});this.onstop()}}
- const capture=createReviewSpeechCapture({...timers,lang:'ja',recognitionFactory:()=>null,Recorder,mediaDevices:{getUserMedia:async()=>({getTracks:()=>tracks})},transcribe,onState:s=>states.push(s),onText:s=>texts.push(s)});
+ const capture=createReviewSpeechCapture({...timers,lang:'ja',recognitionFactory:()=>null,Recorder,mediaDevices:{getUserMedia:async()=>({getTracks:()=>tracks})},transcribe,onState:s=>states.push(s),onText:s=>texts.push(s),...options});
  return {capture,states,texts,get recorder(){return recorder},get stops(){return stops}};
 }
 test('recorded fallback transcribes audio in the target language and releases microphone',async()=>{
@@ -70,4 +70,25 @@ test('finishing recording allows transcript edits before a separate reveal, with
  $('#review-answer').value='えきです';const reveal=context.reveal();finish();await reveal;
  assert.equal(context.reviewRevealed,true);assert.equal($('#review-speech-feedback').hidden,false);assert.match($('#review-speech-feedback').textContent,/matches/);
  assert.equal($('#review-result').hidden,false);assert.equal($('#review-actions').hidden,false);
+});
+
+test('recorded transcription preserves the language of a non-Japanese review',async()=>{
+ let language;const h=recordedHarness(async(blob,lang)=>{language=lang;return 'Bonjour'},{lang:'fr'});
+ h.capture.start();await tick();assert.equal(await h.capture.finish(),'Bonjour');assert.equal(language,'fr');assert.ok(h.stops);
+});
+test('recordings stop automatically at the duration limit and release their tracks',async()=>{
+ let stopTimer;const h=recordedHarness(async()=> '駅です',{setTimer:(fn,delay)=>{assert.equal(delay,30000);stopTimer=fn;return 1},clearTimer(){}});
+ h.capture.start();await tick();stopTimer();assert.equal(await h.capture.done,'駅です');assert.equal(h.recorder.state,'inactive');assert.ok(h.stops);
+});
+test('native permission denial settles without trying a second microphone provider',async()=>{
+ let recognizer,requests=0;const states=[];
+ const capture=createReviewSpeechCapture({...timers,lang:'ja',recognitionFactory:()=>recognizer={start(){},stop(){},abort(){}},mediaDevices:{getUserMedia:async()=>{requests++;throw Error('unexpected')}},onState:s=>states.push(s)});
+ capture.start();recognizer.onerror({error:'not-allowed'});assert.equal(await capture.done,'');assert.equal(requests,0);assert.match(states.at(-1),/Microphone unavailable/);
+});
+test('an empty provider transcript is not treated as a successful answer',async()=>{
+ const h=recordedHarness(async()=> '   ');h.capture.start();await tick();assert.equal(await h.capture.finish(),'');assert.deepEqual(h.texts,[]);assert.match(h.states.at(-1),/Nothing heard/);assert.ok(h.stops);
+});
+test('missing browser speech and recording support leaves manual checking available',async()=>{
+ const states=[];const capture=createReviewSpeechCapture({...timers,lang:'ja',recognitionFactory:()=>null,mediaDevices:{},Recorder:undefined,onState:s=>states.push(s)});
+ capture.start();assert.equal(await capture.done,'');assert.match(states.at(-1),/unavailable/);
 });
