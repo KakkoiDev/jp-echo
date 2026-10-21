@@ -4,6 +4,14 @@
 // ——製品名（DeepSeek、OpenAI、Echo）、キー名（Esc、Space）、モデル名
 // （qwen3:4b）、入力例のURL、端末が返す音声の名前。
 export default {
+  "Dictate your answer": "答えを音声で入力",
+  "Your reading (editable transcript)": "音読の文字起こし（編集できます）",
+  "Write or dictate your answer": "答えを入力するか、音声で入力",
+  "Your transcript appears here. Edit it before showing the meaning.": "ここに文字起こしが表示されます。意味を表示する前に修正できます。",
+  "Type or dictate the target-language sentence": "学習言語の文を入力、または音声で入力",
+  "Tap the microphone to dictate, then tap again to stop. Edit the transcript before checking your answer.": "マイクをタップして話し、もう一度タップして停止します。答え合わせの前に文字起こしを修正できます。",
+  "Review and edit your transcript before checking.": "答え合わせの前に文字起こしを確認・修正してください。",
+  "Transcript edited. Ready to check.": "文字起こしを修正しました。答え合わせができます。",
   "Extra study — 20 more sentences": "追加学習 — さらに20文",
   "Extra study — review early": "追加学習 — 期日前に復習",
   "Daily limit reached": "24時間の上限に達しました",

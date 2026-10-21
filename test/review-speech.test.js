@@ -55,17 +55,19 @@ test('a native service that never ends is bounded after stopping',async()=>{
  const capture=createReviewSpeechCapture({lang:'ja',recognitionFactory:()=>({start(){},stop(){},abort(){}}),onState:s=>states.push(s),setTimer:fn=>{callbacks.set(++id,fn);return id},clearTimer:i=>callbacks.delete(i)});
  capture.start();const final=capture.finish();[...callbacks.values()].at(-1)();assert.equal(await final,'');assert.match(states.at(-1),/Nothing heard/);
 });
-test('Show meaning awaits pending transcription, renders feedback, and does not grade',async()=>{
+test('finishing recording allows transcript edits before a separate reveal, without grading',async()=>{
  const {readFileSync}=await import('node:fs');
  const source=readFileSync(new URL('../app.js',import.meta.url),'utf8');
  const body=source.slice(source.indexOf('async function revealReview()'),source.indexOf('function reviewVocabularyHits('));
  const fields=new Map(),$=id=>{if(!fields.has(id))fields.set(id,{value:'',hidden:true,textContent:'',innerHTML:'',classList:{toggle(){}},append(...args){this.parts=args}});return fields.get(id)};
  const sentence={id:'one',target:'駅【えき】です',source:'It is a station.',targetLang:'ja'};let finish;const capture={finish:()=>new Promise(r=>finish=r)};
- const state={reviewQueue:[sentence],reviewIndex:0,reviewRevealed:false,reviewRecognition:capture};
- const vm=await import('node:vm');const context={...state,$,reviewMode:()=> 'reading',reviewJapanese:s=>s.target,itemTarget:s=>s.targetLang,checkReadingSpeech,stopReviewListening(){},resetSession(){},enableReviewVocabulary(){},document:{querySelector:()=>({hidden:false}),createElement:()=>({})},rubyHtml:s=>s,settings:{},playReviewAudio(){},saveSentence(){assert.fail('reveal must not grade')}};
+ const state={reviewQueue:[sentence],reviewIndex:0,reviewRevealed:false,reviewRecognition:capture,reviewSpeechPending:true};
+ const vm=await import('node:vm');const context={...state,$,reviewMode:()=> 'reading',reviewJapanese:s=>s.target,itemTarget:s=>s.targetLang,checkReadingSpeech,stopReviewListening(){},updateCheckButton(){},resetSession(){},enableReviewVocabulary(){},document:{querySelector:()=>({hidden:false}),createElement:()=>({})},rubyHtml:s=>s,settings:{},playReviewAudio(){},saveSentence(){assert.fail('reveal must not grade')}};
  vm.createContext(context);vm.runInContext(body+';globalThis.reveal=revealReview',context);
  const pending=context.reveal();assert.equal(context.reviewRevealed,false);
- $('#review-answer').value='えきです';finish();await pending;
+ $('#review-answer').value='misheard';context.reviewSpeechPending=false;finish();await pending;
+ assert.equal(context.reviewRevealed,false);assert.equal($('#review-result').hidden,true);
+ $('#review-answer').value='えきです';const reveal=context.reveal();finish();await reveal;
  assert.equal(context.reviewRevealed,true);assert.equal($('#review-speech-feedback').hidden,false);assert.match($('#review-speech-feedback').textContent,/matches/);
  assert.equal($('#review-result').hidden,false);assert.equal($('#review-actions').hidden,false);
 });

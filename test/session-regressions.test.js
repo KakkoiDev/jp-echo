@@ -158,7 +158,7 @@ test("Listening is audio-only, Reading is bare Japanese, and Writing requires ty
   assert.match(block,/review-prompt"\)\.hidden=listening/);
   assert.match(block,/mode==="reading"\?reviewPlainJapanese\(sentence\):sentence\.source/);
   assert.match(block,/review-capture"\)\.hidden=listening/);
-  assert.match(block,/review-answer-tools"\)\.hidden=mode!=="reading"/);
+  assert.match(block,/review-answer-tools"\)\.hidden=listening/);
   assert.match(block,/if\(listening\)requestAnimationFrame/);
 });
 
