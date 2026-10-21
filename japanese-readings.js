@@ -1,6 +1,6 @@
 // Shared, conservative dictionary readings. Context-dependent readings are explicit.
 import {rubySegments,segmentsToNotation,stripFurigana,readingsToNotation,KANJI} from './core.js';
-export const READING_VERSION=3;
+export const READING_VERSION=4;
 export const readingText=text=>rubySegments(text).map(part=>part.reading||part.text).join('');
 // Explicit ruby is a pronunciation hint, not a grammatical particle. Katakana
 // keeps browser voices from interpreting a supplied は/へ as wa/e.
@@ -8,11 +8,12 @@ export const speechText=text=>rubySegments(text).map(part=>part.reading
  ?part.reading.replace(/[ぁ-ゖ]/g,char=>String.fromCharCode(char.charCodeAt(0)+0x60))
  :part.text).join('');
 export function createReadingResolver(words){
- const exact=new Map(),stems=new Map();
+ const exact=new Map(),stems=new Map(),verbDefaults=new Map();
  const add=(map,key,value)=>{if(!map.has(key))map.set(key,new Set());map.get(key).add(value)};
  for(const word of words){
   if(!word.w||!word.r||!KANJI.test(word.w))continue;
   add(exact,word.w,word.r);
+  if((word.pos||[]).includes("vk")&&word.w.endsWith("来る")&&word.r.endsWith("くる"))verbDefaults.set(word.w,word.r);
   const annotated=rubySegments(readingsToNotation([[word.w,word.r]]));
   // A lemma's trailing kana may conjugate; its kanji stem reading remains.
   if(annotated.length===2&&annotated[0].reading&&!annotated[1].reading)add(stems,annotated[0].text,annotated[0].reading);
@@ -20,11 +21,22 @@ export function createReadingResolver(words){
  const trie={};
  const put=(key,value)=>{let node=trie;for(const char of key)node=node[char]||(node[char]={});(node.matches||(node.matches=[])).push(value)};
  const endings={v1:"るたてなまられよず","v1-s":"るたてなまられよず",v5u:"わいうえおっ","v5u-s":"わいうえおっ",v5k:"かきくけこい","v5k-s":"かきくけこっ",v5g:"がぎぐげごい",v5s:"さしすせそ",v5t:"たちつてとっ",v5n:"なにぬねのん",v5b:"ばびぶべぼん",v5m:"まみむめもん",v5r:"らりるれろっ","v5r-i":"らりるれろっ",v5aru:"らりるれろっい","adj-i":"いくかけ","adj-ix":"いくかけ"};
- for(const [key,readings] of exact)put(key,{key,readings,kanaFinal:/[ぁ-ゖァ-ヺ]$/.test(key)});
+ for(const [key,readings] of exact)put(key,{key,readings,preferred:verbDefaults.get(key),kanaFinal:/[ぁ-ゖァ-ヺ]$/.test(key)});
  for(const word of words){const ending=(word.pos||[]).map(pos=>endings[pos]).find(Boolean);
   if(!ending||!word.w||!word.r||!KANJI.test(word.w))continue;
   const key=word.w.slice(0,-1),reading=word.r.slice(0,-1);
   if(key&&reading&&word.r.endsWith(word.w.slice(-1)))put(key,{key,readings:new Set([reading]),ending,defaultReading:(word.pos||[]).includes("v5k-s")});
+ }
+ // 来る changes its kanji reading with the full suffix: きた/きます,
+ // こない/こられる, くる/くれば. A one-kana ending table cannot model it.
+ for(const word of words){
+  if(!(word.pos||[]).includes('vk')||!word.w?.endsWith('来る')||!word.r?.endsWith('くる'))continue;
+  const key=word.w.slice(0,-1),prefix=word.r.slice(0,-2);
+  for(const [reading,suffix] of [
+   ['く',/^(?:る|れば)/u],
+   ['き',/^(?:た|て|ま|なさい|ながら|に|そう|ちゃ|ちま|つつ|すぎ|過ぎ|やす|づら|は|始め|終わ)/u],
+   ['こ',/^(?:な(?:い|く|かっ|けれ|きゃ|くちゃ)|られ|れ(?!ば)|させ|よう|い|ず|ぬ)/u],
+  ])put(key,{key,readings:new Set([prefix+reading]),suffix});
  }
  const segmenter=typeof Intl.Segmenter==='function'?new Intl.Segmenter('ja',{granularity:'word'}):{segment:text=>{let index=0;return [...text].map(segment=>{const token={segment,index};index+=segment.length;return token})}};
  return function resolve(text,overrides={}){
@@ -36,18 +48,18 @@ export function createReadingResolver(words){
    let node=trie,best=null,length=0;
    for(const char of plain.slice(cursor)){
     node=node[char];if(!node)break;length+=char.length;
-    const matches=(node.matches||[]).filter(m=>m.ending?m.ending.includes(plain[cursor+length]||"!"):m.kanaFinal||boundaries.has(cursor+length));
+    const matches=(node.matches||[]).filter(m=>m.suffix?m.suffix.test(plain.slice(cursor+length)):m.ending?m.ending.includes(plain[cursor+length]||"!"):m.kanaFinal||boundaries.has(cursor+length));
     if(matches.length)best={length,matches};
    }
    if(best){
     // A conjugated word outranks a noun with the same kanji stem.
-    const inflected=best.matches.filter(m=>m.ending);
+    const inflected=best.matches.filter(m=>m.ending||m.suffix);
     const matches=inflected.length?inflected:best.matches;
     let readings=new Set(matches.flatMap(m=>[...m.readings]));
-    if(readings.size>1&&inflected.length){
+    if(readings.size>1&&(inflected.length||matches.some(m=>m.preferred))){
      const supplied=readingText(retained(cursor,cursor+best.length));
      if(readings.has(supplied))readings=new Set([supplied]);
-     else {const preferred=matches.find(m=>m.defaultReading);if(preferred)readings=preferred.readings}
+     else {const preferred=matches.find(m=>m.preferred||m.defaultReading);if(preferred)readings=preferred.preferred?new Set([preferred.preferred]):preferred.readings}
     }
 tokens.push({segment:plain.slice(cursor,cursor+best.length),index:cursor,dictionaryReadings:readings});cursor+=best.length;continue}
    const token=originalTokens.find(t=>t.index<=cursor&&cursor<t.index+t.segment.length);
