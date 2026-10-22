@@ -1352,7 +1352,7 @@ async function renderReviewHome(){const all=(await listSentences()).map(item=>en
   else{const schedule=reviewAvailabilityMessage(0,0,next,now),budget=dailyReviewBudget(all,settings,now);
     const nextAllowance=budget.nextAvailable?" More allowance becomes available "+new Intl.DateTimeFormat(undefined,{dateStyle:'medium',timeStyle:'short'}).format(new Date(budget.nextAvailable))+".":"";
     $("#review-rest-copy").textContent=available.length?"Your daily allowance is used up or set to zero."+nextAllowance:all.length===0?"Translate a sentence and it joins the queue straight away.":schedule;
-    $("#review-footnote").textContent=available.length?"Limits count reviews completed in the past 24 hours, across all sessions.":all.length?"You can rest now, or choose extra study.":""}}
+    $("#review-footnote").textContent=available.length?"Limits count reviews completed in the past 20 hours, across all sessions.":all.length?"You can rest now, or choose extra study.":""}}
 async function renderSidePanel(){
   const view=document.body.dataset.view;
   $("#side-panel").hidden=!isWide()||(view!=="practice"&&view!=="session");

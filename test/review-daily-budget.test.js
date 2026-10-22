@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {dailyReviewBudget,limitReviewSession} from '../review-modes.js';
-const now=Date.parse('2026-10-19T12:00:00Z'),day=86400000;
+const now=Date.parse('2026-10-19T12:00:00Z'),day=20*3600000;
 const event=(state,at=now-3600000,rating='ok')=>({state,at:new Date(at).toISOString(),rating});
 const card=(id,state,reviews=[])=>({id,target:'はい',srs:{state,due:'2020-01-01T00:00:00Z'},reviews});
 test('finishing 200 existing reviews leaves zero even though other cards remain due',()=>{
@@ -17,7 +17,7 @@ test('new and existing daily allowances retain their separate limits and pre-gra
  assert.deepEqual(budget.used,{new:1,review:1});assert.deepEqual(budget.remaining,{new:1,review:2});
  assert.equal(limitReviewSession(items.slice(2),{reviewNewLimit:1,reviewExistingLimit:1},items,now).length,0);
 });
-test('allowance releases exactly 24 hours after the grade, without deleting history',()=>{
+test('allowance releases exactly 20 hours after the grade, without deleting history',()=>{
  const items=[card('done',2,[event(2,now-day+1)]),card('due',2)];
  assert.equal(limitReviewSession([items[1]],{reviewExistingLimit:1},items,now).length,0);
  assert.equal(limitReviewSession([items[1]],{reviewExistingLimit:1},items,now+1).length,1);
@@ -51,4 +51,13 @@ test('real navigation badge counts history of cards that are no longer due',asyn
  const completed=card('done',2,[event(2,Date.now()-1000)]);completed.srs.due='2099-01-01T00:00:00Z';
  let count;await new Function('listSentences','ensureSchedule','dueSentences','limitReviewSession','settings','updateDueBadge',`return (async()=>{${body}})()`)(async()=>[completed,card('due',2)],s=>s,dueSentences,limitReviewSession,{reviewNewLimit:0,reviewExistingLimit:1},value=>count=value);
  assert.equal(count,0);
+});
+
+test('20-hour reset frees both allowances before 24 hours and preserves recent grades',()=>{
+ const items=[card('new',1,[event(0,now-21*3600000)]),card('old',2,[event(2,now-21*3600000)]),card('recent',2,[event(2,now-19*3600000)])];
+ const before=structuredClone(items);
+ const budget=dailyReviewBudget(items,{reviewNewLimit:1,reviewExistingLimit:2},now);
+ assert.deepEqual(budget.used,{new:0,review:1});
+ assert.deepEqual(budget.remaining,{new:1,review:1});
+ assert.deepEqual(items,before);
 });

@@ -66,7 +66,8 @@ export function skillMix(sentences=[]){
 const EXPECT={listening:"you will hear it with no text",reading:"you will read the Japanese without furigana",writing:"you will see the meaning and type the Japanese"};
 export function dueLine(sentence,when){const mode=reviewMode(ensureReviewTrack(sentence));return `Due ${when}, as a ${REVIEW_MODE_META[mode].label.toLowerCase()} card — ${EXPECT[mode]}.`}
 
-// New and existing review allowances span the past 24 hours, across sessions.
+// New and existing review allowances span the past 20 hours, across sessions.
+const REVIEW_WINDOW_MS=20*60*60*1000;
 export function sessionLimit(value){
   if(value==null||String(value).trim()==="")return 20;
   const number=Number(value);
@@ -85,7 +86,7 @@ export function orderReviewSentences(due,order){
  return due.map(item=>({item,length:reviewSentenceLength(item)})).sort((a,b)=>factor*(a.length-b.length)).map(entry=>entry.item);
 }
 export function dailyReviewBudget(sentences,settings={},now=Date.now()){
- const end=Number(now),cutoff=end-86400000,used={new:0,review:0},expires={new:[],review:[]};
+ const end=Number(now),cutoff=end-REVIEW_WINDOW_MS,used={new:0,review:0},expires={new:[],review:[]};
  for(const sentence of sentences){
   // Older logs did not record the pre-review state. Their first historical
   // attempt introduced the card; later attempts count as existing reviews.
@@ -93,7 +94,7 @@ export function dailyReviewBudget(sentences,settings={},now=Date.now()){
   history.forEach((review,index)=>{
    const at=Date.parse(review.at);if(at<=cutoff||at>end)return;
    const kind=(review.state===0||(review.state==null&&index===0))?'new':'review';
-   used[kind]++;expires[kind].push(at+86400000);
+   used[kind]++;expires[kind].push(at+REVIEW_WINDOW_MS);
   });
  }
  const limits={new:sessionLimit(settings.reviewNewLimit),review:sessionLimit(settings.reviewExistingLimit)};
