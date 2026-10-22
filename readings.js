@@ -6,26 +6,41 @@ export const readingSignature=s=>JSON.stringify([s.targetLang||'ja',s.target,s.c
 export function dictionaryReadings(record,force=false){
  if((record.targetLang||'ja')!=='ja')return record;
  const checked=record.readingVersion===READING_VERSION&&record.readingSignature===readingSignature(record);
- if(checked&&!force)return record;
+ // Revalidate the sentence being used: an old checked marker is not proof
+ // that its stored ruby is correct. This is local and makes no model request.
  const next={...record},issues=[];delete next.readingVersion;
  for(const key of ['target','casualTarget','politeTarget'])if(record[key]){const result=resolve(record[key],record.readingOverrides||{});next[key]=result.text;issues.push(...result.issues)}
- next.readingIssues=[...new Map(issues.map(i=>[i.surface,i])).values()];next.readingSignature=readingSignature(next);return next;
+ next.readingIssues=[...new Map(issues.map(i=>[i.surface,i])).values()];next.readingSignature=readingSignature(next);
+ if(checked&&!force&&next.readingSignature===record.readingSignature)return record;
+ return next;
 }
 export async function backfillReadings({list,read,correct,write,onProgress=()=>{},yieldTask=()=>new Promise(r=>setTimeout(r,0)),force=false}){
- const items=await list();let done=0,total=items.filter(s=>(s.targetLang||'ja')==='ja').length;
+ const items=await list(),pending=[];let done=0,total=items.filter(s=>(s.targetLang||'ja')==='ja').length;
+ // Finish every local repair before making any network request. An unavailable
+ // model must never block a later dictionary-backed correction.
  for(const item of items){
   if((item.targetLang||'ja')!=='ja')continue;
   if(!force&&item.readingVersion===READING_VERSION&&item.readingSignature===readingSignature(item)){onProgress(++done,total);continue}
   const latest=await read(item.id);if(!latest)continue;
   const prepared=dictionaryReadings(latest,force);
   if(!force&&prepared.readingVersion===READING_VERSION&&prepared.readingSignature===readingSignature(prepared)){onProgress(++done,total);continue}
-  // Dictionary-backed repairs are local. Only unresolved context needs a model.
-  const needsModel=prepared.readingIssues.length>0;
-  const usedModel=needsModel&&typeof correct==='function';
-  const corrected=usedModel?dictionaryReadings({...prepared,...await correct(prepared),readingVersion:undefined}):prepared;
-  const next={...prepared,...corrected,readingVersion:READING_VERSION,readingIssues:usedModel?[]:corrected.readingIssues};next.readingSignature=readingSignature(next);
-  await write(item.id,readingSignature(latest),next);onProgress(++done,total);await yieldTask();
+  const needsModel=prepared.readingIssues.length>0&&typeof correct==='function';
+  const next={...prepared,readingVersion:needsModel?undefined:READING_VERSION};next.readingSignature=readingSignature(next);
+  await write(item.id,readingSignature(latest),next);
+  if(needsModel)pending.push(item.id);else onProgress(++done,total);
+  await yieldTask();
  }
+ let failure;
+ for(const id of pending){
+  const latest=await read(id);if(!latest)continue;
+  try{
+   const corrected=dictionaryReadings({...latest,...await correct(latest),readingVersion:undefined});
+   const next={...corrected,readingVersion:READING_VERSION,readingIssues:[]};next.readingSignature=readingSignature(next);
+   await write(id,readingSignature(latest),next);onProgress(++done,total);
+  }catch(error){failure=error;break}
+  await yieldTask();
+ }
+ if(failure)throw failure;
  return {done,total};
 }
 

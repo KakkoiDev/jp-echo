@@ -23,3 +23,15 @@ test('saved checked sentences are repaired once after this reading-version upgra
  assert.ok(current.target.endsWith('来【き】た。'));assert.equal(current.source,original.source);assert.deepEqual(current.reviews,original.reviews);assert.deepEqual(current.srs,original.srs);assert.equal(current.readingVersion,READING_VERSION);
  await backfillReadings(options);assert.equal(writes,1);assert.equal(reads,1);
 });
+
+test('a stale checked marker cannot preserve raita when a card is displayed',()=>{
+ const saved={target,readingVersion:READING_VERSION};saved.readingSignature=readingSignature(saved);
+ assert.ok(dictionaryReadings(saved).target.endsWith('来【き】た。'));
+});
+test('failed AI on an earlier card cannot prevent later local kita repairs',async()=>{
+ const records=new Map([['unknown',{id:'unknown',target:'龘【とう】です。'}],['five',{id:'five',target}]]);
+ await assert.rejects(backfillReadings({list:async()=>[...records.values()],read:async id=>records.get(id),write:async(id,signature,next)=>records.set(id,next),correct:async()=>{assert.ok(records.get('five').target.endsWith('来【き】た。'));throw Error('offline')},yieldTask:async()=>{}}),/offline/);
+ assert.ok(records.get('five').target.endsWith('来【き】た。'));
+ // Ambiguous 人 can still need AI; its deterministic 来 repair is saved first.
+ assert.equal(records.get('unknown').readingVersion,undefined);
+});
