@@ -1514,3 +1514,9 @@ html.motion-off #review-progress-bar { transition: none; }
 .family-kanji-grid{margin:12px 0 20px;grid-template-columns:repeat(7,minmax(0,1fr))}
 .family-kanji-cell{min-width:0}
 @media(max-width:380px){.family-kanji-grid{grid-template-columns:repeat(6,minmax(0,1fr))}}
+
+.sentence-quick-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:.5rem 1rem;margin:1rem 0}.review-flag-row{display:flex;justify-content:flex-end;margin:.5rem 0}.review-flag-row button[aria-pressed="true"]{color:var(--seal-deep)}
+
+.sentence-foot{flex-wrap:wrap}
+
+.library-progress{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:20px 0 8px;text-align:center}.library-progress>div{display:flex;flex-direction:column;gap:6px;padding:12px 4px;border:1px solid var(--hairline)}.library-progress strong{font-size:28px;font-weight:500}.library-progress span{font-size:13px}.library-progress-note{margin-bottom:20px}

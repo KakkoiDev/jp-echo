@@ -253,7 +253,7 @@ test("sentence page: the key, the echo row, the tiles, the rows and the foot fol
   assert.match(html, /<span class="collapse-meta">Generate a new one from your directions, or fix the furigana<\/span>/);
   assert.match(css, /\.collapse-title\{grid-column:1;font-size:14px;color:var\(--sumi\)\}/);
   const page = html.slice(html.indexOf('<section id="sentence-view"'), html.indexOf("</section>", html.indexOf('<section id="sentence-view"')));
-  assert.match(page, /<div class="sentence-foot"><button id="sentence-find-references" class="plain" type="button" data-ui="button">Find missing references<\/button><button data-ui="button" id="sentence-delete" class="text-danger" type="button">/, "a quiet text link and the delete, on one row at the bottom");
+  assert.match(page, /<div class="sentence-foot"><button[^>]*id="sentence-flag"[^>]*>[^<]*<\/button><button id="sentence-find-references" class="plain" type="button" data-ui="button">Find missing references<\/button><button data-ui="button" id="sentence-delete" class="text-danger" type="button">/, "a quiet text link and the delete, on one row at the bottom");
   assert.ok(page.indexOf('id="sentence-find-references"') > page.indexOf('id="sentence-change"'), "Find missing references is no longer above the sentence");
   assert.match(css, /#sentence-view:has\(#sentence-change\[open\]\) :is\(\.sentence-play-row,#sentence-grammar/, "with Change this sentence open, the page is the editor");
   assert.match(page, /id="sentence-rewrite" class="primary" type="button">Generate<svg/);
