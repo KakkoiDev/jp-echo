@@ -1,4 +1,4 @@
-const CACHE="jp-echo-v184";
+const CACHE="jp-echo-v185";
 const PREFS_CACHE="jp-echo-prefs",PREFS_KEY="./reminder",REMINDER_TAG="echo-due";
 const ASSETS=["./","./index.html","./404.html","./styles.css","./styles.css?v=138","./app.js","./components.js","./actions.js","./routes.js","./anki-export.js","./srs.js","./review-modes.js","./review-speech.js","./vendor/sql-wasm.wasm","./core.js","./japanese-readings.js","./readings.js","./catalogues.js","./references.js","./text-extraction.js","./epub-import.js","./mini-imports.js","./imports.js","./gist-backup.js","./diff.js","./reminders.js","./db.js","./api.js","./speech.js","./repair.js","./kanji.js","./kanji-families.js","./decks/kanji-families-curriculum.json","./kanji-data.js","./kanji-readings.js","./grammar.js","./grammar-spans.js","./grammar-data.js","./lookup.js","./notes.js","./stories.js","./words.js","./japanese-words.js","./words-data.js","./i18n.js","./i18n/ja.js","./manifest.webmanifest","./icon.svg","./icon-192.png","./icon-512.png","./icon-maskable-512.png","./apple-touch-icon.png","./favicon.ico","./mask-icon.svg"];
 

@@ -1659,6 +1659,10 @@ function bindDictation(mic,field,status){
   mic.setAttribute("aria-pressed","false");
   mic.onclick=()=>{
     if(active){try{active.abort()}catch{}idle();return}
+    if(fallbackStarted)return;
+    // Stop the loops as well as speech: cancelling TTS alone leaves their
+    // timers free to speak again while the microphone is recording.
+    resetSession();discussionLoop.stop();speechSynthesis.cancel();
     if(!hasNative||nativeBroken()){recordedFallback();return}
     const recognition=recognitionFactory(inputLang);if(!recognition){recordedFallback();return}active=recognition;let gotEvent=false;
     recognition.onstart=()=>{gotEvent=true;status.textContent=DICTATION.listening};
