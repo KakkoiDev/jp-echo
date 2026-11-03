@@ -411,7 +411,7 @@ function moraTable(host,rows,{emoji,furigana,english,quiz},columns=["a","i","u",
       if(!hidden){const word=el("span","mora-word"+([...kanji].length>3?" long":""),kanji);if(mark)word.append(el("span","mora-mark",mark));cell.append(word);
         if(icon&&emoji)cell.append(Object.assign(el("span","mora-emoji",icon),{ariaHidden:"true"}));
         if(furigana)cell.append(el("span","mora-reading",reading));
-        if(english)cell.append(Object.assign(el("span","mora-english",gloss),{lang:"en"}))}
+        if(english)cell.append(Object.assign(el("span","mora-english",mark==="巨大"?"giant "+gloss:mark==="風船"?gloss+" balloon":gloss),{lang:"en"}))}
       cell.onclick=()=>{loop.stop();discussionLoop.stop();readingLoop.stop();
         const voice=voices[Number($("#voice").value)]||voices[0]||null;speakOnce(mora+"、"+speak,{voice,rate:Number($("#rate").value)||1});
         if(hidden){moraRevealed.add(mora);renderMora()}};
