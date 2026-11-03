@@ -386,13 +386,13 @@ const MORA_ROWS=[["あ","い","う","え","お"],["か","き","く","け","こ"]
 // The mora table (Mora.dc.html): one cell per sound, the same anchor every
 // time. A cell is a button: it says the mora and its anchor. "Test yourself"
 // hides the anchors until a cell is tapped. The voiced rows below reuse the
-// base anchor in mud (゛) or bubbles (゜), so there are no new images to learn.
+// base anchor as a giant (゛) or a balloon (゜), so there are no new images to learn.
 const MORA_VOICED_ROWS=[["が","ぎ","ぐ","げ","ご"],["ざ","じ","ず","ぜ","ぞ"],["だ","ぢ","づ","で","ど"],["ば","び","ぶ","べ","ぼ"],["ぱ","ぴ","ぷ","ぺ","ぽ"]];
 const MORA_YOON_ROWS=["き","し","ち","に","ひ","み","り","ぎ","じ","び","ぴ"].map(base=>["ゃ","ゅ","ょ"].map(small=>base+small));
 const MORA_SMALL={"ゃ":"や","ゅ":"ゆ","ょ":"よ"};
 const moraRevealed=new Set();
 // What a cell shows: the anchor word, its reading, English and picture, and
-// the 泥/泡 mark for a voiced sound. A combined sound uses its own anchor
+// the 巨大/風船 mark for a voiced or p-sound. A combined sound uses its own anchor
 // (MORA_YOON) or, without one, its two fused anchors.
 function moraAnchorInfo(mora){
   const first=mora[0],small=mora[1],[base,mark]=MORA_VOICED[first]||[first,null];
@@ -406,7 +406,7 @@ function moraTable(host,rows,{emoji,furigana,english,quiz},columns=["a","i","u",
     for(const mora of row){if(!mora){line.append(el("div","mora-cell empty"));continue}
       const {kanji,reading,gloss,icon,mark,speak}=moraAnchorInfo(mora),hidden=quiz&&!moraRevealed.has(mora);
       const cell=el("button","mora-cell"+(hidden?" hidden-anchor":"")+(mark?" voiced":""));cell.type="button";
-      cell.setAttribute("aria-label",hidden?mora+" — "+t("tap to see its anchor"):mora+" — "+kanji+(mark?" "+(mark==="泥"?t("in mud"):t("in bubbles")):""));
+      cell.setAttribute("aria-label",hidden?mora+" — "+t("tap to see its anchor"):mora+" — "+kanji+(mark?" "+(mark==="巨大"?t("giant"):t("as a balloon")):""));
       cell.append(el("span","mora-kana",mora));
       if(!hidden){const word=el("span","mora-word"+([...kanji].length>3?" long":""),kanji);if(mark)word.append(el("span","mora-mark",mark));cell.append(word);
         if(icon&&emoji)cell.append(Object.assign(el("span","mora-emoji",icon),{ariaHidden:"true"}));

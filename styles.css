@@ -1589,7 +1589,7 @@ button.mora-cell{width:100%;border:0;border-right:1px solid var(--hairline);bord
 button.mora-cell:last-child{border-right:0}
 .mora-word{overflow-wrap:normal;word-break:keep-all}
 .mora-word.long{font-size:9.5px;letter-spacing:-.02em}
-.mora-mark{margin-left:2px;font-size:.85em;color:var(--ink-muted)}
+.mora-mark{display:block;margin-top:1px;font-size:9px;letter-spacing:.06em;color:var(--ink-muted)}
 .mora-cell.hidden-anchor .mora-kana{font-size:22px}
 #mora-voiced-table{margin-top:0}
 
