@@ -335,25 +335,30 @@ export function exportBackup(sentences, preferences = {}, notes = []) {
 }
 
 // --- mnemonic mora alphabet v1 ----------------------------------------------
-export const MORA_MNEMONICS_VERSION = 2;
-export const MORA_MNEMONICS = Object.freeze({"あ":"飴","い":"犬","う":"牛","え":"海老","お":"お茶","か":"傘","き":"木","く":"熊","け":"剣","こ":"氷","さ":"猿","し":"鹿","す":"寿司","せ":"蝉","そ":"算盤","た":"太鼓","ち":"蝶々","つ":"机","て":"手","と":"鳥","な":"茄子","に":"肉","ぬ":"縫い針","ね":"猫","の":"鋸","は":"花","ひ":"火","ふ":"船","へ":"蛇","ほ":"本","ま":"枕","み":"水","む":"虫","め":"目","も":"餅","や":"山","ゆ":"雪","よ":"洋服","ら":"ライオン","り":"林檎","る":"ルーペ","れ":"冷蔵庫","ろ":"ロケット","わ":"鰐","を":"ヲタ芸","ん":"「ん？」"});
-export const MORA_MNEMONIC_MODIFIERS = Object.freeze({dakuten:"泥 — cover the base anchor in mud (濁る → muddy/cloudy)",handakuten:"泡 — cover the base anchor in bubbles",yoon:"ゃ・ゅ・ょ — fuse with the preceding い-row mora; combine that anchor with 山・雪・洋服 into one image",sokuon:"っ — no anchor of its own; tighten/double the next consonant by showing the next anchor twice",n:"「ん？」 — a questioning reaction",wo:"ヲタ芸 — energetic dancing with glowing light sticks"});
+export const MORA_MNEMONICS_VERSION = 3;
+export const MORA_MNEMONICS = Object.freeze({"あ":"飴","い":"犬","う":"牛","え":"海老","お":"お茶","か":"傘","き":"木","く":"熊","け":"剣","こ":"氷","さ":"猿","し":"鹿","す":"寿司","せ":"蝉","そ":"ソファ","た":"太鼓","ち":"蝶々","つ":"机","て":"手","と":"鳥","な":"茄子","に":"肉","ぬ":"ぬいぐるみ","ね":"猫","の":"海苔","は":"花","ひ":"火","ふ":"船","へ":"蛇","ほ":"本","ま":"枕","み":"水","む":"虫","め":"目","も":"餅","や":"山","ゆ":"雪","よ":"ヨット","ら":"ライオン","り":"林檎","る":"ルビー","れ":"冷蔵庫","ろ":"ロケット","わ":"鰐","を":"お茶","ん":"「ん？」"});
+export const MORA_MNEMONIC_MODIFIERS = Object.freeze({dakuten:"泥 — cover the base anchor in mud (濁る → muddy/cloudy)",handakuten:"泡 — cover the base anchor in bubbles",yoon:"ゃ・ゅ・ょ — fuse with the preceding い-row mora; combine that anchor with 山・雪・ヨット into one image",sokuon:"っ — no anchor of its own; tighten/double the next consonant by showing the next anchor twice",n:"「ん？」 — a questioning reaction",wo:"を sounds like お, so it uses お’s anchor, お茶"});
 export const MORA_MNEMONIC_META=Object.freeze({
 "あ":["飴","あめ","candy","🍬"],"い":["犬","いぬ","dog","🐕"],"う":["牛","うし","cow","🐄"],"え":["海老","えび","shrimp","🦐"],"お":["お茶","おちゃ","tea","🍵"],
 "か":["傘","かさ","umbrella","☂️"],"き":["木","き","tree","🌳"],"く":["熊","くま","bear","🐻"],"け":["剣","けん","sword","⚔️"],"こ":["氷","こおり","ice","🧊"],
-"さ":["猿","さる","monkey","🐒"],"し":["鹿","しか","deer","🦌"],"す":["寿司","すし","sushi","🍣"],"せ":["蝉","せみ","cicada","🪲"],"そ":["算盤","そろばん","abacus","🧮"],
+"さ":["猿","さる","monkey","🐒"],"し":["鹿","しか","deer","🦌"],"す":["寿司","すし","sushi","🍣"],"せ":["蝉","せみ","cicada","🪲"],"そ":["ソファ","そふぁ","sofa","🛋️"],
 "た":["太鼓","たいこ","drum","🥁"],"ち":["蝶々","ちょうちょう","butterfly","🦋"],"つ":["机","つくえ","desk","🪑"],"て":["手","て","hand","✋"],"と":["鳥","とり","bird","🐦"],
-"な":["茄子","なす","eggplant","🍆"],"に":["肉","にく","meat","🥩"],"ぬ":["縫い針","ぬいばり","sewing needle","🪡"],"ね":["猫","ねこ","cat","🐈"],"の":["鋸","のこぎり","saw","🪚"],
+"な":["茄子","なす","eggplant","🍆"],"に":["肉","にく","meat","🥩"],"ぬ":["ぬいぐるみ","ぬいぐるみ","stuffed toy","🧸"],"ね":["猫","ねこ","cat","🐈"],"の":["海苔","のり","nori seaweed","🍙"],
 "は":["花","はな","flower","🌸"],"ひ":["火","ひ","fire","🔥"],"ふ":["船","ふね","boat","⛵"],"へ":["蛇","へび","snake","🐍"],"ほ":["本","ほん","book","📕"],
 "ま":["枕","まくら","pillow","🛏️"],"み":["水","みず","water","💧"],"む":["虫","むし","bug","🐛"],"め":["目","め","eye","👁️"],"も":["餅","もち","mochi","🍡"],
-"や":["山","やま","mountain","⛰️"],"ゆ":["雪","ゆき","snow","❄️"],"よ":["洋服","ようふく","clothes","👕"],
-"ら":["ライオン","らいおん","lion","🦁"],"り":["林檎","りんご","apple","🍎"],"る":["ルーペ","るーぺ","magnifying glass","🔍"],"れ":["冷蔵庫","れいぞうこ","refrigerator","🧊"],"ろ":["ロケット","ろけっと","rocket","🚀"],
-"わ":["鰐","わに","crocodile","🐊"],"を":["ヲタ芸","をたげい","otagei","🪄"],"ん":["「ん？」","ん","huh?","❓"]
+"や":["山","やま","mountain","⛰️"],"ゆ":["雪","ゆき","snow","❄️"],"よ":["ヨット","よっと","yacht","⛵"],
+"ら":["ライオン","らいおん","lion","🦁"],"り":["林檎","りんご","apple","🍎"],"る":["ルビー","るびー","ruby","💎"],"れ":["冷蔵庫","れいぞうこ","refrigerator","🧊"],"ろ":["ロケット","ろけっと","rocket","🚀"],
+"わ":["鰐","わに","crocodile","🐊"],"を":["お茶","おちゃ","tea — を sounds like お","🍵"],"ん":["「ん？」","ん","huh?","❓"]
 });
 export function moraMnemonicTable(){return Object.entries(MORA_MNEMONICS).map(([mora,image])=>{const [kanji,reading,english,emoji]=MORA_MNEMONIC_META[mora]||[image,"","",""];return {mora,image,kanji,reading,english,emoji}})}
-const MORA_VOICED=Object.freeze({"が":["か","泥"],"ぎ":["き","泥"],"ぐ":["く","泥"],"げ":["け","泥"],"ご":["こ","泥"],"ざ":["さ","泥"],"じ":["し","泥"],"ず":["す","泥"],"ぜ":["せ","泥"],"ぞ":["そ","泥"],"だ":["た","泥"],"ぢ":["ち","泥"],"づ":["つ","泥"],"で":["て","泥"],"ど":["と","泥"],"ば":["は","泥"],"び":["ひ","泥"],"ぶ":["ふ","泥"],"べ":["へ","泥"],"ぼ":["ほ","泥"],"ぱ":["は","泡"],"ぴ":["ひ","泡"],"ぷ":["ふ","泡"],"ぺ":["へ","泡"],"ぽ":["ほ","泡"]});
+export const MORA_VOICED=Object.freeze({"が":["か","泥"],"ぎ":["き","泥"],"ぐ":["く","泥"],"げ":["け","泥"],"ご":["こ","泥"],"ざ":["さ","泥"],"じ":["し","泥"],"ず":["す","泥"],"ぜ":["せ","泥"],"ぞ":["そ","泥"],"だ":["た","泥"],"ぢ":["ち","泥"],"づ":["つ","泥"],"で":["て","泥"],"ど":["と","泥"],"ば":["は","泥"],"び":["ひ","泥"],"ぶ":["ふ","泥"],"べ":["へ","泥"],"ぼ":["ほ","泥"],"ぱ":["は","泡"],"ぴ":["ひ","泡"],"ぷ":["ふ","泡"],"ぺ":["へ","泡"],"ぽ":["ほ","泡"]});
 const MORA_SMALL_Y=Object.freeze({"ゃ":"や","ゅ":"ゆ","ょ":"よ"});
 const MORA_YOON_BASES=new Set(["き","ぎ","し","じ","ち","ぢ","に","ひ","び","ぴ","み","り"]);
+// Combined sounds with an anchor of their own: one concrete word that starts
+// with the sound, which is easier to picture than two fused images. Voiced and
+// p-sounds reuse it in 泥 or 泡 (じょ=泥の醤油, びょ=泥の豹, ぴゃ=泡の百).
+// A combined sound not listed here still fuses its two anchors.
+export const MORA_YOON=Object.freeze({"きゃ":["キャベツ","きゃべつ","cabbage","🥬"],"きゅ":["胡瓜","きゅうり","cucumber","🥒"],"きょ":["恐竜","きょうりゅう","dinosaur","🦖"],"しゃ":["写真","しゃしん","photo","📷"],"しゅ":["手裏剣","しゅりけん","shuriken","🥷"],"しょ":["醤油","しょうゆ","soy sauce","🍶"],"ちゃ":["茶碗","ちゃわん","rice bowl","🍚"],"ちゅ":["チューリップ","ちゅーりっぷ","tulip","🌷"],"ちょ":["チョコ","ちょこ","chocolate","🍫"],"にゅ":["ニュース","にゅーす","news","📰"],"ひゃ":["百","ひゃく","a hundred","💯"],"ひょ":["豹","ひょう","leopard","🐆"],"りゅ":["竜","りゅう","dragon","🐉"],"りょ":["料理","りょうり","cooking","🍳"]});
 function moraAnchor(mora){if(MORA_MNEMONICS[mora])return MORA_MNEMONICS[mora];const mod=MORA_VOICED[mora];return mod?mod[1]+"の"+MORA_MNEMONICS[mod[0]]:""}
 export function moraMnemonicTokens(reading=""){
   const kana=[...toHiragana(String(reading).normalize("NFKC"))],out=[];
@@ -364,10 +369,11 @@ export function moraMnemonicTokens(reading=""){
     let image=moraAnchor(current),mora=current;
     if(!image)continue;
     const small=MORA_SMALL_Y[kana[i+1]];
-    if(small&&MORA_YOON_BASES.has(current)){mora+=kana[++i];image+="＋"+MORA_MNEMONICS[small]+"（融合）"}
+    if(small&&MORA_YOON_BASES.has(current)){const next=kana[++i],[base,mark]=MORA_VOICED[current]||[current,null],own=MORA_YOON[base+next];mora+=next;
+      image=own?(mark?mark+"の"+own[0]:own[0]):image+"＋"+MORA_MNEMONICS[small]+"（融合）"}
     if(sokuon){mora="っ"+mora;image+="×2（っ：次の子音を詰める）";sokuon=false}
     out.push({mora,image})
   }
   return out
 }
-export function moraMnemonicPrompt(){const rows=Object.entries(MORA_MNEMONICS).map(([m,i])=>m+"="+i).join(", ");return "Echo Mora (canonical; never substitute another anchor): "+rows+".\nVoiced kana use the unvoiced anchor covered in 泥: が=泥の傘, ぎ=泥の木, ぐ=泥の熊, げ=泥の剣, ご=泥の氷; likewise ざ/だ/ば rows. P sounds use the は-row anchor covered in 泡: ぱ=泡の花, ぴ=泡の火, ぷ=泡の船, ぺ=泡の蛇, ぽ=泡の本.\nSmall ゃ/ゅ/ょ are fused, never separate mnemonic beats: combine the preceding い-row anchor with 山/雪/洋服 into one image, e.g. きゃ=木＋山, しゅ=鹿＋雪, ちょ=蝶々＋洋服. Small っ has no anchor of its own: it tightens/doubles the following consonant, so show the following anchor twice/overlapped, e.g. きって=木 then 手×2.\nUse these only as a rescue mnemonic. Make the shortest vivid causal animation you can: the anchor objects must appear in pronunciation order, physically interacting so replaying the movement recovers the mora order. The central action/consequence must embody the Japanese meaning itself, not an English sound-alike. Prefer touch, force, motion, sound and consequence over explanation. Do not add a memory palace or location. Do not invent a canonical anchor for ー or other sounds not defined here. End by reconnecting the scene directly to the Japanese word so the mnemonic can fade with practice."}
+export function moraMnemonicPrompt(){const rows=Object.entries(MORA_MNEMONICS).map(([m,i])=>m+"="+i).join(", ");return "Echo Mora (canonical; never substitute another anchor): "+rows+".\nVoiced kana use the unvoiced anchor covered in 泥: が=泥の傘, ぎ=泥の木, ぐ=泥の熊, げ=泥の剣, ご=泥の氷; likewise ざ/だ/ば rows. P sounds use the は-row anchor covered in 泡: ぱ=泡の花, ぴ=泡の火, ぷ=泡の船, ぺ=泡の蛇, ぽ=泡の本.\nSmall ゃ/ゅ/ょ are never separate mnemonic beats. These combined sounds have an anchor of their own: "+Object.entries(MORA_YOON).map(([m,[w]])=>m+"="+w).join(", ")+"; voiced and p-sounds use it covered in 泥 or 泡 (じょ=泥の醤油, びょ=泥の豹, ぴゃ=泡の百). Any other combined sound fuses the preceding い-row anchor with 山/雪/ヨット into one image, e.g. にゃ=肉＋山, みょ=水＋ヨット. Small っ has no anchor of its own: it tightens/doubles the following consonant, so show the following anchor twice/overlapped, e.g. きって=木 then 手×2.\nUse these only as a rescue mnemonic. Make the shortest vivid causal animation you can: the anchor objects must appear in pronunciation order, physically interacting so replaying the movement recovers the mora order. The central action/consequence must embody the Japanese meaning itself, not an English sound-alike. Prefer touch, force, motion, sound and consequence over explanation. Do not add a memory palace or location. Do not invent a canonical anchor for ー or other sounds not defined here. End by reconnecting the scene directly to the Japanese word so the mnemonic can fade with practice."}

@@ -62,7 +62,7 @@ test("Mora v1 is learning content outside settings with independent display togg
 test("GitHub Pages deep-link recovery runs before route parsing",()=>{const routeImport=app.indexOf('from "./routes.js"'),recovery=app.indexOf('echo-route');assert.ok(routeImport>=0&&recovery>routeImport);assert.match(app,/history\.replaceState\(\{echo:true\},"",p\)/)});
 
 
-test("Mora emoji is a separate row after the kanji, not an inline anchor",()=>{assert.match(app,/mora-word.*?\$\{kanji\}.*?mora-emoji/s);assert.doesNotMatch(app,/class="mora-anchor"/)});
+test("Mora emoji is a separate row after the kanji, not an inline anchor",()=>{assert.match(app,/el\("span","mora-word"[^;]*,kanji\)[\s\S]*?mora-emoji/);assert.doesNotMatch(app,/class="mora-anchor"/)});
 
 
 test("service worker updates never navigate or reload an open Echo page",async()=>{const fs=await import("node:fs/promises");const sw=await fs.readFile(new URL("../sw.js",import.meta.url),"utf8");assert.doesNotMatch(sw,/reloadClients/);assert.doesNotMatch(sw,/client\.navigate\(/);assert.match(sw,/self\.clients\.claim\(\)/)});
@@ -110,7 +110,7 @@ test("static microphone controls keep the canonical compact glyph",()=>{for(cons
 
 test("dictation works independently of AI provider and keeps old Chrome fallback",async()=>{const fs=await import("node:fs/promises");const speech=await fs.readFile(new URL("../speech.js",import.meta.url),"utf8");assert.match(speech,/window\.SpeechRecognition\|\|window\.webkitSpeechRecognition/);const start=app.indexOf("function bindDictation"),end=app.indexOf("function setupRecognition",start),block=app.slice(start,end);assert.doesNotMatch(block,/hasTranslator/);assert.match(block,/mic\.disabled=false/);assert.match(block,/recognitionFactory\(inputLang\)/);assert.match(block,/recognition\.start\(\)/);assert.match(block,/catch\(error\)/)});
 
-test("Mora reference keeps its responsive five-column table styling",()=>{assert.match(css,/\.mora-row\{display:grid;grid-template-columns:repeat\(5,minmax\(0,1fr\)\)/);assert.match(css,/\.mora-cell\{[^}]*display:flex[^}]*flex-direction:column/);assert.match(css,/\.mora-emoji\{display:block/);assert.match(css,/\.mora-controls label\{display:inline-flex/);assert.match(css,/@media\(max-width:520px\)/)});
+test("Mora reference keeps its responsive five-column table styling",()=>{assert.match(css,/\.mora-row\{display:grid;grid-template-columns:repeat\(var\(--mora-columns,5\),minmax\(0,1fr\)\)/);assert.match(css,/\.mora-cell\{[^}]*display:flex[^}]*flex-direction:column/);assert.match(css,/\.mora-emoji\{display:block/);assert.match(css,/\.mora-controls label\{display:inline-flex/);assert.match(css,/@media\(max-width:520px\)/)});
 
 test("dictation cannot remain stuck when Android native recognition hangs",()=>{const start=app.indexOf("function bindDictation"),end=app.indexOf("function setupRecognition",start),block=app.slice(start,end);assert.match(block,/watchdog=setTimeout/);assert.match(block,/recognition\.abort\(\)/);assert.match(block,/recordedFallback\(\)/);assert.match(block,/markNativeBroken\(\)/);assert.match(block,/aria-pressed/)});
 
@@ -134,9 +134,10 @@ test("reading has its own loop and controls before the passage",()=>{assert.matc
 test("reading echo uses only the existing voice list and no undefined voice helper",()=>{const start=app.indexOf("function playReading"),end=app.indexOf("function saveWorkspace",start),block=app.slice(start,end);assert.match(block,/voices\.find\(v=>v\.default\)/);assert.match(block,/readingLoop\.playConversation/);assert.doesNotMatch(block,/voiceForPolicy/)});
 
 
-test("Mora page teaches fused small kana and sokuon",()=>{
-  assert.match(html,/Small kana — fuse/);
-  for(const sample of ["きゃ = 木＋山","しゅ = 鹿＋雪","ちょ = 蝶々＋洋服","きって = 木 → 手×2"])assert.match(html,new RegExp(sample.replace(/[＋→×]/g,"\\$&")));
+test("Mora page teaches combined sounds with their own anchors, and sokuon",()=>{
+  assert.match(html,/Combined sounds — one anchor each/);assert.match(html,/<div id="mora-yoon-table" class="mora-table" lang="ja"><\/div>/);
+  assert.match(html,/じょ is 醤油 in mud, びょ is 豹 in mud/);
+  assert.match(html,/きって = 木 → 手×2/);
 });
 
 

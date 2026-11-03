@@ -1,6 +1,6 @@
 // Shared, conservative dictionary readings. Context-dependent readings are explicit.
 import {rubySegments,segmentsToNotation,stripFurigana,readingsToNotation,KANJI} from './core.js';
-export const READING_VERSION=5;
+export const READING_VERSION=6;
 export const readingText=text=>rubySegments(text).map(part=>part.reading||part.text).join('');
 // Explicit ruby is a pronunciation hint, not a grammatical particle. Katakana
 // keeps browser voices from interpreting a supplied は/へ as wa/e.
@@ -65,6 +65,15 @@ tokens.push({segment:plain.slice(cursor,cursor+best.length),index:cursor,diction
    const token=originalTokens.find(t=>t.index<=cursor&&cursor<t.index+t.segment.length);
    const end=token?token.index+token.segment.length:cursor+1;
    tokens.push({segment:plain.slice(cursor,end),index:cursor});cursor=end;
+  }
+  // 何 is なに or なん by what follows it, which the dictionary cannot say:
+  // なに at the end of a question and before を, が, も, か, に, へ, や;
+  // なん before だ, で, の, と, です, じゃ and counters. Anything else keeps
+  // what it had.
+  for(const token of tokens){if(token.segment!=='何'||token.dictionaryReadings?.size!==2)continue;
+   const next=plain.slice(token.index+1);
+   if(/^(?:$|[？?。！!、」』）\s]|[をがもかにへや])/u.test(next))token.dictionaryReadings=new Set(['なに']);
+   else if(/^(?:だ|で|の|と|じゃ|て|[人回時歳年日月本枚個度分階番語色倍点台冊匹杯週])/u.test(next))token.dictionaryReadings=new Set(['なん']);
   }
   for(const token of tokens){
    const surface=token.segment,start=token.index,end=start+surface.length;
