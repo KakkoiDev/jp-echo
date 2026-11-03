@@ -38,3 +38,19 @@ test('settings and the end of a session say "a day" (Settings.dc.html, ReviewDon
   assert.match(html,/A “day” is the last 20 hours/);
   assert.match(app,/\$\("#review-complete-title"\)\.textContent=done&&remaining\.length\?t\("All said for today"\):t\("All said"\)/);
 });
+
+test('desktop: the Settings row in the sidebar is current on the Settings route',()=>{
+  assert.match(app,/const on=name==="settings";settingsNav\.classList\.toggle\("current",on\);settingsNav\.setAttribute\("aria-current",on\?"page":"false"\)/);
+});
+
+test('desktop: practice-another-way cards keep their padding and border, and grow with two lines',()=>{
+  assert.match(css,/\.library-tool\.two-line\{height:auto\}/);
+  assert.match(css,/\.welcome-modes \.library-tool\.two-line,\.library-tool\.two-line\{align-items:flex-start;padding:14px 16px;border:1px solid var\(--hairline\)/);
+});
+
+test('desktop: the sidebar badge sits at the row edge; ripples stop at the column; the review switch is above its rings',()=>{
+  assert.match(css,/\.tab-badge\{position:absolute;top:50%;left:auto;right:13px/);
+  assert.match(css,/@media \(min-width:1024px\)\{\n  #welcome-ripple,\.ripple\.live\{right:-56px\}/);
+  assert.doesNotMatch(html,/class="ripple echo"[^>]*style="position:absolute;right:-96px/);
+  assert.match(css,/#review-home>\.segmented\{position:relative;z-index:1\}/);
+});

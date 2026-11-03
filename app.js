@@ -372,6 +372,8 @@ function showView(name,{route=true}={}){if(name==="map"&&targetLang()!=="ja")nam
   $("#view-title").textContent=VIEW_TITLES[name]||"";$("#view-title").hidden=!VIEW_TITLES[name];document.querySelector(".brand").hidden=!!VIEW_TITLES[name];
   $("#discussion-play").onclick=playDiscussion;$("#discussion-english").onchange=renderDiscussion;$("#discussion-new").onclick=()=>{discussionLoop.stop();discussionTurns=[];discussionScenario="";renderDiscussion();$("#english-input").value="";$("#english-input").focus()};$("#reading-furigana").onchange=renderReading;$("#reading-english").onchange=renderReading;$("#reading-echo").onclick=playReading;
 for(const tab of document.querySelectorAll(".tab[data-view]")){const on=tab.dataset.view===name||(name==="session"&&tab.dataset.view==="review")||((name==="sentence"||name==="map")&&tab.dataset.view==="library");tab.classList.toggle("current",on);tab.setAttribute("aria-current",on?"page":"false")}
+  // Settings sits in the desktop sidebar as a fourth row without a data-view; it is current on the Settings route.
+  {const settingsNav=$("#settings-nav");if(settingsNav){const on=name==="settings";settingsNav.classList.toggle("current",on);settingsNav.setAttribute("aria-current",on?"page":"false")}}
   document.body.dataset.view=name;scrollTo(0,0);renderSidePanel();
   saveWorkspace({view:name});if(route)syncRoute({view:name});if(name==="library"||(name==="sentence"&&isWide()))renderHistory();else if(name==="map")renderMap();else if(name==="mora")renderMora();else if(name==="review")renderReviewHome();else if(name==="practice")renderPracticeNotices();else if(name==="setup")resetSetupForm()}
 // The study tool: the wall of joyo kanji, the dictionary and the list of grammar points,
