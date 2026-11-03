@@ -153,6 +153,8 @@ Before considering the change complete:
   (no `skipWaiting` on install). `app.js` shows "A new version of Echo is ready"
   and, on the person's tap, posts `echo:activate-update`; the page reloads only
   after that request. Never reload or navigate from the worker.
+  The install stores rebuilt responses (no URL): Safari refuses a module the
+  worker answers under another address (`test/pwa.test.js`).
 - **AI prose carries readings.** Any prompt whose answer is shown as an
   explanation includes `READINGS_RULE` (api.js), and the answer is rendered with
   `rubyHtml`, so every kanji the model writes has furigana.

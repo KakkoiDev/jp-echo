@@ -8,15 +8,19 @@ test('installed modules stay in the same version even with cache-busting query',
 test('upgrading retains reminder preferences and other application caches',async()=>{const w=worker();let completion;w.handlers.activate({waitUntil:p=>completion=p});await completion;assert.deepEqual(w.deleted,[PREVIOUS])});
 // Install fetches each file at a version-specific address (a CDN holding the
 // previous deploy cannot answer it) and stores it under its plain address.
-function installer({failPath=null}={}){const fetched=[],stored=[];class R{constructor(input,options={}){this.url=new URL(typeof input==='string'?input:input.href,'https://echo.test/').href;this.cache=options.cache}}
+function installer({failPath=null}={}){const fetched=[],stored=[],responses=[];class Rebuilt{constructor(body,init){this.body=body;this.init=init;this.url=''}}class R{constructor(input,options={}){this.url=new URL(typeof input==='string'?input:input.href,'https://echo.test/').href;this.cache=options.cache}}
  let install;const self={registration:{scope:'https://echo.test/'},addEventListener:(name,handler)=>{if(name==='install')install=handler},skipWaiting:()=>{throw Error('install must not skip waiting')}};
- vm.runInNewContext(script,{self,URL,Request:R,caches:{open:async()=>({put:async(request,response)=>stored.push(request.url)})},fetch:async request=>{fetched.push(request);return {ok:!failPath||new URL(request.url).pathname!==failPath,status:404}}});
- return {run:()=>new Promise((resolve,reject)=>install({waitUntil:p=>p.then(resolve,reject)})),fetched,stored}}
+ vm.runInNewContext(script,{self,URL,Request:R,Response:Rebuilt,caches:{open:async()=>({put:async(request,response)=>{stored.push(request.url);responses.push(response)}})},fetch:async request=>{fetched.push(request);const ok=!failPath||new URL(request.url).pathname!==failPath;return {ok,status:ok?200:404,statusText:'OK',headers:{'content-type':'text/javascript'},url:request.url,arrayBuffer:async()=>new ArrayBuffer(1)}}});
+ return {run:()=>new Promise((resolve,reject)=>install({waitUntil:p=>p.then(resolve,reject)})),fetched,stored,responses}}
 test('installation fetches every asset fresh, at this version, and stores it under its plain address',async()=>{const w=installer();await w.run();
  assert.ok(w.fetched.length>20);
  for(const request of w.fetched){assert.equal(request.cache,'reload');const url=new URL(request.url);assert.equal(url.searchParams.get('echo-cache'),CURRENT);const path=url.pathname;assert.ok(path==='/'||existsSync(new URL('..'+path,import.meta.url)),path)}
  for(const url of w.stored)assert.ok(!url.includes('echo-cache'),url);
  assert.ok(w.stored.includes('https://echo.test/app.js'));});
+// Safari rejects a module the worker answers with a response carrying another
+// address, so the fetched (…?echo-cache=…) response is never stored as is.
+test('installed responses are rebuilt so they carry no cache-busting address',async()=>{const w=installer();await w.run();
+ assert.equal(w.responses.length,w.stored.length);for(const response of w.responses){assert.ok(response instanceof Object&&'init' in response,'stored a fetched response');assert.equal(response.url,'');assert.equal(response.init.status,200);assert.equal(response.init.headers['content-type'],'text/javascript')}});
 test('a version is cached whole or not at all: one failed file fails the install',async()=>{await assert.rejects(installer({failPath:'/core.js'}).run(),/Could not cache/)});
 
 const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');

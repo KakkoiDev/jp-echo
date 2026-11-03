@@ -36,6 +36,11 @@ window.echoReportError=function(error){
  const message=error?.message||String(error||'Unknown startup error');
  document.getElementById('startup-error-message').textContent=message;if(window.caches)caches.keys().then(keys=>{const v=keys.find(k=>/^jp-echo-v\d+$/.test(k));if(v)document.getElementById('startup-error-message').textContent='Echo '+v.slice(8)+': '+message}).catch(()=>{});
  panel.hidden=false;
+ // Safari names no file when a module fails to load. Ask for each one and
+ // name any that does not come back as a script, so a screenshot says which.
+ if(/module/i.test(message)&&typeof fetch==='function'&&!window.echoProbed){window.echoProbed=true;fetch('/sw.js',{cache:'no-store'}).then(r=>r.text()).then(async source=>{const paths=[...new Set(source.match(/"\.\/[\w\/-]+\.js"/g)||[])].map(p=>p.slice(3,-1));const bad=[];
+  for(const path of paths){try{const r=await fetch('/'+path,{cache:'no-store'});const type=r.headers.get('content-type')||'';if(!r.ok||!/javascript/.test(type))bad.push(path+' ('+r.status+' '+type+')')}catch(e){bad.push(path+' (offline)')}}
+  const line=document.createElement('p');line.textContent=bad.length?'Not loading: '+bad.join(', '):'All '+paths.length+' modules load from the network.';document.getElementById('startup-error-message').after(line)}).catch(()=>{})}
 };
 // Update Echo, from the error panel, works even when app.js never loaded: a
 // waiting version takes over, or else the offline copy is cleared and fetched

@@ -1,4 +1,4 @@
-const CACHE="jp-echo-v194";
+const CACHE="jp-echo-v195";
 const PREFS_CACHE="jp-echo-prefs",PREFS_KEY="./reminder",REMINDER_TAG="echo-due";
 const ASSETS=["./","./index.html","./404.html","./styles.css","./styles.css?v=147","./app.js","./components.js","./actions.js","./routes.js","./anki-export.js","./srs.js","./review-modes.js","./review-speech.js","./vendor/sql-wasm.wasm","./core.js","./japanese-readings.js","./readings.js","./catalogues.js","./references.js","./text-extraction.js","./epub-import.js","./mini-imports.js","./imports.js","./gist-backup.js","./diff.js","./reminders.js","./db.js","./api.js","./speech.js","./repair.js","./kanji.js","./kanji-families.js","./decks/kanji-families-curriculum.json","./kanji-data.js","./kanji-readings.js","./grammar.js","./grammar-spans.js","./grammar-data.js","./lookup.js","./notes.js","./stories.js","./words.js","./japanese-words.js","./words-data.js","./i18n.js","./i18n/ja.js","./manifest.webmanifest","./icon.svg","./icon-192.png","./icon-512.png","./icon-maskable-512.png","./apple-touch-icon.png","./favicon.ico","./mask-icon.svg"];
 
@@ -9,11 +9,18 @@ const ASSETS=["./","./index.html","./404.html","./styles.css","./styles.css?v=14
 // next to a new core.js made "Importing a module script failed". Stored under
 // its plain address. Any failure fails the whole install, so a version is
 // complete or absent, never mixed.
+//
+// The stored response is rebuilt, not the fetched one: a fetched response
+// remembers its address (…app.js?echo-cache=…), and Safari refuses a module
+// whose response comes back from the worker under an address other than the
+// one it asked for — "Importing a module script failed" on every start. A
+// rebuilt response has no address, so the page's own request URL is used.
 self.addEventListener("install",event=>event.waitUntil((async()=>{
   const cache=await caches.open(CACHE);
   await Promise.all(ASSETS.map(async path=>{const url=new URL(path,self.registration.scope);url.searchParams.set("echo-cache",CACHE);
     const response=await fetch(new Request(url,{cache:"reload"}));if(!response.ok)throw new Error("Could not cache "+path+" ("+response.status+")");
-    await cache.put(new Request(new URL(path,self.registration.scope)),response)}));
+    const body=await response.arrayBuffer();
+    await cache.put(new Request(new URL(path,self.registration.scope)),new Response(body,{status:response.status,statusText:response.statusText,headers:response.headers}))}));
 })()));
 
 self.addEventListener("activate",event=>{
