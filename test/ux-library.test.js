@@ -14,10 +14,10 @@ const fn = (from, to) => { const start = app.indexOf(from); return app.slice(sta
 
 test("decks import from a file or a URL; no bundled third-party decks", () => {
   assert.match(html, /id="import"[^>]*>Choose file</);
-  assert.match(html, /id="deck-json-url" type="url"/);
-  assert.match(html, /id="import-deck-url"/);
+  // A deck link goes into the Import page's one box (test/import-any.test.js).
+  assert.match(html, /id="import-text"/);
   assert.match(html, /href="https:\/\/github\.com\/KakkoiDev\/jp-echo\/blob\/main\/DECK-FORMAT\.md"/, "Settings links the format");
-  assert.match(app, /\$\("#import-deck-url"\)\.onclick=\(\)=>importDeckURL\(/);
+  assert.match(app, /case "deck-url":return importDeckURL\(/);
   for (const gone of ["import-ai-team", "import-example-deck"]) assert.doesNotMatch(html, new RegExp(`id="${gone}"`), gone);
   assert.doesNotMatch(app, /AI_TEAM_DECK_URL|EXAMPLE_DECK_URL/);
   assert.match(html, /id="import-minihongo"/, "the starter seed stays");

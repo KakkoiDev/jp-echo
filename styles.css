@@ -1575,3 +1575,10 @@ html.motion-off #review-progress-bar { transition: none; }
 
 /* Notes now carry readings as ruby (READINGS_RULE in api.js): leave room for them. */
 .note-text:has(ruby){line-height:2.1}
+/* Import: one box for a file, a link or text (Settings → Import). */
+.import-any{display:flex;flex-direction:column;gap:9px;padding:16px;border:1px dashed var(--rule);border-radius:4px;background:var(--panel)}
+.import-any.dragging{border-color:var(--seal);background:var(--seal-tint)}
+.import-any textarea{min-height:84px;resize:vertical}
+.import-any #import-intent:empty{display:none}
+.import-any-actions{display:flex;flex-wrap:wrap;gap:8px}
+.import-any-actions button{flex:1 1 140px}

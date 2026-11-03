@@ -296,7 +296,7 @@ test("settings is the page the boards draw: chips, rows, honest reminders, sub-p
 test("library and the study tool: the empty library, the tool rows, grammar and word rows, the word sheet, the mora table", () => {
   assert.match(html, /<div id="empty-history" class="empty-panel" hidden><svg class="ripple echo" width="300"/, "a still ripple behind the empty library");
   assert.match(html, /<span class="empty-glyph" lang="ja" aria-hidden="true">空<\/span><strong>No sentences yet<\/strong><span>Everything you translate lands here, with its readings and its review history\.<\/span><button data-ui="button" id="empty-practice" class="primary" type="button">Write your first one<svg/);
-  assert.match(html, /id="empty-starter" class="plain library-tool two-line"[\s\S]*Add 262 starter sentences[\s\S]*id="empty-import" class="plain library-tool two-line"[\s\S]*Import a deck or a backup/);
+  assert.match(html, /id="empty-starter" class="plain library-tool two-line"[\s\S]*Add 262 starter sentences[\s\S]*id="empty-import" class="plain library-tool two-line"[\s\S]*Import a deck, a backup or a book/);
   assert.doesNotMatch(app, /\.join\(" · "\)\+" "\+t\("learned"\)/, "the tool row tally is three numbers");
   assert.match(css, /\.library-tool\.mora-open\{margin-top:0\}/);
   assert.match(css, /\.point-row:not\(:has\(\.reading\)\)\{display:grid;grid-template-columns:20px minmax\(0,1fr\) auto/, "a grammar row is its title over its gloss");
