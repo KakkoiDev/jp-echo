@@ -4,6 +4,16 @@
 // data and callbacks; components own their DOM/event wiring.
 
 export const micSvg=`<svg class="mic-glyph" width="16" height="20" viewBox="0 0 16 20" fill="none" aria-hidden="true"><rect x="5" y="1" width="6" height="11" rx="3" stroke="currentColor" stroke-width="1.4"/><path d="M2 9.2a6 6 0 0 0 12 0M8 15.4V19M5.2 19h5.6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>`;
+// The flag is a drawn line icon (Icons/flag), never the ⚑ character. Pressed,
+// it fills: `[aria-pressed="true"] .flag-glyph` in styles.css.
+export const flagSvg=`<svg class="flag-glyph" width="13" height="15" viewBox="0 0 13 15" fill="none" aria-hidden="true"><path d="M1.5 14V1.5M1.5 2h8.6l-1.8 3.2 1.8 3.2H1.5" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
+// One flag control, three forms: icon-only in a session bar (.icon-button,
+// named by aria-label), a row in a menu sheet (.settings-row), or a labelled
+// text button on the sentence page.
+export function renderFlagButton(button,sentence){const flagged=sentence?.flagged===true;button.setAttribute("aria-pressed",String(flagged));
+  if(button.classList.contains("settings-row")){const title=button.querySelector(".settings-row-title"),status=button.querySelector(".settings-row-status");if(title)title.textContent=flagged?"Flagged — remove the flag":"Flag for later";if(status)status.textContent=flagged?"It shows in Library under Flagged":"Something to check — it shows in Library under Flagged";return}
+  if(button.classList.contains("icon-button")){button.innerHTML=flagSvg;button.setAttribute("aria-label",flagged?"Flagged — remove the flag":"Flag for later")}
+  else{button.innerHTML=flagSvg;button.append(document.createTextNode(flagged?" Flagged — remove flag":" Flag sentence"))}}
 const swapSvg=`<svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M2 6h12M11 3l3 3-3 3M16 12H4M7 9l-3 3 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 const sendSvg=`<svg width="14" height="11" viewBox="0 0 16 12" fill="none" aria-hidden="true"><path d="M1 6h13M9.5 1.5 14 6l-4.5 4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 

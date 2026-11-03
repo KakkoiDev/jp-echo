@@ -45,7 +45,7 @@ test('delete from practice removes saved card and restores editable source for r
 });
 test('new sentence actions and review flag are wired to the existing editor and confirm sheet',()=>{
  assert.match(html,/id="practice-edit"/);assert.match(html,/id="practice-delete"/);assert.match(html,/<option value="flagged">Flagged<\/option>/);
- assert.match(source,/\$\("#practice-delete"\)\.onclick=\(\)=>askDelete\(current,deletePracticeSentence\)/);
+ assert.match(source,/\$\("#practice-delete"\)\.onclick=fromPracticeMenu\(\(\)=>askDelete\(current,deletePracticeSentence\)\)/);
  assert.match(source,/async function editPracticeSentence\(\).*await openDetail\(current.id\).*openEditor\(\)/);
  assert.match(source,/\$\("#review-flag"\)\.onclick=\(\)=>toggleSentenceFlag\(reviewQueue\[reviewIndex\]/);
  // The flag stays outside review-meta, which is hidden on answer reveal.
@@ -53,11 +53,15 @@ test('new sentence actions and review flag are wired to the existing editor and 
 });
 
 test('library progress counts every sentence once, including missing schedules and relearning',()=>{
- const fields=new Map();const ctx=vm.createContext({$:key=>{if(!fields.has(key))fields.set(key,{});return fields.get(key)}});
+ const fields=new Map();const ctx=vm.createContext({t:(text,vars={})=>text.replace(/\{(\w+)\}/g,(_,k)=>vars[k]),$:key=>{if(!fields.has(key))fields.set(key,{style:{},attrs:{},setAttribute(name,value){this.attrs[name]=value}});return fields.get(key)}});
  const start=source.indexOf('function renderLibraryProgress('),end=source.indexOf('\nlet historyRenderVersion',start);
  vm.runInContext(source.slice(start,end),ctx);
  ctx.renderLibraryProgress([{},{srs:{state:0}},{srs:{state:1}},{srs:{state:2}},{srs:{state:3},skipped:true}]);
  assert.equal(fields.get('#library-progress-new').textContent,'2');assert.equal(fields.get('#library-progress-practicing').textContent,'2');assert.equal(fields.get('#library-progress-learned').textContent,'1');
- ctx.renderLibraryProgress([]);for(const field of fields.values())assert.equal(field.textContent,'0');
+ // One meter, not three big numbers: widths follow the counts, the label reads them.
+ assert.equal(fields.get('#library-progress-bar-learned').style.width,'20.00%');assert.equal(fields.get('#library-progress-bar-practicing').style.width,'40.00%');
+ assert.equal(fields.get('#library-progress').attrs['aria-label'],'Your library: 1 learned, 2 practicing, 2 new');assert.equal(fields.get('#library-progress').hidden,false);
+ ctx.renderLibraryProgress([]);for(const key of ['new','practicing','learned'])assert.equal(fields.get('#library-progress-'+key).textContent,'0');assert.equal(fields.get('#library-progress').hidden,true);
+ assert.doesNotMatch(html,/library-progress-note/);assert.ok(html.indexOf('id="library-progress"')>html.indexOf('id="library-count"'));
  assert.match(source,/renderLibraryTool\(all\);renderLibraryProgress\(all\)/);
 });

@@ -28,3 +28,8 @@ test('extra study starts the standard review flow with normal grading and both e
  assert.equal(queue.length,20);assert.equal(shown,'session');assert.equal(rendered,true);
  assert.match(app,/review-extra-study"\)\.onclick=startExtraStudy/);assert.match(app,/review-extra-more"\)\.onclick=startExtraStudy/);
 });
+
+test('extra study is an outlined path, never the filled button of the screen (ReviewLimit.dc.html)',async()=>{
+ const {readFileSync}=await import('node:fs');const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+ for(const id of ['review-extra-study','review-extra-more'])assert.match(html,new RegExp('id="'+id+'" [^>]*class="outline"|id="'+id+'" class="outline"'));
+});

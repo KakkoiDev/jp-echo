@@ -1515,8 +1515,39 @@ html.motion-off #review-progress-bar { transition: none; }
 .family-kanji-cell{min-width:0}
 @media(max-width:380px){.family-kanji-grid{grid-template-columns:repeat(6,minmax(0,1fr))}}
 
-.sentence-quick-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:.5rem 1rem;margin:1rem 0}.review-flag-row{display:flex;justify-content:flex-end;margin:.5rem 0}.review-flag-row button[aria-pressed="true"]{color:var(--seal-deep)}
+.sentence-quick-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:.5rem 1rem;margin:1rem 0}/* Flag (Review.dc.html, IconButton): pressed is the one ON idiom — seal-tint ground, seal-edge border, seal-deep glyph, filled. */
+#review-flag{width:40px;height:40px;flex-shrink:0}.icon-button[aria-pressed="true"]{background:var(--seal-tint);border-color:var(--seal-edge);color:var(--seal-deep)}[aria-pressed="true"] .flag-glyph{fill:currentColor}#sentence-flag{display:inline-flex;align-items:center;gap:6px}.flagged-chip{display:inline-flex;align-items:center;gap:5px}.flagged-chip .flag-glyph{width:9px;height:11px}
 
 .sentence-foot{flex-wrap:wrap}
 
-.library-progress{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:20px 0 8px;text-align:center}.library-progress>div{display:flex;flex-direction:column;gap:6px;padding:12px 4px;border:1px solid var(--hairline)}.library-progress strong{font-size:28px;font-weight:500}.library-progress span{font-size:13px}.library-progress-note{margin-bottom:20px}
+/* The Library meter (History.dc.html): one 8px stacked bar under the count line, then the counts in words. */
+#history-view .library-progress{margin:-6px 0 4px}.library-progress .bar{height:8px;margin-top:0}.library-progress-line{margin:7px 0 0;font-size:12px;color:var(--ink-muted)}.library-progress-line strong{font-weight:500;color:var(--sumi)}
+/* Practice — more for this sentence (PracticeMenu.dc.html). The ⋯ sits at the
+   end of the toggles row; its sheet is the existing .sheet-dialog with
+   SettingsRow rows, each an icon, a title and one line of what it does. */
+#practice-more{margin-left:auto;width:42px;height:42px}
+.menu-sheet{padding-top:22px}
+.menu-sheet .overline{margin:0}
+#practice-menu-quote{margin:6px 0 4px;padding-bottom:14px;border-bottom:1px solid var(--rule);font-family:var(--display);font-size:19px;line-height:1.55;overflow-wrap:anywhere}
+.menu-row{gap:14px;min-height:68px;cursor:pointer}
+.menu-row>svg{color:var(--sumi)}
+.menu-row-danger .settings-row-title,.menu-row-danger>svg{color:var(--seal-deep)}
+.menu-sheet-note{margin:14px 0 0}
+.history-open .chip-row{display:flex;flex-wrap:wrap;gap:6px}
+.menu-row>svg{width:18px;height:18px;flex:0 0 18px}
+/* Group by (Map.dc.html): an overline, then the existing segmented control. */
+.group-by{display:flex;align-items:center;gap:14px;margin:0 0 16px}
+.group-by .overline{flex-shrink:0;margin:0}
+.group-by .segmented{flex-grow:1;margin:0}
+/* Grouped by meaning, the families browser IS the wall: no disclosure to open. */
+#family-panel>summary{display:none}
+/* Topic bands (Group by: Meaning) have no level column: the topic name leads, in display type, with its families and first kanji under the bar. */
+.band[data-level=""] .band-level{display:none}
+.band[data-level=""] .band-label{font-family:var(--display);font-size:19px;color:var(--sumi)}
+.band-preview{display:block;margin-top:6px;font-size:11px;color:var(--ink-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* Custom references is a Collapsible (title, one meta line, chevron), not a browser disclosure in a card. */
+#custom-references{margin:0 0 14px}
+.band[data-level=""] .band-top{align-items:flex-start}
+.band[data-level=""] .band-label{white-space:normal;overflow:visible}
+#custom-references>summary{font-weight:400}
+.group-by{margin-top:14px}
