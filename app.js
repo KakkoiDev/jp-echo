@@ -17,7 +17,7 @@ import {japaneseVoices,recognitionFactory,ShadowLoop,ConversationLoop} from "./s
 import {STORIES} from "./stories.js";
 import {coverage as kanjiCoverage,facts as kanjiFacts,jlptBands as kanjiBands,learned as kanjiLearned,LEVEL_LABELS,levelOf,nextUnmet,sentenceKanji,TOTAL as KANJI_TOTAL} from "./kanji.js";
 import {searchGrammar,searchKanji,searchWords} from "./lookup.js";
-import {loadFamilyCurriculum,findFamilies,familyThemes,exampleLibraryIndex,exampleState,familyProgress,familyVocabulary} from "./kanji-families.js";
+import {loadFamilyCurriculum,familyTopics,findFamilies,familyThemes,exampleLibraryIndex,exampleState,familyProgress,familyVocabulary} from "./kanji-families.js";
 import {ALL as REFERENCE_WORDS,setImportedWords,bands as wordBands,carries as carriesWord,coverage as wordCoverage,kindOf,learned as wordLearned,levelOf as wordLevel,marks as wordMarks,sentenceWords,wordSpans,TOTAL as WORD_TOTAL,word as wordById} from "./words.js";
 import {deleteNote as dbDeleteNote,forBackup,getNote,listNotes,makeNote,mergeNotes,noteKey,putNote as dbPutNote,replaceNotes as dbReplaceNotes} from "./notes.js";
 import {downloadAnkiDeck} from "./anki-export.js";
@@ -26,7 +26,7 @@ import {reviewAvailabilityMessage,reviewStats,dailyReviewBudget,reviewOrder,sess
 import {DEFAULT_TIME,REMINDER_TAG,reminderText,shouldRemind} from "./reminders.js";
 import {saveDiscussionTurn} from "./actions.js";
 // New shared UI comes from the component library (COMPONENTS.md).
-import {grammarList,skillGlyph,skillTrio,expandableList,fitTextArea,kanjiNumeral} from "./components.js";
+import {flagSvg,renderFlagButton,grammarList,skillGlyph,skillTrio,expandableList,fitTextArea,kanjiNumeral} from "./components.js";
 // Settings page state, declared before anything can read it (navigationState).
 const SETTINGS_TITLES={main:"Settings",ai:"AI service",speech:"Speech recognition",backup:"Backup",import:"Import sentences",export:"Export",grammar:"Grammar"};
 let settingsPage="main",settingsReturn="practice";
@@ -82,7 +82,13 @@ const loop=new ShadowLoop({onEcho:async()=>{const sheet=($("#kanji-dialog").open
 // "on" and "off" say so outright, which is the only way to keep the motion
 // on a phone whose battery saver has switched the whole OS to reduced.
 function applyMotion(motion=settings.motion||"system"){const root=document.documentElement;
-  root.classList.toggle("motion-on",motion==="on");root.classList.toggle("motion-off",motion==="off")}
+  root.classList.toggle("motion-on",motion==="on");root.classList.toggle("motion-off",motion==="off");renderMotionHint(motion)}
+// "Device" is the default and a reduced-motion device freezes every ring, which
+// reads as broken. Say so where the setting lives, while it is the reason.
+const reducedMotion=matchMedia("(prefers-reduced-motion: reduce)");
+function renderMotionHint(motion=settings.motion||"system"){const hint=document.getElementById("motion-hint");if(!hint)return;
+  hint.textContent=motion==="system"&&reducedMotion.matches?t("Your device is asking for less motion right now, so the echo stays still while audio plays. Choose Always on to see it move."):t("The arcs beside the echo count move while audio plays. Following your device means battery saver stops them.")}
+reducedMotion.addEventListener?.("change",()=>renderMotionHint());
 const sourceLang=()=>settings.sourceLang||DEFAULT_PAIR.sourceLang;
 const targetLang=()=>settings.targetLang||DEFAULT_PAIR.targetLang;
 // A sentence carries the pair it was made with, so an old card keeps rendering
@@ -354,7 +360,7 @@ function playReading(){if(!readingPassage?.sentences.length)return;if(readingLoo
 
 function saveWorkspace(patch={}){const next={...workspace(),view:document.body.dataset.view||"practice",discussionMode,mapQuery:$("#map-search")?.value||"",historyQuery:$("#history-search")?.value||"",mapView:settings.mapView||"kanji",...patch};try{storePreference(WORKSPACE_KEY,JSON.stringify(next))}catch{/* Navigation must work even when browser storage is full or unavailable. */}return next}
 let applyingRoute=false;
-function navigationState(patch={}){return {view:document.body.dataset.view||"practice",discussionMode,readingMode,extractMode,mapView:settings.mapView||"kanji",mapQuery:$("#map-search")?.value||"",historyQuery:$("#history-search")?.value||"",historyFilter:$("#history-filter")?.value||"all",historyOrder:$("#history-order")?.value||"created",historyDirection:$("#history-direction")?.value||"desc",sentenceId:detail?.id||null,settingsPage,...patch}}
+function navigationState(patch={}){return {view:document.body.dataset.view||"practice",discussionMode,readingMode,extractMode,mapView:settings.mapView||"kanji",kanjiGroup:settings.kanjiGroup||"jlpt",mapQuery:$("#map-search")?.value||"",historyQuery:$("#history-search")?.value||"",historyFilter:$("#history-filter")?.value||"all",historyOrder:$("#history-order")?.value||"created",historyDirection:$("#history-direction")?.value||"desc",sentenceId:detail?.id||null,settingsPage,...patch}}
 function syncRoute(patch={},replace=false){if(applyingRoute)return;const url=routeFor(navigationState(patch));if(location.pathname+location.search===url)return;history[replace?"replaceState":"pushState"]({echo:true},"",url)}
 
 const wide=matchMedia("(min-width:1024px)");
@@ -406,12 +412,25 @@ async function renderMap(){
   if(half==="words")return renderWords(sentences);
   renderKanjiWall(sentences);
 }
+let familyCatalogue=null;
 function renderKanjiWall(sentences){
-  const cover=kanjiCoverage(sentences),known=kanjiLearned(sentences),met=cover.size,learnedN=known.size;
+  const cover=kanjiCoverage(sentences),known=kanjiLearned(sentences);
+  // Grouped by meaning, the wall is the curriculum's parent kanji in ten
+  // topics; until the catalogue has loaded it stays on the JLPT wall.
+  const meaning=settings.kanjiGroup==="meaning";
+  if(meaning&&!familyCatalogue)loadFamilyCurriculum().then(catalogue=>{familyCatalogue=catalogue;if(settings.kanjiGroup==="meaning"&&document.body.dataset.view==="map")renderMap()}).catch(()=>{});
+  const topics=meaning&&familyCatalogue?familyTopics(familyCatalogue):null;
+  const wall=topics?new Set(topics.flatMap(topic=>topic.chars)):null,total=wall?wall.size:KANJI_TOTAL;
+  const met=wall?[...wall].filter(c=>cover.has(c)).length:cover.size,learnedN=wall?[...wall].filter(c=>known.has(c)).length:known.size;
   const card=$("#kanji-summary");card.replaceChildren();
-  card.append(el("span","overline",t("The jōyō {n}, banded by JLPT",{n:KANJI_TOTAL.toLocaleString()})));
+  card.append(el("span","overline",wall?t("{n} parent kanji, grouped by meaning",{n:total.toLocaleString()}):t("The jōyō {n}, banded by JLPT",{n:KANJI_TOTAL.toLocaleString()})));
   const line=el("p","summary-line");line.append(el("strong",null,learnedN.toLocaleString()),el("span",null,t("learned, {met} met",{met:met.toLocaleString()})));
-  card.append(line,bar(learnedN,met,KANJI_TOTAL),legend([["learned",t("Learned"),learnedN],["met",t("In a sentence"),met-learnedN],["",t("Not met yet"),KANJI_TOTAL-met]]));
+  card.append(line,bar(learnedN,met,total));
+  if(wall){card.append(el("p","copy",t("Each parent kanji heads a family of words that share it — 行 gives 銀行, 旅行, 行動. Same cells, same states as the JLPT wall; tap one for its family, its prepared sentences and every word that contains it.")));
+    const host=$("#map-bands");host.replaceChildren();
+    for(const topic of topics)host.append(renderKanjiBand({...topic,preview:t("{n} families",{n:topic.families.length})+" · "+topic.chars.slice(0,9).join("")+(topic.chars.length>9?"…":"")},cover,known));
+    familyBrowse.sentences=sentences;applyKanjiGroup();return}
+  card.append(legend([["learned",t("Learned"),learnedN],["met",t("In a sentence"),met-learnedN],["",t("Not met yet"),KANJI_TOTAL-met]]));
   const copy=el("p","copy");
   if(sentences.length){copy.append(t("A kanji is ")+"",el("em",null,t("met")),t(" once one of your sentences uses it, and "),el("em",null,t("learned")),t(" once that sentence reaches review. Nothing here is scheduled or graded on its own — the wall is read off "));
     const link=el("button",null,sentences.length===1?t("your 1 sentence"):t("your {n} sentences",{n:sentences.length.toLocaleString()}));link.type="button";link.onclick=()=>showView("library");copy.append(link,t(", and nothing you do here changes them."))}
@@ -422,8 +441,16 @@ function renderKanjiWall(sentences){
   // Families are an optional learning layer above the existing JLPT wall.
   // Browsing never creates review cards.
   familyBrowse.sentences=sentences;
+  applyKanjiGroup();
   if($("#family-panel").open)void renderKanjiFamilies(sentences);
 }
+// Group by (Map.dc.html, MapFamilies.dc.html): one wall, two orders. JLPT
+// level shows the banded wall; Meaning shows the same cells by family topic.
+// Neither is a second search or a separate panel to find.
+function applyKanjiGroup(){const meaning=settings.kanjiGroup==="meaning";
+  for(const tab of document.querySelectorAll("#kanji-group [role=tab]")){const on=tab.dataset.group===(meaning?"meaning":"jlpt");tab.setAttribute("aria-selected",String(on));tab.tabIndex=on?0:-1}
+  $("#family-panel").hidden=true;$("#map-kanji").classList.toggle("by-meaning",meaning)}
+function setKanjiGroup(group){settings.kanjiGroup=group==="meaning"?"meaning":"jlpt";storePreference("jp-echo-settings",JSON.stringify(settings));syncRoute();tool.open=null;tool.chip="all";renderMap()}
 
 // The whole family browser stays closed when the Kanji tab is first entered.
 // Inside it, topics behave like the JLPT accordion and reuse the same kanji
@@ -507,7 +534,7 @@ function bandHead(band,learnedN,metN,total,sub){
   head.append(el("span","band-level",band.level));
   const text=el("span","band-text"),top=el("span","band-top");top.append(el("span","band-label",t(band.label)));
   const tally=el("span","band-tally");tally.append(el("strong",null,learnedN.toLocaleString()),document.createTextNode(" "+t("learned")+" · "+sub));top.append(tally);
-  text.append(top,bar(learnedN,metN,total));head.append(text);head.insertAdjacentHTML("beforeend",CHEVRON);
+  text.append(top,bar(learnedN,metN,total));if(band.preview)text.append(el("span","band-preview",band.preview));head.append(text);head.insertAdjacentHTML("beforeend",CHEVRON);
   head.onclick=()=>{tool.open=tool.open===band.key?null:band.key;tool.chip="all";renderMap()};
   return head}
 function chunkHead(from,to,first,order=t("taught first")){return el("p","chunk-head",from.toLocaleString()+"–"+to.toLocaleString()+(first?" · "+order:""))}
@@ -1342,9 +1369,9 @@ async function renderReviewHome(){const all=(await listSentences()).map(item=>en
   $("#start-review").hidden=due.length===0;$("#review-practice").hidden=due.length>0;
   const extra=extraStudySession(available,all,settings),early=extra.length&&!available.some(item=>!item.skipped);
   $("#review-extra-study").hidden=due.length>0||!extra.length;
-  $("#review-extra-study").textContent=early?"Extra study — review early":"Extra study — 20 more sentences";
+  $("#review-extra-study").textContent=early?"Extra study — review early":"Extra study — 20 more";
   $("#review-extra-note").hidden=due.length>0||!extra.length;
-  $("#review-extra-note").textContent=early?"Review up to 20 sentences before they are due. Grading updates their next review dates.":"Study up to 20 more due sentences. Your daily limits stay unchanged; grades are saved normally.";
+  $("#review-extra-note").textContent=early?"Review up to 20 sentences before they are due. Grading updates their next review dates.":"Counts against nothing. Shortest first, from Settings, if you want a light one.";
   document.querySelector("#review-rest-block .rest-title").textContent=available.length?"Daily limit reached":"Nothing due";
   renderSkillMix(due);
   if(due.length){$("#review-estimate").textContent="Say each one out loud before you check. Roughly "+spell(Math.max(1,Math.round(due.length*.55)))+" minute"+(Math.round(due.length*.55)>1?"s":"")+".";
@@ -1393,10 +1420,16 @@ function renderLibraryProgress(all){
  const counts={new:0,practicing:0,learned:0};
  for(const sentence of all){const state=sentence.srs?.state??0;counts[state===2?"learned":state===1||state===3?"practicing":"new"]++}
  for(const [key,value] of Object.entries(counts))$("#library-progress-"+key).textContent=String(value);
+ // One meter, not three big numbers (History.dc.html): learned solid seal,
+ // practicing hatched, new left as paper. The line under it says the same.
+ const total=all.length,width=n=>(total?100*n/total:0).toFixed(2)+"%";
+ $("#library-progress-bar-learned").style.width=width(counts.learned);$("#library-progress-bar-practicing").style.width=width(counts.practicing);
+ $("#library-progress").setAttribute("aria-label",t("Your library: {learned} learned, {practicing} practicing, {new} new",{learned:counts.learned,practicing:counts.practicing,new:counts.new}));
+ $("#library-progress").hidden=total===0;
 }
 let historyRenderVersion=0;
 async function renderHistory(){const version=++historyRenderVersion,all=await listSentences();if(version!==historyRenderVersion)return;renderLibraryTool(all);renderLibraryProgress(all);const list=$("#history-list"),due=dueSentences(all),query=$("#history-search").value.trim().toLocaleLowerCase(),filter=$("#history-filter").value,order=$("#history-order").value,direction=$("#history-direction").value,now=Date.now();let items=all.filter(item=>{const haystack=[item.source,item.target,item.plainTarget,item.casualTarget,item.politeTarget].filter(Boolean).join(" ").toLocaleLowerCase();if(query&&!haystack.includes(query))return false;const state=item.srs?.state??0;if(filter==="due")return !item.srs?.due||Date.parse(item.srs.due)<=now;if(filter==="new")return state===0;if(filter==="learning")return state===1||state===3;if(filter==="review")return state===2;if(filter==="skipped")return item.skipped===true;if(filter==="flagged")return item.flagged===true;return true});const comparators={created:(a,b)=>a.createdAt.localeCompare(b.createdAt),echoes:(a,b)=>(Number(a.echoCount)||0)-(Number(b.echoCount)||0),due:(a,b)=>Date.parse(a.srs?.due||a.createdAt)-Date.parse(b.srs?.due||b.createdAt),english:(a,b)=>a.source.localeCompare(b.source),japanese:(a,b)=>preferredPlainTarget(a).localeCompare(preferredPlainTarget(b),itemTarget(a))},factor=direction==="asc"?1:-1;items.sort((a,b)=>factor*(comparators[order]||comparators.created)(a,b));list.replaceChildren();$("#empty-history").hidden=all.length>0;renderStarterOffer(all);document.querySelector(".history-tools").hidden=all.length===0;$("#empty-results").hidden=all.length===0||items.length>0;$("#empty-results-count").textContent=all.length===1?"One is in your library.":capitalise(spell(all.length))+" are in your library.";updateDueBadge(limitReviewSession(due,settings,all).length);$("#library-count").textContent=items.length===1?"1 sentence":items.length+" sentences";$("#library-order-label").textContent=ORDER_LABELS[order+"-"+direction]||"";$(".list-head").hidden=items.length===0;if(isWide()&&!detail&&items.length)return openDetail(items[0].id);
-  for(const [index,item] of items.entries()){if(index%10===0){await new Promise(resolve=>setTimeout(resolve,0));if(version!==historyRenderVersion)return}const li=document.createElement("li");li.dataset.id=item.id;const state=cardState(item,now);li.innerHTML='<button class="history-open" type="button"><span class="lines"><span lang="'+itemTarget(item)+'">'+rubyHtml(preferredTarget(item))+'</span><span class="source-line">'+escapeText(item.source)+'</span><span class="status-chip '+state+'">'+CARD_STATES[state]+'</span>'+(item.flagged?'<span class="status-chip">⚑ Flagged</span>':'')+'</span><span class="tally"><strong>'+(Number(item.echoCount)||0)+'</strong><span>echoes</span></span></button>';li.querySelector(".history-open").onclick=()=>openDetail(item.id);list.append(li)}markSelectedRow()}
+  for(const [index,item] of items.entries()){if(index%10===0){await new Promise(resolve=>setTimeout(resolve,0));if(version!==historyRenderVersion)return}const li=document.createElement("li");li.dataset.id=item.id;const state=cardState(item,now);li.innerHTML='<button class="history-open" type="button"><span class="lines"><span lang="'+itemTarget(item)+'">'+rubyHtml(preferredTarget(item))+'</span><span class="source-line">'+escapeText(item.source)+'</span><span class="chip-row"><span class="status-chip '+state+'">'+CARD_STATES[state]+'</span>'+(item.flagged?'<span class="status-chip flagged-chip">'+flagSvg+' Flagged</span>':'')+'</span></span><span class="tally"><strong>'+(Number(item.echoCount)||0)+'</strong><span>echoes</span></span></button>';li.querySelector(".history-open").onclick=()=>openDetail(item.id);list.append(li)}markSelectedRow()}
 const formatDate=value=>new Intl.DateTimeFormat(undefined,{day:"numeric",month:"long"}).format(new Date(value));
 const RATING_LABELS={again:"Again",ok:"OK"};
 let practiceEditor=false;
@@ -1486,7 +1519,6 @@ async function deletePracticeSentence(sentence){
  $("#english-input").value=sentence.source;$("#english-input").dispatchEvent(new Event("input",{bubbles:true}));$("#english-input").focus();
  refreshDueBadge();setStatus("Sentence deleted. Edit your words and translate again.");
 }
-function renderFlagButton(button,sentence){const flagged=sentence.flagged===true;button.setAttribute("aria-pressed",String(flagged));button.textContent=flagged?"⚑ Flagged — remove flag":"⚑ Flag sentence"}
 async function toggleSentenceFlag(sentence,button){
  if(!sentence||reviewBusy)return;
  reviewBusy=true;button.disabled=true;updateReviewPrevious();
@@ -1721,9 +1753,11 @@ async function renderReviewComplete(){const done=reviewQueue.length;let copy=don
   const all=(await listSentences()).map(item=>ensureSchedule(item)),next=all.filter(item=>!isDue(item)).map(item=>Date.parse(item.srs.due)).filter(Number.isFinite).sort((a,b)=>a-b)[0];
   const remaining=dueSentences(all);copy+=" "+reviewAvailabilityMessage(remaining.length,0,next);
   $("#review-complete-copy").textContent=copy;
+  // Sentences still due after a full session means the daily limit ended it (ReviewDone.dc.html).
+  $("#review-complete-title").textContent=done&&remaining.length?t("All said for today"):t("All said");
   const extra=extraStudySession(remaining,all,settings),early=extra.length&&!remaining.some(item=>!item.skipped);
-  $("#review-extra-more").hidden=!extra.length;$("#review-extra-more").textContent=early?"Extra study — review early":"Extra study — 20 more sentences";
-  $("#review-extra-more-note").hidden=!extra.length;$("#review-extra-more-note").textContent=early?"These sentences are not due yet. Grading updates their next review dates.":"Your daily limits stay unchanged; extra grades are saved normally.";
+  $("#review-extra-more").hidden=!extra.length;$("#review-extra-more").textContent=early?"Extra study — review early":"Extra study — 20 more";
+  $("#review-extra-more-note").hidden=!extra.length;$("#review-extra-more-note").textContent=early?"These sentences are not due yet. Grading updates their next review dates.":"Over your limit, on purpose. Tomorrow’s queue is not touched.";
   refreshDueBadge()}
 function updateCheckButton(){const sentence=reviewQueue[reviewIndex];if(!sentence)return $("#review-check").disabled=true;$("#review-check").disabled=reviewSpeechPending||(reviewMode(sentence)==="writing"&&!$("#review-answer").value.trim())}
 async function revealReview(){let sentence=reviewQueue[reviewIndex];if(!sentence||reviewRevealed)return;
@@ -2142,7 +2176,7 @@ $("#family-dictionary-level").onchange=()=>{
   if(!character)return;
   void loadFamilyCurriculum().then(c=>renderKanjiFamilyDictionary(c.byKanji.get(character)));
 };
-$("#map-back").onclick=()=>showView("library");for(const button of document.querySelectorAll("#map-toggle [role=tab]"))button.onclick=()=>{settings.mapView=button.dataset.map;storePreference("jp-echo-settings",JSON.stringify(settings));saveWorkspace({mapView:settings.mapView});tool.open=null;tool.chip="all";renderMap()};$("#map-toggle").addEventListener("keydown",event=>{if(event.key!=="ArrowLeft"&&event.key!=="ArrowRight")return;const tabs=[...document.querySelectorAll("#map-toggle [role=tab]")].filter(b=>!b.hidden),at=tabs.findIndex(b=>b.getAttribute("aria-selected")==="true"),next=tabs[(at+(event.key==="ArrowRight"?1:tabs.length-1))%tabs.length];if(next){next.click();next.focus()}});let lookupTimer=0;$("#map-search").oninput=()=>{saveWorkspace();syncRoute({},true);clearTimeout(lookupTimer);lookupTimer=setTimeout(renderMap,150)};$("#map-search").onkeydown=event=>{if(event.key==="Escape"&&$("#map-search").value){$("#map-search").value="";renderMap()}};$("#map-search-clear").onclick=()=>{$("#map-search").value="";$("#map-search").focus();renderMap()};$("#grammar-prev").onclick=()=>grammarStep(-1);$("#grammar-next").onclick=()=>grammarStep(1);$("#grammar-close").onclick=()=>{loop.stop();$("#grammar-dialog").close()};$("#grammar-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;grammarOpen=null;saveWorkspace({modal:null})});$("#grammar-say-go").onclick=sayForGrammar;$("#grammar-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForGrammar()};$("#grammar-compose").onclick=composeForGrammar;$("#kanji-prev").onclick=()=>learnStep(-1);$("#kanji-next").onclick=()=>learnStep(1);$("#kanji-dialog").addEventListener("keydown",event=>{if(!kanjiOpen?.learn||event.target.tagName==="TEXTAREA")return;if(event.key==="ArrowRight")learnStep(1);else if(event.key==="ArrowLeft")learnStep(-1)});$("#kanji-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForKanji()};$("#sentence-back").onclick=()=>{detail=null;const back=practiceEditor?"practice":"library";practiceEditor=false;showView(back)};$("#sentence-play").onclick=playDetail;// Editing lives in the collapsed "Change this sentence" row (no pencil button).
+$("#map-back").onclick=()=>showView("library");for(const tab of document.querySelectorAll("#kanji-group [role=tab]"))tab.onclick=()=>setKanjiGroup(tab.dataset.group);$("#kanji-group").addEventListener("keydown",event=>{if(event.key!=="ArrowLeft"&&event.key!=="ArrowRight")return;const next=settings.kanjiGroup==="meaning"?"jlpt":"meaning";setKanjiGroup(next);$(`#kanji-group [data-group=${next}]`).focus()});for(const button of document.querySelectorAll("#map-toggle [role=tab]"))button.onclick=()=>{settings.mapView=button.dataset.map;storePreference("jp-echo-settings",JSON.stringify(settings));saveWorkspace({mapView:settings.mapView});tool.open=null;tool.chip="all";renderMap()};$("#map-toggle").addEventListener("keydown",event=>{if(event.key!=="ArrowLeft"&&event.key!=="ArrowRight")return;const tabs=[...document.querySelectorAll("#map-toggle [role=tab]")].filter(b=>!b.hidden),at=tabs.findIndex(b=>b.getAttribute("aria-selected")==="true"),next=tabs[(at+(event.key==="ArrowRight"?1:tabs.length-1))%tabs.length];if(next){next.click();next.focus()}});let lookupTimer=0;$("#map-search").oninput=()=>{saveWorkspace();syncRoute({},true);clearTimeout(lookupTimer);lookupTimer=setTimeout(renderMap,150)};$("#map-search").onkeydown=event=>{if(event.key==="Escape"&&$("#map-search").value){$("#map-search").value="";renderMap()}};$("#map-search-clear").onclick=()=>{$("#map-search").value="";$("#map-search").focus();renderMap()};$("#grammar-prev").onclick=()=>grammarStep(-1);$("#grammar-next").onclick=()=>grammarStep(1);$("#grammar-close").onclick=()=>{loop.stop();$("#grammar-dialog").close()};$("#grammar-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;grammarOpen=null;saveWorkspace({modal:null})});$("#grammar-say-go").onclick=sayForGrammar;$("#grammar-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForGrammar()};$("#grammar-compose").onclick=composeForGrammar;$("#kanji-prev").onclick=()=>learnStep(-1);$("#kanji-next").onclick=()=>learnStep(1);$("#kanji-dialog").addEventListener("keydown",event=>{if(!kanjiOpen?.learn||event.target.tagName==="TEXTAREA")return;if(event.key==="ArrowRight")learnStep(1);else if(event.key==="ArrowLeft")learnStep(-1)});$("#kanji-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForKanji()};$("#sentence-back").onclick=()=>{detail=null;const back=practiceEditor?"practice":"library";practiceEditor=false;showView(back)};$("#sentence-play").onclick=playDetail;// Editing lives in the collapsed "Change this sentence" row (no pencil button).
 // Opening fills the editor; closing it cancels an in-flight rewrite.
 $("#sentence-change").ontoggle=()=>{if($("#sentence-change").open){if(editorOpenId!==detail?.id)openEditor()}else{editorOpenId=null;editorGeneration++}};$("#sentence-cancel").onclick=()=>{closeEditor();if(practiceEditor){practiceEditor=false;detail=null;showView("practice")}};$("#sentence-editor").onsubmit=saveEdit;
 $("#sentence-delete").onclick=()=>askDelete();$("#delete-cancel").onclick=()=>$("#delete-dialog").close();$("#delete-confirm").onclick=confirmDelete;$("#delete-dialog").onclick=event=>{if(event.target===$("#delete-dialog"))$("#delete-dialog").close()};
@@ -2200,7 +2234,7 @@ async function applyRoute(route=parseRoute(location.href)){
     if(!settings.onboarded&&!hasTranslator()&&route.view!=="setup"&&route.view!=="onboard")route={view:"onboard"};
     if(route.historyQuery!=null){$("#history-search").value=route.historyQuery;$("#clear-history-search").hidden=!route.historyQuery}
     if(route.historyFilter)$("#history-filter").value=route.historyFilter;if(route.historyOrder)$("#history-order").value=route.historyOrder;if(route.historyDirection)$("#history-direction").value=route.historyDirection;
-    if(route.mapQuery!=null)$("#map-search").value=route.mapQuery;if(route.mapView)settings.mapView=route.mapView;
+    if(route.mapQuery!=null)$("#map-search").value=route.mapQuery;if(route.mapView)settings.mapView=route.mapView;if(route.kanjiGroup)settings.kanjiGroup=route.kanjiGroup;
     if(route.sentenceId){const sentence=await getSentence(route.sentenceId);if(sentence){detail=ensureSchedule(sentence);showView("sentence",{route:false});renderDetail()}else showView("library",{route:false})}
     else if(route.view==="settings")openSettings(route.settingsPage,{route:false});
     else {showView(route.view||"practice",{route:false});if((route.view||"practice")==="practice")setPracticeMode(route.extractMode?"extract":route.readingMode?"reading":route.discussionMode?"discussion":"sentence",{route:false})}
@@ -2310,7 +2344,14 @@ $('#extract-epub').onchange=async event=>{const file=event.target.files[0];if(!f
  try{const book=await readEpub(await file.arrayBuffer());extractionBook=book;extractionRows=[];extractionInventory=null;$('#extract-preview').replaceChildren();$('#extract-selection').hidden=$('#extract-foot').hidden=true;$('#extract-passage').value='';$('#extract-book-status').textContent=`${book.title} · ${book.chapters.length} chapters loaded. Find sentences analyzes the full book using your AI service in batches. Large books can take time and use many requests.`;$('#extract-status').textContent='Book loaded. Choose a vocabulary filter, then Find sentences.'}
  catch(error){extractionBook=null;$('#extract-book-status').textContent=error.message}finally{event.target.value='';setExtractionBusy(false)}};
 
-$("#practice-edit").onclick=editPracticeSentence;
-$("#practice-delete").onclick=()=>askDelete(current,deletePracticeSentence);
+// Practice keeps one ⋯ button; edit, flag, open and delete live in its sheet
+// (PracticeMenu.dc.html). The loop keeps playing while the sheet is open.
+$("#practice-more").onclick=()=>{if(!current)return;$("#practice-menu-quote").textContent=stripFurigana(preferredTarget(current));renderFlagButton($("#practice-flag"),current);$("#practice-menu").showModal()};
+const fromPracticeMenu=action=>()=>{$("#practice-menu").close();action()};
+$("#practice-menu").addEventListener("click",event=>{if(event.target===$("#practice-menu"))$("#practice-menu").close()});
+$("#practice-edit").onclick=fromPracticeMenu(editPracticeSentence);
+$("#practice-flag").onclick=()=>toggleSentenceFlag(current,$("#practice-flag"));
+$("#practice-open").onclick=fromPracticeMenu(()=>{if(current)openDetail(current.id)});
+$("#practice-delete").onclick=fromPracticeMenu(()=>askDelete(current,deletePracticeSentence));
 $("#review-flag").onclick=()=>toggleSentenceFlag(reviewQueue[reviewIndex],$("#review-flag"));
 $("#sentence-flag").onclick=()=>toggleSentenceFlag(detail,$("#sentence-flag"));

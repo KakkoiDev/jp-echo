@@ -149,3 +149,29 @@ export const sentenceIndex=sentences=>{
   return {ids,targets};
 };
 export const exampleInLibrary=(card,index)=>index.ids.get(card.id)||index.targets.get(normalizeExample(card.target))||null;
+
+// Group by Meaning (MapFamilies.dc.html): the curriculum's eighteen themes,
+// several of them twins (Time and Time & relations, Work and Work & society),
+// folded into ten topics. Each topic is band-shaped — key, label, chars — so
+// the kanji wall draws it with the same head, bar, chips and cells as a JLPT
+// band. A theme not listed here keeps a topic of its own rather than vanish.
+export const FAMILY_TOPICS=Object.freeze([
+  ["everyday","Everyday & places",["Everyday","Places"]],
+  ["people","People",["People"]],
+  ["actions","Actions",["Actions & change","Actions"]],
+  ["time","Time & relations",["Time & relations","Time"]],
+  ["nature","Nature",["Nature"]],
+  ["descriptions","Descriptions & senses",["Descriptions","Senses"]],
+  ["language","Language & learning",["Language","Learning"]],
+  ["mind","Mind & meaning",["Mind & meaning"]],
+  ["work","Work, money & society",["Work & society","Work","Money"]],
+  ["concepts","Opposites & concepts",["Prefixes & opposites","Concepts"]],
+].map(([key,label,themes])=>Object.freeze({key,label,themes:Object.freeze(themes)})));
+export function familyTopics(curriculum){
+  const families=curriculum.families||curriculum.kanjiFamilies||[],byTheme=new Map();
+  for(const family of families){if(!byTheme.has(family.theme))byTheme.set(family.theme,[]);byTheme.get(family.theme).push(family)}
+  const topics=FAMILY_TOPICS.map(topic=>({key:"topic-"+topic.key,level:"",label:topic.label,families:topic.themes.flatMap(theme=>byTheme.get(theme)||[])}));
+  const claimed=new Set(FAMILY_TOPICS.flatMap(topic=>topic.themes));
+  for(const [theme,list] of byTheme)if(!claimed.has(theme))topics.push({key:"topic-theme-"+theme.toLowerCase().replace(/[^a-z0-9]+/g,"-"),level:"",label:theme,families:list});
+  return topics.filter(topic=>topic.families.length).map(topic=>({...topic,chars:[...new Set(topic.families.map(f=>f.kanji))]}));
+}

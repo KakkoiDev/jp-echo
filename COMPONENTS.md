@@ -53,6 +53,20 @@ the sentence page and the revealed review answer only.
 `.settings-row` (static markup in Settings): title, one-line status, chevron,
 64 px floor, `--rule` divider. Opens a settings sub-page.
 
+### FlagButton
+`renderFlagButton(button, sentence)` and `flagSvg` (components.js): the one
+flag. The glyph is the drawn Icons/flag line, never ⚑; pressed, it fills.
+Three forms from one function: an `.icon-button` in a session bar (named by
+`aria-label`), a `.settings-row` in a menu sheet, or a labelled text button on
+the sentence page. `toggleSentenceFlag` in app.js owns the write.
+
+### MenuSheet
+`.sheet-dialog.menu-sheet` with `.settings-row.menu-row` rows: an overline,
+the subject, then one row per action (icon, title, one line of what happens);
+a destructive row adds `.menu-row-danger`. Practice's ⋯ (`#practice-more`) is
+the first: edit, flag, open its page, delete. Opening it never touches the
+loop. Put further per-sentence actions here, not as links under a sentence.
+
 Note: the app imports components.js for these three. Older behaviour still has
 inline copies in app.js; move them here as they are touched.
 
@@ -132,3 +146,11 @@ playback, dictionary lookup and backup retain their existing owners.
 The Kanji Family screen separates **authored example sentences** from **other JMdict words containing the same kanji**. The latter are indexed by `dictionaryIndex` from `words-data.js` and paginated in the detail sheet, linking to Echo's existing Word modal. Dictionary-only words are not assigned synthetic example sentences or SRS state. See `decks/KANJI-FAMILIES-COVERAGE-AUDIT.md` for all-family coverage.
 
 The Kanji Families panel uses native nested `<details>`/`<summary>`: the outer section is collapsed on Kanji navigation, and topic groups inside use JLPT-wall `kanjiCell` buttons. Search renders matching character cells directly; the browser only loads its family data when expanded. No extra family-row cards or fixed initial expansion.
+
+**Group by (November design).** The Kanji tab now has one wall with two
+orders: `#kanji-group` (JLPT level | Meaning), URL state as `/kanji?group=meaning`.
+Meaning draws `familyTopics()` — the eighteen curriculum themes folded into ten
+— through the same `renderKanjiBand` as the JLPT wall, so cells, states, chips
+and "Practise the ones you haven't met" are shared. The old `#family-panel`
+browser above is no longer shown (it stays in the markup for its tests); remove
+it and `renderKanjiFamilies` together once nothing depends on them.

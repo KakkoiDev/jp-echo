@@ -16,3 +16,4 @@ test('pretty-route restoration keeps assets rooted at the deployed app',async()=
  const {readFile}=await import('node:fs/promises');const html=await readFile(new URL('../index.html',import.meta.url),'utf8');
  const base=html.indexOf('<base href="/">'),restore=html.indexOf('echo-pages-route');assert.ok(base>=0&&base<restore,'asset base is established before history restores a nested route');
 });
+test("kanji group by meaning is URL state; JLPT level is the default",()=>{assert.equal(routeFor({view:"map",mapView:"kanji",kanjiGroup:"meaning"}),"/kanji?group=meaning");assert.equal(routeFor({view:"map",mapView:"kanji",kanjiGroup:"jlpt"}),"/kanji");assert.equal(parseRoute("/kanji?group=meaning").kanjiGroup,"meaning");assert.equal(parseRoute("/kanji").kanjiGroup,"jlpt");assert.equal(parseRoute("/kanji?group=bogus").kanjiGroup,"jlpt");assert.equal(routeFor({view:"map",mapView:"words",kanjiGroup:"meaning"}),"/words")});
