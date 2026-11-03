@@ -1592,4 +1592,9 @@ button.mora-cell:last-child{border-right:0}
 .mora-mark{display:block;margin-top:1px;font-size:9px;letter-spacing:.06em;color:var(--ink-muted)}
 .mora-cell.hidden-anchor .mora-kana{font-size:22px}
 #mora-voiced-table{margin-top:0}
+/* What ゛ and ゜ mean, right above the voiced table. */
+.mora-mark-key{display:grid;gap:8px;margin:0 0 10px;font-size:12px;line-height:1.6;color:var(--ink-soft)}
+.mora-mark-key p{margin:0}
+.mora-mark-key strong{font-family:var(--display);font-weight:500;font-size:14px;color:var(--seal-deep);margin-right:4px}
+.mora-mark-reading{font-size:10px;color:var(--ink-muted)}
 
