@@ -1567,3 +1567,11 @@ html.motion-off #review-progress-bar { transition: none; }
 /* The ornament rings behind the due count (ReviewHome.dc.html) rise past the
    Review | Stats switch; the switch is paper above them, not glass. */
 #review-home>.segmented{position:relative;z-index:1}
+/* "A new version is ready" (sw.js waits while Echo is open). Toast placement at
+   the top, so it never covers the composer; panel corners, an outlined verb. */
+.update-ready{position:fixed;z-index:20;left:50%;top:calc(env(safe-area-inset-top) + 12px);transform:translateX(-50%);display:flex;align-items:center;gap:12px;width:max-content;max-width:calc(100vw - 32px);padding:8px 8px 8px 16px;border:1px solid var(--hairline);border-radius:4px;background:var(--panel);color:var(--sumi);box-shadow:0 6px 22px rgba(28,26,23,.16);font-size:14px}
+.update-ready[hidden]{display:none}
+.update-ready button{min-height:40px;padding:0 14px;font-size:13px}
+
+/* Notes now carry readings as ruby (READINGS_RULE in api.js): leave room for them. */
+.note-text:has(ruby){line-height:2.1}
