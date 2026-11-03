@@ -136,7 +136,7 @@ test("reading echo uses only the existing voice list and no undefined voice help
 
 test("Mora page teaches combined sounds with their own anchors, and sokuon",()=>{
   assert.match(html,/Combined sounds — one anchor each/);assert.match(html,/<div id="mora-yoon-table" class="mora-table" lang="ja"><\/div>/);
-  assert.match(html,/じょ is 醤油 in mud, びょ is 豹 in mud/);
+  assert.match(html,/じょ is a giant 醤油, びょ a giant 豹/);assert.doesNotMatch(html,/in mud|泥 <span/);
   assert.match(html,/きって = 木 → 手×2/);
 });
 
