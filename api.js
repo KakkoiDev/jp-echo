@@ -181,7 +181,11 @@ async function composeGrammar(point,settings){
 // never from the index they were read off — and Echo's rewrite of any note,
 // including the bundled kanji story, to an instruction of yours. The same
 // rules as the stories: no religion, no swearing, plain text.
-const NOTE_RULES="Write in plain, vivid, everyday English for someone learning Japanese. Never mention any religion, deity, or holy figure, and never swear or use a euphemism for swearing; the sound ジ is written jee, never gee. Plain text only: no HTML, no markdown, no headings. Japanese inside the text is fine, and readings go in the notation 駅【えき】 after a kanji run.";
+// Every explanation Echo's model writes may use kanji the learner cannot read
+// yet, so every kanji it writes carries its reading in Echo's own furigana
+// notation, which the app renders as ruby. One rule, for every such prompt.
+export const READINGS_RULE="Every kanji you write carries its reading straight after it in this exact notation: 革命【かくめい】, 傘【かさ】, 目【め】. This applies to every word, compound, example sentence and single kanji you mention, every time it appears, even when the reading seems obvious. Never give a reading in parentheses or romaji instead. Kana needs no reading.";
+const NOTE_RULES="Write in plain, vivid, everyday English for someone learning Japanese. Never mention any religion, deity, or holy figure, and never swear or use a euphemism for swearing; the sound ジ is written jee, never gee. Plain text only: no HTML, no markdown, no headings. Japanese inside the text is fine. "+READINGS_RULE;
 const NOTE_FORBIDDEN=/\b(god|gods|jesus|christ|lord|allah|buddha|damn|hell|gee)\b|<[a-z][^>]*>/i;
 function notesPrompt(){
   return `You write Echo's notes on a Japanese grammar point. You are given only its name and a one-line gloss; write from those and your own knowledge of Japanese, not from any textbook or website. Return JSON only: {"breath":"...","remember":"...","examples":[{"ja":"...","en":"..."},{"ja":"...","en":"..."}]}. "breath" explains the point in one paragraph, in one breath: how it attaches, what it means, one tiny example inline. "remember" is a way to remember it, a few sentences. "examples" are two short natural Japanese sentences that use the point, each with its English. ${NOTE_RULES}`;

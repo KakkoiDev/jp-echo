@@ -149,6 +149,13 @@ Before considering the change complete:
   downloads it and the gist holds it. Writes that change a backup go through
   the `saveSentence` / `deleteSentence` / note wrappers in `app.js` (which call
   `markBackupDirty`), never straight to `db.js` or `notes.js`.
+- **Updates are offered, never forced.** A new worker waits while Echo is open
+  (no `skipWaiting` on install). `app.js` shows "A new version of Echo is ready"
+  and, on the person's tap, posts `echo:activate-update`; the page reloads only
+  after that request. Never reload or navigate from the worker.
+- **AI prose carries readings.** Any prompt whose answer is shown as an
+  explanation includes `READINGS_RULE` (api.js), and the answer is rendered with
+  `rubyHtml`, so every kanji the model writes has furigana.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

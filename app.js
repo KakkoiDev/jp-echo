@@ -11,7 +11,7 @@ import {DEFAULT_PAIR,LANGUAGES,safeLanguage,MORA_MNEMONIC_META,createSentence,re
 import {isExactMatch,markAttempt,markTarget} from "./diff.js";
 import {applyReadingCorrection,removeArchivedMiniCards,readImportRecovery,saveImportRecovery,deleteSentence as dbDeleteSentence,getSentence,listSentences,migrateStore,replaceAll,saveSentence as persistSentence} from "./db.js";
 import {MIN_INTERVAL_MS,QUIET_MS,downloadBackup,parseGistId,shouldAutoBackup,uploadBackup} from "./gist-backup.js";
-import {correctSentenceReadings,analyzeSentenceGrammar,askModel,rewriteSentence,adjustNote,carries,compose,composeFromIntent,PROVIDER_DEFAULTS,tagGrammar,translate,discuss,generateReading,writeNotes,writeWordNote,transcribeAudio} from "./api.js";
+import {READINGS_RULE,correctSentenceReadings,analyzeSentenceGrammar,askModel,rewriteSentence,adjustNote,carries,compose,composeFromIntent,PROVIDER_DEFAULTS,tagGrammar,translate,discuss,generateReading,writeNotes,writeWordNote,transcribeAudio} from "./api.js";
 import {grammarListItems,setImportedGrammar,byLevel as grammarByLevel,cleanTags as grammarTags,coverage as grammarCoverage,hasGrammar,isTagged,learned as grammarLearned,LEVELS as GRAMMAR_LEVELS,point as grammarPoint,POINTS as GRAMMAR_POINTS,summarise as grammarSummarise,untagged as untaggedSentences} from "./grammar.js";
 import {japaneseVoices,recognitionFactory,ShadowLoop,ConversationLoop} from "./speech.js";
 import {STORIES} from "./stories.js";
@@ -1062,10 +1062,12 @@ async function renderPointNotes(point){
 // instruction to Echo, editing by hand, or Reset to Echo's.
 function noteBlock(block,{about,kind,note,onSave,onReset,echoLine,yoursLine,render=null}){
   const text=block.querySelector(".note-text"),line=block.querySelector(".note-note"),panel=block.querySelector(".adjust-panel"),input=panel.querySelector("input"),rewrite=panel.querySelector(".rewrite"),reset=panel.querySelector(".reset-link"),adjust=block.querySelector(".adjust-link"),pstatus=panel.querySelector(".adjust-status");const adjustMic=panel.querySelector(".note-adjust-mic");if(adjustMic)bindDictation(adjustMic,input,pstatus);
-  const show=n=>{if(render)render(n);else text.textContent=n.text;line.textContent=n.by==="you"?yoursLine:echoLine;block.dataset.by=n.by;reset.hidden=n.by!=="you"&&!(render&&n.by==="you")};
+  const show=n=>{if(render)render(n);else text.innerHTML=rubyHtml(n.text);line.textContent=n.by==="you"?yoursLine:echoLine;block.dataset.by=n.by;reset.hidden=n.by!=="you"&&!(render&&n.by==="you")};
   show(note);pstatus.textContent="";input.value="";
   adjust.onclick=()=>{panel.hidden=!panel.hidden;if(!panel.hidden){input.focus()}};
-  const current=()=>render?null:text.textContent;
+  // The note is shown with its readings as ruby; its source text is note.text,
+  // and the raw notation is what an edit by hand works on.
+  const current=()=>render?null:text.isContentEditable?text.textContent:note.text;
   rewrite.onclick=async()=>{const instruction=input.value.trim();if(!instruction){input.focus();return}
     rewrite.disabled=true;pstatus.textContent=t("Rewriting…");
     try{const made=await adjustNote({about,kind,current:block.currentText?block.currentText():current(),instruction},{...settings,targetLang:targetLang()});
@@ -1078,7 +1080,7 @@ function noteBlock(block,{about,kind,note,onSave,onReset,echoLine,yoursLine,rend
   // panel's other actions and could save a half-made edit.
   for(const p of block.querySelectorAll(".note-text")){p.contentEditable="false";p.onfocus=null;p.onblur=null}
   const saveLink=panel.querySelector(".save-link");
-  const editable=on=>{for(const p of block.querySelectorAll(".note-text"))p.contentEditable=on?"true":"false";if(saveLink)saveLink.hidden=!on};
+  const editable=on=>{for(const p of block.querySelectorAll(".note-text"))p.contentEditable=on?"true":"false";if(!render){if(on)text.textContent=note.text;else show(note)}if(saveLink)saveLink.hidden=!on};
   if(saveLink)saveLink.onclick=async()=>{const edited=block.currentText?block.currentText():block.querySelector(".note-text").textContent.trim();if(!edited||edited===(block.currentText?block.savedText:note.text)){pstatus.textContent=t("Nothing changed.");return}note=await onSave(edited,"you");if(block.currentText)block.savedText=edited;show(note);pstatus.textContent=t("Saved. Yours now.")};
   adjust.onclick=()=>{panel.hidden=!panel.hidden;editable(!panel.hidden);if(!panel.hidden)input.focus()};
 }
@@ -1256,8 +1258,11 @@ async function openWord(w,cover,{learn=null,route=true}={}){
 // opens: one request, on your key, kept on the device and in every backup.
 async function renderWordNote(w){
   const block=$("#word-note"),ask=$("#word-note-ask"),hint=$("#word-note-hint");$("#word-note-status").textContent="";
-  block.hidden=true;block.querySelector(".adjust-panel").hidden=true;
+  block.hidden=true;
   let note=null;try{note=await getNote(noteKey("word",w.id,"remember"))}catch{note=null}
+  // Echo's note is used constantly: it remembers being open, and a link under
+  // the meanings jumps to it, so it is never a scroll and two clicks away.
+  $("#word-more").open=settings.wordNoteOpen===true;$("#word-note-jump").hidden=!note&&!hasTranslator();
   ask.hidden=!!note;hint.hidden=!!note;ask.disabled=!hasTranslator();
   hint.textContent=hasTranslator()?t("One request on your key. Kept on this device and in every backup, and yours to adjust."):t("Add a translator and Echo can write one.");
   if(note)showWordNote(w,note);
@@ -1273,8 +1278,13 @@ function showWordNote(w,note){
   const panel=block.querySelector(".adjust-panel"),text=block.querySelector(".note-text"),edit=panel.querySelector(".note-edit"),saveEdit=panel.querySelector(".note-save"),del=panel.querySelector(".note-delete"),regen=panel.querySelector(".note-regenerate"),mic=panel.querySelector(".note-adjust-mic"),instruction=panel.querySelector("input"),status=panel.querySelector(".adjust-status");
   // Word mnemonics use explicit Save edit. The generic blur-save races Delete/Generate new.
   text.onblur=null;
-  edit.onclick=()=>{text.contentEditable="true";text.focus();edit.hidden=true;saveEdit.hidden=false};
-  saveEdit.onclick=async()=>{const value=text.textContent.trim();if(!value)return;text.contentEditable="false";note=await save(value);edit.hidden=false;saveEdit.hidden=true;status.textContent=t("Saved. Yours now.")};
+  // The change-it row is always there under the note: no Adjust step, and Edit,
+  // Generate fresh and Delete sit inline rather than behind "More options".
+  block.querySelector(".adjust-link").hidden=true;panel.hidden=false;text.contentEditable="false";edit.hidden=false;saveEdit.hidden=true;
+  panel.querySelector(".rewrite").disabled=!hasTranslator();regen.disabled=!hasTranslator();
+  // Edit by hand works on the raw notation (読【よ】み), not on the rendered ruby.
+  edit.onclick=()=>{text.textContent=note.text;text.contentEditable="true";text.focus();edit.hidden=true;saveEdit.hidden=false};
+  saveEdit.onclick=async()=>{const value=text.textContent.trim();if(!value)return;text.contentEditable="false";note=await save(value);text.innerHTML=rubyHtml(note.text);edit.hidden=false;saveEdit.hidden=true;status.textContent=t("Saved. Yours now.")};
   del.onclick=async()=>{await deleteNote(noteKey("word",w.id,"remember"));block.hidden=true;$("#word-note-ask").hidden=false;$("#word-note-hint").hidden=false;$("#word-note-ask").disabled=!hasTranslator();$("#word-note-status").textContent=t("Deleted. You can generate a new one from scratch.")};
   regen.onclick=async()=>{regen.disabled=true;status.textContent=t("Writing a new one from scratch…");try{const made=await writeWordNote({word:w.w,reading:w.r,meaning:w.en.join(" / "),kind:kindOf(w)},{...settings,targetLang:targetLang()});const next=makeNote({kind:"word",id:w.id,part:"remember",text:made.remember});await putNote(next);showWordNote(w,next)}catch(error){status.textContent=sheetError(error)}finally{regen.disabled=false}};
   bindDictation(mic,instruction,status);
@@ -1918,7 +1928,7 @@ async function openVocabularyHit(hit,context){
   if(savedReference)$("#dictionary-explanation").textContent=savedReference.text;
   const online=el('button','quiet',savedReference?'Open saved custom reference':'Look up with AI');online.type='button';online.onclick=()=>{dialog.close();openCustomReferences(surface,'auto',context)};list.append(online);
   ask.onclick=async()=>{ask.disabled=true;$("#dictionary-explanation").textContent="Looking up the word in this sentence…";
-    try{const result=await askModel(JSON.stringify({word:surface,sentence:context}),`Explain this Japanese word or proper name in its sentence context in ${languageName(sourceLang())}. Treat the complete supplied word as one unit. For names, explain the likely reference, not meanings of substrings. If uncertain say so. Return JSON only: {"definition":"..."}.`,settings);if(generation===dictionaryLookupGeneration&&dialog.open)$("#dictionary-explanation").textContent="AI explanation: "+String(result.definition||"No definition returned.")}
+    try{const result=await askModel(JSON.stringify({word:surface,sentence:context}),`Explain this Japanese word or proper name in its sentence context in ${languageName(sourceLang())}. Treat the complete supplied word as one unit. For names, explain the likely reference, not meanings of substrings. If uncertain say so. ${READINGS_RULE} Return JSON only: {"definition":"..."}.`,settings);if(generation===dictionaryLookupGeneration&&dialog.open)$("#dictionary-explanation").innerHTML=escapeText("AI explanation: ")+rubyHtml(String(result.definition||"No definition returned."))}
     catch(error){if(generation===dictionaryLookupGeneration)$("#dictionary-explanation").textContent=error.message}
     finally{if(generation===dictionaryLookupGeneration)ask.disabled=!hasTranslator()}};
   if(!dialog.open)dialog.showModal();
@@ -2178,7 +2188,7 @@ $("#family-dictionary-level").onchange=()=>{
   if(!character)return;
   void loadFamilyCurriculum().then(c=>renderKanjiFamilyDictionary(c.byKanji.get(character)));
 };
-$("#map-back").onclick=()=>showView("library");for(const tab of document.querySelectorAll("#kanji-group [role=tab]"))tab.onclick=()=>setKanjiGroup(tab.dataset.group);$("#kanji-group").addEventListener("keydown",event=>{if(event.key!=="ArrowLeft"&&event.key!=="ArrowRight")return;const next=settings.kanjiGroup==="meaning"?"jlpt":"meaning";setKanjiGroup(next);$(`#kanji-group [data-group=${next}]`).focus()});for(const button of document.querySelectorAll("#map-toggle [role=tab]"))button.onclick=()=>{settings.mapView=button.dataset.map;storePreference("jp-echo-settings",JSON.stringify(settings));saveWorkspace({mapView:settings.mapView});tool.open=null;tool.chip="all";renderMap()};$("#map-toggle").addEventListener("keydown",event=>{if(event.key!=="ArrowLeft"&&event.key!=="ArrowRight")return;const tabs=[...document.querySelectorAll("#map-toggle [role=tab]")].filter(b=>!b.hidden),at=tabs.findIndex(b=>b.getAttribute("aria-selected")==="true"),next=tabs[(at+(event.key==="ArrowRight"?1:tabs.length-1))%tabs.length];if(next){next.click();next.focus()}});let lookupTimer=0;$("#map-search").oninput=()=>{saveWorkspace();syncRoute({},true);clearTimeout(lookupTimer);lookupTimer=setTimeout(renderMap,150)};$("#map-search").onkeydown=event=>{if(event.key==="Escape"&&$("#map-search").value){$("#map-search").value="";renderMap()}};$("#map-search-clear").onclick=()=>{$("#map-search").value="";$("#map-search").focus();renderMap()};$("#grammar-prev").onclick=()=>grammarStep(-1);$("#grammar-next").onclick=()=>grammarStep(1);$("#grammar-close").onclick=()=>{loop.stop();$("#grammar-dialog").close()};$("#grammar-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;grammarOpen=null;saveWorkspace({modal:null})});$("#grammar-say-go").onclick=sayForGrammar;$("#grammar-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForGrammar()};$("#grammar-compose").onclick=composeForGrammar;$("#kanji-prev").onclick=()=>learnStep(-1);$("#kanji-next").onclick=()=>learnStep(1);$("#kanji-dialog").addEventListener("keydown",event=>{if(!kanjiOpen?.learn||event.target.tagName==="TEXTAREA")return;if(event.key==="ArrowRight")learnStep(1);else if(event.key==="ArrowLeft")learnStep(-1)});$("#kanji-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForKanji()};$("#sentence-back").onclick=()=>{detail=null;const back=practiceEditor?"practice":"library";practiceEditor=false;showView(back)};$("#sentence-play").onclick=playDetail;// Editing lives in the collapsed "Change this sentence" row (no pencil button).
+$("#map-back").onclick=()=>showView("library");$("#word-more").addEventListener("toggle",()=>{const open=$("#word-more").open;if(settings.wordNoteOpen===open)return;settings.wordNoteOpen=open;storePreference("jp-echo-settings",JSON.stringify(settings))});$("#word-note-jump").onclick=()=>{const more=$("#word-more");more.open=true;const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches||document.documentElement.classList.contains("motion-off");more.scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"});more.querySelector("summary").focus({preventScroll:true})};for(const tab of document.querySelectorAll("#kanji-group [role=tab]"))tab.onclick=()=>setKanjiGroup(tab.dataset.group);$("#kanji-group").addEventListener("keydown",event=>{if(event.key!=="ArrowLeft"&&event.key!=="ArrowRight")return;const next=settings.kanjiGroup==="meaning"?"jlpt":"meaning";setKanjiGroup(next);$(`#kanji-group [data-group=${next}]`).focus()});for(const button of document.querySelectorAll("#map-toggle [role=tab]"))button.onclick=()=>{settings.mapView=button.dataset.map;storePreference("jp-echo-settings",JSON.stringify(settings));saveWorkspace({mapView:settings.mapView});tool.open=null;tool.chip="all";renderMap()};$("#map-toggle").addEventListener("keydown",event=>{if(event.key!=="ArrowLeft"&&event.key!=="ArrowRight")return;const tabs=[...document.querySelectorAll("#map-toggle [role=tab]")].filter(b=>!b.hidden),at=tabs.findIndex(b=>b.getAttribute("aria-selected")==="true"),next=tabs[(at+(event.key==="ArrowRight"?1:tabs.length-1))%tabs.length];if(next){next.click();next.focus()}});let lookupTimer=0;$("#map-search").oninput=()=>{saveWorkspace();syncRoute({},true);clearTimeout(lookupTimer);lookupTimer=setTimeout(renderMap,150)};$("#map-search").onkeydown=event=>{if(event.key==="Escape"&&$("#map-search").value){$("#map-search").value="";renderMap()}};$("#map-search-clear").onclick=()=>{$("#map-search").value="";$("#map-search").focus();renderMap()};$("#grammar-prev").onclick=()=>grammarStep(-1);$("#grammar-next").onclick=()=>grammarStep(1);$("#grammar-close").onclick=()=>{loop.stop();$("#grammar-dialog").close()};$("#grammar-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;grammarOpen=null;saveWorkspace({modal:null})});$("#grammar-say-go").onclick=sayForGrammar;$("#grammar-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForGrammar()};$("#grammar-compose").onclick=composeForGrammar;$("#kanji-prev").onclick=()=>learnStep(-1);$("#kanji-next").onclick=()=>learnStep(1);$("#kanji-dialog").addEventListener("keydown",event=>{if(!kanjiOpen?.learn||event.target.tagName==="TEXTAREA")return;if(event.key==="ArrowRight")learnStep(1);else if(event.key==="ArrowLeft")learnStep(-1)});$("#kanji-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForKanji()};$("#sentence-back").onclick=()=>{detail=null;const back=practiceEditor?"practice":"library";practiceEditor=false;showView(back)};$("#sentence-play").onclick=playDetail;// Editing lives in the collapsed "Change this sentence" row (no pencil button).
 // Opening fills the editor; closing it cancels an in-flight rewrite.
 $("#sentence-change").ontoggle=()=>{if($("#sentence-change").open){if(editorOpenId!==detail?.id)openEditor()}else{editorOpenId=null;editorGeneration++}};$("#sentence-cancel").onclick=()=>{closeEditor();if(practiceEditor){practiceEditor=false;detail=null;showView("practice")}};$("#sentence-editor").onsubmit=saveEdit;
 $("#sentence-delete").onclick=()=>askDelete();$("#delete-cancel").onclick=()=>$("#delete-dialog").close();$("#delete-confirm").onclick=confirmDelete;$("#delete-dialog").onclick=event=>{if(event.target===$("#delete-dialog"))$("#delete-dialog").close()};
@@ -2254,6 +2264,22 @@ applyLanguage();startupCleanup=migrateStore().then(()=>cleanupLegacyMiniHongo())
 // what it left in a browser is cleared once, quietly.
 try{localStorage.removeItem("jp-echo-wanikani-token");indexedDB.deleteDatabase("jp-echo-wanikani")}catch{}
 if("serviceWorker"in navigator){writeReminderPrefs();syncReminderSchedule();remindOnOpen()}
+// A new version installs in the background but waits while Echo is open, and a
+// plain reload keeps the old one (the page never stops being controlled). So
+// say when one is ready and let the person switch: the reload follows their
+// tap, never the worker. Checking again on return keeps a home-screen app current.
+async function offerUpdates(){const registration=await window.echoWorker;if(!registration||!navigator.serviceWorker?.controller)return;
+  let updating=false;
+  const offer=()=>{if(registration.waiting)$("#update-ready").hidden=false};
+  $("#update-now").onclick=()=>{const waiting=registration.waiting;if(!waiting){$("#update-ready").hidden=true;return}updating=true;$("#update-now").disabled=true;waiting.postMessage("echo:activate-update")};
+  navigator.serviceWorker.addEventListener("controllerchange",()=>{if(updating)location.reload()});
+  // index.html starts the update check before this runs, so a new version may
+  // already be installing: watch that one as well as any found later.
+  const watch=worker=>worker?.addEventListener("statechange",()=>{if(worker.state==="installed")offer()});
+  watch(registration.installing);registration.addEventListener?.("updatefound",()=>watch(registration.installing));
+  document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")registration.update().catch(()=>{})});
+  offer()}
+if("serviceWorker"in navigator)void offerUpdates();
 
 $("#sentence-rewrite").onclick=rewriteDetailSentence;
 $("#sentence-correct-readings").onclick=correctEditorReadings;
