@@ -1,12 +1,20 @@
-const CACHE="jp-echo-v191";
+const CACHE="jp-echo-v192";
 const PREFS_CACHE="jp-echo-prefs",PREFS_KEY="./reminder",REMINDER_TAG="echo-due";
-const ASSETS=["./","./index.html","./404.html","./styles.css","./styles.css?v=144","./app.js","./components.js","./actions.js","./routes.js","./anki-export.js","./srs.js","./review-modes.js","./review-speech.js","./vendor/sql-wasm.wasm","./core.js","./japanese-readings.js","./readings.js","./catalogues.js","./references.js","./text-extraction.js","./epub-import.js","./mini-imports.js","./imports.js","./gist-backup.js","./diff.js","./reminders.js","./db.js","./api.js","./speech.js","./repair.js","./kanji.js","./kanji-families.js","./decks/kanji-families-curriculum.json","./kanji-data.js","./kanji-readings.js","./grammar.js","./grammar-spans.js","./grammar-data.js","./lookup.js","./notes.js","./stories.js","./words.js","./japanese-words.js","./words-data.js","./i18n.js","./i18n/ja.js","./manifest.webmanifest","./icon.svg","./icon-192.png","./icon-512.png","./icon-maskable-512.png","./apple-touch-icon.png","./favicon.ico","./mask-icon.svg"];
+const ASSETS=["./","./index.html","./404.html","./styles.css","./styles.css?v=145","./app.js","./components.js","./actions.js","./routes.js","./anki-export.js","./srs.js","./review-modes.js","./review-speech.js","./vendor/sql-wasm.wasm","./core.js","./japanese-readings.js","./readings.js","./catalogues.js","./references.js","./text-extraction.js","./epub-import.js","./mini-imports.js","./imports.js","./gist-backup.js","./diff.js","./reminders.js","./db.js","./api.js","./speech.js","./repair.js","./kanji.js","./kanji-families.js","./decks/kanji-families-curriculum.json","./kanji-data.js","./kanji-readings.js","./grammar.js","./grammar-spans.js","./grammar-data.js","./lookup.js","./notes.js","./stories.js","./words.js","./japanese-words.js","./words-data.js","./i18n.js","./i18n/ja.js","./manifest.webmanifest","./icon.svg","./icon-192.png","./icon-512.png","./icon-maskable-512.png","./apple-touch-icon.png","./favicon.ico","./mask-icon.svg"];
 
 // Keep an update waiting while existing clients use their installed version.
 // Never skipWaiting: activation must not replace assets during an open session.
-self.addEventListener("install",event=>event.waitUntil(
-  caches.open(CACHE).then(cache=>cache.addAll(ASSETS.map(path=>new Request(path,{cache:"reload"}))))
-));
+// Each file is fetched at an address unique to this version, so a CDN still
+// holding the previous deploy cannot hand back a stale copy: a stale app.js
+// next to a new core.js made "Importing a module script failed". Stored under
+// its plain address. Any failure fails the whole install, so a version is
+// complete or absent, never mixed.
+self.addEventListener("install",event=>event.waitUntil((async()=>{
+  const cache=await caches.open(CACHE);
+  await Promise.all(ASSETS.map(async path=>{const url=new URL(path,self.registration.scope);url.searchParams.set("echo-cache",CACHE);
+    const response=await fetch(new Request(url,{cache:"reload"}));if(!response.ok)throw new Error("Could not cache "+path+" ("+response.status+")");
+    await cache.put(new Request(new URL(path,self.registration.scope)),response)}));
+})()));
 
 self.addEventListener("activate",event=>{
   event.waitUntil((async()=>{
