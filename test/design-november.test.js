@@ -54,3 +54,9 @@ test('desktop: the sidebar badge sits at the row edge; ripples stop at the colum
   assert.doesNotMatch(html,/class="ripple echo"[^>]*style="position:absolute;right:-96px/);
   assert.match(css,/#review-home>\.segmented\{position:relative;z-index:1\}/);
 });
+
+test('Anki export lives only in Settings → Export, not on the desktop side panel',()=>{
+  assert.doesNotMatch(html,/id="side-export-anki"/);assert.doesNotMatch(app,/side-export-anki/);
+  assert.match(html,/id="export-anki"/);
+});
+

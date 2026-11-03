@@ -305,7 +305,7 @@ test("library and the study tool: the empty library, the tool rows, grammar and 
   assert.match(css, /\.mora-table\.labelled \.mora-row\{grid-template-columns:22px repeat\(5,minmax\(0,1fr\)\)\}/);
   assert.match(app, /host\.classList\.toggle\("labelled",english\)/);
   assert.match(app, /\$\("#mora-show-english"\)\.checked=settings\.moraEnglish\?\?true/, "English is on by default; it draws the headings");
-  assert.match(html, /<small lang="en">fuses with the i-row before it<\/small>/);
+  assert.match(html, /<div id="mora-yoon-table" class="mora-table" lang="ja"><\/div>/, "combined sounds have their own table");
   assert.doesNotMatch(html, /【まえ】/, "no raw bracket furigana on the mora cards");
   assert.match(app, /echoLine:t\("Bundled with the app for 2,131 of the 2,136\./);
   assert.match(app, /name==="map"\|\|name==="mora"\|\|name==="settings"\)&&!isWide\(\)/, "the Mora table is a pushed screen like the study tool: no brand header, no tabs");

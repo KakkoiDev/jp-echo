@@ -100,3 +100,10 @@ test("JP Core readings: 多すぎる is おお, and a reading never repeats the 
   assert.equal(normalizeFurigana("やり方【やりかた】"),"やり方【かた】");
   assert.equal(normalizeFurigana("ここ子供【こども】"),"ここ子供【こども】");
 });
+
+test("JP Core readings: 何 by context — なに before ？/を/か, なん before です/の",async()=>{
+  const {createReadingResolver}=await import("../japanese-readings.js");
+  const resolve=createReadingResolver([{w:"何",r:"なに"},{w:"何",r:"なん"},{w:"苗字",r:"みょうじ"}]);
+  assert.equal(resolve("苗字【みょうじ】は何【なん】？").text,"苗字【みょうじ】は何【なに】？");
+  assert.equal(resolve("何ですか").text,"何【なん】ですか");
+});

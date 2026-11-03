@@ -7,13 +7,13 @@ import {validateDeckBackup,fetchDeckBackup,runImportFeedback,classifyImport,impo
 import {isSeeded,planMiniSentenceUpgrade,repairMiniImport} from './mini-imports.js';
 import {applyI18n,setDictionary,t} from "./i18n.js";
 import {earliestPair,flipSentence,isReversed,pairLooksSwapped,repairPair} from "./repair.js";
-import {DEFAULT_PAIR,LANGUAGES,safeLanguage,MORA_MNEMONIC_META,createSentence,replaceSentenceContent,exportBackup,forAnki,hasFurigana,hasRegisters,languageName,mergeSentences,normalizeFurigana,rubySegments,rubyHtml,SCHEMA_VERSION,stripFurigana} from "./core.js";
+import {DEFAULT_PAIR,LANGUAGES,safeLanguage,MORA_MNEMONIC_META,MORA_VOICED,MORA_YOON,createSentence,replaceSentenceContent,exportBackup,forAnki,hasFurigana,hasRegisters,languageName,mergeSentences,normalizeFurigana,rubySegments,rubyHtml,SCHEMA_VERSION,stripFurigana} from "./core.js";
 import {isExactMatch,markAttempt,markTarget} from "./diff.js";
 import {applyReadingCorrection,removeArchivedMiniCards,readImportRecovery,saveImportRecovery,deleteSentence as dbDeleteSentence,getSentence,listSentences,migrateStore,replaceAll,saveSentence as persistSentence} from "./db.js";
 import {MIN_INTERVAL_MS,QUIET_MS,downloadBackup,parseGistId,shouldAutoBackup,uploadBackup} from "./gist-backup.js";
 import {READINGS_RULE,correctSentenceReadings,analyzeSentenceGrammar,askModel,rewriteSentence,adjustNote,carries,compose,composeFromIntent,PROVIDER_DEFAULTS,tagGrammar,translate,discuss,generateReading,writeNotes,writeWordNote,transcribeAudio} from "./api.js";
 import {grammarListItems,setImportedGrammar,byLevel as grammarByLevel,cleanTags as grammarTags,coverage as grammarCoverage,hasGrammar,isTagged,learned as grammarLearned,LEVELS as GRAMMAR_LEVELS,point as grammarPoint,POINTS as GRAMMAR_POINTS,summarise as grammarSummarise,untagged as untaggedSentences} from "./grammar.js";
-import {japaneseVoices,recognitionFactory,ShadowLoop,ConversationLoop} from "./speech.js";
+import {speakOnce,japaneseVoices,recognitionFactory,ShadowLoop,ConversationLoop} from "./speech.js";
 import {STORIES} from "./stories.js";
 import {coverage as kanjiCoverage,facts as kanjiFacts,jlptBands as kanjiBands,learned as kanjiLearned,LEVEL_LABELS,levelOf,nextUnmet,sentenceKanji,TOTAL as KANJI_TOTAL} from "./kanji.js";
 import {searchGrammar,searchKanji,searchWords} from "./lookup.js";
@@ -383,7 +383,42 @@ for(const tab of document.querySelectorAll(".tab[data-view]")){const on=tab.data
 // here is scheduled or graded.
 const MORA_ROWS=[["あ","い","う","え","お"],["か","き","く","け","こ"],["さ","し","す","せ","そ"],["た","ち","つ","て","と"],["な","に","ぬ","ね","の"],["は","ひ","ふ","へ","ほ"],["ま","み","む","め","も"],["や",null,"ゆ",null,"よ"],["ら","り","る","れ","ろ"],["わ",null,null,null,"を"],["ん"]];
 // The Mora board (Mora.dc.html): with English on, a · i · u · e · o head the columns and each row is labelled by its first kana.
-function renderMora(){const host=$("#mora-table"),emoji=$("#mora-show-emoji").checked,furigana=$("#mora-show-furigana").checked,english=$("#mora-show-english").checked;host.classList.toggle("labelled",english);const head=document.createElement("div");head.className="mora-row mora-head";head.setAttribute("aria-hidden","true");head.innerHTML='<span></span>'+["a","i","u","e","o"].map(v=>"<span>"+v+"</span>").join("");host.replaceChildren(...(english?[head]:[]),...MORA_ROWS.map(row=>{const line=document.createElement("div");line.className="mora-row";if(english){const label=document.createElement("span");label.className="mora-row-label";label.textContent=row.find(Boolean)||"";line.append(label)}for(const mora of row){const cell=document.createElement("div");cell.className="mora-cell";if(!mora){cell.classList.add("empty");line.append(cell);continue}const [kanji,reading,gloss,icon]=MORA_MNEMONIC_META[mora];cell.innerHTML=`<span class="mora-kana">${mora}</span><span class="mora-word">${kanji}</span>${icon&&emoji?`<span class="mora-emoji" aria-hidden="true">${icon}</span>`:""}${furigana?`<span class="mora-reading">${reading}</span>`:""}${english?`<span class="mora-english" lang="en">${gloss}</span>`:""}`;line.append(cell)}return line}))}
+// The mora table (Mora.dc.html): one cell per sound, the same anchor every
+// time. A cell is a button: it says the mora and its anchor. "Test yourself"
+// hides the anchors until a cell is tapped. The voiced rows below reuse the
+// base anchor in mud (゛) or bubbles (゜), so there are no new images to learn.
+const MORA_VOICED_ROWS=[["が","ぎ","ぐ","げ","ご"],["ざ","じ","ず","ぜ","ぞ"],["だ","ぢ","づ","で","ど"],["ば","び","ぶ","べ","ぼ"],["ぱ","ぴ","ぷ","ぺ","ぽ"]];
+const MORA_YOON_ROWS=["き","し","ち","に","ひ","み","り","ぎ","じ","び","ぴ"].map(base=>["ゃ","ゅ","ょ"].map(small=>base+small));
+const MORA_SMALL={"ゃ":"や","ゅ":"ゆ","ょ":"よ"};
+const moraRevealed=new Set();
+// What a cell shows: the anchor word, its reading, English and picture, and
+// the 泥/泡 mark for a voiced sound. A combined sound uses its own anchor
+// (MORA_YOON) or, without one, its two fused anchors.
+function moraAnchorInfo(mora){
+  const first=mora[0],small=mora[1],[base,mark]=MORA_VOICED[first]||[first,null];
+  if(small){const own=MORA_YOON[base+small];if(own){const [kanji,reading,gloss,icon]=own;return {kanji,reading,gloss,icon,mark,speak:reading}}
+    const a=MORA_MNEMONIC_META[base],b=MORA_MNEMONIC_META[MORA_SMALL[small]];return {kanji:a[0]+"＋"+b[0],reading:a[1]+"・"+b[1],gloss:a[2]+" + "+b[2],icon:"",mark,speak:a[1]+"、"+b[1]}}
+  const [kanji,reading,gloss,icon]=MORA_MNEMONIC_META[base];return {kanji,reading,gloss,icon,mark,speak:reading}}
+function moraTable(host,rows,{emoji,furigana,english,quiz},columns=["a","i","u","e","o"]){host.classList.toggle("labelled",english);host.style.setProperty("--mora-columns",String(columns.length));
+  const head=el("div","mora-row mora-head");head.setAttribute("aria-hidden","true");head.innerHTML='<span></span>'+columns.map(v=>"<span>"+v+"</span>").join("");
+  host.replaceChildren(...(english?[head]:[]),...rows.map(row=>{const line=el("div","mora-row");
+    if(english)line.append(el("span","mora-row-label",(row.find(Boolean)||"").slice(0,columns.length===3?1:undefined)));
+    for(const mora of row){if(!mora){line.append(el("div","mora-cell empty"));continue}
+      const {kanji,reading,gloss,icon,mark,speak}=moraAnchorInfo(mora),hidden=quiz&&!moraRevealed.has(mora);
+      const cell=el("button","mora-cell"+(hidden?" hidden-anchor":"")+(mark?" voiced":""));cell.type="button";
+      cell.setAttribute("aria-label",hidden?mora+" — "+t("tap to see its anchor"):mora+" — "+kanji+(mark?" "+(mark==="泥"?t("in mud"):t("in bubbles")):""));
+      cell.append(el("span","mora-kana",mora));
+      if(!hidden){const word=el("span","mora-word"+([...kanji].length>3?" long":""),kanji);if(mark)word.append(el("span","mora-mark",mark));cell.append(word);
+        if(icon&&emoji)cell.append(Object.assign(el("span","mora-emoji",icon),{ariaHidden:"true"}));
+        if(furigana)cell.append(el("span","mora-reading",reading));
+        if(english)cell.append(Object.assign(el("span","mora-english",gloss),{lang:"en"}))}
+      cell.onclick=()=>{loop.stop();discussionLoop.stop();readingLoop.stop();
+        const voice=voices[Number($("#voice").value)]||voices[0]||null;speakOnce(mora+"、"+speak,{voice,rate:Number($("#rate").value)||1});
+        if(hidden){moraRevealed.add(mora);renderMora()}};
+      line.append(cell)}
+    return line}))}
+function renderMora(){const options={emoji:$("#mora-show-emoji").checked,furigana:$("#mora-show-furigana").checked,english:$("#mora-show-english").checked,quiz:$("#mora-quiz").checked};
+  moraTable($("#mora-table"),MORA_ROWS,options);moraTable($("#mora-voiced-table"),MORA_VOICED_ROWS,options);moraTable($("#mora-yoon-table"),MORA_YOON_ROWS,options,["ya","yu","yo"])}
 function saveMoraDisplay(){settings.moraEmoji=$("#mora-show-emoji").checked;settings.moraFurigana=$("#mora-show-furigana").checked;settings.moraEnglish=$("#mora-show-english").checked;storePreference("jp-echo-settings",JSON.stringify(settings));renderMora()}
 const tool={open:null,chip:"all",more:new Set()};
 const familyBrowse={theme:"all",openTheme:null,sentences:[]};
@@ -2173,7 +2208,7 @@ function sheetDrag(dialog,close){
 }
 sheetDrag($("#kanji-dialog"),()=>{loop.stop();$("#kanji-dialog").close()});sheetDrag($("#grammar-dialog"),()=>{loop.stop();$("#grammar-dialog").close()});sheetDrag($("#word-dialog"),()=>{loop.stop();$("#word-dialog").close()});
 $("#word-close").onclick=()=>{loop.stop();$("#word-dialog").close()};$("#word-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;wordOpen=null;saveWorkspace({modal:null})});$("#word-compose").onclick=composeForWord;$("#word-say-go").onclick=sayForWord;$("#word-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForWord()};$("#word-note-ask").onclick=askWordNote;$("#word-prev").onclick=()=>wordStep(-1);$("#word-next").onclick=()=>wordStep(1);$("#word-dialog").addEventListener("keydown",event=>{if(!wordOpen?.learn||event.target.tagName==="TEXTAREA"||event.target.isContentEditable)return;if(event.key==="ArrowRight")wordStep(1);else if(event.key==="ArrowLeft")wordStep(-1)});
-$("#mora-open").onclick=()=>showView("mora");$("#mora-back").onclick=()=>showView("library");for(const id of ["#mora-show-emoji","#mora-show-furigana","#mora-show-english"])$(id).onchange=saveMoraDisplay;
+$("#mora-open").onclick=()=>showView("mora");$("#mora-back").onclick=()=>showView("library");$("#mora-quiz").onchange=()=>{moraRevealed.clear();renderMora()};for(const id of ["#mora-show-emoji","#mora-show-furigana","#mora-show-english"])$(id).onchange=saveMoraDisplay;
 $("#kanji-close").onclick=()=>{loop.stop();$("#kanji-dialog").close()};$("#kanji-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;kanjiOpen=null;saveWorkspace({modal:null})});$("#kanji-compose").onclick=composeForKanji;$("#kanji-say-go").onclick=sayForKanji;$("#library-tool").onclick=()=>showView("map");
 $("#family-panel").addEventListener("toggle",()=>{
   if($("#family-panel").open)void renderKanjiFamilies(familyBrowse.sentences);
@@ -2199,7 +2234,7 @@ $("#map-back").onclick=()=>showView("library");$("#word-more").addEventListener(
 // Opening fills the editor; closing it cancels an in-flight rewrite.
 $("#sentence-change").ontoggle=()=>{if($("#sentence-change").open){if(editorOpenId!==detail?.id)openEditor()}else{editorOpenId=null;editorGeneration++}};$("#sentence-cancel").onclick=()=>{closeEditor();if(practiceEditor){practiceEditor=false;detail=null;showView("practice")}};$("#sentence-editor").onsubmit=saveEdit;
 $("#sentence-delete").onclick=()=>askDelete();$("#delete-cancel").onclick=()=>$("#delete-dialog").close();$("#delete-confirm").onclick=confirmDelete;$("#delete-dialog").onclick=event=>{if(event.target===$("#delete-dialog"))$("#delete-dialog").close()};
-$("#side-start-review").onclick=startReview;$("#side-export-anki").onclick=()=>exportAnki($("#side-export-anki"));
+$("#side-start-review").onclick=startReview;
 wide.addEventListener("change",()=>showView(document.body.dataset.view||"practice"));
 // Learn mode in a sheet: ← and → step through the band, like the footer's
 // Previous / Next. Typing stays typing.

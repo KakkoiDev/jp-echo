@@ -94,13 +94,18 @@ test("the Anki export reads the fields the app writes today, and the old names s
 
 
 test("Mora fuses small ya yu yo with the previous i-row anchor",()=>{
-  assert.equal(MORA_MNEMONICS_VERSION,2);
-  assert.deepEqual(moraMnemonicTokens("きゃく"),[{mora:"きゃ",image:"木＋山（融合）"},{mora:"く",image:"熊"}]);
-  assert.deepEqual(moraMnemonicTokens("ジュース"),[{mora:"じゅ",image:"泥の鹿＋雪（融合）"},{mora:"す",image:"寿司"}]);
+  assert.equal(MORA_MNEMONICS_VERSION,3);
+  // A combined sound with its own anchor uses it; voiced and p-sounds put it in 泥 or 泡.
+  assert.deepEqual(moraMnemonicTokens("きゃく"),[{mora:"きゃ",image:"キャベツ"},{mora:"く",image:"熊"}]);
+  assert.deepEqual(moraMnemonicTokens("ジュース"),[{mora:"じゅ",image:"泥の手裏剣"},{mora:"す",image:"寿司"}]);
+  assert.deepEqual(moraMnemonicTokens("じょうず").slice(0,1),[{mora:"じょ",image:"泥の醤油"}]);
+  assert.deepEqual(moraMnemonicTokens("びょういん").slice(0,1),[{mora:"びょ",image:"泥の豹"}]);
+  // Without one, the two anchors still fuse.
+  assert.deepEqual(moraMnemonicTokens("にゃ"),[{mora:"にゃ",image:"肉＋山（融合）"}]);
 });
 
 test("small tsu doubles the following anchor instead of inventing its own",()=>{
   assert.deepEqual(moraMnemonicTokens("きって"),[{mora:"き",image:"木"},{mora:"って",image:"手×2（っ：次の子音を詰める）"}]);
-  assert.deepEqual(moraMnemonicTokens("まっちゃ"),[{mora:"ま",image:"枕"},{mora:"っちゃ",image:"蝶々＋山（融合）×2（っ：次の子音を詰める）"}]);
+  assert.deepEqual(moraMnemonicTokens("まっちゃ"),[{mora:"ま",image:"枕"},{mora:"っちゃ",image:"茶碗×2（っ：次の子音を詰める）"}]);
   assert.match(moraMnemonicPrompt(),/Small っ has no anchor of its own/);
 });

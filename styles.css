@@ -1106,8 +1106,9 @@ html.motion-off #review-progress-bar { transition: none; }
 .mora-controls input{width:14px;height:14px;margin:0;accent-color:var(--seal)}
 .mora-hint{margin:-6px 0 14px}
 .mora-table{width:100%;overflow:hidden;border:1px solid var(--hairline);background:var(--panel)}
-.mora-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border-bottom:1px solid var(--hairline)}
+.mora-row{display:grid;grid-template-columns:repeat(var(--mora-columns,5),minmax(0,1fr));border-bottom:1px solid var(--hairline)}
 .mora-table.labelled .mora-row{grid-template-columns:22px repeat(5,minmax(0,1fr))}
+#mora-yoon-table.labelled .mora-row{grid-template-columns:30px repeat(3,minmax(0,1fr))}
 .mora-row:last-child{border-bottom:0}
 .mora-head{background:var(--panel-soft)}
 .mora-head span,.mora-row-label{display:flex;align-items:center;justify-content:center;min-height:26px;font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-muted)}
@@ -1583,3 +1584,12 @@ html.motion-off #review-progress-bar { transition: none; }
 .import-any-actions{display:flex;flex-wrap:wrap;gap:8px}
 .import-any-actions button{flex:1 1 140px}
 #extract-passage.dragging{border-color:var(--seal);background:var(--seal-tint)}
+/* Mora cells are buttons: tap to hear. Long anchors shrink instead of breaking mid-word. */
+button.mora-cell{width:100%;border:0;border-right:1px solid var(--hairline);border-radius:0;background:transparent;color:inherit;font:inherit;letter-spacing:normal;cursor:pointer}
+button.mora-cell:last-child{border-right:0}
+.mora-word{overflow-wrap:normal;word-break:keep-all}
+.mora-word.long{font-size:9.5px;letter-spacing:-.02em}
+.mora-mark{margin-left:2px;font-size:.85em;color:var(--ink-muted)}
+.mora-cell.hidden-anchor .mora-kana{font-size:22px}
+#mora-voiced-table{margin-top:0}
+
