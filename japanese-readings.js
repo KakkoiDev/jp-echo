@@ -1,6 +1,6 @@
 // Shared, conservative dictionary readings. Context-dependent readings are explicit.
 import {rubySegments,segmentsToNotation,stripFurigana,readingsToNotation,KANJI} from './core.js';
-export const READING_VERSION=4;
+export const READING_VERSION=5;
 export const readingText=text=>rubySegments(text).map(part=>part.reading||part.text).join('');
 // Explicit ruby is a pronunciation hint, not a grammatical particle. Katakana
 // keeps browser voices from interpreting a supplied は/へ as wa/e.
@@ -20,7 +20,7 @@ export function createReadingResolver(words){
  }
  const trie={};
  const put=(key,value)=>{let node=trie;for(const char of key)node=node[char]||(node[char]={});(node.matches||(node.matches=[])).push(value)};
- const endings={v1:"るたてなまられよず","v1-s":"るたてなまられよず",v5u:"わいうえおっ","v5u-s":"わいうえおっ",v5k:"かきくけこい","v5k-s":"かきくけこっ",v5g:"がぎぐげごい",v5s:"さしすせそ",v5t:"たちつてとっ",v5n:"なにぬねのん",v5b:"ばびぶべぼん",v5m:"まみむめもん",v5r:"らりるれろっ","v5r-i":"らりるれろっ",v5aru:"らりるれろっい","adj-i":"いくかけ","adj-ix":"いくかけ"};
+ const endings={v1:"るたてなまられよずすそ","v1-s":"るたてなまられよずすそ",v5u:"わいうえおっ","v5u-s":"わいうえおっ",v5k:"かきくけこい","v5k-s":"かきくけこっ",v5g:"がぎぐげごい",v5s:"さしすせそ",v5t:"たちつてとっ",v5n:"なにぬねのん",v5b:"ばびぶべぼん",v5m:"まみむめもん",v5r:"らりるれろっ","v5r-i":"らりるれろっ",v5aru:"らりるれろっい","adj-i":"いくかけさすそ","adj-ix":"いくかけさすそ"};
  for(const [key,readings] of exact)put(key,{key,readings,preferred:verbDefaults.get(key),kanaFinal:/[ぁ-ゖァ-ヺ]$/.test(key)});
  for(const word of words){const ending=(word.pos||[]).map(pos=>endings[pos]).find(Boolean);
   if(!ending||!word.w||!word.r||!KANJI.test(word.w))continue;

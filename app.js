@@ -2401,7 +2401,12 @@ $('#extract-passage').oninput=()=>{extractionBook=null;$('#extract-book-status')
 async function loadExtractionBook(file){if(!file||extractionBusy)return;setExtractionBusy(true);$('#extract-book-status').textContent='Reading EPUB chapters…';
  try{const book=await readEpub(await file.arrayBuffer());extractionBook=book;extractionRows=[];extractionInventory=null;$('#extract-preview').replaceChildren();$('#extract-selection').hidden=$('#extract-foot').hidden=true;$('#extract-passage').value='';$('#extract-book-status').textContent=`${book.title} · ${book.chapters.length} chapters loaded. Find sentences analyzes the full book using your AI service in batches. Large books can take time and use many requests.`;$('#extract-status').textContent='Book loaded. Choose a vocabulary filter, then Find sentences.'}
  catch(error){extractionBook=null;$('#extract-book-status').textContent=error.message}finally{setExtractionBusy(false)}}
-$('#extract-epub').onchange=async event=>{try{await loadExtractionBook(event.target.files[0])}finally{event.target.value=''}};
+// Extract's own file button and its passage box take what the Import page's
+// one box takes, through the same router: a book or text lands here, a deck
+// or backup merges.
+$('#extract-epub').onchange=async event=>{const file=event.target.files[0];event.target.value='';if(file)await importAny({file})};
+{const box=$('#extract-passage');box.addEventListener('dragover',event=>{if(event.dataTransfer?.types?.includes('Files')){event.preventDefault();box.classList.add('dragging')}});box.addEventListener('dragleave',()=>box.classList.remove('dragging'));
+  box.addEventListener('drop',event=>{const file=event.dataTransfer?.files?.[0];box.classList.remove('dragging');if(!file)return;event.preventDefault();void importAny({file})})}
 // Pasted Japanese or a text file lands in Extract's passage box, ready for Find sentences.
 function openExtractionText(text){openTextExtraction();const passage=$('#extract-passage');passage.value=String(text).slice(0,Number(passage.maxLength)>0?Number(passage.maxLength):30000);passage.dispatchEvent(new Event('input'));$('#extract-status').textContent='Text loaded. Choose a vocabulary filter, then Find sentences.';$('#extract-analyze').focus()}
 

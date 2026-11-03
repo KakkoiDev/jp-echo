@@ -41,3 +41,9 @@ test('the Import page has one box for files, links and text, wired to the existi
   assert.match(app,/case "passage":return openExtractionText\(result\.text\)/);
   assert.match(app,/async function gistRestore\(\)\{[\s\S]*?return restoreFromGist\(/);
 });
+
+test('Extract takes files through the same router: its button and a drop on the passage',()=>{
+  assert.match(html,/<label class="file-button" for="extract-epub">Open a file<input id="extract-epub" class="sr-only" type="file" accept="\.epub,application\/epub\+zip,\.txt/);
+  assert.match(app,/\$\('#extract-epub'\)\.onchange=async event=>\{const file=event\.target\.files\[0\];event\.target\.value='';if\(file\)await importAny\(\{file\}\)\}/);
+  assert.match(app,/box\.addEventListener\('drop',event=>\{const file=event\.dataTransfer\?\.files\?\.\[0\];[^}]*void importAny\(\{file\}\)/);
+});
