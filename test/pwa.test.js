@@ -6,15 +6,32 @@ function worker(){const handlers={},deleted=[],added=[];let network=0;const stor
 test('offline installed PWA opens sentence, grammar and dictionary deep links',async()=>{const w=worker();for(const path of ['/','/sentences/test','/grammar/minihongo%3Agram-1','/words/-1','/kanji/駅','/review'])assert.equal(await w.fetch(path,'navigate'),'installed-shell');assert.equal(w.network(),0)});
 test('installed modules stay in the same version even with cache-busting query',async()=>{const w=worker();assert.equal(await w.fetch('/api.js?v=old'),'installed-api');assert.equal(w.network(),0)});
 test('upgrading retains reminder preferences and other application caches',async()=>{const w=worker();let completion;w.handlers.activate({waitUntil:p=>completion=p});await completion;assert.deepEqual(w.deleted,[PREVIOUS])});
-test('installation refreshes every shell asset and all assets exist',async()=>{const w=worker();let completion;w.handlers.install({waitUntil:p=>completion=p});await completion;for(const request of w.added){assert.equal(request.cache,'reload');const path=new URL(request.url).pathname;assert.ok(path==='/'||existsSync(new URL('..'+path,import.meta.url)),path)}});
+// Install fetches each file at a version-specific address (a CDN holding the
+// previous deploy cannot answer it) and stores it under its plain address.
+function installer({failPath=null}={}){const fetched=[],stored=[];class R{constructor(input,options={}){this.url=new URL(typeof input==='string'?input:input.href,'https://echo.test/').href;this.cache=options.cache}}
+ let install;const self={registration:{scope:'https://echo.test/'},addEventListener:(name,handler)=>{if(name==='install')install=handler},skipWaiting:()=>{throw Error('install must not skip waiting')}};
+ vm.runInNewContext(script,{self,URL,Request:R,caches:{open:async()=>({put:async(request,response)=>stored.push(request.url)})},fetch:async request=>{fetched.push(request);return {ok:!failPath||new URL(request.url).pathname!==failPath,status:404}}});
+ return {run:()=>new Promise((resolve,reject)=>install({waitUntil:p=>p.then(resolve,reject)})),fetched,stored}}
+test('installation fetches every asset fresh, at this version, and stores it under its plain address',async()=>{const w=installer();await w.run();
+ assert.ok(w.fetched.length>20);
+ for(const request of w.fetched){assert.equal(request.cache,'reload');const url=new URL(request.url);assert.equal(url.searchParams.get('echo-cache'),CURRENT);const path=url.pathname;assert.ok(path==='/'||existsSync(new URL('..'+path,import.meta.url)),path)}
+ for(const url of w.stored)assert.ok(!url.includes('echo-cache'),url);
+ assert.ok(w.stored.includes('https://echo.test/app.js'));});
+test('a version is cached whole or not at all: one failed file fails the install',async()=>{await assert.rejects(installer({failPath:'/core.js'}).run(),/Could not cache/)});
 
 const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
 const registration=html.slice(html.indexOf("if('serviceWorker' in navigator){"),html.indexOf('</script>',html.indexOf("if('serviceWorker' in navigator){")));
 test('worker installation waits for open app clients instead of forcing activation',async()=>{
- let install,skipCalls=0;
- const self={addEventListener:(name,handler)=>{if(name==='install')install=handler},skipWaiting:()=>{skipCalls++}};
- vm.runInNewContext(script,{self,caches:{open:async()=>({addAll:async()=>{}})},Request:class{constructor(){}}});
- let pending;install({waitUntil:p=>pending=p});await pending;assert.equal(skipCalls,0);
+ // installer() throws if install calls skipWaiting.
+ await installer().run();
+});
+test('the startup error panel can update Echo even when app.js never loaded',()=>{
+ assert.match(html,/onclick="window\.echoRepair\(this\)">Update Echo<\/button>/);
+ assert.match(html,/if\(registration\?\.waiting\)\{navigator\.serviceWorker\.addEventListener\('controllerchange',\(\)=>location\.reload\(\)\);registration\.waiting\.postMessage\('echo:activate-update'\);return\}/);
+ // Only Echo's offline copies are cleared; data stores are never touched here.
+ assert.match(html,/if\(\/\^jp-echo-v\\d\+\$\/\.test\(key\)\)await caches\.delete\(key\)/);
+ assert.doesNotMatch(html,/indexedDB\.deleteDatabase|localStorage\.clear/);
+ assert.doesNotMatch(html,/Echo v130/);
 });
 test('delayed controller changes and update checks preserve the route and unsaved session',async()=>{
  for(const path of ['/sentences/test','/words/-1','/review','/settings']){
