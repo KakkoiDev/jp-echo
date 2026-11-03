@@ -154,3 +154,13 @@ Meaning draws `familyTopics()` — the eighteen curriculum themes folded into te
 and "Practise the ones you haven't met" are shared. The old `#family-panel`
 browser above is no longer shown (it stays in the markup for its tests); remove
 it and `renderKanjiFamilies` together once nothing depends on them.
+
+### Radio
+`/radio`, reached from the Review home's 夜 Radio row (a `library-tool
+two-line` row, the same as "Or practise another way"). `radio.js` owns the
+night plan (`radioPlan`, `radioPhase`), the queue (`radioQueue`: reviewed at
+least once, most recently reviewed first) and what each phase says
+(`radioSteps`). `RadioPlayer` and `NoiseBed` (speech.js) play it; app.js only
+draws the setup page and the `#radio-night` screen and holds the screen wake
+lock. Deep-sleep cues are the sentence alone, never followed by its meaning
+(`test/radio.test.js`). Phase copy lives in `RADIO_PHASE_COPY`.

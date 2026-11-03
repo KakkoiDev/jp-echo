@@ -158,6 +158,11 @@ Before considering the change complete:
 - **AI prose carries readings.** Any prompt whose answer is shown as an
   explanation includes `READINGS_RULE` (api.js), and the answer is rendered with
   `rubyHtml`, so every kanji the model writes has furigana.
+- **Radio follows the sleep-cueing research where it has one.** The deep-sleep
+  cues (`radio.js`) are the sentence alone: a translation right after a cue
+  cancels its benefit (Schreiner, Lehmann & Rasch 2015). The meaning plays in
+  the wind-down and, by the learner's choice, the rest of the night. The night
+  needs the screen on (wake lock): a locked phone stops speech on iOS and Android.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 
