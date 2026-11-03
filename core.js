@@ -295,7 +295,14 @@ export function mergeSentences(current, incoming) {
     if(reviews.length)result.reviews=reviews;
     if(old.srs&&(!candidate.srs||Number(candidate.srs.reps||0)<Number(old.srs.reps||0)))result.srs=old.srs;
     if(!sameId&&old.srs)result.srs=old.srs;
-    if(old.reviewTrack)result.reviewTrack=old.reviewTrack;
+    // A newer edit on this device must not throw away reviews done elsewhere:
+    // for the same card the schedule with more repetitions always wins.
+    if(sameId&&candidate.srs&&Number(candidate.srs.reps||0)>Number(old.srs?.reps||0))result.srs=candidate.srs;
+    // Review progress travels with the schedule it belongs to: whichever copy's
+    // srs won also supplies the skill turn and the last rating, so a restore from
+    // a device that reviewed further never pairs its schedule with stale skills.
+    const progress=result.srs===old.srs||!candidate.srs?old:candidate;
+    for(const key of ["reviewTrack","lastRating"]){if(progress[key]!=null)result[key]=progress[key];else if(old[key]!=null)result[key]=old[key]}
     const analysis=[...new Map([...(candidate.grammarAnalysis||[]),...(old.grammarAnalysis||[])].map(a=>[a.text,a])).values()];if(analysis.length)result.grammarAnalysis=analysis;
     merged.set(old.id,result);identities.set(identity,old.id);
   }

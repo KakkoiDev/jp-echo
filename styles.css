@@ -525,7 +525,9 @@ kbd{padding:2px 7px;border:1px solid var(--chip-rev-bd);border-radius:3px;backgr
   .tab{flex:0 0 auto;height:46px;flex-direction:row;justify-content:flex-start;gap:12px;padding:0 13px;border-top:0;border-radius:4px;margin-top:0;font-size:15px;letter-spacing:normal}
   .tab.current{background:var(--panel);border:1px solid var(--hairline);color:var(--sumi)}
   .tab.current .tab-icon{color:var(--seal)}
-  .tab-badge{position:static;margin-left:auto;min-width:24px;height:22px;font-size:12px}
+  /* The badge lives inside the icon on the phone tab bar; in the sidebar it sits at the row's right edge (Desktop.dc.html). */
+  .tab{position:relative}.tabs .tab-icon{position:static}
+  .tab-badge{position:absolute;top:50%;left:auto;right:13px;transform:translateY(-50%);min-width:24px;height:22px;font-size:12px}
   .tabs>.nav-settings{display:flex}
   .dock{left:264px;right:340px;bottom:0;transform:none;width:auto}
   .toast{bottom:calc(env(safe-area-inset-bottom) + 18px)}
@@ -1295,6 +1297,8 @@ html.motion-off #review-progress-bar { transition: none; }
    states carry discoverability. Rows reuse .library-tool. */
 .welcome-modes{position:relative;display:flex;flex-direction:column;margin-top:28px}
 .welcome-modes .overline{margin-bottom:2px;font-size:10px}
+/* Two lines never fit the one-line 44px row: let the copy set the height. */
+.library-tool.two-line{height:auto}
 .welcome-modes .library-tool.two-line{min-height:44px;padding:6px 0;border-bottom:0}
 .welcome-modes .library-tool.two-line strong{font-size:14px}
 .welcome-modes .library-tool.two-line .library-tool-label span{font-size:12px;color:var(--ink-muted)}
@@ -1318,8 +1322,10 @@ html.motion-off #review-progress-bar { transition: none; }
 @media (min-width:1024px){
   .welcome-modes{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:470px}
   .welcome-modes .overline{grid-column:1/-1}
-  .library-tool.two-line{align-items:flex-start;padding:16px;border:1px solid var(--hairline);border-radius:4px;background:var(--panel)}
-  .library-tool.two-line:last-child{border-bottom:1px solid var(--hairline)}
+  /* Same specificity as the phone rule (.welcome-modes .library-tool.two-line),
+     which otherwise wins and strips the card's padding and bottom border. */
+  .welcome-modes .library-tool.two-line,.library-tool.two-line{align-items:flex-start;padding:14px 16px;border:1px solid var(--hairline);border-radius:4px;background:var(--panel)}
+  .welcome-modes .library-tool.two-line:last-child,.library-tool.two-line:last-child{border-bottom:1px solid var(--hairline)}
   .library-tool.two-line>svg{display:none}
   .library-tool.two-line[hidden]{display:none}
 }
@@ -1551,3 +1557,13 @@ html.motion-off #review-progress-bar { transition: none; }
 .band[data-level=""] .band-label{white-space:normal;overflow:visible}
 #custom-references>summary{font-weight:400}
 .group-by{margin-top:14px}
+/* The start-screen ornament and the live ripple bleed past the column on a
+   phone, where the screen edge crops them. On desktop the column ends at the
+   right-hand panel, which cut them mid-ring: there they stop at the gutter. */
+#welcome-ripple{right:-96px;top:0}
+@media (min-width:1024px){
+  #welcome-ripple,.ripple.live{right:-56px}
+}
+/* The ornament rings behind the due count (ReviewHome.dc.html) rise past the
+   Review | Stats switch; the switch is paper above them, not glass. */
+#review-home>.segmented{position:relative;z-index:1}
