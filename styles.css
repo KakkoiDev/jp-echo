@@ -1598,3 +1598,24 @@ button.mora-cell:last-child{border-right:0}
 .mora-mark-key strong{font-family:var(--display);font-weight:500;font-size:14px;color:var(--seal-deep);margin-right:4px}
 .mora-mark-reading{font-size:10px;color:var(--ink-muted)}
 
+
+/* Radio: the studied sentences through the night. The setup page is an
+   ordinary study tool; the night screen is true black so an OLED phone left
+   on the bedside table lights nothing, with dim text in the existing inks. */
+:root{--radio-night:#000}
+.radio-open{margin-top:18px;border-top:1px solid var(--rule)}
+.radio-plan{list-style:none;margin:10px 0 0;padding:0}
+.radio-plan li{display:grid;grid-template-columns:5.5rem 1fr;gap:4px 12px;padding:11px 0;border-bottom:1px solid var(--rule)}
+.radio-plan .radio-when{font-size:12px;color:var(--ink-muted);font-variant-numeric:tabular-nums;padding-top:2px}
+.radio-plan strong{font-weight:500;font-size:14px}
+.radio-plan .hint{grid-column:2;margin:0}
+.radio-controls label{white-space:nowrap}
+.radio-controls select{margin-left:6px;border:0;background:transparent;font:inherit;color:inherit}
+#radio-start{margin-top:6px}
+.radio-why{margin-top:22px}
+.radio-night{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px 24px calc(24px + env(safe-area-inset-bottom));background:var(--radio-night);color:var(--ink-muted);text-align:center}
+.radio-night>*{opacity:.55}
+.radio-night[hidden]{display:none}
+.radio-phase{margin:0;font-family:var(--display);font-size:22px;color:var(--ink-muted)}
+.radio-line,.radio-until{margin:0;font-size:13px;color:var(--faint);max-width:22rem}
+.radio-night .outline{margin-top:28px;border-color:var(--hairline);color:var(--ink-muted);background:transparent}

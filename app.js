@@ -13,7 +13,8 @@ import {applyReadingCorrection,removeArchivedMiniCards,readImportRecovery,saveIm
 import {MIN_INTERVAL_MS,QUIET_MS,downloadBackup,parseGistId,shouldAutoBackup,uploadBackup} from "./gist-backup.js";
 import {READINGS_RULE,correctSentenceReadings,analyzeSentenceGrammar,askModel,rewriteSentence,adjustNote,carries,compose,composeFromIntent,PROVIDER_DEFAULTS,tagGrammar,translate,discuss,generateReading,writeNotes,writeWordNote,transcribeAudio} from "./api.js";
 import {grammarListItems,setImportedGrammar,byLevel as grammarByLevel,cleanTags as grammarTags,coverage as grammarCoverage,hasGrammar,isTagged,learned as grammarLearned,LEVELS as GRAMMAR_LEVELS,point as grammarPoint,POINTS as GRAMMAR_POINTS,summarise as grammarSummarise,untagged as untaggedSentences} from "./grammar.js";
-import {speakOnce,japaneseVoices,recognitionFactory,ShadowLoop,ConversationLoop} from "./speech.js";
+import {speakOnce,japaneseVoices,recognitionFactory,ShadowLoop,ConversationLoop,RadioPlayer,NoiseBed} from "./speech.js";
+import {RADIO_DEFAULTS,RADIO_MINUTE,RADIO_PHASE_COPY,clockAt,radioPhase,radioPlan,radioQueue,radioSteps} from "./radio.js";
 import {STORIES} from "./stories.js";
 import {coverage as kanjiCoverage,facts as kanjiFacts,jlptBands as kanjiBands,learned as kanjiLearned,LEVEL_LABELS,levelOf,nextUnmet,sentenceKanji,TOTAL as KANJI_TOTAL} from "./kanji.js";
 import {searchGrammar,searchKanji,searchWords} from "./lookup.js";
@@ -367,16 +368,16 @@ function syncRoute(patch={},replace=false){if(applyingRoute)return;const url=rou
 const wide=matchMedia("(min-width:1024px)");
 const isWide=()=>wide.matches;
 const VIEW_TITLES={review:"Review",library:"Library"};
-function showView(name,{route=true}={}){if(name==="map"&&targetLang()!=="ja")name="library";if(name!=="practice")resetSession();if(name!=="session")stopReviewListening();speechSynthesis.cancel();
-  $("#main-view").hidden=name!=="practice";$("#review-home").hidden=name!=="review";$("#history-view").hidden=!(name==="library"||(name==="sentence"&&isWide()));$("#review-view").hidden=name!=="session";$("#sentence-view").hidden=name!=="sentence";$("#onboard-view").hidden=name!=="onboard";$("#setup-view").hidden=name!=="setup";$("#map-view").hidden=name!=="map";$("#mora-view").hidden=name!=="mora";$("#settings-view").hidden=name!=="settings";if(name!=="settings")settingsStack=[];$("#settings-nav")?.toggleAttribute("aria-current",name==="settings");if(name!=="settings"&&$("#ai-show-key")?.getAttribute("aria-pressed")==="true")$("#ai-show-key").click();
-  const solo=name==="onboard"||name==="setup"||((name==="session"||name==="sentence"||name==="map"||name==="mora"||name==="settings")&&!isWide());document.querySelector("header").hidden=solo||(name==="practice"&&(discussionMode||readingMode||extractMode)&&!isWide());$("#tabs").hidden=solo;
+function showView(name,{route=true}={}){if(name==="map"&&targetLang()!=="ja")name="library";if(name!=="radio")stopRadio();if(name!=="practice")resetSession();if(name!=="session")stopReviewListening();speechSynthesis.cancel();
+  $("#main-view").hidden=name!=="practice";$("#review-home").hidden=name!=="review";$("#history-view").hidden=!(name==="library"||(name==="sentence"&&isWide()));$("#review-view").hidden=name!=="session";$("#sentence-view").hidden=name!=="sentence";$("#onboard-view").hidden=name!=="onboard";$("#setup-view").hidden=name!=="setup";$("#map-view").hidden=name!=="map";$("#mora-view").hidden=name!=="mora";$("#radio-view").hidden=name!=="radio";$("#settings-view").hidden=name!=="settings";if(name!=="settings")settingsStack=[];$("#settings-nav")?.toggleAttribute("aria-current",name==="settings");if(name!=="settings"&&$("#ai-show-key")?.getAttribute("aria-pressed")==="true")$("#ai-show-key").click();
+  const solo=name==="onboard"||name==="setup"||((name==="session"||name==="sentence"||name==="map"||name==="mora"||name==="radio"||name==="settings")&&!isWide());document.querySelector("header").hidden=solo||(name==="practice"&&(discussionMode||readingMode||extractMode)&&!isWide());$("#tabs").hidden=solo;
   $("#view-title").textContent=VIEW_TITLES[name]||"";$("#view-title").hidden=!VIEW_TITLES[name];document.querySelector(".brand").hidden=!!VIEW_TITLES[name];
   $("#discussion-play").onclick=playDiscussion;$("#discussion-english").onchange=renderDiscussion;$("#discussion-new").onclick=()=>{discussionLoop.stop();discussionTurns=[];discussionScenario="";renderDiscussion();$("#english-input").value="";$("#english-input").focus()};$("#reading-furigana").onchange=renderReading;$("#reading-english").onchange=renderReading;$("#reading-echo").onclick=playReading;
-for(const tab of document.querySelectorAll(".tab[data-view]")){const on=tab.dataset.view===name||(name==="session"&&tab.dataset.view==="review")||((name==="sentence"||name==="map")&&tab.dataset.view==="library");tab.classList.toggle("current",on);tab.setAttribute("aria-current",on?"page":"false")}
+for(const tab of document.querySelectorAll(".tab[data-view]")){const on=tab.dataset.view===name||((name==="session"||name==="radio")&&tab.dataset.view==="review")||((name==="sentence"||name==="map")&&tab.dataset.view==="library");tab.classList.toggle("current",on);tab.setAttribute("aria-current",on?"page":"false")}
   // Settings sits in the desktop sidebar as a fourth row without a data-view; it is current on the Settings route.
   {const settingsNav=$("#settings-nav");if(settingsNav){const on=name==="settings";settingsNav.classList.toggle("current",on);settingsNav.setAttribute("aria-current",on?"page":"false")}}
   document.body.dataset.view=name;scrollTo(0,0);renderSidePanel();
-  saveWorkspace({view:name});if(route)syncRoute({view:name});if(name==="library"||(name==="sentence"&&isWide()))renderHistory();else if(name==="map")renderMap();else if(name==="mora")renderMora();else if(name==="review")renderReviewHome();else if(name==="practice")renderPracticeNotices();else if(name==="setup")resetSetupForm()}
+  saveWorkspace({view:name});if(route)syncRoute({view:name});if(name==="library"||(name==="sentence"&&isWide()))renderHistory();else if(name==="map")renderMap();else if(name==="mora")renderMora();else if(name==="radio")renderRadio();else if(name==="review")renderReviewHome();else if(name==="practice")renderPracticeNotices();else if(name==="setup")resetSetupForm()}
 // The study tool: the wall of joyo kanji, the dictionary and the list of grammar points,
 // read off your library every time the screen opens. Coverage is never
 // stored, so a sentence added or deleted moves the wall at once, and nothing
@@ -2208,6 +2209,37 @@ function sheetDrag(dialog,close){
 }
 sheetDrag($("#kanji-dialog"),()=>{loop.stop();$("#kanji-dialog").close()});sheetDrag($("#grammar-dialog"),()=>{loop.stop();$("#grammar-dialog").close()});sheetDrag($("#word-dialog"),()=>{loop.stop();$("#word-dialog").close()});
 $("#word-close").onclick=()=>{loop.stop();$("#word-dialog").close()};$("#word-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;wordOpen=null;saveWorkspace({modal:null})});$("#word-compose").onclick=composeForWord;$("#word-say-go").onclick=sayForWord;$("#word-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForWord()};$("#word-note-ask").onclick=askWordNote;$("#word-prev").onclick=()=>wordStep(-1);$("#word-next").onclick=()=>wordStep(1);$("#word-dialog").addEventListener("keydown",event=>{if(!wordOpen?.learn||event.target.tagName==="TEXTAREA"||event.target.isContentEditable)return;if(event.key==="ArrowRight")wordStep(1);else if(event.key==="ArrowLeft")wordStep(-1)});
+// Radio: the studied sentences through the night (radio.js plans it,
+// speech.js plays it). The screen is kept on with a wake lock, because a
+// locked phone stops the speech engine on iPhone and on Android alike.
+const radio=new RadioPlayer({onState:renderRadioState,onDone:()=>{releaseRadioWake();radioNoise.stop();setTimeout(()=>{if(!radio.running)$("#radio-night").hidden=true},60000)}}),radioNoise=new NoiseBed();
+let radioWake=null,radioSentences=[];
+function radioOptions(){return {hours:Number(settings.radioHours)||RADIO_DEFAULTS.hours}}
+async function renderRadio(){radioSentences=radioQueue(await listSentences());
+  $("#radio-empty").hidden=radioSentences.length>0;$("#radio-setup").hidden=!radioSentences.length;
+  $("#radio-hours").value=String(radioOptions().hours);$("#radio-noise").checked=settings.radioNoise!==false;
+  $("#radio-count").textContent=spell(radioSentences.length)+" studied sentence"+(radioSentences.length===1?"":"s")+", newest first";
+  let at=0;const rows=radioPlan(radioOptions()).filter(part=>part.minutes>0).map(part=>{const li=document.createElement("li"),copy=RADIO_PHASE_COPY[part.phase];
+    li.append(el("span","radio-when",radioSpan(at,at+part.minutes)),el("strong","",copy.title),el("p","hint",copy.line+(part.phase==="night"?" Your choice — the studies do not test this part.":"")));at+=part.minutes;return li});
+  $("#radio-plan").replaceChildren(...rows)}
+function radioSpan(from,to){const f=minutes=>minutes%60?Math.floor(minutes/60)+"h"+String(minutes%60).padStart(2,"0"):minutes/60+"h";return (from?f(from):"0")+"–"+f(to)}
+function saveRadioOptions(){settings.radioHours=Number($("#radio-hours").value)||RADIO_DEFAULTS.hours;settings.radioNoise=$("#radio-noise").checked;storePreference("jp-echo-settings",JSON.stringify(settings));renderRadio()}
+async function holdRadioWake(){try{radioWake=await navigator.wakeLock?.request("screen")||null}catch{radioWake=null}
+  $("#radio-status").textContent=radioWake?"":"This browser may still turn the screen off. If it does, set Auto-Lock (iPhone) or Screen timeout (Android) to the longest setting for the night."}
+function releaseRadioWake(){try{radioWake?.release()}catch{}radioWake=null}
+function startRadio(){if(!radioSentences.length)return;loop.stop();discussionLoop.stop();readingLoop.stop();
+  const plan=radioPlan(radioOptions()),voiceFor=lang=>lang===targetLang()?(voices[Number($("#voice").value)]||voices[0]||null):(japaneseVoices(lang)[0]||null);
+  if(settings.radioNoise!==false)radioNoise.start();
+  $("#radio-night").hidden=false;
+  radio.start(radioSentences,{steps:radioSteps,phaseAt:elapsed=>radioPhase(elapsed,plan),voiceFor,rate:Math.min(1,Number($("#rate").value)||1)});
+  holdRadioWake()}
+function stopRadio(){if(!radio.running&&$("#radio-night").hidden)return;radio.stop();radioNoise.stop();releaseRadioWake();$("#radio-night").hidden=true}
+function renderRadioState(at,item){const copy=RADIO_PHASE_COPY[at.phase];$("#radio-phase").textContent=copy.title;$("#radio-line").textContent=item&&at.phase==="wind-down"?stripFurigana(item.target):copy.line;
+  $("#radio-until").textContent=at.phase==="done"?"":"Until "+clockAt(Date.now()+at.left)}
+$("#radio-open").onclick=()=>showView("radio");$("#radio-back").onclick=()=>showView("review");$("#radio-to-review").onclick=()=>showView("review");
+$("#radio-start").onclick=startRadio;$("#radio-stop").onclick=stopRadio;$("#radio-hours").onchange=saveRadioOptions;$("#radio-noise").onchange=saveRadioOptions;
+// A wake lock is dropped whenever the page is hidden; take it again on return.
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&radio.running)holdRadioWake()});
 $("#mora-open").onclick=()=>showView("mora");$("#mora-back").onclick=()=>showView("library");$("#mora-quiz").onchange=()=>{moraRevealed.clear();renderMora()};for(const id of ["#mora-show-emoji","#mora-show-furigana","#mora-show-english"])$(id).onchange=saveMoraDisplay;
 $("#kanji-close").onclick=()=>{loop.stop();$("#kanji-dialog").close()};$("#kanji-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;kanjiOpen=null;saveWorkspace({modal:null})});$("#kanji-compose").onclick=composeForKanji;$("#kanji-say-go").onclick=sayForKanji;$("#library-tool").onclick=()=>showView("map");
 $("#family-panel").addEventListener("toggle",()=>{

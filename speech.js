@@ -50,3 +50,46 @@ export class ConversationLoop extends ShadowLoop{
 // One utterance, no loop: a mora and its anchor when a table cell is tapped.
 export function speakOnce(text,{voice=null,rate=1,lang="ja"}={}){try{speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(lang==="ja"?speechText(text):text);utterance.lang=lang;utterance.voice=voice||null;utterance.rate=rate;speechSynthesis.speak(utterance);return true}catch{return false}}
 
+
+// One utterance that resolves when it ends — or after a watchdog, because
+// engines drop utterances without firing onend, and Radio must not stall at
+// 2 a.m. waiting on one. Cancelling (stop) resolves it too.
+export function speakAndWait(text,{voice=null,rate=1,lang="ja",volume=1}={}){
+  return new Promise(resolve=>{let done=false;const finish=()=>{if(done)return;done=true;clearTimeout(watchdog);resolve()};
+    const watchdog=setTimeout(finish,4000+String(text).length*400);
+    try{const utterance=new SpeechSynthesisUtterance(lang==="ja"?speechText(text):text);utterance.lang=lang;utterance.voice=voice||null;utterance.rate=rate;utterance.volume=volume;
+      utterance.onend=finish;utterance.onerror=finish;speechSynthesis.speak(utterance)}catch{finish()}})}
+
+// Radio walks the night plan from radio.js: each phase starts again from the
+// newest sentence and wraps. Everything time- and sound-related is injected
+// so the order is tested without a speech engine or a real night.
+export class RadioPlayer{
+  constructor({speak=speakAndWait,wait=ms=>new Promise(resolve=>setTimeout(resolve,ms)),now=()=>Date.now(),cancel=()=>{try{speechSynthesis.cancel()}catch{}},onState=()=>{},onDone=()=>{}}={}){Object.assign(this,{speak,wait,now,cancel,onState,onDone});this.run=0;this.running=false}
+  // steps(phase,item,into) and phaseAt(elapsed) come from radio.js; voices
+  // maps a language code to a voice. The first utterance is spoken before
+  // any await, so it stays inside the tap that started Radio (iOS).
+  start(queue,{steps,phaseAt,voiceFor=()=>null,rate=1}){if(!queue.length)return false;const run=++this.run;this.running=true;this.startedAt=this.now();this.loop(run,queue,{steps,phaseAt,voiceFor,rate});return true}
+  async loop(run,queue,{steps,phaseAt,voiceFor,rate}){let index=0,phase=null;
+    while(run===this.run){const at=phaseAt(this.now()-this.startedAt);
+      if(at.phase!==phase){phase=at.phase;index=0}
+      if(at.phase==="done"){this.running=false;this.onState(at,null);this.onDone();return}
+      const item=at.phase==="settle"?null:queue[index%queue.length];this.onState(at,item);
+      if(!item){await this.wait(Math.min(at.left,30000));continue}
+      index++;
+      for(const step of steps(at.phase,item,at.into)){if(run!==this.run)return;
+        if(step.say)await this.speak(step.say,{lang:step.lang,volume:step.volume,rate,voice:voiceFor(step.lang)});else await this.wait(step.pause)}}}
+  stop(){this.run++;this.running=false;this.cancel()}
+}
+
+// A soft pink-noise bed under the night, from a looped generated buffer: no
+// file, no network, works offline. Home sleep-cueing studies play cues over a
+// steady noise so each cue is less of an event. Started from the tap (iOS).
+export class NoiseBed{
+  start(level=.04){if(this.context)return;const Context=window.AudioContext||window.webkitAudioContext;if(!Context)return;
+    const context=new Context(),length=context.sampleRate*4,buffer=context.createBuffer(1,length,context.sampleRate),data=buffer.getChannelData(0);
+    // Paul Kellet's economy pink filter over white noise.
+    let b0=0,b1=0,b2=0;for(let i=0;i<length;i++){const white=Math.random()*2-1;b0=.99765*b0+white*.099046;b1=.963*b1+white*.2965164;b2=.57*b2+white*1.0526913;data[i]=(b0+b1+b2+white*.1848)*.2}
+    const source=context.createBufferSource(),gain=context.createGain();source.buffer=buffer;source.loop=true;gain.gain.value=0;gain.gain.linearRampToValueAtTime(level,context.currentTime+8);
+    source.connect(gain).connect(context.destination);source.start();this.context=context}
+  stop(){try{this.context?.close()}catch{}this.context=null}
+}

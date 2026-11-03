@@ -13,6 +13,7 @@ export function routeFor(state={}){
   else if(view==="library")path="/library";
   else if(view==="map")path=state.mapView==="words"?"/words":state.mapView==="grammar"?"/grammar":"/kanji";
   else if(view==="mora")path="/mora";
+  else if(view==="radio")path="/radio";
   // Settings is a page with two sub-pages for what lives only on this device.
   else if(view==="settings")path=SETTINGS_PAGES.includes(state.settingsPage)?"/settings/"+state.settingsPage:"/settings";
   else if(view==="setup")path="/setup";
@@ -38,6 +39,7 @@ export function parseRoute(input){
   if(p==="/extract")return {...base,extractMode:true};
   if(p==="/review")return {...base,view:"review"};
   if(p==="/mora")return {...base,view:"mora"};
+  if(p==="/radio")return {...base,view:"radio"};
   if(p==="/settings")return {...base,view:"settings",settingsPage:"main"};
   { const sm=p.match(/^\/settings\/([a-z]+)$/);if(sm)return SETTINGS_PAGES.includes(sm[1])?{...base,view:"settings",settingsPage:sm[1]}:{...base,notFound:true}; }
   if(p==="/library")return {...base,view:"library",historyQuery:q.get("q")||"",historyFilter:q.get("filter")||"all",historyOrder:q.get("order")||"created",historyDirection:q.get("direction")||"desc"};
