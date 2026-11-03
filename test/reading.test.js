@@ -92,3 +92,11 @@ test("segments render back to notation", () => {
   assert.equal(segmentsToNotation([{text:"人",reading:"ひと"},{text:"です"}]), "人【ひと】です");
   assert.equal(segmentsToNotation([{text:"人",reading:""}]), "人", "an empty reading is written bare");
 });
+
+test("JP Core readings: 多すぎる is おお, and a reading never repeats the kana before its kanji",async()=>{
+  const {createReadingResolver}=await import("../japanese-readings.js");const {normalizeFurigana}=await import("../core.js");
+  const resolve=createReadingResolver([{w:"多",r:"た",pos:["n","pref"]},{w:"多い",r:"おおい",pos:["adj-i"]},{w:"項目",r:"こうもく"}]);
+  assert.equal(resolve("項目が多すぎます。").text,"項目【こうもく】が多【おお】すぎます。");
+  assert.equal(normalizeFurigana("やり方【やりかた】"),"やり方【かた】");
+  assert.equal(normalizeFurigana("ここ子供【こども】"),"ここ子供【こども】");
+});

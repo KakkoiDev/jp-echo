@@ -59,7 +59,18 @@ export function normalizeFurigana(value = "") {
   let out = "", offset = 0;
   for (const match of value.matchAll(notation)) {
     out += value.slice(offset, match.index).replace(stray, "");
-    out += match[0];
+    // A reading covers its kanji only. やり方【やりかた】 put やりかた over 方
+    // and spoke やりやりかた: trim kana the reading repeats from just before
+    // the kanji, never the whole reading.
+    let reading = match[2];
+    const kana = (out.match(/[ぁ-ゖァ-ヺー]+$/u) || [""])[0];
+    // Two or more kana, or the お/ご prefix: a one-kana overlap is usually
+    // chance (ここ子供【こども】 keeps its こ).
+    for (let k = Math.min(kana.length, reading.length - 1); k > 0; k--) {
+      const lead = kana.slice(-k);
+      if ((k >= 2 || lead === "お" || lead === "ご") && reading.startsWith(lead)) { reading = reading.slice(k); break; }
+    }
+    out += match[1] + "【" + reading + "】";
     offset = match.index + match[0].length;
   }
   return out + value.slice(offset).replace(stray, "");
