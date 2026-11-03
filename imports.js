@@ -44,3 +44,38 @@ export async function runImportFeedback({status,buttons=[],label='file',load,sav
  }catch(error){show(`Import failed: ${error.message||'Please try again.'}`,'error');return null}
  finally{status.setAttribute('aria-busy','false');buttons.forEach((button,index)=>button.disabled=previous[index])}
 }
+
+// One way in. The Import page takes whatever the person has — a file they chose
+// or dropped, or text they pasted — and this says what it is, so the page can
+// hand it to the one place that already handles it: a deck or backup merges
+// (importBackupData), a gist link restores (gist backup), a book or a passage
+// opens Extract from text. Pure: it reads names, types and text, nothing else.
+const JAPANESE=/[぀-ヿ㐀-鿿]/;
+export function classifyImport({file=null,text=""}={}){
+ if(file){
+  const name=String(file.name||"").toLowerCase(),type=String(file.type||"").toLowerCase();
+  if(name.endsWith(".json")||type==="application/json")return {kind:"deck-file"};
+  if(name.endsWith(".epub")||type==="application/epub+zip")return {kind:"book"};
+  if(name.endsWith(".txt")||name.endsWith(".md")||type.startsWith("text/"))return {kind:"text-file"};
+  return {kind:"unknown",reason:"Echo reads a deck or backup (.json), a book (.epub) or a text file (.txt)."};
+ }
+ const value=String(text||"").trim();
+ if(!value)return {kind:"empty"};
+ if(value.startsWith("{")){
+  try{const data=JSON.parse(value);return data&&typeof data==="object"&&!Array.isArray(data)?{kind:"deck-json",data}:{kind:"unknown",reason:"That JSON is not an Echo deck or backup."}}
+  catch{return {kind:"unknown",reason:"That looks like JSON but does not parse. Check it is the whole file."}}
+ }
+ if(/^[0-9a-f]{20,}$/i.test(value))return {kind:"gist",gist:value};
+ let url=null;try{url=new URL(value)}catch{url=null}
+ if(url&&/^https?:$/.test(url.protocol)&&!/\s/.test(value)){
+  const host=url.host.toLowerCase();
+  if(host==="gist.github.com"||host==="gist.githubusercontent.com"||(host==="api.github.com"&&url.pathname.startsWith("/gists/")))return {kind:"gist",gist:value};
+  return {kind:"deck-url",url:value};
+ }
+ if(JAPANESE.test(value))return {kind:"passage",text:value};
+ return {kind:"unknown",reason:"Paste Japanese text, a deck, or a link to a deck or a gist."};
+}
+// One line saying what will happen, shown under the box before anything runs.
+export function importIntent(result){
+ return ({"deck-file":"A deck or backup file. It merges; nothing here is lost.","book":"A book. It opens in Extract from text, where you pick the sentences to keep.","text-file":"A text file. It opens in Extract from text, where you pick the sentences to keep.","deck-json":"A deck or backup. It merges; nothing here is lost.","gist":"A gist backup. It merges into this device; nothing here is lost.","deck-url":"A link to a deck. Echo downloads it and merges it.","passage":"Japanese text. It opens in Extract from text, where you pick the sentences to keep."})[result?.kind]||result?.reason||"";
+}

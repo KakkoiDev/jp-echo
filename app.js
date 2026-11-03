@@ -3,7 +3,7 @@ import {readEpub} from './epub-import.js';
 import {passageCandidates,analyzePassage,vocabularyInventory,classifyExtraction,extractionIdentity} from './text-extraction.js';
 import {fetchReference,missingReferenceCandidates,referenceKey,customReferenceSpans,resolveReferenceLookup} from './references.js';
 import {dictionaryReadings,backfillReadings,correctReadingDraft,checkReadingSpeech} from "./readings.js";
-import {validateDeckBackup,fetchDeckBackup,runImportFeedback} from './imports.js';
+import {validateDeckBackup,fetchDeckBackup,runImportFeedback,classifyImport,importIntent} from './imports.js';
 import {isSeeded,planMiniSentenceUpgrade,repairMiniImport} from './mini-imports.js';
 import {applyI18n,setDictionary,t} from "./i18n.js";
 import {earliestPair,flipSentence,isReversed,pairLooksSwapped,repairPair} from "./repair.js";
@@ -196,7 +196,8 @@ function renderSettingsRows(){if(!$("#settings-status-ai"))return;
   $("#settings-status-ai").textContent=names[provider]+(provider==="local"?(settings.localEndpoint?" · endpoint saved":" · no endpoint yet"):(settings.providerKeys?.[provider]?" · key saved":" · no key yet"));
   $("#settings-status-speech").textContent={auto:"Auto — browser, then Groq",browser:"Browser only",groq:"Groq Whisper",google:"Gemini"}[settings.speechProvider||"auto"]||"Auto — browser, then Groq";
   $("#settings-status-grammar").textContent="Reads new sentences automatically: "+(settings.autoTag?"on":"off");$("#settings-row-grammar").hidden=targetLang()!=="ja";
-  $("#settings-status-import").textContent=targetLang()==="ja"?"A deck, a URL, or the Minihongo starter":"A deck, or a URL";
+  $("#settings-status-import").textContent=targetLang()==="ja"?"A deck, a backup, a gist, a book or text":"A deck, a backup or a gist";
+  $("#import-gist-row").hidden=!settings.gistUrl;
   $("#settings-status-export").textContent="Anki deck · backup file";
   const gist=gistState(),status=$("#settings-status-backup");status.classList.toggle("ok",!!(settings.gistAuto&&gist.lastSuccessAt&&!gist.lastError));status.classList.toggle("error",!!gist.lastError);
   status.textContent=gist.lastError?"Last backup failed — open to see why":settings.gistAuto&&gist.lastSuccessAt?"Gist · backed up "+gistWhen(gist.lastSuccessAt):settings.gistAuto?"Gist backup is on — nothing backed up yet":"Off — back up to a GitHub gist"}
@@ -2030,14 +2031,16 @@ let importStatus=null;
 const importStatusNode=()=>importStatus||$("#import-status");
 async function importHistory(file){if(!file)return;
  const status=importStatusNode();
- try{await runImportFeedback({status,buttons:[$("#import"),$("#empty-import"),$("#import-deck-url")].filter(Boolean),label:file.name,
+ try{await runImportFeedback({status,buttons:[$("#import"),$("#empty-import"),$("#import-go")].filter(Boolean),label:file.name,
   load:async()=>{try{return JSON.parse(await file.text())}catch{throw new Error("That file is not valid JSON. See DECK-FORMAT.md for the deck format.")}},
   save:importBackupData,onComplete:message=>toast(message,6000)});
  }finally{importStatus=null}}
+// A deck or backup pasted as JSON: the same merge as a file.
+async function importDeckData(data,status=$("#import-status")){return runImportFeedback({status,buttons:[$("#import-go"),$("#import")],label:"deck",load:async()=>data,save:importBackupData,onComplete:message=>toast(message,6000)})}
 async function importDeckURL(url,button,status=$("#import-status")){
- if(!String(url||"").trim()){status.textContent="Paste the deck's URL first.";$("#deck-json-url").focus();return}
+ if(!String(url||"").trim()){status.textContent="Paste the deck's URL first.";$("#import-text").focus();return}
  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),30000);
- try{const result=await runImportFeedback({status,buttons:[button,$("#import")],label:"deck",load:()=>fetchDeckBackup(url,{signal:controller.signal}),save:importBackupData,onComplete:message=>toast(message,6000)});if(result)$("#deck-json-url").value=""}
+ try{const result=await runImportFeedback({status,buttons:[button,$("#import")],label:"deck",load:()=>fetchDeckBackup(url,{signal:controller.signal}),save:importBackupData,onComplete:message=>toast(message,6000)});if(result)$("#import-text").value="",$("#import-intent").textContent=""}
  finally{clearTimeout(timer)}}
 async function cleanupLegacyMiniHongo(){
  const marker='jp-echo-minihongo-cleanup-v2';
@@ -2101,14 +2104,18 @@ async function gistBackupNow(){
   catch(error){$("#gist-status").classList.add("error");$("#gist-status").textContent=error.message}
   finally{button.disabled=false}}
 async function gistRestore(){
-  const button=$("#gist-restore"),gist=$("#gist-url").value.trim(),token=$("#gist-token").value.trim();
+  const gist=$("#gist-url").value.trim();
   if(!parseGistId(gist)){$("#gist-status").textContent="Paste the gist's URL to restore from it.";$("#gist-url").focus();return}
-  button.disabled=true;$("#gist-status").classList.remove("error");$("#gist-status").textContent="Downloading the backup…";
+  return restoreFromGist(gist,{button:$("#gist-restore"),status:$("#gist-status")})}
+// One restore, from Backup's button or from a gist link pasted into Import.
+async function restoreFromGist(gist,{button,status}){
+  const token=$("#gist-token").value.trim()||settings.gistToken||"";
+  button.disabled=true;status.classList.remove("error");status.textContent="Downloading the backup…";
   try{const {backup,url}=await downloadBackup({gist,token});const {added}=await importBackupData(backup);
     // Continue backing up to the gist this device was restored from.
     if(url&&!settings.gistUrl){settings.gistUrl=url;storePreference("jp-echo-settings",JSON.stringify(settings));$("#gist-url").value=url}
-    $("#gist-status").textContent=added?`Restored ${added} sentence${added===1?"":"s"} from the gist. Everything already here was kept.`:"Everything in that gist is already on this device."}
-  catch(error){$("#gist-status").classList.add("error");$("#gist-status").textContent=error.message}
+    status.textContent=added?`Restored ${added} sentence${added===1?"":"s"} from the gist. Everything already here was kept.`:"Everything in that gist is already on this device."}
+  catch(error){status.classList.add("error");status.textContent=error.message}
   finally{button.disabled=false}}
 // "Your sentences with it  2": the count sits at the end of the rule heading.
 function sheetCount(head,n){let count=head.querySelector(".count");if(!count){count=el("span","count","");head.append(count)}count.textContent=String(n);head.classList.add("counted")}
@@ -2144,7 +2151,7 @@ for(const id of ["theme","motion","voice","discussion-voice-ai","discussion-voic
 $("#remind").onchange=async()=>{const wanted=$("#remind").checked;
   if(wanted&&!await enableReminders()){$("#remind").checked=false;$("#remind-hint").textContent="Notifications are blocked for Echo. Allow them in your browser settings, then turn this on again.";$("#remind-hint").hidden=false;$("#remind-hint").classList.add("error");$("#remind-reach").textContent="";return}
   $("#remind-hint").textContent="";$("#remind-hint").hidden=true;$("#remind-hint").classList.remove("error");
-  settings.remind=wanted;$("#remind-reach").textContent=reminderReach()};$("#export-anki").onclick=()=>exportAnki($("#export-anki"));$("#open-anki").onclick=()=>openAnki();$("#export").onclick=exportHistory;$("#export-file").onclick=exportHistory;$("#settings-extract").onclick=()=>{settingsStack=[];openTextExtraction()};$("#import").onclick=()=>$("#import-file").click();$("#import-file").onchange=async event=>{await importHistory(event.target.files[0]);event.target.value=""};
+  settings.remind=wanted;$("#remind-reach").textContent=reminderReach()};$("#export-anki").onclick=()=>exportAnki($("#export-anki"));$("#open-anki").onclick=()=>openAnki();$("#export").onclick=exportHistory;$("#export-file").onclick=exportHistory;$("#settings-extract").onclick=()=>{settingsStack=[];openTextExtraction()};$("#import").onclick=()=>$("#import-file").click();$("#import-file").onchange=async event=>{const file=event.target.files[0];event.target.value="";if(file)await importAny({file})};
 $("#voice-install").onclick=installTargetVoice;$("#voice-manage").onclick=installTargetVoice;$("#settings-swap-langs").onclick=()=>setPair(targetLang(),sourceLang());window.addEventListener("focus",()=>setTimeout(populateVoices,250));document.addEventListener("visibilitychange",()=>{if(!document.hidden)setTimeout(populateVoices,250)});$("#onboard-start").onclick=()=>showView("setup");$("#onboard-restore").onclick=()=>{finishOnboarding();openSettings()};
 $("#setup-next").onclick=()=>{storeTranslator();showSetupStep(2)};
 $("#setup-back").onclick=()=>{if(setupStep===2)return showSetupStep(1);showView(settings.onboarded?"practice":"onboard")};$("#setup-provider").onchange=showSetupFields;$("#setup-save").onclick=saveSetup;$("#setup-skip").onclick=finishOnboarding;
@@ -2299,8 +2306,29 @@ $("#welcome-discussion").onclick=()=>setPracticeMode("discussion");$("#welcome-r
 // It is the chosen chip (seal-tinted) until the box says something else.
 for(const scene of document.querySelectorAll("#discussion-scenes [data-scene]"))scene.onclick=()=>{const input=$("#english-input");input.value=scene.dataset.scene;for(const other of document.querySelectorAll("#discussion-scenes [data-scene]"))other.setAttribute("aria-pressed",String(other===scene));input.dispatchEvent(new Event("input",{bubbles:true}));input.focus()};
 $("#english-input").addEventListener("input",()=>{if(!discussionMode)return;for(const scene of document.querySelectorAll("#discussion-scenes [data-scene]"))if(scene.getAttribute("aria-pressed")==="true"&&scene.dataset.scene!==$("#english-input").value)scene.setAttribute("aria-pressed","false")});
-$("#import-deck-url").onclick=()=>importDeckURL($("#deck-json-url").value,$("#import-deck-url"));$("#deck-json-url").onkeydown=event=>{if(event.key==="Enter"){event.preventDefault();$("#import-deck-url").click()}};
+
 $("#empty-import").onclick=()=>{importStatus=$("#empty-starter-status");$("#import-file").click()};
+// Import has one way in (Settings → Import): a file chosen or dropped, or text
+// pasted. classifyImport says what it is; each kind goes to the importer that
+// already owns it, so nothing here duplicates a merge, a restore or Extract.
+async function importAny({file=null,text=""}={}){const result=classifyImport({file,text}),status=importStatusNode();
+  switch(result.kind){
+    case "deck-file":return importHistory(file);
+    case "deck-json":return importDeckData(result.data);
+    case "deck-url":return importDeckURL(result.url,$("#import-go"));
+    case "gist":return restoreFromGist(result.gist,{button:$("#import-go"),status});
+    case "book":openTextExtraction();return loadExtractionBook(file);
+    case "text-file":return openExtractionText(await file.text());
+    case "passage":return openExtractionText(result.text);
+    case "empty":status.textContent=t("Choose a file, or paste a link, a deck or Japanese text.");$("#import-text").focus();return;
+    default:status.textContent=result.reason}}
+$("#import-go").onclick=()=>importAny({text:$("#import-text").value});
+$("#import-text").oninput=()=>{const result=classifyImport({text:$("#import-text").value});$("#import-intent").textContent=result.kind==="empty"?"":importIntent(result)};
+$("#import-text").onkeydown=event=>{if(event.key==="Enter"&&(event.metaKey||event.ctrlKey)){event.preventDefault();$("#import-go").click()}};
+// Dropping a file anywhere on the box works like choosing it.
+{const box=$("#import-any");box.addEventListener("dragover",event=>{event.preventDefault();box.classList.add("dragging")});box.addEventListener("dragleave",()=>box.classList.remove("dragging"));
+  box.addEventListener("drop",event=>{event.preventDefault();box.classList.remove("dragging");const file=event.dataTransfer?.files?.[0];if(file)void importAny({file})})}
+$("#import-gist").onclick=()=>restoreFromGist(settings.gistUrl,{button:$("#import-gist"),status:$("#import-status")});
 $("#gist-now").onclick=gistBackupNow;$("#gist-restore").onclick=gistRestore;
 // Leaving the app is the last chance to save pending changes; opening it catches up.
 document.addEventListener("visibilitychange",()=>{if(document.hidden)maybeAutoBackup("hidden").catch(()=>{});else{refreshDueBadge();if(document.body.dataset.view==="review")renderReviewHome()}});
@@ -2368,9 +2396,14 @@ $('#extract-none').onclick=()=>{$('#extract-preview').querySelectorAll('input').
 $('#extract-import').onclick=importExtractedSentences;
 $('#extract-passage').oninput=()=>{extractionBook=null;$('#extract-book-status').textContent='';++extractionGeneration;extractionRows=[];extractionInventory=null;$('#extract-preview').replaceChildren();$('#extract-selection').hidden=$('#extract-foot').hidden=true;$('#extract-status').textContent=''};
 
-$('#extract-epub').onchange=async event=>{const file=event.target.files[0];if(!file||extractionBusy)return;setExtractionBusy(true);$('#extract-book-status').textContent='Reading EPUB chapters…';
+// Load a book into Extract from text: from its own file button, or handed over
+// by the Import page's one box.
+async function loadExtractionBook(file){if(!file||extractionBusy)return;setExtractionBusy(true);$('#extract-book-status').textContent='Reading EPUB chapters…';
  try{const book=await readEpub(await file.arrayBuffer());extractionBook=book;extractionRows=[];extractionInventory=null;$('#extract-preview').replaceChildren();$('#extract-selection').hidden=$('#extract-foot').hidden=true;$('#extract-passage').value='';$('#extract-book-status').textContent=`${book.title} · ${book.chapters.length} chapters loaded. Find sentences analyzes the full book using your AI service in batches. Large books can take time and use many requests.`;$('#extract-status').textContent='Book loaded. Choose a vocabulary filter, then Find sentences.'}
- catch(error){extractionBook=null;$('#extract-book-status').textContent=error.message}finally{event.target.value='';setExtractionBusy(false)}};
+ catch(error){extractionBook=null;$('#extract-book-status').textContent=error.message}finally{setExtractionBusy(false)}}
+$('#extract-epub').onchange=async event=>{try{await loadExtractionBook(event.target.files[0])}finally{event.target.value=''}};
+// Pasted Japanese or a text file lands in Extract's passage box, ready for Find sentences.
+function openExtractionText(text){openTextExtraction();const passage=$('#extract-passage');passage.value=String(text).slice(0,Number(passage.maxLength)>0?Number(passage.maxLength):30000);passage.dispatchEvent(new Event('input'));$('#extract-status').textContent='Text loaded. Choose a vocabulary filter, then Find sentences.';$('#extract-analyze').focus()}
 
 // Practice keeps one ⋯ button; edit, flag, open and delete live in its sheet
 // (PracticeMenu.dc.html). The loop keeps playing while the sheet is open.
