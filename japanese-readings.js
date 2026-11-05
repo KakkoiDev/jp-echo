@@ -94,10 +94,10 @@ tokens.push({segment:plain.slice(cursor,cursor+best.length),index:cursor,diction
   pieces.push(plain.slice(offset));return {text:pieces.join(''),issues};
  };
 }
-export function validateReadingCorrection(original,corrected){
+export function validateReadingCorrection(original,corrected,{allowMissing=false}={}){
  if(typeof corrected!=='string'||stripFurigana(corrected)!==stripFurigana(original))throw Error('Reading correction changed the sentence text.');
  const segments=rubySegments(corrected);
  if(segments.some(p=>p.reading&&!/^[ぁ-ゖァ-ヺー]+$/.test(p.reading)))throw Error('Reading correction contains an invalid reading.');
- if(segments.some(p=>!p.reading&&KANJI.test(p.text)))throw Error('Reading correction omitted a kanji reading.');
+ if(!allowMissing&&segments.some(p=>!p.reading&&KANJI.test(p.text)))throw Error('Reading correction omitted a kanji reading.');
  return corrected;
 }
