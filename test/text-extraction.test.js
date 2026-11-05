@@ -65,3 +65,10 @@ test('extraction continues after AI rewrites one row, preserving original Japane
  assert.deepEqual(result[0].words.map(w=>w.lemma),['猫']);
  assert.equal(result[1].target,'犬【いぬ】も来【き】た。');
 });
+
+test('missing model Japanese also falls back to the original passage row',async()=>{
+ const {target,...rest}=response.sentences[0];
+ const [result]=await analyzePassage([row],{ask:async()=>({sentences:[rest]})});
+ assert.equal(result.target,row.text);
+ assert.equal(result.originalKept,true);
+});
