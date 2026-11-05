@@ -99,3 +99,26 @@ test('bulk adaptation keeps successful drafts, reports failures and stops betwee
  assert.deepEqual(result.drafts.map(d=>[d.index,d.adaptedFrom]),[[10,0],[11,2]]);
  assert.deepEqual(progress,[[0,4],[1,4],[2,4]]);
 });
+
+test('truncated JSON retries in smaller batches and keeps successful sentences in order',async()=>{
+ const rows=passageCandidates('猫が来た。犬も来た。鳥も来た。');
+ const calls=[],skipped=[],progress=[];
+ const results=await analyzePassage(rows,{onSkipped:r=>skipped.push(r.index),onProgress:done=>progress.push(done),ask:async input=>{
+  const {sentences}=JSON.parse(input);calls.push(sentences.map(r=>r.index));
+  if(sentences.length>1||sentences[0].index===1)JSON.parse('{"sentences": []');
+  return {sentences:sentences.map(r=>({index:r.index,target:r.text,source:'It came.',words:[]}))};
+ }});
+ assert.deepEqual(calls,[[0,1,2],[0,1],[0],[1],[2]]);
+ assert.deepEqual(results.map(r=>r.index),[0,2]);
+ assert.deepEqual(skipped,[1]);assert.equal(progress.at(-1),3);
+});
+
+test('a singleton JSON error retries once, but provider errors surface immediately',async()=>{
+ let attempts=0;
+ const result=await analyzePassage([row],{ask:async()=>{if(!attempts++)JSON.parse('{');return response}});
+ assert.equal(attempts,2);assert.equal(result.length,1);
+ await assert.rejects(analyzePassage([row],{ask:async()=>JSON.parse('{')}),/repeatedly returned invalid JSON/);
+ attempts=0;
+ await assert.rejects(analyzePassage([row],{ask:async()=>{attempts++;throw Error('Rate limited')}}),/Rate limited/);
+ assert.equal(attempts,1);
+});
