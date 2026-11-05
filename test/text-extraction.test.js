@@ -72,3 +72,30 @@ test('missing model Japanese also falls back to the original passage row',async(
  assert.equal(result.target,row.text);
  assert.equal(result.originalKept,true);
 });
+
+test('bulk split puts dense punctuation first, skipping short or already adapted rows',async()=>{
+ const {extractionAdaptationQueue}=await import('../text-extraction.js');
+ const word={lemma:'権限',quote:'権限',meaning:'permission'};
+ const dense={index:3,text:'録音に対する権限「文字起こしの閲覧・録音再生／追加／削除」を独立して追加する場合、既存の録音tableは変えられるか？',fresh:[word]};
+ const ordinary={index:0,text:'アカウントの権限を管理できるようにしてください。',fresh:[word]};
+ const done={...ordinary,index:1},example={index:5,text:'権限が必要です。',fresh:[word],adaptedFrom:1};
+ const rows=[ordinary,done,dense,example,{index:2,text:'権限がない。',fresh:[word]}];
+ assert.deepEqual(extractionAdaptationQueue(rows,rows).map(row=>row.index),[3,0]);
+});
+
+test('bulk adaptation keeps successful drafts, reports failures and stops between originals',async()=>{
+ const {adaptExtractionRows}=await import('../text-extraction.js');
+ const word={lemma:'権限',quote:'権限',meaning:'permission'};
+ const rows=['この設定を変えるには管理者の権限が必要です。','権限があれば変更できます。','変更する権限があるか確認してください。','権限がある担当者を探してください。'].map((text,index)=>({text,index,fresh:[word]}));
+ let calls=0;const progress=[];
+ const result=await adaptExtractionRows(rows,{...matcher,nextIndex:10,shouldStop:()=>calls>=3,onProgress:(done,total)=>progress.push([done,total]),ask:async()=>{
+  calls++;
+  if(calls===2)return {sentences:[]};
+  return {sentences:[{lemma:'権限',quote:'権限',target:calls===1?'権限が必要です。':'権限を確認します。',source:'Check the permissions.'}]};
+ }});
+ assert.deepEqual(result.completed,[0,2]);
+ assert.deepEqual(result.failures.map(f=>f.index),[1]);
+ assert.equal(result.stopped,true);
+ assert.deepEqual(result.drafts.map(d=>[d.index,d.adaptedFrom]),[[10,0],[11,2]]);
+ assert.deepEqual(progress,[[0,4],[1,4],[2,4]]);
+});

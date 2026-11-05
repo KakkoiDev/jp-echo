@@ -1,6 +1,6 @@
 import {createReviewSpeechCapture} from './review-speech.js';
 import {readEpub} from './epub-import.js';
-import {passageCandidates,analyzePassage,vocabularyInventory,classifyExtraction,extractionIdentity,adaptExtraction} from './text-extraction.js';
+import {passageCandidates,analyzePassage,vocabularyInventory,classifyExtraction,extractionIdentity,extractionAdaptationQueue,adaptExtractionRows} from './text-extraction.js';
 import {fetchReference,missingReferenceCandidates,referenceKey,customReferenceSpans,resolveReferenceLookup} from './references.js';
 import {dictionaryReadings,backfillReadings,correctReadingDraft,checkReadingSpeech} from "./readings.js";
 import {validateDeckBackup,fetchDeckBackup,runImportFeedback,classifyImport,importIntent} from './imports.js';
@@ -2431,43 +2431,63 @@ for(const selector of ['#custom-reference-term','#custom-reference-context','#cu
 let extractionBook=null;
 let extractionRows=[],extractionInventory=null,extractionGeneration=0,extractionBusy=false;
 function openTextExtraction(){if(document.body.dataset.view!=="practice")showView("practice");setPracticeMode("extract")}
+let extractionSplitQueue=[],extractionBulkRunning=false,extractionStopRequested=false;
 function renderExtractionPreview(selection=null){
  const host=$('#extract-preview');host.replaceChildren();if(!extractionInventory)return;
  const rows=classifyExtraction(extractionRows,extractionInventory,{wordSpans,wordById},$('#extract-filter').value);$('#extract-selection').hidden=$('#extract-foot').hidden=!rows.length;
+ extractionSplitQueue=extractionAdaptationQueue(rows,extractionRows);
+ const eligible=new Set(extractionSplitQueue.map(row=>row.index));
+ const bulk=$('#extract-split-all');bulk.hidden=!eligible.size;bulk.textContent=`Split all with AI (${eligible.size})`;
  for(const row of rows){const card=el('article','extraction-card'),label=el('label','extraction-choice'),check=document.createElement('input');check.type='checkbox';check.dataset.index=row.index;check.checked=selection instanceof Map&&selection.has(row.index)?selection.get(row.index):!row.originalKept&&row.fresh.length<=2;label.append(check,document.createTextNode(row.adaptedFrom!=null?'AI example · 1 focus word':`${row.fresh.length} ${$('#extract-filter').value==='new'?'new':'not learned'} ${row.fresh.length===1?'word':'words'}`));card.append(label);
   const sentence=el('p','extraction-japanese');sentence.lang='ja';const ranges=[];for(const word of row.fresh){let from=0,index;while((index=row.text.indexOf(word.quote,from))!==-1){ranges.push({start:index,end:index+word.quote.length});from=index+word.quote.length}}
   for(let i=0;i<row.text.length;){const range=ranges.find(range=>range.start<=i&&i<range.end);if(range){const mark=el('mark',null,row.text.slice(i,range.end));sentence.append(mark);i=range.end}else{sentence.append(document.createTextNode(row.text[i]));i++}}card.append(sentence,el('p',null,row.source));
   if(row.originalKept)card.append(el('p','hint','Original Japanese kept. Check the AI translation before importing.'));
   const words=el('ul');for(const word of row.fresh)words.append(el('li',null,`${word.lemma} — ${word.meaning}`));card.append(words);
   if(row.repeated.length)card.append(el('p','hint',row.repeated.map(word=>`${word.lemma}: in ${word.count} proposed sentences`).join(' · ')));
-  if(row.adaptedFrom==null&&row.text.length>8&&!extractionRows.some(item=>item.adaptedFrom===row.index)){
+  if(eligible.has(row.index)){
    const adapt=el('button','outline',row.fresh.length===1?'Make a shorter example with AI':`Make ${row.fresh.length} short examples with AI`);
-   adapt.type='button';adapt.dataset.ui='button';adapt.dataset.extractAdapt='';adapt.onclick=()=>adaptExtractionRow(row,adapt);card.append(adapt);
+   adapt.type='button';adapt.dataset.ui='button';adapt.dataset.extractAdapt='';adapt.onclick=()=>adaptExtractionSelection([row],adapt);card.append(adapt);
   }
   const context=el('details'),summary=el('summary',null,row.adaptedFrom!=null?'Original sentence':'Surrounding context');context.append(summary,el('p','custom-reference-text',row.context));card.append(context);host.append(card);
  }$('#extract-found').textContent=rows.length===1?'1 sentence found':`${rows.length} sentences found`;$('#extract-status').textContent=rows.length?'Sentences with one or two new words are picked first.':'No sentences match this filter. Try “Met but not learned” or paste another passage.';
  updateExtractionSelection();
 }
-function setExtractionBusy(busy){extractionBusy=busy;for(const id of ['#extract-analyze','#extract-passage','#extract-filter','#extract-all','#extract-none','#extract-epub'])$(id).disabled=busy;$('#extract-preview').querySelectorAll('input, [data-extract-adapt]').forEach(control=>control.disabled=busy);updateExtractionSelection()}
+function setExtractionBusy(busy){extractionBusy=busy;for(const id of ['#extract-analyze','#extract-passage','#extract-filter','#extract-all','#extract-none','#extract-epub','#extract-split-all'])$(id).disabled=busy;$('#extract-preview').querySelectorAll('input, [data-extract-adapt]').forEach(control=>control.disabled=busy);updateExtractionSelection()}
 function updateExtractionSelection(){const count=$('#extract-preview').querySelectorAll('input:checked').length;$('#extract-import').disabled=!count||extractionBusy;$('#extract-import').textContent=`Import ${count} selected`}
 async function extractTextPassage(){if(extractionBusy)return;const generation=++extractionGeneration;setExtractionBusy(true);extractionRows=[];extractionInventory=null;$('#extract-preview').replaceChildren();$('#extract-selection').hidden=$('#extract-foot').hidden=true;$('#extract-status').classList.remove('error');
  try{if(targetLang()!=='ja')throw Error('Text extraction is available when learning Japanese.');if(!hasTranslator())throw Error('Add an AI service in Settings to analyze this passage.');const existing=await listSentences(),rows=extractionBook?passageCandidates(extractionBook.chapters.map(chapter=>chapter.text).join('\n'),existing,{book:true}):passageCandidates($('#extract-passage').value,existing);if(rows.length>20000)throw Error('This book has more than 20,000 sentences. Import a smaller volume.');if(!rows.length)throw Error('These sentences are already in your library.');const results=await analyzePassage(rows,{ask:(text,prompt)=>askModel(text,prompt,settings),onProgress:(done,total)=>{if(generation!==extractionGeneration)return;$('#extract-status').textContent=`Analyzing sentences ${done} / ${total}…`}});if(generation!==extractionGeneration)return;extractionRows=results;extractionInventory=vocabularyInventory(await listSentences(),{sentenceWords,wordById});renderExtractionPreview();
  }catch(error){if(generation===extractionGeneration){$('#extract-status').textContent=error.message;$('#extract-status').classList.add('error')}}finally{setExtractionBusy(false)}}
-async function adaptExtractionRow(row,button){
- if(extractionBusy)return;
+async function adaptExtractionSelection(rows,button,{bulk=false}={}){
+ if(extractionBusy||!rows.length)return;
  const generation=extractionGeneration,caption=button.textContent;
  const selection=new Map([...$('#extract-preview').querySelectorAll('input')].map(input=>[Number(input.dataset.index),input.checked]));
- const status=$('#extract-status');status.classList.remove('error');status.textContent='Writing short examples…';button.textContent='Writing examples…';setExtractionBusy(true);
+ const status=$('#extract-status');status.classList.remove('error');status.textContent='Writing short examples…';
+ extractionBulkRunning=bulk;extractionStopRequested=false;setExtractionBusy(true);
+ button.textContent=bulk?'Stop splitting':'Writing examples…';if(bulk)button.disabled=false;
  try{
   const existing=await listSentences(),targets=existing.flatMap(item=>[item.target,item.casualTarget,item.politeTarget].filter(Boolean));
-  const drafts=await adaptExtraction(row,{ask:(text,prompt)=>askModel(text,prompt,settings),wordSpans,wordById,
-   existing:[...targets,...extractionRows.map(item=>item.text)],nextIndex:Math.max(0,...extractionRows.map(item=>item.index))+1});
+  const {drafts,completed,failures,stopped}=await adaptExtractionRows(rows,{ask:(text,prompt)=>askModel(text,prompt,settings),wordSpans,wordById,
+   existing:[...targets,...extractionRows.map(item=>item.text)],nextIndex:extractionRows.reduce((max,row)=>Math.max(max,row.index+1),0),
+   shouldStop:()=>extractionStopRequested||generation!==extractionGeneration,
+   onProgress:(done,total)=>{if(bulk)status.textContent=`Splitting sentence ${done+1} of ${total}…`;}});
   if(generation!==extractionGeneration)return;
-  extractionRows.push(...drafts);selection.set(row.index,false);for(const draft of drafts)selection.set(draft.index,true);
-  renderExtractionPreview(selection);status.textContent=`${drafts.length} AI examples ready. Review your selection before importing.`;
-  $('#extract-preview').querySelector(`input[data-index="${drafts[0].index}"]`)?.focus();
- }catch(error){if(generation===extractionGeneration){status.textContent=error.message;status.classList.add('error');button.focus()}}
- finally{button.textContent=caption;setExtractionBusy(false)}
+  extractionRows.push(...drafts);
+  for(const index of completed)selection.set(index,false);
+  for(const draft of drafts)selection.set(draft.index,true);
+  renderExtractionPreview(selection);
+  status.textContent=[
+   stopped?'Stopped.':'',
+   drafts.length?`${drafts.length} AI examples ready. Review your selection before importing.`:'',
+   failures.length?(bulk?`${failures.length} originals could not be split. You can retry them or import as-is.`:failures[0].message):''
+  ].filter(Boolean).join(' ');
+  status.classList.toggle('error',!!failures.length&&!drafts.length);
+  if(!bulk&&drafts.length)$('#extract-preview').querySelector(`input[data-index="${drafts[0].index}"]`)?.focus();
+ }catch(error){if(generation===extractionGeneration){status.textContent=error.message;status.classList.add('error')}}
+ finally{
+  extractionBulkRunning=false;extractionStopRequested=false;
+  if(bulk)button.textContent=`Split all with AI (${extractionSplitQueue.length})`;else button.textContent=caption;
+  setExtractionBusy(false);
+ }
 }
 async function importExtractedSentences(){if(extractionBusy)return;const indices=new Set([...$('#extract-preview').querySelectorAll('input:checked')].map(input=>Number(input.dataset.index)));if(!indices.size)return;setExtractionBusy(true);$('#extract-status').textContent='Importing selected sentences…';
  try{const existing=await listSentences(),seen=new Set(existing.filter(s=>(s.targetLang||'ja')==='ja').flatMap(s=>[s.target,s.casualTarget,s.politeTarget].filter(Boolean).map(extractionIdentity)));const selected=extractionRows.filter(row=>indices.has(row.index)&&!seen.has(extractionIdentity(row.text)));const sentences=selected.map(row=>({...createSentence(row.source,{casual:row.target,polite:row.target},new Date(),undefined,{sourceLang:'en',targetLang:'ja'}),extractedVocabulary:row.words,importOrigin:row.adaptedFrom!=null?'ai-extraction-example':extractionBook?'epub':'pasted-text',...(extractionBook?{bookTitle:extractionBook.title}:{})}));
@@ -2480,6 +2500,10 @@ $('#extract-analyze').onclick=extractTextPassage;
 $('#extract-filter').onchange=renderExtractionPreview;
 $('#extract-preview').onchange=updateExtractionSelection;
 $('#extract-all').onclick=()=>{$('#extract-preview').querySelectorAll('input').forEach(input=>input.checked=true);updateExtractionSelection()};
+$('#extract-split-all').onclick=()=>{
+ if(extractionBulkRunning){extractionStopRequested=true;$('#extract-split-all').disabled=true;$('#extract-status').textContent='Stopping after the current sentence…';return}
+ adaptExtractionSelection(extractionSplitQueue,$('#extract-split-all'),{bulk:true});
+};
 $('#extract-none').onclick=()=>{$('#extract-preview').querySelectorAll('input').forEach(input=>input.checked=false);updateExtractionSelection()};
 $('#extract-import').onclick=importExtractedSentences;
 $('#extract-passage').oninput=()=>{extractionBook=null;$('#extract-book-status').textContent='';++extractionGeneration;extractionRows=[];extractionInventory=null;$('#extract-preview').replaceChildren();$('#extract-selection').hidden=$('#extract-foot').hidden=true;$('#extract-status').textContent=''};
