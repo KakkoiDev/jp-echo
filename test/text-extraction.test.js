@@ -50,3 +50,18 @@ test('adaptation rejects omissions, long drafts, mixed targets, and existing dup
   [valid,['録音【ろくおん】を聞く。'],/duplicate/],
  ])await assert.rejects(adaptExtraction(original,{...matcher,existing,ask:async()=>({sentences})}),error);
 });
+
+test('extraction continues after AI rewrites one row, preserving original Japanese and grounded vocabulary',async()=>{
+ const rows=passageCandidates('猫が来た。犬も来た。');
+ const result=await analyzePassage(rows,{ask:async()=>({sentences:[
+  {...response.sentences[0],target:'猫【ねこ】が到着【とうちゃく】した。',words:[
+   {lemma:'猫',quote:'猫',meaning:'cat'},
+   {lemma:'到着',quote:'到着',meaning:'arrival'}
+  ]},
+  {index:1,target:'犬【いぬ】も来【き】た。',source:'A dog came too.',words:[]}
+ ]})});
+ assert.equal(result[0].target,'猫が来た。');
+ assert.equal(result[0].originalKept,true);
+ assert.deepEqual(result[0].words.map(w=>w.lemma),['猫']);
+ assert.equal(result[1].target,'犬【いぬ】も来【き】た。');
+});
