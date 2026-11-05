@@ -19,3 +19,34 @@ test('one missing proper-name reading does not block a passage preview',async()=
  assert.equal(result.length,2);
  assert.equal(result[1].target,rows[1].text);
 });
+
+test('four detected words become four shorter, independent import drafts',async()=>{
+ const terms=['権限','録音','削除','担当'];
+ const original={index:4,text:'担当者には録音の削除に必要な権限があります。',source:'The person in charge has permission to delete recordings.',fresh:terms.map(lemma=>({lemma,quote:lemma,meaning:'test gloss'}))};
+ const targets=['権限【けんげん】がありません。','録音【ろくおん】を聞【き】きます。','削除【さくじょ】します。','私【わたし】が担当【たんとう】します。'];
+ const translations=['I do not have permission.','I listen to the recording.','I will delete it.','I will take charge.'];
+ const {adaptExtraction}=await import('../text-extraction.js');
+ const drafts=await adaptExtraction(original,{...matcher,nextIndex:12,ask:async input=>{
+  assert.deepEqual(JSON.parse(input).focus.map(w=>w.lemma),terms);
+  return {sentences:terms.map((lemma,i)=>({lemma,quote:lemma,target:targets[i],source:translations[i]}))};
+ }});
+ assert.deepEqual(drafts.map(d=>d.index),[12,13,14,15]);
+ assert.deepEqual(drafts.map(d=>d.words.map(w=>w.lemma)),terms.map(w=>[w]));
+ assert.deepEqual(drafts.map(d=>d.target),targets);
+ assert.equal(original.index,4);
+ const preview=classifyExtraction(drafts,{encountered:new Set(),learned:new Set()},{wordSpans:()=>[{id:1,start:0,end:1}],wordById:()=>({w:'別の語'})});
+ assert.deepEqual(preview.map(d=>d.fresh.map(w=>w.lemma)),terms.map(w=>[w]));
+});
+
+test('adaptation rejects omissions, long drafts, mixed targets, and existing duplicates',async()=>{
+ const {adaptExtraction}=await import('../text-extraction.js');
+ const original={index:0,text:'この権限があればすべての録音を聞くことができます。',fresh:['権限','録音'].map(lemma=>({lemma,quote:lemma,meaning:'test gloss'}))};
+ const valid=[{lemma:'権限',quote:'権限',target:'権限がない。',source:'I do not have permission.'},{lemma:'録音',quote:'録音',target:'録音を聞く。',source:'I listen to the recording.'}];
+ for(const [sentences,existing,error] of [
+  [valid.slice(0,1),[],/one example per word/],
+  [[{...valid[0],target:'権限があるので'+ 'とても'.repeat(20)+'便利です。'},valid[1]],[],/short sentence/],
+  [[{...valid[0],target:'録音の権限がない。'},valid[1]],[],/another focus word/],
+  [[{...valid[0],target:'許可がない。'},valid[1]],[],/missed its focus word/],
+  [valid,['録音【ろくおん】を聞く。'],/duplicate/],
+ ])await assert.rejects(adaptExtraction(original,{...matcher,existing,ask:async()=>({sentences})}),error);
+});
