@@ -230,3 +230,7 @@ learning content, not official JLPT frequency rankings.
 [Coverage report for all 206 families](decks/KANJI-FAMILIES-COVERAGE-AUDIT.md) compares the curated examples with the existing 22,954-entry JMdict-derived dictionary. The Kanji sheet now also lists **all other dictionary entries containing the selected kanji**, with reading, definition, JLPT filter and a link into the normal Word sheet to create a contextual sentence. Dictionary grouping is based on the written character, not a guarantee of a shared etymology. The core set covers 206 kanji (99 distinct index radicals); it is not the entire 214-radical Kangxi indexing system.
 
 **No 3-word cap:** `kanji-families.js` derives the entire per-kanji vocabulary from the already bundled dictionary. Kanji details show the complete, searchable vocabulary list with JLPT filters, pronunciation and English meanings. The authored example-sentence selection is separate and can grow independently; no synthetic cards are created when a word has no sentence. A word containing a kanji is not automatically a semantic derivative of that kanji.
+
+## Roadmap
+
+- [Echo Reader and native apps](specs/echo-platform/ROADMAP.md): Sluka-inspired reading, WebMods Chromium capture, and Capacitor capabilities and release policy.
