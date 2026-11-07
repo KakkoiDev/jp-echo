@@ -178,6 +178,14 @@ tile, laid flat) with an 11px label under each. Tools are
 short form. There is one shelf, in Library (`/library#tools`); Practice links
 to it with one 話読本 row. Do not add a second list of tools elsewhere.
 
+The desktop sidebar (≥1024px) shows the same tools as a list:
+`toolListHtml(tools,{current})` / `toolList(host,tools,{onOpen,current})`
+renders `.nav-tool` rows (glyph tile + full name) under a "Tools" overline in
+`#nav-tools`, fed from the same `LIBRARY_TOOLS` plus Echo's notes (記). It is
+the shelf in list form, not a second list: Library hides its shelf on desktop.
+The sidebar also carries `#nav-search` ("Search everything", `/` shortcut),
+which opens the same `/search` route as the header magnifier.
+
 ### HeaderSearch
 `headerSearchHtml()` / `hydrateHeaderSearch(root,{onOpen})`: the magnifier
 `.icon-button` in every tab header, named "Search everything". It opens

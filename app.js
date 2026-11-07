@@ -29,7 +29,7 @@ import {reviewAvailabilityMessage,reviewStats,dailyReviewBudget,reviewOrder,sess
 import {DEFAULT_TIME,REMINDER_TAG,reminderText,shouldRemind} from "./reminders.js";
 import {saveDiscussionTurn} from "./actions.js";
 // New shared UI comes from the component library (COMPONENTS.md).
-import {flagSvg,renderFlagButton,grammarList,skillGlyph,skillTrio,expandableList,fitTextArea,kanjiNumeral,toolShelf,renderFilterButton,wireFilterButton,anchorStripHtml,hydrateHeaderSearch,chevronSvg,cornerMarkHtml,themedPictureHtml} from "./components.js";
+import {flagSvg,renderFlagButton,grammarList,skillGlyph,skillTrio,expandableList,fitTextArea,kanjiNumeral,toolShelf,toolList,renderFilterButton,wireFilterButton,anchorStripHtml,hydrateHeaderSearch,chevronSvg,cornerMarkHtml,themedPictureHtml} from "./components.js";
 // Settings page state, declared before anything can read it (navigationState).
 const SETTINGS_TITLES={main:"Settings",ai:"AI service",speech:"Speech recognition",backup:"Backup",import:"Import sentences",export:"Export",grammar:"Grammar"};
 let settingsPage="main",settingsReturn="practice";
@@ -242,7 +242,7 @@ const readingLoop=new ConversationLoop({onEcho:()=>{},onState:(state,index)=>{lo
 // and Extract from text — reached from the "Or practise another way" rows and
 // pushed with a back arrow, like the study tool. There is no mode bar. The
 // composer is the same component everywhere; only its label and verb change.
-function setPracticeMode(mode,{route=true}={}){discussionMode=mode==="discussion";readingMode=mode==="reading";extractMode=mode==="extract";saveWorkspace({discussionMode,readingMode,extractMode});if(route)syncRoute({view:"practice",discussionMode,readingMode,extractMode});$("#discussion").hidden=!discussionMode;$("#reading").hidden=!readingMode;$("#extract-text").hidden=!extractMode;const pushed=discussionMode||readingMode||extractMode;$("#welcome").hidden=pushed||!!current;$("#practice").hidden=pushed||!current;$(".dock").hidden=extractMode;$(".dock").classList.toggle("discussion-dock",discussionMode||readingMode);if(document.body.dataset.view==="practice"&&!isWide())document.querySelector("header").hidden=pushed;renderComposerCopy();if(extractMode)$("#extract-passage").focus();loop.stop();discussionLoop.stop();readingLoop.stop()}
+function setPracticeMode(mode,{route=true}={}){discussionMode=mode==="discussion";readingMode=mode==="reading";extractMode=mode==="extract";queueMicrotask(()=>{try{renderNavTools()}catch{}});saveWorkspace({discussionMode,readingMode,extractMode});if(route)syncRoute({view:"practice",discussionMode,readingMode,extractMode});$("#discussion").hidden=!discussionMode;$("#reading").hidden=!readingMode;$("#extract-text").hidden=!extractMode;const pushed=discussionMode||readingMode||extractMode;$("#welcome").hidden=pushed||!!current;$("#practice").hidden=pushed||!current;$(".dock").hidden=extractMode;$(".dock").classList.toggle("discussion-dock",discussionMode||readingMode);if(document.body.dataset.view==="practice"&&!isWide())document.querySelector("header").hidden=pushed;renderComposerCopy();if(extractMode)$("#extract-passage").focus();loop.stop();discussionLoop.stop();readingLoop.stop()}
 // One composer, one place for its words. Discussion asks for a scene until it
 // starts; Reading asks for a text, then another; the verb says what will happen.
 function composerLabel(){return discussionMode?(discussionTurns.length?"Your reply":"The scene"):readingMode?(readingPassage?"Another text":"What do you want to read?"):"What do you want to say?"}
@@ -379,7 +379,7 @@ for(const tab of document.querySelectorAll(".tab[data-view]")){const on=tab.data
   // Settings sits in the desktop sidebar as a fourth row without a data-view; it is current on the Settings route.
   {const settingsNav=$("#settings-nav");if(settingsNav){const on=name==="settings";settingsNav.classList.toggle("current",on);settingsNav.setAttribute("aria-current",on?"page":"false")}}
   document.body.dataset.view=name;scrollTo(0,0);renderSidePanel();
-  saveWorkspace({view:name});if(route)syncRoute({view:name});if(name==="library"||(name==="sentence"&&isWide()))renderHistory();else if(name==="map")renderMap();else if(name==="mora")renderMora();else if(name==="radio")renderRadio();else if(name==="notes")renderNotes();else if(name==="drill")startMoraDrill();else if(name==="search")renderSearch();else if(name==="review")renderReviewHome();else if(name==="practice"){renderPracticeNotices();renderWelcome()}else if(name==="setup")resetSetupForm()}
+  saveWorkspace({view:name});if(route)syncRoute({view:name});queueMicrotask(()=>{try{renderNavTools()}catch{}});if(name==="library"||(name==="sentence"&&isWide()))renderHistory();else if(name==="map")renderMap();else if(name==="mora")renderMora();else if(name==="radio")renderRadio();else if(name==="notes")renderNotes();else if(name==="drill")startMoraDrill();else if(name==="search")renderSearch();else if(name==="review")renderReviewHome();else if(name==="practice"){renderPracticeNotices();renderWelcome()}else if(name==="setup")resetSetupForm()}
 // The study tool: the wall of joyo kanji, the dictionary and the list of grammar points,
 // read off your library every time the screen opens. Coverage is never
 // stored, so a sentence added or deleted moves the wall at once, and nothing
@@ -418,18 +418,20 @@ function moraTable(host,rows,{pictures,furigana,english,quiz},columns=["a","i","
         if(furigana)cell.append(el("span","mora-reading",reading));
         if(english)cell.append(Object.assign(el("span","mora-english",gloss),{lang:"en"}))}
       if(corner)cell.insertAdjacentHTML("beforeend",cornerMarkHtml(corner));
+      cell.classList.toggle("open",mora===moraOpen);
       cell.onclick=()=>{loop.stop();discussionLoop.stop();readingLoop.stop();
         const voice=voices[Number($("#voice").value)]||voices[0]||null;speakOnce(mora+"、"+speak,{voice,rate:Number($("#rate").value)||1});
-        if(hidden){moraRevealed.add(mora);renderMora()}};
+        moraOpen=mora;if(hidden)moraRevealed.add(mora);renderMora()};
       line.append(cell)}
     return line}))}
 // Four sections behind one segmented control, the section in the URL.
-let moraSection="base";
+let moraSection="base",moraOpen="あ";
 const MORA_SECTION_COUNTS={base:()=>t("46 anchors · version 4"),voiced:()=>t("25 voiced · same anchors, marked"),combined:()=>t("{n} combined · one anchor each",{n:MORA_YOON_ROWS.flat().length}),specials:()=>t("Small っ and the marks")};
 function renderMora(){const options={pictures:$("#mora-show-pictures").checked,furigana:$("#mora-show-furigana").checked,english:$("#mora-show-english").checked,quiz:$("#mora-quiz").checked};
   for(const tab of document.querySelectorAll("#mora-sections [data-section]"))tab.setAttribute("aria-selected",String(tab.dataset.section===moraSection));
   for(const section of MORA_SECTIONS)$("#mora-section-"+section).hidden=section!==moraSection;
   $("#mora-count").textContent=MORA_SECTION_COUNTS[moraSection]();
+  renderMoraDetail(options);
   moraTable($("#mora-table"),MORA_ROWS,options);moraTable($("#mora-voiced-table"),MORA_VOICED_ROWS,options);moraTable($("#mora-yoon-table"),MORA_YOON_ROWS,options,["ya","yu","yo"])}
 function saveMoraDisplay(){settings.moraPictures=$("#mora-show-pictures").checked;settings.moraFurigana=$("#mora-show-furigana").checked;settings.moraEnglish=$("#mora-show-english").checked;storePreference("jp-echo-settings",JSON.stringify(settings));renderMora()}
 // A cell link (#<kana>) lands on its cell and briefly marks it.
@@ -2342,6 +2344,24 @@ $("#drill-next").onclick=()=>{drill.state=nextDrill(drill.state);renderDrill();s
 $("#drill-again").onclick=()=>{startMoraDrill([...drill.state.misses]).then(sayDrillSound)};
 $("#drill-table").onclick=()=>showView("mora");$("#drill-back").onclick=()=>showView("mora");
 $("#mora-drill-open").onclick=()=>showView("drill");
+// The desktop sidebar carries the same tools as a list (DesktopLibraryTools),
+// plus Echo's notes, with the open one lit; and the one search, with "/".
+const NAV_TOOL_NAMES={discussion:"Discussion",reading:"Reading",extract:"Extract from text",radio:"Radio",map:"Kanji, words, grammar",mora:"Mora table",notes:"Echo’s notes"};
+function currentTool(){const view=document.body.dataset.view;if(view==="practice")return discussionMode?"discussion":readingMode?"reading":extractMode?"extract":null;if(view==="drill")return "mora";return ["map","mora","radio","notes"].includes(view)?view:null}
+function renderNavTools(){const tools=[...LIBRARY_TOOLS,{id:"notes",glyph:"記",label:"Echo’s notes",ja:true}].filter(tool=>!tool.ja||targetLang()==="ja").map(tool=>({...tool,name:t(NAV_TOOL_NAMES[tool.id]||tool.label)}));
+  toolList($("#nav-tools"),tools,{onOpen:openLibraryTool,current:currentTool()})}
+$("#nav-search").onclick=()=>openSearch();
+document.addEventListener("keydown",event=>{if(event.key!=="/"||event.metaKey||event.ctrlKey||event.altKey)return;const target=event.target;if(target.closest?.("input,textarea,select,[contenteditable]")||document.querySelector("dialog[open]"))return;event.preventDefault();openSearch()});
+renderNavTools();
+// Desktop: the open cell, beside the table (DesktopMora). The anchor, its
+// mark, and a few dictionary words that start with the sound.
+function renderMoraDetail({quiz}={}){const mora=moraOpen,hidden=quiz&&!moraRevealed.has(mora),{kanji,reading,gloss,mark,speak}=moraAnchorInfo(mora),picture=moraPicture(mora);
+  $("#mora-detail-kana").textContent=mora;$("#mora-detail-picture").innerHTML=picture&&!hidden?themedPictureHtml(picture,{size:44}):"";
+  $("#mora-detail-word").textContent=hidden?"?":kanji;$("#mora-detail-reading").textContent=hidden?"":reading;$("#mora-detail-english").textContent=hidden?"":gloss;
+  $("#mora-detail-mark").hidden=!mark||hidden;if(mark&&!hidden){$("#mora-detail-mark-title").textContent=mark==="巨大"?t("Giant")+" ゛":t("Balloon")+" ゜";$("#mora-detail-mark-line").innerHTML=escapeText(mora)+' — <span class="mora-modifier">'+escapeText(mark==="巨大"?"巨大な":"風船の")+"</span>"+escapeText(kanji)}
+  const words=REFERENCE_WORDS.filter(w=>w.r&&w.r.startsWith(mora)&&w.r!==mora&&w.w!==w.r).slice(0,3);
+  $("#mora-detail-words-block").hidden=!words.length;$("#mora-detail-words").replaceChildren(...words.map(w=>{const li=el("li");li.innerHTML='<span lang="ja">'+escapeText(w.w)+'</span> <span class="mora-detail-reading" lang="ja">'+escapeText(w.r)+'</span> · '+escapeText((w.en||[])[0]||"");return li}));
+  $("#mora-detail-hear").onclick=()=>{const voice=voices[Number($("#voice").value)]||voices[0]||null;speakOnce(mora+"、"+speak,{voice,rate:Number($("#rate").value)||1})}}
 $("#clear-filters").onclick=()=>{$("#history-search").value="";$("#clear-history-search").hidden=true;$("#history-filter").value="all";settings.historyFilter="all";try{storePreference("jp-echo-settings",JSON.stringify(settings))}catch{}renderHistory()};
 addEventListener("online",renderPracticeNotices);addEventListener("offline",renderPracticeNotices);
 // A sheet closes the way it looks like it should: drag the handle down far

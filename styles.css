@@ -1848,3 +1848,41 @@ header .header-search+#settings-button{margin-left:-4px}
 .drill-choice:disabled{background:var(--panel);color:var(--sumi);border-color:var(--hairline)}
 .drill-choice.right:disabled{background:var(--seal-tint);border:1.5px solid var(--seal)}
 .drill-choice.right .corner-mark{right:auto;left:8px}
+
+/* Desktop sidebar: the one search and the Tools group (DesktopLibraryTools). */
+.nav-search,.nav-tools-title,.nav-tools{display:none}
+@media(min-width:1024px){
+  .tabs>.nav-brand{border-bottom:0;margin-bottom:0;padding-bottom:20px}
+  .nav-search{display:flex;align-items:center;gap:10px;width:100%;height:40px;min-height:40px;margin-bottom:18px;padding:0 12px;border:1px solid var(--hairline);border-radius:4px;background:var(--panel);color:var(--ink-muted);font-size:13px;letter-spacing:normal;justify-content:flex-start}
+  .nav-search span{flex:1 1 auto;text-align:left}
+  .nav-search kbd{font-family:var(--ui);font-size:11px;color:var(--faint);background:transparent;border:0;padding:0}
+  .nav-tools-title{display:block;margin:20px 12px 6px}
+  .nav-tools{display:flex;flex-direction:column}
+  .nav-tool{display:flex;align-items:center;justify-content:flex-start;gap:12px;width:100%;height:36px;min-height:36px;padding:0 12px;border:1px solid transparent;border-radius:4px;background:transparent;color:var(--ink-soft);font-size:14px;letter-spacing:normal;text-align:left}
+  .nav-tool[aria-current="page"]{background:var(--panel);border-color:var(--hairline);color:var(--sumi)}
+  .nav-tool-glyph{width:22px;height:22px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:1px solid var(--hairline);border-radius:3px;background:var(--panel);font-family:var(--display);font-size:13px;color:var(--seal-deep)}
+  .tabs>.nav-settings{margin-top:auto}
+  /* The sidebar holds the tools, so Library drops its shelf. */
+  #history-view #library-tools,#history-view #tools{display:none}
+}
+/* Desktop Mora (DesktopMora): ten columns and the open cell beside them. */
+.mora-detail{display:none}
+@media(min-width:1024px){
+  body[data-view="mora"] main{max-width:none;margin-right:330px}
+  #mora-view #mora-section-base .mora-table,#mora-view #mora-section-voiced .mora-table{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:5px}
+  #mora-view #mora-section-base .mora-row,#mora-view #mora-section-voiced .mora-row{display:contents}
+  #mora-view #mora-section-base .mora-head,#mora-view #mora-section-voiced .mora-head{display:none}
+  #mora-view button.mora-cell.open{border-color:var(--seal)}
+  #mora-view .mora-detail{display:flex;flex-direction:column;position:fixed;top:0;right:0;bottom:0;width:330px;box-sizing:border-box;padding:30px 28px;border-left:1px solid var(--hairline);background:var(--panel);overflow:auto}
+  .mora-detail-head{display:flex;align-items:flex-start;gap:18px;margin-top:10px}
+  .mora-detail-kana{font-family:var(--display);font-size:56px;line-height:1}
+  .mora-detail-anchor{margin:18px 0 0;font-family:var(--display);font-size:22px}
+  .mora-detail-reading{font-size:13px;color:var(--ink-soft)}
+  .mora-detail-english{margin:2px 0 0;font-size:13px;color:var(--ink-muted)}
+  .mora-detail-block{margin-top:18px;padding-top:14px;border-top:1px solid var(--rule)}
+  .mora-detail-block p{margin:0}
+  .mora-detail-block .overline{margin-bottom:8px}
+  .mora-detail-words{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;font-size:13px}
+  .mora-detail-words [lang="ja"]:first-child{font-family:var(--display);font-size:15px}
+  #mora-detail-hear{margin-top:22px;width:100%;min-height:44px}
+}
