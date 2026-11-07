@@ -861,7 +861,9 @@ html.motion-off #review-progress-bar { transition: none; }
 .band-tally strong{font-weight:500;color:var(--sumi)}
 .band-text .bar{height:8px;margin-top:0}
 .band-head svg{flex-shrink:0;color:var(--ink-muted);transition:transform .2s}
-.band[data-open] svg{transform:rotate(180deg)}
+/* Only the band's own open/close chevron turns: a bare `svg` here also
+   flipped the learned ticks in the open band's rows (✓ read as ^). */
+.band[data-open]>.band-head svg{transform:rotate(180deg)}
 .band-body{padding-bottom:24px}
 .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:13px}
 .chips button{height:34px;min-height:34px;padding:0 12px;border-radius:3px;font-size:12px;letter-spacing:.04em;white-space:nowrap;background:var(--panel);border:1px solid var(--hairline);color:var(--ink-soft)}
@@ -1647,7 +1649,9 @@ button.mora-cell:last-child{border-right:0}
 .library-notes-open{flex-shrink:0;display:flex;align-items:center;gap:6px;min-height:36px;height:auto;padding:0;background:transparent;border:0;border-radius:0;color:var(--ink-soft);font-size:12px;letter-spacing:normal;white-space:nowrap}
 .library-notes-open strong{font-weight:500;color:var(--sumi)}
 .library-notes-glyph{font-family:var(--display);font-size:15px;color:var(--seal-deep)}
-.library-notes-words{display:flex;gap:6px;min-width:0;overflow:hidden}
+/* Words that do not fit wrap onto a second line that is clipped away, so a
+   chip is either whole or not shown: never cut in half. */
+.library-notes-words{display:flex;flex-wrap:wrap;gap:12px 6px;min-width:0;max-height:36px;overflow:hidden}
 .library-note-word{flex-shrink:0;display:inline-flex;align-items:baseline;gap:5px;min-height:0;height:auto;padding:6px 9px;border:1px solid var(--hairline);border-radius:3px;background:var(--panel);color:var(--sumi);letter-spacing:normal;white-space:nowrap}
 .library-note-word .word{font-family:var(--display);font-size:15px}
 .library-note-word .reading{font-size:10px;color:var(--ink-muted)}
