@@ -65,8 +65,9 @@ test("the due line names the next card and what it will ask", async () => {
   assert.equal(dueLine(s, "in 3 days"), "Due in 3 days, as a writing card — you will see the meaning and type the Japanese.");
 });
 
-test("practice: one navigation — three rows that never hide, pushed screens with a back arrow, no mode bar", () => {
-  assert.match(html, /id="welcome-modes"[\s\S]*Or practise another way[\s\S]*id="welcome-discussion" class="library-tool two-line"[\s\S]*id="welcome-reading" class="library-tool two-line"[\s\S]*id="welcome-extract" class="library-tool two-line"/);
+test("practice: one navigation — one 話読本 row into Library's tools, pushed screens with a back arrow, no mode bar", () => {
+  assert.match(html, /id="welcome-tools" class="welcome-tools" type="button"><span class="welcome-tools-glyphs" lang="ja" aria-hidden="true">話読本<\/span><span class="welcome-tools-label">Other ways to practise<\/span>/);
+  assert.doesNotMatch(html, /id="welcome-modes"|id="welcome-discussion"|id="welcome-reading"|id="welcome-extract"/, "no second list of tools on Practice");
   for (const gone of ["practice-mode", "mode-sentence", "mode-discussion", "mode-reading", "mode-extract", "modesUsed", "markModeUsed", "renderWelcomeModes"]) { assert.equal(html.includes(gone), false, gone); assert.equal(app.includes(gone), false, gone); assert.equal(css.includes(gone), false, gone); }
   for (const [section, back] of [['<section id="discussion" hidden>', "discussion-back"], ['<section id="reading" hidden>', "reading-back"], ['<section id="extract-text" hidden>', "extract-back"]]) {
     const at = html.indexOf(section);
@@ -74,7 +75,7 @@ test("practice: one navigation — three rows that never hide, pushed screens wi
     assert.match(html.slice(at, at + 700), new RegExp('<div class="tool-head"><button data-ui="button" id="' + back + '" class="icon-button" type="button" aria-label="Back to Practice">'), back + " is the study tool's back-arrow header");
   }
   assert.match(app, /\$\("#extract-back"\)\.onclick=showStart;\$\("#discussion-back"\)\.onclick=showStart;\$\("#reading-back"\)\.onclick=showStart;/);
-  assert.match(app, /function showStart\(\)\{loop\.stop\(\);current=null;renderSentence\(\);setPracticeMode\("sentence"\)\}/, "back lands on the start screen, where the rows are");
+  assert.match(app, /function showStart\(\)\{loop\.stop\(\);current=null;renderSentence\(\);setPracticeMode\("sentence"\);renderWelcome\(\)\}/, "back lands on the start screen, with its 話読本 row");
   assert.match(app, /if\(tab\.dataset\.view==="practice"&&document\.body\.dataset\.view==="practice"\)showStart\(\)/, "the Practice tab, tapped again, is the way back from a pushed screen");
   assert.match(app, /function composerVerb\(\)\{return discussionMode\?\(discussionTurns\.length\?"Send":"Begin"\):readingMode\?"Write":"Translate"\}/, "one composer; only its verb changes");
   // The three bodies follow their boards.
@@ -207,17 +208,17 @@ test("the echo animation is docs/design/motion.css whole, and the live rings mov
   }
   assert.equal((html.match(/<svg class="echo" width="96" height="96" viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="1\.6"/g) || []).length, 5, "five compact arc pairs: practice, sentence, review answer, discussion, reading");
   assert.doesNotMatch(html, /<svg class="echo" width="76"/);
-  assert.equal((html.match(/<svg class="ripple echo"/g) || []).length, 4, "welcome, onboarding, review home and the empty library rings stay still and never carry .live");
+  assert.equal((html.match(/<svg class="ripple echo"/g) || []).length, 3, "welcome, onboarding and the empty library rings stay still and never carry .live (Review home is action first, ReviewHomeFirst: no ring)");
 });
 
 test("review: the skill-mix card, the listening panel, the answer and the stats follow the October boards", () => {
   assert.doesNotMatch(html, /id="review-24h"|id="session-review-24h"/, "the 24-hour counter line is gone from Review home and the session");
   const home = html.slice(html.indexOf('<section id="review-home"'), html.indexOf('<section id="review-view"'));
-  assert.ok(home.indexOf('<div id="review-skill-mix" class="skill-mix"') > home.indexOf('<div class="breakdown">') && home.indexOf('<div id="review-skill-mix"') < home.indexOf('<div class="sheet">'), "the skill mix is a card between the ring and the sheet");
+  assert.ok(home.indexOf('id="start-review"') > home.indexOf('id="due-count"') && home.indexOf('<div id="review-skill-mix"') > home.indexOf('id="start-review"') && home.indexOf('<div class="breakdown">') > home.indexOf('<div id="review-skill-mix"'), "action first: the count, Start review, then the skill mix and the counts (ReviewHomeFirst)");
   assert.match(css, /\.skill-mix\{display:flex;flex-direction:column;margin:20px 0 0;padding:14px 16px 15px;background:var\(--panel\);border:1px solid var\(--hairline\);border-radius:4px;text-align:left\}/);
   assert.match(app, /item\.append\(skillGlyph\(mode,\{state:"filled",size:30\}\)/, "the mix glyphs are filled marks");
   assert.match(css, /\.skill-glyph\[data-state="filled"\]\{background:var\(--seal\);border-color:var\(--seal\);color:var\(--seal-on\)\}/);
-  assert.match(app, /"Say each one out loud before you check\. Roughly "\+spell/);
+  assert.match(app, /\$\("#review-estimate"\)\.textContent=t\("about \{n\} min",/);
   assert.match(css, /\.review-mode-title\{margin:18px 0 0;font-family:var\(--display\);font-weight:600;font-size:22px;line-height:1\.25\}/, "card title: 22px, left");
   assert.match(app, /skillTrio\(mode,\{label:meta\.label\+" card\. This sentence turns through listening, reading and writing\.",size:26\}\)/);
   assert.match(html, /<div id="review-passive" class="review-passive" hidden><button data-ui="button" id="review-front-audio" type="button" aria-pressed="false"><svg/, "the listening card's Play is outlined, with a play icon, in a panel");
