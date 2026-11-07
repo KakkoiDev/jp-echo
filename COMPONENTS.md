@@ -164,3 +164,40 @@ least once, most recently reviewed first) and what each phase says
 draws the setup page and the `#radio-night` screen and holds the screen wake
 lock. Deep-sleep cues are the sentence alone, never followed by its meaning
 (`test/radio.test.js`). Phase copy lives in `RADIO_PHASE_COPY`.
+
+## November primitives
+
+Added for the November design pass (`docs/design/november/README.md`). Each
+renders markup from escaped text; screens pass data and callbacks only.
+
+### ToolShelf
+`toolShelfHtml(tools)` / `toolShelf(host,tools,{onOpen})`: every tool beyond
+the practice loop as a flat row of 52px glyph tiles (the tool row's glyph
+tile, laid flat) with an 11px label under each. Tools are
+`{id, glyph, label, name?}`; `name` is the accessible name when the label is a
+short form. There is one shelf, in Library (`/library#tools`); Practice links
+to it with one 話読本 row. Do not add a second list of tools elsewhere.
+
+### HeaderSearch
+`headerSearchHtml()` / `hydrateHeaderSearch(root,{onOpen})`: the magnifier
+`.icon-button` in every tab header, named "Search everything". It opens
+`/search`; the caller owns navigation.
+
+### FilterButton
+`renderFilterButton(button,summary)` / `wireFilterButton(button,dialog)`: one
+quiet 34px control that names the current filter ("All · Newest") and opens a
+`<dialog class="sheet-dialog">` holding the real controls. The button never
+owns the filters; the sheet's selects do, and commit on `change`.
+
+### AnchorStrip
+`anchorStripHtml(items,{compact})`: the mora anchors of a reading, in order,
+each a link to its Mora cell (`/mora?section=…#<kana>`). Items are
+`{mora, image, mark, picture, href}` with `mark` `"giant"` (゛) or
+`"balloon"` (゜). The full form shows kana, picture and image name with
+arrows between; `compact` is the chip form for lists. The anchors come from
+`moraMnemonicTokens` (core.js); the strip never chooses an anchor.
+
+`cornerMarkHtml(mark)` is the one corner mark for giant (巨 on seal) and
+balloon (a seal ring), shared by the strip and the Mora table.
+`themedPictureHtml({light,dark})` holds both drawings; the active theme,
+forced or system, shows one.

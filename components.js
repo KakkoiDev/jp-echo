@@ -107,3 +107,55 @@ export function expandableList({host,items,render,limit=5,moreLabel="See more",l
 
 // A generated sentence and its meaning stay visible without scrolling inside fields.
 export function fitTextArea(field){field.style.height="auto";field.style.height=Math.max(field.scrollHeight,96)+"px"}
+
+// --- November primitives (docs/design/november) ------------------------------
+// Each returns markup built from escaped text, so a caller may pass words,
+// readings and labels from the library without them reaching markup raw.
+const escapeText=value=>String(value??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[ch]);
+const chevronSvg=`<svg width="8" height="13" viewBox="0 0 8 13" fill="none" aria-hidden="true"><path d="m1.5 1.5 5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const caretSvg=`<svg width="10" height="7" viewBox="0 0 10 7" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>`;
+export const searchSvg=`<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="7" cy="7" r="5.2" stroke="currentColor" stroke-width="1.4"/><path d="m11 11 3.4 3.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>`;
+export {chevronSvg};
+
+// ToolShelf: every tool Echo has beyond the practice loop, as a flat row of
+// 52px glyph tiles with a label under each — the tool row's glyph tile, laid
+// flat. One shelf, in Library (/library#tools); Practice links to it.
+// tools: [{id, glyph, label, name}] — `name` is the accessible name when the
+// label is a short form ("Kanji" for Kanji, words and grammar).
+export function toolShelfHtml(tools=[],{label="Tools"}={}){
+  return `<nav class="tool-shelf" aria-label="${escapeText(label)}">${tools.map(tool=>`<button type="button" data-ui="button" class="tool-shelf-tile" data-tool="${escapeText(tool.id)}"${tool.name?` aria-label="${escapeText(tool.name)}"`:""}><span class="tool-shelf-glyph" lang="ja" aria-hidden="true">${escapeText(tool.glyph)}</span><span class="tool-shelf-label">${escapeText(tool.label)}</span></button>`).join("")}</nav>`}
+export function toolShelf(host,tools,{onOpen,label}={}){host.innerHTML=toolShelfHtml(tools,{label});
+  for(const tile of host.querySelectorAll(".tool-shelf-tile"))tile.onclick=()=>onOpen?.(tile.dataset.tool);return host.firstElementChild}
+
+// HeaderSearch: the magnifier in every tab header. It opens /search; the
+// caller passes the navigation so routing stays in app.js.
+export function headerSearchHtml({label="Search everything"}={}){return `<button type="button" data-ui="button" class="icon-button header-search" aria-label="${escapeText(label)}">${searchSvg}</button>`}
+export function hydrateHeaderSearch(root,{onOpen}={}){for(const button of root.querySelectorAll(".header-search"))button.onclick=()=>onOpen?.();}
+
+// FilterButton: one quiet control that names the current filter ("All ·
+// Newest") and opens a sheet holding the real controls. The sheet is an
+// existing <dialog class="sheet-dialog">; the button never owns the filters.
+export function filterButtonHtml(summary){return `<span class="filter-button-label">${escapeText(summary)}</span>${caretSvg}`}
+export function renderFilterButton(button,summary,{label="Filter and sort"}={}){button.innerHTML=filterButtonHtml(summary);button.classList.add("filter-button");button.setAttribute("aria-haspopup","dialog");button.setAttribute("aria-label",label+": "+summary)}
+export function wireFilterButton(button,dialog,{onOpen}={}){button.onclick=()=>{onOpen?.();if(!dialog.open)dialog.showModal?.();button.setAttribute("aria-expanded","true")};
+  dialog.addEventListener("close",()=>{button.setAttribute("aria-expanded","false");button.focus?.()})}
+
+// ThemedPicture: a drawn picture with a light and a dark file. Both are in the
+// markup and the theme (data-theme on <html>, or the system when "system")
+// shows one, so a forced theme never shows the other theme's drawing.
+export function themedPictureHtml({light,dark},{size=30,alt="",className=""}={}){
+  return `<span class="themed-picture${className?" "+className:""}"><img class="picture-light" src="${escapeText(light)}" width="${size}" height="${size}" alt="${escapeText(alt)}" loading="lazy"><img class="picture-dark" src="${escapeText(dark)}" width="${size}" height="${size}" alt="${escapeText(alt)}" loading="lazy"></span>`}
+
+// CornerMark: the one mark for a voiced (゛ giant, 巨) or p-sound (゜ balloon)
+// anchor, in the top-right corner of a mora cell or a strip cell.
+export function cornerMarkHtml(mark){if(mark==="giant")return `<span class="corner-mark giant" role="img" aria-label="giant" title="゛ giant">巨</span>`;
+  if(mark==="balloon")return `<span class="corner-mark balloon" role="img" aria-label="balloon" title="゜ balloon"></span>`;return ""}
+
+// AnchorStrip: the anchors of a reading, in order, each a link to its Mora
+// cell. items: [{mora, image, mark, picture:{light, dark}|null, href}].
+// `compact` is the chip form for lists (Echo's notes): kana and image only.
+export function anchorStripHtml(items=[],{compact=false,label="Mora anchors"}={}){
+  if(compact)return `<span class="anchor-strip compact" lang="ja" aria-label="${escapeText(label)}">${items.map(item=>`<span class="anchor-chip"><b>${escapeText(item.mora)}</b>${escapeText(item.image)}</span>`).join("")}</span>`;
+  const image=item=>{const text=escapeText(item.image);if(item.mark==="giant"&&text.startsWith("巨大な"))return `<span class="anchor-modifier">巨大な</span>${text.slice(3)}`;if(item.mark==="balloon"&&text.startsWith("風船の"))return `<span class="anchor-modifier">風船の</span>${text.slice(3)}`;return text};
+  const picture=item=>item.picture?themedPictureHtml(item.picture,{size:30,className:"anchor-picture"}):"";
+  return `<div class="anchor-strip" lang="ja" role="list" aria-label="${escapeText(label)}">${items.map((item,i)=>`${i?`<span class="anchor-arrow" aria-hidden="true">→</span>`:""}<a role="listitem" class="anchor-cell" href="${escapeText(item.href||"#")}"><span class="anchor-kana">${escapeText(item.mora)}</span>${picture(item)}<span class="anchor-image">${image(item)}</span>${cornerMarkHtml(item.mark)}</a>`).join("")}</div>`}
