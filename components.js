@@ -124,6 +124,11 @@ export {chevronSvg};
 // label is a short form ("Kanji" for Kanji, words and grammar).
 export function toolShelfHtml(tools=[],{label="Tools"}={}){
   return `<nav class="tool-shelf" aria-label="${escapeText(label)}">${tools.map(tool=>`<button type="button" data-ui="button" class="tool-shelf-tile" data-tool="${escapeText(tool.id)}"${tool.name?` aria-label="${escapeText(tool.name)}"`:""}><span class="tool-shelf-glyph" lang="ja" aria-hidden="true">${escapeText(tool.glyph)}</span><span class="tool-shelf-label">${escapeText(tool.label)}</span></button>`).join("")}</nav>`}
+// The same tools as a list for the desktop sidebar (DesktopLibraryTools):
+// a 22px glyph tile and the tool's full name. One list of tools, two forms.
+export function toolListHtml(tools=[],{current=null}={}){
+  return tools.map(tool=>`<button type="button" data-ui="button" class="nav-tool" data-tool="${escapeText(tool.id)}"${tool.id===current?' aria-current="page"':""}><span class="nav-tool-glyph" lang="ja" aria-hidden="true">${escapeText(tool.glyph)}</span><span>${escapeText(tool.name||tool.label)}</span></button>`).join("")}
+export function toolList(host,tools,{onOpen,current}={}){host.innerHTML=toolListHtml(tools,{current});for(const row of host.querySelectorAll(".nav-tool"))row.onclick=()=>onOpen?.(row.dataset.tool)}
 export function toolShelf(host,tools,{onOpen,label}={}){host.innerHTML=toolShelfHtml(tools,{label});
   for(const tile of host.querySelectorAll(".tool-shelf-tile"))tile.onclick=()=>onOpen?.(tile.dataset.tool);return host.firstElementChild}
 
