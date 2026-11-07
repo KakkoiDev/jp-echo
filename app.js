@@ -370,7 +370,7 @@ const isWide=()=>wide.matches;
 const VIEW_TITLES={review:"Review",library:"Library"};
 function showView(name,{route=true}={}){if(name==="map"&&targetLang()!=="ja")name="library";if(name!=="radio")stopRadio();if(name!=="practice")resetSession();if(name!=="session")stopReviewListening();speechSynthesis.cancel();
   $("#main-view").hidden=name!=="practice";$("#review-home").hidden=name!=="review";$("#history-view").hidden=!(name==="library"||(name==="sentence"&&isWide()));$("#review-view").hidden=name!=="session";$("#sentence-view").hidden=name!=="sentence";$("#onboard-view").hidden=name!=="onboard";$("#setup-view").hidden=name!=="setup";$("#map-view").hidden=name!=="map";$("#mora-view").hidden=name!=="mora";$("#radio-view").hidden=name!=="radio";$("#notes-view").hidden=name!=="notes";$("#search-view").hidden=name!=="search";$("#settings-view").hidden=name!=="settings";if(name!=="settings")settingsStack=[];$("#settings-nav")?.toggleAttribute("aria-current",name==="settings");if(name!=="settings"&&$("#ai-show-key")?.getAttribute("aria-pressed")==="true")$("#ai-show-key").click();
-  const solo=name==="onboard"||name==="setup"||((name==="session"||name==="sentence"||name==="map"||name==="mora"||name==="radio"||name==="notes"||name==="settings")&&!isWide());document.querySelector("header").hidden=solo||(name==="search"&&!isWide())||(name==="practice"&&(discussionMode||readingMode||extractMode)&&!isWide());$("#tabs").hidden=solo;
+  const solo=name==="onboard"||name==="setup"||((name==="session"||name==="sentence"||name==="map"||name==="mora"||name==="radio"||name==="notes"||name==="settings")&&!isWide());document.querySelector("header").hidden=solo||(name==="search"&&!isWide())||(name==="practice"&&(discussionMode||readingMode||extractMode)&&!isWide());$("#tabs").hidden=solo&&name!=="sentence"&&name!=="notes";
   $("#view-title").textContent=VIEW_TITLES[name]||"";$("#view-title").hidden=!VIEW_TITLES[name];document.querySelector(".brand").hidden=!!VIEW_TITLES[name];
   $("#discussion-play").onclick=playDiscussion;$("#discussion-english").onchange=renderDiscussion;$("#discussion-new").onclick=()=>{discussionLoop.stop();discussionTurns=[];discussionScenario="";renderDiscussion();$("#english-input").value="";$("#english-input").focus()};$("#reading-furigana").onchange=renderReading;$("#reading-english").onchange=renderReading;$("#reading-echo").onclick=playReading;
 for(const tab of document.querySelectorAll(".tab[data-view]")){const on=tab.dataset.view===name||((name==="session"||name==="radio")&&tab.dataset.view==="review")||((name==="sentence"||name==="map"||name==="notes")&&tab.dataset.view==="library");tab.classList.toggle("current",on);tab.setAttribute("aria-current",on?"page":"false")}
@@ -1481,12 +1481,13 @@ let practiceEditor=false;
 async function openDetail(id){practiceEditor=false;const sentence=await getSentence(id);if(!sentence)return showView("library");resetSession();detail=ensureSchedule(sentence);showView("sentence");renderDetail()}
 function markSelectedRow(){for(const li of document.querySelectorAll("#history-list li"))li.classList.toggle("selected",li.dataset.id===detail?.id);}
 function renderDetailLearningText(){$("#sentence-grammar").replaceChildren();$("#sentence-grammar").hidden=true;$("#sentence-japanese").innerHTML=rubyHtml(preferredTarget(detail));$("#sentence-japanese").lang=itemTarget(detail);enableVocabulary($("#sentence-japanese"),preferredTarget(detail),itemTarget(detail),detail,{grammarHost:$("#sentence-grammar"),explain:true});}
-function renderDetail(){if(!detail)return;renderFlagButton($("#sentence-flag"),detail);closeEditor();markSelectedRow();
+function renderDetail(){queueMicrotask(()=>renderInItSummaries());if(!detail)return;renderFlagButton($("#sentence-flag"),detail);closeEditor();markSelectedRow();
   $("#sentence-added").textContent="Added "+formatDate(detail.createdAt);
   renderDetailLearningText();
   $("#sentence-english").textContent=detail.source;
   const registerRow=$("#sentence-register-row"),canChooseRegister=hasRegisters(itemTarget(detail))&&(detail.casualTarget||detail.target)!==(detail.politeTarget||detail.target);
-  registerRow.hidden=!canChooseRegister;
+  registerRow.hidden=true;$("#sentence-register-toggle").hidden=!canChooseRegister;$("#sentence-register-chip").hidden=!canChooseRegister;
+  if(canChooseRegister){const polite=sentenceRegister(detail)==="polite";$("#sentence-register-chip").textContent=polite?t("Polite"):t("Casual");$("#sentence-register-toggle").querySelector(".settings-row-title").textContent=polite?t("Hear it casual"):t("Hear it polite")}
   if(canChooseRegister)for(const button of $("#sentence-register").querySelectorAll("[data-register]")){
     const on=button.dataset.register===sentenceRegister(detail);button.classList.toggle("selected",on);button.setAttribute("aria-pressed",String(on));
     button.onclick=async()=>{if(button.dataset.register===sentenceRegister(detail))return;resetSession();detail={...detail,reviewRegister:button.dataset.register,updatedAt:new Date().toISOString()};await saveSentence(detail);if(current?.id===detail.id){current=detail;$("#show-polite").checked=sentenceRegister(detail)==="polite";renderSentence()}renderDetail();renderHistory()}
@@ -1512,8 +1513,8 @@ function renderDetail(){if(!detail)return;renderFlagButton($("#sentence-flag"),d
 let editorGeneration=0,rewrittenDraft=null,editorOpenId=null;
 function openEditor(){$("#sentence-reading-status").textContent="";editorOpenId=detail?.id||null;editorGeneration++;
   const meaningLanguage=detail?.sourceLang&&detail.sourceLang!==itemTarget(detail)?detail.sourceLang:(sourceLang()!==itemTarget(detail)?sourceLang():"en");
-  $("#sentence-meaning-language").replaceChildren(...LANGUAGES.map(([code,name])=>new Option(name,code)));$("#sentence-meaning-language").value=meaningLanguage;rewrittenDraft=null;$("#sentence-source-draft").value=detail?.source||"";$("#sentence-instruction").value="";$("#sentence-ai").open=false;$("#sentence-rewrite-status").textContent="";$("#sentence-rewrite").disabled=!hasTranslator();$("#sentence-save").disabled=false;if(!detail)return;resetSession();$("#sentence-draft").value=preferredTarget(detail);$("#sentence-edit-error").hidden=true;if(!$("#sentence-change").open)$("#sentence-change").open=true;for(const id of ["#sentence-draft","#sentence-source-draft"])fitTextArea($(id));$("#sentence-instruction").focus()}
-function closeEditor(){editorOpenId=null;editorGeneration++;rewrittenDraft=null;$("#sentence-change").open=false}
+  $("#sentence-meaning-language").replaceChildren(...LANGUAGES.map(([code,name])=>new Option(name,code)));$("#sentence-meaning-language").value=meaningLanguage;rewrittenDraft=null;$("#sentence-source-draft").value=detail?.source||"";$("#sentence-instruction").value="";$("#sentence-ai").open=false;$("#sentence-rewrite-status").textContent="";$("#sentence-rewrite").disabled=!hasTranslator();$("#sentence-save").disabled=false;if(!detail)return;resetSession();$("#sentence-draft").value=preferredTarget(detail);$("#sentence-edit-error").hidden=true;$("#sentence-change").hidden=false;if(!$("#sentence-change").open)$("#sentence-change").open=true;for(const id of ["#sentence-draft","#sentence-source-draft"])fitTextArea($(id));$("#sentence-instruction").focus()}
+function closeEditor(){editorOpenId=null;editorGeneration++;rewrittenDraft=null;$("#sentence-change").open=false;$("#sentence-change").hidden=true}
 async function saveEdit(event){event.preventDefault();if(!detail)return;
   const japanese=normalizeFurigana($("#sentence-draft").value.trim());
   if(!japanese||(hasFurigana(itemTarget(detail))&&!/[\u3040-\u30ff\u3400-\u9fff]/.test(japanese))){$("#sentence-edit-error").textContent="That needs to be a Japanese sentence.";$("#sentence-edit-error").hidden=false;return}
@@ -1541,6 +1542,9 @@ async function correctEditorReadings(){
 }
 async function rewriteDetailSentence(){
   if(!detail||$("#sentence-rewrite").disabled)return;
+  // "Tell Echo what to change" sits up front (SentenceFocus); the draft opens
+  // below it so both versions are seen before anything is saved.
+  if(editorOpenId!==detail.id){const asked=$("#sentence-instruction").value;openEditor();$("#sentence-instruction").value=asked}
   const instruction=$("#sentence-instruction").value.trim(),status=$("#sentence-rewrite-status"),button=$("#sentence-rewrite");
   if(!instruction){status.textContent="Tell AI what to change.";$("#sentence-instruction").focus();return}
   const generation=editorGeneration,id=detail.id;button.disabled=true;$("#sentence-save").disabled=true;status.textContent="Rewriting…";
@@ -2265,6 +2269,21 @@ async function renderSearch(){const version=++searchVersion,query=$("#search-inp
 $("#search-input").oninput=()=>{syncRoute({},true);renderSearch()};
 for(const tab of document.querySelectorAll("#search-scope [data-scope]"))tab.onclick=()=>{searchScope=tab.dataset.scope;renderSearch()};
 $("#search-back").onclick=()=>{if(history.state?.echo&&history.length>1)history.back();else showView(searchFrom)};
+// The sentence page has two actions up front (SentenceFocus): Play the loop
+// and "Tell Echo what to change". Everything else is in this MenuSheet.
+$("#sentence-more").onclick=()=>{if(!detail)return;$("#sentence-menu-quote").textContent=stripFurigana(preferredTarget(detail));renderFlagButton($("#sentence-flag"),detail);$("#sentence-menu").showModal()};
+$("#sentence-menu").addEventListener("click",event=>{if(event.target===$("#sentence-menu"))$("#sentence-menu").close()});
+// A row runs its action after the sheet closes, so a confirm opens on the page.
+$("#sentence-menu").addEventListener("click",event=>{if(event.target.closest?.(".menu-row"))$("#sentence-menu").close()},true);
+$("#sentence-register-toggle").onclick=()=>{const other=sentenceRegister(detail)==="polite"?"casual":"polite";$("#sentence-register").querySelector(`[data-register="${other}"]`)?.click()};
+$("#sentence-edit").onclick=()=>{openEditor();$("#sentence-change").scrollIntoView({block:"start",behavior:"smooth"})};
+$("#sentence-furigana").onclick=()=>{openEditor();$("#sentence-edit-readings").scrollIntoView({block:"center",behavior:"smooth"});$("#sentence-edit-readings").focus({preventScroll:true})};
+// The "In it" rows say what they hold before they are opened.
+function renderInItSummaries(){const items=[...$("#sentence-grammar").querySelectorAll(".grammar-phrase")].map(node=>node.textContent.trim()).filter(Boolean);
+  $("#sentence-grammar-block .collapse-title").textContent=items.length?t("Grammar")+" — "+(items.length===1?t("1 point"):t("{n} points",{n:items.length})):t("Grammar");
+  $("#sentence-grammar-meta").textContent=items.length?items.slice(0,3).join(" · "):($("#sentence-grammar").hidden?"":t("Explain the grammar"));
+  $("#sentence-track-meta").textContent=$("#stat-due").textContent}
+new MutationObserver(renderInItSummaries).observe($("#sentence-grammar"),{childList:true,subtree:true,attributes:true,attributeFilter:["hidden"]});
 $("#clear-filters").onclick=()=>{$("#history-search").value="";$("#clear-history-search").hidden=true;$("#history-filter").value="all";settings.historyFilter="all";try{storePreference("jp-echo-settings",JSON.stringify(settings))}catch{}renderHistory()};
 addEventListener("online",renderPracticeNotices);addEventListener("offline",renderPracticeNotices);
 // A sheet closes the way it looks like it should: drag the handle down far

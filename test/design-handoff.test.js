@@ -45,16 +45,17 @@ test("pill chips are replaced by the list; the two underline styles both exist",
   assert.match(html, /id="sentence-key" class="underline-key"/);
 });
 
-test("sentence page: design order, collapsed history and change, quiet delete", () => {
+test("sentence page: two actions up front, the rest in the ⋯ MenuSheet (SentenceFocus, SentenceMenu)", () => {
   const page = html.slice(html.indexOf('<section id="sentence-view"'), html.indexOf("</section>", html.indexOf('<section id="sentence-view"')));
-  const order = ["sentence-japanese", "sentence-english", "sentence-key", "stat-echoes", "sentence-play", "sentence-register", "sentence-grammar", "sentence-review-track", "stat-due", "sentence-history-block", "sentence-change", "sentence-delete"].map(id => page.indexOf(`id="${id}"`));
+  const order = ["sentence-more", "stat-stage", "sentence-japanese", "sentence-english", "sentence-key", "sentence-play", "sentence-ai", "sentence-grammar", "sentence-review-track", "stat-due", "sentence-history-block", "sentence-change"].map(id => page.indexOf(`id="${id}"`));
   assert.ok(order.every(i => i > 0), "every part present");
   assert.deepEqual([...order].sort((a, b) => a - b), order, "in the design's order");
-  assert.doesNotMatch(page, /id="sentence-edit"/, "the pencil button is gone; editing lives in Change this sentence");
-  assert.match(page, /<details id="sentence-change" class="collapse-row">[\s\S]*<form id="sentence-editor">/);
-  assert.match(page, /id="sentence-delete" class="text-danger"/);
-  assert.match(page, /class="register-label">Hear it as</);
-  assert.match(page, /<span id="sentence-added" class="overline"><\/span><span id="stat-stage" class="status-chip">/, "status chip in the session bar");
+  assert.match(page, /<label class="rule-label" for="sentence-instruction">Tell Echo what to change<\/label>/);
+  assert.match(page, /<details id="sentence-change" class="collapse-row" hidden>[\s\S]*<form id="sentence-editor">/, "the editor opens only when asked");
+  const menu = html.slice(html.indexOf('<dialog id="sentence-menu"'), html.indexOf("</dialog>", html.indexOf('<dialog id="sentence-menu"')));
+  for (const id of ["sentence-register-toggle", "sentence-edit", "sentence-furigana", "sentence-flag", "sentence-find-references", "sentence-delete"]) assert.match(menu, new RegExp(`id="${id}" type="button" class="settings-row menu-row`), id + " is a MenuSheet row");
+  assert.match(menu, /id="sentence-delete" type="button" class="settings-row menu-row menu-row-danger"/);
+  assert.doesNotMatch(page, /id="sentence-flag"|id="sentence-delete"|class="sentence-foot"/, "no actions left on the page itself");
 });
 
 test("the due line names the next card and what it will ask", async () => {
@@ -204,7 +205,7 @@ test("the echo animation is docs/design/motion.css whole, and the live rings mov
   assert.match(app, /onState:\(state,index\)=>\{loopArcs\("#reading",state\)/);
   for (const host of ['<article id="practice" hidden>', '<div id="review-result" hidden>', '<section id="sentence-view" hidden>']) {
     const at = html.indexOf(host), live = html.indexOf('<svg class="ripple echo live"', at);
-    assert.ok(at >= 0 && live > at && live - at < 700, host + " carries the live ripple behind the sentence");
+    assert.ok(at >= 0 && live > at && live - at < 1700, host + " carries the live ripple behind the sentence");
   }
   assert.equal((html.match(/<svg class="echo" width="96" height="96" viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="1\.6"/g) || []).length, 5, "five compact arc pairs: practice, sentence, review answer, discussion, reading");
   assert.doesNotMatch(html, /<svg class="echo" width="76"/);
@@ -228,7 +229,7 @@ test("review: the skill-mix card, the listening panel, the answer and the stats 
   assert.match(app, /for\(const id of \[".review-meta","#review-mode-title","#review-mode-instruction"\]\)document\.querySelector\(id\)\.hidden=true/, "the checked answer drops the chip, trio, title and reason");
   assert.match(html, /<p id="review-grammar-note" class="hint">Read off the sentence when it was explained\. A row opens the grammar point\. The review never asks the model\.<\/p>/);
   assert.match(css, /#review-grammar\[hidden\]\+#review-grammar-note\{display:none\}/);
-  assert.doesNotMatch(app, /t\("\{n\} points"/, "Grammar in it carries no count");
+  assert.match(app, /t\("Grammar"\)\+" — "\+\(items\.length===1\?t\("1 point"\):t\("\{n\} points",\{n:items\.length\}\)\)/, "Grammar in it says how many points (SentenceFocus)");
   assert.match(app, /capitalise\(spell\(done\)\)\+\(done===1\?" sentence":" sentences"\)\+" out loud\."/, "the finished screen starts with a capital and says what was done");
   assert.match(app, /Math\.round\(\(complete\?reviewQueue\.length:reviewIndex\+1\)\/reviewQueue\.length\*100\)/, "the progress bar counts the card in hand");
   assert.match(html, /<div id="review-stats" role="tabpanel" aria-labelledby="review-tab-stats" hidden><p class="overline">Past 24 hours<\/p><p class="stats-figure"><strong id="stats-24h">0<\/strong>/);
@@ -242,7 +243,7 @@ test("review: the skill-mix card, the listening panel, the answer and the stats 
 test("sentence page: the key, the echo row, the tiles, the rows and the foot follow the Sentence board", () => {
   assert.match(html, /<span class="key-word"><span class="key-sample-word">a word<\/span> — tap to look it up<\/span><span id="sentence-key-grammar" class="key-grammar"><span class="key-sample-grammar">grammar<\/span> — explained below<\/span>/, "the underline itself is the sample, and both items always show");
   assert.doesNotMatch(app, /\$\("#sentence-key-grammar"\)\.hidden=/);
-  assert.match(css, /\.sentence-play-row\{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-top:20px\}/);
+  assert.match(css, /#sentence-view \.sentence-play-row\{display:block;margin-top:22px\}/, "Play the loop is full width (SentenceFocus)");
   assert.match(css, /\.sentence-echoes \.counter strong\{font-size:22px\}/);
   assert.match(css, /\.register-label\{font-size:11px;text-transform:uppercase;letter-spacing:\.16em;color:var\(--ink-muted\)\}/);
   assert.match(html, /<p id="sentence-grammar-note" class="hint">One request, when you asked\. Kept with the sentence; shown again on the review answer without asking\.<\/p>/);
@@ -251,13 +252,11 @@ test("sentence page: the key, the echo row, the tiles, the rows and the foot fol
   assert.match(app, /skillGlyph\(mode,\{state:done\?"filled":mode===next\?"inactive":"default",size:30\}\)/);
   assert.match(css, /\.skill-tile\[data-next\]\{border-color:var\(--seal\)\}/);
   assert.match(app, /\(reviews\.length\?reviews\.length\+\(reviews\.length===1\?" review":" reviews"\):"No reviews yet"\)\+" · "\+\(Number\(detail\.echoCount\)\|\|0\)\+" echoes"/, "History meta: reviews · echoes · last date");
-  assert.match(html, /<span class="collapse-meta">Generate a new one from your directions, or fix the furigana<\/span>/);
   assert.match(css, /\.collapse-title\{grid-column:1;font-size:14px;color:var\(--sumi\)\}/);
   const page = html.slice(html.indexOf('<section id="sentence-view"'), html.indexOf("</section>", html.indexOf('<section id="sentence-view"')));
-  assert.match(page, /<div class="sentence-foot"><button[^>]*id="sentence-flag"[^>]*>[^<]*<\/button><button id="sentence-find-references" class="plain" type="button" data-ui="button">Find missing references<\/button><button data-ui="button" id="sentence-delete" class="text-danger" type="button">/, "a quiet text link and the delete, on one row at the bottom");
-  assert.ok(page.indexOf('id="sentence-find-references"') > page.indexOf('id="sentence-change"'), "Find missing references is no longer above the sentence");
+  assert.match(page, /<p class="hint sentence-menu-note">Casual \/ polite, editing, furigana, flag, find missing references and delete are in ⋯\.<\/p>/, "the page says where the rest went");
   assert.match(css, /#sentence-view:has\(#sentence-change\[open\]\) :is\(\.sentence-play-row,#sentence-grammar/, "with Change this sentence open, the page is the editor");
-  assert.match(page, /id="sentence-rewrite" class="primary" type="button">Generate<svg/);
+  assert.match(page, /id="sentence-rewrite" class="outline" type="button" aria-label="Rewrite">→<\/button>/);
   assert.match(page, /<div class="furigana-actions"><button data-ui="button" id="sentence-edit-readings" type="button" class="plain">Edit furigana<\/button>/);
   assert.match(page, /id="sentence-cancel" class="outline"/);
   assert.match(html, /<dialog id="dictionary-dialog" class="tool-sheet"><div class="sheet-handle" aria-hidden="true"><\/div><div class="dictionary-head"><h2 id="dictionary-title" lang="ja"><\/h2><button data-ui="button" id="dictionary-close" class="icon-button" type="button" aria-label="Close">/);
