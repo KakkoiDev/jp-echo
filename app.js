@@ -391,7 +391,7 @@ const MORA_ROWS=[["あ","い","う","え","お"],["か","き","く","け","こ"]
 // hides the anchors until a cell is tapped. The voiced rows below reuse the
 // base anchor as a giant (゛) or a balloon (゜), so there are no new images to learn.
 const MORA_VOICED_ROWS=[["が","ぎ","ぐ","げ","ご"],["ざ","じ","ず","ぜ","ぞ"],["だ","ぢ","づ","で","ど"],["ば","び","ぶ","べ","ぼ"],["ぱ","ぴ","ぷ","ぺ","ぽ"]];
-const MORA_YOON_ROWS=["き","し","ち","に","ひ","み","り","ぎ","じ","び","ぴ"].map(base=>["ゃ","ゅ","ょ"].map(small=>base+small));
+const MORA_YOON_ROWS=["き","ぎ","し","じ","ち","に","ひ","び","ぴ","み","り"].map(base=>["ゃ","ゅ","ょ"].map(small=>base+small));
 const MORA_SMALL={"ゃ":"や","ゅ":"ゆ","ょ":"よ"};
 const moraRevealed=new Set();
 // What a cell shows: the anchor word, its reading, English and picture, and
@@ -405,15 +405,22 @@ function moraAnchorInfo(mora){
 // Mora cells (MoraCompact, MoraVoiced): the kana, the drawn picture, the
 // anchor (巨大な / 風船の in seal for ゛/゜) and its English, with the one
 // corner mark. Each cell is #<kana>, so a note's anchor strip can land on it.
-function moraTable(host,rows,{pictures,furigana,english,quiz},columns=["a","i","u","e","o"]){host.classList.toggle("labelled",english);host.style.setProperty("--mora-columns",String(columns.length));
-  const head=el("div","mora-row mora-head");head.setAttribute("aria-hidden","true");head.innerHTML=columns.map(v=>"<span>"+v+"</span>").join("");
+function moraTable(host,rows,{pictures,furigana,english,quiz},columns=["a","i","u","e","o"],{rowLabels=false}={}){host.classList.toggle("labelled",english);host.classList.toggle("with-labels",rowLabels);host.style.setProperty("--mora-columns",String(columns.length));
+  const head=el("div","mora-row mora-head");head.setAttribute("aria-hidden","true");head.innerHTML=(rowLabels?"<span></span>":"")+columns.map(v=>"<span>"+v+"</span>").join("");
   host.replaceChildren(...(english?[head]:[]),...rows.map(row=>{const line=el("div","mora-row");
+    // MoraCombined: each row is labelled with the sound it starts from.
+    if(rowLabels){const label=el("span","mora-row-label",(row.find(Boolean)||"")[0]||"");label.setAttribute("aria-hidden","true");line.append(label)}
     for(const mora of row){if(!mora){line.append(el("div","mora-cell empty"));continue}
       const {kanji,reading,gloss,mark,speak}=moraAnchorInfo(mora),hidden=quiz&&!moraRevealed.has(mora),corner=mark==="巨大"?"giant":mark==="風船"?"balloon":null;
       const cell=el("button","mora-cell"+(hidden?" hidden-anchor":"")+(mark?" voiced":""));cell.type="button";cell.id=mora;
       cell.setAttribute("aria-label",hidden?mora+" — "+t("tap to see its anchor"):mora+" — "+(mark?moraModified(mark,kanji):kanji)+(mark?" ("+(corner==="giant"?t("giant"):t("as a balloon"))+")":""));
       cell.append(el("span","mora-kana",mora));
+      // A combined sound with no anchor of its own fuses two: both pictures,
+      // side by side with ＋, and a FUSED tag (MoraCombined), so no cell is blank.
+      const fused=mora.length>1&&!moraPicture(mora);if(fused)cell.classList.add("fused");
       if(!hidden){const picture=pictures?moraPicture(mora):null;if(picture)cell.insertAdjacentHTML("beforeend",themedPictureHtml(picture,{size:30,className:"mora-picture"}));
+        else if(pictures&&fused){const first=moraPicture(moraBase(mora).key[0]),second=moraPicture(MORA_SMALL[mora[1]]);if(first&&second)cell.insertAdjacentHTML("beforeend",'<span class="mora-fused-pictures">'+themedPictureHtml(first,{size:24})+'<span class="mora-fused-plus" aria-hidden="true">＋</span>'+themedPictureHtml(second,{size:24})+"</span>")}
+        if(fused)cell.insertAdjacentHTML("beforeend",'<span class="mora-fused-tag" aria-hidden="true">'+escapeText(t("fused"))+"</span>");
         const word=el("span","mora-word"+([...kanji].length>3?" long":""));if(mark)word.append(el("span","mora-modifier",mark==="巨大"?"巨大な":"風船の"));word.append(document.createTextNode(kanji));cell.append(word);
         if(furigana)cell.append(el("span","mora-reading",reading));
         if(english)cell.append(Object.assign(el("span","mora-english",gloss),{lang:"en"}))}
@@ -426,13 +433,18 @@ function moraTable(host,rows,{pictures,furigana,english,quiz},columns=["a","i","
     return line}))}
 // Four sections behind one segmented control, the section in the URL.
 let moraSection="base",moraOpen="あ";
-const MORA_SECTION_COUNTS={base:()=>t("46 anchors · version 4"),voiced:()=>t("25 voiced · same anchors, marked"),combined:()=>t("{n} combined · one anchor each",{n:MORA_YOON_ROWS.flat().length}),specials:()=>t("Small っ and the marks")};
+const MORA_SECTION_COUNTS={base:()=>t("46 anchors · version 4"),voiced:()=>t("25 voiced · same anchors, marked"),combined:()=>t("{n} combined · one anchor each",{n:MORA_YOON_ROWS.flat().length}),specials:()=>t("っ · ん · を · the marks")};
 function renderMora(){const options={pictures:$("#mora-show-pictures").checked,furigana:$("#mora-show-furigana").checked,english:$("#mora-show-english").checked,quiz:$("#mora-quiz").checked};
   for(const tab of document.querySelectorAll("#mora-sections [data-section]"))tab.setAttribute("aria-selected",String(tab.dataset.section===moraSection));
   for(const section of MORA_SECTIONS)$("#mora-section-"+section).hidden=section!==moraSection;
   $("#mora-count").textContent=MORA_SECTION_COUNTS[moraSection]();
   renderMoraDetail(options);
-  moraTable($("#mora-table"),MORA_ROWS,options);moraTable($("#mora-voiced-table"),MORA_VOICED_ROWS,options);moraTable($("#mora-yoon-table"),MORA_YOON_ROWS,options,["ya","yu","yo"])}
+  moraTable($("#mora-table"),MORA_ROWS,options);moraTable($("#mora-voiced-table"),MORA_VOICED_ROWS,options);moraTable($("#mora-yoon-table"),MORA_YOON_ROWS,options,["ya","yu","yo"],{rowLabels:true});renderMoraSpecials()}
+// MoraSpecials: small っ (its next anchor twice), ん and を with their
+// pictures, and the marks as rows that open the section that shows them.
+function renderMoraSpecials(){const picture=(kana,size)=>{const p=moraPicture(kana);return p?themedPictureHtml(p,{size,alt:moraAnchorInfo(kana).gloss}):""};
+  $("#mora-special-tte").innerHTML=picture("き",30)+'<span lang="ja">木</span><span class="mora-special-arrow" aria-hidden="true">→</span>'+picture("て",30)+picture("て",30)+'<span lang="ja">手 ×2</span>';
+  for(const kana of ["ん","を"]){const host=$("#mora-special-"+(kana==="ん"?"n":"wo"));if(!host.dataset.done){host.insertAdjacentHTML("afterbegin",picture(kana,44));host.dataset.done="1"}}}
 function saveMoraDisplay(){settings.moraPictures=$("#mora-show-pictures").checked;settings.moraFurigana=$("#mora-show-furigana").checked;settings.moraEnglish=$("#mora-show-english").checked;storePreference("jp-echo-settings",JSON.stringify(settings));renderMora()}
 // A cell link (#<kana>) lands on its cell and briefly marks it.
 function showMoraCell(kana){const cell=document.getElementById(kana);if(!cell||!cell.classList.contains("mora-cell"))return;cell.scrollIntoView({block:"center"});cell.classList.add("landed");setTimeout(()=>cell.classList.remove("landed"),1600)}
@@ -2411,7 +2423,7 @@ $("#review-radio").onclick=()=>showView("radio");$("#radio-back").onclick=()=>sh
 $("#radio-start").onclick=startRadio;$("#radio-stop").onclick=stopRadio;$("#radio-hours").onchange=saveRadioOptions;$("#radio-noise").onchange=saveRadioOptions;
 // A wake lock is dropped whenever the page is hidden; take it again on return.
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&radio.running)holdRadioWake()});
-$("#mora-back").onclick=()=>showView("library");$("#mora-quiz").onchange=()=>{moraRevealed.clear();renderMora()};for(const tab of document.querySelectorAll("#mora-sections [data-section]"))tab.onclick=()=>{moraSection=tab.dataset.section;syncRoute({});renderMora()};for(const id of ["#mora-show-pictures","#mora-show-furigana","#mora-show-english"])$(id).onchange=saveMoraDisplay;
+$("#mora-back").onclick=()=>showView("library");$("#mora-quiz").onchange=()=>{moraRevealed.clear();renderMora()};for(const tab of document.querySelectorAll("#mora-sections [data-section], #mora-section-specials [data-section]"))tab.onclick=()=>{moraSection=tab.dataset.section;syncRoute({});renderMora();if(tab.closest("#mora-section-specials"))$("#mora-sections").scrollIntoView({block:"nearest"})};for(const id of ["#mora-show-pictures","#mora-show-furigana","#mora-show-english"])$(id).onchange=saveMoraDisplay;
 $("#kanji-close").onclick=()=>{loop.stop();$("#kanji-dialog").close()};$("#kanji-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;kanjiOpen=null;saveWorkspace({modal:null})});$("#kanji-compose").onclick=composeForKanji;$("#kanji-say-go").onclick=sayForKanji;
 $("#family-panel").addEventListener("toggle",()=>{
   if($("#family-panel").open)void renderKanjiFamilies(familyBrowse.sentences);
