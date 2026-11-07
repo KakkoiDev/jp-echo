@@ -15,6 +15,7 @@ export function routeFor(state={}){
   else if(view==="mora")path="/mora";
   else if(view==="radio")path="/radio";
   else if(view==="notes")path="/words";
+  else if(view==="search")path="/search";
   // Settings is a page with two sub-pages for what lives only on this device.
   else if(view==="settings")path=SETTINGS_PAGES.includes(state.settingsPage)?"/settings/"+state.settingsPage:"/settings";
   else if(view==="setup")path="/setup";
@@ -24,6 +25,8 @@ export function routeFor(state={}){
   else if(state.discussionMode)path="/discussion";
   const q=new URLSearchParams();
   if(path==="/library"){if(state.historyQuery)q.set("q",state.historyQuery);if(state.historyFilter&&state.historyFilter!=="all")q.set("filter",state.historyFilter);if(state.historyOrder&&state.historyOrder!=="created")q.set("order",state.historyOrder);if(state.historyDirection&&state.historyDirection!=="desc")q.set("direction",state.historyDirection)}
+  // One search for sentences, words and kanji; the query survives reload.
+  if(view==="search"&&state.searchQuery)q.set("q",state.searchQuery);
   // Echo's notes is the Words wall filtered to the words with a note.
   if(view==="notes")q.set("notes","1");
   if(["/words","/kanji","/grammar"].includes(path)&&state.mapQuery&&view!=="notes")q.set("q",state.mapQuery);
@@ -43,6 +46,7 @@ export function parseRoute(input){
   if(p==="/review")return {...base,view:"review"};
   if(p==="/mora")return {...base,view:"mora"};
   if(p==="/radio")return {...base,view:"radio"};
+  if(p==="/search")return {...base,view:"search",searchQuery:q.get("q")||""};
   if(p==="/settings")return {...base,view:"settings",settingsPage:"main"};
   { const sm=p.match(/^\/settings\/([a-z]+)$/);if(sm)return SETTINGS_PAGES.includes(sm[1])?{...base,view:"settings",settingsPage:sm[1]}:{...base,notFound:true}; }
   if(p==="/library")return {...base,view:"library",historyQuery:q.get("q")||"",historyFilter:q.get("filter")||"all",historyOrder:q.get("order")||"created",historyDirection:q.get("direction")||"desc"};

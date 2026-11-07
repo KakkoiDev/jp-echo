@@ -1712,3 +1712,28 @@ button.mora-cell:last-child{border-right:0}
 #review-overview>.breakdown strong{font-family:var(--display);font-weight:600;font-size:18px;color:var(--sumi)}
 #review-overview #review-rest-block{flex-direction:row;align-items:center;gap:12px;margin-top:20px;text-align:left}
 #review-overview #review-rest-block[hidden]{display:none}
+
+/* Header search and /search (Search board). */
+header .header-search{margin-left:auto}
+header .header-search+#settings-button{margin-left:-4px}
+.search-field{display:flex;align-items:center;gap:10px;height:46px;margin-top:16px;padding:0 12px;box-sizing:border-box;background:var(--panel);border:1px solid var(--sumi);border-radius:4px;color:var(--ink-muted)}
+.search-field input{flex:1 1 auto;min-width:0;min-height:0;height:100%;padding:0;background:transparent;border:0;border-radius:0;font-size:15px;color:var(--sumi)}
+.search-scope{margin-top:12px}
+.search-scope [role="tab"]{height:38px;min-height:38px}
+.search-rule{margin:20px 0 0}
+.search-list{list-style:none;margin:2px 0 0;padding:0}
+.search-list li{border-bottom:1px solid var(--rule)}
+.search-list.kanji li{border-bottom:0}
+.search-row{display:flex;align-items:center;gap:12px;width:100%;height:auto;min-height:44px;padding:11px 0;background:transparent;border:0;border-radius:0;color:inherit;text-align:left;letter-spacing:normal;font-size:inherit}
+.search-row>svg{flex-shrink:0;color:var(--ink-muted)}
+.search-word{flex-shrink:0;min-width:56px;font-family:var(--display);font-size:22px}
+.search-lines{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}
+.search-reading{font-size:13px;color:var(--ink-soft)}
+.search-gloss{font-size:12px;color:var(--ink-muted)}
+.search-sentence{font-family:var(--display);font-size:17px;line-height:1.5}
+.search-sentence mark{background:var(--seal-wash);color:var(--seal-deep);padding:0 1px}
+.search-row.sentence{padding:12px 0}
+.search-row .kanji-cell{width:46px;height:46px;flex-shrink:0}
+.search-kanji-meta{font-size:13px;color:var(--ink-soft)}
+.search-note{flex-shrink:0}
+.search-hint{margin:16px 0 0}
