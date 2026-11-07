@@ -44,7 +44,7 @@ written for Echo**. Yomitan is GPL-3.0, so its tables are not copied.
 | R1 | Saved words get **their own IndexedDB store** (`jp-echo-words`), keyed by dictionary word id; never a record type inside `sentences` | recommended, awaiting confirmation |
 | R2 | Sync uses **one gist file per writer**: Echo writes `echo-backup.json`, and each reader install writes `echo-reader-<device>.json`. Every reader pulls all of them and merges deterministically. | recommended (the user's "safer" option, made strict) |
 | R3 | The remember note is written **by Echo**, at the reader's explicit request, and syncs back. Writing it inside the pane is a later milestone (M8). | recommended, awaiting confirmation |
-| R4 | The conjugation engine is a **shared Echo module** (`deinflect.js`). Echo's own word matching moves onto it too. | recommended, awaiting confirmation |
+| R4 | The conjugation engine lives **in JP Core** (KakkoiDev/jp-core, a browser module beside `browser/jp-core.js`, with its Python twin and tests), as the one authority for Japanese tooling. Echo copies it verbatim, as it does `core.js`, and moves its own word matching onto it; the reader gets it through `reader-core.js`. | user, 7 Nov |
 | R5 | The script reuses Echo code through a **generated classic-script bundle** (`reader-core.js`) built from Echo's modules, never a hand copy | recommended |
 | D6 | **Saved is a mark, not a state.** A new reusable `SavedMark` (a drawn bookmark) shows it; met and learned keep their chips and still come only from sentences. The way in is a 栞 *Saved words · N* row under 記 Echo's notes, opening its own screen at `/words?saved=1`. Never a value in the Cards filter. | design, 8 Nov (canvas row "Saved words") |
 
@@ -765,7 +765,7 @@ path follows docs/DEVELOPMENT.md:12.
 | File | Change | Tests |
 |---|---|---|
 | `tools/build-words-data.mjs`, `words-data.js` | Decode numeric entities (`&#x27;`) | No gloss matches `/&#?\w+;/` |
-| `deinflect.js` (new) | Stem and attachment generator, conditions, `deinflect(text)` returning `[{text, conditions, trace}]`, `posFlags(pos)` | `test/deinflect.test.js`: §3.6 table, cycles, depth |
+| `deinflect.js` (new, copied verbatim from JP Core per R4; change it there first) | Stem and attachment generator, conditions, `deinflect(text)` returning `[{text, conditions, trace}]`, `posFlags(pos)` | `test/deinflect.test.js`: §3.6 table, cycles, depth |
 | `japanese-words.js` | Use `deinflect` plus an index over `w`, `k` and `r` for `wordsIn` and `wordSpans`, removing the `NEXT` / `INFLECTION_TAILS` heuristics | The existing `test/words.test.js` passes, plus the §3.3 gap cases in research-words |
 | `lookup.js` | `lookupAt(text)`: longest-match scan with ranking (§3.2, §3.5), shared by the reader and, later, Echo's own search | `test/lookup.test.js` |
 | `saved-words.js` (new) | §4.2 | `test/saved-words.test.js`: make, validate, merge (tie, tombstone, re-save, contexts cap, determinism) |
