@@ -15,7 +15,7 @@
 // CC BY), as collected by jamsinclair and elzup (MIT). A word is on the list
 // when its written form and reading both match an entry; kana-only list
 // words match a kana-only or usually-kana entry.
-import {readFileSync, writeFileSync, existsSync} from "node:fs";
+import {readFileSync, writeFileSync, existsSync, mkdirSync, rmSync} from "node:fs";
 import {gunzipSync} from "node:zlib";
 
 const here = new URL("./", import.meta.url);
@@ -106,10 +106,9 @@ for (const [key, list] of candidates) {
   if (!had || level > had) levelOf.set(chosen.id, level); // "N5" > "N4" as strings: the easier level wins
 }
 
-const out = [];
-for (const e of parsed) {
-  const level = levelOf.get(e.id) || null;
-  if (!e.common && !level) continue;
+// One entry as the app reads it: {id, w, r, k, en, pos}. Shared by
+// words-data.js and the looked-up pieces in dict/.
+function wordOf(e, level = null) {
   // The written form: the first kanji form unless the word is usually kana,
   // in which case the reading is what you would see, and the kanji is "also".
   const usuallyKana = e.senses[0].misc.includes("uk") || !e.kanji.length;
@@ -126,7 +125,13 @@ for (const e of parsed) {
   word.en = en; word.pos = pos;
   if (level) word.jlpt = level;
   word.rank = e.rank; word.reading = toHiragana(reading.text);
-  out.push(word);
+  return word;
+}
+const out = [];
+for (const e of parsed) {
+  const level = levelOf.get(e.id) || null;
+  if (!e.common && !level) continue;
+  out.push(wordOf(e, level));
 }
 // Level order first, N5 to N1 then the common words on no list; within a
 // level the newspaper rank, then reading order, so Practise walks the most
@@ -168,3 +173,28 @@ ${lines.join(",\n")}
 ];
 `);
 console.log("words-data.js:", out.length, "words, JLPT matched", matched, "of", listed, JSON.stringify(counts));
+
+// The rest of JMdict, for dictionary.js: every entry not in words-data.js, in
+// pieces by the first character of its written and kanji forms. Left out: a
+// sense marked vulgar, X-rated, derogatory or sensitive (and an entry with
+// nothing else), archaic and obsolete senses, and kana-only words under three
+// characters, which a run of kana would match by accident. The pieces sit in
+// dict/<version>/ so an address never changes and the app may keep it forever.
+const {DICT_BUCKETS, packPieces} = await import(new URL("../dictionary.js", here));
+const shipped = new Set(out.map(w => w.id));
+const UNSAFE = new Set(["vulg", "X", "derog", "sens"]);
+const version = created === "unknown date" ? "dev" : created;
+const rest = [];
+for (const e of parsed) {
+  if (shipped.has(e.id)) continue;
+  const senses = e.senses.filter(s => s.gloss.length && !s.misc.some(m => UNSAFE.has(m) || m === "arch" || m === "obs"));
+  if (senses.length) rest.push(wordOf({...e, senses}));
+}
+const buckets = packPieces(rest), looked = new Set(buckets.flat().map(row => row[0])).size;
+if (looked < 100000) throw new Error(`only ${looked} looked-up words: expected the rest of JMdict to be over 100,000`);
+const dictDir = new URL(`../dict/${version}/`, here);
+rmSync(new URL("../dict/", here), {recursive: true, force: true});
+mkdirSync(dictDir, {recursive: true});
+buckets.forEach((rows, bucket) => writeFileSync(new URL(String(bucket).padStart(3, "0") + ".json", dictDir), JSON.stringify(rows)));
+writeFileSync(new URL("../dict/manifest.json", here), JSON.stringify({version, count: looked, buckets: DICT_BUCKETS, source: "JMdict " + created + ", EDRDG, CC BY-SA 4.0 — https://www.edrdg.org/edrdg/licence.html"}, null, 1) + "\n");
+console.log("dict/:", looked, "looked-up words in", DICT_BUCKETS, "pieces, version", version);

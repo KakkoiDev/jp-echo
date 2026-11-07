@@ -180,6 +180,13 @@ Before considering the change complete:
   Changing an anchor bumps the version in core.js and JP Core
   (browser/jp-core.js) together; the AI validator follows `moraMnemonicTokens`,
   and `MORA_V4_RETIRED` (app.js) points out notes written with an old anchor.
+- **The dictionary is two parts.** `words-data.js` (shipped, precached) holds
+  JMdict's common words and every JLPT word; it alone feeds the Words wall, its
+  bands and totals. The rest of JMdict is `dict/<version>/NNN.json`, fetched by
+  `dictionary.js` only for the characters a sentence contains, added to a
+  separate matcher (`addLookupWords`, words.js) and kept by the worker in
+  `jp-echo-dict`, which app updates never clear. Both come from one JMdict file
+  through `tools/build-words-data.mjs`; never hand-edit either.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

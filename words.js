@@ -20,7 +20,7 @@ export const LEVELS = ["N5", "N4", "N3", "N2", "N1", "+"];
 export const LEVEL_LABELS = {N5: "Getting around", N4: "Everyday talk", N3: "Newspapers, forms", N2: "Work and study", N1: "The long tail", "+": "Common, on no list"};
 
 const INDEX = new Map(WORDS.map(w => [w.id, w]));
-export const word = id => INDEX.get(Number(id)) || null;
+export const word = id => INDEX.get(Number(id)) || LOOKUP_INDEX.get(Number(id)) || null;
 export const levelOf = w => w?.jlpt || "+";
 export let TOTAL = WORDS.length;
 export const ALL = WORDS;
@@ -51,8 +51,28 @@ export function kindOf(w) {
 // (書か, 書き, 書く, 書け, 書こ) or drops to い or っ before た and て; an
 // ichidan stem takes the endings straight; an い-adjective drops い for
 // く, かった, ければ, さ, そう.
-let {wordsIn,wordSpans,keysOf}=createJapaneseWordMatcher(WORDS);
-export {wordsIn,wordSpans};
+let main=createJapaneseWordMatcher(WORDS);
+
+// The uncommon words of JMdict, looked up a piece at a time when a sentence
+// needs them (dictionary.js). They have their own matcher: they mark and
+// open like any word, but never join the Words wall, its bands or its totals.
+const LOOKUP=[],LOOKUP_INDEX=new Map();
+let lookup=createJapaneseWordMatcher(LOOKUP);
+// Adds looked-up words; returns how many were new. A common word always wins
+// its id: a looked-up word never shadows one already in WORDS.
+export function addLookupWords(list=[]){let added=0;
+ for(const w of list)if(Number.isInteger(w?.id)&&w.w&&Array.isArray(w.en)&&!INDEX.has(w.id)&&!LOOKUP_INDEX.has(w.id)){LOOKUP.push(w);LOOKUP_INDEX.set(w.id,w);added++}
+ if(added)lookup=createJapaneseWordMatcher(LOOKUP);return added}
+export const isLookupWord=w=>!!w&&LOOKUP_INDEX.has(Number(w.id));
+export function wordsIn(text){const found=main.wordsIn(text);if(LOOKUP.length)for(const id of lookup.wordsIn(text))found.add(id);return found}
+// A looked-up word marks where no common word does, or where it spans a
+// longer stretch than the common words it covers (朝会 over 朝 and 会).
+export function wordSpans(text="",ids=null){const spans=main.wordSpans(text,ids);if(!LOOKUP.length)return spans;
+ for(const extra of lookup.wordSpans(text,ids)){const overlap=spans.filter(s=>s.start<extra.end&&extra.start<s.end);
+  if(!overlap.length)spans.push(extra);
+  else if(overlap.every(s=>extra.start<=s.start&&s.end<=extra.end&&extra.end-extra.start>s.end-s.start)){for(const s of overlap)spans.splice(spans.indexOf(s),1);spans.push(extra)}}
+ return spans.sort((a,b)=>a.start-b.start||b.end-a.end)}
+const keysOf=w=>(LOOKUP_INDEX.has(Number(w?.id))?lookup:main).keysOf(w);
 export const carries = (text,w) => !!w && wordsIn(text).has(w.id);
 
 // Every register, because 見る and 拝見する are different words and you have
@@ -107,5 +127,5 @@ const BASE_WORDS=[...WORDS];
 export function setImportedWords(imported=[]){
  WORDS.splice(0,WORDS.length,...BASE_WORDS,...imported.filter(w=>Number.isInteger(w.id)&&w.id<0&&w.w&&Array.isArray(w.en)));
  INDEX.clear();for(const w of WORDS)INDEX.set(w.id,w);TOTAL=WORDS.length;BANDS=null;
- ({wordsIn,wordSpans,keysOf}=createJapaneseWordMatcher(WORDS));
+ main=createJapaneseWordMatcher(WORDS);
 }
