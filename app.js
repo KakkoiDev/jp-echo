@@ -34,6 +34,7 @@ import {flagSvg,renderFlagButton,grammarList,skillGlyph,skillTrio,expandableList
 const SETTINGS_TITLES={main:"Settings",ai:"AI service",speech:"Speech recognition",backup:"Backup",import:"Import sentences",export:"Export",grammar:"Grammar"};
 let settingsPage="main",settingsReturn="practice";
 import {parseRoute,routeFor} from "./routes.js";
+import {sealKey,openKey,readToken,isSupported as keyShareSupported} from "./key-share.js";
 import {mergeCatalogues,readCatalogues,saveCatalogues} from "./catalogues.js";
 let importedCatalogues=readCatalogues();
 function applyCatalogues(){setImportedWords(importedCatalogues.words);setImportedGrammar([...(importedCatalogues.grammar||[]),...(importedCatalogues.references||[]).filter(entry=>entry.kind==="grammar").map(entry=>({id:entry.id,title:entry.term,level:"Custom",hint:entry.text.slice(0,160),explanation:entry.text,origin:"custom",sourceUrl:entry.sourceUrl,sourceLabel:entry.sourceLabel}))])}
@@ -196,7 +197,7 @@ function leaveSettings(){const target=settingsPage!=="main"?"main":"out";
 // SettingsRow statuses: one line each, true to what is stored.
 function renderSettingsRows(){if(!$("#settings-status-ai"))return;
   const provider=defaultProvider(),names={google:"Google Gemini",deepseek:"DeepSeek",openai:"OpenAI",anthropic:"Anthropic",local:"Local AI"};
-  $("#settings-status-ai").textContent=names[provider]+(provider==="local"?(settings.localEndpoint?" · endpoint saved":" · no endpoint yet"):(settings.providerKeys?.[provider]?" · key saved":" · no key yet"));
+  $("#settings-status-ai").textContent=names[provider]+(provider==="local"?(settings.localEndpoint?" · endpoint saved":" · no endpoint yet"):(settings.providerKeys?.[provider]?(settings.sharedKey?.provider===provider?" · key "+sharedKeyLine():" · key saved"):" · no key yet"));
   $("#settings-status-speech").textContent={auto:"Auto — browser, then Groq",browser:"Browser only",groq:"Groq Whisper",google:"Gemini"}[settings.speechProvider||"auto"]||"Auto — browser, then Groq";
   $("#settings-status-grammar").textContent="Reads new sentences automatically: "+(settings.autoTag?"on":"off");$("#settings-row-grammar").hidden=targetLang()!=="ja";
   $("#settings-status-import").textContent=targetLang()==="ja"?"A deck, a backup, a gist, a book or text":"A deck, a backup or a gist";
@@ -215,7 +216,7 @@ async function checkAIService(){const button=$("#ai-check"),next=aiFormSettings(
   try{await translate("Good morning.",{...next,sourceLang:"en",targetLang:targetLang()});$("#ai-status").textContent="The key works — checked just now. The check used one request.";settings.aiCheckedAt=new Date().toISOString();persistSettings()}
   catch(error){$("#ai-status").textContent="That did not work: "+(error.message||error)}finally{button.disabled=false}}
 function removeAIKey(){const provider=$("#provider").value;
-  if(provider==="local"){settings.localEndpoint="";$("#local-endpoint").value=""}else{settings.providerKeys={...(settings.providerKeys||{}),[provider]:""};if(provider==="deepseek")delete settings.apiKey;$("#"+provider+"-key").value=""}
+  if(provider==="local"){settings.localEndpoint="";$("#local-endpoint").value=""}else{settings.providerKeys={...(settings.providerKeys||{}),[provider]:""};if(settings.sharedKey?.provider===provider)delete settings.sharedKey;if(provider==="deepseek")delete settings.apiKey;$("#"+provider+"-key").value=""}
   $("#ai-status").textContent=persistSettings()?"Removed from this device. Your sentences stay.":"This browser would not update its storage.";renderSettingsRows();renderPracticeNotices?.()}
 function saveSpeech(){settings.speechProvider=$("#speech-provider").value;settings.speechKeys={...(settings.speechKeys||{}),groq:$("#groq-speech-key").value.trim()};
   $("#speech-status").textContent=persistSettings()?"Saved on this device.":"This browser would not store it.";renderSettingsRows();setupRecognition?.()}
@@ -2642,6 +2643,76 @@ document.addEventListener("visibilitychange",()=>{if(document.hidden)maybeAutoBa
 $("#import-minihongo").onclick=()=>seedStarter($("#import-minihongo"));
 $("#empty-starter").onclick=()=>seedStarter($("#empty-starter"),$("#empty-starter-status"));
 $("#empty-practice").onclick=()=>{showView("practice");setPracticeMode("sentence");$("#english-input").focus()};
+
+// Invite someone (Settings → On this device only). A link to Echo, optionally
+// with "install" and with the sender's AI key, encrypted in the link's
+// #fragment (key-share.js, the same scheme as Minihongo's). The unlock code is
+// shown here only, to pass on separately. One code per opening of the sheet.
+// Keys that can be shared: every provider that has one (not a local model).
+const SHAREABLE_PROVIDERS=["google","deepseek","openai","anthropic"];
+let invite={sealed:null};
+const shareableKey=()=>{const provider=settings.provider||"deepseek";if(!SHAREABLE_PROVIDERS.includes(provider))return null;const key=providerKey(provider);if(!key)return null;
+  const model=settings.providerModels?.[provider];return {provider,key,...(model?{model}:{})}};
+function inviteUrl(){const url=new URL("/",location.origin);if($("#invite-install").checked)url.searchParams.set("install","1");if($("#invite-key").checked&&invite.sealed)url.hash="key="+invite.sealed.token;return url.href}
+async function refreshInvite(){$("#invite-copy").textContent=t("Copy link");const wants=$("#invite-key").checked,days=Number($("#invite-key-days").value||0);$("#invite-key-options").hidden=!wants;
+  if(wants&&(!invite.sealed||invite.sealed.days!==days)){const payload=shareableKey();if(!payload){$("#invite-key").checked=false;$("#invite-key-options").hidden=true}
+    else{$("#invite-key-code").textContent="…";$("#invite-url").value="";const {token,code}=await sealKey(payload,days);invite.sealed={token,code,days}}}
+  if(invite.sealed){$("#invite-key-code").textContent=invite.sealed.code;$("#invite-copy-code").textContent=t("Copy code")}
+  $("#invite-url").value=inviteUrl()}
+async function openInvite(){const key=shareableKey();$("#invite-key-section").hidden=!key||!keyShareSupported();
+  $("#invite-key-which").textContent=key?t("Your {name} key",{name:PROVIDER_NAMES[key.provider]||key.provider}):"";
+  // The OS share sheet is a phone feature; desktop browsers support it unevenly.
+  $("#invite-share").hidden=!(navigator.share&&matchMedia("(pointer: coarse)").matches);
+  $("#invite-dialog").showModal();await refreshInvite();$("#invite-url").select()}
+async function copyText(text,button,done){try{await navigator.clipboard.writeText(text)}catch{$("#invite-url").select();document.execCommand?.("copy")}button.textContent=done}
+$("#settings-row-invite").onclick=openInvite;
+for(const id of ["#invite-install","#invite-key","#invite-key-days"])$(id).addEventListener("change",refreshInvite);
+$("#invite-url").addEventListener("focus",()=>$("#invite-url").select());
+$("#invite-copy").onclick=()=>copyText($("#invite-url").value,$("#invite-copy"),t("Link copied"));
+$("#invite-copy-code").onclick=()=>{if(invite.sealed)copyText(invite.sealed.code,$("#invite-copy-code"),t("Code copied"))};
+// The link only: the unlock code must travel separately.
+$("#invite-share").onclick=async()=>{try{await navigator.share({title:"Echo",url:$("#invite-url").value});$("#invite-dialog").close()}catch(error){if(error?.name!=="AbortError")$("#invite-copy").click()}};
+$("#invite-done").onclick=()=>$("#invite-dialog").close();
+$("#invite-dialog").addEventListener("click",event=>{if(event.target===$("#invite-dialog"))$("#invite-dialog").close()});
+// Forget the sealed key: reopening the sheet makes a fresh code.
+$("#invite-dialog").addEventListener("close",()=>{invite.sealed=null;$("#invite-key").checked=false;$("#invite-key-options").hidden=true});
+
+// Arriving from an invite: ?install=1 offers to install once (then the
+// parameter is dropped), #key=… asks for the unlock code. The key is
+// decrypted here and saved like a key typed in Settings, as an explicit save;
+// the encrypted token is then removed from the address so it does not linger
+// in history, bookmarks or a re-shared URL.
+const arrivalToken=readToken(location.hash);
+function sharedKeyLine(){const shared=settings.sharedKey;if(!shared||shared.provider!==(settings.provider||"deepseek")||!providerKey(shared.provider))return "";
+  return shared.exp?t("shared with you, until {date}",{date:formatDate(shared.exp)}):t("shared with you")}
+// A shared key with an expiry is removed once it has passed.
+function expireSharedKey(now=Date.now()){const shared=settings.sharedKey;if(!shared?.exp||now<=shared.exp)return false;
+  if(settings.providerKeys?.[shared.provider])settings.providerKeys={...settings.providerKeys,[shared.provider]:""};delete settings.sharedKey;storePreference("jp-echo-settings",JSON.stringify(settings));resetSettingsForm();
+  toast(t("The AI key someone shared with you has expired and was removed."),6000);return true}
+{const params=new URLSearchParams(location.search),install=params.has("install")&&!isInstalled();
+  if(params.has("install")){params.delete("install");const rest=params.toString();history.replaceState(history.state,"",location.pathname+(rest?"?"+rest:"")+location.hash)}
+  if(arrivalToken||install){$("#arrival-key").hidden=!arrivalToken;$("#arrival-install").hidden=!install;
+    $("#arrival-dialog").setAttribute("aria-labelledby",arrivalToken?"arrival-key-title":"arrival-install-title");
+    setTimeout(()=>{$("#arrival-dialog").showModal();if(arrivalToken)$("#arrival-key-code").focus()},install&&!arrivalToken?1200:0)}}
+const ARRIVAL_MESSAGES={unsupported:"This browser cannot unlock shared keys. Open the link in an up-to-date browser.","wrong-code":"That code does not unlock this key. Check it and try again.",expired:"This shared key has expired. Ask for a new invite link.",malformed:"This link is incomplete or damaged. Ask for a new invite link."};
+$("#arrival-key-form").addEventListener("submit",async event=>{event.preventDefault();const status=$("#arrival-key-status"),button=$("#arrival-key-unlock");
+  if(!keyShareSupported()){status.textContent=t(ARRIVAL_MESSAGES.unsupported);return}
+  button.disabled=true;status.textContent=t("Unlocking…");
+  try{const shared=await openKey(arrivalToken,$("#arrival-key-code").value);
+    if(!SHAREABLE_PROVIDERS.includes(shared.provider))throw Object.assign(new Error("malformed"),{code:"malformed"});
+    settings.provider=shared.provider;settings.providerKeys={...(settings.providerKeys||{}),[shared.provider]:String(shared.key)};
+    if(shared.model)settings.providerModels={...(settings.providerModels||{}),[shared.provider]:String(shared.model)};
+    settings.sharedKey={provider:shared.provider,...(shared.exp?{exp:shared.exp}:{})};
+    storePreference("jp-echo-settings",JSON.stringify(settings));resetSettingsForm();
+    // First visit: the setup screen asks for a key; fill it in, so it is not asked for twice.
+    if(!settings.onboarded){$("#setup-provider").value=shared.provider;showSetupFields();$("#setup-key").value=String(shared.key)}
+    history.replaceState(history.state,"",location.pathname+location.search);
+    $("#arrival-key-form").hidden=true;status.textContent="";$("#arrival-key-done").hidden=false}
+  catch(error){status.textContent=t(ARRIVAL_MESSAGES[error?.code]||ARRIVAL_MESSAGES.malformed);button.disabled=false;if(error?.code==="wrong-code")$("#arrival-key-code").select()}});
+$("#arrival-install-yes").onclick=async()=>{await installApp();$("#arrival-install-status").textContent=$("#install-status").textContent;if(isInstalled())$("#arrival-dialog").close()};
+$("#arrival-install-no").onclick=()=>{$("#arrival-install").hidden=true;if($("#arrival-key").hidden)$("#arrival-dialog").close()};
+$("#arrival-close").onclick=()=>$("#arrival-dialog").close();
+expireSharedKey();
 
 window.echoAppReady=true;
 

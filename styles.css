@@ -1960,3 +1960,22 @@ header .header-search+#settings-button{margin-left:-4px}
 #notes-outdated-why{margin-top:10px}
 .notes-outdated>button{width:100%;min-height:44px;margin-top:10px}
 #notes-outdated-status:not(:empty){margin-top:8px}
+/* Invite someone, and arriving from an invite (key-share.js). Echo's sheet,
+   switch and button styles; the unlock code is the one display-type value. */
+.invite-sheet .invite-lede{margin:6px 0 10px}
+.invite-key-options{display:flex;flex-direction:column;gap:12px;margin:6px 0 4px;padding:12px 14px;border:1px solid var(--hairline);border-radius:4px;background:var(--washi)}
+.invite-key-options .hint{margin:0}
+.invite-key-options label{display:flex;flex-direction:column;gap:6px}
+.invite-code{display:flex;flex-direction:column;gap:8px}
+.invite-code .overline{margin:0;color:var(--seal-deep)}
+#invite-key-code{font-family:var(--display);font-size:22px;letter-spacing:.12em;color:var(--sumi)}
+#invite-copy-code{align-self:flex-start;min-height:40px}
+.invite-link{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+#invite-url{font-family:var(--ui);font-size:13px;color:var(--ink-soft)}
+.invite-actions:has(#invite-share[hidden]){grid-template-columns:1fr}
+.invite-done{width:100%;margin-top:8px}
+.arrival-form{display:flex;gap:8px;margin-top:12px}
+.arrival-form input{flex:1 1 auto;min-width:0;font-family:var(--display);font-size:18px;letter-spacing:.08em;text-transform:uppercase}
+.arrival-form button{flex:0 0 auto}
+#arrival-key-status:not(:empty),#arrival-key-done{margin-top:10px}
+.arrival-sheet section+section:not([hidden]){margin-top:18px;padding-top:14px;border-top:1px solid var(--rule)}
