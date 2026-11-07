@@ -19,13 +19,15 @@ test('notes show their readings as ruby and are edited as raw notation',()=>{
   assert.match(app,/\$\("#dictionary-explanation"\)\.innerHTML=escapeText\("AI explanation: "\)\+rubyHtml\(/);
 });
 
-test('Echo’s note is one step away: remembered open, a jump link, and its tools inline',()=>{
-  assert.match(html,/<p id="word-meta" class="hint"><\/p><button data-ui="button" id="word-note-jump" class="link-button" type="button" hidden>Echo’s note ↓<\/button>/);
+test('Echo’s note is open near the top of the word sheet (WordNote), its tools inline',()=>{
   const sheet=html.slice(html.indexOf('<dialog id="word-dialog"'),html.indexOf('</dialog>',html.indexOf('<dialog id="word-dialog"')));
+  assert.doesNotMatch(sheet,/word-note-jump|<details id="word-more"/,'no jump link, no collapse');
+  const order=['id="word-title"','id="word-senses"','id="word-kanji"','id="word-more"','id="word-mine-head"','id="word-sentences"','class="kanji-say"','id="word-learn-nav"'].map(k=>sheet.indexOf(k));
+  assert.ok(order.every(i=>i>=0)&&order.every((i,n)=>n===0||i>order[n-1]),'header, senses, kanji, Echo’s note, your sentences, say a sentence, previous/next');
   assert.doesNotMatch(sheet,/<summary>More options<\/summary>/);assert.match(sheet,/<div class="word-note-more"><div class="word-note-manage">/);
-  assert.match(app,/\$\("#word-more"\)\.open=settings\.wordNoteOpen===true/);
-  assert.match(app,/settings\.wordNoteOpen=open;storePreference\("jp-echo-settings"/);
+  assert.doesNotMatch(app,/wordNoteOpen/);
   assert.match(app,/block\.querySelector\("\.adjust-link"\)\.hidden=true;panel\.hidden=false;text\.contentEditable="false"/);
+  assert.match(app,/\$\("#word-kanji-cells"\)\.replaceChildren\(\.\.\.chars\.map\(c=>kanjiCell\(c,kcover,kknown\)\)\)/,'each kanji opens its own sheet through the shared kanjiCell');
 });
 
 test('a waiting version switches only when the person taps Update now',()=>{
