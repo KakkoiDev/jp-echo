@@ -2325,11 +2325,17 @@ for(const tab of document.querySelectorAll("#search-scope [data-scope]"))tab.onc
 $("#search-back").onclick=()=>{if(history.state?.echo&&history.length>1)history.back();else showView(searchFrom)};
 // The sentence page has two actions up front (SentenceFocus): Play the loop
 // and "Tell Echo what to change". Everything else is in this MenuSheet.
-$("#sentence-more").onclick=()=>{if(!detail)return;$("#sentence-menu-quote").textContent=stripFurigana(preferredTarget(detail));renderFlagButton($("#sentence-flag"),detail);$("#sentence-menu").showModal()};
+$("#sentence-more").onclick=()=>{if(!detail)return;$("#sentence-menu-quote").textContent=stripFurigana(preferredTarget(detail));renderFlagButton($("#sentence-flag"),detail);$("#sentence-again").disabled=!hasTranslator();$("#sentence-menu").showModal()};
 $("#sentence-menu").addEventListener("click",event=>{if(event.target===$("#sentence-menu"))$("#sentence-menu").close()});
 // A row runs its action after the sheet closes, so a confirm opens on the page.
 $("#sentence-menu").addEventListener("click",event=>{if(event.target.closest?.(".menu-row"))$("#sentence-menu").close()},true);
 $("#sentence-register-toggle").onclick=()=>{const other=sentenceRegister(detail)==="polite"?"casual":"polite";$("#sentence-register").querySelector(`[data-register="${other}"]`)?.click()};
+// Write it again: a fresh wording of the same meaning, through the one
+// rewrite (Tell Echo what to change) with the instruction filled in. Both
+// versions show before Save; Save replaces this sentence, so only the new one
+// is practised (owner, 7 Nov). Its review schedule and history stay.
+const WRITE_AGAIN="Write it again: same meaning, fresh natural wording";
+$("#sentence-again").onclick=()=>{if(!detail||!hasTranslator())return;openEditor();$("#sentence-instruction").value=t(WRITE_AGAIN);rewriteDetailSentence();$("#sentence-change").scrollIntoView({block:"start",behavior:"smooth"})};
 $("#sentence-edit").onclick=()=>{openEditor();$("#sentence-change").scrollIntoView({block:"start",behavior:"smooth"})};
 $("#sentence-furigana").onclick=()=>{openEditor();$("#sentence-edit-readings").scrollIntoView({block:"center",behavior:"smooth"});$("#sentence-edit-readings").focus({preventScroll:true})};
 // The "In it" rows say what they hold before they are opened.
