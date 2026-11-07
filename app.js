@@ -123,9 +123,14 @@ function setInputLang(code){inputLang=code;applyLanguageUI();setupRecognition()}
 // The interface follows the language you write in, because that is the one
 // you know. English is the language the strings are written in, so it needs no
 // catalogue and no fetch.
+const UI_CATALOGUES=new Set(["ja"]);  // i18n/<code>.js, each also in sw.js ASSETS
 async function applyLanguage(){
   const code=sourceLang();
-  if(code==="en"){setDictionary(null);applyI18n();return}
+  // Only the catalogues that exist are asked for. Safari reports a missing
+  // one (a 404) as "Importing a module script failed" on the error panel even
+  // though the failure is caught here, so a French or Spanish learner saw it
+  // on every start.
+  if(!UI_CATALOGUES.has(code)){setDictionary(null);applyI18n();return}
   try{const module=await import(`./i18n/${code}.js`);setDictionary(module.default)}
   catch{setDictionary(null)}  // no catalogue for that language yet: stay in English
   applyI18n();

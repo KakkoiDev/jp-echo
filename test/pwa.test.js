@@ -1,4 +1,4 @@
-import test from 'node:test';import assert from 'node:assert/strict';import {readFileSync,existsSync} from 'node:fs';import vm from 'node:vm';
+import test from 'node:test';import assert from 'node:assert/strict';import {readFileSync,existsSync,readdirSync} from 'node:fs';import vm from 'node:vm';
 const script=readFileSync(new URL('../sw.js',import.meta.url),'utf8');
 // Follow the shipped cache name, so bumping it does not need a test edit.
 const CURRENT=script.match(/const CACHE="(jp-echo-v\d+)"/)[1],PREVIOUS='jp-echo-v'+(Number(CURRENT.slice(9))-1);
@@ -60,4 +60,12 @@ test('a module that fails only in this browser is named on the error panel',()=>
  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
  assert.match(html,/for\(const path of paths\.filter\(p=>p!=='app\.js'\)\)try\{await import\('\/'\+path\)\}catch\(e\)\{failed=path\+/,'each module is imported on its own, app.js excepted');
  assert.match(html,/Failing here: /);
+});
+
+test('the interface asks only for language catalogues that exist (a 404 import broke Safari)',()=>{
+ const app=readFileSync(new URL('../app.js',import.meta.url),'utf8'),sw=readFileSync(new URL('../sw.js',import.meta.url),'utf8');
+ const listed=JSON.parse(app.match(/const UI_CATALOGUES=new Set\((\[[^\]]*\])\)/)[1]);
+ assert.match(app,/if\(!UI_CATALOGUES\.has\(code\)\)\{setDictionary\(null\);applyI18n\(\);return\}\s*try\{const module=await import\(`\.\/i18n\/\$\{code\}\.js`\)/);
+ for(const code of listed){assert.ok(existsSync(new URL(`../i18n/${code}.js`,import.meta.url)),code+' exists');assert.ok(sw.includes(`"./i18n/${code}.js"`),code+' is cached offline')}
+ for(const file of readdirSync(new URL('../i18n/',import.meta.url)))assert.ok(listed.includes(file.replace(/\.js$/,'')),file+' is listed');
 });
