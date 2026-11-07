@@ -1930,3 +1930,18 @@ header .header-search+#settings-button{margin-left:-4px}
 .filter-sheet-hint{margin:12px 0 0;font-size:12px;line-height:1.6}
 #library-filter-sheet .dialog-actions{margin-top:14px;grid-template-columns:1fr}
 #library-filter-sheet .dialog-actions button{width:100%;min-height:48px}
+/* November close-out: WordNote. The word large on the left, its reading and
+   chips beside it; senses; its kanji; Echo's note open; your sentences; say one. */
+.word-head{gap:14px;padding-top:12px}
+.word-head .point-title{font-weight:400;font-size:40px;line-height:1.1;flex:0 0 auto}
+.word-head-side{gap:5px;padding-top:4px}
+.word-head-side .point-gloss{font-size:15px}
+.word-kanji{display:flex;align-items:center;gap:8px;margin:12px 22px 0}
+.word-kanji-cells{display:flex;gap:8px;flex:0 0 auto}
+#word-dialog .word-kanji .kanji-cell{width:44px;height:44px;min-height:44px;font-size:20px}
+.word-kanji-caption{font-size:12px;color:var(--ink-muted);min-width:0}
+.word-note-section{margin:16px 22px 0;padding-top:14px;border-top:1px solid var(--rule)}
+.word-note-section>#word-note-title{margin:0 0 6px;color:var(--seal-deep)}
+.word-note-section .note-block{margin:0}
+.word-note-section .note-head .overline{color:var(--seal-deep)}
+#word-dialog #word-meta{margin:8px 22px 0}

@@ -103,7 +103,9 @@ test("discussion: starter scenes fill the box and never send", () => {
 });
 
 test("sheets: your sentences, then say, then the collapsed note, then the learn footer", () => {
-  for (const [prefix, notes, collapsed] of [["kanji", "kanji-story", true], ["word", "word-note", true], ["grammar", "point-notes", false]]) {
+  // The word sheet follows WordNote (close-out B13: Echo's note open near the
+  // top) and is held in test/notes-ux.test.js.
+  for (const [prefix, notes, collapsed] of [["kanji", "kanji-story", true], ["grammar", "point-notes", false]]) {
     const start = html.indexOf(`<dialog id="${prefix}-dialog"`), sheet = html.slice(start, html.indexOf("</dialog>", start));
     const at = id => sheet.indexOf(`id="${id}"`);
     const order = [`${prefix}-mine-head`, `${prefix}-say`, notes, `${prefix}-learn-nav`].map(at);
