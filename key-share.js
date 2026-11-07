@@ -9,7 +9,7 @@
 // an unlock code that the sender passes on separately.
 //
 //   unlock code ──PBKDF2-SHA256 (600k rounds, random salt)──▶ AES-256 key
-//   {provider, key, model?} ──AES-GCM (random IV)──▶ ciphertext
+//   {provider, key, model?, speech?} ──AES-GCM (random IV)──▶ ciphertext
 //   link: https://echo.kakkoi.dev/#key=v1.<salt>.<iv>.<ciphertext>  (base64url)
 //
 // The salt and IV are random per link and not secret. Everything depends on
@@ -66,7 +66,8 @@ export class KeyShareError extends Error {
 
 export const isSupported = () => !!((globalThis.isSecureContext ?? true) && globalThis.crypto?.subtle);
 
-// payload: {provider, key, model?}; days: a number, or 0 for no expiry.
+// payload: {provider?, key?, model?, speech?: {groq}}: an AI key, a Groq
+// speech key, or both. days: a number, or 0 for no expiry.
 // Returns {token, code}: the token goes after '#key=', the code is shown to the sender.
 export async function sealKey(payload, days = 0, now = Date.now()) {
   if (!isSupported()) throw new KeyShareError("unsupported");
@@ -104,7 +105,8 @@ export async function openKey(token, code, now = Date.now()) {
   let body;
   try { body = JSON.parse(new TextDecoder().decode(plain)); }
   catch { throw new KeyShareError("malformed"); }
-  if (!body?.provider || !body?.key) throw new KeyShareError("malformed");
+  const ai = !!(body?.provider && body?.key), speech = !!body?.speech?.groq;
+  if (!ai && !speech) throw new KeyShareError("malformed");
   if (body.exp && now > body.exp) throw new KeyShareError("expired");
   return body;
 }

@@ -55,3 +55,20 @@ test('Invite boards (8 Nov): hairline sheet edge, one filled button, quiet Done/
  assert.match(css,/\.invite-done\{[^}]*border-color:var\(--hairline\);color:var\(--ink-soft\)\}/);
  assert.match(app,/it is 12 letters and numbers\./);
 });
+
+test('one invite carries the AI key, the Groq speech key, or both',async()=>{
+ const both=await sealKey({provider:'google',key:'g-key',speech:{groq:'gsk_test'}},30);
+ const body=await openKey(both.token,both.code);
+ assert.equal(body.key,'g-key');assert.equal(body.speech.groq,'gsk_test');
+ assert.doesNotMatch(both.token,/gsk_test/,'the speech key is not readable in the link either');
+ const speechOnly=await sealKey({speech:{groq:'gsk_only'}},7);
+ assert.equal((await openKey(speechOnly.token,speechOnly.code)).speech.groq,'gsk_only');
+ const empty=await sealKey({},7);
+ await assert.rejects(openKey(empty.token,empty.code),e=>e.code==='malformed','a link with no key at all is refused');
+ const app=read('app.js');
+ assert.match(app,/groq=settings\.speechKeys\?\.groq/,'the sender\'s Groq key goes in the link');
+ assert.match(app,/if\(groq\)settings\.speechKeys=\{\.\.\.\(settings\.speechKeys\|\|\{\}\),groq:String\(groq\)\}/,'the arrival saves it as the speech key');
+ assert.match(app,/if\(shared\.speech&&settings\.speechKeys\?\.groq\)settings\.speechKeys=\{\.\.\.settings\.speechKeys,groq:""\}/,'and it expires with the AI key');
+ const backup=exportBackup([],{speechKeys:{groq:'gsk_shared'},sharedKey:{speech:true,exp:1}},[]);
+ assert.equal(JSON.stringify(backup).includes('gsk_shared'),false,'never in an export');
+});

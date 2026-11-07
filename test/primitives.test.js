@@ -55,3 +55,10 @@ test('a themed picture shows the drawing for the active theme, including a force
 test('the new primitives are documented before any screen uses them',()=>{
  for(const name of ['ToolShelf','HeaderSearch','FilterButton','AnchorStrip'])assert.match(doc,new RegExp('### '+name));
 });
+
+test('the settings gear is drawn like the search glyph: a line, not a filled cog',()=>{
+ const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+ const gears=html.match(/<svg class="gear-glyph"[^]*?<\/svg>/g)||[];
+ assert.equal(gears.length,2,'the header button and the desktop rail');
+ for(const gear of gears){assert.match(gear,/viewBox="0 0 16 16" fill="none"/);assert.doesNotMatch(gear,/fill="currentColor"/);assert.match(gear,/stroke-width="1\.3"/)}
+});
