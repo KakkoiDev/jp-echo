@@ -52,4 +52,6 @@ export function answerDrill(state, picked) {
 }
 export function nextDrill(state) { return {...state, index: state.index + 1, answered: null}; }
 export const drillDone = state => state.index >= state.queue.length;
-export const drillProgress = state => ({n: Math.min(state.index + 1, state.total), total: state.total, repeat: state.index >= state.total});
+// toRepeat: misses still queued for the end of the round (DrillMiss: "4 / 10 · 1 to repeat").
+export const drillProgress = state => ({n: Math.min(state.index + 1, state.total), total: state.total, repeat: state.index >= state.total,
+  toRepeat: Math.max(0, state.queue.length - Math.max(state.total, state.index + 1))});

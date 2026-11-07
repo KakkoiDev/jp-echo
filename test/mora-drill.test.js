@@ -23,8 +23,9 @@ test('choices are four of the same kind, so the corner mark never gives a voiced
 test('a miss shows the answer and comes back once at the end; only first tries count',()=>{
  let s=startDrill(['く','さ']);
  s=answerDrill(s,'か');assert.equal(s.answered.right,false);assert.deepEqual(s.queue,['く','さ','く']);assert.deepEqual(s.misses,['く']);
+ assert.equal(drillProgress(s).toRepeat,1,'DrillMiss: "1 / 2 · 1 to repeat"');
  s=nextDrill(s);s=answerDrill(s,'さ');s=nextDrill(s);
- assert.deepEqual(drillProgress(s),{n:2,total:2,repeat:true});
+ assert.deepEqual(drillProgress(s),{n:2,total:2,repeat:true,toRepeat:0});
  s=answerDrill(s,'か');assert.deepEqual(s.queue,['く','さ','く'],'a second miss does not queue again');
  s=nextDrill(s);assert.ok(drillDone(s));assert.equal(s.firstTry,1);
 });
