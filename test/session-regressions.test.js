@@ -137,7 +137,7 @@ test("reading echo uses only the existing voice list and no undefined voice help
 test("Mora page teaches combined sounds with their own anchors, and sokuon",()=>{
   assert.match(html,/<div id="mora-section-combined" class="mora-section" hidden>/);assert.match(html,/<div id="mora-yoon-table" class="mora-table" lang="ja"><\/div>/);
   assert.match(html,/じょ is a giant 醤油, びょ a giant 豹/);assert.match(html,/<div class="mora-mark-key" lang="ja">[\s\S]*?゛ 巨大<\/strong><span lang="en">giant and heavy<\/span>[\s\S]*?゜ 風船<\/strong><span lang="en">a balloon that pops<\/span>/,"MoraVoiced: one card per mark");assert.match(app,/word\.append\(el\("span","mora-modifier",mark==="巨大"\?"巨大な":"風船の"\)\)/);assert.doesNotMatch(html,/in mud|泥 <span/);
-  assert.match(html,/きって = 木 → 手×2/);
+  assert.match(html,/Small っ<\/p>[\s\S]*?It doubles the next sound/);assert.match(app,/picture\("て",30\)\+picture\("て",30\)\+'<span lang="ja">手 ×2<\/span>'/,"MoraSpecials: きって = 木 → 手 ×2, drawn");
 });
 
 
