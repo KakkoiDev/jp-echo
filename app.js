@@ -1542,7 +1542,9 @@ function renderDetail(){queueMicrotask(()=>renderInItSummaries());if(!detail)ret
     li.innerHTML='<span class="when">'+escapeText(row.when)+'</span><span class="detail">'+(row.echoes===null?"":'<span class="echoes">'+row.echoes+" echoes</span>")+'<span class="rating-chip '+row.className+'">'+escapeText(row.rating)+"</span></span>";return li}));
   const lapses=reviews.filter(entry=>entry.rating==="again").length;
   $("#sentence-history-note").textContent=lapses?"A review was marked Again "+(lapses===1?"once":spell(lapses)+" times")+".":reviews.length?"Reviewed correctly every time so far.":"Not reviewed yet — it is waiting in the queue.";
-  {const last=reviews[reviews.length-1];$("#sentence-history-count").textContent=(reviews.length?reviews.length+(reviews.length===1?" review":" reviews"):"No reviews yet")+" · "+(Number(detail.echoCount)||0)+" echoes"+(last?" · last "+formatDate(last.at):"")}
+  // SentenceFocus: the echo count lives in the History row's line, visible
+  // without opening it ("Made 2 Oct · 12 echoes").
+  {const echoes=Number(detail.echoCount)||0;$("#sentence-history-count").textContent=t("Made {date}",{date:formatDate(detail.createdAt)})+" · "+(echoes===1?t("1 echo"):t("{n} echoes",{n:echoes}))}
   $("#sentence-play").disabled=false}
 let editorGeneration=0,rewrittenDraft=null,editorOpenId=null;
 function openEditor(){$("#sentence-reading-status").textContent="";editorOpenId=detail?.id||null;editorGeneration++;
@@ -2246,7 +2248,10 @@ async function renderNotes(){const entries=await wordNotes();$("#notes-count").t
     open.onclick=async()=>openWord(word,wordCoverage(await listSentences()));li.append(open);return li}))}
 // One quiet control names the filter; its sheet holds search, Cards, Sort and
 // Direction, which commit on change as they always have.
-function libraryFilterSummary(){const filter=$("#history-filter"),query=$("#history-search").value.trim(),order=(ORDER_LABELS[$("#history-order").value+"-"+$("#history-direction").value]||"").replace(/ first$/,"");
+// LibraryFilter: Direction names what it does for the chosen sort
+// ("Newest first", "Most echoes", "English A–Z"), so it never truncates.
+function syncDirectionLabels(){const order=$("#history-order").value;for(const option of $("#history-direction").options)option.textContent=t(ORDER_LABELS[order+"-"+option.value]||option.textContent)}
+function libraryFilterSummary(){syncDirectionLabels();const filter=$("#history-filter"),query=$("#history-search").value.trim(),order=(ORDER_LABELS[$("#history-order").value+"-"+$("#history-direction").value]||"").replace(/ first$/,"");
   return [query?"“"+query+"”":"",filter.options[filter.selectedIndex]?.text||"",order].filter(Boolean).join(" · ")}
 wireFilterButton($("#library-filter"),$("#library-filter-sheet"));
 $("#library-filter-done").onclick=()=>$("#library-filter-sheet").close();

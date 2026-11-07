@@ -251,7 +251,7 @@ test("sentence page: the key, the echo row, the tiles, the rows and the foot fol
   assert.match(app, /label=el\("span","skill-label",done\?meta\.past:mode===next\?"next: "\+meta\.title\.toLowerCase\(\):meta\.verb\)/, "tile labels: heard / read / next: write it");
   assert.match(app, /skillGlyph\(mode,\{state:done\?"filled":mode===next\?"inactive":"default",size:30\}\)/);
   assert.match(css, /\.skill-tile\[data-next\]\{border-color:var\(--seal\)\}/);
-  assert.match(app, /\(reviews\.length\?reviews\.length\+\(reviews\.length===1\?" review":" reviews"\):"No reviews yet"\)\+" · "\+\(Number\(detail\.echoCount\)\|\|0\)\+" echoes"/, "History meta: reviews · echoes · last date");
+  assert.match(app, /\$\("#sentence-history-count"\)\.textContent=t\("Made \{date\}",\{date:formatDate\(detail\.createdAt\)\}\)\+" · "\+\(echoes===1\?t\("1 echo"\):t\("\{n\} echoes",\{n:echoes\}\)\)/, "History meta (SentenceFocus, close-out B6): Made <date> · <n> echoes");
   assert.match(css, /\.collapse-title\{grid-column:1;font-size:14px;color:var\(--sumi\)\}/);
   const page = html.slice(html.indexOf('<section id="sentence-view"'), html.indexOf("</section>", html.indexOf('<section id="sentence-view"')));
   assert.match(page, /<p class="hint sentence-menu-note">Casual \/ polite, editing, furigana, flag, find missing references and delete are in ⋯\.<\/p>/, "the page says where the rest went");
