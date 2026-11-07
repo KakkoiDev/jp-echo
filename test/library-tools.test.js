@@ -30,3 +30,8 @@ test('Echo’s notes: a 記 row in Library and its own route that survives reloa
  assert.match(app,/sort\(\(a,b\)=>String\(b\.note\.made\)\.localeCompare\(String\(a\.note\.made\)\)\)/,'newest first');
  assert.match(app,/entries\.slice\(0,3\)/,'the row shows the three newest');
 });
+
+test('Echo’s notes row never cuts a word chip in half: extra chips wrap onto a clipped line',()=>{
+ const css=readFileSync(new URL('../styles.css',import.meta.url),'utf8');
+ assert.match(css,/\.library-notes-words\{display:flex;flex-wrap:wrap;gap:12px 6px;min-width:0;max-height:36px;overflow:hidden\}/);
+});
