@@ -85,7 +85,7 @@ render/
 htmx-adapter.js    intercept/local request adapter and history integration
 ```
 
-Keep `api.js`, `core.js`, `db.js`, `srs.js`, `speech.js`, dictionary/data modules.
+Keep `api.js`, `core.js`, `db.js`, `review.js`, `speech.js`, dictionary/data modules.
 
 ## Saving contract
 

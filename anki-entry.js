@@ -1,7 +1,7 @@
 import initSqlJs from "sql.js";
 import {Deck,Model,Package} from "genanki-js";
 import JSZip from "jszip";
-import {ankiSchedule} from "./anki-schedule.js";
+import {ankiSchedule} from "./review.js";
 
 const DECK_ID=2059400110;
 const MODEL_ID=2059400111;

@@ -99,10 +99,20 @@ Change these rules in JP Core first and bring the copy over in the same change.
 The synchronized JP Core revision is
 `b6956d9fbc5fb454e4516b1d67537faf8c1c3467`.
 
+review.js is JP Core's `browser/review.js`, copied unchanged: the FSRS
+schedule (ts-fsrs 5.4.2 vendored inside, with Echo's parameters), the 聴 読 書
+rotation (`reviewTrack`), review counts and the Anki card mapping. Minihongo
+uses the same file, so a sentence's review state means the same in both apps.
+Echo keeps what it shows and how it picks a session in review-modes.js — the
+skill glyphs and copy, the daily limits and the session order. Change
+scheduling in JP Core first; a change there moves every learner's due dates.
+The synchronized JP Core revision for review.js is
+`363fb53952082b04d321087d7de48743e324dff6`.
+
 ## Layout
 
     index.html app.js styles.css   the app itself
-    core.js diff.js srs.js db.js   sentence rules, the answer diff, scheduling, storage
+    core.js diff.js review.js db.js  sentence rules, the answer diff, scheduling, storage
     api.js speech.js reminders.js  translation, the loop and dictation, due reminders
     sw.js manifest.webmanifest     offline shell and install
     docs/                          the landing page, published beside the app

@@ -16,7 +16,7 @@
 export const DEFAULT_TIME = "20:00";
 export const REMINDER_TAG = "echo-due";
 
-// The same rule as srs.js isDue, kept here so the service worker — which
+// The same rule as review.js isDue, kept here so the service worker — which
 // cannot import a module — has a one-line copy to match. test/reminders.test.js
 // asserts the two agree.
 export function isDueRecord(sentence, now = Date.now()) {

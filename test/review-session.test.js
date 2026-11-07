@@ -31,7 +31,7 @@ test('limits normalize to nonnegative whole numbers and preserve zero',()=>{
 
 test('starting a session applies saved limits to the real due queue',async()=>{
  const {readFileSync}=await import('node:fs');
- const {dueSentences}=await import('../srs.js');
+ const {dueSentences}=await import('../review.js');
  const source=readFileSync(new URL('../app.js',import.meta.url),'utf8');
  const body=source.match(/async function startReview\(\)\{(.*?)\}\nfunction reviewJapanese/s)[1];
  const items=[card('n',0),card('r',2),card('future',2)].map(x=>({...x,srs:{...x.srs,due:x.id==='future'?'2099-01-01T00:00:00Z':'2020-01-01T00:00:00Z'}}));
@@ -43,7 +43,7 @@ test('starting a session applies saved limits to the real due queue',async()=>{
 
 test('navigation badge reflects session limits rather than the entire backlog',async()=>{
  const {readFileSync}=await import('node:fs');
- const {dueSentences}=await import('../srs.js');
+ const {dueSentences}=await import('../review.js');
  const source=readFileSync(new URL('../app.js',import.meta.url),'utf8');
  const body=source.match(/async function refreshDueBadge\(\)\{([^\n]*)\}/)[1];
  const items=Array.from({length:100},(_,id)=>({...card(id,2),srs:{state:2,due:'2020-01-01T00:00:00Z'}}));

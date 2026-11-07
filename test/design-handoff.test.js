@@ -58,7 +58,8 @@ test("sentence page: design order, collapsed history and change, quiet delete", 
 });
 
 test("the due line names the next card and what it will ask", async () => {
-  const {dueLine, recordReviewMode, ensureReviewTrack} = await import("../review-modes.js");
+  const {dueLine} = await import("../review-modes.js");
+  const {recordReviewMode, ensureReviewTrack} = await import("../review.js");
   let s = ensureReviewTrack({id: "a"});
   assert.equal(dueLine(s, "now"), "Due now, as a listening card — you will hear it with no text.");
   s = recordReviewMode(recordReviewMode(s, "ok"), "ok");
