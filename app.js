@@ -21,7 +21,8 @@ import {STORIES} from "./stories.js";
 import {coverage as kanjiCoverage,facts as kanjiFacts,jlptBands as kanjiBands,learned as kanjiLearned,LEVEL_LABELS,levelOf,nextUnmet,sentenceKanji,TOTAL as KANJI_TOTAL} from "./kanji.js";
 import {searchGrammar,searchKanji,searchWords} from "./lookup.js";
 import {loadFamilyCurriculum,familyTopics,findFamilies,familyThemes,exampleLibraryIndex,exampleState,familyProgress,familyVocabulary} from "./kanji-families.js";
-import {ALL as REFERENCE_WORDS,setImportedWords,bands as wordBands,carries as carriesWord,coverage as wordCoverage,kindOf,learned as wordLearned,levelOf as wordLevel,marks as wordMarks,sentenceWords,wordSpans,TOTAL as WORD_TOTAL,word as wordById} from "./words.js";
+import {ALL as REFERENCE_WORDS,setImportedWords,bands as wordBands,carries as carriesWord,coverage as wordCoverage,kindOf,learned as wordLearned,levelOf as wordLevel,marks as wordMarks,sentenceWords,wordSpans,TOTAL as WORD_TOTAL,word as wordById,addLookupWords} from "./words.js";
+import {createDictionary} from "./dictionary.js";
 import {wordNoteParts,deleteNote as dbDeleteNote,forBackup,getNote,listNotes,makeNote,mergeNotes,noteKey,putNote as dbPutNote,replaceNotes as dbReplaceNotes} from "./notes.js";
 import {downloadAnkiDeck} from "./anki-export.js";
 import {dueSentences,ensureSchedule,isDue,reviewSentence} from "./srs.js";
@@ -1905,9 +1906,18 @@ function enableReviewVocabulary(sentence,target){enableVocabulary($("#review-jap
 // Grammar is shown only where a host is given: the sentence page and the
 // revealed review answer. Lists, sheets, Discussion and Reading keep word
 // lookup but no grammar UI, so nothing is injected into a row or bubble.
-function enableVocabulary(root,target,lang=targetLang(),sentence=null,{grammarHost=null,explain=false}={}){
+// Uncommon words come from dict/ when a sentence needs them (dictionary.js).
+const dictionary=createDictionary();
+function enableVocabulary(root,target,lang=targetLang(),sentence=null,{grammarHost=null,explain=false,lookedUp=false}={}){
   if(!root||lang!=="ja")return;
-  const plain=stripFurigana(target),analysis=grammarAnalysisCache.get(plain)||(sentence?.grammarAnalysis||[]).find(a=>a.text===plain);
+  // Kept so a redraw after a lookup starts from the same markup, not from
+  // the marks this pass adds.
+  if(!lookedUp)root.__vocabularyMarkup=root.innerHTML;
+  const plain=stripFurigana(target);
+  if(!lookedUp){const drawn=new Set(wordSpans(plain).map(span=>span.id));
+    dictionary.wordsFor(plain).then(found=>{addLookupWords(found);if(!root.isConnected||!wordSpans(plain).some(span=>!drawn.has(span.id)))return;
+      root.innerHTML=root.__vocabularyMarkup;enableVocabulary(root,target,lang,sentence,{grammarHost,explain,lookedUp:true})}).catch(()=>{})}
+  const analysis=grammarAnalysisCache.get(plain)||(sentence?.grammarAnalysis||[]).find(a=>a.text===plain);
   const customSpans=customReferenceSpans(plain,importedCatalogues.references||[]);
   const vocabulary=[...wordSpans(plain).filter(span=>!customSpans.some(other=>span.start<other.end&&span.end>other.start)),...customSpans],grammar=(analysis?.spans||[]).filter(s=>grammarPoint(s.id)&&plain.slice(s.start,s.end)===s.quote);
   const edges=[...new Set([...vocabulary,...grammar].flatMap(h=>[h.start,h.end]))].sort((a,b)=>a-b),hits=[];
