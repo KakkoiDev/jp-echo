@@ -1,6 +1,9 @@
 # Echo Reader — specification (draft)
 
-> **Status: draft, paused 2026-10-03.** No code has been written yet. The
+> **Status: draft, paused 2026-10-03.** No code has been written yet.
+> **8 Nov: the Echo-side boards exist** (canvas row "Saved words": SavedStates,
+> LibraryToolsSaved, SavedWords, SavedWordsEmpty, WordSaved, WordUnsaved) and
+> §4.4, §7.3, §9, §12 and §13.2 follow them. The reader pane (§7) is not drawn. The
 > research behind this draft is done for Echo's library, words, notes and
 > backup, for the GitHub gist API, and for Yomitan's lookup engine. Not done
 > yet: a read of webmods' conventions beyond `CLAUDE.md`, live checks of
@@ -43,6 +46,7 @@ written for Echo**. Yomitan is GPL-3.0, so its tables are not copied.
 | R3 | The remember note is written **by Echo**, at the reader's explicit request, and syncs back. Writing it inside the pane is a later milestone (M8). | recommended, awaiting confirmation |
 | R4 | The conjugation engine is a **shared Echo module** (`deinflect.js`). Echo's own word matching moves onto it too. | recommended, awaiting confirmation |
 | R5 | The script reuses Echo code through a **generated classic-script bundle** (`reader-core.js`) built from Echo's modules, never a hand copy | recommended |
+| D6 | **Saved is a mark, not a state.** A new reusable `SavedMark` (a drawn bookmark) shows it; met and learned keep their chips and still come only from sentences. The way in is a 栞 *Saved words · N* row under 記 Echo's notes, opening its own screen at `/words?saved=1`. Never a value in the Cards filter. | design, 8 Nov (canvas row "Saved words") |
 
 ---
 
@@ -411,11 +415,26 @@ furigana. The result is the saved word's context sentence.
   contains no key named like `token`, `key` or `gistUrl`.
 
 ### 4.4 Interaction with review and coverage
-- **Review and SRS:** no change. A saved word is not a card.
-- **Word state:** the sheet's states become **saved**, **met**, **learned**
-  and **unmet**. Saved means saved, with no sentence yet. Met and learned still
-  come only from sentences (words.js:70-92). `STATE_LABELS` (app.js:360) gains
-  "Saved".
+- **Review and SRS:** no change. A saved word is not a card: it never reaches
+  the review queue, the due badge, the Cards filter or the grammar tagger.
+- **Word state is unchanged:** unmet, met and learned, from sentences only
+  (words.js:70-92). `STATE_LABELS` does **not** gain "Saved".
+- **Saved is a mark beside the state** (D6, board SavedStates):
+  - unmet + saved: the mark, no chip;
+  - met + saved: the mark and the Met chip;
+  - learned + saved: the mark and the Learned chip.
+- **`SavedMark`** (components.js, documented in COMPONENTS.md): a drawn
+  bookmark, viewBox 12×16, stroke 1.4. Not saved: a `--sumi` outline. Saved:
+  filled `--seal`.
+  - On the word sheet it is an IconButton with `aria-pressed` (the ON state is
+    the seal-tint one the flag uses), labelled "Save word" / "Saved — remove
+    from saved words".
+  - In rows (Search results, the Words map, Echo's notes, Saved words) it is
+    the 12px mark, never a button.
+- **Remove** sets `removedAt` (a tombstone, §5.4). The word leaves the Saved
+  words list quietly, with no toast. The sheet shows "Removed from saved
+  words." in its status line, and the contexts drop out of view; they stay on
+  the record, so saving again brings them back.
 
 ---
 
@@ -591,26 +610,39 @@ Nothing runs until the first trigger in a tab.
 - **Isolation:** one host element `<echo-reader>` holding a **closed shadow
   root**, so page CSS can't reach in and the reader's CSS can't leak out.
 
-### 7.3 Content per entry (mirrors `openWord`; same order, same words)
-1. A chip row:
-   - JLPT level;
-   - state: Saved, In a sentence, Learned, or Not met yet;
-   - kind (from `kindOf`);
-   - and in the reader only, the trace in small caps: *causative · passive ·
-     past*.
-2. The title (`w`) in `--display`, with its reading.
-3. *Also written …*.
-4. Senses as an `<ol>`.
-5. *In N of your sentences*, when the pulled backup has sentences that contain
-   the word (worked out with Echo's matcher from the bundle).
-6. **A way to remember it**: the note text with *Echo's / Yours* attribution,
-   or the pending line, or nothing.
-7. The context sentence, with the word marked the way Echo marks
-   `.review-vocab`.
-8. Actions:
-   - **Save to Echo**, which turns into *Saved ✓ · Remove*;
-   - **Open in Echo**, which opens `https://echo.kakkoi.dev/words/<id>`;
-   - **Hear**: `speechSynthesis` with a `ja-JP` voice and Echo's default rate.
+### 7.3 Content per entry (mirrors the word sheet; same order, same words)
+**Not drawn yet.** The reader pane waits for this spec to be resumed. It must
+follow the Echo word sheet as drawn on WordNote and WordSaved:
+1. **Header:** the word in `--display`, with its reading and chips beside it
+   (JLPT level, kind, and Met or Learned when earned). In the reader only, the
+   trace in small caps (*causative · passive · past*). The `SavedMark` toggle
+   sits in the header.
+2. *Also written …*, then the senses 一 二 三.
+3. **Status line**, when saved: "Saved 6 Nov · from the reader. Saving never
+   adds a review card."
+4. Its kanji.
+5. **Echo's note:** "how to say it", then "Echo's note — the kanji", or the
+   pending line, or nothing.
+6. *In N of your sentences*, when the pulled backup has sentences that contain
+   the word.
+7. **The context being saved**, with the word marked as `.review-vocab`
+   marks it.
+8. **Actions:** the `SavedMark` toggle; *Open in Echo*
+   (`https://echo.kakkoi.dev/words/<id>`); *Hear* (`speechSynthesis`, a `ja-JP`
+   voice, Echo's default rate).
+
+On the Echo sheet the order is (board WordSaved):
+1. the header with the save toggle;
+2. senses;
+3. the status line;
+4. kanji;
+5. Echo's note;
+6. Your sentences with it;
+7. Say a sentence;
+8. **Where you saved it · N**: up to 5, newest first. Each context shows the
+   sentence with the word marked, then "title · domain/path · date", or
+   "Sentence only · date" for a context saved without an address;
+9. **Remove from saved words**, at the foot.
 
 ### 7.4 Visual language (Echo's, not a generic popup)
 - **Tokens:** `tools/build-reader-core.mjs` extracts the `:root` custom
@@ -739,9 +771,9 @@ path follows docs/DEVELOPMENT.md:12.
 | `saved-words.js` (new) | §4.2 | `test/saved-words.test.js`: make, validate, merge (tie, tombstone, re-save, contexts cap, determinism) |
 | `reader-sync.js` (new) | Pull all `echo-reader-*.json`, merge through wrappers, note requests (§5.5, §6) | `test/reader-sync.test.js` with a fake `fetchImpl` |
 | `gist-backup.js` | `downloadBackup` also returns `files` (all reader files, reading `raw_url` when truncated) | `test/gist-backup.test.js` |
-| `app.js` | `saveWord` and `removeWord` wrappers; `buildBackup` adds `words`; `importBackupData` merges words; library *Saved words* row and list; word sheet Save / Remove, saved state and contexts; `openWord` syncs the route (fixes research-library §7.1); empty states; Settings → Backup reader line | `test/ux-library.test.js`, `test/gist-backup.test.js` (wrapper regex, `buildBackup` regex), `test/routes.test.js` |
-| `routes.js` | `/library?filter=words` (round-trips already: routes.js:23, 39). Add `<option value="words">` to `#history-filter`, or use a `.library-tool` row. Pick one (§13). | `test/routes.test.js` |
-| `index.html`, `styles.css` | The saved-words list reuses `.point-row`. A saved state chip `data-state="saved"` reuses `.status-chip` with existing tokens only. | `test/design-handoff.test.js`: no raw colours |
+| `app.js` | `saveWord` and `removeWord` wrappers; `buildBackup` adds `words`; `importBackupData` merges words; the 栞 *Saved words · N* row under 記 Echo's notes (board LibraryToolsSaved) and the Saved words screen at `/words?saved=1` (SavedWords: the mark, word, reading · gloss, a Met / Learned chip if earned, the latest context and its source line; SavedWordsEmpty: the 栞 tile, how to save, "Saving never adds a review card.", an outlined *Open the Words wall*); word sheet Save / Remove, saved state and contexts; `openWord` syncs the route (fixes research-library §7.1); empty states; Settings → Backup reader line | `test/ux-library.test.js`, `test/gist-backup.test.js` (wrapper regex, `buildBackup` regex), `test/routes.test.js` |
+| `routes.js` | `/words?saved=1` opens the Saved words screen, the same pattern as Echo's notes (`/words?notes=1`); its own view, so the Library list keeps holding sentences only (research-library §7.2). No value in the Cards filter. | `test/routes.test.js` |
+| `components.js`, `COMPONENTS.md`, `index.html`, `styles.css` | `SavedMark` (§4.4): one drawn bookmark, existing tokens only, as a 12px row mark or an `aria-pressed` IconButton. Saved-word rows reuse the Echo's notes row (`.notes-row`). No new chip and no raw colours. | `test/primitives.test.js`, `test/design-handoff.test.js`: no raw colours |
 | `actions.js` | `saveWord` action with an injectable `save` | `test/actions.test.js` |
 | `tools/build-reader-core.mjs` (new), `reader-core.js` (generated) | IIFE bundle exposing `EchoReaderCore {buildIndex, lookupAt, deinflect, kindOf, levelOf, makeSavedWord, mergeWords, mergeNotes, noteKey, parseGistId, coverage, tokensCss}` (M8 adds `writeWordNote` and `adjustNote`) | `test/reader-core.test.js`: rebuild equals the committed file; the bundle loads under `vm` with no `export` |
 | `sw.js` | Add new modules to `ASSETS`; bump `CACHE` (currently `jp-echo-v130`) and the `styles.css?v=` query | `test/pwa.test.js` |
@@ -817,7 +849,7 @@ path follows docs/DEVELOPMENT.md:12.
 |---|---|---|---|
 | M1 | jp-echo | `deinflect.js` + `lookup.lookupAt` + `japanese-words.js` moved onto it + gloss entity fix | §3.6 table green; the Words page counts the gap cases; all 335 existing tests pass |
 | M2 | jp-echo | `saved-words.js`, wrappers, `buildBackup.words`, import merge, DECK-FORMAT | Merge and validation tests; a backup round-trip keeps words and tombstones |
-| M3 | jp-echo | Library *Saved words* list; word sheet Save / Remove, contexts, saved state; `openWord` route sync | UX and route tests; light, dark and narrow screenshots |
+| M3 | jp-echo | 栞 Saved words row and `/words?saved=1` screen with its empty state; `SavedMark`; word sheet save toggle, status line, Where you saved it, Remove; `openWord` route sync | UX and route tests; light, dark and narrow screenshots beside the boards (canvas row "Saved words") |
 | M4 | jp-echo | `reader-sync.js` + `downloadBackup` files + Settings line | Fake-gist tests; manual: a hand-written `echo-reader-x.json` in a test gist appears in the Library |
 | M5 | jp-echo | Notes for `noteRequested` words | Test with a fake provider |
 | M6 | jp-echo | `tools/build-reader-core.mjs` → `reader-core.js` (with tokens CSS) | Bundle sync test; loads in `vm` |
@@ -829,10 +861,9 @@ path follows docs/DEVELOPMENT.md:12.
 ## 13. Open questions and risks
 
 1. **R1 to R4 need the user's confirmation** (see the decision table).
-2. **The Library entry point:** a `Saved words · N` `.library-tool` row, which
-   is quiet and fits "discoverability lives in empty states", or a `words`
-   option in the *Cards* filter, which is cheaper but puts words among card
-   states. The recommendation is the row, opening `/library?filter=words`.
+2. **The Library entry point:** decided 8 Nov (D6): a 栞 *Saved words · N* row
+   under 記 Echo's notes, opening its own screen at `/words?saved=1`. Not a
+   value in the Cards filter.
 3. **Should a saved word appear in Practise** (the Words band walk) before
    others? Not in v1.
 4. **Tombstone garbage collection:** keep forever (small), or drop tombstones
