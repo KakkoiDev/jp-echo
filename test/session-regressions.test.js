@@ -56,13 +56,13 @@ test("legacy workspace is only an upgrade bridge, not normal route restoration",
 test("discussion save uses explicit awaited persistence action",()=>{assert.match(app,/saveDiscussionTurn\(turn/);assert.match(app,/save\.textContent="Saving…"/);assert.match(app,/await saveDiscussionTurn/);assert.match(app,/catch\(error\)\{save\.disabled=false/)});
 
 
-test("Mora v1 is learning content outside settings with independent display toggles",()=>{assert.match(html,/id="mora-view"/);assert.doesNotMatch(html,/Mora v1/);assert.match(html,/id="mora-show-emoji"/);assert.match(html,/id="mora-show-furigana"/);assert.match(html,/id="mora-show-english"/);assert.doesNotMatch(html,/<section class="settings-section"><h3>Memory — Mora v1/);assert.match(app,/MORA_MNEMONIC_META/);assert.match(app,/function renderMora/)});
+test("Mora v1 is learning content outside settings with independent display toggles",()=>{assert.match(html,/id="mora-view"/);assert.doesNotMatch(html,/Mora v1/);assert.match(html,/id="mora-show-pictures"[^>]*> Pictures</);assert.match(html,/id="mora-show-furigana"/);assert.match(html,/id="mora-show-english"/);assert.doesNotMatch(html,/<section class="settings-section"><h3>Memory — Mora v1/);assert.match(app,/MORA_MNEMONIC_META/);assert.match(app,/function renderMora/)});
 
 
 test("GitHub Pages deep-link recovery runs before route parsing",()=>{const routeImport=app.indexOf('from "./routes.js"'),recovery=app.indexOf('echo-route');assert.ok(routeImport>=0&&recovery>routeImport);assert.match(app,/history\.replaceState\(\{echo:true\},"",p\)/)});
 
 
-test("Mora emoji is a separate row after the kanji, not an inline anchor",()=>{assert.match(app,/el\("span","mora-word"[^;]*,kanji\)[\s\S]*?mora-emoji/);assert.doesNotMatch(app,/class="mora-anchor"/)});
+test("Mora pictures are the drawn set, above the anchor word, never emoji",()=>{assert.match(app,/const picture=pictures\?moraPicture\(mora\):null;if\(picture\)cell\.insertAdjacentHTML\("beforeend",themedPictureHtml\(picture/);assert.doesNotMatch(app,/mora-emoji/);assert.doesNotMatch(app,/class="mora-anchor"/)});
 
 
 test("service worker updates never navigate or reload an open Echo page",async()=>{const fs=await import("node:fs/promises");const sw=await fs.readFile(new URL("../sw.js",import.meta.url),"utf8");assert.doesNotMatch(sw,/reloadClients/);assert.doesNotMatch(sw,/client\.navigate\(/);assert.match(sw,/self\.clients\.claim\(\)/)});
@@ -135,8 +135,8 @@ test("reading echo uses only the existing voice list and no undefined voice help
 
 
 test("Mora page teaches combined sounds with their own anchors, and sokuon",()=>{
-  assert.match(html,/Combined sounds — one anchor each/);assert.match(html,/<div id="mora-yoon-table" class="mora-table" lang="ja"><\/div>/);
-  assert.match(html,/じょ is a giant 醤油, びょ a giant 豹/);assert.match(html,/<div class="mora-mark-key" lang="en">[\s\S]*?゛ 巨大[\s\S]*?ゴロゴロ is a boulder rolling, コロコロ a pebble/);assert.match(app,/mark==="巨大"\?"giant "\+gloss:mark==="風船"\?gloss\+" balloon":gloss/);assert.doesNotMatch(html,/in mud|泥 <span/);
+  assert.match(html,/<div id="mora-section-combined" class="mora-section" hidden>/);assert.match(html,/<div id="mora-yoon-table" class="mora-table" lang="ja"><\/div>/);
+  assert.match(html,/じょ is a giant 醤油, びょ a giant 豹/);assert.match(html,/<div class="mora-mark-key" lang="ja">[\s\S]*?゛ 巨大<\/strong><span lang="en">giant and heavy<\/span>[\s\S]*?゜ 風船<\/strong><span lang="en">a balloon that pops<\/span>/,"MoraVoiced: one card per mark");assert.match(app,/word\.append\(el\("span","mora-modifier",mark==="巨大"\?"巨大な":"風船の"\)\)/);assert.doesNotMatch(html,/in mud|泥 <span/);
   assert.match(html,/きって = 木 → 手×2/);
 });
 

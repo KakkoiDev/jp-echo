@@ -201,3 +201,8 @@ arrows between; `compact` is the chip form for lists. The anchors come from
 balloon (a seal ring), shared by the strip and the Mora table.
 `themedPictureHtml({light,dark})` holds both drawings; the active theme,
 forced or system, shows one.
+
+Mora cells and the AnchorStrip share `mora-pictures.js` (domain: which drawing,
+which section, which cell) and `themedPictureHtml` / `cornerMarkHtml`
+(presentation). A link to `a.anchor-cell` is handled once in app.js
+(`openMoraCell`): it closes any sheet, opens the section and lands on the cell.

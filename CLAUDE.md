@@ -163,6 +163,13 @@ Before considering the change complete:
   cancels its benefit (Schreiner, Lehmann & Rasch 2015). The meaning plays in
   the wind-down and, by the learner's choice, the rest of the night. The night
   needs the screen on (wake lock): a locked phone stops speech on iOS and Android.
+- **Mora pictures are the owner's drawn set.** `anchors/` and `anchors-dark/`
+  hold one picture per current anchor (MORA_MNEMONICS v4), switched by theme
+  through `themedPictureHtml`; `mora-pictures.js` maps kana to file, section and
+  cell (`/mora?section=…#<kana>`). Voiced/p-sounds reuse the base drawing with the
+  one corner mark. The AnchorAudit alternates (よ→鎧, れ→レモン, ち→地図, ん→判子,
+  そ→蕎麦, こ→駒) are not shipped until the owner decides; changing an anchor
+  bumps the version in core.js, JP Core and the AI validator together.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

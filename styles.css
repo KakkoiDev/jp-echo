@@ -1765,3 +1765,38 @@ header .header-search+#settings-button{margin-left:-4px}
 #sentence-view .sentence-main>.collapse-row{border-bottom:1px solid var(--rule)}
 #sentence-view .sentence-columns .collapse-row{margin-top:0;border-top:0}
 #sentence-view .sentence-columns #sentence-grammar-block{border-top:1px solid var(--rule)}
+
+/* Mora (MoraCompact, MoraVoiced): four sections, drawn pictures, one corner
+   mark. Cells are 104px tall in a five-column grid with 5px gaps. */
+.mora-sections{margin-top:14px}
+.mora-sections [role="tab"]{height:40px;min-height:40px}
+#mora-view .mora-controls{gap:6px;margin:12px 0 0}
+#mora-view .mora-controls label{padding:7px 10px;font-size:12px}
+.mora-section{margin-top:14px}
+#mora-view .mora-table{display:flex;flex-direction:column;gap:5px}
+#mora-view .mora-row,#mora-view .mora-table.labelled .mora-row{display:grid;grid-template-columns:repeat(var(--mora-columns,5),minmax(0,1fr));gap:5px}
+#mora-view .mora-head span{font-size:10px;text-transform:uppercase;letter-spacing:.16em;color:var(--ink-muted);text-align:center}
+#mora-view button.mora-cell{position:relative;height:104px;min-height:104px;padding:6px 3px 5px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:2px;border:1px solid var(--hairline);border-radius:3px;background:var(--panel);color:var(--sumi)}
+#mora-view .mora-cell.empty{border:0;background:transparent}
+#mora-view .mora-kana{font-family:var(--display);font-size:22px;line-height:1.1;color:var(--sumi)}
+#mora-view .mora-word{font-family:var(--display);font-size:11px;color:var(--sumi);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+#mora-view .mora-modifier{color:var(--seal-deep)}
+#mora-view .mora-english{font-size:9.5px;line-height:1.2;color:var(--ink-muted);text-align:center}
+#mora-view .mora-reading{font-size:9.5px;color:var(--ink-muted)}
+#mora-view .mora-cell.landed{border-color:var(--seal);box-shadow:inset 0 0 0 1px var(--seal)}
+.mora-mark-key{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mora-mark-card{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:12px 10px 10px;border:1px solid var(--hairline);border-radius:3px;background:var(--panel)}
+.mora-mark-card .corner-mark{top:8px;left:10px;right:auto}
+.mora-mark-card strong{font-family:var(--display);font-weight:400;font-size:17px}
+.mora-mark-card span[lang="en"]{font-size:12px;color:var(--ink-muted)}
+#mora-section-voiced .mora-hint,#mora-section-combined .mora-hint{margin:10px 0 12px}
+.mora-foot{margin:14px 0 0}
+.word-note-anchors{margin:10px 0 0}
+.word-note-anchors .hint{margin:8px 0 0}
+#mora-view .mora-table,#mora-view .mora-head{border:0;background:transparent;padding:0;border-radius:0}
+#mora-view .mora-head{border-bottom:0}
+#mora-view .mora-controls label{gap:6px;letter-spacing:normal}
+#mora-view .mora-controls input{width:13px;height:13px}
+.mora-mark-card span[lang="en"]{font-family:var(--ui)}
+#mora-view .mora-row{border:0}
+#mora-view .mora-english{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}

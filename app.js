@@ -7,13 +7,14 @@ import {validateDeckBackup,fetchDeckBackup,runImportFeedback,classifyImport,impo
 import {isSeeded,planMiniSentenceUpgrade,repairMiniImport} from './mini-imports.js';
 import {applyI18n,setDictionary,t} from "./i18n.js";
 import {earliestPair,flipSentence,isReversed,pairLooksSwapped,repairPair} from "./repair.js";
-import {moraMnemonicTokens,DEFAULT_PAIR,LANGUAGES,safeLanguage,MORA_MNEMONIC_META,MORA_VOICED,MORA_YOON,createSentence,replaceSentenceContent,exportBackup,forAnki,hasFurigana,hasRegisters,languageName,mergeSentences,normalizeFurigana,rubySegments,rubyHtml,SCHEMA_VERSION,stripFurigana} from "./core.js";
+import {moraMnemonicTokens,moraModified,DEFAULT_PAIR,LANGUAGES,safeLanguage,MORA_MNEMONIC_META,MORA_VOICED,MORA_YOON,createSentence,replaceSentenceContent,exportBackup,forAnki,hasFurigana,hasRegisters,languageName,mergeSentences,normalizeFurigana,rubySegments,rubyHtml,SCHEMA_VERSION,stripFurigana} from "./core.js";
 import {isExactMatch,markAttempt,markTarget} from "./diff.js";
 import {applyReadingCorrection,removeArchivedMiniCards,readImportRecovery,saveImportRecovery,deleteSentence as dbDeleteSentence,getSentence,listSentences,migrateStore,replaceAll,saveSentence as persistSentence} from "./db.js";
 import {MIN_INTERVAL_MS,QUIET_MS,downloadBackup,parseGistId,shouldAutoBackup,uploadBackup} from "./gist-backup.js";
 import {READINGS_RULE,correctSentenceReadings,analyzeSentenceGrammar,askModel,rewriteSentence,adjustNote,carries,compose,composeFromIntent,PROVIDER_DEFAULTS,tagGrammar,translate,discuss,generateReading,writeNotes,writeWordNote,transcribeAudio} from "./api.js";
 import {grammarListItems,setImportedGrammar,byLevel as grammarByLevel,cleanTags as grammarTags,coverage as grammarCoverage,hasGrammar,isTagged,learned as grammarLearned,LEVELS as GRAMMAR_LEVELS,point as grammarPoint,POINTS as GRAMMAR_POINTS,summarise as grammarSummarise,untagged as untaggedSentences} from "./grammar.js";
 import {speakOnce,japaneseVoices,recognitionFactory,ShadowLoop,ConversationLoop,RadioPlayer,NoiseBed} from "./speech.js";
+import {anchorStripItems,moraPicture,moraBase,MORA_SECTIONS} from "./mora-pictures.js";
 import {RADIO_DEFAULTS,RADIO_MINUTE,RADIO_PHASE_COPY,clockAt,radioPhase,radioPlan,radioQueue,radioSteps} from "./radio.js";
 import {STORIES} from "./stories.js";
 import {coverage as kanjiCoverage,facts as kanjiFacts,jlptBands as kanjiBands,learned as kanjiLearned,LEVEL_LABELS,levelOf,nextUnmet,sentenceKanji,TOTAL as KANJI_TOTAL} from "./kanji.js";
@@ -27,7 +28,7 @@ import {reviewAvailabilityMessage,reviewStats,dailyReviewBudget,reviewOrder,sess
 import {DEFAULT_TIME,REMINDER_TAG,reminderText,shouldRemind} from "./reminders.js";
 import {saveDiscussionTurn} from "./actions.js";
 // New shared UI comes from the component library (COMPONENTS.md).
-import {flagSvg,renderFlagButton,grammarList,skillGlyph,skillTrio,expandableList,fitTextArea,kanjiNumeral,toolShelf,renderFilterButton,wireFilterButton,anchorStripHtml,hydrateHeaderSearch,chevronSvg} from "./components.js";
+import {flagSvg,renderFlagButton,grammarList,skillGlyph,skillTrio,expandableList,fitTextArea,kanjiNumeral,toolShelf,renderFilterButton,wireFilterButton,anchorStripHtml,hydrateHeaderSearch,chevronSvg,cornerMarkHtml,themedPictureHtml} from "./components.js";
 // Settings page state, declared before anything can read it (navigationState).
 const SETTINGS_TITLES={main:"Settings",ai:"AI service",speech:"Speech recognition",backup:"Backup",import:"Import sentences",export:"Export",grammar:"Grammar"};
 let settingsPage="main",settingsReturn="practice";
@@ -362,7 +363,7 @@ function playReading(){if(!readingPassage?.sentences.length)return;if(readingLoo
 
 function saveWorkspace(patch={}){const next={...workspace(),view:document.body.dataset.view||"practice",discussionMode,mapQuery:$("#map-search")?.value||"",historyQuery:$("#history-search")?.value||"",mapView:settings.mapView||"kanji",...patch};try{storePreference(WORKSPACE_KEY,JSON.stringify(next))}catch{/* Navigation must work even when browser storage is full or unavailable. */}return next}
 let applyingRoute=false;
-function navigationState(patch={}){return {view:document.body.dataset.view||"practice",searchQuery:$("#search-input")?.value||"",discussionMode,readingMode,extractMode,mapView:settings.mapView||"kanji",kanjiGroup:settings.kanjiGroup||"jlpt",mapQuery:$("#map-search")?.value||"",historyQuery:$("#history-search")?.value||"",historyFilter:$("#history-filter")?.value||"all",historyOrder:$("#history-order")?.value||"created",historyDirection:$("#history-direction")?.value||"desc",sentenceId:detail?.id||null,settingsPage,...patch}}
+function navigationState(patch={}){return {view:document.body.dataset.view||"practice",moraSection,searchQuery:$("#search-input")?.value||"",discussionMode,readingMode,extractMode,mapView:settings.mapView||"kanji",kanjiGroup:settings.kanjiGroup||"jlpt",mapQuery:$("#map-search")?.value||"",historyQuery:$("#history-search")?.value||"",historyFilter:$("#history-filter")?.value||"all",historyOrder:$("#history-order")?.value||"created",historyDirection:$("#history-direction")?.value||"desc",sentenceId:detail?.id||null,settingsPage,...patch}}
 function syncRoute(patch={},replace=false){if(applyingRoute)return;const url=routeFor(navigationState(patch));if(location.pathname+location.search===url)return;history[replace?"replaceState":"pushState"]({echo:true},"",url)}
 
 const wide=matchMedia("(min-width:1024px)");
@@ -400,27 +401,42 @@ function moraAnchorInfo(mora){
   if(small){const own=MORA_YOON[base+small];if(own){const [kanji,reading,gloss,icon]=own;return {kanji,reading,gloss,icon,mark,speak:reading}}
     const a=MORA_MNEMONIC_META[base],b=MORA_MNEMONIC_META[MORA_SMALL[small]];return {kanji:a[0]+"＋"+b[0],reading:a[1]+"・"+b[1],gloss:a[2]+" + "+b[2],icon:"",mark,speak:a[1]+"、"+b[1]}}
   const [kanji,reading,gloss,icon]=MORA_MNEMONIC_META[base];return {kanji,reading,gloss,icon,mark,speak:reading}}
-function moraTable(host,rows,{emoji,furigana,english,quiz},columns=["a","i","u","e","o"]){host.classList.toggle("labelled",english);host.style.setProperty("--mora-columns",String(columns.length));
-  const head=el("div","mora-row mora-head");head.setAttribute("aria-hidden","true");head.innerHTML='<span></span>'+columns.map(v=>"<span>"+v+"</span>").join("");
+// Mora cells (MoraCompact, MoraVoiced): the kana, the drawn picture, the
+// anchor (巨大な / 風船の in seal for ゛/゜) and its English, with the one
+// corner mark. Each cell is #<kana>, so a note's anchor strip can land on it.
+function moraTable(host,rows,{pictures,furigana,english,quiz},columns=["a","i","u","e","o"]){host.classList.toggle("labelled",english);host.style.setProperty("--mora-columns",String(columns.length));
+  const head=el("div","mora-row mora-head");head.setAttribute("aria-hidden","true");head.innerHTML=columns.map(v=>"<span>"+v+"</span>").join("");
   host.replaceChildren(...(english?[head]:[]),...rows.map(row=>{const line=el("div","mora-row");
-    if(english)line.append(el("span","mora-row-label",(row.find(Boolean)||"").slice(0,columns.length===3?1:undefined)));
     for(const mora of row){if(!mora){line.append(el("div","mora-cell empty"));continue}
-      const {kanji,reading,gloss,icon,mark,speak}=moraAnchorInfo(mora),hidden=quiz&&!moraRevealed.has(mora);
-      const cell=el("button","mora-cell"+(hidden?" hidden-anchor":"")+(mark?" voiced":""));cell.type="button";
-      cell.setAttribute("aria-label",hidden?mora+" — "+t("tap to see its anchor"):mora+" — "+kanji+(mark?" "+(mark==="巨大"?t("giant"):t("as a balloon")):""));
+      const {kanji,reading,gloss,mark,speak}=moraAnchorInfo(mora),hidden=quiz&&!moraRevealed.has(mora),corner=mark==="巨大"?"giant":mark==="風船"?"balloon":null;
+      const cell=el("button","mora-cell"+(hidden?" hidden-anchor":"")+(mark?" voiced":""));cell.type="button";cell.id=mora;
+      cell.setAttribute("aria-label",hidden?mora+" — "+t("tap to see its anchor"):mora+" — "+(mark?moraModified(mark,kanji):kanji)+(mark?" ("+(corner==="giant"?t("giant"):t("as a balloon"))+")":""));
       cell.append(el("span","mora-kana",mora));
-      if(!hidden){const word=el("span","mora-word"+([...kanji].length>3?" long":""),kanji);if(mark)word.append(el("span","mora-mark",mark));cell.append(word);
-        if(icon&&emoji)cell.append(Object.assign(el("span","mora-emoji",icon),{ariaHidden:"true"}));
+      if(!hidden){const picture=pictures?moraPicture(mora):null;if(picture)cell.insertAdjacentHTML("beforeend",themedPictureHtml(picture,{size:30,className:"mora-picture"}));
+        const word=el("span","mora-word"+([...kanji].length>3?" long":""));if(mark)word.append(el("span","mora-modifier",mark==="巨大"?"巨大な":"風船の"));word.append(document.createTextNode(kanji));cell.append(word);
         if(furigana)cell.append(el("span","mora-reading",reading));
-        if(english)cell.append(Object.assign(el("span","mora-english",mark==="巨大"?"giant "+gloss:mark==="風船"?gloss+" balloon":gloss),{lang:"en"}))}
+        if(english)cell.append(Object.assign(el("span","mora-english",gloss),{lang:"en"}))}
+      if(corner)cell.insertAdjacentHTML("beforeend",cornerMarkHtml(corner));
       cell.onclick=()=>{loop.stop();discussionLoop.stop();readingLoop.stop();
         const voice=voices[Number($("#voice").value)]||voices[0]||null;speakOnce(mora+"、"+speak,{voice,rate:Number($("#rate").value)||1});
         if(hidden){moraRevealed.add(mora);renderMora()}};
       line.append(cell)}
     return line}))}
-function renderMora(){const options={emoji:$("#mora-show-emoji").checked,furigana:$("#mora-show-furigana").checked,english:$("#mora-show-english").checked,quiz:$("#mora-quiz").checked};
+// Four sections behind one segmented control, the section in the URL.
+let moraSection="base";
+const MORA_SECTION_COUNTS={base:()=>t("46 anchors · version 4"),voiced:()=>t("25 voiced · same anchors, marked"),combined:()=>t("{n} combined · one anchor each",{n:MORA_YOON_ROWS.flat().length}),specials:()=>t("Small っ and the marks")};
+function renderMora(){const options={pictures:$("#mora-show-pictures").checked,furigana:$("#mora-show-furigana").checked,english:$("#mora-show-english").checked,quiz:$("#mora-quiz").checked};
+  for(const tab of document.querySelectorAll("#mora-sections [data-section]"))tab.setAttribute("aria-selected",String(tab.dataset.section===moraSection));
+  for(const section of MORA_SECTIONS)$("#mora-section-"+section).hidden=section!==moraSection;
+  $("#mora-count").textContent=MORA_SECTION_COUNTS[moraSection]();
   moraTable($("#mora-table"),MORA_ROWS,options);moraTable($("#mora-voiced-table"),MORA_VOICED_ROWS,options);moraTable($("#mora-yoon-table"),MORA_YOON_ROWS,options,["ya","yu","yo"])}
-function saveMoraDisplay(){settings.moraEmoji=$("#mora-show-emoji").checked;settings.moraFurigana=$("#mora-show-furigana").checked;settings.moraEnglish=$("#mora-show-english").checked;storePreference("jp-echo-settings",JSON.stringify(settings));renderMora()}
+function saveMoraDisplay(){settings.moraPictures=$("#mora-show-pictures").checked;settings.moraFurigana=$("#mora-show-furigana").checked;settings.moraEnglish=$("#mora-show-english").checked;storePreference("jp-echo-settings",JSON.stringify(settings));renderMora()}
+// A cell link (#<kana>) lands on its cell and briefly marks it.
+function showMoraCell(kana){const cell=document.getElementById(kana);if(!cell||!cell.classList.contains("mora-cell"))return;cell.scrollIntoView({block:"center"});cell.classList.add("landed");setTimeout(()=>cell.classList.remove("landed"),1600)}
+function openMoraCell(href){const url=new URL(href,location.origin),section=url.searchParams.get("section")||"base",kana=decodeURIComponent(url.hash.slice(1));
+  for(const dialog of document.querySelectorAll("dialog[open]"))dialog.close();
+  moraSection=MORA_SECTIONS.includes(section)?section:"base";showView("mora");history.replaceState(history.state,"",location.pathname+location.search+"#"+encodeURIComponent(kana));requestAnimationFrame(()=>showMoraCell(kana))}
+document.addEventListener("click",event=>{const link=event.target.closest?.("a.anchor-cell");if(!link)return;event.preventDefault();openMoraCell(link.getAttribute("href"))});
 const tool={open:null,chip:"all",more:new Set()};
 const familyBrowse={theme:"all",openTheme:null,sentences:[]};
 const familyDictionaryState={character:null,level:"all"};
@@ -1305,7 +1321,10 @@ async function renderWordNote(w){
   if(note)showWordNote(w,note);
 }
 function showWordNote(w,note){
-  const block=$("#word-note");block.hidden=false;block.querySelector(".adjust-link").disabled=!hasTranslator();
+  const block=$("#word-note");block.hidden=false;
+  // The reading's anchors, in order, each opening its Mora cell (WordNote).
+  {const items=anchorStripItems(moraMnemonicTokens(w.r||""));$("#word-note-anchors").hidden=!items.length;$("#word-note-strip").innerHTML=items.length?anchorStripHtml(items,{label:t("Mora anchors for {word}",{word:w.r||w.w})}):""}
+  block.querySelector(".adjust-link").disabled=!hasTranslator();
   const save=async(text,by="you")=>{const next=makeNote({kind:"word",id:w.id,part:"remember",text,echo:note.echo??note.text,by});await putNote(next);note=next;return next};
   noteBlock(block,{about:w.w+(w.r!==w.w?"（"+w.r+"）":"")+" ("+(w.en[0]||"")+")",kind:t("A way to remember it"),note,
     onSave:save,
@@ -2333,7 +2352,7 @@ $("#review-radio").onclick=()=>showView("radio");$("#radio-back").onclick=()=>sh
 $("#radio-start").onclick=startRadio;$("#radio-stop").onclick=stopRadio;$("#radio-hours").onchange=saveRadioOptions;$("#radio-noise").onchange=saveRadioOptions;
 // A wake lock is dropped whenever the page is hidden; take it again on return.
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&radio.running)holdRadioWake()});
-$("#mora-back").onclick=()=>showView("library");$("#mora-quiz").onchange=()=>{moraRevealed.clear();renderMora()};for(const id of ["#mora-show-emoji","#mora-show-furigana","#mora-show-english"])$(id).onchange=saveMoraDisplay;
+$("#mora-back").onclick=()=>showView("library");$("#mora-quiz").onchange=()=>{moraRevealed.clear();renderMora()};for(const tab of document.querySelectorAll("#mora-sections [data-section]"))tab.onclick=()=>{moraSection=tab.dataset.section;syncRoute({});renderMora()};for(const id of ["#mora-show-pictures","#mora-show-furigana","#mora-show-english"])$(id).onchange=saveMoraDisplay;
 $("#kanji-close").onclick=()=>{loop.stop();$("#kanji-dialog").close()};$("#kanji-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;kanjiOpen=null;saveWorkspace({modal:null})});$("#kanji-compose").onclick=composeForKanji;$("#kanji-say-go").onclick=sayForKanji;
 $("#family-panel").addEventListener("toggle",()=>{
   if($("#family-panel").open)void renderKanjiFamilies(familyBrowse.sentences);
@@ -2402,7 +2421,7 @@ $("#setup-target").onchange=()=>{setPair(sourceLang(),$("#setup-target").value);
 $("#swap-langs").onclick=()=>{setInputLang(enteringTarget()?sourceLang():targetLang());toast("Typing in "+languageName(inputLang))};for(const swap of document.querySelectorAll("[data-input-swap]"))swap.onclick=()=>{setInputLang(enteringTarget()?sourceLang():targetLang());toast("Typing in "+languageName(inputLang));const field=$("#"+swap.dataset.inputSwap);if(field)field.focus()};
 $("#theme").onchange=()=>applyTheme($("#theme").value);$("#motion").onchange=()=>applyMotion($("#motion").value);window.addEventListener("beforeinstallprompt",event=>{event.preventDefault();installPrompt=event;updateInstallUI()});window.addEventListener("appinstalled",()=>{installPrompt=null;updateInstallUI()});
 $("#history-search").oninput=()=>{$("#clear-history-search").hidden=!$("#history-search").value;saveWorkspace();syncRoute({},true);renderHistory()};$("#clear-history-search").onclick=()=>{$("#history-search").value="";$("#clear-history-search").hidden=true;$("#history-search").focus();renderHistory()};for(const id of ["#history-filter","#history-order","#history-direction"]){$(id).onchange=()=>{settings.historyFilter=$("#history-filter").value;settings.historyOrder=$("#history-order").value;settings.historyDirection=$("#history-direction").value;try{storePreference("jp-echo-settings",JSON.stringify(settings))}catch{}syncRoute({},true);renderHistory()}}
-const legacyOrders={newest:["created","desc"],oldest:["created","asc"],echoes:["echoes","desc"],due:["due","asc"]},legacy=legacyOrders[settings.historyOrder];if(legacy){settings.historyOrder=legacy[0];settings.historyDirection=settings.historyDirection||legacy[1]}resetSettingsForm();applyTheme();applyMotion();$("#mora-show-emoji").checked=settings.moraEmoji??false;$("#mora-show-furigana").checked=settings.moraFurigana??false;$("#mora-show-english").checked=settings.moraEnglish??true;syncLanguageSelects();applyLanguageUI();$("#show-english").checked=settings.showEnglish??false;$("#show-furigana").checked=settings.showFurigana??true;$("#show-polite").checked=settings.showPolite??false;$("#history-filter").value=settings.historyFilter||"all";$("#history-order").value=settings.historyOrder||"created";$("#history-direction").value=settings.historyDirection||"desc";speechSynthesis.onvoiceschanged=populateVoices;populateVoices();renderVoiceHelp();
+const legacyOrders={newest:["created","desc"],oldest:["created","asc"],echoes:["echoes","desc"],due:["due","asc"]},legacy=legacyOrders[settings.historyOrder];if(legacy){settings.historyOrder=legacy[0];settings.historyDirection=settings.historyDirection||legacy[1]}resetSettingsForm();applyTheme();applyMotion();$("#mora-show-pictures").checked=settings.moraPictures??settings.moraEmoji??true;$("#mora-show-furigana").checked=settings.moraFurigana??false;$("#mora-show-english").checked=settings.moraEnglish??true;syncLanguageSelects();applyLanguageUI();$("#show-english").checked=settings.showEnglish??false;$("#show-furigana").checked=settings.showFurigana??true;$("#show-polite").checked=settings.showPolite??false;$("#history-filter").value=settings.historyFilter||"all";$("#history-order").value=settings.historyOrder||"created";$("#history-direction").value=settings.historyDirection||"desc";speechSynthesis.onvoiceschanged=populateVoices;populateVoices();renderVoiceHelp();
 // Android fills the voice list after the page has settled and does not always
 // fire voiceschanged, so the select is rebuilt a few times before giving up.
 for(const delay of [400,1200,3000])setTimeout(populateVoices,delay);
@@ -2414,10 +2433,11 @@ async function applyRoute(route=parseRoute(location.href)){
     if(route.historyQuery!=null){$("#history-search").value=route.historyQuery;$("#clear-history-search").hidden=!route.historyQuery}
     if(route.historyFilter)$("#history-filter").value=route.historyFilter;if(route.historyOrder)$("#history-order").value=route.historyOrder;if(route.historyDirection)$("#history-direction").value=route.historyDirection;
     if(route.searchQuery!=null)$("#search-input").value=route.searchQuery;
+    if(route.moraSection)moraSection=route.moraSection;
     if(route.mapQuery!=null)$("#map-search").value=route.mapQuery;if(route.mapView)settings.mapView=route.mapView;if(route.kanjiGroup)settings.kanjiGroup=route.kanjiGroup;
     if(route.sentenceId){const sentence=await getSentence(route.sentenceId);if(sentence){detail=ensureSchedule(sentence);showView("sentence",{route:false});renderDetail()}else showView("library",{route:false})}
     else if(route.view==="settings")openSettings(route.settingsPage,{route:false});
-    else {showView(route.view||"practice",{route:false});if((route.view||"practice")==="practice")setPracticeMode(route.extractMode?"extract":route.readingMode?"reading":route.discussionMode?"discussion":"sentence",{route:false})}
+    else {showView(route.view||"practice",{route:false});if(route.view==="mora"&&location.hash)requestAnimationFrame(()=>showMoraCell(decodeURIComponent(location.hash.slice(1))));if((route.view||"practice")==="practice")setPracticeMode(route.extractMode?"extract":route.readingMode?"reading":route.discussionMode?"discussion":"sentence",{route:false})}
     if(route.modal){const sentences=await listSentences();if(route.modal.kind==="word"){const w=wordById(route.modal.id);if(w)await openWord(w,wordCoverage(sentences),{route:false})}else if(route.modal.kind==="kanji")await openKanji(route.modal.id,kanjiCoverage(sentences),{route:false});else if(route.modal.kind==="grammar"){const p=grammarPoint(route.modal.id);if(p)await openGrammar(p,grammarCoverage(sentences),{route:false})}}
   }finally{applyingRoute=false}
 }
