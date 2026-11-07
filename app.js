@@ -22,7 +22,7 @@ import {coverage as kanjiCoverage,facts as kanjiFacts,jlptBands as kanjiBands,le
 import {searchGrammar,searchKanji,searchWords} from "./lookup.js";
 import {loadFamilyCurriculum,familyTopics,findFamilies,familyThemes,exampleLibraryIndex,exampleState,familyProgress,familyVocabulary} from "./kanji-families.js";
 import {ALL as REFERENCE_WORDS,setImportedWords,bands as wordBands,carries as carriesWord,coverage as wordCoverage,kindOf,learned as wordLearned,levelOf as wordLevel,marks as wordMarks,sentenceWords,wordSpans,TOTAL as WORD_TOTAL,word as wordById} from "./words.js";
-import {deleteNote as dbDeleteNote,forBackup,getNote,listNotes,makeNote,mergeNotes,noteKey,putNote as dbPutNote,replaceNotes as dbReplaceNotes} from "./notes.js";
+import {wordNoteParts,deleteNote as dbDeleteNote,forBackup,getNote,listNotes,makeNote,mergeNotes,noteKey,putNote as dbPutNote,replaceNotes as dbReplaceNotes} from "./notes.js";
 import {downloadAnkiDeck} from "./anki-export.js";
 import {dueSentences,ensureSchedule,isDue,reviewSentence} from "./srs.js";
 import {reviewAvailabilityMessage,reviewStats,dailyReviewBudget,reviewOrder,sessionLimit,limitReviewSession,extraStudySession,dueLine,ensureReviewTrack,nextSkill,recordReviewMode,reviewMode,reviewModeMeta,skillMix,skillReason} from "./review-modes.js";
@@ -1346,6 +1346,11 @@ function moraRetiredIn(reading,text){const seen=new Set(),out=[];
   for(const {mora} of moraMnemonicTokens(reading)){const kana=mora.replace(/^っ/,""),first=(MORA_VOICED[kana[0]]||[kana[0]])[0],small=kana[1]&&!MORA_YOON[first+kana[1]]?MORA_SMALL[kana[1]]:null;
     for(const base of [first,small])if(base&&MORA_V4_RETIRED[base]&&!seen.has(base)&&text.includes(MORA_V4_RETIRED[base])){seen.add(base);out.push([MORA_V4_RETIRED[base],MORA_MNEMONIC_META[base][0]])}}
   return out}
+// WordNote: "how to say it" (the mora mnemonic) under the note's own title,
+// then "Echo's note — the kanji". Both are the one note text, split at the
+// labels Echo writes; a note without them shows whole.
+function renderWordNoteText(block,value){const text=block.querySelector(".note-text"),parts=wordNoteParts(value);
+  text.innerHTML=parts?rubyHtml(parts.mora)+'<span class="note-part"><span class="overline note-part-title">'+escapeText(t("Echo’s note — the kanji"))+'</span><span class="note-part-text">'+rubyHtml(parts.kanji)+"</span></span>":rubyHtml(value)}
 function showWordNote(w,note){
   const block=$("#word-note");block.hidden=false;
   // The reading's anchors, in order, each opening its Mora cell (WordNote).
@@ -1360,7 +1365,8 @@ function showWordNote(w,note){
     onSave:save,
     onReset:async()=>{const next=makeNote({kind:"word",id:w.id,part:"remember",text:note.echo??note.text});await putNote(next);note=next;return next},
     echoLine:t("Written by Echo when you asked, on your own key, and kept on this device and in every backup. Adjust it if it does not stick."),
-    yoursLine:t("Your version. Reset brings Echo’s back.")});
+    yoursLine:t("Your version. Reset brings Echo’s back."),render:n=>renderWordNoteText(block,n.text)});
+  block.currentText=()=>note.text;
   const panel=block.querySelector(".adjust-panel"),text=block.querySelector(".note-text"),edit=panel.querySelector(".note-edit"),saveEdit=panel.querySelector(".note-save"),del=panel.querySelector(".note-delete"),regen=panel.querySelector(".note-regenerate"),mic=panel.querySelector(".note-adjust-mic"),instruction=panel.querySelector("input"),status=panel.querySelector(".adjust-status");
   // Word mnemonics use explicit Save edit. The generic blur-save races Delete/Generate new.
   text.onblur=null;
@@ -1370,7 +1376,7 @@ function showWordNote(w,note){
   panel.querySelector(".rewrite").disabled=!hasTranslator();regen.disabled=!hasTranslator();
   // Edit by hand works on the raw notation (読【よ】み), not on the rendered ruby.
   edit.onclick=()=>{text.textContent=note.text;text.contentEditable="true";text.focus();edit.hidden=true;saveEdit.hidden=false};
-  saveEdit.onclick=async()=>{const value=text.textContent.trim();if(!value)return;text.contentEditable="false";note=await save(value);text.innerHTML=rubyHtml(note.text);edit.hidden=false;saveEdit.hidden=true;status.textContent=t("Saved. Yours now.")};
+  saveEdit.onclick=async()=>{const value=text.textContent.trim();if(!value)return;text.contentEditable="false";note=await save(value);renderWordNoteText(block,note.text);edit.hidden=false;saveEdit.hidden=true;status.textContent=t("Saved. Yours now.")};
   del.onclick=async()=>{await deleteNote(noteKey("word",w.id,"remember"));block.hidden=true;$("#word-note-ask").hidden=false;$("#word-note-hint").hidden=false;$("#word-note-ask").disabled=!hasTranslator();$("#word-note-status").textContent=t("Deleted. You can generate a new one from scratch.")};
   regen.onclick=async()=>{regen.disabled=true;status.textContent=t("Writing a new one from scratch…");try{const made=await writeWordNote({word:w.w,reading:w.r,meaning:w.en.join(" / "),kind:kindOf(w)},{...settings,targetLang:targetLang()});const next=makeNote({kind:"word",id:w.id,part:"remember",text:made.remember});await putNote(next);showWordNote(w,next)}catch(error){status.textContent=sheetError(error)}finally{regen.disabled=false}};
   bindDictation(mic,instruction,status);
@@ -2256,9 +2262,24 @@ async function renderLibraryNotes(){const row=$("#library-notes"),entries=target
   $("#library-notes-count").textContent=String(entries.length);
   $("#library-notes-words").replaceChildren(...entries.slice(0,3).map(({word})=>{const chip=document.createElement("button");chip.type="button";chip.className="library-note-word";chip.lang="ja";chip.dataset.ui="button";
     chip.append(el("span","word",word.w),el("span","reading",word.r||""));chip.setAttribute("aria-label",word.w+" — "+t("Echo’s note"));chip.onclick=async()=>openWord(word,wordCoverage(await listSentences()));return chip}))}
-async function renderNotes(){const entries=await wordNotes();$("#notes-count").textContent=t("{n} words · newest first",{n:entries.length});$("#notes-empty").hidden=entries.length>0;
+// Mora v5: Echo's notes still written with an old anchor. Only Echo's own
+// versions are rewritten; a note you wrote yourself is left as it is.
+const outdatedNotes=entries=>entries.filter(({note,word})=>note.by!=="you"&&moraRetiredIn(word.r||"",note.text||"").length);
+function renderNotesOutdated(entries){const old=outdatedNotes(entries),box=$("#notes-outdated");box.hidden=!old.length||notesRewriting;if(!old.length)return;
+  $("#notes-outdated-text").textContent=old.length===1?t("One note still uses an older anchor."):t("{n} notes still use older anchors.",{n:old.length});
+  $("#notes-outdated-go").disabled=!hasTranslator();$("#notes-outdated-status").textContent=hasTranslator()?t("One request per note, on your key."):t("Add a translator and Echo can rewrite them.")}
+let notesRewriting=false;
+async function rewriteOutdatedNotes(){if(notesRewriting||!hasTranslator())return;const old=outdatedNotes(await wordNotes());if(!old.length)return;
+  notesRewriting=true;const go=$("#notes-outdated-go"),status=$("#notes-outdated-status");go.disabled=true;let done=0,failed=0;
+  try{for(const {word} of old){status.textContent=t("Rewriting {n} of {total}…",{n:done+failed+1,total:old.length});
+      try{const made=await writeWordNote({word:word.w,reading:word.r,meaning:word.en.join(" / "),kind:kindOf(word)},{...settings,targetLang:targetLang()});
+        await putNote(makeNote({kind:"word",id:word.id,part:"remember",text:made.remember}));done++}catch{failed++}}}
+  finally{notesRewriting=false}
+  await renderNotes();$("#notes-outdated").hidden=false;$("#notes-outdated-text").textContent=failed?t("Rewrote {n}; {failed} could not be rewritten. Try again for those.",{n:done,failed}):t("Rewrote {n} with the new anchors.",{n:done});
+  $("#notes-outdated-go").hidden=!failed;$("#notes-outdated-go").disabled=false;status.textContent=""}
+async function renderNotes(){const entries=await wordNotes();renderNotesOutdated(entries);$("#notes-outdated-go").hidden=false;$("#notes-count").textContent=t("{n} words · newest first",{n:entries.length});$("#notes-empty").hidden=entries.length>0;
   $("#notes-list").replaceChildren(...entries.map(({note,word})=>{const li=document.createElement("li"),open=document.createElement("button");open.type="button";open.className="notes-row";open.dataset.ui="button";
-    const story=stripFurigana(String(note.text)).replace(/\s+/g," ").trim();
+    const story=stripFurigana(String(wordNoteParts(note.text)?.mora||note.text)).replace(/\s+/g," ").trim();
     open.innerHTML='<span class="notes-word" lang="ja">'+escapeText(word.w)+'</span><span class="notes-body"><span class="notes-meta"><span lang="ja">'+escapeText(word.r||"")+'</span> · '+escapeText((word.en||[])[0]||"")+'</span><span class="notes-story">'+escapeText(story)+'</span>'+anchorStripHtml(moraMnemonicTokens(word.r||"").map(token=>({...token})),{compact:true})+'</span><svg class="notes-chevron" width="8" height="13" viewBox="0 0 8 13" fill="none" aria-hidden="true"><path d="m1.5 1.5 5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     open.onclick=async()=>openWord(word,wordCoverage(await listSentences()));li.append(open);return li}))}
 // One quiet control names the filter; its sheet holds search, Cards, Sort and
@@ -2336,6 +2357,7 @@ $("#sentence-register-toggle").onclick=()=>{const other=sentenceRegister(detail)
 // is practised (owner, 7 Nov). Its review schedule and history stay.
 const WRITE_AGAIN="Write it again: same meaning, fresh natural wording";
 $("#sentence-again").onclick=()=>{if(!detail||!hasTranslator())return;openEditor();$("#sentence-instruction").value=t(WRITE_AGAIN);rewriteDetailSentence();$("#sentence-change").scrollIntoView({block:"start",behavior:"smooth"})};
+$("#notes-outdated-go").onclick=rewriteOutdatedNotes;
 $("#sentence-edit").onclick=()=>{openEditor();$("#sentence-change").scrollIntoView({block:"start",behavior:"smooth"})};
 $("#sentence-furigana").onclick=()=>{openEditor();$("#sentence-edit-readings").scrollIntoView({block:"center",behavior:"smooth"});$("#sentence-edit-readings").focus({preventScroll:true})};
 // The "In it" rows say what they hold before they are opened.

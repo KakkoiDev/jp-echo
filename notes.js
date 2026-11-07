@@ -55,3 +55,19 @@ export function mergeNotes(current = [], incoming = []) {
   }
   return [...out.values()];
 }
+
+// Echo's note on a word is one text in two labelled parts (api.js asks for
+// "Kanji meanings" and "Mora mnemonic"). WordNote shows them apart: how to
+// say it first, then the kanji. A note without both labels (one you wrote,
+// or an older one) stays whole.
+export function wordNoteParts(text = "") {
+  const value = String(text);
+  const kanjiAt = value.search(/(?:^|\n|\*\*|#+\s*)kanji meanings?\s*\**\s*[:：]/i);
+  const moraAt = value.search(/(?:^|\n|\*\*|#+\s*)mora (?:mnemonic|anchors?)\s*\**\s*[:：]/i);
+  if (kanjiAt < 0 || moraAt < 0) return null;
+  const strip = part => part.replace(/^\s*(?:\*\*|#+\s*)?(?:kanji meanings?|mora (?:mnemonic|anchors?))\s*\**\s*[:：]\s*\**\s*/i, "").trim();
+  const [first, second] = kanjiAt < moraAt ? [kanjiAt, moraAt] : [moraAt, kanjiAt];
+  const a = strip(value.slice(first, second)), b = strip(value.slice(second));
+  const kanji = kanjiAt < moraAt ? a : b, mora = kanjiAt < moraAt ? b : a;
+  return kanji && mora ? {mora, kanji} : null;
+}
