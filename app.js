@@ -15,7 +15,7 @@ import {READINGS_RULE,correctSentenceReadings,analyzeSentenceGrammar,askModel,re
 import {grammarListItems,setImportedGrammar,byLevel as grammarByLevel,cleanTags as grammarTags,coverage as grammarCoverage,hasGrammar,isTagged,learned as grammarLearned,LEVELS as GRAMMAR_LEVELS,point as grammarPoint,POINTS as GRAMMAR_POINTS,summarise as grammarSummarise,untagged as untaggedSentences} from "./grammar.js";
 import {speakOnce,japaneseVoices,recognitionFactory,ShadowLoop,ConversationLoop,RadioPlayer,NoiseBed} from "./speech.js";
 import {anchorStripItems,moraPicture,moraBase,moraCellHref,MORA_SECTIONS} from "./mora-pictures.js";
-import {drillRound,drillChoices,startDrill,answerDrill,nextDrill,drillDone,drillProgress} from "./mora-drill.js";
+import {DRILL_SIZE,drillRound,drillChoices,startDrill,answerDrill,nextDrill,drillDone,drillProgress} from "./mora-drill.js";
 import {RADIO_DEFAULTS,RADIO_MINUTE,RADIO_PHASE_COPY,clockAt,radioPhase,radioPlan,radioQueue,radioSteps} from "./radio.js";
 import {STORIES} from "./stories.js";
 import {coverage as kanjiCoverage,facts as kanjiFacts,jlptBands as kanjiBands,learned as kanjiLearned,LEVEL_LABELS,levelOf,nextUnmet,sentenceKanji,TOTAL as KANJI_TOTAL} from "./kanji.js";
@@ -2324,36 +2324,43 @@ new MutationObserver(renderInItSummaries).observe($("#sentence-grammar"),{childL
 let drill=null;
 function drillCard(kana){const {kanji,gloss,mark}=moraAnchorInfo(kana),picture=moraPicture(kana),corner=mark==="巨大"?"giant":mark==="風船"?"balloon":null;
   return (picture?themedPictureHtml(picture,{size:44,className:"drill-picture"}):"")+'<span class="drill-kanji" lang="ja">'+(mark?'<span class="mora-modifier">'+(mark==="巨大"?"巨大な":"風船の")+'</span>':"")+escapeText(kanji)+'</span><span class="drill-gloss">'+escapeText(gloss)+'</span>'+(corner?cornerMarkHtml(corner):"")}
-function sayDrillSound(){if(!drill||drillDone(drill.state))return;const kana=drill.state.queue[drill.state.index],voice=voices[Number($("#voice").value)]||voices[0]||null;speakOnce(kana,{voice,rate:Number($("#rate").value)||1})}
+function sayDrillSound(){if(!drill||drillDone(drill.state))return;if(!drill.heard){drill.heard=true;renderDrill()}const kana=drill.state.queue[drill.state.index],voice=voices[Number($("#voice").value)]||voices[0]||null;speakOnce(kana,{voice,rate:Number($("#rate").value)||1})}
 async function startMoraDrill(round){const readings=(await wordNotes()).map(entry=>entry.word.r).filter(Boolean);
-  drill={state:startDrill(round||drillRound({misses:settings.moraDrillMisses||[],readings})),choices:null};renderDrill()}
+  // DrillStart: a fresh drill waits for one tap on the sound (iOS plays nothing
+  // before a tap); the choices open once it has been heard, and every later
+  // sound plays by itself. A round started from a button is already a tap.
+  drill={state:startDrill(round||drillRound({misses:settings.moraDrillMisses||[],readings})),choices:null,heard:false,fromNotes:readings.length>0};renderDrill()}
 function renderDrill(){if(!drill)return;const {state}=drill,done=drillDone(state);
   $("#drill-play").hidden=done;$("#drill-done").hidden=!done;$("#drill-progress").hidden=done;$("#drill-bar").hidden=done;
   if(done){renderDrillDone();return}
-  const kana=state.queue[state.index],{n,total,repeat}=drillProgress(state),answered=state.answered;
-  $("#drill-progress").textContent=repeat?t("again"):n+" / "+total;$("#drill-bar-fill").style.width=(100*Math.min(state.index,total)/total).toFixed(1)+"%";
+  const kana=state.queue[state.index],{n,total,repeat,toRepeat}=drillProgress(state),answered=state.answered,waiting=!drill.heard;
+  $("#drill-progress").textContent=repeat?t("again"):n+" / "+total+(toRepeat?" · "+t("{n} to repeat",{n:toRepeat}):"");
+  $("#drill-sound").classList.toggle("first",waiting);$("#drill-play>.overline").textContent=answered&&!answered.right?t("Not this time"):t("Hear it, then find its anchor");
+  $("#drill-hint").textContent=waiting?t("The choices open once you have heard the sound. After the first tap, each new sound plays by itself."):t("Tap the sound again as often as you like. Nothing here is scheduled or scored outside this round.");$("#drill-bar-fill").style.width=(100*Math.min(state.index,total)/total).toFixed(1)+"%";
   if(!drill.choices||drill.choices.kana!==kana||drill.choices.at!==state.index)drill.choices={kana,at:state.index,list:drillChoices(kana)};
   const {kanji,reading,gloss,mark}=moraAnchorInfo(kana),anchor=mark?moraModified(mark,kanji):kanji,english=mark==="巨大"?t("giant")+" "+gloss:mark==="風船"?gloss+" "+t("balloon"):gloss;
-  $("#drill-prompt").innerHTML=answered?'<span class="drill-kana" lang="ja">'+escapeText(kana)+'</span> '+escapeText(t("is the"))+" "+escapeText(english)+' — <span lang="ja">'+escapeText(anchor)+" "+escapeText(reading)+'</span>':escapeText(t("Which anchor is this sound?"));
+  $("#drill-prompt").innerHTML=answered?'<span class="drill-kana" lang="ja">'+escapeText(kana)+'</span> '+escapeText(t("is the"))+" "+escapeText(english)+' — <span lang="ja">'+escapeText(anchor)+" "+escapeText(reading)+'</span>':escapeText(waiting?t("Tap to hear the first sound"):t("Which anchor is this sound?"));
   $("#drill-choices").replaceChildren(...drill.choices.list.map(choice=>{const card=document.createElement("button");card.type="button";card.className="drill-choice";card.dataset.ui="button";card.innerHTML=drillCard(choice);
     card.setAttribute("aria-label",moraAnchorInfo(choice).kanji+" — "+moraAnchorInfo(choice).gloss);
-    if(answered){card.disabled=true;if(choice===kana){card.classList.add("right");card.insertAdjacentHTML("afterbegin",'<span class="drill-right status-chip due">'+escapeText(t("Right"))+'</span>')}else card.classList.add(choice===answered.picked?"picked":"dim")}
+    if(answered){card.disabled=true;if(choice===kana){card.classList.add("right");card.insertAdjacentHTML("afterbegin",'<span class="drill-right status-chip due">'+escapeText(t("Right"))+'</span>')}else if(choice===answered.picked){card.classList.add("picked");card.insertAdjacentHTML("afterbegin",'<span class="drill-right status-chip">'+escapeText(t("Your pick"))+'</span>')}else card.classList.add("dim")}
+    else if(waiting){card.disabled=true;card.classList.add("waiting");card.setAttribute("aria-disabled","true")}
     else card.onclick=()=>{drill.state=answerDrill(drill.state,choice);renderDrill();$("#drill-next").focus({preventScroll:true})};
     return card}));
   $("#drill-after").hidden=!answered;$("#drill-hint").hidden=!!answered;
-  if(answered){const word=moraAnchorInfo(kana).kanji;$("#drill-note").textContent=answered.right?(repeat?t("You found {anchor} this time.",{anchor:word}):t("You picked {anchor} on the first try. A miss shows the right anchor and comes back once more at the end of the round.",{anchor:word})):t("The right anchor is {anchor}. It comes back once more at the end of the round.",{anchor:word})}}
+  if(answered){const word=moraAnchorInfo(kana).kanji;$("#drill-note").textContent=answered.right?(repeat?t("You found {anchor} this time.",{anchor:word}):t("You picked {anchor} on the first try. A miss shows the right anchor and comes back once more at the end of the round.",{anchor:word})):t("{kana} comes back once more at the end of this round. Tap the sound to hear it again.",{kana})}}
 function renderDrillDone(){const {state}=drill,missed=state.misses;
   settings.moraDrillMisses=missed;storePreference("jp-echo-settings",JSON.stringify(settings));
   $("#drill-score").textContent=t("{n} of {total} on the first try",{n:state.firstTry,total:state.total});
-  $("#drill-again-title").textContent=missed.length?(missed.length===1?t("One anchor to look at again:"):t("{n} anchors to look at again:",{n:spell(missed.length).replace(/^./,c=>c.toUpperCase())})):"";
-  $("#drill-again-title").hidden=!missed.length;$("#drill-again").hidden=!missed.length;
-  $("#drill-again").textContent=missed.length===1?t("Drill this one again"):t("Drill these {n} again",{n:spell(missed.length)});
+  // DrillDonePerfect: no misses list, one line, and the action becomes "Drill 10 more".
+  $("#drill-again-title").textContent=missed.length?(missed.length===1?t("One anchor to look at again:"):t("{n} anchors to look at again:",{n:spell(missed.length).replace(/^./,c=>c.toUpperCase())})):(drill.fromNotes?t("Nothing to look at again. Next round starts with sounds from your noted words."):t("Nothing to look at again."));
+  $("#drill-again-title").hidden=false;$("#drill-missed").hidden=!missed.length;
+  $("#drill-again").textContent=!missed.length?t("Drill {n} more",{n:DRILL_SIZE}):missed.length===1?t("Drill this one again"):t("Drill these {n} again",{n:spell(missed.length)});
   $("#drill-missed").replaceChildren(...missed.map(kana=>{const li=document.createElement("li"),{kanji,gloss}=moraAnchorInfo(kana),picture=moraPicture(kana);
     li.innerHTML='<span class="drill-missed-kana" lang="ja">'+escapeText(kana)+'</span>'+(picture?themedPictureHtml(picture,{size:30}):"")+'<span class="drill-missed-text"><span lang="ja">'+escapeText(kanji)+'</span><span class="hint">'+escapeText(gloss)+'</span></span><a class="drill-missed-link" href="'+escapeText(moraCellHref(kana))+'">'+escapeText(t("In the table"))+'</a>';
     li.querySelector("a").onclick=event=>{event.preventDefault();openMoraCell(event.currentTarget.getAttribute("href"))};return li}))}
 $("#drill-sound").onclick=sayDrillSound;
 $("#drill-next").onclick=()=>{drill.state=nextDrill(drill.state);renderDrill();sayDrillSound()};
-$("#drill-again").onclick=()=>{startMoraDrill([...drill.state.misses]).then(sayDrillSound)};
+$("#drill-again").onclick=()=>{const misses=[...drill.state.misses];startMoraDrill(misses.length?misses:undefined).then(sayDrillSound)};
 $("#drill-table").onclick=()=>showView("mora");$("#drill-back").onclick=()=>showView("mora");
 $("#mora-drill-open").onclick=()=>showView("drill");
 // The desktop sidebar carries the same tools as a list (DesktopLibraryTools),
