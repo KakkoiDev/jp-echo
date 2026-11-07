@@ -21,7 +21,7 @@ Rules of engagement:
 - **Never invent a screen.** If the design is missing a state you need, say so in the PR and draw nothing; the designer will add it.
 - **Never weaken a principle to make a PR smaller.** The Library is the sentence list; the study tool is a pushed screen; your own sentence comes first on every sheet; Echo is a prefill, not a mode; movement means audio is playing; copy about the microphone, reminders and backups stays exactly as honest as the spec writes it.
 - **Motion:** replace the echo animation in `styles.css` with `docs/design/motion.css` whole, mark the playing-screen ripples `.live`, and select both `.arcs > .echo` and `.ripple.echo.live` in the loop's `onState`. Then do the acceptance test in the spec on a real phone.
-- **Tokens:** `docs/design/tokens.css` is the palette; `theme-map.json` is how dark is derived. No new colours.
+- **Tokens:** `docs/design/tokens.css` is the palette; the dark values are the `[data-theme="dark"]` block of `styles.css` (the old `theme-map.json` is removed). No new colours.
 - **Report back** with the PR links in order, what you could not match and why, and anything in the design that contradicts the code you found — those are the designer's bugs to fix, not yours to paper over.
 
 Begin with the docs PR, then `design-system`.

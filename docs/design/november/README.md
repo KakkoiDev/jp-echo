@@ -56,6 +56,39 @@ any screen uses them: **ToolShelf, HeaderSearch, AnchorStrip, FilterButton.**
 - The anchor replacements on AnchorAudit: よ→鎧, れ→レモン, ち→地図, ん→判子, そ→蕎麦, こ→駒. `MORA_MNEMONICS` stays at version 4; `core.js`, JP Core and the AI validator are unchanged. The alternate pictures are kept for the owner's decision, not shipped.
 - Redraws of や, め and つ (outlined in red on the audit sheet). The files ship as they are.
 
+## Close-out (7 Nov)
+
+The build's discrepancies went back to the designer as
+[`DESIGNER-FIXES.md`](DESIGNER-FIXES.md). The answers are on the canvas, in
+the row "November close-out — the build's discrepancies" (the CloseOut sheet,
+then the new boards, then *Dark and *360). **Code** means the board was redrawn
+to match the build. **Board** and **New board** mean the build changes.
+
+| Item | Verdict | Where it lands |
+|---|---|---|
+| A1 Mora Combined | New board MoraCombined: 33 cells; a fused sound shows its two anchors with ＋ and a FUSED tag | mora PR |
+| A2 Mora Specials | New board MoraSpecials: small っ, ん and を, the marks | mora PR |
+| A3 Drill miss | New board DrillMiss: "Your pick" struck through, Right on the answer, "4 / 10 · 1 to repeat" | drill PR |
+| A4 Perfect round | New board DrillDonePerfect: one line, "Drill 10 more" | drill PR |
+| A5 First sound on iPhone | New board DrillStart: seal-ringed play, choices inactive until heard, then autoplay | drill PR |
+| A6 Search kanji row | Code: reuses `kanjiCell` | — |
+| B1 Desktop Library | Code: list plus the open sentence pane | — |
+| B2 Desktop Mora drill | Code: the 練 drill row under the toggles | — |
+| B3 ん | Code: を in the o column, ん on its own row | — |
+| B4 Toggles at 390/360 | Two lines on purpose; line 2 "Test yourself — hides the anchors until you tap" | mora PR |
+| B5 "Write it again" | Code: "Edit, or correct with Echo". A fresh-version action needs the owner | — |
+| B6 Echo counter | Board: in the History row line, "Made 2 Oct · 12 echoes" | library + sentence PR |
+| B7 Composer | Code: the shared LearnerComposer | — |
+| B8 Library search | Code, new board LibraryFilter: search, Cards · Sort · Direction, Done | library + sentence PR |
+| B9 Skill mix | Code: SkillGlyph tiles | — |
+| B10 Radio window | Code: 19:00–04:59; the hint reads "from 7 pm until morning" | library + sentence PR |
+| B11 Voiced cards | Board: each card carries its reason in one line | mora PR |
+| B12 Hero and ripple | Code: hero ink; the ripple shows only while audio plays | library + sentence PR |
+| B13 Word sheet | Board: WordNote redrawn with every current section | word sheet PR |
+| C Tokens | Code: dark boards re-exported from `styles.css` | — |
+| M1 Header search | Already shipped in #113 (one shared header, all three tabs) | — |
+| M2 theme-map.json | Removed; `styles.css` holds the dark values | this PR |
+
 ## PR sequence
 
 1. docs — this page and the CLAUDE.md rule
