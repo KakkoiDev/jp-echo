@@ -46,3 +46,12 @@ test('Invite someone and the arrival sheet: the key travels in the #fragment, th
  assert.match(app,/function expireSharedKey/);
  assert.match(sw,/"\.\/key-share\.js"/,'cached for offline');
 });
+
+test('Invite boards (8 Nov): hairline sheet edge, one filled button, quiet Done/Close, the wrong-code line',()=>{
+ const app=read('app.js'),css=read('styles.css');
+ assert.match(css,/\.sheet-dialog\{[^}]*border-top:1px solid var\(--hairline\)/,'a sheet\'s top edge is a hairline, never a red alert line');
+ assert.match(app,/\$\("#arrival-install-yes"\)\.className=arrivalToken\?"outline":"primary"/);
+ assert.match(app,/\$\("#arrival-key-done"\)\.hidden=false;\$\("#arrival-install-yes"\)\.className="primary"/);
+ assert.match(css,/\.invite-done\{[^}]*border-color:var\(--hairline\);color:var\(--ink-soft\)\}/);
+ assert.match(app,/it is 12 letters and numbers\./);
+});

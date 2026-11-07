@@ -353,7 +353,7 @@ body.no-key .mic{display:none}
 #sentence-history-note{margin-top:14px}
 .sentence-danger{margin-top:auto;padding:18px 0 30px;border-top:1px solid var(--hairline)}
 .danger{width:100%;min-height:50px;background:transparent;border-color:var(--seal-edge);color:var(--seal-deep);letter-spacing:.04em}
-.sheet-dialog{position:fixed;width:100%;max-width:none;margin:auto auto 0;padding:28px 22px calc(32px + env(safe-area-inset-bottom));border:0;border-top:2px solid var(--seal);border-radius:8px 8px 0 0;background:var(--panel);box-shadow:0 -14px 40px rgba(28,26,23,.18)}
+.sheet-dialog{position:fixed;width:100%;max-width:none;margin:auto auto 0;padding:28px 22px calc(32px + env(safe-area-inset-bottom));border:0;border-top:1px solid var(--hairline);border-radius:10px 10px 0 0;background:var(--panel);box-shadow:0 -14px 40px rgba(28,26,23,.18)}
 .sheet-dialog h2{margin:0;font-size:26px;line-height:1.35}
 .danger-mark{width:44px;height:44px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;border:1px solid var(--seal-edge);border-radius:4px;background:var(--seal-tint);color:var(--seal-deep)}
 #delete-quote{margin:14px 0 0;padding:12px 14px;border-left:2px solid var(--hairline);background:var(--washi);font-family:var(--display);font-size:18px;line-height:1.6;color:var(--ink-soft);overflow-wrap:anywhere}
@@ -1973,7 +1973,9 @@ header .header-search+#settings-button{margin-left:-4px}
 .invite-link{display:flex;flex-direction:column;gap:6px;margin-top:12px}
 #invite-url{font-family:var(--ui);font-size:13px;color:var(--ink-soft)}
 .invite-actions:has(#invite-share[hidden]){grid-template-columns:1fr}
-.invite-done{width:100%;margin-top:8px}
+.invite-done{width:100%;margin-top:8px;background:var(--panel);border-color:var(--hairline);color:var(--ink-soft)}
+#arrival-key-done::before{content:"✓ ";color:var(--seal)}
+#arrival-key-status.error{color:var(--seal-deep)}
 .arrival-form{display:flex;gap:8px;margin-top:12px}
 .arrival-form input{flex:1 1 auto;min-width:0;font-family:var(--display);font-size:18px;letter-spacing:.08em;text-transform:uppercase}
 .arrival-form button{flex:0 0 auto}
