@@ -27,7 +27,7 @@ import {reviewAvailabilityMessage,reviewStats,dailyReviewBudget,reviewOrder,sess
 import {DEFAULT_TIME,REMINDER_TAG,reminderText,shouldRemind} from "./reminders.js";
 import {saveDiscussionTurn} from "./actions.js";
 // New shared UI comes from the component library (COMPONENTS.md).
-import {flagSvg,renderFlagButton,grammarList,skillGlyph,skillTrio,expandableList,fitTextArea,kanjiNumeral,toolShelf,renderFilterButton,wireFilterButton,anchorStripHtml} from "./components.js";
+import {flagSvg,renderFlagButton,grammarList,skillGlyph,skillTrio,expandableList,fitTextArea,kanjiNumeral,toolShelf,renderFilterButton,wireFilterButton,anchorStripHtml,hydrateHeaderSearch,chevronSvg} from "./components.js";
 // Settings page state, declared before anything can read it (navigationState).
 const SETTINGS_TITLES={main:"Settings",ai:"AI service",speech:"Speech recognition",backup:"Backup",import:"Import sentences",export:"Export",grammar:"Grammar"};
 let settingsPage="main",settingsReturn="practice";
@@ -362,22 +362,22 @@ function playReading(){if(!readingPassage?.sentences.length)return;if(readingLoo
 
 function saveWorkspace(patch={}){const next={...workspace(),view:document.body.dataset.view||"practice",discussionMode,mapQuery:$("#map-search")?.value||"",historyQuery:$("#history-search")?.value||"",mapView:settings.mapView||"kanji",...patch};try{storePreference(WORKSPACE_KEY,JSON.stringify(next))}catch{/* Navigation must work even when browser storage is full or unavailable. */}return next}
 let applyingRoute=false;
-function navigationState(patch={}){return {view:document.body.dataset.view||"practice",discussionMode,readingMode,extractMode,mapView:settings.mapView||"kanji",kanjiGroup:settings.kanjiGroup||"jlpt",mapQuery:$("#map-search")?.value||"",historyQuery:$("#history-search")?.value||"",historyFilter:$("#history-filter")?.value||"all",historyOrder:$("#history-order")?.value||"created",historyDirection:$("#history-direction")?.value||"desc",sentenceId:detail?.id||null,settingsPage,...patch}}
+function navigationState(patch={}){return {view:document.body.dataset.view||"practice",searchQuery:$("#search-input")?.value||"",discussionMode,readingMode,extractMode,mapView:settings.mapView||"kanji",kanjiGroup:settings.kanjiGroup||"jlpt",mapQuery:$("#map-search")?.value||"",historyQuery:$("#history-search")?.value||"",historyFilter:$("#history-filter")?.value||"all",historyOrder:$("#history-order")?.value||"created",historyDirection:$("#history-direction")?.value||"desc",sentenceId:detail?.id||null,settingsPage,...patch}}
 function syncRoute(patch={},replace=false){if(applyingRoute)return;const url=routeFor(navigationState(patch));if(location.pathname+location.search===url)return;history[replace?"replaceState":"pushState"]({echo:true},"",url)}
 
 const wide=matchMedia("(min-width:1024px)");
 const isWide=()=>wide.matches;
 const VIEW_TITLES={review:"Review",library:"Library"};
 function showView(name,{route=true}={}){if(name==="map"&&targetLang()!=="ja")name="library";if(name!=="radio")stopRadio();if(name!=="practice")resetSession();if(name!=="session")stopReviewListening();speechSynthesis.cancel();
-  $("#main-view").hidden=name!=="practice";$("#review-home").hidden=name!=="review";$("#history-view").hidden=!(name==="library"||(name==="sentence"&&isWide()));$("#review-view").hidden=name!=="session";$("#sentence-view").hidden=name!=="sentence";$("#onboard-view").hidden=name!=="onboard";$("#setup-view").hidden=name!=="setup";$("#map-view").hidden=name!=="map";$("#mora-view").hidden=name!=="mora";$("#radio-view").hidden=name!=="radio";$("#notes-view").hidden=name!=="notes";$("#settings-view").hidden=name!=="settings";if(name!=="settings")settingsStack=[];$("#settings-nav")?.toggleAttribute("aria-current",name==="settings");if(name!=="settings"&&$("#ai-show-key")?.getAttribute("aria-pressed")==="true")$("#ai-show-key").click();
-  const solo=name==="onboard"||name==="setup"||((name==="session"||name==="sentence"||name==="map"||name==="mora"||name==="radio"||name==="notes"||name==="settings")&&!isWide());document.querySelector("header").hidden=solo||(name==="practice"&&(discussionMode||readingMode||extractMode)&&!isWide());$("#tabs").hidden=solo;
+  $("#main-view").hidden=name!=="practice";$("#review-home").hidden=name!=="review";$("#history-view").hidden=!(name==="library"||(name==="sentence"&&isWide()));$("#review-view").hidden=name!=="session";$("#sentence-view").hidden=name!=="sentence";$("#onboard-view").hidden=name!=="onboard";$("#setup-view").hidden=name!=="setup";$("#map-view").hidden=name!=="map";$("#mora-view").hidden=name!=="mora";$("#radio-view").hidden=name!=="radio";$("#notes-view").hidden=name!=="notes";$("#search-view").hidden=name!=="search";$("#settings-view").hidden=name!=="settings";if(name!=="settings")settingsStack=[];$("#settings-nav")?.toggleAttribute("aria-current",name==="settings");if(name!=="settings"&&$("#ai-show-key")?.getAttribute("aria-pressed")==="true")$("#ai-show-key").click();
+  const solo=name==="onboard"||name==="setup"||((name==="session"||name==="sentence"||name==="map"||name==="mora"||name==="radio"||name==="notes"||name==="settings")&&!isWide());document.querySelector("header").hidden=solo||(name==="search"&&!isWide())||(name==="practice"&&(discussionMode||readingMode||extractMode)&&!isWide());$("#tabs").hidden=solo;
   $("#view-title").textContent=VIEW_TITLES[name]||"";$("#view-title").hidden=!VIEW_TITLES[name];document.querySelector(".brand").hidden=!!VIEW_TITLES[name];
   $("#discussion-play").onclick=playDiscussion;$("#discussion-english").onchange=renderDiscussion;$("#discussion-new").onclick=()=>{discussionLoop.stop();discussionTurns=[];discussionScenario="";renderDiscussion();$("#english-input").value="";$("#english-input").focus()};$("#reading-furigana").onchange=renderReading;$("#reading-english").onchange=renderReading;$("#reading-echo").onclick=playReading;
 for(const tab of document.querySelectorAll(".tab[data-view]")){const on=tab.dataset.view===name||((name==="session"||name==="radio")&&tab.dataset.view==="review")||((name==="sentence"||name==="map"||name==="notes")&&tab.dataset.view==="library");tab.classList.toggle("current",on);tab.setAttribute("aria-current",on?"page":"false")}
   // Settings sits in the desktop sidebar as a fourth row without a data-view; it is current on the Settings route.
   {const settingsNav=$("#settings-nav");if(settingsNav){const on=name==="settings";settingsNav.classList.toggle("current",on);settingsNav.setAttribute("aria-current",on?"page":"false")}}
   document.body.dataset.view=name;scrollTo(0,0);renderSidePanel();
-  saveWorkspace({view:name});if(route)syncRoute({view:name});if(name==="library"||(name==="sentence"&&isWide()))renderHistory();else if(name==="map")renderMap();else if(name==="mora")renderMora();else if(name==="radio")renderRadio();else if(name==="notes")renderNotes();else if(name==="review")renderReviewHome();else if(name==="practice"){renderPracticeNotices();renderWelcome()}else if(name==="setup")resetSetupForm()}
+  saveWorkspace({view:name});if(route)syncRoute({view:name});if(name==="library"||(name==="sentence"&&isWide()))renderHistory();else if(name==="map")renderMap();else if(name==="mora")renderMora();else if(name==="radio")renderRadio();else if(name==="notes")renderNotes();else if(name==="search")renderSearch();else if(name==="review")renderReviewHome();else if(name==="practice"){renderPracticeNotices();renderWelcome()}else if(name==="setup")resetSetupForm()}
 // The study tool: the wall of joyo kanji, the dictionary and the list of grammar points,
 // read off your library every time the screen opens. Coverage is never
 // stored, so a sentence added or deleted moves the wall at once, and nothing
@@ -2231,6 +2231,40 @@ async function renderWelcome(){let all=[];try{all=await listSentences()}catch{al
     row.setAttribute("aria-label",t("Play the loop")+": "+stripFurigana(preferredTarget(item)));
     row.onclick=async()=>{const fresh=await getSentence(item.id)||item;openSentence(ensureSchedule(fresh));$("#play-pause").click()};li.append(row);return li}))}
 $("#welcome-tools").onclick=()=>{showView("library");history.replaceState(history.state,"",location.pathname+location.search+"#tools");requestAnimationFrame(()=>$("#tools")?.scrollIntoView({block:"start"}))};
+// One search (Search board): the magnifier in every tab header opens
+// /search?q=. Words and kanji come from the bundled dictionary (lookup.js),
+// sentences from the library; a result opens where it lives.
+let searchScope="all",searchFrom="library",searchVersion=0;
+function openSearch(){const tab=document.body.dataset.view;if(tab!=="search")searchFrom=["practice","review","library"].includes(tab)?tab:searchFrom;showView("search");requestAnimationFrame(()=>$("#search-input").focus())}
+hydrateHeaderSearch(document,{onOpen:openSearch});
+function searchRule(label,n){const h=el("h3","rule-heading search-rule");h.textContent=label+" · "+n;return h}
+async function renderSearch(){const version=++searchVersion,query=$("#search-input").value.trim(),host=$("#search-results");
+  for(const tab of document.querySelectorAll("#search-scope [data-scope]"))tab.setAttribute("aria-selected",String(tab.dataset.scope===searchScope));
+  for(const tab of document.querySelectorAll(".tab[data-view]")){const on=tab.dataset.view===searchFrom;tab.classList.toggle("current",on);tab.setAttribute("aria-current",on?"page":"false")}
+  if(!query){host.replaceChildren();return}
+  const all=await listSentences();if(version!==searchVersion)return;
+  const parts=[],want=scope=>searchScope==="all"||searchScope===scope,ja=targetLang()==="ja";
+  if(ja&&want("words")){const r=searchWords(query),notes=new Set((await wordNotes()).map(e=>e.word.id));if(version!==searchVersion)return;
+    const words=(r?.words||[]).slice(0,searchScope==="words"?50:5);
+    if(words.length){const ul=el("ul","search-list");for(const w of words){const li=el("li"),row=el("button","search-row");row.type="button";
+      row.innerHTML='<span class="search-word" lang="ja">'+escapeText(w.w)+'</span><span class="search-lines"><span class="search-reading" lang="ja">'+escapeText(w.r||"")+'</span><span class="search-gloss">'+escapeText((w.en||[])[0]||"")+'</span></span>'+(notes.has(w.id)?'<span class="status-chip due search-note">'+escapeText(t("Note"))+'</span>':'')+chevronSvg;
+      row.onclick=()=>openWord(w,wordCoverage(all));li.append(row);ul.append(li)}parts.push(searchRule(t("Words"),r.total),ul)}}
+  if(ja&&want("kanji")){const r=searchKanji(query),cover=kanjiCoverage(all),known=kanjiLearned(all),chars=(r?.chars||[]).slice(0,searchScope==="kanji"?50:5);
+    if(chars.length){const ul=el("ul","search-list kanji");for(const c of chars){const li=el("li"),row=el("button","search-row");row.type="button";
+      const cell=kanjiCell(c,cover,known);cell.tabIndex=-1;cell.removeAttribute("aria-label");cell.onclick=null;const count=(cover.get(c)||[]).length;
+      row.append(cell,el("span","search-kanji-meta",[(kanjiFacts(c)?.en||[]).slice(0,2).join(", "),levelOf(c),count?t("met in {n} sentence"+(count===1?"":"s"),{n:count}):null].filter(Boolean).join(" · ")));
+      row.onclick=()=>openKanji(c,cover);li.append(row);ul.append(li)}parts.push(searchRule(t("Kanji"),r.chars.length),ul)}}
+  if(want("sentences")){const needle=query.toLocaleLowerCase(),now=Date.now();
+    const hits=all.filter(item=>[item.source,item.target,item.plainTarget,item.casualTarget,item.politeTarget].filter(Boolean).join(" ").toLocaleLowerCase().includes(needle));
+    if(hits.length){const ul=el("ul","search-list");for(const item of hits.slice(0,searchScope==="sentences"?100:5)){const li=el("li"),row=el("button","search-row sentence");row.type="button";
+      const plain=stripFurigana(preferredTarget(item)),at=plain.toLocaleLowerCase().indexOf(needle),marked=at<0?escapeText(plain):escapeText(plain.slice(0,at))+'<mark>'+escapeText(plain.slice(at,at+query.length))+'</mark>'+escapeText(plain.slice(at+query.length)),state=cardState(item,now);
+      row.innerHTML='<span class="search-lines"><span class="search-sentence" lang="'+itemTarget(item)+'">'+marked+'</span><span class="search-gloss">'+escapeText(item.source||"")+'</span></span><span class="status-chip '+state+'">'+CARD_STATES[state]+'</span>';
+      row.onclick=()=>openDetail(item.id);li.append(row);ul.append(li)}parts.push(searchRule(t("Sentences"),hits.length),ul)}}
+  if(!parts.length){const none=el("p","hint search-none");none.textContent=t("Nothing matches “{q}” yet.",{q:query});parts.push(none)}
+  host.replaceChildren(...parts)}
+$("#search-input").oninput=()=>{syncRoute({},true);renderSearch()};
+for(const tab of document.querySelectorAll("#search-scope [data-scope]"))tab.onclick=()=>{searchScope=tab.dataset.scope;renderSearch()};
+$("#search-back").onclick=()=>{if(history.state?.echo&&history.length>1)history.back();else showView(searchFrom)};
 $("#clear-filters").onclick=()=>{$("#history-search").value="";$("#clear-history-search").hidden=true;$("#history-filter").value="all";settings.historyFilter="all";try{storePreference("jp-echo-settings",JSON.stringify(settings))}catch{}renderHistory()};
 addEventListener("online",renderPracticeNotices);addEventListener("offline",renderPracticeNotices);
 // A sheet closes the way it looks like it should: drag the handle down far
@@ -2360,6 +2394,7 @@ async function applyRoute(route=parseRoute(location.href)){
     if(!settings.onboarded&&!hasTranslator()&&route.view!=="setup"&&route.view!=="onboard")route={view:"onboard"};
     if(route.historyQuery!=null){$("#history-search").value=route.historyQuery;$("#clear-history-search").hidden=!route.historyQuery}
     if(route.historyFilter)$("#history-filter").value=route.historyFilter;if(route.historyOrder)$("#history-order").value=route.historyOrder;if(route.historyDirection)$("#history-direction").value=route.historyDirection;
+    if(route.searchQuery!=null)$("#search-input").value=route.searchQuery;
     if(route.mapQuery!=null)$("#map-search").value=route.mapQuery;if(route.mapView)settings.mapView=route.mapView;if(route.kanjiGroup)settings.kanjiGroup=route.kanjiGroup;
     if(route.sentenceId){const sentence=await getSentence(route.sentenceId);if(sentence){detail=ensureSchedule(sentence);showView("sentence",{route:false});renderDetail()}else showView("library",{route:false})}
     else if(route.view==="settings")openSettings(route.settingsPage,{route:false});
