@@ -2,7 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
-import {reviewMode,reviewModeMeta,skillReason} from '../review-modes.js';
+import {reviewMode} from '../review.js';
+import {reviewModeMeta,skillReason} from '../review-modes.js';
 const app=readFileSync(new URL('../app.js',import.meta.url),'utf8');
 function harness(mode,overrides={}){
  const fields=new Map(),$=id=>{if(!fields.has(id))fields.set(id,{attrs:{},value:'',textContent:'',hidden:false,disabled:false,dataset:{},style:{},classList:{toggle(){},remove(){}},setAttribute(key,value){this.attrs[key]=value},replaceChildren(){},focus(){}});return fields.get(id)};

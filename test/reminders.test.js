@@ -1,11 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {DEFAULT_TIME, dueCount, isDueRecord, reminderMoment, reminderText, shouldRemind} from "../reminders.js";
-import {isDue} from "../srs.js";
+import {isDue} from "../review.js";
 
 const at = (day, hour, minute = 0) => new Date(2026, 0, day, hour, minute).getTime();
 
-test("the service worker's due rule matches srs.js", () => {
+test("the service worker's due rule matches review.js", () => {
   const now = new Date("2026-01-10T12:00:00Z");
   const cases = [
     {},

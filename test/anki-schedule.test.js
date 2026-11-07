@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {ankiSchedule} from "../anki-schedule.js";
+import {ankiSchedule} from "../review.js";
 
 test("exports reviewed FSRS progress to Anki card fields",()=>{
   const created=Date.parse("2026-09-20T00:00:00Z")/1000;

@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {ensureReviewTrack,nextSkill,recordReviewMode,reviewMode,reviewModeMeta,skillMix,skillReason} from "../review-modes.js";
+import {ensureReviewTrack,nextSkill,recordReviewMode,reviewMode,skillMix} from "../review.js";
+import {reviewModeMeta,skillReason} from "../review-modes.js";
 
 test("legacy sentences start with Listening and zero progress",()=>{
   const original={id:"s1"};

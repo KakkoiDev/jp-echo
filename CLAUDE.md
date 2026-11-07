@@ -118,6 +118,9 @@ Before considering the change complete:
 - `app.js`: screen orchestration and legacy code being migrated toward components.
 - `api.js`: model/provider-facing behavior.
 - `core.js`: shared Japanese/domain logic synchronized from JP Core where noted.
+- `review.js`: JP Core's spaced-repetition state (FSRS schedule, skill rotation,
+  review stats, Anki mapping), copied verbatim — never edit it here.
+  `review-modes.js` holds Echo's presentation and session selection on top.
 - `actions.js`: explicit persistence mutations.
 - `routes.js`: canonical URL/navigation model.
 - `speech.js`: speech and repetition engines.
@@ -169,8 +172,9 @@ Before considering the change complete:
 ## Design handoff decisions (October 2026)
 
 - **Skills are glyphs.** 聴 読 書 via `SkillGlyph` (components.js); never emoji.
-  Skill copy derives from `review-modes.js` (`skillReason`, `skillMix`,
-  `dueLine`) — change the copy to fit the logic, never the logic to fit copy.
+  Skill copy derives from `review-modes.js` (`skillReason`, `dueLine`) and
+  `review.js` (`skillMix`) — change the copy to fit the logic, never the logic
+  to fit copy.
 - **Answered grammar is a list, not chips** (`GrammarList`). Word marks
   (`.review-vocab`, interactive) and grammar marks (`.grammar-mark`, not
   interactive) differ in weight and colour and may share a segment.

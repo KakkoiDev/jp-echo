@@ -46,7 +46,7 @@ test('real review entry records its prior state for daily accounting',async()=>{
  assert.match(source,/rating,mode,state:sentence\.srs\?\.state\?\?0/);
 });
 test('real navigation badge counts history of cards that are no longer due',async()=>{
- const {readFileSync}=await import('node:fs');const {dueSentences}=await import('../srs.js');
+ const {readFileSync}=await import('node:fs');const {dueSentences}=await import('../review.js');
  const source=readFileSync(new URL('../app.js',import.meta.url),'utf8');const body=source.match(/async function refreshDueBadge\(\)\{([^\n]*)\}/)[1];
  const completed=card('done',2,[event(2,Date.now()-1000)]);completed.srs.due='2099-01-01T00:00:00Z';
  let count;await new Function('listSentences','ensureSchedule','dueSentences','limitReviewSession','settings','updateDueBadge',`return (async()=>{${body}})()`)(async()=>[completed,card('due',2)],s=>s,dueSentences,limitReviewSession,{reviewNewLimit:0,reviewExistingLimit:1},value=>count=value);

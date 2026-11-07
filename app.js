@@ -22,8 +22,8 @@ import {loadFamilyCurriculum,familyTopics,findFamilies,familyThemes,exampleLibra
 import {ALL as REFERENCE_WORDS,setImportedWords,bands as wordBands,carries as carriesWord,coverage as wordCoverage,kindOf,learned as wordLearned,levelOf as wordLevel,marks as wordMarks,sentenceWords,wordSpans,TOTAL as WORD_TOTAL,word as wordById} from "./words.js";
 import {deleteNote as dbDeleteNote,forBackup,getNote,listNotes,makeNote,mergeNotes,noteKey,putNote as dbPutNote,replaceNotes as dbReplaceNotes} from "./notes.js";
 import {downloadAnkiDeck} from "./anki-export.js";
-import {dueSentences,ensureSchedule,isDue,reviewSentence} from "./srs.js";
-import {reviewAvailabilityMessage,reviewStats,dailyReviewBudget,reviewOrder,sessionLimit,limitReviewSession,extraStudySession,dueLine,ensureReviewTrack,nextSkill,recordReviewMode,reviewMode,reviewModeMeta,skillMix,skillReason} from "./review-modes.js";
+import {dueSentences,ensureSchedule,isDue,reviewSentence,reviewStats,ensureReviewTrack,nextSkill,recordReviewMode,reviewMode,skillMix} from "./review.js";
+import {reviewAvailabilityMessage,dailyReviewBudget,reviewOrder,sessionLimit,limitReviewSession,extraStudySession,dueLine,reviewModeMeta,skillReason} from "./review-modes.js";
 import {DEFAULT_TIME,REMINDER_TAG,reminderText,shouldRemind} from "./reminders.js";
 import {saveDiscussionTurn} from "./actions.js";
 // New shared UI comes from the component library (COMPONENTS.md).

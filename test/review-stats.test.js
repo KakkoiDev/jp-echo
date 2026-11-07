@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {reviewStats} from '../review-modes.js';
+import {reviewStats} from '../review.js';
 const now=Date.parse('2026-10-06T14:00:00Z'),day=86400000;
 const event=(ago,rating='ok',mode='listening')=>({at:new Date(now-ago).toISOString(),rating,mode});
 test('rolling 24h counts both grades and only valid past timestamps',()=>{
