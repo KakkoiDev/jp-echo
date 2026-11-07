@@ -2701,13 +2701,15 @@ function expireSharedKey(now=Date.now()){const shared=settings.sharedKey;if(!sha
   toast(t("The AI key someone shared with you has expired and was removed."),6000);return true}
 {const params=new URLSearchParams(location.search),install=params.has("install")&&!isInstalled();
   if(params.has("install")){params.delete("install");const rest=params.toString();history.replaceState(history.state,"",location.pathname+(rest?"?"+rest:"")+location.hash)}
-  if(arrivalToken||install){$("#arrival-key").hidden=!arrivalToken;$("#arrival-install").hidden=!install;
+  // One filled button at a time: while the code is being typed, Unlock is
+  // the action and Install waits, outlined (ArrivalKey / ArrivalKeyUnlocked).
+  if(arrivalToken||install){$("#arrival-key").hidden=!arrivalToken;$("#arrival-install").hidden=!install;$("#arrival-install-yes").className=arrivalToken?"outline":"primary";
     $("#arrival-dialog").setAttribute("aria-labelledby",arrivalToken?"arrival-key-title":"arrival-install-title");
     setTimeout(()=>{$("#arrival-dialog").showModal();if(arrivalToken)$("#arrival-key-code").focus()},install&&!arrivalToken?1200:0)}}
-const ARRIVAL_MESSAGES={unsupported:"This browser cannot unlock shared keys. Open the link in an up-to-date browser.","wrong-code":"That code does not unlock this key. Check it and try again.",expired:"This shared key has expired. Ask for a new invite link.",malformed:"This link is incomplete or damaged. Ask for a new invite link."};
+const ARRIVAL_MESSAGES={unsupported:"This browser cannot unlock shared keys. Open the link in an up-to-date browser.","wrong-code":"That code doesn't open this key. Check it with the person who sent the link; it is 12 letters and numbers.",expired:"This shared key has expired. Ask for a new invite link.",malformed:"This link is incomplete or damaged. Ask for a new invite link."};
 $("#arrival-key-form").addEventListener("submit",async event=>{event.preventDefault();const status=$("#arrival-key-status"),button=$("#arrival-key-unlock");
   if(!keyShareSupported()){status.textContent=t(ARRIVAL_MESSAGES.unsupported);return}
-  button.disabled=true;status.textContent=t("Unlocking…");
+  button.disabled=true;status.classList.remove("error");status.textContent=t("Unlocking…");
   try{const shared=await openKey(arrivalToken,$("#arrival-key-code").value);
     if(!SHAREABLE_PROVIDERS.includes(shared.provider))throw Object.assign(new Error("malformed"),{code:"malformed"});
     settings.provider=shared.provider;settings.providerKeys={...(settings.providerKeys||{}),[shared.provider]:String(shared.key)};
@@ -2717,8 +2719,8 @@ $("#arrival-key-form").addEventListener("submit",async event=>{event.preventDefa
     // First visit: the setup screen asks for a key; fill it in, so it is not asked for twice.
     if(!settings.onboarded){$("#setup-provider").value=shared.provider;showSetupFields();$("#setup-key").value=String(shared.key)}
     history.replaceState(history.state,"",location.pathname+location.search);
-    $("#arrival-key-form").hidden=true;status.textContent="";$("#arrival-key-done").hidden=false}
-  catch(error){status.textContent=t(ARRIVAL_MESSAGES[error?.code]||ARRIVAL_MESSAGES.malformed);button.disabled=false;if(error?.code==="wrong-code")$("#arrival-key-code").select()}});
+    $("#arrival-key-form").hidden=true;status.textContent="";$("#arrival-key-done").hidden=false;$("#arrival-install-yes").className="primary"}
+  catch(error){status.classList.add("error");status.textContent=t(ARRIVAL_MESSAGES[error?.code]||ARRIVAL_MESSAGES.malformed);button.disabled=false;if(error?.code==="wrong-code")$("#arrival-key-code").select()}});
 $("#arrival-install-yes").onclick=async()=>{await installApp();$("#arrival-install-status").textContent=$("#install-status").textContent;if(isInstalled())$("#arrival-dialog").close()};
 $("#arrival-install-no").onclick=()=>{$("#arrival-install").hidden=true;if($("#arrival-key").hidden)$("#arrival-dialog").close()};
 $("#arrival-close").onclick=()=>$("#arrival-dialog").close();
