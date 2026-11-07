@@ -26,13 +26,13 @@ test('cancelled rewrite cannot overwrite or enable controls belonging to a newer
  completions[0]({source:'Old request',casual:'古い文。',polite:'古い文です。'});await first;assert.equal(h.$('#sentence-draft').value,'駅に行く。');assert.equal(h.$('#sentence-rewrite').disabled,true);assert.equal(h.$('#sentence-save').disabled,true);
  completions[1]({source:'New request',casual:'新しい文。',polite:'新しい文です。'});await second;assert.equal(h.$('#sentence-draft').value,'新しい文。');assert.equal(h.$('#sentence-save').disabled,false);
 });
-test('requirements precede separate visible sentence and meaning fields',()=>{
+test('the instruction sits up front and the draft opens under it, sentence then meaning',()=>{
  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
  const form=html.slice(html.indexOf('<form id="sentence-editor">'),html.indexOf('</form>',html.indexOf('<form id="sentence-editor">')));
- assert.ok(form.indexOf('id="sentence-instruction"')<form.indexOf('id="sentence-draft"'));
+ assert.ok(html.indexOf('id="sentence-instruction"')<html.indexOf('<form id="sentence-editor">'),'Tell Echo what to change comes first (SentenceFocus)');
  assert.ok(form.indexOf('id="sentence-draft"')<form.indexOf('id="sentence-source-draft"'));
- assert.doesNotMatch(form,/<details/);assert.match(form,/id="sentence-rewrite" class="primary" type="button">Generate</);assert.match(form,/Meaning of the new sentence/);
- assert.match(app,/if\(editorOpenId!==detail\?\.id\)openEditor\(\)/);
+ assert.doesNotMatch(form,/<details/);assert.match(html,/id="sentence-rewrite" class="outline" type="button" aria-label="Rewrite">→</);assert.match(form,/Meaning of the new sentence/);
+ assert.match(app,/if\(editorOpenId!==detail\.id\)\{const asked=\$\("#sentence-instruction"\)\.value;openEditor\(\);\$\("#sentence-instruction"\)\.value=asked\}/,'opening the draft keeps what was asked');
 });
 
 test('legacy Japanese meaning-language metadata is corrected before requesting and saving English',async()=>{

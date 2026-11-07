@@ -1737,3 +1737,27 @@ header .header-search+#settings-button{margin-left:-4px}
 .search-kanji-meta{font-size:13px;color:var(--ink-soft)}
 .search-note{flex-shrink:0}
 .search-hint{margin:16px 0 0}
+
+/* Sentence page, focused (SentenceFocus, SentenceMenu): back, title and ⋯;
+   the chips; the sentence; Play the loop; "Tell Echo what to change"; then
+   the In it rows. Everything else is in the ⋯ MenuSheet. */
+.sentence-bar{gap:12px}
+#sentence-view .session-bar.sentence-bar{margin-bottom:0}
+#sentence-view .sentence-bar #sentence-more{margin-left:auto}
+.sentence-bar .sentence-title{flex-grow:1;font-family:var(--display);font-weight:600;font-size:19px}
+.sentence-chips{display:flex;gap:8px;margin-top:16px}
+.sentence-chips .status-chip{align-self:auto}
+.register-chip{border-color:var(--hairline);background:var(--panel);color:var(--ink-soft)}
+#sentence-view .sentence-echoes{display:none}
+#sentence-view .sentence-play-row{display:block;margin-top:22px}
+#sentence-view #sentence-play{width:100%;min-height:48px}
+#sentence-ai{margin-top:18px}
+#sentence-ai .rule-label{display:block;margin-bottom:9px;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.2em;color:var(--seal-deep)}
+#sentence-ai .input-row.adjust-row{display:flex;flex-wrap:nowrap;gap:8px;align-items:stretch}
+#sentence-ai .input-row.adjust-row textarea{flex:1 1 auto;flex-basis:auto;min-height:44px;height:44px;padding:11px 12px;resize:none;background:var(--washi)}
+#sentence-ai .adjust-row .mic,#sentence-ai #sentence-rewrite{width:48px;height:44px;min-height:44px;padding:0;flex-shrink:0}
+#sentence-ai>.hint{margin:8px 0 0}
+.rule-heading.in-it{margin:24px 0 4px}
+#sentence-view .sentence-columns{margin-top:0}
+.sentence-menu-note{margin:12px 0 0}
+.menu-glyph{width:22px;flex-shrink:0;text-align:center;font-family:var(--display);font-size:16px;color:var(--seal-deep)}
