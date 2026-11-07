@@ -55,3 +55,9 @@ test('failed worker update cannot reload or navigate the open page',async()=>{
  const window={},navigator={serviceWorker:{register:async()=>({update:()=>Promise.reject(Error('offline'))})}};
  vm.runInNewContext(registration,{navigator,window,location:{reload:()=>assert.fail('unexpected reload')}});await window.echoWorker;
 });
+
+test('a module that fails only in this browser is named on the error panel',()=>{
+ const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+ assert.match(html,/for\(const path of paths\.filter\(p=>p!=='app\.js'\)\)try\{await import\('\/'\+path\)\}catch\(e\)\{failed=path\+/,'each module is imported on its own, app.js excepted');
+ assert.match(html,/Failing here: /);
+});
