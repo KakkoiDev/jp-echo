@@ -94,7 +94,7 @@ test("the Anki export reads the fields the app writes today, and the old names s
 
 
 test("Mora fuses small ya yu yo with the previous i-row anchor",()=>{
-  assert.equal(MORA_MNEMONICS_VERSION,4);
+  assert.equal(MORA_MNEMONICS_VERSION,5);
   // A combined sound with its own anchor uses it; voiced and p-sounds make it giant or a balloon.
   assert.deepEqual(moraMnemonicTokens("きゃく"),[{mora:"きゃ",image:"キャベツ"},{mora:"く",image:"熊"}]);
   assert.deepEqual(moraMnemonicTokens("ジュース"),[{mora:"じゅ",image:"巨大な手裏剣"},{mora:"す",image:"寿司"}]);
@@ -102,7 +102,7 @@ test("Mora fuses small ya yu yo with the previous i-row anchor",()=>{
   assert.deepEqual(moraMnemonicTokens("びょういん").slice(0,1),[{mora:"びょ",image:"巨大な豹"}]);
   // Without one, the two anchors still fuse.
   assert.deepEqual(moraMnemonicTokens("にゃ"),[{mora:"にゃ",image:"肉＋山（融合）"}]);
-  assert.deepEqual(moraMnemonicTokens("ぱん"),[{mora:"ぱ",image:"風船の花"},{mora:"ん",image:"頷き"}]);
+  assert.deepEqual(moraMnemonicTokens("ぱん"),[{mora:"ぱ",image:"風船の花"},{mora:"ん",image:"判子"}]);
   assert.deepEqual(moraMnemonicTokens("がく").slice(0,1),[{mora:"が",image:"巨大な傘"}]);
 });
 

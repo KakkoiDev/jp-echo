@@ -37,3 +37,13 @@ test('each voiced mark card carries its reason (MoraVoiced)',()=>{
  assert.match(html,/mora-mark-why[^>]*>Voiced sounds feel big: <span lang="ja">ゴロゴロ<\/span>/);
  assert.match(html,/mora-mark-why[^>]*>P is a popping sound/);
 });
+
+test('Mora v5: five anchors changed, pictures follow, old notes are pointed out',async()=>{
+ const {MORA_MNEMONICS,MORA_MNEMONICS_VERSION,moraMnemonicPrompt}=await import('../core.js');
+ assert.equal(MORA_MNEMONICS_VERSION,5);
+ assert.deepEqual(['よ','れ','ち','ん','こ'].map(k=>MORA_MNEMONICS[k]),['鎧','レモン','地図','判子','駒']);
+ assert.match(moraMnemonicPrompt(),/みょ=水＋鎧/);assert.match(moraMnemonicPrompt(),/ご=巨大な駒/);assert.doesNotMatch(moraMnemonicPrompt(),/ヨット|頷き|蝶々|冷蔵庫|氷/);
+ const app=read('app.js'),html=read('index.html');
+ assert.match(app,/MORA_V4_RETIRED=Object\.freeze\(\{"よ":"ヨット","れ":"冷蔵庫","ち":"蝶々","ん":"頷き","こ":"氷"\}\)/);
+ assert.match(html,/id="word-note-retired"/);assert.doesNotMatch(html,/頷き|is a nod/);
+});

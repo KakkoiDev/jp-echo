@@ -433,7 +433,7 @@ function moraTable(host,rows,{pictures,furigana,english,quiz},columns=["a","i","
     return line}))}
 // Four sections behind one segmented control, the section in the URL.
 let moraSection="base",moraOpen="あ";
-const MORA_SECTION_COUNTS={base:()=>t("46 anchors · version 4"),voiced:()=>t("25 voiced · same anchors, marked"),combined:()=>t("{n} combined · one anchor each",{n:MORA_YOON_ROWS.flat().length}),specials:()=>t("っ · ん · を · the marks")};
+const MORA_SECTION_COUNTS={base:()=>t("46 anchors · version 5"),voiced:()=>t("25 voiced · same anchors, marked"),combined:()=>t("{n} combined · one anchor each",{n:MORA_YOON_ROWS.flat().length}),specials:()=>t("っ · ん · を · the marks")};
 function renderMora(){const options={pictures:$("#mora-show-pictures").checked,furigana:$("#mora-show-furigana").checked,english:$("#mora-show-english").checked,quiz:$("#mora-quiz").checked};
   for(const tab of document.querySelectorAll("#mora-sections [data-section]"))tab.setAttribute("aria-selected",String(tab.dataset.section===moraSection));
   for(const section of MORA_SECTIONS)$("#mora-section-"+section).hidden=section!==moraSection;
@@ -1340,10 +1340,20 @@ async function renderWordNote(w){
   hint.textContent=hasTranslator()?t("One request on your key. Kept on this device and in every backup, and yours to adjust."):t("Add a translator and Echo can write one.");
   if(note)showWordNote(w,note);
 }
+// The anchors Mora v5 replaced, by kana: v4's word, then v5's.
+const MORA_V4_RETIRED=Object.freeze({"よ":"ヨット","れ":"冷蔵庫","ち":"蝶々","ん":"頷き","こ":"氷"});
+function moraRetiredIn(reading,text){const seen=new Set(),out=[];
+  for(const {mora} of moraMnemonicTokens(reading)){const kana=mora.replace(/^っ/,""),first=(MORA_VOICED[kana[0]]||[kana[0]])[0],small=kana[1]&&!MORA_YOON[first+kana[1]]?MORA_SMALL[kana[1]]:null;
+    for(const base of [first,small])if(base&&MORA_V4_RETIRED[base]&&!seen.has(base)&&text.includes(MORA_V4_RETIRED[base])){seen.add(base);out.push([MORA_V4_RETIRED[base],MORA_MNEMONIC_META[base][0]])}}
+  return out}
 function showWordNote(w,note){
   const block=$("#word-note");block.hidden=false;
   // The reading's anchors, in order, each opening its Mora cell (WordNote).
   {const items=anchorStripItems(moraMnemonicTokens(w.r||""));$("#word-note-anchors").hidden=!items.length;$("#word-note-strip").innerHTML=items.length?anchorStripHtml(items,{label:t("Mora anchors for {word}",{word:w.r||w.w})}):""}
+  // Mora v5 (7 Nov) replaced five anchors. A note written before then still
+  // tells the old story while the strip shows the new anchor: say which, once.
+  {const old=moraRetiredIn(w.r||"",note.text||"");$("#word-note-retired").hidden=!old.length;
+   $("#word-note-retired").textContent=old.length?t("This note uses an older anchor: {list}. Generate fresh to write it with the new one.",{list:old.map(([was,now])=>was+" → "+now).join(", ")}):""}
   block.querySelector(".adjust-link").disabled=!hasTranslator();
   const save=async(text,by="you")=>{const next=makeNote({kind:"word",id:w.id,part:"remember",text,echo:note.echo??note.text,by});await putNote(next);note=next;return next};
   noteBlock(block,{about:w.w+(w.r!==w.w?"（"+w.r+"）":"")+" ("+(w.en[0]||"")+")",kind:t("Echo’s note — how to say it"),note,

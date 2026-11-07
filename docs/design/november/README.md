@@ -51,10 +51,11 @@ or a primitive, the repo wins and the PR says so.
 New reusable primitives, added to `components.js` and `COMPONENTS.md` before
 any screen uses them: **ToolShelf, HeaderSearch, AnchorStrip, FilterButton.**
 
-## Not yet decided — do not ship
+## Decided after the pass (7 Nov)
 
-- The anchor replacements on AnchorAudit: よ→鎧, れ→レモン, ち→地図, ん→判子, そ→蕎麦, こ→駒. `MORA_MNEMONICS` stays at version 4; `core.js`, JP Core and the AI validator are unchanged. The alternate pictures are kept for the owner's decision, not shipped.
-- Redraws of や, め and つ (outlined in red on the audit sheet). The files ship as they are.
+- **Anchors, Mora v5.** The owner took five AnchorAudit replacements: よ→鎧, れ→レモン, ち→地図, ん→判子, こ→駒. そ keeps ソファ (蕎麦 declined). `MORA_MNEMONICS_VERSION` is 5 in `core.js` and JP Core.
+- **Pictures.** The owner sent 512px masters of the whole set, with や, め and つ redrawn (no frame; one plain desk). They ship at 128px; the dark set is the same drawing recoloured.
+- **"Write it again".** A fresh version replaces the sentence: the owner practises only the new one.
 
 ## Close-out (7 Nov)
 
