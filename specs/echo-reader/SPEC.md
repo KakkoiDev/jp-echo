@@ -41,9 +41,9 @@ written for Echo**. Yomitan is GPL-3.0, so its tables are not copied.
 | D3 | Sync goes through the existing gist. User's preference: pull, merge, push; or, if safer, separate files that are always all pulled, with duplicates removed on pull | user |
 | D4 | Runs on all sites (`@match *://*/*`) | user |
 | D5 | Lookup quality similar to Yomitan's, conjugations included | user |
-| R1 | Saved words get **their own IndexedDB store** (`jp-echo-words`), keyed by dictionary word id; never a record type inside `sentences` | recommended, awaiting confirmation |
+| R1 | Saved words get **their own IndexedDB store** (`jp-echo-words`), keyed by dictionary word id; never a record type inside `sentences`. **Saving a word adds the sentence it was met in to the Library as an ordinary sentence card**, so the word is reviewed in context (§4.4). | user, 7 Nov |
 | R2 | Sync uses **one gist file per writer**: Echo writes `echo-backup.json`, and each reader install writes `echo-reader-<device>.json`. Every reader pulls all of them and merges deterministically. | recommended (the user's "safer" option, made strict) |
-| R3 | The remember note is written **by Echo**, at the reader's explicit request, and syncs back. Writing it inside the pane is a later milestone (M8). | recommended, awaiting confirmation |
+| R3 | The remember note is written **by Echo**, at the reader's explicit request, and syncs back. Writing it inside the pane is a later milestone (M8). | user (as recommended), 7 Nov |
 | R4 | The conjugation engine lives **in JP Core** (KakkoiDev/jp-core, a browser module beside `browser/jp-core.js`, with its Python twin and tests), as the one authority for Japanese tooling. Echo copies it verbatim, as it does `core.js`, and moves its own word matching onto it; the reader gets it through `reader-core.js`. | user, 7 Nov |
 | R5 | The script reuses Echo code through a **generated classic-script bundle** (`reader-core.js`) built from Echo's modules, never a hand copy | recommended |
 | D6 | **Saved is a mark, not a state.** A new reusable `SavedMark` (a drawn bookmark) shows it; met and learned keep their chips and still come only from sentences. The way in is a 栞 *Saved words · N* row under 記 Echo's notes, opening its own screen at `/words?saved=1`. Never a value in the Cards filter. | design, 8 Nov (canvas row "Saved words") |
@@ -56,8 +56,10 @@ Echo's loop is **mean → shape → hear → say → retrieve → use**. Reading
 open web is where a learner *meets* words. Today those words are lost unless
 they are typed into Echo by hand. The reader turns "I just met this word" into
 Echo material in one action. Words stay **material for production**: a saved
-word is not reviewed as a flashcard. It invites the learner, on the word sheet
-in Echo, to *say a sentence using it* (`sayForWord`, app.js:1039-1049) or to
+word is not reviewed as a flashcard. **The sentence it was met in is** (R1):
+saving adds that sentence to the Library as an ordinary card, so the word is
+heard, said and retrieved in context. The word sheet in Echo also invites the
+learner to *say a sentence using it* (`sayForWord`, app.js:1039-1049) or to
 let Echo write one (app.js:1050-1058). That sentence then enters review the
 normal way. This keeps the CLAUDE.md rule that review grades only Listening,
 Reading and Writing of sentences, and it matches DESIGN-BRIEF.md:22-23 ("the
@@ -377,6 +379,10 @@ furigana. The result is the saved word's context sentence.
     query and hash are dropped because they often carry personal tokens.
   - `title`: up to 120 characters.
   
+  - `sentenceId`: set once Echo has added this context as a sentence card
+    (§4.4), or found it already in the Library. A context without it is
+    still waiting for its card.
+
   The reader has a setting to save the sentence only, with no URL or title.
 - **`removedAt`**: a tombstone, so un-saving survives merges (§5.4).
 
@@ -415,10 +421,34 @@ furigana. The result is the saved word's context sentence.
   contains no key named like `token`, `key` or `gistUrl`.
 
 ### 4.4 Interaction with review and coverage
-- **Review and SRS:** no change. A saved word is not a card: it never reaches
-  the review queue, the due badge, the Cards filter or the grammar tagger.
-- **Word state is unchanged:** unmet, met and learned, from sentences only
-  (words.js:70-92). `STATE_LABELS` does **not** gain "Saved".
+- **Review (R1): the context sentence becomes a card; the word does not.** The
+  saved-word record never reaches the review queue, the due badge, the Cards
+  filter or the grammar tagger. Each saved context is added to the Library as
+  an ordinary sentence, so the word is reviewed inside the sentence it was met
+  in, and review keeps grading sentences only (CLAUDE.md: Listening, Reading,
+  Writing).
+  - **Who adds it:** Echo only, after a save on the word sheet, or after a
+    merge brings a reader save in (§5.5). The reader never writes `sentences`.
+  - **Once per sentence:** matched by `extractionIdentity`
+    (text-extraction.js). A context already in the Library adds nothing and
+    just gets its `sentenceId`. Saving from Echo's own word sheet is always
+    this case: its context is the open sentence.
+  - **The meaning** is written by Echo the way Extract from text does it
+    (`analyzePassage`, text-extraction.js), then `createSentence` →
+    `ensureSchedule` → the `saveSentence` wrapper → `autoTag` →
+    `refreshDueBadge`, as `saveWordSentence` does (app.js). One at a time, at
+    most 10 per launch, like the notes (§6).
+  - **No model set up:** the word is still saved; the context waits without a
+    `sentenceId`, and the sheet's status line says *Echo will add the sentence
+    to your Library once a model is set up.*
+  - The new sentence carries `savedFrom: {word: <id>, url?, title?}` (the
+    reader's no-address setting holds), so the sentence page can say where it
+    was met.
+  - **Remove** never deletes a sentence: by then it is the learner's card.
+- **Word state, same rule:** unmet, met and learned come from sentences only
+  (words.js:70-92). `STATE_LABELS` does **not** gain "Saved". Because the
+  context becomes a sentence, a saved word turns **met** once its card exists;
+  unmet + saved only lasts while the card is waiting.
 - **Saved is a mark beside the state** (D6, board SavedStates):
   - unmet + saved: the mark, no chip;
   - met + saved: the mark and the Met chip;
@@ -537,7 +567,7 @@ Notes use the existing `mergeNotes` (notes.js:49-57): the newer `made` wins.
 2. **Merge:** fold every `echo-reader-*.json`'s `words` (and, from M8,
    `notes`) into local, through the `saveWord` / `putNote` wrappers. That
    marks the backup dirty, and the next upload carries the words. Readers then
-   prune.
+   prune. Then add the context cards that are still waiting (§4.4).
 3. **Never** write to `echo-reader-*` files.
 4. **Never** auto-merge `echo-backup.json` from other Echo devices. That would
    resurrect deleted sentences, because sentences have no tombstones. Two-way
@@ -618,8 +648,8 @@ follow the Echo word sheet as drawn on WordNote and WordSaved:
    trace in small caps (*causative · passive · past*). The `SavedMark` toggle
    sits in the header.
 2. *Also written …*, then the senses 一 二 三.
-3. **Status line**, when saved: "Saved 6 Nov · from the reader. Saving never
-   adds a review card."
+3. **Status line**, when saved: "Saved 6 Nov · from the reader. The sentence
+   is in your Library."
 4. Its kanji.
 5. **Echo's note:** "how to say it", then "Echo's note — the kanji", or the
    pending line, or nothing.
@@ -771,7 +801,7 @@ path follows docs/DEVELOPMENT.md:12.
 | `saved-words.js` (new) | §4.2 | `test/saved-words.test.js`: make, validate, merge (tie, tombstone, re-save, contexts cap, determinism) |
 | `reader-sync.js` (new) | Pull all `echo-reader-*.json`, merge through wrappers, note requests (§5.5, §6) | `test/reader-sync.test.js` with a fake `fetchImpl` |
 | `gist-backup.js` | `downloadBackup` also returns `files` (all reader files, reading `raw_url` when truncated) | `test/gist-backup.test.js` |
-| `app.js` | `saveWord` and `removeWord` wrappers; `buildBackup` adds `words`; `importBackupData` merges words; the 栞 *Saved words · N* row under 記 Echo's notes (board LibraryToolsSaved) and the Saved words screen at `/words?saved=1` (SavedWords: the mark, word, reading · gloss, a Met / Learned chip if earned, the latest context and its source line; SavedWordsEmpty: the 栞 tile, how to save, "Saving never adds a review card.", an outlined *Open the Words wall*); word sheet Save / Remove, saved state and contexts; `openWord` syncs the route (fixes research-library §7.1); empty states; Settings → Backup reader line | `test/ux-library.test.js`, `test/gist-backup.test.js` (wrapper regex, `buildBackup` regex), `test/routes.test.js` |
+| `app.js` | `saveWord` and `removeWord` wrappers; `buildBackup` adds `words`; `importBackupData` merges words; the 栞 *Saved words · N* row under 記 Echo's notes (board LibraryToolsSaved) and the Saved words screen at `/words?saved=1` (SavedWords: the mark, word, reading · gloss, a Met / Learned chip if earned, the latest context and its source line; SavedWordsEmpty: the 栞 tile, how to save, "Saving a word adds the sentence you met it in to your Library.", an outlined *Open the Words wall*); word sheet Save / Remove, saved state and contexts; `openWord` syncs the route (fixes research-library §7.1); empty states; Settings → Backup reader line | `test/ux-library.test.js`, `test/gist-backup.test.js` (wrapper regex, `buildBackup` regex), `test/routes.test.js` |
 | `routes.js` | `/words?saved=1` opens the Saved words screen, the same pattern as Echo's notes (`/words?notes=1`); its own view, so the Library list keeps holding sentences only (research-library §7.2). No value in the Cards filter. | `test/routes.test.js` |
 | `components.js`, `COMPONENTS.md`, `index.html`, `styles.css` | `SavedMark` (§4.4): one drawn bookmark, existing tokens only, as a 12px row mark or an `aria-pressed` IconButton. Saved-word rows reuse the Echo's notes row (`.notes-row`). No new chip and no raw colours. | `test/primitives.test.js`, `test/design-handoff.test.js`: no raw colours |
 | `actions.js` | `saveWord` action with an injectable `save` | `test/actions.test.js` |
@@ -860,7 +890,9 @@ path follows docs/DEVELOPMENT.md:12.
 
 ## 13. Open questions and risks
 
-1. **R1 to R4 need the user's confirmation** (see the decision table).
+1. **R1 to R4 are decided** (see the decision table). R1's context card
+   changes copy on the WordSaved and SavedWordsEmpty boards (§7.3, §9):
+   the designer redraws those lines.
 2. **The Library entry point:** decided 8 Nov (D6): a 栞 *Saved words · N* row
    under 記 Echo's notes, opening its own screen at `/words?saved=1`. Not a
    value in the Cards filter.
