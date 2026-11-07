@@ -25,6 +25,8 @@ export function routeFor(state={}){
   else if(state.discussionMode)path="/discussion";
   const q=new URLSearchParams();
   if(path==="/library"){if(state.historyQuery)q.set("q",state.historyQuery);if(state.historyFilter&&state.historyFilter!=="all")q.set("filter",state.historyFilter);if(state.historyOrder&&state.historyOrder!=="created")q.set("order",state.historyOrder);if(state.historyDirection&&state.historyDirection!=="desc")q.set("direction",state.historyDirection)}
+  // Mora sections: Base is the plain /mora; the others carry ?section=.
+  if(path==="/mora"&&["voiced","combined","specials"].includes(state.moraSection))q.set("section",state.moraSection);
   // One search for sentences, words and kanji; the query survives reload.
   if(view==="search"&&state.searchQuery)q.set("q",state.searchQuery);
   // Echo's notes is the Words wall filtered to the words with a note.
@@ -44,7 +46,7 @@ export function parseRoute(input){
   if(p==="/reading")return {...base,readingMode:true};
   if(p==="/extract")return {...base,extractMode:true};
   if(p==="/review")return {...base,view:"review"};
-  if(p==="/mora")return {...base,view:"mora"};
+  if(p==="/mora")return {...base,view:"mora",moraSection:["voiced","combined","specials"].includes(q.get("section"))?q.get("section"):"base"};
   if(p==="/radio")return {...base,view:"radio"};
   if(p==="/search")return {...base,view:"search",searchQuery:q.get("q")||""};
   if(p==="/settings")return {...base,view:"settings",settingsPage:"main"};
