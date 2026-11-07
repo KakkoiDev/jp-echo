@@ -1619,3 +1619,30 @@ button.mora-cell:last-child{border-right:0}
 .radio-phase{margin:0;font-family:var(--display);font-size:22px;color:var(--ink-muted)}
 .radio-line,.radio-until{margin:0;font-size:13px;color:var(--faint);max-width:22rem}
 .radio-night .outline{margin-top:28px;border-color:var(--hairline);color:var(--ink-muted);background:transparent}
+
+/* November primitives (components.js; docs/design/november). Values from the
+   AccessMap, LibraryTools and WordNote boards; colours are the repo tokens. */
+.tool-shelf{display:flex;justify-content:space-between;gap:4px}
+.tool-shelf-tile{width:52px;min-height:0;height:auto;padding:0;display:flex;flex-direction:column;align-items:center;gap:6px;background:transparent;border:0;border-radius:0;color:var(--ink-soft);letter-spacing:normal;font-size:inherit}
+.tool-shelf-glyph{width:52px;height:52px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;border:1px solid var(--hairline);border-radius:4px;background:var(--panel);font-family:var(--display);font-size:21px;color:var(--seal-deep)}
+.tool-shelf-label{font-size:11px;letter-spacing:.02em;white-space:nowrap}
+.filter-button{height:34px;min-height:34px;padding:0 10px;display:inline-flex;align-items:center;gap:6px;background:var(--panel);border:1px solid var(--hairline);border-radius:3px;font-family:var(--ui);font-size:12px;letter-spacing:normal;color:var(--ink-soft);white-space:nowrap}
+.filter-button svg{flex-shrink:0}
+.themed-picture{display:inline-flex;flex-shrink:0}
+.themed-picture img{display:block}
+.themed-picture .picture-dark{display:none}
+[data-theme="dark"] .themed-picture .picture-light{display:none}
+[data-theme="dark"] .themed-picture .picture-dark{display:block}
+@media(prefers-color-scheme:dark){[data-theme="system"] .themed-picture .picture-light{display:none}[data-theme="system"] .themed-picture .picture-dark{display:block}}
+.corner-mark{position:absolute;top:3px;right:3px;box-sizing:border-box}
+.corner-mark.giant{width:15px;height:15px;display:flex;align-items:center;justify-content:center;border-radius:2px;background:var(--seal);color:var(--seal-on);font-family:var(--ui);font-size:9px;font-weight:700;line-height:1}
+.corner-mark.balloon{width:13px;height:13px;border-radius:50%;border:1.5px solid var(--seal)}
+.anchor-strip{display:flex;gap:5px}
+.anchor-cell{position:relative;flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 2px 7px;border:1px solid var(--hairline);border-radius:3px;background:var(--panel);text-decoration:none;color:inherit}
+.anchor-kana{font-family:var(--display);font-size:18px;color:var(--seal-deep)}
+.anchor-image{font-family:var(--display);font-size:11px;color:var(--sumi);text-align:center;overflow-wrap:anywhere}
+.anchor-modifier{color:var(--seal-deep)}
+.anchor-arrow{align-self:center;color:var(--faint)}
+.anchor-strip.compact{flex-wrap:wrap;gap:4px}
+.anchor-chip{display:inline-flex;align-items:baseline;gap:3px;padding:2px 6px;border:1px solid var(--rule);border-radius:2px;background:var(--panel);font-size:11px;color:var(--ink-soft)}
+.anchor-chip b{font-weight:500;color:var(--seal-deep)}
