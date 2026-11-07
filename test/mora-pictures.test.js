@@ -9,7 +9,7 @@ const read=f=>readFileSync(new URL('../'+f,import.meta.url),'utf8');
 test('every current anchor has a light and a dark drawing; the undecided alternates do not ship',()=>{
  for(const kana of [...Object.keys(MORA_MNEMONICS),...Object.keys(MORA_YOON)]){const p=moraPicture(kana);assert.ok(p,kana);for(const f of [p.light,p.dark])assert.ok(existsSync(new URL('..'+f,import.meta.url)),f)}
  for(const dir of ['anchors','anchors-dark'])assert.deepEqual(readdirSync(new URL('../'+dir,import.meta.url)).filter(f=>f.includes('-')),[],'no よ→鎧, れ→レモン … alternates until the owner decides');
- assert.equal(MORA_MNEMONICS_VERSION,4,'the anchors themselves are unchanged');
+ assert.equal(MORA_MNEMONICS_VERSION,5,'v5: the owner chose 鎧, レモン, 地図, 判子 and 駒 (7 Nov)');
 });
 
 test('voiced and p-sounds reuse the base drawing; a fused combined sound has none',()=>{

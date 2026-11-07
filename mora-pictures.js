@@ -3,7 +3,7 @@
 // named by romaji. Voiced and p-sounds reuse their base anchor's picture —
 // the giant (゛) or balloon (゜) is the corner mark, not a second drawing. A
 // combined sound with an anchor of its own has its own picture; one that
-// fuses two anchors has none. The anchors themselves stay MORA_MNEMONICS v4
+// fuses two anchors has none. The anchors themselves are MORA_MNEMONICS v5
 // in core.js: this module only says where each one's drawing is and which
 // Mora section shows it.
 import {MORA_VOICED,MORA_YOON,MORA_MNEMONICS} from "./core.js";

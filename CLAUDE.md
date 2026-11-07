@@ -164,12 +164,15 @@ Before considering the change complete:
   the wind-down and, by the learner's choice, the rest of the night. The night
   needs the screen on (wake lock): a locked phone stops speech on iOS and Android.
 - **Mora pictures are the owner's drawn set.** `anchors/` and `anchors-dark/`
-  hold one picture per current anchor (MORA_MNEMONICS v4), switched by theme
+  hold one picture per current anchor (MORA_MNEMONICS v5), switched by theme
   through `themedPictureHtml`; `mora-pictures.js` maps kana to file, section and
   cell (`/mora?section=…#<kana>`). Voiced/p-sounds reuse the base drawing with the
-  one corner mark. The AnchorAudit alternates (よ→鎧, れ→レモン, ち→地図, ん→判子,
-  そ→蕎麦, こ→駒) are not shipped until the owner decides; changing an anchor
-  bumps the version in core.js, JP Core and the AI validator together.
+  one corner mark. The light set is the owner's 512px masters at 128px; the dark
+  set is the same drawing with ink → `#F2EEE3` and seal → `#E0614B`.
+  v5 (owner, 7 Nov): よ 鎧, れ レモン, ち 地図, ん 判子, こ 駒; そ keeps ソファ.
+  Changing an anchor bumps the version in core.js and JP Core
+  (browser/jp-core.js) together; the AI validator follows `moraMnemonicTokens`,
+  and `MORA_V4_RETIRED` (app.js) points out notes written with an old anchor.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 
