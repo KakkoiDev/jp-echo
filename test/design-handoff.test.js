@@ -319,7 +319,7 @@ test("notes save on an explicit action, never on blur; bands mark open state wit
   assert.match(block, /saveLink\.onclick=async\(\)=>/);
   assert.equal((html.match(/class="save-link hit"/g) || []).length, 3, "the story and the two grammar note blocks carry Save my edit");
   assert.doesNotMatch(app, /setAttribute\("aria-busy",""\)/, "a band that is open is not busy");
-  assert.match(css, /\.band\[data-open\] svg\{transform:rotate\(180deg\)\}/);
+  assert.match(css, /\.band\[data-open\]>\.band-head svg\{transform:rotate\(180deg\)\}/);
   assert.doesNotMatch(app, /function untilDue/);
   assert.doesNotMatch(css, /^\.stats\{/m);
 });
