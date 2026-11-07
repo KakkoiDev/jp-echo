@@ -146,11 +146,12 @@ Before considering the change complete:
   kind are stripped in `exportBackup` — provider keys, speech keys, the GitHub
   gist token and the gist URL. Add any new credential there, with a test.
 - **A shared AI key travels encrypted, in the #fragment only.** Settings → Invite
-  someone seals `{provider, key, model?}` with `key-share.js` (Minihongo's
+  someone seals `{provider, key, model?}` and/or `speech: {groq}` (the AI key,
+  the Groq speech key, or both) with `key-share.js` (Minihongo's
   scheme: PBKDF2 600k + AES-GCM, Echo's own associated data). The unlock code
   is shown to the sender only and never goes into the link or the Share sheet.
   On arrival the key is saved like a typed key (an explicit save), marked in
-  `settings.sharedKey`, removed after its expiry, and once unlocked the token
+  `settings.sharedKey` (`provider`, `speech`), both removed after its expiry, and once unlocked the token
   leaves the address. It is a credential: never in an export, a backup or the gist.
 - **Gist backup is one document.** `buildBackup()` is the only producer; Export
   downloads it and the gist holds it. Writes that change a backup go through

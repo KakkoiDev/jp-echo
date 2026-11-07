@@ -2658,11 +2658,15 @@ $("#empty-practice").onclick=()=>{showView("practice");setPracticeMode("sentence
 // with "install" and with the sender's AI key, encrypted in the link's
 // #fragment (key-share.js, the same scheme as Minihongo's). The unlock code is
 // shown here only, to pass on separately. One code per opening of the sheet.
-// Keys that can be shared: every provider that has one (not a local model).
+// Keys that can be shared: the AI key of every provider that has one (not a
+// local model), and the Groq speech key. One link carries whichever exist.
 const SHAREABLE_PROVIDERS=["google","deepseek","openai","anthropic"];
 let invite={sealed:null};
-const shareableKey=()=>{const provider=settings.provider||"deepseek";if(!SHAREABLE_PROVIDERS.includes(provider))return null;const key=providerKey(provider);if(!key)return null;
-  const model=settings.providerModels?.[provider];return {provider,key,...(model?{model}:{})}};
+const shareableKey=()=>{const provider=settings.provider||"deepseek",key=SHAREABLE_PROVIDERS.includes(provider)&&providerKey(provider),groq=settings.speechKeys?.groq;
+  if(!key&&!groq)return null;const model=key&&settings.providerModels?.[provider];
+  return {...(key?{provider,key}:{}),...(model?{model}:{}),...(groq?{speech:{groq}}:{})}};
+// "Your Gemini key and your Groq speech key"
+const sharedKeysLabel=payload=>[payload.key&&t("Your {name} key",{name:PROVIDER_NAMES[payload.provider]||payload.provider}),payload.speech?.groq&&t("your Groq speech key")].filter(Boolean).join(t(" and "));
 function inviteUrl(){const url=new URL("/",location.origin);if($("#invite-install").checked)url.searchParams.set("install","1");if($("#invite-key").checked&&invite.sealed)url.hash="key="+invite.sealed.token;return url.href}
 async function refreshInvite(){$("#invite-copy").textContent=t("Copy link");const wants=$("#invite-key").checked,days=Number($("#invite-key-days").value||0);$("#invite-key-options").hidden=!wants;
   if(wants&&(!invite.sealed||invite.sealed.days!==days)){const payload=shareableKey();if(!payload){$("#invite-key").checked=false;$("#invite-key-options").hidden=true}
@@ -2670,7 +2674,7 @@ async function refreshInvite(){$("#invite-copy").textContent=t("Copy link");cons
   if(invite.sealed){$("#invite-key-code").textContent=invite.sealed.code;$("#invite-copy-code").textContent=t("Copy code")}
   $("#invite-url").value=inviteUrl()}
 async function openInvite(){const key=shareableKey();$("#invite-key-section").hidden=!key||!keyShareSupported();
-  $("#invite-key-which").textContent=key?t("Your {name} key",{name:PROVIDER_NAMES[key.provider]||key.provider}):"";
+  $("#invite-key-which").textContent=key?sharedKeysLabel(key).replace(/^./,c=>c.toUpperCase()):"";
   // The OS share sheet is a phone feature; desktop browsers support it unevenly.
   $("#invite-share").hidden=!(navigator.share&&matchMedia("(pointer: coarse)").matches);
   $("#invite-dialog").showModal();await refreshInvite();$("#invite-url").select()}
@@ -2697,7 +2701,8 @@ function sharedKeyLine(){const shared=settings.sharedKey;if(!shared||shared.prov
   return shared.exp?t("shared with you, until {date}",{date:formatDate(shared.exp)}):t("shared with you")}
 // A shared key with an expiry is removed once it has passed.
 function expireSharedKey(now=Date.now()){const shared=settings.sharedKey;if(!shared?.exp||now<=shared.exp)return false;
-  if(settings.providerKeys?.[shared.provider])settings.providerKeys={...settings.providerKeys,[shared.provider]:""};delete settings.sharedKey;storePreference("jp-echo-settings",JSON.stringify(settings));resetSettingsForm();
+  if(shared.provider&&settings.providerKeys?.[shared.provider])settings.providerKeys={...settings.providerKeys,[shared.provider]:""};
+  if(shared.speech&&settings.speechKeys?.groq)settings.speechKeys={...settings.speechKeys,groq:""};delete settings.sharedKey;storePreference("jp-echo-settings",JSON.stringify(settings));resetSettingsForm();
   toast(t("The AI key someone shared with you has expired and was removed."),6000);return true}
 {const params=new URLSearchParams(location.search),install=params.has("install")&&!isInstalled();
   if(params.has("install")){params.delete("install");const rest=params.toString();history.replaceState(history.state,"",location.pathname+(rest?"?"+rest:"")+location.hash)}
@@ -2711,13 +2716,15 @@ $("#arrival-key-form").addEventListener("submit",async event=>{event.preventDefa
   if(!keyShareSupported()){status.textContent=t(ARRIVAL_MESSAGES.unsupported);return}
   button.disabled=true;status.classList.remove("error");status.textContent=t("Unlocking…");
   try{const shared=await openKey(arrivalToken,$("#arrival-key-code").value);
-    if(!SHAREABLE_PROVIDERS.includes(shared.provider))throw Object.assign(new Error("malformed"),{code:"malformed"});
-    settings.provider=shared.provider;settings.providerKeys={...(settings.providerKeys||{}),[shared.provider]:String(shared.key)};
-    if(shared.model)settings.providerModels={...(settings.providerModels||{}),[shared.provider]:String(shared.model)};
-    settings.sharedKey={provider:shared.provider,...(shared.exp?{exp:shared.exp}:{})};
-    storePreference("jp-echo-settings",JSON.stringify(settings));resetSettingsForm();
+    const ai=!!shared.key,groq=shared.speech?.groq;
+    if(ai&&!SHAREABLE_PROVIDERS.includes(shared.provider))throw Object.assign(new Error("malformed"),{code:"malformed"});
+    if(ai){settings.provider=shared.provider;settings.providerKeys={...(settings.providerKeys||{}),[shared.provider]:String(shared.key)};
+      if(shared.model)settings.providerModels={...(settings.providerModels||{}),[shared.provider]:String(shared.model)}}
+    if(groq)settings.speechKeys={...(settings.speechKeys||{}),groq:String(groq)};
+    settings.sharedKey={...(ai?{provider:shared.provider}:{}),...(groq?{speech:true}:{}),...(shared.exp?{exp:shared.exp}:{})};
+    storePreference("jp-echo-settings",JSON.stringify(settings));resetSettingsForm();renderSettingsRows();setupRecognition?.();
     // First visit: the setup screen asks for a key; fill it in, so it is not asked for twice.
-    if(!settings.onboarded){$("#setup-provider").value=shared.provider;showSetupFields();$("#setup-key").value=String(shared.key)}
+    if(ai&&!settings.onboarded){$("#setup-provider").value=shared.provider;showSetupFields();$("#setup-key").value=String(shared.key)}
     history.replaceState(history.state,"",location.pathname+location.search);
     $("#arrival-key-form").hidden=true;status.textContent="";$("#arrival-key-done").hidden=false;$("#arrival-install-yes").className="primary"}
   catch(error){status.classList.add("error");status.textContent=t(ARRIVAL_MESSAGES[error?.code]||ARRIVAL_MESSAGES.malformed);button.disabled=false;if(error?.code==="wrong-code")$("#arrival-key-code").select()}});
