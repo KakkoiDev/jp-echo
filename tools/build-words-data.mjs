@@ -1,6 +1,6 @@
 // Regenerates words-data.js from JMdict and the JLPT vocabulary lists. Run by hand:
 //
-//   curl -o data/jmdict/JMdict_e.gz https://ftp.edrdg.org/pub/Nihongo/JMdict_e.gz
+//   curl --create-dirs -o data/jmdict/JMdict_e.gz https://www.edrdg.org/pub/Nihongo/JMdict_e.gz
 //   node tools/build-words-data.mjs
 //
 // Its own file because its own licence. JMdict is EDRDG's, CC BY-SA 4.0, and
@@ -20,7 +20,7 @@ import {gunzipSync} from "node:zlib";
 
 const here = new URL("./", import.meta.url);
 const gz = new URL("../data/jmdict/JMdict_e.gz", here), xml = new URL("../data/jmdict/JMdict_e.xml", here);
-if (!existsSync(gz) && !existsSync(xml)) throw new Error("No data/jmdict/JMdict_e.gz — download it from https://ftp.edrdg.org/pub/Nihongo/JMdict_e.gz first.");
+if (!existsSync(gz) && !existsSync(xml)) throw new Error("No data/jmdict/JMdict_e.gz — download it from https://www.edrdg.org/pub/Nihongo/JMdict_e.gz first.");
 const text = existsSync(gz) ? gunzipSync(readFileSync(gz)).toString("utf8") : readFileSync(xml, "utf8");
 const created = (text.match(/JMdict created: (\d{4}-\d{2}-\d{2})/) || [])[1] || "unknown date";
 
