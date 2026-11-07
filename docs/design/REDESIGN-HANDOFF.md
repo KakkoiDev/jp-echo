@@ -4,7 +4,7 @@ For the agent implementing this in `KakkoiDev/jp-echo`. Drop this file in the re
 
 ## Where the design lives
 
-If you are reading this from the zip: `design/` holds every artboard as standalone HTML plus `canvas.json` (positions, sizes, titles) and `index.html`, a gallery that opens them all. `screenshots/` are reference renders — made without the web fonts, so metrics differ slightly from the real thing; trust the HTML. `tokens.css`, `motion.css` and `theme-map.json` are copy-in files.
+If you are reading this from the zip: `design/` holds every artboard as standalone HTML plus `canvas.json` (positions, sizes, titles) and `index.html`, a gallery that opens them all. `screenshots/` are reference renders — made without the web fonts, so metrics differ slightly from the real thing; trust the HTML. `tokens.css` and `motion.css` are copy-in files. (`theme-map.json` was removed on 7 Nov: `styles.css` holds the dark values.)
 
 Canvas: https://claude.ai/code/artifact/80f70c60-3306-4e79-ab6d-02fc002fc6b0
 
@@ -281,7 +281,7 @@ A rule that changed in October: a selected segment, chip or scene is drawn like 
 
 ### Dark theme for the new sheets
 
-`MapKanji`, `MapPoint`, `MapSearch` and `MapGrammar` have no dark artboard. They do not need one: `theme-map.json` in this package is the exact light→dark hex substitution the dark boards were generated with, and it is mechanical. Apply it via the tokens, not per-element.
+`MapKanji`, `MapPoint`, `MapSearch` and `MapGrammar` have no dark artboard. They do not need one: the dark values are the `[data-theme="dark"]` tokens in `styles.css` (the old `theme-map.json`, removed 7 Nov, had stale line colours). Apply them via the tokens, not per-element.
 
 ### A layout trap the artboards had
 

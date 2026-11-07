@@ -8,7 +8,7 @@ The complete design of Echo (repo `KakkoiDev/jp-echo`), packaged for implementat
 2. **`design/index.html`** — open in a browser. Every artboard at real size, in canvas rows; the boards link to each other, so you can walk the app end to end.
 3. **`design/*.dc.html`** — the artboards. Plain HTML with inline styles; every value is measured. `canvas.json` has each board's size, title and position. `<x-dc>` and `<helmet>` are inert custom tags from the canvas runtime; `support.js` is a stub.
 4. **`motion.css`** — the echo animation as shippable code, now with the compact-form weights (section 4) and where the moving echo lives (section 8). Replace the copy in `styles.css` with this one. `screenshots/motion-before.png` and `motion-after.png` are the frames that show why.
-5. **`tokens.css`**, **`theme-map.json`** — the palette and type; the exact light→dark substitution.
+5. **`tokens.css`** — the palette and type. Dark values live in `styles.css`, which replaced `theme-map.json` (removed 7 Nov).
 6. **`screenshots/`** — reference renders, made without the web fonts, so line breaks differ slightly from the HTML. When they disagree, the HTML is right.
 
 ## What this edition changes in the build
