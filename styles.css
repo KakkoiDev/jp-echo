@@ -1680,8 +1680,10 @@ button.mora-cell:last-child{border-right:0}
 .welcome-tools svg{color:var(--ink-muted)}
 .welcome.returning{padding-top:8px}
 .welcome.returning strong{font-size:23px;line-height:1.2;letter-spacing:.02em}
-.welcome.returning strong br,.welcome.returning .lede,.welcome.returning #welcome-ripple{display:none}
-.welcome.returning strong em{color:inherit}
+.welcome.returning strong br,.welcome.returning .lede{display:none}
+/* PracticeFirst and PracticeReturning draw the hero in ink, with no ring. */
+.welcome strong em{color:inherit}
+#welcome #welcome-ripple{display:none}
 .welcome-recent .rule-heading{margin:16px 0 0}
 .welcome-recent-list{list-style:none;margin:2px 0 0;padding:0}
 .welcome-recent-list li{border-bottom:1px solid var(--rule)}
