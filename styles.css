@@ -1926,3 +1926,7 @@ header .header-search+#settings-button{margin-left:-4px}
 .drill-choice.picked{border:1px solid var(--sumi);opacity:1}
 .drill-choice.picked .drill-kanji{text-decoration:line-through;text-decoration-color:var(--seal)}
 .drill-right.status-chip:not(.due){border-color:var(--hairline);background:var(--panel);color:var(--ink-soft)}
+/* November close-out: LibraryFilter. */
+.filter-sheet-hint{margin:12px 0 0;font-size:12px;line-height:1.6}
+#library-filter-sheet .dialog-actions{margin-top:14px;grid-template-columns:1fr}
+#library-filter-sheet .dialog-actions button{width:100%;min-height:48px}
