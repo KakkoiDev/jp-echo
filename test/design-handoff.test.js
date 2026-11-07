@@ -308,7 +308,7 @@ test("library and the study tool: the empty library, the tool rows, grammar and 
   assert.match(html, /<div id="mora-yoon-table" class="mora-table" lang="ja"><\/div>/, "combined sounds have their own table");
   assert.doesNotMatch(html, /【まえ】/, "no raw bracket furigana on the mora cards");
   assert.match(app, /echoLine:t\("Bundled with the app for 2,131 of the 2,136\./);
-  assert.match(app, /name==="map"\|\|name==="mora"\|\|name==="radio"\|\|name==="notes"\|\|name==="settings"\)&&!isWide\(\)/, "the Mora table is a pushed screen like the study tool: no brand header, no tabs");
+  assert.match(app, /name==="map"\|\|name==="mora"\|\|name==="drill"\|\|name==="radio"\|\|name==="notes"\|\|name==="settings"\)&&!isWide\(\)/, "the Mora table is a pushed screen like the study tool: no brand header, no tabs");
 });
 
 test("notes save on an explicit action, never on blur; bands mark open state without aria-busy; dead code is gone", () => {

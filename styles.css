@@ -1800,3 +1800,51 @@ header .header-search+#settings-button{margin-left:-4px}
 .mora-mark-card span[lang="en"]{font-family:var(--ui)}
 #mora-view .mora-row{border:0}
 #mora-view .mora-english{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Mora drill (Drill, DrillAnswer, DrillDone). */
+.mora-drill-open{display:flex;align-items:center;gap:12px;width:100%;min-height:48px;height:auto;margin-top:12px;padding:0 14px;border:1px solid var(--sumi);border-radius:4px;background:var(--panel);color:inherit;text-align:left;letter-spacing:normal;font-size:inherit;justify-content:flex-start}
+.mora-drill-glyph{font-family:var(--display);font-size:18px;color:var(--seal-deep)}
+.mora-drill-text{flex:1 1 auto;display:flex;flex-direction:column;padding:6px 0}
+.mora-drill-text strong{font-size:14px;font-weight:500}
+.mora-drill-text span{font-size:12px;color:var(--ink-muted)}
+.mora-drill-open svg{flex-shrink:0;color:var(--ink-muted)}
+.drill-head{display:flex;align-items:center;gap:12px;padding:calc(22px + env(safe-area-inset-top)) 0 12px}
+.drill-title{font-family:var(--display);font-weight:600;font-size:19px}
+.drill-progress{margin-left:auto;font-family:var(--display);font-size:15px;color:var(--ink-muted)}
+.drill-bar{height:2px;background:var(--rule)}
+.drill-bar span{display:block;height:2px;width:0;background:var(--seal)}
+.drill-play{display:flex;flex-direction:column;align-items:stretch}
+.drill-play>.overline{margin:30px 0 16px;text-align:center}
+.drill-sound{align-self:center;width:112px;height:112px;min-height:112px;padding:0;border:1px solid var(--sumi);border-radius:50%;background:var(--panel);color:var(--seal)}
+.drill-prompt{margin:14px 0 0;font-size:15px;text-align:center}
+.drill-kana{font-family:var(--display);font-size:30px}
+.drill-choices{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:26px}
+.drill-choice{position:relative;height:112px;min-height:112px;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:1px solid var(--sumi);border-radius:4px;background:var(--panel);color:var(--sumi);letter-spacing:normal}
+.drill-choice .corner-mark{top:8px;right:8px}
+.drill-kanji{font-family:var(--display);font-size:19px}
+.drill-gloss{font-size:12px;color:var(--ink-muted)}
+.drill-choice.right{border:1.5px solid var(--seal);background:var(--seal-tint)}
+.drill-choice.dim,.drill-choice.picked{border-color:var(--hairline);opacity:.55}
+.drill-choice:disabled{cursor:default}
+.drill-right{position:absolute;top:8px;right:8px}
+.drill-after{display:flex;flex-direction:column;margin-top:18px}
+.drill-after>button{width:100%;min-height:48px}
+.drill-after .hint{margin:8px 0 0}
+.drill-hint{margin:16px 0 0}
+.drill-done{display:flex;flex-direction:column;align-items:stretch;margin-top:34px}
+.drill-done-seal{align-self:center;width:72px;height:72px;display:flex;align-items:center;justify-content:center;border-radius:5px;background:var(--seal);color:var(--seal-on);font-family:var(--display);font-size:40px}
+.drill-done>strong{margin-top:16px;font-family:var(--display);font-weight:600;font-size:30px;text-align:center}
+#drill-again-title{margin:8px 0 0;font-size:14px;color:var(--ink-muted);text-align:center}
+.drill-missed{list-style:none;margin:18px 0 0;padding:0;border-top:1px solid var(--rule)}
+.drill-missed li{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--rule)}
+.drill-missed-kana{width:36px;font-family:var(--display);font-size:26px}
+.drill-missed-text{flex:1 1 auto;display:flex;flex-direction:column}
+.drill-missed-text [lang="ja"]{font-family:var(--display);font-size:16px}
+.drill-missed-text .hint{margin:0}
+.drill-missed-link{font-size:12px;color:var(--seal-deep)}
+.drill-done-actions{display:flex;flex-direction:column;gap:10px;margin-top:26px}
+.drill-done-actions button{width:100%;min-height:48px}
+.drill-done>.hint{margin:14px 0 0}
+.drill-choice:disabled{background:var(--panel);color:var(--sumi);border-color:var(--hairline)}
+.drill-choice.right:disabled{background:var(--seal-tint);border:1.5px solid var(--seal)}
+.drill-choice.right .corner-mark{right:auto;left:8px}
