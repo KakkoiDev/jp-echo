@@ -2266,8 +2266,8 @@ async function renderLibraryNotes(){const row=$("#library-notes"),entries=target
 // versions are rewritten; a note you wrote yourself is left as it is.
 const outdatedNotes=entries=>entries.filter(({note,word})=>note.by!=="you"&&moraRetiredIn(word.r||"",note.text||"").length);
 function renderNotesOutdated(entries){const old=outdatedNotes(entries),box=$("#notes-outdated");box.hidden=!old.length||notesRewriting;if(!old.length)return;
-  $("#notes-outdated-text").textContent=old.length===1?t("One note still uses an older anchor."):t("{n} notes still use older anchors.",{n:old.length});
-  $("#notes-outdated-go").disabled=!hasTranslator();$("#notes-outdated-status").textContent=hasTranslator()?t("One request per note, on your key."):t("Add a translator and Echo can rewrite them.")}
+  $("#notes-outdated-text").textContent=old.length===1?t("One note still uses an older anchor"):t("{n} notes still use older anchors",{n:old.length});$("#notes-outdated-why").hidden=false;
+  $("#notes-outdated-go").disabled=!hasTranslator();$("#notes-outdated-status").textContent=hasTranslator()?t("Echo rewrites them one at a time, on your own key."):t("Add a translator and Echo can rewrite them.")}
 let notesRewriting=false;
 async function rewriteOutdatedNotes(){if(notesRewriting||!hasTranslator())return;const old=outdatedNotes(await wordNotes());if(!old.length)return;
   notesRewriting=true;const go=$("#notes-outdated-go"),status=$("#notes-outdated-status");go.disabled=true;let done=0,failed=0;
@@ -2276,7 +2276,7 @@ async function rewriteOutdatedNotes(){if(notesRewriting||!hasTranslator())return
         await putNote(makeNote({kind:"word",id:word.id,part:"remember",text:made.remember}));done++}catch{failed++}}}
   finally{notesRewriting=false}
   await renderNotes();$("#notes-outdated").hidden=false;$("#notes-outdated-text").textContent=failed?t("Rewrote {n}; {failed} could not be rewritten. Try again for those.",{n:done,failed}):t("Rewrote {n} with the new anchors.",{n:done});
-  $("#notes-outdated-go").hidden=!failed;$("#notes-outdated-go").disabled=false;status.textContent=""}
+  $("#notes-outdated-why").hidden=true;$("#notes-outdated-go").hidden=!failed;$("#notes-outdated-go").disabled=false;status.textContent=""}
 async function renderNotes(){const entries=await wordNotes();renderNotesOutdated(entries);$("#notes-outdated-go").hidden=false;$("#notes-count").textContent=t("{n} words · newest first",{n:entries.length});$("#notes-empty").hidden=entries.length>0;
   $("#notes-list").replaceChildren(...entries.map(({note,word})=>{const li=document.createElement("li"),open=document.createElement("button");open.type="button";open.className="notes-row";open.dataset.ui="button";
     const story=stripFurigana(String(wordNoteParts(note.text)?.mora||note.text)).replace(/\s+/g," ").trim();

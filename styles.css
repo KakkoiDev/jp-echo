@@ -1952,5 +1952,7 @@ header .header-search+#settings-button{margin-left:-4px}
 /* Echo's notes: notes still written with an old anchor. */
 .notes-outdated{margin:14px 0 4px;padding:12px 14px;border:1px solid var(--hairline);border-radius:4px;background:var(--panel)}
 .notes-outdated .hint{margin:0}
+.notes-outdated-title{margin:0;font-size:14px;color:var(--sumi)}
+#notes-outdated-why{margin-top:10px}
 .notes-outdated>button{width:100%;min-height:44px;margin-top:10px}
 #notes-outdated-status:not(:empty){margin-top:8px}
