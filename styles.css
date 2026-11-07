@@ -1761,3 +1761,7 @@ header .header-search+#settings-button{margin-left:-4px}
 #sentence-view .sentence-columns{margin-top:0}
 .sentence-menu-note{margin:12px 0 0}
 .menu-glyph{width:22px;flex-shrink:0;text-align:center;font-family:var(--display);font-size:16px;color:var(--seal-deep)}
+#sentence-view .sentence-main,#sentence-view .sentence-aside{margin:0;padding:0;border:0}
+#sentence-view .sentence-main>.collapse-row{border-bottom:1px solid var(--rule)}
+#sentence-view .sentence-columns .collapse-row{margin-top:0;border-top:0}
+#sentence-view .sentence-columns #sentence-grammar-block{border-top:1px solid var(--rule)}
