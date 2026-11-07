@@ -13,6 +13,7 @@ export function routeFor(state={}){
   else if(view==="library")path="/library";
   else if(view==="map")path=state.mapView==="words"?"/words":state.mapView==="grammar"?"/grammar":"/kanji";
   else if(view==="mora")path="/mora";
+  else if(view==="drill")path="/mora/drill";
   else if(view==="radio")path="/radio";
   else if(view==="notes")path="/words";
   else if(view==="search")path="/search";
@@ -46,6 +47,7 @@ export function parseRoute(input){
   if(p==="/reading")return {...base,readingMode:true};
   if(p==="/extract")return {...base,extractMode:true};
   if(p==="/review")return {...base,view:"review"};
+  if(p==="/mora/drill")return {...base,view:"drill"};
   if(p==="/mora")return {...base,view:"mora",moraSection:["voiced","combined","specials"].includes(q.get("section"))?q.get("section"):"base"};
   if(p==="/radio")return {...base,view:"radio"};
   if(p==="/search")return {...base,view:"search",searchQuery:q.get("q")||""};

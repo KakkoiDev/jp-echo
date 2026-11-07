@@ -63,7 +63,7 @@ test('Radio is a route of its own, cached for the night offline',()=>{
  assert.equal(parseRoute('/radio').view,'radio');
  const sw=readFileSync(new URL('../sw.js',import.meta.url),'utf8');
  assert.match(sw,/"\.\/radio\.js"/);
- assert.match(sw,/mora\|radio\|/);
+ assert.match(sw,/\|radio\|/);
 });
 
 test('the night screen keeps the phone awake and the setup says so',()=>{

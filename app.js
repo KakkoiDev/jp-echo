@@ -14,7 +14,8 @@ import {MIN_INTERVAL_MS,QUIET_MS,downloadBackup,parseGistId,shouldAutoBackup,upl
 import {READINGS_RULE,correctSentenceReadings,analyzeSentenceGrammar,askModel,rewriteSentence,adjustNote,carries,compose,composeFromIntent,PROVIDER_DEFAULTS,tagGrammar,translate,discuss,generateReading,writeNotes,writeWordNote,transcribeAudio} from "./api.js";
 import {grammarListItems,setImportedGrammar,byLevel as grammarByLevel,cleanTags as grammarTags,coverage as grammarCoverage,hasGrammar,isTagged,learned as grammarLearned,LEVELS as GRAMMAR_LEVELS,point as grammarPoint,POINTS as GRAMMAR_POINTS,summarise as grammarSummarise,untagged as untaggedSentences} from "./grammar.js";
 import {speakOnce,japaneseVoices,recognitionFactory,ShadowLoop,ConversationLoop,RadioPlayer,NoiseBed} from "./speech.js";
-import {anchorStripItems,moraPicture,moraBase,MORA_SECTIONS} from "./mora-pictures.js";
+import {anchorStripItems,moraPicture,moraBase,moraCellHref,MORA_SECTIONS} from "./mora-pictures.js";
+import {drillRound,drillChoices,startDrill,answerDrill,nextDrill,drillDone,drillProgress} from "./mora-drill.js";
 import {RADIO_DEFAULTS,RADIO_MINUTE,RADIO_PHASE_COPY,clockAt,radioPhase,radioPlan,radioQueue,radioSteps} from "./radio.js";
 import {STORIES} from "./stories.js";
 import {coverage as kanjiCoverage,facts as kanjiFacts,jlptBands as kanjiBands,learned as kanjiLearned,LEVEL_LABELS,levelOf,nextUnmet,sentenceKanji,TOTAL as KANJI_TOTAL} from "./kanji.js";
@@ -370,15 +371,15 @@ const wide=matchMedia("(min-width:1024px)");
 const isWide=()=>wide.matches;
 const VIEW_TITLES={review:"Review",library:"Library"};
 function showView(name,{route=true}={}){if(name==="map"&&targetLang()!=="ja")name="library";if(name!=="radio")stopRadio();if(name!=="practice")resetSession();if(name!=="session")stopReviewListening();speechSynthesis.cancel();
-  $("#main-view").hidden=name!=="practice";$("#review-home").hidden=name!=="review";$("#history-view").hidden=!(name==="library"||(name==="sentence"&&isWide()));$("#review-view").hidden=name!=="session";$("#sentence-view").hidden=name!=="sentence";$("#onboard-view").hidden=name!=="onboard";$("#setup-view").hidden=name!=="setup";$("#map-view").hidden=name!=="map";$("#mora-view").hidden=name!=="mora";$("#radio-view").hidden=name!=="radio";$("#notes-view").hidden=name!=="notes";$("#search-view").hidden=name!=="search";$("#settings-view").hidden=name!=="settings";if(name!=="settings")settingsStack=[];$("#settings-nav")?.toggleAttribute("aria-current",name==="settings");if(name!=="settings"&&$("#ai-show-key")?.getAttribute("aria-pressed")==="true")$("#ai-show-key").click();
-  const solo=name==="onboard"||name==="setup"||((name==="session"||name==="sentence"||name==="map"||name==="mora"||name==="radio"||name==="notes"||name==="settings")&&!isWide());document.querySelector("header").hidden=solo||(name==="search"&&!isWide())||(name==="practice"&&(discussionMode||readingMode||extractMode)&&!isWide());$("#tabs").hidden=solo&&name!=="sentence"&&name!=="notes";
+  $("#main-view").hidden=name!=="practice";$("#review-home").hidden=name!=="review";$("#history-view").hidden=!(name==="library"||(name==="sentence"&&isWide()));$("#review-view").hidden=name!=="session";$("#sentence-view").hidden=name!=="sentence";$("#onboard-view").hidden=name!=="onboard";$("#setup-view").hidden=name!=="setup";$("#map-view").hidden=name!=="map";$("#mora-view").hidden=name!=="mora";$("#radio-view").hidden=name!=="radio";$("#notes-view").hidden=name!=="notes";$("#drill-view").hidden=name!=="drill";if(name!=="drill")drill=null;$("#search-view").hidden=name!=="search";$("#settings-view").hidden=name!=="settings";if(name!=="settings")settingsStack=[];$("#settings-nav")?.toggleAttribute("aria-current",name==="settings");if(name!=="settings"&&$("#ai-show-key")?.getAttribute("aria-pressed")==="true")$("#ai-show-key").click();
+  const solo=name==="onboard"||name==="setup"||((name==="session"||name==="sentence"||name==="map"||name==="mora"||name==="drill"||name==="radio"||name==="notes"||name==="settings")&&!isWide());document.querySelector("header").hidden=solo||(name==="search"&&!isWide())||(name==="practice"&&(discussionMode||readingMode||extractMode)&&!isWide());$("#tabs").hidden=solo&&name!=="sentence"&&name!=="notes";
   $("#view-title").textContent=VIEW_TITLES[name]||"";$("#view-title").hidden=!VIEW_TITLES[name];document.querySelector(".brand").hidden=!!VIEW_TITLES[name];
   $("#discussion-play").onclick=playDiscussion;$("#discussion-english").onchange=renderDiscussion;$("#discussion-new").onclick=()=>{discussionLoop.stop();discussionTurns=[];discussionScenario="";renderDiscussion();$("#english-input").value="";$("#english-input").focus()};$("#reading-furigana").onchange=renderReading;$("#reading-english").onchange=renderReading;$("#reading-echo").onclick=playReading;
 for(const tab of document.querySelectorAll(".tab[data-view]")){const on=tab.dataset.view===name||((name==="session"||name==="radio")&&tab.dataset.view==="review")||((name==="sentence"||name==="map"||name==="notes")&&tab.dataset.view==="library");tab.classList.toggle("current",on);tab.setAttribute("aria-current",on?"page":"false")}
   // Settings sits in the desktop sidebar as a fourth row without a data-view; it is current on the Settings route.
   {const settingsNav=$("#settings-nav");if(settingsNav){const on=name==="settings";settingsNav.classList.toggle("current",on);settingsNav.setAttribute("aria-current",on?"page":"false")}}
   document.body.dataset.view=name;scrollTo(0,0);renderSidePanel();
-  saveWorkspace({view:name});if(route)syncRoute({view:name});if(name==="library"||(name==="sentence"&&isWide()))renderHistory();else if(name==="map")renderMap();else if(name==="mora")renderMora();else if(name==="radio")renderRadio();else if(name==="notes")renderNotes();else if(name==="search")renderSearch();else if(name==="review")renderReviewHome();else if(name==="practice"){renderPracticeNotices();renderWelcome()}else if(name==="setup")resetSetupForm()}
+  saveWorkspace({view:name});if(route)syncRoute({view:name});if(name==="library"||(name==="sentence"&&isWide()))renderHistory();else if(name==="map")renderMap();else if(name==="mora")renderMora();else if(name==="radio")renderRadio();else if(name==="notes")renderNotes();else if(name==="drill")startMoraDrill();else if(name==="search")renderSearch();else if(name==="review")renderReviewHome();else if(name==="practice"){renderPracticeNotices();renderWelcome()}else if(name==="setup")resetSetupForm()}
 // The study tool: the wall of joyo kanji, the dictionary and the list of grammar points,
 // read off your library every time the screen opens. Coverage is never
 // stored, so a sentence added or deleted moves the wall at once, and nothing
@@ -2303,6 +2304,44 @@ function renderInItSummaries(){const items=[...$("#sentence-grammar").querySelec
   $("#sentence-grammar-meta").textContent=items.length?items.slice(0,3).join(" · "):($("#sentence-grammar").hidden?"":t("Explain the grammar"));
   $("#sentence-track-meta").textContent=$("#stat-due").textContent}
 new MutationObserver(renderInItSummaries).observe($("#sentence-grammar"),{childList:true,subtree:true,attributes:true,attributeFilter:["hidden"]});
+// The mora drill (/mora/drill): free practice, kept in the page. It never
+// touches FSRS or the Review badge; only the last round's misses are kept so
+// the next round starts with them.
+let drill=null;
+function drillCard(kana){const {kanji,gloss,mark}=moraAnchorInfo(kana),picture=moraPicture(kana),corner=mark==="巨大"?"giant":mark==="風船"?"balloon":null;
+  return (picture?themedPictureHtml(picture,{size:44,className:"drill-picture"}):"")+'<span class="drill-kanji" lang="ja">'+(mark?'<span class="mora-modifier">'+(mark==="巨大"?"巨大な":"風船の")+'</span>':"")+escapeText(kanji)+'</span><span class="drill-gloss">'+escapeText(gloss)+'</span>'+(corner?cornerMarkHtml(corner):"")}
+function sayDrillSound(){if(!drill||drillDone(drill.state))return;const kana=drill.state.queue[drill.state.index],voice=voices[Number($("#voice").value)]||voices[0]||null;speakOnce(kana,{voice,rate:Number($("#rate").value)||1})}
+async function startMoraDrill(round){const readings=(await wordNotes()).map(entry=>entry.word.r).filter(Boolean);
+  drill={state:startDrill(round||drillRound({misses:settings.moraDrillMisses||[],readings})),choices:null};renderDrill()}
+function renderDrill(){if(!drill)return;const {state}=drill,done=drillDone(state);
+  $("#drill-play").hidden=done;$("#drill-done").hidden=!done;$("#drill-progress").hidden=done;$("#drill-bar").hidden=done;
+  if(done){renderDrillDone();return}
+  const kana=state.queue[state.index],{n,total,repeat}=drillProgress(state),answered=state.answered;
+  $("#drill-progress").textContent=repeat?t("again"):n+" / "+total;$("#drill-bar-fill").style.width=(100*Math.min(state.index,total)/total).toFixed(1)+"%";
+  if(!drill.choices||drill.choices.kana!==kana||drill.choices.at!==state.index)drill.choices={kana,at:state.index,list:drillChoices(kana)};
+  const {kanji,reading,gloss,mark}=moraAnchorInfo(kana),anchor=mark?moraModified(mark,kanji):kanji,english=mark==="巨大"?t("giant")+" "+gloss:mark==="風船"?gloss+" "+t("balloon"):gloss;
+  $("#drill-prompt").innerHTML=answered?'<span class="drill-kana" lang="ja">'+escapeText(kana)+'</span> '+escapeText(t("is the"))+" "+escapeText(english)+' — <span lang="ja">'+escapeText(anchor)+" "+escapeText(reading)+'</span>':escapeText(t("Which anchor is this sound?"));
+  $("#drill-choices").replaceChildren(...drill.choices.list.map(choice=>{const card=document.createElement("button");card.type="button";card.className="drill-choice";card.dataset.ui="button";card.innerHTML=drillCard(choice);
+    card.setAttribute("aria-label",moraAnchorInfo(choice).kanji+" — "+moraAnchorInfo(choice).gloss);
+    if(answered){card.disabled=true;if(choice===kana){card.classList.add("right");card.insertAdjacentHTML("afterbegin",'<span class="drill-right status-chip due">'+escapeText(t("Right"))+'</span>')}else card.classList.add(choice===answered.picked?"picked":"dim")}
+    else card.onclick=()=>{drill.state=answerDrill(drill.state,choice);renderDrill();$("#drill-next").focus({preventScroll:true})};
+    return card}));
+  $("#drill-after").hidden=!answered;$("#drill-hint").hidden=!!answered;
+  if(answered){const word=moraAnchorInfo(kana).kanji;$("#drill-note").textContent=answered.right?(repeat?t("You found {anchor} this time.",{anchor:word}):t("You picked {anchor} on the first try. A miss shows the right anchor and comes back once more at the end of the round.",{anchor:word})):t("The right anchor is {anchor}. It comes back once more at the end of the round.",{anchor:word})}}
+function renderDrillDone(){const {state}=drill,missed=state.misses;
+  settings.moraDrillMisses=missed;storePreference("jp-echo-settings",JSON.stringify(settings));
+  $("#drill-score").textContent=t("{n} of {total} on the first try",{n:state.firstTry,total:state.total});
+  $("#drill-again-title").textContent=missed.length?(missed.length===1?t("One anchor to look at again:"):t("{n} anchors to look at again:",{n:spell(missed.length).replace(/^./,c=>c.toUpperCase())})):"";
+  $("#drill-again-title").hidden=!missed.length;$("#drill-again").hidden=!missed.length;
+  $("#drill-again").textContent=missed.length===1?t("Drill this one again"):t("Drill these {n} again",{n:spell(missed.length)});
+  $("#drill-missed").replaceChildren(...missed.map(kana=>{const li=document.createElement("li"),{kanji,gloss}=moraAnchorInfo(kana),picture=moraPicture(kana);
+    li.innerHTML='<span class="drill-missed-kana" lang="ja">'+escapeText(kana)+'</span>'+(picture?themedPictureHtml(picture,{size:30}):"")+'<span class="drill-missed-text"><span lang="ja">'+escapeText(kanji)+'</span><span class="hint">'+escapeText(gloss)+'</span></span><a class="drill-missed-link" href="'+escapeText(moraCellHref(kana))+'">'+escapeText(t("In the table"))+'</a>';
+    li.querySelector("a").onclick=event=>{event.preventDefault();openMoraCell(event.currentTarget.getAttribute("href"))};return li}))}
+$("#drill-sound").onclick=sayDrillSound;
+$("#drill-next").onclick=()=>{drill.state=nextDrill(drill.state);renderDrill();sayDrillSound()};
+$("#drill-again").onclick=()=>{startMoraDrill([...drill.state.misses]).then(sayDrillSound)};
+$("#drill-table").onclick=()=>showView("mora");$("#drill-back").onclick=()=>showView("mora");
+$("#mora-drill-open").onclick=()=>showView("drill");
 $("#clear-filters").onclick=()=>{$("#history-search").value="";$("#clear-history-search").hidden=true;$("#history-filter").value="all";settings.historyFilter="all";try{storePreference("jp-echo-settings",JSON.stringify(settings))}catch{}renderHistory()};
 addEventListener("online",renderPracticeNotices);addEventListener("offline",renderPracticeNotices);
 // A sheet closes the way it looks like it should: drag the handle down far
