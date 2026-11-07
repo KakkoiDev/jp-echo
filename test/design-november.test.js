@@ -45,7 +45,7 @@ test('desktop: the Settings row in the sidebar is current on the Settings route'
 
 test('desktop: practice-another-way cards keep their padding and border, and grow with two lines',()=>{
   assert.match(css,/\.library-tool\.two-line\{height:auto\}/);
-  assert.match(css,/\.welcome-modes \.library-tool\.two-line,\.library-tool\.two-line\{align-items:flex-start;padding:14px 16px;border:1px solid var\(--hairline\)/);
+  assert.match(css,/  \.library-tool\.two-line\{align-items:flex-start;padding:14px 16px;border:1px solid var\(--hairline\)/);
 });
 
 test('desktop: the sidebar badge sits at the row edge; ripples stop at the column; the review switch is above its rings',()=>{

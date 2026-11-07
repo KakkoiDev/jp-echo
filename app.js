@@ -248,7 +248,7 @@ function composerPlaceholder(){return discussionMode?(discussionTurns.length?"Sa
 function composerVerb(){return discussionMode?(discussionTurns.length?"Send":"Begin"):readingMode?"Write":"Translate"}
 function renderComposerCopy(){$("#composer-label").textContent=composerLabel();$("#english-input").placeholder=composerPlaceholder();const verb=composerVerb();$("#translate .label").textContent=verb;$("#translate").setAttribute("aria-label",verb)}
 // Back to the start screen: the loop is a session, the sentence stays in the Library.
-function showStart(){loop.stop();current=null;renderSentence();setPracticeMode("sentence")}
+function showStart(){loop.stop();current=null;renderSentence();setPracticeMode("sentence");renderWelcome()}
 function renderDiscussion(){if(discussionMode)renderComposerCopy();const list=$("#discussion-turns");list.replaceChildren(...discussionTurns.map(turn=>{const li=document.createElement("li");li.className="discussion-turn "+turn.role;const bubble=document.createElement("div");bubble.className="discussion-bubble";const ja=document.createElement("p");ja.className="discussion-japanese";ja.lang=targetLang();ja.innerHTML=rubyHtml(turn.target);enableVocabulary(ja,turn.target,targetLang(),turn);const en=document.createElement("p");en.className="discussion-translation";en.textContent=turn.source;en.hidden=!$("#discussion-english").checked;const actions=document.createElement("div");actions.className="discussion-message-actions";const save=document.createElement("button");save.type="button";save.className="plain discussion-save";save.textContent=turn.saved?"Saved ✓":"Save to Library";save.disabled=!!turn.saved;save.onclick=async()=>{save.disabled=true;const previous=save.textContent;save.textContent="Saving…";try{await saveDiscussionTurn(turn,{sourceLang:sourceLang(),targetLang:targetLang(),save:saveSentence});turn.saved=true;save.textContent="Saved ✓";refreshDueBadge();toast("Saved to your library.")}catch(error){save.disabled=false;save.textContent=previous;toast(sheetError(error),5000)}};actions.append(save);bubble.append(ja,en,actions);li.append(bubble);return li}));$("#discussion-live").hidden=!discussionTurns.length;$("#discussion-setup").hidden=!!discussionTurns.length;const live=discussionTurns.length>0;$("#discussion-head-title").textContent=live?discussionScenario:"Discussion";$("#discussion-head-sub").textContent=live?"Discussion · "+discussionTurns.length+(discussionTurns.length===1?" turn":" turns"):"Practice · another way";requestAnimationFrame(()=>{if(discussionTurns.length)list.lastElementChild?.scrollIntoView({block:"nearest",behavior:"smooth"})})}
 function playDiscussion(){if(discussionLoop.running){discussionLoop.togglePause();return}const pick=policy=>{if(!voices.length)return null;if(policy==="random")return voices[Math.floor(Math.random()*voices.length)];if(policy==="default")return voices.find(v=>v.default)||voices[0];return voices[Number(policy)]||voices[0]};discussionLoop.playConversation(discussionTurns.map(t=>({text:t.target,role:t.role})),{voiceFor:turn=>pick(turn.role==="ai"?$("#discussion-voice-ai").value:$("#discussion-voice-user").value),rate:Number($("#rate").value),lang:targetLang()})}
 async function beginDiscussion(){if($("#translate").disabled)return;const typed=$("#english-input").value;discussionScenario=$("#english-input").value.trim()||"An everyday conversation";$("#english-input").value="";$("#discussion-status").textContent="Starting…";$("#translate").disabled=true;try{const out=await discuss({scenario:discussionScenario,history:[]},{...settings,sourceLang:sourceLang(),targetLang:targetLang()});discussionTurns=[{role:"ai",...out.ai}];renderDiscussion();playDiscussion();$("#discussion-status").textContent=""}catch(e){if(!$("#english-input").value.trim())$("#english-input").value=typed;$("#discussion-status").textContent=e.message}finally{$("#translate").disabled=false}}
@@ -377,7 +377,7 @@ for(const tab of document.querySelectorAll(".tab[data-view]")){const on=tab.data
   // Settings sits in the desktop sidebar as a fourth row without a data-view; it is current on the Settings route.
   {const settingsNav=$("#settings-nav");if(settingsNav){const on=name==="settings";settingsNav.classList.toggle("current",on);settingsNav.setAttribute("aria-current",on?"page":"false")}}
   document.body.dataset.view=name;scrollTo(0,0);renderSidePanel();
-  saveWorkspace({view:name});if(route)syncRoute({view:name});if(name==="library"||(name==="sentence"&&isWide()))renderHistory();else if(name==="map")renderMap();else if(name==="mora")renderMora();else if(name==="radio")renderRadio();else if(name==="notes")renderNotes();else if(name==="review")renderReviewHome();else if(name==="practice")renderPracticeNotices();else if(name==="setup")resetSetupForm()}
+  saveWorkspace({view:name});if(route)syncRoute({view:name});if(name==="library"||(name==="sentence"&&isWide()))renderHistory();else if(name==="map")renderMap();else if(name==="mora")renderMora();else if(name==="radio")renderRadio();else if(name==="notes")renderNotes();else if(name==="review")renderReviewHome();else if(name==="practice"){renderPracticeNotices();renderWelcome()}else if(name==="setup")resetSetupForm()}
 // The study tool: the wall of joyo kanji, the dictionary and the list of grammar points,
 // read off your library every time the screen opens. Coverage is never
 // stored, so a sentence added or deleted moves the wall at once, and nothing
@@ -1414,7 +1414,7 @@ async function renderReviewHome(){const all=(await listSentences()).map(item=>en
   updateDueBadge(due.length);
   const waiting=all.filter(item=>!available.includes(item)),next=waiting.map(item=>Date.parse(item.srs.due)).filter(Number.isFinite).sort((a,b)=>a-b)[0];
   $("#review-due-block").hidden=due.length===0;$("#review-rest-block").hidden=due.length>0;
-  document.querySelector(".ring-stage").classList.toggle("resting",due.length===0);
+  renderReviewRadio(all,now);
   $("#start-review").hidden=due.length===0;$("#review-practice").hidden=due.length>0;
   const extra=extraStudySession(available,all,settings),early=extra.length&&!available.some(item=>!item.skipped);
   $("#review-extra-study").hidden=due.length>0||!extra.length;
@@ -1423,7 +1423,7 @@ async function renderReviewHome(){const all=(await listSentences()).map(item=>en
   $("#review-extra-note").textContent=early?"Review up to 20 sentences before they are due. Grading updates their next review dates.":"Counts against nothing. Shortest first, from Settings, if you want a light one.";
   document.querySelector("#review-rest-block .rest-title").textContent=available.length?"Daily limit reached":"Nothing due";
   renderSkillMix(due);
-  if(due.length){$("#review-estimate").textContent="Say each one out loud before you check. Roughly "+spell(Math.max(1,Math.round(due.length*.55)))+" minute"+(Math.round(due.length*.55)>1?"s":"")+".";
+  if(due.length){$("#review-estimate").textContent=t("about {n} min",{n:Math.max(1,Math.round(due.length*.55))});
     $("#review-footnote").textContent=reviewAvailabilityMessage(available.length,due.length,next,now)}
   else{const schedule=reviewAvailabilityMessage(0,0,next,now),budget=dailyReviewBudget(all,settings,now);
     const nextAllowance=budget.nextAvailable?" More allowance becomes available "+new Intl.DateTimeFormat(undefined,{dateStyle:'medium',timeStyle:'short'}).format(new Date(budget.nextAvailable))+".":"";
@@ -2215,6 +2215,22 @@ $("#library-filter-done").onclick=()=>$("#library-filter-sheet").close();
 $("#library-filter-sheet").addEventListener("click",event=>{if(event.target===$("#library-filter-sheet"))$("#library-filter-sheet").close()});
 $("#library-notes-open").onclick=()=>showView("notes");$("#notes-back").onclick=()=>showView("library");
 renderLibraryTools();
+// Review home, action first (ReviewHomeFirst): the evening brings Radio up
+// beside Start review. In the day it is in Library's tools shelf.
+const isEvening=(now=Date.now())=>{const hour=new Date(now).getHours();return hour>=19||hour<5};
+function renderReviewRadio(all,now=Date.now()){const count=radioQueue(all).length,show=isEvening(now)&&count>0;
+  $("#review-radio").hidden=!show;$("#review-radio-hint").hidden=!show;
+  if(show)$("#review-radio-label").textContent=t("Radio — tonight’s {n} sentences",{n:count})}
+// Practice, returning (PracticeReturning): once there are sentences, the hero
+// shrinks to one line and the last three you practised replay with one tap.
+async function renderWelcome(){let all=[];try{all=await listSentences()}catch{all=[]}
+  const recent=all.filter(item=>item.target||item.plainTarget).sort((a,b)=>String(b.updatedAt||b.createdAt).localeCompare(String(a.updatedAt||a.createdAt))).slice(0,3);
+  $("#welcome").classList.toggle("returning",recent.length>0);$("#welcome-recent").hidden=!recent.length;
+  $("#welcome-recent-list").replaceChildren(...recent.map(item=>{const li=document.createElement("li"),row=document.createElement("button");row.type="button";row.className="recent-row";row.dataset.ui="button";
+    row.innerHTML='<span class="recent-lines"><span class="recent-ja" lang="'+itemTarget(item)+'">'+escapeText(stripFurigana(preferredTarget(item)))+'</span><span class="recent-en">'+escapeText(item.source||"")+'</span></span><span class="recent-count">'+(Number(item.echoCount)||0)+'×</span><svg class="recent-play" width="11" height="13" viewBox="0 0 11 13" fill="currentColor" aria-hidden="true"><path d="M1 1.2 10 6.5 1 11.8Z"/></svg>';
+    row.setAttribute("aria-label",t("Play the loop")+": "+stripFurigana(preferredTarget(item)));
+    row.onclick=async()=>{const fresh=await getSentence(item.id)||item;openSentence(ensureSchedule(fresh));$("#play-pause").click()};li.append(row);return li}))}
+$("#welcome-tools").onclick=()=>{showView("library");history.replaceState(history.state,"",location.pathname+location.search+"#tools");requestAnimationFrame(()=>$("#tools")?.scrollIntoView({block:"start"}))};
 $("#clear-filters").onclick=()=>{$("#history-search").value="";$("#clear-history-search").hidden=true;$("#history-filter").value="all";settings.historyFilter="all";try{storePreference("jp-echo-settings",JSON.stringify(settings))}catch{}renderHistory()};
 addEventListener("online",renderPracticeNotices);addEventListener("offline",renderPracticeNotices);
 // A sheet closes the way it looks like it should: drag the handle down far
@@ -2260,7 +2276,7 @@ function startRadio(){if(!radioSentences.length)return;loop.stop();discussionLoo
 function stopRadio(){if(!radio.running&&$("#radio-night").hidden)return;radio.stop();radioNoise.stop();releaseRadioWake();$("#radio-night").hidden=true}
 function renderRadioState(at,item){const copy=RADIO_PHASE_COPY[at.phase];$("#radio-phase").textContent=copy.title;$("#radio-line").textContent=item&&at.phase==="wind-down"?stripFurigana(item.target):copy.line;
   $("#radio-until").textContent=at.phase==="done"?"":"Until "+clockAt(Date.now()+at.left)}
-$("#radio-open").onclick=()=>showView("radio");$("#radio-back").onclick=()=>showView("review");$("#radio-to-review").onclick=()=>showView("review");
+$("#review-radio").onclick=()=>showView("radio");$("#radio-back").onclick=()=>showView("review");$("#radio-to-review").onclick=()=>showView("review");
 $("#radio-start").onclick=startRadio;$("#radio-stop").onclick=stopRadio;$("#radio-hours").onchange=saveRadioOptions;$("#radio-noise").onchange=saveRadioOptions;
 // A wake lock is dropped whenever the page is hidden; take it again on return.
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&radio.running)holdRadioWake()});
@@ -2392,7 +2408,7 @@ $("#dictionary-dialog").addEventListener("close",()=>dictionaryLookupGeneration+
 
 
 $('#undo-mini-cleanup').onclick=undoMiniCleanup;
-$("#welcome-discussion").onclick=()=>setPracticeMode("discussion");$("#welcome-reading").onclick=()=>setPracticeMode("reading");
+
 // A starter scene fills the box and never sends: the learner can change it first.
 // It is the chosen chip (seal-tinted) until the box says something else.
 for(const scene of document.querySelectorAll("#discussion-scenes [data-scene]"))scene.onclick=()=>{const input=$("#english-input");input.value=scene.dataset.scene;for(const other of document.querySelectorAll("#discussion-scenes [data-scene]"))other.setAttribute("aria-pressed",String(other===scene));input.dispatchEvent(new Event("input",{bubbles:true}));input.focus()};
@@ -2519,7 +2535,7 @@ async function importExtractedSentences(){if(extractionBusy)return;const indices
  if(sentences.length)await importBackupData({schemaVersion:SCHEMA_VERSION,sentences,catalogues:{words}});
  extractionRows=extractionRows.filter(row=>!indices.has(row.index));extractionInventory=vocabularyInventory(await listSentences(),{sentenceWords,wordById});renderExtractionPreview();$('#extract-status').textContent=`Import complete. ${sentences.length} sentences added${selected.length<indices.size?'; duplicates skipped':''}. Your review session limits still apply.`;
  }catch(error){$('#extract-status').textContent=`Import failed: ${error.message}`;$('#extract-status').classList.add('error')}finally{setExtractionBusy(false)}}
-$("#welcome-extract").onclick=openTextExtraction;$("#extract-back").onclick=showStart;$("#discussion-back").onclick=showStart;$("#reading-back").onclick=showStart;
+$("#extract-back").onclick=showStart;$("#discussion-back").onclick=showStart;$("#reading-back").onclick=showStart;
 $('#extract-analyze').onclick=extractTextPassage;
 $('#extract-filter').onchange=renderExtractionPreview;
 $('#extract-preview').onchange=updateExtractionSelection;

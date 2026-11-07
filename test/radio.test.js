@@ -70,5 +70,5 @@ test('the night screen keeps the phone awake and the setup says so',()=>{
  const app=readFileSync(new URL('../app.js',import.meta.url),'utf8'),html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
  assert.match(app,/wakeLock\?\.request\("screen"\)/);
  assert.match(app,/visibilitychange[^\n]*radio\.running[^\n]*holdRadioWake/,'the lock is taken again when the page returns');
- assert.match(html,/id="radio-open"/);assert.match(html,/id="radio-night"/);
+ assert.match(html,/id="review-radio"/);assert.match(app,/id:"radio",glyph:"夜"/);assert.match(html,/id="radio-night"/);
 });
