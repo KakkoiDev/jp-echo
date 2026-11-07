@@ -87,7 +87,7 @@ to match the build. **Board** and **New board** mean the build changes.
 | B12 Hero and ripple | Code: hero ink; the ripple shows only while audio plays | library + sentence PR |
 | B13 Word sheet | Board: WordNote redrawn with every current section | word sheet PR |
 | C Tokens | Code: dark boards re-exported from `styles.css` | — |
-| M1 Header search | Already shipped in #113 (one shared header, all three tabs) | — |
+| M1 Header search | Shipped in #113: the one shared header shows the magnifier on Practice, Review and Library (checked again 8 Nov; see `shots/pr5-headers.png`). Not open. | — |
 | M2 theme-map.json | Removed; `styles.css` holds the dark values | this PR |
 
 ## PR sequence

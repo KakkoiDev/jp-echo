@@ -15,7 +15,7 @@ test('Echo’s word note shows how to say it, then the kanji (WordNote)',()=>{
 
 test('Echo’s notes: notes written with an old anchor can be rewritten together, yours are left alone',()=>{
  const app=readFileSync(new URL('../app.js',import.meta.url),'utf8'),html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
- assert.match(html,/<div id="notes-outdated" class="notes-outdated" hidden>[\s\S]*?id="notes-outdated-go"/);
+ assert.match(html,/<div id="notes-outdated" class="notes-outdated" hidden>[\s\S]*?Notes you wrote yourself are never touched\.[\s\S]*?id="notes-outdated-go"/,'Notes board: title, why, button, status');
  assert.match(app,/const outdatedNotes=entries=>entries\.filter\(\(\{note,word\}\)=>note\.by!=="you"&&moraRetiredIn\(/,'only Echo’s own versions');
  assert.match(app,/await putNote\(makeNote\(\{kind:"word",id:word\.id,part:"remember",text:made\.remember\}\)\)/,'through the backup-marking note wrapper, one at a time');
 });
