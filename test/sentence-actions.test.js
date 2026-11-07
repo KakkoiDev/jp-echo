@@ -57,11 +57,10 @@ test('library progress counts every sentence once, including missing schedules a
  const start=source.indexOf('function renderLibraryProgress('),end=source.indexOf('\nlet historyRenderVersion',start);
  vm.runInContext(source.slice(start,end),ctx);
  ctx.renderLibraryProgress([{},{srs:{state:0}},{srs:{state:1}},{srs:{state:2}},{srs:{state:3},skipped:true}]);
- assert.equal(fields.get('#library-progress-new').textContent,'2');assert.equal(fields.get('#library-progress-practicing').textContent,'2');assert.equal(fields.get('#library-progress-learned').textContent,'1');
  // One meter, not three big numbers: widths follow the counts, the label reads them.
  assert.equal(fields.get('#library-progress-bar-learned').style.width,'20.00%');assert.equal(fields.get('#library-progress-bar-practicing').style.width,'40.00%');
  assert.equal(fields.get('#library-progress').attrs['aria-label'],'Your library: 1 learned, 2 practicing, 2 new');assert.equal(fields.get('#library-progress').hidden,false);
- ctx.renderLibraryProgress([]);for(const key of ['new','practicing','learned'])assert.equal(fields.get('#library-progress-'+key).textContent,'0');assert.equal(fields.get('#library-progress').hidden,true);
+ ctx.renderLibraryProgress([]);assert.equal(fields.get('#library-progress').hidden,true);
  assert.doesNotMatch(html,/library-progress-note/);assert.ok(html.indexOf('id="library-progress"')>html.indexOf('id="library-count"'));
- assert.match(source,/renderLibraryTool\(all\);renderLibraryProgress\(all\)/);
+ assert.match(source,/renderLibraryProgress\(all\);renderLibraryNotes\(\)/);
 });

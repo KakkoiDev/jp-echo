@@ -7,7 +7,7 @@ import {validateDeckBackup,fetchDeckBackup,runImportFeedback,classifyImport,impo
 import {isSeeded,planMiniSentenceUpgrade,repairMiniImport} from './mini-imports.js';
 import {applyI18n,setDictionary,t} from "./i18n.js";
 import {earliestPair,flipSentence,isReversed,pairLooksSwapped,repairPair} from "./repair.js";
-import {DEFAULT_PAIR,LANGUAGES,safeLanguage,MORA_MNEMONIC_META,MORA_VOICED,MORA_YOON,createSentence,replaceSentenceContent,exportBackup,forAnki,hasFurigana,hasRegisters,languageName,mergeSentences,normalizeFurigana,rubySegments,rubyHtml,SCHEMA_VERSION,stripFurigana} from "./core.js";
+import {moraMnemonicTokens,DEFAULT_PAIR,LANGUAGES,safeLanguage,MORA_MNEMONIC_META,MORA_VOICED,MORA_YOON,createSentence,replaceSentenceContent,exportBackup,forAnki,hasFurigana,hasRegisters,languageName,mergeSentences,normalizeFurigana,rubySegments,rubyHtml,SCHEMA_VERSION,stripFurigana} from "./core.js";
 import {isExactMatch,markAttempt,markTarget} from "./diff.js";
 import {applyReadingCorrection,removeArchivedMiniCards,readImportRecovery,saveImportRecovery,deleteSentence as dbDeleteSentence,getSentence,listSentences,migrateStore,replaceAll,saveSentence as persistSentence} from "./db.js";
 import {MIN_INTERVAL_MS,QUIET_MS,downloadBackup,parseGistId,shouldAutoBackup,uploadBackup} from "./gist-backup.js";
@@ -27,7 +27,7 @@ import {reviewAvailabilityMessage,reviewStats,dailyReviewBudget,reviewOrder,sess
 import {DEFAULT_TIME,REMINDER_TAG,reminderText,shouldRemind} from "./reminders.js";
 import {saveDiscussionTurn} from "./actions.js";
 // New shared UI comes from the component library (COMPONENTS.md).
-import {flagSvg,renderFlagButton,grammarList,skillGlyph,skillTrio,expandableList,fitTextArea,kanjiNumeral} from "./components.js";
+import {flagSvg,renderFlagButton,grammarList,skillGlyph,skillTrio,expandableList,fitTextArea,kanjiNumeral,toolShelf,renderFilterButton,wireFilterButton,anchorStripHtml} from "./components.js";
 // Settings page state, declared before anything can read it (navigationState).
 const SETTINGS_TITLES={main:"Settings",ai:"AI service",speech:"Speech recognition",backup:"Backup",import:"Import sentences",export:"Export",grammar:"Grammar"};
 let settingsPage="main",settingsReturn="practice";
@@ -369,15 +369,15 @@ const wide=matchMedia("(min-width:1024px)");
 const isWide=()=>wide.matches;
 const VIEW_TITLES={review:"Review",library:"Library"};
 function showView(name,{route=true}={}){if(name==="map"&&targetLang()!=="ja")name="library";if(name!=="radio")stopRadio();if(name!=="practice")resetSession();if(name!=="session")stopReviewListening();speechSynthesis.cancel();
-  $("#main-view").hidden=name!=="practice";$("#review-home").hidden=name!=="review";$("#history-view").hidden=!(name==="library"||(name==="sentence"&&isWide()));$("#review-view").hidden=name!=="session";$("#sentence-view").hidden=name!=="sentence";$("#onboard-view").hidden=name!=="onboard";$("#setup-view").hidden=name!=="setup";$("#map-view").hidden=name!=="map";$("#mora-view").hidden=name!=="mora";$("#radio-view").hidden=name!=="radio";$("#settings-view").hidden=name!=="settings";if(name!=="settings")settingsStack=[];$("#settings-nav")?.toggleAttribute("aria-current",name==="settings");if(name!=="settings"&&$("#ai-show-key")?.getAttribute("aria-pressed")==="true")$("#ai-show-key").click();
-  const solo=name==="onboard"||name==="setup"||((name==="session"||name==="sentence"||name==="map"||name==="mora"||name==="radio"||name==="settings")&&!isWide());document.querySelector("header").hidden=solo||(name==="practice"&&(discussionMode||readingMode||extractMode)&&!isWide());$("#tabs").hidden=solo;
+  $("#main-view").hidden=name!=="practice";$("#review-home").hidden=name!=="review";$("#history-view").hidden=!(name==="library"||(name==="sentence"&&isWide()));$("#review-view").hidden=name!=="session";$("#sentence-view").hidden=name!=="sentence";$("#onboard-view").hidden=name!=="onboard";$("#setup-view").hidden=name!=="setup";$("#map-view").hidden=name!=="map";$("#mora-view").hidden=name!=="mora";$("#radio-view").hidden=name!=="radio";$("#notes-view").hidden=name!=="notes";$("#settings-view").hidden=name!=="settings";if(name!=="settings")settingsStack=[];$("#settings-nav")?.toggleAttribute("aria-current",name==="settings");if(name!=="settings"&&$("#ai-show-key")?.getAttribute("aria-pressed")==="true")$("#ai-show-key").click();
+  const solo=name==="onboard"||name==="setup"||((name==="session"||name==="sentence"||name==="map"||name==="mora"||name==="radio"||name==="notes"||name==="settings")&&!isWide());document.querySelector("header").hidden=solo||(name==="practice"&&(discussionMode||readingMode||extractMode)&&!isWide());$("#tabs").hidden=solo;
   $("#view-title").textContent=VIEW_TITLES[name]||"";$("#view-title").hidden=!VIEW_TITLES[name];document.querySelector(".brand").hidden=!!VIEW_TITLES[name];
   $("#discussion-play").onclick=playDiscussion;$("#discussion-english").onchange=renderDiscussion;$("#discussion-new").onclick=()=>{discussionLoop.stop();discussionTurns=[];discussionScenario="";renderDiscussion();$("#english-input").value="";$("#english-input").focus()};$("#reading-furigana").onchange=renderReading;$("#reading-english").onchange=renderReading;$("#reading-echo").onclick=playReading;
-for(const tab of document.querySelectorAll(".tab[data-view]")){const on=tab.dataset.view===name||((name==="session"||name==="radio")&&tab.dataset.view==="review")||((name==="sentence"||name==="map")&&tab.dataset.view==="library");tab.classList.toggle("current",on);tab.setAttribute("aria-current",on?"page":"false")}
+for(const tab of document.querySelectorAll(".tab[data-view]")){const on=tab.dataset.view===name||((name==="session"||name==="radio")&&tab.dataset.view==="review")||((name==="sentence"||name==="map"||name==="notes")&&tab.dataset.view==="library");tab.classList.toggle("current",on);tab.setAttribute("aria-current",on?"page":"false")}
   // Settings sits in the desktop sidebar as a fourth row without a data-view; it is current on the Settings route.
   {const settingsNav=$("#settings-nav");if(settingsNav){const on=name==="settings";settingsNav.classList.toggle("current",on);settingsNav.setAttribute("aria-current",on?"page":"false")}}
   document.body.dataset.view=name;scrollTo(0,0);renderSidePanel();
-  saveWorkspace({view:name});if(route)syncRoute({view:name});if(name==="library"||(name==="sentence"&&isWide()))renderHistory();else if(name==="map")renderMap();else if(name==="mora")renderMora();else if(name==="radio")renderRadio();else if(name==="review")renderReviewHome();else if(name==="practice")renderPracticeNotices();else if(name==="setup")resetSetupForm()}
+  saveWorkspace({view:name});if(route)syncRoute({view:name});if(name==="library"||(name==="sentence"&&isWide()))renderHistory();else if(name==="map")renderMap();else if(name==="mora")renderMora();else if(name==="radio")renderRadio();else if(name==="notes")renderNotes();else if(name==="review")renderReviewHome();else if(name==="practice")renderPracticeNotices();else if(name==="setup")resetSetupForm()}
 // The study tool: the wall of joyo kanji, the dictionary and the list of grammar points,
 // read off your library every time the screen opens. Coverage is never
 // stored, so a sentence added or deleted moves the wall at once, and nothing
@@ -1461,23 +1461,19 @@ const escapeText=value=>{const node=document.createElement("span");node.textCont
 const CARD_STATES={due:"Due now",new:"New",learning:"Learning",review:"Review"};
 const ORDER_LABELS={"created-desc":"Newest first","created-asc":"Oldest first","echoes-desc":"Most echoes","echoes-asc":"Fewest echoes","due-desc":"Furthest away","due-asc":"Due soonest","english-desc":"English Z–A","english-asc":"English A–Z","japanese-desc":"Japanese Z–A","japanese-asc":"Japanese A–Z"};
 function cardState(item,now=Date.now()){const state=item.srs?.state??0;if(!item.srs?.due||Date.parse(item.srs.due)<=now)return "due";if(state===0)return "new";if(state===1||state===3)return "learning";return "review"}
-function renderLibraryTool(all){const row=$("#library-tool");row.hidden=targetLang()!=="ja";if(row.hidden)return;
-  const k=kanjiLearned(all).size,w=wordLearned(all).size,g=hasGrammar()?grammarLearned(all).size:null;
-  $("#library-tool-tally").textContent=[k,w,g].filter(n=>n!==null).map(n=>n.toLocaleString()).join(" · ");
-  row.setAttribute("aria-label",t("Kanji, words and grammar")+": "+(g===null?t("{k} kanji and {w} words learned",{k:k.toLocaleString(),w:w.toLocaleString()}):t("{k} kanji, {w} words and {g} points learned",{k:k.toLocaleString(),w:w.toLocaleString(),g:g.toLocaleString()})))}
 function renderLibraryProgress(all){
  const counts={new:0,practicing:0,learned:0};
  for(const sentence of all){const state=sentence.srs?.state??0;counts[state===2?"learned":state===1||state===3?"practicing":"new"]++}
- for(const [key,value] of Object.entries(counts))$("#library-progress-"+key).textContent=String(value);
  // One meter, not three big numbers (History.dc.html): learned solid seal,
- // practicing hatched, new left as paper. The line under it says the same.
+ // practicing hatched, new left as paper; its label reads the counts (one
+ // meter line, LibraryTools board).
  const total=all.length,width=n=>(total?100*n/total:0).toFixed(2)+"%";
  $("#library-progress-bar-learned").style.width=width(counts.learned);$("#library-progress-bar-practicing").style.width=width(counts.practicing);
  $("#library-progress").setAttribute("aria-label",t("Your library: {learned} learned, {practicing} practicing, {new} new",{learned:counts.learned,practicing:counts.practicing,new:counts.new}));
  $("#library-progress").hidden=total===0;
 }
 let historyRenderVersion=0;
-async function renderHistory(){const version=++historyRenderVersion,all=await listSentences();if(version!==historyRenderVersion)return;renderLibraryTool(all);renderLibraryProgress(all);const list=$("#history-list"),due=dueSentences(all),query=$("#history-search").value.trim().toLocaleLowerCase(),filter=$("#history-filter").value,order=$("#history-order").value,direction=$("#history-direction").value,now=Date.now();let items=all.filter(item=>{const haystack=[item.source,item.target,item.plainTarget,item.casualTarget,item.politeTarget].filter(Boolean).join(" ").toLocaleLowerCase();if(query&&!haystack.includes(query))return false;const state=item.srs?.state??0;if(filter==="due")return !item.srs?.due||Date.parse(item.srs.due)<=now;if(filter==="new")return state===0;if(filter==="learning")return state===1||state===3;if(filter==="review")return state===2;if(filter==="skipped")return item.skipped===true;if(filter==="flagged")return item.flagged===true;return true});const comparators={created:(a,b)=>a.createdAt.localeCompare(b.createdAt),echoes:(a,b)=>(Number(a.echoCount)||0)-(Number(b.echoCount)||0),due:(a,b)=>Date.parse(a.srs?.due||a.createdAt)-Date.parse(b.srs?.due||b.createdAt),english:(a,b)=>a.source.localeCompare(b.source),japanese:(a,b)=>preferredPlainTarget(a).localeCompare(preferredPlainTarget(b),itemTarget(a))},factor=direction==="asc"?1:-1;items.sort((a,b)=>factor*(comparators[order]||comparators.created)(a,b));list.replaceChildren();$("#empty-history").hidden=all.length>0;renderStarterOffer(all);document.querySelector(".history-tools").hidden=all.length===0;$("#empty-results").hidden=all.length===0||items.length>0;$("#empty-results-count").textContent=all.length===1?"One is in your library.":capitalise(spell(all.length))+" are in your library.";updateDueBadge(limitReviewSession(due,settings,all).length);$("#library-count").textContent=items.length===1?"1 sentence":items.length+" sentences";$("#library-order-label").textContent=ORDER_LABELS[order+"-"+direction]||"";$(".list-head").hidden=items.length===0;if(isWide()&&!detail&&items.length)return openDetail(items[0].id);
+async function renderHistory(){const version=++historyRenderVersion,all=await listSentences();if(version!==historyRenderVersion)return;renderLibraryProgress(all);renderLibraryNotes();const list=$("#history-list"),due=dueSentences(all),query=$("#history-search").value.trim().toLocaleLowerCase(),filter=$("#history-filter").value,order=$("#history-order").value,direction=$("#history-direction").value,now=Date.now();let items=all.filter(item=>{const haystack=[item.source,item.target,item.plainTarget,item.casualTarget,item.politeTarget].filter(Boolean).join(" ").toLocaleLowerCase();if(query&&!haystack.includes(query))return false;const state=item.srs?.state??0;if(filter==="due")return !item.srs?.due||Date.parse(item.srs.due)<=now;if(filter==="new")return state===0;if(filter==="learning")return state===1||state===3;if(filter==="review")return state===2;if(filter==="skipped")return item.skipped===true;if(filter==="flagged")return item.flagged===true;return true});const comparators={created:(a,b)=>a.createdAt.localeCompare(b.createdAt),echoes:(a,b)=>(Number(a.echoCount)||0)-(Number(b.echoCount)||0),due:(a,b)=>Date.parse(a.srs?.due||a.createdAt)-Date.parse(b.srs?.due||b.createdAt),english:(a,b)=>a.source.localeCompare(b.source),japanese:(a,b)=>preferredPlainTarget(a).localeCompare(preferredPlainTarget(b),itemTarget(a))},factor=direction==="asc"?1:-1;items.sort((a,b)=>factor*(comparators[order]||comparators.created)(a,b));list.replaceChildren();$("#empty-history").hidden=all.length>0;renderStarterOffer(all);document.querySelector(".history-tools").hidden=all.length===0;$("#empty-results").hidden=all.length===0||items.length>0;$("#empty-results-count").textContent=all.length===1?"One is in your library.":capitalise(spell(all.length))+" are in your library.";updateDueBadge(limitReviewSession(due,settings,all).length);$("#library-count").textContent=items.length===1?"1 sentence":items.length+" sentences";renderFilterButton($("#library-filter"),libraryFilterSummary());$(".list-head").hidden=items.length===0;if(isWide()&&!detail&&items.length)return openDetail(items[0].id);
   for(const [index,item] of items.entries()){if(index%10===0){await new Promise(resolve=>setTimeout(resolve,0));if(version!==historyRenderVersion)return}const li=document.createElement("li");li.dataset.id=item.id;const state=cardState(item,now);li.innerHTML='<button class="history-open" type="button"><span class="lines"><span lang="'+itemTarget(item)+'">'+rubyHtml(preferredTarget(item))+'</span><span class="source-line">'+escapeText(item.source)+'</span><span class="chip-row"><span class="status-chip '+state+'">'+CARD_STATES[state]+'</span>'+(item.flagged?'<span class="status-chip flagged-chip">'+flagSvg+' Flagged</span>':'')+'</span></span><span class="tally"><strong>'+(Number(item.echoCount)||0)+'</strong><span>echoes</span></span></button>';li.querySelector(".history-open").onclick=()=>openDetail(item.id);list.append(li)}markSelectedRow()}
 const formatDate=value=>new Intl.DateTimeFormat(undefined,{day:"numeric",month:"long"}).format(new Date(value));
 const RATING_LABELS={again:"Again",ok:"OK"};
@@ -2191,6 +2187,34 @@ $("#remind").onchange=async()=>{const wanted=$("#remind").checked;
 $("#voice-install").onclick=installTargetVoice;$("#voice-manage").onclick=installTargetVoice;$("#settings-swap-langs").onclick=()=>setPair(targetLang(),sourceLang());window.addEventListener("focus",()=>setTimeout(populateVoices,250));document.addEventListener("visibilitychange",()=>{if(!document.hidden)setTimeout(populateVoices,250)});$("#onboard-start").onclick=()=>showView("setup");$("#onboard-restore").onclick=()=>{finishOnboarding();openSettings()};
 $("#setup-next").onclick=()=>{storeTranslator();showSetupStep(2)};
 $("#setup-back").onclick=()=>{if(setupStep===2)return showSetupStep(1);showView(settings.onboarded?"practice":"onboard")};$("#setup-provider").onchange=showSetupFields;$("#setup-save").onclick=saveSetup;$("#setup-skip").onclick=finishOnboarding;
+// The one home for tools (LibraryTools board): every way into Echo beyond the
+// practice loop, as the ToolShelf at /library#tools. Practice's 話読本 row
+// opens this, never a second list.
+const LIBRARY_TOOLS=[{id:"discussion",glyph:"話",label:"Discussion"},{id:"reading",glyph:"読",label:"Reading"},{id:"extract",glyph:"本",label:"Extract",name:"Extract from text"},{id:"radio",glyph:"夜",label:"Radio"},{id:"map",glyph:"学",label:"Kanji",name:"Kanji, words and grammar",ja:true},{id:"mora",glyph:"音",label:"Mora",name:"Mora memory table",ja:true}];
+function openLibraryTool(id){if(id==="discussion"||id==="reading"){showView("practice");setPracticeMode(id)}else if(id==="extract")openTextExtraction();else showView(id)}
+function renderLibraryTools(){toolShelf($("#library-tools"),LIBRARY_TOOLS.filter(tool=>!tool.ja||targetLang()==="ja"),{onOpen:openLibraryTool})}
+// The front door to Echo's notes: the words you asked Echo to help you
+// remember, newest first. The row shows three; /words?notes=1 lists them all.
+async function wordNotes(){let notes=[];try{notes=await listNotes()}catch{notes=[]}
+  return notes.filter(note=>note.kind==="word"&&note.part==="remember"&&note.text).map(note=>({note,word:wordById(note.id)})).filter(entry=>entry.word).sort((a,b)=>String(b.note.made).localeCompare(String(a.note.made)))}
+async function renderLibraryNotes(){const row=$("#library-notes"),entries=targetLang()==="ja"?await wordNotes():[];row.hidden=!entries.length;if(!entries.length)return;
+  $("#library-notes-count").textContent=String(entries.length);
+  $("#library-notes-words").replaceChildren(...entries.slice(0,3).map(({word})=>{const chip=document.createElement("button");chip.type="button";chip.className="library-note-word";chip.lang="ja";chip.dataset.ui="button";
+    chip.append(el("span","word",word.w),el("span","reading",word.r||""));chip.setAttribute("aria-label",word.w+" — "+t("Echo’s note"));chip.onclick=async()=>openWord(word,wordCoverage(await listSentences()));return chip}))}
+async function renderNotes(){const entries=await wordNotes();$("#notes-count").textContent=t("{n} words · newest first",{n:entries.length});$("#notes-empty").hidden=entries.length>0;
+  $("#notes-list").replaceChildren(...entries.map(({note,word})=>{const li=document.createElement("li"),open=document.createElement("button");open.type="button";open.className="notes-row";open.dataset.ui="button";
+    const story=stripFurigana(String(note.text)).replace(/\s+/g," ").trim();
+    open.innerHTML='<span class="notes-word" lang="ja">'+escapeText(word.w)+'</span><span class="notes-body"><span class="notes-meta"><span lang="ja">'+escapeText(word.r||"")+'</span> · '+escapeText((word.en||[])[0]||"")+'</span><span class="notes-story">'+escapeText(story)+'</span>'+anchorStripHtml(moraMnemonicTokens(word.r||"").map(token=>({...token})),{compact:true})+'</span><svg class="notes-chevron" width="8" height="13" viewBox="0 0 8 13" fill="none" aria-hidden="true"><path d="m1.5 1.5 5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    open.onclick=async()=>openWord(word,wordCoverage(await listSentences()));li.append(open);return li}))}
+// One quiet control names the filter; its sheet holds search, Cards, Sort and
+// Direction, which commit on change as they always have.
+function libraryFilterSummary(){const filter=$("#history-filter"),query=$("#history-search").value.trim(),order=(ORDER_LABELS[$("#history-order").value+"-"+$("#history-direction").value]||"").replace(/ first$/,"");
+  return [query?"“"+query+"”":"",filter.options[filter.selectedIndex]?.text||"",order].filter(Boolean).join(" · ")}
+wireFilterButton($("#library-filter"),$("#library-filter-sheet"));
+$("#library-filter-done").onclick=()=>$("#library-filter-sheet").close();
+$("#library-filter-sheet").addEventListener("click",event=>{if(event.target===$("#library-filter-sheet"))$("#library-filter-sheet").close()});
+$("#library-notes-open").onclick=()=>showView("notes");$("#notes-back").onclick=()=>showView("library");
+renderLibraryTools();
 $("#clear-filters").onclick=()=>{$("#history-search").value="";$("#clear-history-search").hidden=true;$("#history-filter").value="all";settings.historyFilter="all";try{storePreference("jp-echo-settings",JSON.stringify(settings))}catch{}renderHistory()};
 addEventListener("online",renderPracticeNotices);addEventListener("offline",renderPracticeNotices);
 // A sheet closes the way it looks like it should: drag the handle down far
@@ -2240,8 +2264,8 @@ $("#radio-open").onclick=()=>showView("radio");$("#radio-back").onclick=()=>show
 $("#radio-start").onclick=startRadio;$("#radio-stop").onclick=stopRadio;$("#radio-hours").onchange=saveRadioOptions;$("#radio-noise").onchange=saveRadioOptions;
 // A wake lock is dropped whenever the page is hidden; take it again on return.
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&radio.running)holdRadioWake()});
-$("#mora-open").onclick=()=>showView("mora");$("#mora-back").onclick=()=>showView("library");$("#mora-quiz").onchange=()=>{moraRevealed.clear();renderMora()};for(const id of ["#mora-show-emoji","#mora-show-furigana","#mora-show-english"])$(id).onchange=saveMoraDisplay;
-$("#kanji-close").onclick=()=>{loop.stop();$("#kanji-dialog").close()};$("#kanji-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;kanjiOpen=null;saveWorkspace({modal:null})});$("#kanji-compose").onclick=composeForKanji;$("#kanji-say-go").onclick=sayForKanji;$("#library-tool").onclick=()=>showView("map");
+$("#mora-back").onclick=()=>showView("library");$("#mora-quiz").onchange=()=>{moraRevealed.clear();renderMora()};for(const id of ["#mora-show-emoji","#mora-show-furigana","#mora-show-english"])$(id).onchange=saveMoraDisplay;
+$("#kanji-close").onclick=()=>{loop.stop();$("#kanji-dialog").close()};$("#kanji-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;kanjiOpen=null;saveWorkspace({modal:null})});$("#kanji-compose").onclick=composeForKanji;$("#kanji-say-go").onclick=sayForKanji;
 $("#family-panel").addEventListener("toggle",()=>{
   if($("#family-panel").open)void renderKanjiFamilies(familyBrowse.sentences);
 });

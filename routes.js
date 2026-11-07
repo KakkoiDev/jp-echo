@@ -14,6 +14,7 @@ export function routeFor(state={}){
   else if(view==="map")path=state.mapView==="words"?"/words":state.mapView==="grammar"?"/grammar":"/kanji";
   else if(view==="mora")path="/mora";
   else if(view==="radio")path="/radio";
+  else if(view==="notes")path="/words";
   // Settings is a page with two sub-pages for what lives only on this device.
   else if(view==="settings")path=SETTINGS_PAGES.includes(state.settingsPage)?"/settings/"+state.settingsPage:"/settings";
   else if(view==="setup")path="/setup";
@@ -23,7 +24,9 @@ export function routeFor(state={}){
   else if(state.discussionMode)path="/discussion";
   const q=new URLSearchParams();
   if(path==="/library"){if(state.historyQuery)q.set("q",state.historyQuery);if(state.historyFilter&&state.historyFilter!=="all")q.set("filter",state.historyFilter);if(state.historyOrder&&state.historyOrder!=="created")q.set("order",state.historyOrder);if(state.historyDirection&&state.historyDirection!=="desc")q.set("direction",state.historyDirection)}
-  if(["/words","/kanji","/grammar"].includes(path)&&state.mapQuery)q.set("q",state.mapQuery);
+  // Echo's notes is the Words wall filtered to the words with a note.
+  if(view==="notes")q.set("notes","1");
+  if(["/words","/kanji","/grammar"].includes(path)&&state.mapQuery&&view!=="notes")q.set("q",state.mapQuery);
   // Group by: JLPT level is the default wall; Meaning groups the same cells by family topic.
   if(path==="/kanji"&&state.kanjiGroup==="meaning")q.set("group","meaning");
   return path+(q.size?"?"+q:"");
@@ -47,6 +50,7 @@ export function parseRoute(input){
   if(p==="/onboard")return {...base,view:"onboard"};
   let m=p.match(/^\/sentences\/([^/]+)$/);if(m)return {...base,view:"sentence",sentenceId:dec(m[1])};
   m=p.match(/^\/(words|kanji|grammar)\/([^/]+)$/);if(m)return {...base,view:"map",mapView:m[1]==="words"?"words":m[1]==="grammar"?"grammar":"kanji",modal:{kind:m[1]==="words"?"word":m[1],id:dec(m[2])}};
+  if(p==="/words"&&q.get("notes")==="1")return {...base,view:"notes"};
   m=p.match(/^\/(words|kanji|grammar)$/);if(m)return {...base,view:"map",mapView:m[1]==="words"?"words":m[1]==="grammar"?"grammar":"kanji",mapQuery:q.get("q")||"",...(m[1]==="kanji"?{kanjiGroup:q.get("group")==="meaning"?"meaning":"jlpt"}:{})};
   return {...base,notFound:true};
 }
