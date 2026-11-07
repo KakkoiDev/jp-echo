@@ -298,7 +298,7 @@ test("library and the study tool: the empty library, the tool rows, grammar and 
   assert.match(html, /<span class="empty-glyph" lang="ja" aria-hidden="true">空<\/span><strong>No sentences yet<\/strong><span>Everything you translate lands here, with its readings and its review history\.<\/span><button data-ui="button" id="empty-practice" class="primary" type="button">Write your first one<svg/);
   assert.match(html, /id="empty-starter" class="plain library-tool two-line"[\s\S]*Add 262 starter sentences[\s\S]*id="empty-import" class="plain library-tool two-line"[\s\S]*Import a deck, a backup or a book/);
   assert.doesNotMatch(app, /\.join\(" · "\)\+" "\+t\("learned"\)/, "the tool row tally is three numbers");
-  assert.match(css, /\.library-tool\.mora-open\{margin-top:0\}/);
+  assert.match(html, /<p id="tools" class="sr-only">Tools<\/p><div id="library-tools" class="library-tools"><\/div>/, "the tools shelf is the one home for the study tool and the mora table");
   assert.match(css, /\.point-row:not\(:has\(\.reading\)\)\{display:grid;grid-template-columns:20px minmax\(0,1fr\) auto/, "a grammar row is its title over its gloss");
   assert.match(app, /chunkHead\(i\+1,Math\.min\(i\+20,limit\),i===0&&tool\.chip==="all",t\("most common first"\)\)/);
   assert.match(app, /const mark=el\("span","sense-mark",kanjiNumeral\(i\+1\)\)/, "senses are numbered 一 二");
@@ -308,7 +308,7 @@ test("library and the study tool: the empty library, the tool rows, grammar and 
   assert.match(html, /<div id="mora-yoon-table" class="mora-table" lang="ja"><\/div>/, "combined sounds have their own table");
   assert.doesNotMatch(html, /【まえ】/, "no raw bracket furigana on the mora cards");
   assert.match(app, /echoLine:t\("Bundled with the app for 2,131 of the 2,136\./);
-  assert.match(app, /name==="map"\|\|name==="mora"\|\|name==="radio"\|\|name==="settings"\)&&!isWide\(\)/, "the Mora table is a pushed screen like the study tool: no brand header, no tabs");
+  assert.match(app, /name==="map"\|\|name==="mora"\|\|name==="radio"\|\|name==="notes"\|\|name==="settings"\)&&!isWide\(\)/, "the Mora table is a pushed screen like the study tool: no brand header, no tabs");
 });
 
 test("notes save on an explicit action, never on blur; bands mark open state without aria-busy; dead code is gone", () => {
