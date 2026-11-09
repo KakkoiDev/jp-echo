@@ -1,12 +1,22 @@
 // Shared, conservative dictionary readings. Context-dependent readings are explicit.
 import {rubySegments,segmentsToNotation,stripFurigana,readingsToNotation,KANJI} from './core.js';
-export const READING_VERSION=6;
+export const READING_VERSION=7;
 export const readingText=text=>rubySegments(text).map(part=>part.reading||part.text).join('');
 // Explicit ruby is a pronunciation hint, not a grammatical particle. Katakana
 // keeps browser voices from interpreting a supplied は/へ as wa/e.
 export const speechText=text=>rubySegments(text).map(part=>part.reading
  ?part.reading.replace(/[ぁ-ゖ]/g,char=>String.fromCharCode(char.charCodeAt(0)+0x60))
  :part.text).join('');
+// Echo's compact dictionary omits some common compounds and spelling variants.
+const FALLBACK_READINGS=new Map([
+ ['見積','みつもり'],
+ ['認知的','にんちてき'],
+ ['過負荷','かふか'],
+ ['着任','ちゃくにん'],
+ ['既読','きどく'],
+ ['誤用','ごよう'],
+]);
+
 export function createReadingResolver(words){
  const exact=new Map(),stems=new Map(),verbDefaults=new Map();
  const add=(map,key,value)=>{if(!map.has(key))map.set(key,new Set());map.get(key).add(value)};
@@ -18,6 +28,7 @@ export function createReadingResolver(words){
   // A lemma's trailing kana may conjugate; its kanji stem reading remains.
   if(annotated.length===2&&annotated[0].reading&&!annotated[1].reading)add(stems,annotated[0].text,annotated[0].reading);
  }
+ for(const [surface,reading] of FALLBACK_READINGS)if(!exact.has(surface))add(exact,surface,reading);
  const trie={};
  const put=(key,value)=>{let node=trie;for(const char of key)node=node[char]||(node[char]={});(node.matches||(node.matches=[])).push(value)};
  const endings={v1:"るたてなまられよずすそ","v1-s":"るたてなまられよずすそ",v5u:"わいうえおっ","v5u-s":"わいうえおっ",v5k:"かきくけこい","v5k-s":"かきくけこっ",v5g:"がぎぐげごい",v5s:"さしすせそ",v5t:"たちつてとっ",v5n:"なにぬねのん",v5b:"ばびぶべぼん",v5m:"まみむめもん",v5r:"らりるれろっ","v5r-i":"らりるれろっ",v5aru:"らりるれろっい","adj-i":"いくかけさすそ","adj-ix":"いくかけさすそ"};
@@ -61,7 +72,7 @@ export function createReadingResolver(words){
      if(readings.has(supplied))readings=new Set([supplied]);
      else {const preferred=matches.find(m=>m.preferred||m.defaultReading);if(preferred)readings=preferred.preferred?new Set([preferred.preferred]):preferred.readings}
     }
-tokens.push({segment:plain.slice(cursor,cursor+best.length),index:cursor,dictionaryReadings:readings});cursor+=best.length;continue}
+    tokens.push({segment:plain.slice(cursor,cursor+best.length),index:cursor,dictionaryReadings:readings});cursor+=best.length;continue}
    const token=originalTokens.find(t=>t.index<=cursor&&cursor<t.index+t.segment.length);
    const end=token?token.index+token.segment.length:cursor+1;
    tokens.push({segment:plain.slice(cursor,end),index:cursor});cursor=end;
