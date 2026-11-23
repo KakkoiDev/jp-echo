@@ -2,6 +2,17 @@
 
 Practice is the entry point for N2 exams and study. Open **Practice → N2 exams & study**. The exam picker, recall checks, passage results, attempt history and AI actions share this page. Existing exam bookmarks continue to work.
 
+## Layout (November 24 redesign)
+
+The N2 page is drawn with Echo's own `styles.css` (tool-head, Library two-line rows, the drill card and bar, review-actions, sheet-dialog), so it reads as the same app in light, dark and system themes. Practice's welcome screen opens it from the 試 row under 話読本.
+
+- **Hub** (`n2-mock.html`): a countdown to the next JLPT date (first Sunday of July or December), **Today** (recall goal, the next or running mock, weak items), **Readiness** (the latest mock as estimated 言語知識 / 読解 / 聴解 scores out of 60 with the 19-point floor and the 90 pass line, plus coverage meters), the twenty mocks with status chips, workbooks under a disclosure, then the AI coach, export and history.
+- **Recall** (`?view=recall&type=meaning|reading|grammar&queue=daily|weak|new`): a 20-card round. Big prompt, Hear it, Show answer, then Missed / Slow / Instant in the bottom bar (Space and 1–3 on a keyboard).
+- **Exam** (`?book=…`): one question per screen, timer in the sticky head, full-width choice rows, a flag for unsure, and a Questions sheet with the answer grid that also finishes the section. Keys 1–4, ← →, F.
+- **Results**: the estimated section scores, the slowest questions, and a review list filtered to missed and unsure.
+
+The logic lives in `n2-study.js` (no DOM) and is held by `test/n2-study.test.js`: the exam date, the section estimate, the recall queue (the newest evidence decides weakness, so a later clean check clears an old mock miss) and the daily goal (first checks spread to finish two days before the exam).
+
 ## Daily use
 
 1. **Check recall.** Choose vocabulary meaning, written-word reading, or grammar. Answer aloud before revealing the cue. Mark Instant, Slow or Missed. Daily review gives yesterday’s weak items priority and rotates in unchecked entries. The Weak items queue also includes mistakes on explicitly tagged exam questions.

@@ -188,6 +188,10 @@ Before considering the change complete:
   separate matcher (`addLookupWords`, words.js) and kept by the worker in
   `jp-echo-dict`, which app updates never clear. Both come from one JMdict file
   through `tools/build-words-data.mjs`; never hand-edit either.
+- **N2 is its own page on Echo's styles.** `n2-mock.html` links `styles.css`
+  and reuses its primitives; the only N2-specific CSS is the block headed
+  "JLPT N2" (choice rows, question grid, section meter). Logic without DOM
+  lives in `n2-study.js`. Never give it a second palette or font again.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

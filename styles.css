@@ -1981,3 +1981,103 @@ header .header-search+#settings-button{margin-left:-4px}
 .arrival-form button{flex:0 0 auto}
 #arrival-key-status:not(:empty),#arrival-key-done{margin-top:10px}
 .arrival-sheet section+section:not([hidden]){margin-top:18px;padding-top:14px;border-top:1px solid var(--rule)}
+
+/* JLPT N2 (n2-mock.html). Same object as the rest of Echo: tool-head, Library
+   rows, the drill card and bar, review-actions, sheet-dialog. Only the exam
+   pieces with no Echo equivalent live here: choice rows, the question grid
+   and the section meter. */
+body.n2 main{max-width:760px;margin:0 auto;padding-bottom:calc(120px + env(safe-area-inset-bottom))}
+.n2 a.icon-button{text-decoration:none}
+.n2 .button{min-height:48px}
+.n2 .library-tool.two-line{text-decoration:none;color:inherit;cursor:pointer}
+.n2 .library-tool.two-line .status-chip{align-self:center;flex-shrink:0}
+.n2-rows{margin-top:6px}
+.n2-countdown{display:flex;align-items:baseline;gap:10px;margin-top:18px}
+.n2-countdown strong{font-family:var(--display);font-weight:600;font-size:52px;line-height:1;color:var(--seal)}
+.n2-countdown span{font-size:13px;letter-spacing:.04em;color:var(--ink-soft)}
+.n2-goal-track{margin:-2px 0 4px 42px}
+.progress-track>span{display:block;height:100%;background:var(--seal)}
+.n2-lede{margin-top:10px}
+.n2-coverage{display:grid;gap:14px;margin-top:16px}
+.n2-meter,.n2-section{display:flex;flex-direction:column;gap:7px;color:inherit;text-decoration:none}
+.n2-meter-head,.n2-section-head{display:flex;align-items:baseline;gap:10px;font-size:13px;color:var(--ink-soft)}
+.n2-meter-ja{font-family:var(--display);font-size:16px;color:var(--sumi)}
+.n2-meter-n{margin-left:auto;font-variant-numeric:tabular-nums;color:var(--ink-muted)}
+.n2-meter .progress-track,.n2-section-track{position:relative;height:4px}
+.n2-meter .progress-track>span{position:absolute;left:0;top:0;bottom:0;background:var(--seal-edge)}
+.n2-meter .progress-track>.n2-meter-auto{background:var(--seal)}
+.n2-score{display:flex;flex-direction:column;gap:14px;margin-top:14px;padding:18px 16px;border:1px solid var(--hairline);border-radius:4px;background:var(--panel)}
+.n2-score .stats-figure{margin:0}
+.n2-score .status-chip{margin-top:-4px}
+.n2-floor{position:absolute;top:-4px;bottom:-4px;width:1px;background:var(--sumi)}
+.n2-section.low .n2-meter-n{color:var(--seal-deep)}
+.n2-section .hint{margin:0}
+.n2-more{margin-top:14px;font-size:13px;color:var(--ink-soft)}
+.n2-more>summary{min-height:44px;display:flex;align-items:center;cursor:pointer;color:var(--ink-soft)}
+.n2-links{margin:6px 0 0;padding-left:18px;line-height:2}
+.n2-analysis{white-space:pre-wrap}
+.n2 .notice{margin-top:14px}
+.n2-warning{margin-top:16px;color:var(--seal-deep)}
+.n2-center{text-align:center;margin-top:12px}
+/* Recall card */
+.n2-card{display:flex;flex-direction:column;align-items:center;gap:10px;min-height:46dvh;padding:34px 0 24px;text-align:center;cursor:pointer}
+.n2-prompt{margin:8px 0 0;font-family:var(--display);font-weight:500;font-size:52px;line-height:1.25;overflow-wrap:anywhere}
+.n2-prompt.long{font-size:34px}
+.n2-say{min-height:44px;gap:8px;font-size:13px}
+.n2-answer{display:flex;flex-direction:column;align-items:center;gap:6px;width:100%;margin-top:6px;padding-top:18px;border-top:1px solid var(--rule)}
+.n2-answer p{margin:0}
+.n2-reading{font-family:var(--display);font-size:24px;color:var(--seal-deep)}
+.n2-reading:empty{display:none}
+.n2-meaning{font-size:17px;line-height:1.55;color:var(--sumi);max-width:30em}
+.n2-grades{grid-template-columns:repeat(3,1fr)}
+.n2-grades .n2-wide{grid-column:1/-1}
+/* Exam */
+.n2-exam-head{position:sticky;top:0;z-index:5;background:var(--washi)}
+.n2-exam-head .drill-title{font-size:16px}
+.n2-clock{margin-left:auto;font-family:var(--display);font-size:20px;font-variant-numeric:tabular-nums}
+.n2-clock.low{color:var(--seal)}
+.n2-question{padding:18px 0 0}
+.n2-passage{margin:12px 0 0;padding:14px 16px;border-left:2px solid var(--hairline);background:var(--panel);font-family:var(--display);font-size:17px;line-height:2;white-space:pre-wrap}
+.n2-passage.small{font-size:15px;line-height:1.85}
+.n2-stem{margin:16px 0 0;font-size:21px;font-weight:500;line-height:1.7;letter-spacing:.02em}
+.n2-listen{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:18px}
+.n2-choices{display:grid;gap:8px;margin-top:20px}
+.n2-choice{justify-content:flex-start;gap:14px;min-height:56px;height:auto;padding:12px 14px;text-align:left;letter-spacing:normal;border-color:var(--hairline);font-size:16px;line-height:1.5}
+.n2-choice[aria-checked=true]{border:1.5px solid var(--seal);background:var(--seal-tint)}
+.n2-choice-n{flex-shrink:0;width:26px;height:26px;display:flex;align-items:center;justify-content:center;border:1px solid var(--quiet-edge);border-radius:50%;font-size:13px;color:var(--ink-soft)}
+.n2-choice[aria-checked=true] .n2-choice-n{background:var(--seal);border-color:var(--seal);color:var(--seal-on)}
+.n2-choice-text{font-family:var(--display);font-size:18px}
+.n2-choices.numbers{grid-template-columns:repeat(4,1fr)}
+.n2-choices.numbers .n2-choice{justify-content:center}
+.n2-booklet{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.n2-booklet iframe{width:100%;height:52dvh;border:1px solid var(--hairline);border-radius:4px;background:var(--panel)}
+.n2-booklet audio{width:100%}
+.n2-exam-bar{grid-template-columns:56px 44px 1fr 56px;align-items:center}
+.n2-exam-bar .icon-button{height:58px;width:44px}
+.n2-exam-bar #prev,.n2-exam-bar #next{font-size:24px;padding:0}
+.n2-exam-bar #next{font-size:15px}
+.n2-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:6px;margin-top:14px;max-height:46dvh;overflow:auto}
+.n2-cell{position:relative;min-height:44px;padding:0;border-color:var(--hairline);font-size:14px;letter-spacing:0;font-variant-numeric:tabular-nums}
+.n2-cell[data-answered=true]{background:var(--seal-tint);border-color:var(--seal-edge);color:var(--seal-deep)}
+.n2-cell[data-unsure=true]::after{content:"";position:absolute;top:4px;right:4px;width:6px;height:6px;border-radius:50%;background:var(--seal)}
+.n2-cell[aria-current=true]{border:1.5px solid var(--sumi)}
+.n2-plan{list-style:none;margin:28px 0 0;padding:0;border-top:1px solid var(--rule)}
+.n2-plan li{display:flex;align-items:baseline;gap:10px;padding:14px 0;border-bottom:1px solid var(--rule);font-size:13px;color:var(--ink-soft)}
+/* Results */
+.n2-review-list{margin-top:8px}
+.n2-review{border-bottom:1px solid var(--rule)}
+.n2-review>summary{display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center;min-height:56px;padding:10px 0;cursor:pointer;list-style:none}
+.n2-review>summary::-webkit-details-marker{display:none}
+.n2-review-n{grid-column:1;font-size:11px;letter-spacing:.08em;color:var(--ink-muted)}
+.n2-review-stem{grid-column:1;font-family:var(--display);font-size:15px;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.n2-review[open] .n2-review-stem{white-space:normal}
+.n2-review .status-chip{grid-column:2;grid-row:1/3;align-self:center}
+.n2-review-choices{margin:12px 0 0;padding-left:22px;font-family:var(--display);font-size:15px;line-height:1.9}
+.n2-review-choices .right{color:var(--seal-deep);font-weight:600}
+.n2-review-choices .right::after{content:" ← correct";font-family:var(--ui);font-size:11px;font-weight:400}
+.n2-review-choices .picked{text-decoration:line-through;text-decoration-color:var(--seal)}
+.n2-why{margin:10px 0 14px;font-size:13px;line-height:1.6;color:var(--ink-soft)}
+.n2-times{margin:4px 0 0;padding-left:20px;line-height:1.9}
+@media(min-width:760px){.n2-prompt{font-size:64px}.n2-card{min-height:40dvh}}
+a.welcome-tools{text-decoration:none}
+.welcome-tools+.welcome-n2{margin-top:0;border-top:0}

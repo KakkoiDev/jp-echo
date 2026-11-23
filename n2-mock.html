@@ -1,30 +1,138 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="system">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>N2 mock exam · Echo</title>
-<link rel="icon" href="./icon.svg">
-<style>
-:root{color-scheme:light dark;--paper:#f5f1e8;--card:#fffdf7;--ink:#29251e;--line:#d8d0c0;--seal:#993727}
-@media(prefers-color-scheme:dark){:root{--paper:#201e19;--card:#292620;--ink:#f3ebd9;--line:#534e43;--seal:#f19a82}}
-*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.5 system-ui,sans-serif}main{max-width:78rem;margin:auto;padding:clamp(1rem,3vw,3rem)}header,.row{display:flex;align-items:center;flex-wrap:wrap;gap:.75rem}header{justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:.8rem}a{color:var(--seal)}h1,h2{font-family:Georgia,serif;line-height:1.15}h1{font-size:clamp(2rem,5vw,3.5rem);margin:.6em 0}button,select{font:inherit;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:.5rem;padding:.6rem .85rem;cursor:pointer}button:disabled{opacity:.45;cursor:default}button[aria-pressed=true],.primary{background:var(--ink);color:var(--paper)}.panel{background:var(--card);border:1px solid var(--line);border-radius:.8rem;padding:1rem}.layout{display:grid;grid-template-columns:minmax(0,2fr) minmax(16rem,1fr);gap:1rem}iframe{display:block;width:100%;height:60vh;border:1px solid var(--line);margin:.75rem 0}audio{width:100%}#clock{font-variant-numeric:tabular-nums;font-weight:bold}.choices button{min-width:3rem}label{display:block;margin:1rem 0}li{margin:.4em 0}[hidden]{display:none!important}progress{width:100%;accent-color:var(--seal)}@media(max-width:700px){.layout{grid-template-columns:1fr}iframe{height:35vh}h1{margin:.4em 0}}
-#passage,#stem{font-family:system-ui,sans-serif;line-height:1.9;max-width:45em}#stem{font-size:1.28rem}#passage:empty{display:none}.native .choices{display:grid;gap:.45rem}.native .choices button{text-align:left}#sources{margin-top:1.2rem}#sources li{margin:.7rem 0}#review-items>details{padding:.6rem 0;border-bottom:1px solid var(--line)}
-#books{display:grid;grid-template-columns:repeat(auto-fit,minmax(13rem,1fr))}#books button{text-align:left}#study{margin:1rem 0}#study-prompt{font-size:1.75rem;margin:.5rem 0}#analysis{white-space:pre-wrap}#study-controls{gap:1rem}#study-controls label{margin:.4rem 0}#hubnav{margin-bottom:1rem}#collection-note{max-width:55em}</style>
-</head><body><main>
-<header><a href="./">‹ Echo Practice</a><strong id="clock"></strong></header>
-<h1>N2 practice</h1>
-<nav class="row" id="hubnav" hidden><a href="#study">Study progress</a><a href="#history">History and export</a></nav><div id="intro" class="panel"><h2 id="set-title">Practice exams</h2><p>105 minutes for vocabulary, grammar and reading. Then take a break and start the 50-minute listening section. Answers save on this device. Each Echo set covers vocabulary, grammar, reading and listening. Set 01 is the original November mock. Sets 02–20 are themed practice forms with new word targets and recurring exercise patterns. Official workbook media requires internet access.</p><div class="row" id="books"></div><details id="sources"><summary>More recent exams from other publishers</summary><ul>
-<li><a href="https://passjapanese.com/ja/jlpt/n2/full-exams/recent-trends-1">PassJapanese · 2026 trend mock</a> · 101 questions, VIP</li>
-<li><a href="https://www.faustacademy.com/jlpt-n2-practice-test">Faust Academy · November 2026 collection</a> · seven written papers and seven listening papers with audio, free PDFs</li>
-<li><a href="https://jlpt.migii.net/en/sample-test/jlpt-n2">Migii · session-labeled mock exams</a></li></ul></details></div>
-<div id="dashboard" hidden><section id="study" class="panel"><h2>N2 study progress</h2><div id="coverage"></div><p id="passages"></p><details><summary>My passage results</summary><ul id="passage-list"></ul></details>
-<div id="study-controls" class="row"><label>Skill <select id="dimension"><option value="meaning">Vocabulary meaning</option><option value="reading">Word reading</option><option value="grammar">Grammar</option></select></label>
-<label>Queue <select id="practice-filter"><option value="all">Daily review</option><option value="weak">Weak items</option><option value="new">Unchecked</option></select></label></div>
-<details id="recall-log"><summary>My checked items</summary><label>Search checked words and grammar <input id="recall-search" type="search"></label><ul id="recall-list"></ul></details><p id="study-prompt" lang="ja"></p><button id="reveal">Reveal answer</button><p id="study-answer"></p><div id="ratings" class="row" hidden><button data-grade="missed">Missed</button><button data-grade="slow">Slow</button><button data-grade="instant">Instant</button></div></section>
-<section id="history" class="panel"><h2>Exam history</h2><div id="adaptive-list"></div><ul id="history-list"></ul><div class="row"><button id="export-report">Export study JSON</button><button id="adaptive">Create targeted exam</button><button id="analyze-report">Analyze with my AI</button></div><p>AI analysis and targeted exam creation send your scores and selected mistakes to the provider in Echo Settings.</p><p id="analysis" role="status"></p></section></div><section id="exam" hidden><div class="layout"><article class="panel"><div class="row"><strong id="material"></strong><a id="open" target="_blank" rel="noopener">Open booklet ↗</a></div><p id="passage" lang="ja"></p><h2 id="stem" lang="ja"></h2><button id="speak" hidden>Play Japanese audio</button><iframe id="pdf" title="Official N2 question booklet"></iframe><audio id="audio" controls preload="none" hidden></audio><a id="track" target="_blank" rel="noopener" hidden>Open listening track ↗</a></article>
-<aside class="panel"><span id="volume"></span><h2 id="prompt"></h2><progress id="progress"></progress><p id="count"></p><div id="choices" class="row choices" aria-label="Answer choices"></div><label><input type="checkbox" id="guess"> Mark as a guess</label><div class="row"><button id="prev">Previous</button><button id="next">Next</button></div><label>Jump to question <select id="jump"></select></label><button id="submit">Finish section</button></aside></div></section>
-<section class="panel" id="rest" hidden><h2>Written section complete</h2><p>Take a break. Have your headphones ready before starting the listening timer. Use the audio control when you reach a listening prompt.</p><button id="listen" class="primary">Start listening · 50 min</button></section>
-<section class="panel" id="results" hidden><h2>Your results</h2><div class="row"><a href="./n2-mock.html#history">History, export and AI analysis</a><button id="retake">Start another attempt</button></div><p>Raw practice scores by skill. JLPT uses scaled scores on exam day.</p><div id="scores"></div><details><summary>Time spent per question</summary><ol id="timings"></ol></details><h3>Missed, unanswered and guessed</h3><p id="feedback"></p><ol id="mistakes"></ol><div id="review-items"></div><a id="script" target="_blank" rel="noopener">Official listening transcript ↗</a></section>
-<p><a href="./n2-mock.html" id="library" hidden>Choose a mock</a></p><p role="alert" id="warning"></p>
-</main><script type="module" src="./n2-mock.js"></script></body></html>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#F3F0E7"><meta name="theme-color" media="(prefers-color-scheme: dark)" content="#191712">
+<title>JLPT N2 · Echo</title>
+<script>try{const s=JSON.parse(localStorage.getItem("jp-echo-settings")||"{}");document.documentElement.dataset.theme=s.theme||"system";const m=s.motion||"system";if(m!=="system")document.documentElement.classList.add("motion-"+m)}catch{}</script>
+<link rel="icon" href="./favicon.ico" sizes="32x32"><link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="./apple-touch-icon.png"><link rel="manifest" href="./manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="./styles.css?v=180">
+</head>
+<body class="n2">
+<main id="n2-main">
+
+<!-- Hub -->
+<section id="hub" hidden>
+  <div class="tool-head"><a class="icon-button" href="./" aria-label="Back to Echo"><svg width="18" height="16" viewBox="0 0 18 16" fill="none" aria-hidden="true"><path d="M8 1 1 8l7 7M1 8h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a><span class="tool-titles"><span class="tool-title">JLPT N2</span><span class="overline" id="hub-exam-line"></span></span></div>
+  <div class="n2-countdown"><strong id="hub-days"></strong><span id="hub-days-label"></span></div>
+
+  <h3 class="rule-heading">Today</h3>
+  <div class="n2-rows">
+    <a class="library-tool two-line" id="today-recall" href="?view=recall"><span class="library-tool-glyph" lang="ja" aria-hidden="true">憶</span><span class="library-tool-label"><strong>Recall check</strong><span id="today-recall-line"></span></span><svg width="8" height="13" viewBox="0 0 8 13" fill="none" aria-hidden="true"><path d="m1.5 1.5 5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    <div class="progress-track n2-goal-track" aria-hidden="true"><span id="today-goal-bar"></span></div>
+    <a class="library-tool two-line" id="today-exam" href="#exams"><span class="library-tool-glyph" lang="ja" aria-hidden="true">試</span><span class="library-tool-label"><strong id="today-exam-title"></strong><span id="today-exam-line"></span></span><svg width="8" height="13" viewBox="0 0 8 13" fill="none" aria-hidden="true"><path d="m1.5 1.5 5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    <a class="library-tool two-line" id="today-weak" href="?view=recall&amp;queue=weak"><span class="library-tool-glyph" lang="ja" aria-hidden="true">弱</span><span class="library-tool-label"><strong>Weak items</strong><span id="today-weak-line"></span></span><svg width="8" height="13" viewBox="0 0 8 13" fill="none" aria-hidden="true"><path d="m1.5 1.5 5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+  </div>
+
+  <h3 class="rule-heading" id="study">Readiness</h3>
+  <div id="readiness"></div>
+  <div class="n2-coverage" id="coverage"></div>
+
+  <h3 class="rule-heading" id="exams">Mock exams</h3>
+  <p class="hint n2-lede">Each Echo set has vocabulary, grammar and reading (105 min), then listening (50 min). Answers save on this device as you go.</p>
+  <div class="n2-rows" id="exam-list"></div>
+  <details class="n2-more"><summary>Official sample workbooks and other publishers</summary>
+    <div class="n2-rows" id="workbook-list"></div>
+    <ul class="n2-links">
+      <li><a href="https://passjapanese.com/ja/jlpt/n2/full-exams/recent-trends-1" rel="noopener" target="_blank">PassJapanese · 2026 trend mock</a> <span class="hint">101 questions, paid</span></li>
+      <li><a href="https://www.faustacademy.com/jlpt-n2-practice-test" rel="noopener" target="_blank">Faust Academy · November 2026 collection</a> <span class="hint">written and listening papers, free PDFs</span></li>
+      <li><a href="https://jlpt.migii.net/en/sample-test/jlpt-n2" rel="noopener" target="_blank">Migii · session-labelled mocks</a></li>
+    </ul>
+  </details>
+
+  <h3 class="rule-heading" id="history">Coach and history</h3>
+  <div class="n2-rows">
+    <button data-ui="button" class="library-tool two-line" id="adaptive" type="button"><span class="library-tool-glyph" lang="ja" aria-hidden="true">狙</span><span class="library-tool-label"><strong>Create a targeted exam</strong><span>New questions on your misses, written by your AI provider</span></span></button>
+    <button data-ui="button" class="library-tool two-line" id="analyze-report" type="button"><span class="library-tool-glyph" lang="ja" aria-hidden="true">診</span><span class="library-tool-label"><strong>Analyze my results</strong><span>A diagnosis and a six-hour plan from your AI provider</span></span></button>
+    <button data-ui="button" class="library-tool two-line" id="export-report" type="button"><span class="library-tool-glyph" lang="ja" aria-hidden="true">出</span><span class="library-tool-label"><strong>Export study JSON</strong><span>Every attempt and check, for another tool</span></span></button>
+  </div>
+  <p class="hint">The AI actions send your scores and selected mistakes to the provider set in Echo Settings.</p>
+  <div class="notice" id="analysis-box" hidden><div class="notice-body"><span class="notice-title">From your coach</span><p class="notice-copy n2-analysis" id="analysis" role="status"></p></div></div>
+  <div class="n2-rows" id="adaptive-list"></div>
+  <div class="n2-rows" id="history-list"></div>
+</section>
+
+<!-- Recall -->
+<section id="recall" hidden>
+  <div class="drill-head"><a class="icon-button" href="./n2-mock.html" aria-label="Back to N2"><svg width="18" height="16" viewBox="0 0 18 16" fill="none" aria-hidden="true"><path d="M8 1 1 8l7 7M1 8h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a><span class="drill-title">Recall</span><span class="drill-progress" id="recall-progress"></span></div>
+  <div class="drill-bar"><span id="recall-bar"></span></div>
+  <div class="segmented" role="tablist" aria-label="What to recall">
+    <button data-ui="button" role="tab" data-type="meaning" type="button">意味 Meaning</button><button data-ui="button" role="tab" data-type="reading" type="button">読み Reading</button><button data-ui="button" role="tab" data-type="grammar" type="button">文法 Grammar</button>
+  </div>
+  <div class="chips" role="group" aria-label="Queue">
+    <button data-ui="button" type="button" data-queue="daily">Daily</button><button data-ui="button" type="button" data-queue="weak">Weak</button><button data-ui="button" type="button" data-queue="new">Unchecked</button>
+  </div>
+  <div id="recall-card" class="n2-card">
+    <p class="overline" id="recall-ask"></p>
+    <p class="n2-prompt" id="recall-prompt" lang="ja"></p>
+    <button data-ui="button" class="plain n2-say" id="recall-say" type="button" aria-label="Hear it"><svg width="18" height="16" viewBox="0 0 18 16" fill="none" aria-hidden="true"><path d="M2 5.5h3l4-3.5v12l-4-3.5H2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M12 5a4 4 0 0 1 0 6M14.5 2.5a7.5 7.5 0 0 1 0 11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span>Hear it</span></button>
+    <div id="recall-answer" class="n2-answer" hidden><p class="n2-reading" id="recall-reading" lang="ja"></p><p class="n2-meaning" id="recall-meaning"></p></div>
+    <p class="hint" id="recall-state"></p>
+  </div>
+  <div class="drill-done" id="recall-done" hidden><span class="drill-done-seal" lang="ja" aria-hidden="true">済</span><strong id="recall-done-title"></strong><p class="hint" id="recall-done-line"></p><ul class="drill-missed" id="recall-missed"></ul><div class="drill-done-actions"><button data-ui="button" class="primary" id="recall-again" type="button">Another round</button><a class="button outline" href="./n2-mock.html">Back to N2</a></div></div>
+  <div class="review-actions n2-grades" id="recall-actions">
+    <button data-ui="button" class="primary n2-wide" id="reveal" type="button">Show answer</button>
+    <button data-ui="button" class="again" data-grade="missed" type="button" hidden>Missed</button>
+    <button data-ui="button" class="quiet" data-grade="slow" type="button" hidden>Slow</button>
+    <button data-ui="button" class="outline" data-grade="instant" type="button" hidden>Instant</button>
+  </div>
+</section>
+
+<!-- Exam -->
+<section id="intro" hidden>
+  <div class="tool-head"><a class="icon-button" href="./n2-mock.html#exams" aria-label="Back to N2"><svg width="18" height="16" viewBox="0 0 18 16" fill="none" aria-hidden="true"><path d="M8 1 1 8l7 7M1 8h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a><span class="tool-titles"><span class="tool-title" id="set-title"></span><span class="overline">JLPT N2 · mock exam</span></span></div>
+  <div class="mode-intro"><span class="glyph" lang="ja" aria-hidden="true">試</span><strong class="mode-intro-title" id="intro-title">Exam conditions</strong><p class="mode-hint" id="intro-copy"></p></div>
+  <ol class="n2-plan" id="intro-plan"></ol>
+  <div class="drill-done-actions"><button data-ui="button" class="primary" id="start" type="button"></button></div>
+  <p class="hint n2-center" id="intro-note"></p>
+</section>
+
+<section id="exam" hidden>
+  <div class="drill-head n2-exam-head"><a class="icon-button" href="./n2-mock.html#exams" aria-label="Leave. Your answers are saved"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="m2 2 10 10M12 2 2 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></a><span class="tool-titles"><span class="drill-title" id="material"></span><span class="overline" id="count"></span></span><strong class="n2-clock" id="clock" role="timer"></strong></div>
+  <div class="drill-bar"><span id="progress"></span></div>
+  <article class="n2-question">
+    <p class="overline" id="prompt"></p>
+    <div class="n2-passage" id="passage" lang="ja"></div>
+    <div class="n2-listen" id="listen-box" hidden><button data-ui="button" class="drill-sound" id="speak" type="button" aria-label="Play the Japanese audio"><svg width="34" height="30" viewBox="0 0 18 16" fill="none" aria-hidden="true"><path d="M2 5.5h3l4-3.5v12l-4-3.5H2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M12 5a4 4 0 0 1 0 6M14.5 2.5a7.5 7.5 0 0 1 0 11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button><span class="hint" id="plays"></span></div>
+    <h2 class="n2-stem" id="stem" lang="ja"></h2>
+    <div class="n2-booklet" id="booklet" hidden><a id="open" target="_blank" rel="noopener">Open the booklet in a new tab</a><iframe id="pdf" title="Official N2 question booklet"></iframe><audio id="audio" controls preload="none" hidden></audio><a id="track" target="_blank" rel="noopener" hidden>Open the listening track</a></div>
+    <div class="n2-choices" id="choices" role="radiogroup" aria-label="Answer choices"></div>
+  </article>
+  <div class="review-actions n2-exam-bar">
+    <button data-ui="button" class="quiet" id="prev" type="button" aria-label="Previous question">‹</button>
+    <button data-ui="button" class="icon-button n2-flag" id="guess" type="button" aria-pressed="false" aria-label="Mark as unsure"></button>
+    <button data-ui="button" class="quiet n2-grid-open" id="grid-open" type="button">Questions</button>
+    <button data-ui="button" class="outline" id="next" type="button" aria-label="Next question">›</button>
+  </div>
+  <dialog id="grid-dialog" class="sheet-dialog" aria-labelledby="grid-title">
+    <p class="overline" id="grid-title">Questions</p>
+    <p class="hint" id="grid-summary"></p>
+    <div class="n2-grid" id="jump"></div>
+    <div class="dialog-actions"><button data-ui="button" class="quiet" id="grid-close" type="button">Keep going</button><button data-ui="button" class="primary" id="submit" type="button">Finish section</button></div>
+  </dialog>
+</section>
+
+<section id="rest" hidden>
+  <div class="mode-intro"><span class="glyph" lang="ja" aria-hidden="true">休</span><strong class="mode-intro-title">Written section done</strong><p class="mode-hint">Take your break. Have headphones ready: the listening timer starts when you tap.</p></div>
+  <div id="rest-score"></div>
+  <div class="drill-done-actions"><button data-ui="button" id="listen" class="primary" type="button">Start listening · 50 min</button><a class="button outline" href="./n2-mock.html">Later — back to N2</a></div>
+</section>
+
+<section id="results" hidden>
+  <div class="tool-head"><a class="icon-button" href="./n2-mock.html" aria-label="Back to N2"><svg width="18" height="16" viewBox="0 0 18 16" fill="none" aria-hidden="true"><path d="M8 1 1 8l7 7M1 8h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a><span class="tool-titles"><span class="tool-title" id="results-title">Results</span><span class="overline" id="results-date"></span></span></div>
+  <div id="scores"></div>
+  <div class="drill-done-actions"><a class="button primary" id="drill-misses" href="?view=recall&amp;queue=weak">Drill my weak items</a><button data-ui="button" class="outline" id="retake" type="button">Take this exam again</button></div>
+  <h3 class="rule-heading">Review</h3>
+  <div class="chips" role="group" aria-label="Show"><button data-ui="button" type="button" data-show="wrong" aria-pressed="true">Missed and unsure</button><button data-ui="button" type="button" data-show="all" aria-pressed="false">All</button></div>
+  <div id="review-items" class="n2-review-list"></div>
+  <a id="script" class="link-button" target="_blank" rel="noopener" hidden>Official listening transcript</a>
+</section>
+
+<p role="alert" class="hint n2-warning" id="warning"></p>
+</main>
+<script type="module" src="./n2-mock.js"></script>
+</body>
+</html>
