@@ -1,0 +1,239 @@
+{
+  "schema": "echo.jlpt.profile.v1",
+  "sources": [
+    "https://www.jlpt.jp/e/guideline/testsections.html",
+    "https://www.jlpt.jp/e/guideline/results.html"
+  ],
+  "profiles": [
+    {
+      "level": "N5",
+      "timedBlocks": [
+        {
+          "id": "vocabulary",
+          "minutes": 20
+        },
+        {
+          "id": "grammar_reading",
+          "minutes": 40
+        },
+        {
+          "id": "listening",
+          "minutes": 30
+        }
+      ],
+      "scoringSections": [
+        {
+          "id": "knowledge_reading",
+          "maximum": 120,
+          "minimum": 38
+        },
+        {
+          "id": "listening",
+          "maximum": 60,
+          "minimum": 19
+        }
+      ],
+      "totalMinimum": 80,
+      "itemTypes": {
+        "vocabulary": [
+          "kanji_reading",
+          "context_word",
+          "paraphrase",
+          "orthography"
+        ],
+        "grammar": [
+          "form",
+          "order",
+          "text"
+        ],
+        "reading": [
+          "short",
+          "medium",
+          "information_lookup"
+        ],
+        "listening": [
+          "task",
+          "key_point",
+          "quick_response",
+          "situational_expression"
+        ]
+      }
+    },
+    {
+      "level": "N4",
+      "timedBlocks": [
+        {
+          "id": "vocabulary",
+          "minutes": 25
+        },
+        {
+          "id": "grammar_reading",
+          "minutes": 55
+        },
+        {
+          "id": "listening",
+          "minutes": 35
+        }
+      ],
+      "scoringSections": [
+        {
+          "id": "knowledge_reading",
+          "maximum": 120,
+          "minimum": 38
+        },
+        {
+          "id": "listening",
+          "maximum": 60,
+          "minimum": 19
+        }
+      ],
+      "totalMinimum": 90,
+      "itemTypes": {
+        "vocabulary": [
+          "kanji_reading",
+          "context_word",
+          "paraphrase",
+          "orthography",
+          "usage"
+        ],
+        "grammar": [
+          "form",
+          "order",
+          "text"
+        ],
+        "reading": [
+          "short",
+          "medium",
+          "information_lookup"
+        ],
+        "listening": [
+          "task",
+          "key_point",
+          "quick_response",
+          "situational_expression"
+        ]
+      }
+    },
+    {
+      "level": "N3",
+      "timedBlocks": [
+        {
+          "id": "vocabulary",
+          "minutes": 30
+        },
+        {
+          "id": "grammar_reading",
+          "minutes": 70
+        },
+        {
+          "id": "listening",
+          "minutes": 40
+        }
+      ],
+      "scoringSections": [
+        {
+          "id": "knowledge",
+          "maximum": 60,
+          "minimum": 19
+        },
+        {
+          "id": "reading",
+          "maximum": 60,
+          "minimum": 19
+        },
+        {
+          "id": "listening",
+          "maximum": 60,
+          "minimum": 19
+        }
+      ],
+      "totalMinimum": 95,
+      "itemTypes": {
+        "vocabulary": [
+          "kanji_reading",
+          "context_word",
+          "paraphrase",
+          "orthography",
+          "usage"
+        ],
+        "grammar": [
+          "form",
+          "order",
+          "text"
+        ],
+        "reading": [
+          "short",
+          "medium",
+          "information_lookup",
+          "long"
+        ],
+        "listening": [
+          "task",
+          "key_point",
+          "quick_response",
+          "situational_expression",
+          "gist"
+        ]
+      }
+    },
+    {
+      "level": "N1",
+      "timedBlocks": [
+        {
+          "id": "knowledge_reading",
+          "minutes": 110
+        },
+        {
+          "id": "listening",
+          "minutes": 55
+        }
+      ],
+      "scoringSections": [
+        {
+          "id": "knowledge",
+          "maximum": 60,
+          "minimum": 19
+        },
+        {
+          "id": "reading",
+          "maximum": 60,
+          "minimum": 19
+        },
+        {
+          "id": "listening",
+          "maximum": 60,
+          "minimum": 19
+        }
+      ],
+      "totalMinimum": 100,
+      "itemTypes": {
+        "vocabulary": [
+          "kanji_reading",
+          "context_word",
+          "paraphrase",
+          "usage"
+        ],
+        "grammar": [
+          "form",
+          "order",
+          "text"
+        ],
+        "reading": [
+          "short",
+          "medium",
+          "information_lookup",
+          "long",
+          "integrated",
+          "theme_long"
+        ],
+        "listening": [
+          "task",
+          "key_point",
+          "quick_response",
+          "gist",
+          "integrated"
+        ]
+      }
+    }
+  ]
+}

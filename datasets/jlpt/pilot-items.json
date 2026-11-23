@@ -1,0 +1,271 @@
+{
+  "schema": "echo.jlpt.pilot.v1",
+  "provenance": "Original Echo research drafts",
+  "reviewStatus": "unpiloted",
+  "answerIndexBase": 0,
+  "items": [
+    {
+      "id": "n5-pilot-vocabulary-01",
+      "level": "N5",
+      "skill": "vocabulary",
+      "itemType": "kanji_reading",
+      "target": 1332650,
+      "prompt": "日本の【秋】はすずしいです。「秋」はどう読みますか。",
+      "choices": [
+        "はる",
+        "あき",
+        "なつ",
+        "ふゆ"
+      ],
+      "answerIndex": 1,
+      "explanation": "秋 is read あき. The other choices are the other seasons."
+    },
+    {
+      "id": "n5-pilot-grammar-01",
+      "level": "N5",
+      "skill": "grammar",
+      "itemType": "form",
+      "target": "も",
+      "prompt": "わたしは学生です。妹（　）学生です。",
+      "choices": [
+        "を",
+        "で",
+        "も",
+        "に"
+      ],
+      "answerIndex": 2,
+      "explanation": "も adds the sister to the same group: she is a student too."
+    },
+    {
+      "id": "n5-pilot-reading-01",
+      "level": "N5",
+      "skill": "reading",
+      "itemType": "short",
+      "target": "meeting_time",
+      "prompt": "何時に駅に行きますか。",
+      "choices": [
+        "八時半",
+        "九時半",
+        "十時",
+        "九時"
+      ],
+      "answerIndex": 3,
+      "explanation": "Arrive at the station at nine. Nine thirty is the bus departure.",
+      "passage": "あした、九時に駅に来てください。九時半のバスで公園に行きます。"
+    },
+    {
+      "id": "n5-pilot-listening-01",
+      "level": "N5",
+      "skill": "listening",
+      "itemType": "quick_response",
+      "target": "reply_to_request",
+      "prompt": "いちばんいい返事はどれですか。",
+      "choices": [
+        "はい、どうぞ。",
+        "ええ、本でした。",
+        "いいえ、読みませんでした。"
+      ],
+      "answerIndex": 0,
+      "explanation": "The speaker asks to see the book. どうぞ offers it.",
+      "script": "すみません、その本を見せてください。"
+    },
+    {
+      "id": "n4-pilot-vocabulary-01",
+      "level": "N4",
+      "skill": "vocabulary",
+      "itemType": "kanji_reading",
+      "target": 1153930,
+      "prompt": "ここは子どもにも【安全】です。「安全」はどう読みますか。",
+      "choices": [
+        "あんせん",
+        "あんぜん",
+        "あんねん",
+        "あんてん"
+      ],
+      "answerIndex": 1,
+      "explanation": "安全 is あんぜん, meaning safe."
+    },
+    {
+      "id": "n4-pilot-grammar-01",
+      "level": "N4",
+      "skill": "grammar",
+      "itemType": "form",
+      "target": "やすい",
+      "prompt": "この地図は字が大きいので、お年寄りにも（　）。",
+      "choices": [
+        "読みます",
+        "読むそうです",
+        "読みやすいです",
+        "読んだことがあります"
+      ],
+      "answerIndex": 2,
+      "explanation": "The large print makes the map easy to read. Attach やすい to 読み."
+    },
+    {
+      "id": "n4-pilot-reading-01",
+      "level": "N4",
+      "skill": "reading",
+      "itemType": "information_lookup",
+      "target": "conditional_hours",
+      "prompt": "日曜日にいちばん早く泳げるのは何時からですか。",
+      "choices": [
+        "九時",
+        "十時",
+        "十一時",
+        "十二時"
+      ],
+      "answerIndex": 0,
+      "explanation": "The final sentence gives Sunday its own opening time.",
+      "passage": "プールのお知らせ：月曜日は休みです。火曜日から日曜日は朝十時に開きます。ただし、日曜日だけは朝九時に開きます。"
+    },
+    {
+      "id": "n4-pilot-listening-01",
+      "level": "N4",
+      "skill": "listening",
+      "itemType": "task",
+      "target": "next_action",
+      "prompt": "女の人は何をしますか。",
+      "choices": [
+        "住所を書く",
+        "手紙を出す",
+        "手紙を読む",
+        "切手を買う"
+      ],
+      "answerIndex": 3,
+      "explanation": "He still needs to address the letter and asks her to buy only the stamp.",
+      "script": "女：切手を買いに行くけど、手紙を出してこようか。\n男：ありがとう。でも、住所をまだ書いていないんだ。切手だけお願い。\n女：わかった。"
+    },
+    {
+      "id": "n3-pilot-vocabulary-01",
+      "level": "N3",
+      "skill": "vocabulary",
+      "itemType": "kanji_reading",
+      "target": 1401000,
+      "prompt": "練習の【相手】を探している。「相手」はどう読みますか。",
+      "choices": [
+        "そうしゅ",
+        "あいで",
+        "あいて",
+        "そうて"
+      ],
+      "answerIndex": 2,
+      "explanation": "相手 is あいて, here a practice partner."
+    },
+    {
+      "id": "n3-pilot-grammar-01",
+      "level": "N3",
+      "skill": "grammar",
+      "itemType": "form",
+      "target": "うちに",
+      "prompt": "スープがまだ温かい（　）、どうぞ召し上がってください。",
+      "choices": [
+        "ためで",
+        "うちに",
+        "ところを",
+        "ことから"
+      ],
+      "answerIndex": 1,
+      "explanation": "うちに marks the window before the soup cools."
+    },
+    {
+      "id": "n3-pilot-reading-01",
+      "level": "N3",
+      "skill": "reading",
+      "itemType": "short",
+      "target": "policy_exception",
+      "prompt": "今日返す予定の本をもう少し借りたい。次の人が待っている場合、どうするか。",
+      "choices": [
+        "電話すれば一日延ばせる。",
+        "一度目なら延ばせる。",
+        "次の人に電話する。",
+        "予定どおり今日返す。"
+      ],
+      "answerIndex": 3,
+      "explanation": "The waiting reader triggers the exception even on the first extension request.",
+      "passage": "図書室では、本の貸出期間を一度だけ延ばせます。ただし、次に借りたい人が待っている本は延長できません。延長を希望する人は返す日までに電話してください。"
+    },
+    {
+      "id": "n3-pilot-listening-01",
+      "level": "N3",
+      "skill": "listening",
+      "itemType": "key_point",
+      "target": "changed_constraint",
+      "prompt": "別の店を探すのはどうしてですか。",
+      "choices": [
+        "予算を超えるから",
+        "全員が同じ席で食べられないから",
+        "駅から遠いから",
+        "土曜に来られない人がいるから"
+      ],
+      "answerIndex": 1,
+      "explanation": "The date works. The obstacle is seating eight people together.",
+      "script": "女：駅前の店、土曜なら全員集まれると思ったのにね。\n男：時間は合うんだけど、八人一緒に座れる席がないって。\n女：じゃあ、日付はそのままで別の店を探そう。"
+    },
+    {
+      "id": "n1-pilot-vocabulary-01",
+      "level": "N1",
+      "skill": "vocabulary",
+      "itemType": "context_word",
+      "target": 1587200,
+      "prompt": "理事会は統合を急ぎたい（　）だが、現場との調整には時間がかかりそうだ。",
+      "choices": [
+        "成り行き",
+        "反響",
+        "意向",
+        "内訳"
+      ],
+      "answerIndex": 2,
+      "explanation": "意向 expresses the board’s intention. The remaining nouns describe a course of events, a reaction or a breakdown."
+    },
+    {
+      "id": "n1-pilot-grammar-01",
+      "level": "N1",
+      "skill": "grammar",
+      "itemType": "form",
+      "target": "たところで",
+      "prompt": "今さら担当者を責め（　）、失われた記録が戻ってくるわけではない。",
+      "choices": [
+        "るや否や",
+        "るそばから",
+        "た末に",
+        "たところで"
+      ],
+      "answerIndex": 3,
+      "explanation": "たところで concedes a hypothetical action while denying it would achieve the desired result."
+    },
+    {
+      "id": "n1-pilot-reading-01",
+      "level": "N1",
+      "skill": "reading",
+      "itemType": "integrated",
+      "target": "reconcile_positions",
+      "prompt": "両者の意見に共通するのはどれか。",
+      "choices": [
+        "予約制の廃止を先に決めるべきだ。",
+        "現在見えている数字だけで次の判断を下すのは早い。",
+        "曜日別の待ち時間が改善の唯一の指標だ。",
+        "利用者の総数が減ったことが問題だ。"
+      ],
+      "answerIndex": 1,
+      "explanation": "Both want additional evidence before deciding. They identify different gaps in the evidence.",
+      "passage": "甲：窓口の予約制で待ち時間が減ったのは確かだ。しかし、予約できずに帰った人は統計に現れない。改善を判断するには、その人数も調べたい。\n乙：予約枠を増やせば便利になるというが、枠が埋まるのは一部の曜日だけだ。まず曜日別の利用状況を把握すべきだ。"
+    },
+    {
+      "id": "n1-pilot-listening-01",
+      "level": "N1",
+      "skill": "listening",
+      "itemType": "gist",
+      "target": "qualified_endorsement",
+      "prompt": "話し手は開館時間の延長についてどう考えていますか。",
+      "choices": [
+        "夕方の人数だけで恒久化を決めてよい。",
+        "総数が増えない以上、延長は無意味だ。",
+        "利用者が時間を変えた可能性は低い。",
+        "便利さの中身を確かめた上で費用と比較したい。"
+      ],
+      "answerIndex": 3,
+      "explanation": "She acknowledges a possible benefit even with flat attendance and wants evidence of its value before deciding.",
+      "script": "女：試行期間中、閉館を一時間遅らせたところ、夕方の利用者は増えました。これで延長を恒久化すべきだ、という声もあります。ただ、来館者の総数はほぼ横ばいです。今まで昼間に来ていた方が夕方に移った可能性もあります。それ自体、利便性の向上かもしれませんが、費用に見合うかは、利用者が何に価値を感じたのかを聞いてから判断したいと思います。"
+    }
+  ]
+}

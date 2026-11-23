@@ -1,0 +1,10127 @@
+{
+ "schema": "echo.jlpt.inventory.v1",
+ "level": "N5",
+ "coverage": "assigned-band",
+ "vocabularySource": "words-data.js (JMdict, EDRDG, CC BY-SA 4.0; level credits in JLPT-EXPANSION-HANDOFF.md)",
+ "grammarSource": "grammar-data.js (Echo catalogue identifiers and titles)",
+ "vocabulary": [
+  {
+   "id": 1332650,
+   "w": "秋",
+   "r": "あき",
+   "en": [
+    "autumn; fall"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1404630,
+   "w": "足",
+   "r": "あし",
+   "en": [
+    "foot; paw; arm (of an octopus, squid, etc.)",
+    "leg",
+    "gait"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1269320,
+   "w": "後",
+   "r": "あと",
+   "en": [
+    "behind; rear",
+    "after; later",
+    "remainder; the rest"
+   ],
+   "pos": [
+    "n",
+    "adj-no"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1587040,
+   "w": "言う",
+   "r": "いう",
+   "en": [
+    "to say; to utter; to declare",
+    "to name; to call",
+    "to go (e.g. \"the alarm went ping\"); to make a noise"
+   ],
+   "pos": [
+    "v5u",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1165970,
+   "w": "一番",
+   "r": "いちばん",
+   "en": [
+    "number one; first; first place",
+    "best; most",
+    "game; round; bout"
+   ],
+   "pos": [
+    "n",
+    "adj-no"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1156800,
+   "w": "意味",
+   "r": "いみ",
+   "en": [
+    "meaning; significance; sense"
+   ],
+   "pos": [
+    "n",
+    "vs",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1173720,
+   "w": "映画",
+   "r": "えいが",
+   "en": [
+    "movie; film; motion picture"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1419990,
+   "w": "男",
+   "r": "おとこ",
+   "en": [
+    "man; male",
+    "fellow; guy; chap",
+    "male lover; boyfriend; man"
+   ],
+   "pos": [
+    "n",
+    "n-pref"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1183720,
+   "w": "音楽",
+   "r": "おんがく",
+   "en": [
+    "music"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1203620,
+   "w": "外国",
+   "r": "がいこく",
+   "en": [
+    "foreign country"
+   ],
+   "pos": [
+    "n",
+    "adj-no"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1203650,
+   "w": "外国人",
+   "r": "がいこくじん",
+   "en": [
+    "foreigner; foreign citizen; foreign national"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1198550,
+   "w": "会社",
+   "r": "かいしゃ",
+   "en": [
+    "company; corporation; firm",
+    "one's workplace"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1217730,
+   "w": "顔",
+   "r": "かお",
+   "en": [
+    "face; visage; looks",
+    "look; (facial) expression; countenance",
+    "honor (honour); face; dignity"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1206900,
+   "w": "学生",
+   "r": "がくせい",
+   "en": [
+    "student (esp. a university student)"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1192150,
+   "w": "家族",
+   "r": "かぞく",
+   "en": [
+    "family"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1206730,
+   "w": "学校",
+   "r": "がっこう",
+   "en": [
+    "school"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1192280,
+   "w": "家庭",
+   "r": "かてい",
+   "en": [
+    "home; household; family"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1534520,
+   "w": "木",
+   "r": "き",
+   "en": [
+    "tree; shrub; bush",
+    "wood; timber",
+    "wooden clappers (signalling the beginning or end of a performance)"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1520670,
+   "w": "北",
+   "r": "きた",
+   "en": [
+    "north",
+    "the North; northern territories",
+    "North Korea"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1578150,
+   "w": "九",
+   "r": "きゅう",
+   "en": [
+    "nine; 9"
+   ],
+   "pos": [
+    "num"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1243490,
+   "w": "銀行",
+   "r": "ぎんこう",
+   "en": [
+    "bank; banking institution"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1592250,
+   "w": "国",
+   "r": "くに",
+   "en": [
+    "country; state",
+    "region",
+    "national government; central government"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1323080,
+   "w": "車",
+   "r": "くるま",
+   "en": [
+    "car; automobile; vehicle",
+    "wheel; castor; caster"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1268060,
+   "w": "五",
+   "r": "ご",
+   "en": [
+    "five; 5"
+   ],
+   "pos": [
+    "num"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1380440,
+   "w": "声",
+   "r": "こえ",
+   "en": [
+    "voice",
+    "singing (of a bird); chirping (of an insect); hoot",
+    "voice; opinion (as expressed in words); view"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1268990,
+   "w": "午後",
+   "r": "ごご",
+   "en": [
+    "afternoon; p.m."
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1269060,
+   "w": "午前",
+   "r": "ごぜん",
+   "en": [
+    "morning; a.m."
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1579130,
+   "w": "今年",
+   "r": "ことし",
+   "en": [
+    "this year"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1264540,
+   "w": "言葉",
+   "r": "ことば",
+   "en": [
+    "language; dialect",
+    "word; phrase; expression",
+    "speech; (manner of) speaking; (use of) language"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1307850,
+   "w": "子供",
+   "r": "こども",
+   "en": [
+    "child; children"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1289100,
+   "w": "今月",
+   "r": "こんげつ",
+   "en": [
+    "this month"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1579350,
+   "w": "三",
+   "r": "さん",
+   "en": [
+    "three; 3"
+   ],
+   "pos": [
+    "num"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1579470,
+   "w": "四",
+   "r": "し",
+   "en": [
+    "four; 4"
+   ],
+   "pos": [
+    "num"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1315920,
+   "w": "時間",
+   "r": "じかん",
+   "en": [
+    "time",
+    "hour",
+    "period; class; lesson"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1304970,
+   "w": "仕事",
+   "r": "しごと",
+   "en": [
+    "work; job; labor",
+    "work"
+   ],
+   "pos": [
+    "n",
+    "vs",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1319210,
+   "w": "七",
+   "r": "しち",
+   "en": [
+    "seven"
+   ],
+   "pos": [
+    "num"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1320760,
+   "w": "質問",
+   "r": "しつもん",
+   "en": [
+    "question; inquiry; enquiry"
+   ],
+   "pos": [
+    "n",
+    "vs",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1318400,
+   "w": "自動車",
+   "r": "じどうしゃ",
+   "en": [
+    "car; automobile; motorcar"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1318610,
+   "w": "自分",
+   "r": "じぶん",
+   "en": [
+    "myself; yourself; oneself",
+    "I; me",
+    "you"
+   ],
+   "pos": [
+    "pn"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1321900,
+   "w": "写真",
+   "r": "しゃしん",
+   "en": [
+    "photograph; photo; picture"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1579840,
+   "w": "十",
+   "r": "じゅう",
+   "en": [
+    "ten; 10"
+   ],
+   "pos": [
+    "num"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1362360,
+   "w": "新聞",
+   "r": "しんぶん",
+   "en": [
+    "newspaper"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1348870,
+   "w": "少し",
+   "r": "すこし",
+   "en": [
+    "a little; a bit; a small amount",
+    "a little while; a short time; a moment",
+    "a little way; a short distance"
+   ],
+   "pos": [
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1388740,
+   "w": "千",
+   "r": "せん",
+   "en": [
+    "thousand; 1,000"
+   ],
+   "pos": [
+    "num"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1412560,
+   "w": "台",
+   "r": "だい",
+   "en": [
+    "stand; rest; base",
+    "setting (of a gem); mounting",
+    "stock (in grafting)"
+   ],
+   "pos": [
+    "n",
+    "n-suf"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1413240,
+   "w": "大学",
+   "r": "だいがく",
+   "en": [
+    "university; college",
+    "former imperial university of Japan (established under the ritsuryō system for the training of government administrators)",
+    "the Great Learning (one of the Four Books)"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1497610,
+   "w": "父",
+   "r": "ちち",
+   "en": [
+    "father",
+    "father (e.g. of a discipline); pioneer (e.g. of field of research); founder",
+    "God; Father"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1327190,
+   "w": "手",
+   "r": "て",
+   "en": [
+    "hand; arm",
+    "forepaw; foreleg",
+    "handle"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1443840,
+   "w": "電話",
+   "r": "でんわ",
+   "en": [
+    "telephone call; phone call",
+    "telephone (device); phone"
+   ],
+   "pos": [
+    "n",
+    "vs",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1191320,
+   "w": "夏",
+   "r": "なつ",
+   "en": [
+    "summer"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1461140,
+   "w": "二",
+   "r": "に",
+   "en": [
+    "two; 2"
+   ],
+   "pos": [
+    "num"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1583090,
+   "w": "八",
+   "r": "はち",
+   "en": [
+    "eight; 8"
+   ],
+   "pos": [
+    "num"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1194500,
+   "w": "花",
+   "r": "はな",
+   "en": [
+    "flower; blossom; bloom",
+    "cherry blossom",
+    "beauty"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1600900,
+   "w": "話",
+   "r": "はなし",
+   "en": [
+    "talk; speech; chat",
+    "topic; subject",
+    "discussions; negotiation; argument"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1514990,
+   "w": "母",
+   "r": "はは",
+   "en": [
+    "mother"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1341000,
+   "w": "春",
+   "r": "はる",
+   "en": [
+    "spring; springtime",
+    "New Year",
+    "prime (of life); height (of one's prosperity); heyday"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1447440,
+   "w": "東",
+   "r": "ひがし",
+   "en": [
+    "east"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1290800,
+   "w": "左",
+   "r": "ひだり",
+   "en": [
+    "left; left-hand side",
+    "left hand",
+    "the left (wing); leftist"
+   ],
+   "pos": [
+    "n",
+    "adj-no"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1160820,
+   "w": "一つ",
+   "r": "ひとつ",
+   "en": [
+    "one",
+    "for one thing",
+    "only"
+   ],
+   "pos": [
+    "num"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1488000,
+   "w": "百",
+   "r": "ひゃく",
+   "en": [
+    "hundred; 100"
+   ],
+   "pos": [
+    "num"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1490220,
+   "w": "病院",
+   "r": "びょういん",
+   "en": [
+    "hospital; clinic; doctor's office"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1582670,
+   "w": "二人",
+   "r": "ふたり",
+   "en": [
+    "two persons; two people; pair"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1524720,
+   "w": "毎日",
+   "r": "まいにち",
+   "en": [
+    "every day; daily"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1171010,
+   "w": "右",
+   "r": "みぎ",
+   "en": [
+    "right; right-hand side",
+    "right hand",
+    "the above (in a piece of vertical writing); above-mentioned"
+   ],
+   "pos": [
+    "n",
+    "adj-no"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1371260,
+   "w": "水",
+   "r": "みず",
+   "en": [
+    "water (esp. cool or cold)",
+    "fluid (esp. in an animal tissue); liquid",
+    "flood; floodwaters"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1454080,
+   "w": "道",
+   "r": "みち",
+   "en": [
+    "road; path; street",
+    "route; way",
+    "distance; journey"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1459870,
+   "w": "南",
+   "r": "みなみ",
+   "en": [
+    "south"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1536010,
+   "w": "問題",
+   "r": "もんだい",
+   "en": [
+    "question (e.g. on a test); problem",
+    "problem (e.g. societal, political); question; issue",
+    "question (i.e. doubt)"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1548220,
+   "w": "来年",
+   "r": "らいねん",
+   "en": [
+    "next year"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1585310,
+   "w": "六",
+   "r": "ろく",
+   "en": [
+    "six; 6"
+   ],
+   "pos": [
+    "num"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1311110,
+   "w": "私",
+   "r": "わたし",
+   "en": [
+    "I; me"
+   ],
+   "pos": [
+    "pn"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1171900,
+   "w": "雨",
+   "r": "あめ",
+   "en": [
+    "rain",
+    "rainy day; rainy weather",
+    "the November suit (in hanafuda)"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1163400,
+   "w": "一緒",
+   "r": "いっしょ",
+   "en": [
+    "(doing) together",
+    "one lump; one mixture; the same category",
+    "the same; identical"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1357600,
+   "w": "色",
+   "r": "いろ",
+   "en": [
+    "colour; color; hue",
+    "complexion; skin colour; skin color",
+    "look (on one's face); expression"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1193180,
+   "w": "歌",
+   "r": "うた",
+   "en": [
+    "song; singing",
+    "classical Japanese poem (esp. tanka)",
+    "modern poetry"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1201190,
+   "w": "海",
+   "r": "うみ",
+   "en": [
+    "sea; ocean; waters"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1202270,
+   "w": "絵",
+   "r": "え",
+   "en": [
+    "picture; drawing; painting",
+    "image (TV, film, etc.); picture; footage"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1174420,
+   "w": "英語",
+   "r": "えいご",
+   "en": [
+    "English (language)"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1576060,
+   "w": "一昨年",
+   "r": "おととし",
+   "en": [
+    "year before last"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1344930,
+   "w": "女",
+   "r": "おんな",
+   "en": [
+    "woman; female",
+    "female lover; girlfriend; mistress"
+   ],
+   "pos": [
+    "n",
+    "n-pref"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1409140,
+   "w": "体",
+   "r": "からだ",
+   "en": [
+    "body",
+    "torso; trunk",
+    "build; physique; frame"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1579110,
+   "w": "今日",
+   "r": "きょう",
+   "en": [
+    "today; this day"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1275640,
+   "w": "口",
+   "r": "くち",
+   "en": [
+    "mouth",
+    "opening; hole; gap",
+    "mouth (of a bottle); spout; nozzle"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1254790,
+   "w": "結婚",
+   "r": "けっこん",
+   "en": [
+    "marriage"
+   ],
+   "pos": [
+    "n",
+    "vs",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1273270,
+   "w": "公園",
+   "r": "こうえん",
+   "en": [
+    "(public) park"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1299400,
+   "w": "雑誌",
+   "r": "ざっし",
+   "en": [
+    "magazine; journal; periodical"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1420470,
+   "w": "知る",
+   "r": "しる",
+   "en": [
+    "to know; to be aware (of); to be conscious (of)",
+    "to sense; to feel; to notice",
+    "to understand; to comprehend; to grasp"
+   ],
+   "pos": [
+    "v5r",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1379380,
+   "w": "生徒",
+   "r": "せいと",
+   "en": [
+    "pupil; student; schoolchild"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1387500,
+   "w": "先月",
+   "r": "せんげつ",
+   "en": [
+    "last month"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1387990,
+   "w": "先生",
+   "r": "せんせい",
+   "en": [
+    "teacher; instructor; master",
+    "sensei"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1203250,
+   "w": "外",
+   "r": "そと",
+   "en": [
+    "outside; exterior",
+    "the open (air)",
+    "other place; somewhere else; outside one's group (family, company, etc.)"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1414340,
+   "w": "大切",
+   "r": "たいせつ",
+   "en": [
+    "important; significant; serious",
+    "precious; valuable; dear",
+    "careful"
+   ],
+   "pos": [
+    "adj-na"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1415000,
+   "w": "大変",
+   "r": "たいへん",
+   "en": [
+    "very; greatly; terribly",
+    "immense; enormous; great",
+    "serious; grave; dreadful"
+   ],
+   "pos": [
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1305990,
+   "w": "使う",
+   "r": "つかう",
+   "en": [
+    "to use (a tool, method, etc.); to make use of; to put to use",
+    "to use (a person, animal, puppet, etc.); to employ; to handle",
+    "to use (time, money, etc.); to spend; to consume"
+   ],
+   "pos": [
+    "v5u",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1443000,
+   "w": "電気",
+   "r": "でんき",
+   "en": [
+    "electricity",
+    "(electric) light"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1451470,
+   "w": "動物",
+   "r": "どうぶつ",
+   "en": [
+    "animal"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1468060,
+   "w": "年",
+   "r": "とし",
+   "en": [
+    "year",
+    "age; years",
+    "past one's prime; old age"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1577100,
+   "w": "何",
+   "r": "なに",
+   "en": [
+    "what",
+    "you-know-what; that thing",
+    "whatsit; whachamacallit; what's-his-name"
+   ],
+   "pos": [
+    "pn"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1531710,
+   "w": "名前",
+   "r": "なまえ",
+   "en": [
+    "name",
+    "given name; first name"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1380840,
+   "w": "西",
+   "r": "にし",
+   "en": [
+    "west"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1479890,
+   "w": "半分",
+   "r": "はんぶん",
+   "en": [
+    "half"
+   ],
+   "pos": [
+    "adv",
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1576150,
+   "w": "一人",
+   "r": "ひとり",
+   "en": [
+    "one person",
+    "being alone; being by oneself",
+    "being single; being unmarried"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1490230,
+   "w": "病気",
+   "r": "びょうき",
+   "en": [
+    "illness (usu. excluding minor ailments, e.g. common cold); disease; sickness",
+    "bad habit; bad behaviour; weakness",
+    "crazy; insane; disturbed"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1461160,
+   "w": "二つ",
+   "r": "ふたつ",
+   "en": [
+    "two"
+   ],
+   "pos": [
+    "num"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1499320,
+   "w": "部屋",
+   "r": "へや",
+   "en": [
+    "room; chamber",
+    "apartment; flat; pad",
+    "stable"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1523060,
+   "w": "本当",
+   "r": "ほんとう",
+   "en": [
+    "truth; reality; actuality",
+    "proper; right; correct",
+    "genuine; authentic; real"
+   ],
+   "pos": [
+    "n",
+    "adj-no",
+    "adj-na"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1603990,
+   "w": "町",
+   "r": "まち",
+   "en": [
+    "town; block; neighbourhood",
+    "street; road"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1302680,
+   "w": "山",
+   "r": "やま",
+   "en": [
+    "mountain; hill",
+    "mine",
+    "(mountain) forest"
+   ],
+   "pos": [
+    "n",
+    "ctr"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1266440,
+   "w": "呼ぶ",
+   "r": "よぶ",
+   "en": [
+    "to call out (to); to call; to invoke",
+    "to summon (a doctor, etc.)",
+    "to invite"
+   ],
+   "pos": [
+    "v5b",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1536350,
+   "w": "夜",
+   "r": "よる",
+   "en": [
+    "night; evening",
+    "dinner"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1554310,
+   "w": "料理",
+   "r": "りょうり",
+   "en": [
+    "cooking; cookery; cuisine",
+    "dealing with (skillfully); handling (well); managing"
+   ],
+   "pos": [
+    "n",
+    "vs",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1553170,
+   "w": "旅行",
+   "r": "りょこう",
+   "en": [
+    "travel; trip; journey"
+   ],
+   "pos": [
+    "n",
+    "vs",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1559160,
+   "w": "練習",
+   "r": "れんしゅう",
+   "en": [
+    "practice; training; drill"
+   ],
+   "pos": [
+    "n",
+    "vs",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1381380,
+   "w": "青",
+   "r": "あお",
+   "en": [
+    "blue; azure",
+    "green",
+    "green light (traffic)"
+   ],
+   "pos": [
+    "n",
+    "adj-no"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1258330,
+   "w": "犬",
+   "r": "いぬ",
+   "en": [
+    "dog (Canis (lupus) familiaris); canine",
+    "squealer; rat; snitch",
+    "loser; asshole"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1414170,
+   "w": "大人",
+   "r": "おとな",
+   "en": [
+    "adult; grown-up"
+   ],
+   "pos": [
+    "n",
+    "adj-no",
+    "adj-na"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1311530,
+   "w": "紙",
+   "r": "かみ",
+   "en": [
+    "paper"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1390020,
+   "w": "川",
+   "r": "かわ",
+   "en": [
+    "river; stream",
+    "River; the ... river"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1237150,
+   "w": "教室",
+   "r": "きょうしつ",
+   "en": [
+    "classroom; lecture room",
+    "department (in a university)",
+    "class; lessons; course"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1287410,
+   "w": "黒",
+   "r": "くろ",
+   "en": [
+    "black",
+    "black stone",
+    "guilt; guilty person"
+   ],
+   "pos": [
+    "n",
+    "adj-no"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1578010,
+   "w": "魚",
+   "r": "さかな",
+   "en": [
+    "fish"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1330290,
+   "w": "授業",
+   "r": "じゅぎょう",
+   "en": [
+    "lesson; class; teaching"
+   ],
+   "pos": [
+    "n",
+    "vs",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1474900,
+   "w": "白",
+   "r": "しろ",
+   "en": [
+    "white",
+    "innocence; innocent person",
+    "blank space"
+   ],
+   "pos": [
+    "n",
+    "adj-no"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1396130,
+   "w": "全部",
+   "r": "ぜんぶ",
+   "en": [
+    "all; entire; whole"
+   ],
+   "pos": [
+    "n",
+    "adj-no",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1413890,
+   "w": "大使館",
+   "r": "たいしかん",
+   "en": [
+    "embassy"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1338180,
+   "w": "出す",
+   "r": "だす",
+   "en": [
+    "to take out; to get out",
+    "to put out; to reveal; to show",
+    "to submit (e.g. thesis); to turn in"
+   ],
+   "pos": [
+    "v5s",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1257540,
+   "w": "建物",
+   "r": "たてもの",
+   "en": [
+    "building"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1327720,
+   "w": "手紙",
+   "r": "てがみ",
+   "en": [
+    "letter; note"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1478750,
+   "w": "半",
+   "r": "はん",
+   "en": [
+    "half; semi-; partial",
+    "half-past",
+    "odd number"
+   ],
+   "pos": [
+    "n-pref",
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1482290,
+   "w": "番号",
+   "r": "ばんごう",
+   "en": [
+    "number; series of digits"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1446070,
+   "w": "冬",
+   "r": "ふゆ",
+   "en": [
+    "winter"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1512670,
+   "w": "勉強",
+   "r": "べんきょう",
+   "en": [
+    "study",
+    "diligence; working hard",
+    "experience; knowledge; lesson (for the future)"
+   ],
+   "pos": [
+    "n",
+    "vs",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1584360,
+   "w": "毎年",
+   "r": "まいとし",
+   "en": [
+    "every year; yearly; annually"
+   ],
+   "pos": [
+    "adv",
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1299740,
+   "w": "三つ",
+   "r": "みっつ",
+   "en": [
+    "three",
+    "three years of age"
+   ],
+   "pos": [
+    "num"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1555300,
+   "w": "緑",
+   "r": "みどり",
+   "en": [
+    "green",
+    "greenery; verdure"
+   ],
+   "pos": [
+    "n",
+    "adj-no"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1317170,
+   "w": "耳",
+   "r": "みみ",
+   "en": [
+    "ear",
+    "hearing",
+    "ear (for music, etc.)"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1406820,
+   "w": "村",
+   "r": "むら",
+   "en": [
+    "village"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1584800,
+   "w": "門",
+   "r": "もん",
+   "en": [
+    "gate",
+    "branch of learning based on the teachings of a single master; school",
+    "phylum; division"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1537370,
+   "w": "野菜",
+   "r": "やさい",
+   "en": [
+    "vegetable",
+    "marijuana; cannabis"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1541620,
+   "w": "有名",
+   "r": "ゆうめい",
+   "en": [
+    "famous; well-known"
+   ],
+   "pos": [
+    "adj-na"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1386500,
+   "w": "雪",
+   "r": "ゆき",
+   "en": [
+    "snow; snowfall"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1180570,
+   "w": "横",
+   "r": "よこ",
+   "en": [
+    "horizontal (as opposed to vertical)",
+    "side-to-side (as opposed to front-to-back); width; breadth",
+    "side (of a box, etc.)"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1547900,
+   "w": "来月",
+   "r": "らいげつ",
+   "en": [
+    "next month"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1602710,
+   "w": "両親",
+   "r": "りょうしん",
+   "en": [
+    "parents; both parents"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1412890,
+   "w": "大きな",
+   "r": "おおきな",
+   "en": [
+    "big; large; great"
+   ],
+   "pos": [
+    "adj-pn"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1414220,
+   "w": "大勢",
+   "r": "おおぜい",
+   "en": [
+    "crowd of people; great number of people",
+    "in great numbers"
+   ],
+   "pos": [
+    "n",
+    "adj-no"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1001820,
+   "w": "お金",
+   "r": "おかね",
+   "en": [
+    "money"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1581930,
+   "w": "弟",
+   "r": "おとうと",
+   "en": [
+    "younger brother; little brother; kid brother",
+    "brother-in-law (spouse's younger brother or younger sister's husband)"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1538160,
+   "w": "薬",
+   "r": "くすり",
+   "en": [
+    "medicine; pharmaceuticals; (legal) drugs",
+    "efficacious chemical (gunpowder, pesticide, etc.)",
+    "(pottery) glaze"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1318290,
+   "w": "自転車",
+   "r": "じてんしゃ",
+   "en": [
+    "bicycle; bike"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1597890,
+   "w": "作る",
+   "r": "つくる",
+   "en": [
+    "to make; to produce; to manufacture",
+    "to prepare (food); to brew (alcohol)",
+    "to raise; to grow; to cultivate"
+   ],
+   "pos": [
+    "v5r",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1443530,
+   "w": "電車",
+   "r": "でんしゃ",
+   "en": [
+    "train; electric train"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1315840,
+   "w": "時",
+   "r": "とき",
+   "en": [
+    "time; hour; moment",
+    "occasion; case",
+    "chance; opportunity; season"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1555830,
+   "w": "隣",
+   "r": "となり",
+   "en": [
+    "next (to); adjoining; adjacent",
+    "house next door; neighbouring house; next-door neighbour"
+   ],
+   "pos": [
+    "adj-no",
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1430250,
+   "w": "鳥",
+   "r": "とり",
+   "en": [
+    "bird",
+    "bird meat (esp. chicken meat); fowl; poultry"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1583370,
+   "w": "匹",
+   "r": "ひき",
+   "en": [
+    "counter for small animals",
+    "counter for rolls of cloth (two han in size)",
+    "roll of cloth"
+   ],
+   "pos": [
+    "ctr"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1426250,
+   "w": "昼",
+   "r": "ひる",
+   "en": [
+    "noon; midday",
+    "daytime",
+    "lunch"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1278410,
+   "w": "広い",
+   "r": "ひろい",
+   "en": [
+    "spacious; vast; wide"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1500940,
+   "w": "服",
+   "r": "ふく",
+   "en": [
+    "clothes (esp. Western clothes); clothing; dress",
+    "counter for doses of medicine, gulps of tea, puffs of a cigarette, etc."
+   ],
+   "pos": [
+    "n",
+    "n-suf"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1401400,
+   "w": "窓",
+   "r": "まど",
+   "en": [
+    "window"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1584660,
+   "w": "明日",
+   "r": "あした",
+   "en": [
+    "tomorrow"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1249900,
+   "w": "兄",
+   "r": "あに",
+   "en": [
+    "older brother; elder brother",
+    "brother-in-law (spouse's older brother or older sister's husband)"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1296400,
+   "w": "ある",
+   "r": "ある",
+   "k": "有る",
+   "en": [
+    "to be; to exist; to live",
+    "to have",
+    "to be located"
+   ],
+   "pos": [
+    "v5r-i",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1421700,
+   "w": "池",
+   "r": "いけ",
+   "en": [
+    "pond"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1582820,
+   "w": "入り口",
+   "r": "いりぐち",
+   "en": [
+    "entrance; entry; gate"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1175140,
+   "w": "駅",
+   "r": "えき",
+   "en": [
+    "railway station; train station",
+    "staging post on a highway (in pre-modern Japan)",
+    "counter for railway stations and bus stations"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1175570,
+   "w": "円",
+   "r": "えん",
+   "en": [
+    "yen (currency of Japan)",
+    "circle"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1002650,
+   "w": "お母さん",
+   "r": "おかあさん",
+   "en": [
+    "mother; mom; mum",
+    "wife",
+    "you (of an elderly person older than the speaker); she; her"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1249960,
+   "w": "兄弟",
+   "r": "きょうだい",
+   "en": [
+    "brothers and sisters; siblings",
+    "half-siblings; step-siblings; siblings by marriage or adoption",
+    "mate; friend"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1252330,
+   "w": "警官",
+   "r": "けいかん",
+   "en": [
+    "police officer; policeman; constable"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1263400,
+   "w": "玄関",
+   "r": "げんかん",
+   "en": [
+    "entrance; front door; entryway"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1289220,
+   "w": "今週",
+   "r": "こんしゅう",
+   "en": [
+    "this week"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1381820,
+   "w": "静か",
+   "r": "しずか",
+   "en": [
+    "quiet; silent",
+    "slow; unhurried",
+    "calm; peaceful"
+   ],
+   "pos": [
+    "adj-na"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1387870,
+   "w": "先週",
+   "r": "せんしゅう",
+   "en": [
+    "last week; the week before"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1549140,
+   "w": "卵",
+   "r": "たまご",
+   "en": [
+    "eggs; egg; spawn",
+    "(hen's) egg",
+    "a ... in the making; future (lawyer, doctor, etc.); budding ..."
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1420900,
+   "w": "地下鉄",
+   "r": "ちかてつ",
+   "en": [
+    "subway; metro; underground (railway)"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1421290,
+   "w": "地図",
+   "r": "ちず",
+   "en": [
+    "map; atlas; chart"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1370420,
+   "w": "図書館",
+   "r": "としょかん",
+   "en": [
+    "library"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1920240,
+   "w": "どの",
+   "r": "どの",
+   "k": "何の",
+   "en": [
+    "which; what (way)"
+   ],
+   "pos": [
+    "adj-pn"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1540170,
+   "w": "友達",
+   "r": "ともだち",
+   "en": [
+    "friend; companion"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1191420,
+   "w": "夏休み",
+   "r": "なつやすみ",
+   "en": [
+    "summer vacation; summer holiday"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1463520,
+   "w": "肉",
+   "r": "にく",
+   "en": [
+    "flesh",
+    "meat",
+    "flesh (of a fruit); pulp"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1313000,
+   "w": "歯",
+   "r": "は",
+   "en": [
+    "tooth; teeth",
+    "tooth (of a comb, saw, etc.); cog",
+    "support (of a geta)"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1237410,
+   "w": "橋",
+   "r": "はし",
+   "en": [
+    "bridge"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1485470,
+   "w": "飛行機",
+   "r": "ひこうき",
+   "en": [
+    "airplane; aeroplane; plane"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1505470,
+   "w": "文章",
+   "r": "ぶんしょう",
+   "en": [
+    "writing; composition; essay",
+    "sentence"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1524690,
+   "w": "毎週",
+   "r": "まいしゅう",
+   "en": [
+    "every week"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1584350,
+   "w": "毎月",
+   "r": "まいつき",
+   "en": [
+    "every month; each month; monthly"
+   ],
+   "pos": [
+    "adv",
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1202150,
+   "w": "みな",
+   "r": "みな",
+   "k": "皆",
+   "en": [
+    "everyone; everybody; all",
+    "everything; all"
+   ],
+   "pos": [
+    "n",
+    "pn",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1227500,
+   "w": "休み",
+   "r": "やすみ",
+   "en": [
+    "rest; recess; respite",
+    "vacation; holiday; absence",
+    "dormancy (of a silkworm prior to moulting)"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1552750,
+   "w": "留学生",
+   "r": "りゅうがくせい",
+   "en": [
+    "overseas student; exchange student"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1159980,
+   "w": "医者",
+   "r": "いしゃ",
+   "en": [
+    "doctor; physician"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1524590,
+   "w": "妹",
+   "r": "いもうと",
+   "en": [
+    "younger sister"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1269410,
+   "w": "後ろ",
+   "r": "うしろ",
+   "en": [
+    "back; behind; rear"
+   ],
+   "pos": [
+    "n",
+    "adj-no"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1002430,
+   "w": "お茶",
+   "r": "おちゃ",
+   "en": [
+    "tea (esp. green or barley)",
+    "tea break; teatime",
+    "tea ceremony"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1344970,
+   "w": "女の子",
+   "r": "おんなのこ",
+   "en": [
+    "girl; daughter; baby girl",
+    "young woman"
+   ],
+   "pos": [
+    "exp",
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1589730,
+   "w": "買い物",
+   "r": "かいもの",
+   "en": [
+    "shopping; purchased goods"
+   ],
+   "pos": [
+    "n",
+    "vs",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1206110,
+   "w": "角",
+   "r": "かど",
+   "en": [
+    "corner; edge",
+    "(street) corner; turning",
+    "rough edges (of one's character, words, etc.); abrasiveness; harshness"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1246700,
+   "w": "靴",
+   "r": "くつ",
+   "en": [
+    "shoe; shoes; boots"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1260720,
+   "w": "元気",
+   "r": "げんき",
+   "en": [
+    "lively; full of spirit; energetic",
+    "healthy; well; fit"
+   ],
+   "pos": [
+    "adj-na",
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1576630,
+   "w": "塩",
+   "r": "しお",
+   "en": [
+    "salt; common salt; table salt",
+    "hardship; toil; trouble",
+    "saltiness"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1414150,
+   "w": "大丈夫",
+   "r": "だいじょうぶ",
+   "en": [
+    "safe; secure; sound",
+    "certainly; surely; undoubtedly",
+    "no thanks; I'm good; that's alright"
+   ],
+   "pos": [
+    "adj-na"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1438690,
+   "w": "天気",
+   "r": "てんき",
+   "en": [
+    "weather",
+    "fair weather; fine weather"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1326980,
+   "w": "取る",
+   "r": "とる",
+   "en": [
+    "to take; to pick up; to grab",
+    "to pass; to hand; to give",
+    "to get; to obtain; to acquire"
+   ],
+   "pos": [
+    "v5r",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1436130,
+   "w": "庭",
+   "r": "にわ",
+   "en": [
+    "garden; yard; courtyard",
+    "field (of action); area"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1512610,
+   "w": "便利",
+   "r": "べんり",
+   "en": [
+    "convenient; handy; useful"
+   ],
+   "pos": [
+    "adj-na"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1202170,
+   "w": "皆さん",
+   "r": "みなさん",
+   "en": [
+    "all; everyone; everybody"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1307040,
+   "w": "四つ",
+   "r": "よっつ",
+   "en": [
+    "four; 4",
+    "four years of age",
+    "ten o'clock (in the old time system)"
+   ],
+   "pos": [
+    "num"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1548010,
+   "w": "来週",
+   "r": "らいしゅう",
+   "en": [
+    "next week"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1551790,
+   "w": "立派",
+   "r": "りっぱ",
+   "en": [
+    "splendid; fine; handsome",
+    "praiseworthy; creditable; worthy",
+    "legal; legitimate; lawful"
+   ],
+   "pos": [
+    "adj-na"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1307630,
+   "w": "姉",
+   "r": "あね",
+   "en": [
+    "older sister; elder sister"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1288850,
+   "w": "今",
+   "r": "いま",
+   "en": [
+    "now; the present time; just now",
+    "another; more"
+   ],
+   "pos": [
+    "n",
+    "adj-no",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1587610,
+   "w": "嫌",
+   "r": "いや",
+   "en": [
+    "disliking; not wanting; unwilling (to do)",
+    "unpleasant; disagreeable; nasty",
+    "no!; quit it!; stop!"
+   ],
+   "pos": [
+    "adj-na"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1588880,
+   "w": "大きい",
+   "r": "おおきい",
+   "en": [
+    "big; large; great",
+    "loud",
+    "extensive; spacious"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1002590,
+   "w": "お父さん",
+   "r": "おとうさん",
+   "en": [
+    "father; dad; papa",
+    "husband",
+    "you (of an elderly person older than the speaker); he; him"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1420010,
+   "w": "男の子",
+   "r": "おとこのこ",
+   "en": [
+    "boy; son; baby boy",
+    "young man"
+   ],
+   "pos": [
+    "exp",
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1203090,
+   "w": "階段",
+   "r": "かいだん",
+   "en": [
+    "stairs; stairway; staircase"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1213170,
+   "w": "漢字",
+   "r": "かんじ",
+   "en": [
+    "kanji; Chinese character"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1412640,
+   "w": "台所",
+   "r": "だいどころ",
+   "en": [
+    "kitchen",
+    "financial situation; finances"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1220210,
+   "w": "机",
+   "r": "つくえ",
+   "en": [
+    "desk"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1266970,
+   "w": "戸",
+   "r": "と",
+   "en": [
+    "door (esp. Japanese-style)",
+    "shutter; window shutter"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1598680,
+   "w": "時々",
+   "r": "ときどき",
+   "en": [
+    "sometimes; occasionally; at times",
+    "seasonal; of the season; appropriate (for the season or occasion)"
+   ],
+   "pos": [
+    "adv",
+    "adj-no"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1316140,
+   "w": "時計",
+   "r": "とけい",
+   "en": [
+    "clock; watch; timepiece"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1467640,
+   "w": "猫",
+   "r": "ねこ",
+   "en": [
+    "cat (esp. the domestic cat, Felis catus); feline",
+    "shamisen",
+    "geisha"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1482110,
+   "w": "晩",
+   "r": "ばん",
+   "en": [
+    "evening; night",
+    "dinner; evening meal",
+    "counter for nights"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1460850,
+   "w": "難しい",
+   "r": "むずかしい",
+   "en": [
+    "difficult; hard; troublesome",
+    "impossible; unfeasible",
+    "fussy; particular; fastidious"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1542790,
+   "w": "夕方",
+   "r": "ゆうがた",
+   "en": [
+    "early evening (usu. from 3pm to 6pm); dusk"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1542430,
+   "w": "郵便局",
+   "r": "ゆうびんきょく",
+   "en": [
+    "post office"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1361490,
+   "w": "新しい",
+   "r": "あたらしい",
+   "en": [
+    "new; novel; fresh"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1473950,
+   "w": "売る",
+   "r": "うる",
+   "en": [
+    "to sell",
+    "to betray; to sell out (one's friend, country, etc.)",
+    "to make (oneself) known; to establish (a reputation) for oneself"
+   ],
+   "pos": [
+    "v5r",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1180470,
+   "w": "押す",
+   "r": "おす",
+   "en": [
+    "to push; to thrust; to shove",
+    "to press (down); to push (e.g. a button); to exert pressure on",
+    "to stamp (e.g. one's name); to affix (a seal)"
+   ],
+   "pos": [
+    "v5s",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1203020,
+   "w": "階",
+   "r": "かい",
+   "en": [
+    "storey; story; floor",
+    "stairs",
+    "stage (in chronostratigraphy)"
+   ],
+   "pos": [
+    "n",
+    "n-suf"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1385070,
+   "w": "切手",
+   "r": "きって",
+   "en": [
+    "stamp (postage)",
+    "merchandise certificate"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1231580,
+   "w": "牛肉",
+   "r": "ぎゅうにく",
+   "en": [
+    "beef"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1231590,
+   "w": "牛乳",
+   "r": "ぎゅうにゅう",
+   "en": [
+    "(cow's) milk"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1257240,
+   "w": "嫌い",
+   "r": "きらい",
+   "en": [
+    "disliking; hating; detesting",
+    "tendency; smack (of); touch (of)",
+    "distinction; discrimination"
+   ],
+   "pos": [
+    "adj-na",
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1254760,
+   "w": "結構",
+   "r": "けっこう",
+   "en": [
+    "splendid; nice; wonderful",
+    "sufficient; satisfactory; enough",
+    "not needing (any more of something); (already) having enough; fine (as in \"I'm fine\")"
+   ],
+   "pos": [
+    "adj-na"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1291600,
+   "w": "砂糖",
+   "r": "さとう",
+   "en": [
+    "sugar"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1358550,
+   "w": "食堂",
+   "r": "しょくどう",
+   "en": [
+    "dining room; dining hall; cafeteria",
+    "restaurant; eatery; snack bar"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1413660,
+   "w": "大好き",
+   "r": "だいすき",
+   "en": [
+    "liking very much; loving (something or someone); adoring"
+   ],
+   "pos": [
+    "adj-na"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1283190,
+   "w": "高い",
+   "r": "たかい",
+   "en": [
+    "high; tall",
+    "expensive; high-priced",
+    "high (level); above average (in degree, quality, etc.)"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1335640,
+   "w": "縦",
+   "r": "たて",
+   "en": [
+    "the vertical; height",
+    "front-to-back; length",
+    "north-to-south"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1548370,
+   "w": "頼む",
+   "r": "たのむ",
+   "en": [
+    "to request; to beg; to ask",
+    "to call; to order; to reserve",
+    "to entrust to"
+   ],
+   "pos": [
+    "v5m",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1358340,
+   "w": "食べ物",
+   "r": "たべもの",
+   "en": [
+    "food"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1338850,
+   "w": "出口",
+   "r": "でぐち",
+   "en": [
+    "exit; way out",
+    "outlet; vent"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1486720,
+   "w": "鼻",
+   "r": "はな",
+   "en": [
+    "nose"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1315720,
+   "w": "持つ",
+   "r": "もつ",
+   "en": [
+    "to hold (in one's hand); to take; to carry",
+    "to possess; to have; to own",
+    "to maintain; to keep"
+   ],
+   "pos": [
+    "v5t",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1557110,
+   "w": "冷蔵庫",
+   "r": "れいぞうこ",
+   "en": [
+    "refrigerator; fridge"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1532350,
+   "w": "明るい",
+   "r": "あかるい",
+   "en": [
+    "light; bright; well-lit",
+    "bright (colour)",
+    "cheerful; bright; spirited"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1428280,
+   "w": "朝",
+   "r": "あさ",
+   "en": [
+    "morning",
+    "breakfast"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1547450,
+   "w": "浴びる",
+   "r": "あびる",
+   "en": [
+    "to dash over oneself (e.g. water); to take (e.g. shower); to bask in (e.g. the sun)",
+    "to suffer (e.g. an attack); to draw (e.g. criticism, attention, praise); to have heaped upon"
+   ],
+   "pos": [
+    "v1",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1268070,
+   "w": "五つ",
+   "r": "いつつ",
+   "en": [
+    "five",
+    "five years of age",
+    "eight o'clock (old time system)"
+   ],
+   "pos": [
+    "num"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1173750,
+   "w": "映画館",
+   "r": "えいがかん",
+   "en": [
+    "movie theatre; movie theater; cinema"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1199330,
+   "w": "回",
+   "r": "かい",
+   "en": [
+    "counter for occurrences",
+    "a time; an instance",
+    "inning (baseball); round; game"
+   ],
+   "pos": [
+    "ctr"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1583720,
+   "w": "風邪",
+   "r": "かぜ",
+   "en": [
+    "(common) cold; influenza; flu"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1193060,
+   "w": "果物",
+   "r": "くだもの",
+   "en": [
+    "fruit"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1297960,
+   "w": "作文",
+   "r": "さくぶん",
+   "en": [
+    "writing (an essay, prose, etc.); composition",
+    "formal writing with little real meaning"
+   ],
+   "pos": [
+    "n",
+    "vs",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1472650,
+   "w": "背",
+   "r": "せい",
+   "en": [
+    "height; stature"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1390980,
+   "w": "洗濯",
+   "r": "せんたく",
+   "en": [
+    "washing; laundry",
+    "relaxation; rejuvenation; melting away (of worries, fatigue, etc.)"
+   ],
+   "pos": [
+    "n",
+    "vs",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1399790,
+   "w": "掃除",
+   "r": "そうじ",
+   "en": [
+    "cleaning; sweeping; dusting"
+   ],
+   "pos": [
+    "n",
+    "vs",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1195430,
+   "w": "荷物",
+   "r": "にもつ",
+   "en": [
+    "luggage; baggage; package",
+    "burden",
+    "payload (of a packet, cell, etc.)"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1585650,
+   "w": "箱",
+   "r": "はこ",
+   "en": [
+    "box; case; chest",
+    "car (of a train, etc.)",
+    "shamisen case; shamisen"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1519170,
+   "w": "帽子",
+   "r": "ぼうし",
+   "en": [
+    "hat; cap",
+    "cap (move)"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1583250,
+   "w": "いいえ",
+   "r": "いいえ",
+   "en": [
+    "no",
+    "you're welcome; not at all; don't mention it"
+   ],
+   "pos": [
+    "int"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1589500,
+   "w": "降りる",
+   "r": "おりる",
+   "en": [
+    "to descend (e.g. a mountain); to go down; to come down",
+    "to alight (e.g. from bus); to get off; to disembark",
+    "to step down; to retire; to give up"
+   ],
+   "pos": [
+    "v1",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1473740,
+   "w": "買う",
+   "r": "かう",
+   "en": [
+    "to buy; to purchase",
+    "to value (highly); to think highly of; to have a high opinion of",
+    "to incur (someone's anger, displeasure, etc.); to elicit (e.g. sneers); to invite (e.g. scorn)"
+   ],
+   "pos": [
+    "v5u",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1226440,
+   "w": "喫茶店",
+   "r": "きっさてん",
+   "en": [
+    "coffee shop; tearoom; coffee lounge",
+    "kissaten"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1385170,
+   "w": "切符",
+   "r": "きっぷ",
+   "en": [
+    "ticket"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1579260,
+   "w": "昨日",
+   "r": "きのう",
+   "en": [
+    "yesterday"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1231690,
+   "w": "去年",
+   "r": "きょねん",
+   "en": [
+    "last year"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1296970,
+   "w": "財布",
+   "r": "さいふ",
+   "en": [
+    "wallet; purse; coin purse"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1303620,
+   "w": "散歩",
+   "r": "さんぽ",
+   "en": [
+    "walk; stroll"
+   ],
+   "pos": [
+    "n",
+    "vs",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1318970,
+   "w": "辞書",
+   "r": "じしょ",
+   "en": [
+    "dictionary; lexicon"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1402540,
+   "w": "走る",
+   "r": "はしる",
+   "en": [
+    "to run",
+    "to run (of a vehicle); to drive; to travel",
+    "to rush (to); to dash; to race"
+   ],
+   "pos": [
+    "v5r",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1512070,
+   "w": "辺",
+   "r": "へん",
+   "en": [
+    "area; vicinity; region",
+    "side; edge",
+    "circumstances"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1560670,
+   "w": "廊下",
+   "r": "ろうか",
+   "en": [
+    "corridor; hallway; passageway"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1589600,
+   "w": "終わる",
+   "r": "おわる",
+   "en": [
+    "to end; to come to an end; to finish",
+    "to finish; to complete; to conclude",
+    "to finish doing"
+   ],
+   "pos": [
+    "v5r",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1301940,
+   "w": "傘",
+   "r": "かさ",
+   "en": [
+    "umbrella; parasol",
+    "something shaped like an umbrella or a conical hat; shade (of a lamp); mushroom cap"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1576760,
+   "w": "黄色",
+   "r": "きいろ",
+   "en": [
+    "yellow; amber"
+   ],
+   "pos": [
+    "n",
+    "adj-no",
+    "adj-na"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1384830,
+   "w": "切る",
+   "r": "きる",
+   "en": [
+    "to cut; to cut through; to perform (surgery)",
+    "to sever (connections, ties)",
+    "to turn off (e.g. the light)"
+   ],
+   "pos": [
+    "v5r",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1592970,
+   "w": "交差点",
+   "r": "こうさてん",
+   "en": [
+    "crossing; intersection"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1499690,
+   "w": "封筒",
+   "r": "ふうとう",
+   "en": [
+    "envelope"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1524700,
+   "w": "毎朝",
+   "r": "まいあさ",
+   "en": [
+    "every morning"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1546020,
+   "w": "洋服",
+   "r": "ようふく",
+   "en": [
+    "Western-style clothes (cf. traditional Japanese clothes)"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1444610,
+   "w": "渡す",
+   "r": "わたす",
+   "en": [
+    "to ferry across (e.g. a river); to carry across; to traverse",
+    "to lay across; to build across",
+    "to hand over; to hand in; to pass"
+   ],
+   "pos": [
+    "v5s",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1178590,
+   "w": "鉛筆",
+   "r": "えんぴつ",
+   "en": [
+    "(wooden) pencil"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1333500,
+   "w": "週間",
+   "r": "しゅうかん",
+   "en": [
+    "week"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1353320,
+   "w": "上手",
+   "r": "じょうず",
+   "en": [
+    "skillful; skilled; proficient",
+    "flattery"
+   ],
+   "pos": [
+    "adj-na",
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1472740,
+   "w": "背広",
+   "r": "せびろ",
+   "en": [
+    "business suit"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1338240,
+   "w": "出る",
+   "r": "でる",
+   "en": [
+    "to leave; to exit; to go out",
+    "to leave (on a journey); to depart; to start out",
+    "to move forward"
+   ],
+   "pos": [
+    "v1",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1456360,
+   "w": "読む",
+   "r": "よむ",
+   "en": [
+    "to read",
+    "to recite (e.g. a sutra); to chant",
+    "to predict; to guess; to forecast"
+   ],
+   "pos": [
+    "v5m",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1323560,
+   "w": "借りる",
+   "r": "かりる",
+   "en": [
+    "to borrow",
+    "to rent; to hire",
+    "to make use of (another's help, wisdom, etc.); to obtain; to receive"
+   ],
+   "pos": [
+    "v1",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1423000,
+   "w": "着る",
+   "r": "きる",
+   "en": [
+    "to wear (from the shoulders down); to put on",
+    "to take (the blame, responsibility); to bear"
+   ],
+   "pos": [
+    "v1",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1184270,
+   "w": "ください",
+   "r": "ください",
+   "k": "下さい",
+   "en": [
+    "please (give me)",
+    "please (do for me)"
+   ],
+   "pos": [
+    "exp"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1280770,
+   "w": "紅茶",
+   "r": "こうちゃ",
+   "en": [
+    "black tea"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1337270,
+   "w": "宿題",
+   "r": "しゅくだい",
+   "en": [
+    "homework; assignment",
+    "pending issue; unresolved problem; open question"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1407980,
+   "w": "多分",
+   "r": "たぶん",
+   "en": [
+    "probably; likely; perhaps",
+    "a lot of; much; many"
+   ],
+   "pos": [
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1416830,
+   "w": "誰",
+   "r": "だれ",
+   "en": [
+    "who"
+   ],
+   "pos": [
+    "pn"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1310620,
+   "w": "止まる",
+   "r": "とまる",
+   "en": [
+    "to stop (moving); to come to a stop",
+    "to stop (doing, working, being supplied); to come to a halt; to cease",
+    "to alight; to perch on"
+   ],
+   "pos": [
+    "v5r",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1319220,
+   "w": "七つ",
+   "r": "ななつ",
+   "en": [
+    "seven",
+    "seven years of age",
+    "four o'clock (old time system)"
+   ],
+   "pos": [
+    "num"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1427900,
+   "w": "張る",
+   "r": "はる",
+   "en": [
+    "to stick; to paste; to affix",
+    "to stretch; to spread; to strain",
+    "to form (e.g. ice on a pond)"
+   ],
+   "pos": [
+    "v5r",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1577670,
+   "w": "めがね",
+   "r": "めがね",
+   "k": "眼鏡",
+   "en": [
+    "glasses; eyeglasses; spectacles",
+    "judgment; judgement; discrimination",
+    "four-eyes"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1467720,
+   "w": "熱い",
+   "r": "あつい",
+   "en": [
+    "hot (to the touch)",
+    "passionate (feelings, etc.); ardent; hot (e.g. gaze)",
+    "hot (e.g. temper)"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1434180,
+   "w": "低い",
+   "r": "ひくい",
+   "en": [
+    "low (rank, degree, value, content, quality, etc.)",
+    "low (position); close to the ground",
+    "short (height)"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1577280,
+   "w": "暇",
+   "r": "ひま",
+   "en": [
+    "spare time; free time; leisure",
+    "time (it takes to do something); time required",
+    "time off; leave; vacation"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1259290,
+   "w": "見る",
+   "r": "みる",
+   "en": [
+    "to see; to look; to watch",
+    "to examine; to look over; to assess",
+    "to look after; to attend to; to take care of"
+   ],
+   "pos": [
+    "v1",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1383240,
+   "w": "赤い",
+   "r": "あかい",
+   "en": [
+    "red; crimson; scarlet",
+    "Red; communist"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1584930,
+   "w": "あまり",
+   "r": "あまり",
+   "k": "余り",
+   "en": [
+    "remainder; remnant; rest",
+    "(not) very; (not) much",
+    "too much; excessively; overly"
+   ],
+   "pos": [
+    "n",
+    "adj-no"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1588120,
+   "w": "歌う",
+   "r": "うたう",
+   "en": [
+    "to sing",
+    "to sing of (love, beauty, etc.) in a poem; to express in the form of a poem; to recite (a poem)"
+   ],
+   "pos": [
+    "v5u",
+    "vt",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1580480,
+   "w": "丈夫",
+   "r": "じょうぶ",
+   "en": [
+    "healthy; robust; strong"
+   ],
+   "pos": [
+    "adj-na"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1422720,
+   "w": "茶色",
+   "r": "ちゃいろ",
+   "en": [
+    "brown; light brown; tawny"
+   ],
+   "pos": [
+    "n",
+    "adj-no"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1340450,
+   "w": "できる",
+   "r": "できる",
+   "k": "出来る",
+   "en": [
+    "to be able to do; to be possible; to be permitted (to do)",
+    "to be good at; to do well; to be proficient (in)",
+    "to come into existence; to form; to appear"
+   ],
+   "pos": [
+    "v1",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1429750,
+   "w": "長い",
+   "r": "ながい",
+   "en": [
+    "long (distance, length)",
+    "long (time); protracted; prolonged"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1360010,
+   "w": "寝る",
+   "r": "ねる",
+   "en": [
+    "to sleep (lying down)",
+    "to go to bed; to lie in bed",
+    "to lie down"
+   ],
+   "pos": [
+    "v1",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1376460,
+   "w": "晴れ",
+   "r": "はれ",
+   "en": [
+    "clear weather; fine weather",
+    "formal; ceremonial; public",
+    "cleared of suspicion"
+   ],
+   "pos": [
+    "n",
+    "adj-no"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1185200,
+   "w": "下手",
+   "r": "へた",
+   "en": [
+    "unskillful; poor; awkward",
+    "imprudent; untactful"
+   ],
+   "pos": [
+    "adj-na",
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1277140,
+   "w": "向こう",
+   "r": "むこう",
+   "en": [
+    "opposite side; other side",
+    "over there; ahead; beyond",
+    "destination; there (somewhere distant, esp. abroad)"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1219960,
+   "w": "いくつ",
+   "r": "いくつ",
+   "k": "幾つ",
+   "en": [
+    "how many",
+    "how old"
+   ],
+   "pos": [
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1432680,
+   "w": "痛い",
+   "r": "いたい",
+   "en": [
+    "painful; sore",
+    "cringy; embarrassing"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1547720,
+   "w": "来る",
+   "r": "くる",
+   "en": [
+    "to come (spatially or temporally); to approach; to arrive",
+    "to come back; to do ... and come back",
+    "to come to be; to become; to get"
+   ],
+   "pos": [
+    "vk",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1294940,
+   "w": "歳",
+   "r": "さい",
+   "en": [
+    "... years old; age (of) ..."
+   ],
+   "pos": [
+    "ctr"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1474910,
+   "w": "白い",
+   "r": "しろい",
+   "en": [
+    "white",
+    "blank (e.g. paper); uncolored; unmarked",
+    "innocent; not guilty; pure"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1348910,
+   "w": "少ない",
+   "r": "すくない",
+   "en": [
+    "few; little; small (amount)"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1207240,
+   "w": "楽しい",
+   "r": "たのしい",
+   "en": [
+    "enjoyable; fun; pleasant"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1352570,
+   "w": "上る",
+   "r": "のぼる",
+   "en": [
+    "to ascend; to go up; to climb",
+    "to ascend (as a natural process, e.g. the Sun); to rise",
+    "to go to (the capital)"
+   ],
+   "pos": [
+    "v5r",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1404975,
+   "w": "早い",
+   "r": "はやい",
+   "en": [
+    "fast; quick; rapid",
+    "early; soon; earlier than usual",
+    "premature; too soon; too early"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1265070,
+   "w": "古い",
+   "r": "ふるい",
+   "en": [
+    "old; aged; ancient",
+    "long; since long ago; time-honored",
+    "of the distant past; long-ago"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1295510,
+   "w": "細い",
+   "r": "ほそい",
+   "en": [
+    "thin; slender; fine",
+    "unlucky"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1604890,
+   "w": "目",
+   "r": "め",
+   "en": [
+    "eye; eyeball",
+    "eyesight; sight; vision",
+    "look; stare; gaze"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1580340,
+   "w": "上着",
+   "r": "うわぎ",
+   "en": [
+    "coat; jacket; outerwear",
+    "top; upper-body garment"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1194290,
+   "w": "火曜日",
+   "r": "かようび",
+   "en": [
+    "Tuesday"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1342540,
+   "w": "始め",
+   "r": "はじめ",
+   "en": [
+    "beginning; start; outset",
+    "first (in line, etc.)",
+    "origin"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1457440,
+   "w": "豚肉",
+   "r": "ぶたにく",
+   "en": [
+    "pork"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1519290,
+   "w": "忙しい",
+   "r": "いそがしい",
+   "en": [
+    "busy; occupied; hectic",
+    "restless; hurried; fidgety"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1421970,
+   "w": "遅い",
+   "r": "おそい",
+   "en": [
+    "slow",
+    "late",
+    "too late"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1512130,
+   "w": "返す",
+   "r": "かえす",
+   "en": [
+    "to return (something); to restore; to put back",
+    "to turn over; to turn upside down; to overturn",
+    "to pay back; to retaliate; to reciprocate"
+   ],
+   "pos": [
+    "v5s",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1260490,
+   "w": "鍵",
+   "r": "かぎ",
+   "en": [
+    "key",
+    "lock",
+    "key (to a problem, success, etc.); clue"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1287420,
+   "w": "黒い",
+   "r": "くろい",
+   "en": [
+    "black",
+    "dark; blackish; sun-tanned (skin)",
+    "suspicious; criminal; illicit"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1272500,
+   "w": "交番",
+   "r": "こうばん",
+   "en": [
+    "police box; koban",
+    "alternation",
+    "alternating (current, stress, etc.)"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1236070,
+   "w": "強い",
+   "r": "つよい",
+   "en": [
+    "strong; potent; competent",
+    "strong; brawny; powerful",
+    "good (at); skilled; knowledgeable"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1547330,
+   "w": "欲しい",
+   "r": "ほしい",
+   "en": [
+    "wanting (to have); desiring; wishing for",
+    "I want (you, them, etc.) to (do)"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1524730,
+   "w": "毎晩",
+   "r": "まいばん",
+   "en": [
+    "every night"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1410590,
+   "w": "待つ",
+   "r": "まつ",
+   "en": [
+    "to wait",
+    "to await; to look forward to; to anticipate",
+    "to depend on; to need"
+   ],
+   "pos": [
+    "v5t",
+    "vt",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1542640,
+   "w": "昨夜",
+   "r": "ゆうべ",
+   "en": [
+    "last night; yesterday evening"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1213400,
+   "w": "甘い",
+   "r": "あまい",
+   "en": [
+    "sweet-tasting; sweet; sugary",
+    "fragrant (smelling); sweet (music)",
+    "lightly salted; light in salt; not spicy"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1533580,
+   "w": "面白い",
+   "r": "おもしろい",
+   "en": [
+    "interesting; fascinating; intriguing",
+    "amusing; funny; comical",
+    "enjoyable; fun; entertaining"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1246740,
+   "w": "靴下",
+   "r": "くつした",
+   "en": [
+    "socks; sock; stockings"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1579100,
+   "w": "今朝",
+   "r": "けさ",
+   "en": [
+    "this morning"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1270910,
+   "w": "語",
+   "r": "ご",
+   "en": [
+    "word; term",
+    "language",
+    "speech"
+   ],
+   "pos": [
+    "n",
+    "n-suf",
+    "ctr"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1476410,
+   "w": "箸",
+   "r": "はし",
+   "en": [
+    "chopsticks"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1524930,
+   "w": "また",
+   "r": "また",
+   "k": "又",
+   "en": [
+    "again; once more; once again",
+    "also; too; as well",
+    "on the other hand; while"
+   ],
+   "pos": [
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1604230,
+   "w": "丸い",
+   "r": "まるい",
+   "en": [
+    "round; circular; spherical",
+    "curved; smooth",
+    "harmonious; calm; peaceful"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1475480,
+   "w": "薄い",
+   "r": "うすい",
+   "en": [
+    "thin (of an object)",
+    "pale; light; faint",
+    "watery; thin; diluted"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1174340,
+   "w": "泳ぐ",
+   "r": "およぐ",
+   "en": [
+    "to swim",
+    "to struggle through (a crowd)",
+    "to make one's way through the world; to get along (in life)"
+   ],
+   "pos": [
+    "v5g",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1207610,
+   "w": "かける",
+   "r": "かける",
+   "k": "掛ける",
+   "en": [
+    "to hang up (e.g. a coat, a picture on the wall); to let hang; to suspend (from)",
+    "to put on (e.g. a blanket); to put on top of; to cover",
+    "to put on (glasses, etc.); to wear (a necklace, etc.)"
+   ],
+   "pos": [
+    "v1",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1592340,
+   "w": "曇り",
+   "r": "くもり",
+   "en": [
+    "cloudiness; cloudy weather",
+    "fog (on a mirror, glasses, etc.); cloud (e.g. in marble); blur",
+    "gloom; dejection"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1242130,
+   "w": "近い",
+   "r": "ちかい",
+   "en": [
+    "near; close; short (distance)",
+    "close (in time); soon",
+    "close (relationship); friendly; intimate"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1600430,
+   "w": "飲み物",
+   "r": "のみもの",
+   "en": [
+    "drink; beverage"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1408180,
+   "w": "太い",
+   "r": "ふとい",
+   "en": [
+    "fat; thick",
+    "deep (of a voice); thick; sonorous",
+    "daring; shameless; brazen"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1526360,
+   "w": "万年筆",
+   "r": "まんねんひつ",
+   "en": [
+    "fountain pen"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1227560,
+   "w": "休む",
+   "r": "やすむ",
+   "en": [
+    "to be absent; to take a day off",
+    "to rest; to have a break",
+    "to go to bed; to (lie down to) sleep; to turn in"
+   ],
+   "pos": [
+    "v5m",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1586420,
+   "w": "暖かい",
+   "r": "あたたかい",
+   "en": [
+    "warm; mild; (pleasantly) hot",
+    "warm (of a colour); mellow",
+    "having enough money"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1243600,
+   "w": "九つ",
+   "r": "ここのつ",
+   "en": [
+    "nine",
+    "nine years of age",
+    "twelve o'clock (old time system)"
+   ],
+   "pos": [
+    "num"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1597040,
+   "w": "立つ",
+   "r": "たつ",
+   "en": [
+    "to stand (up); to rise; to get to one's feet",
+    "to stand (in a position; of a person, tree, building, etc.); to be situated (in, on)",
+    "to be (in difficulties, the lead, etc.); to put oneself (in a position or situation); to take up (a position, post, etc.)"
+   ],
+   "pos": [
+    "v5t",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1597530,
+   "w": "茶碗",
+   "r": "ちゃわん",
+   "en": [
+    "rice bowl; tea cup; teacup"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1429700,
+   "w": "飛ぶ",
+   "r": "とぶ",
+   "en": [
+    "to fly; to soar",
+    "to jump; to leap; to spring",
+    "to spatter; to scatter; to splash"
+   ],
+   "pos": [
+    "v5b",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1355120,
+   "w": "乗る",
+   "r": "のる",
+   "en": [
+    "to get on (train, plane, bus, ship, etc.); to get in; to board",
+    "to get on (e.g. a footstool); to step on; to jump on",
+    "to reach; to go over; to pass"
+   ],
+   "pos": [
+    "v5r",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1201940,
+   "w": "灰皿",
+   "r": "はいざら",
+   "en": [
+    "ashtray"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1562350,
+   "w": "話す",
+   "r": "はなす",
+   "en": [
+    "to talk; to speak; to converse",
+    "to tell; to explain; to narrate",
+    "to speak (a language)"
+   ],
+   "pos": [
+    "v5s",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1157070,
+   "w": "椅子",
+   "r": "いす",
+   "en": [
+    "chair; seat; stool",
+    "post; position; seat"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1436570,
+   "w": "締める",
+   "r": "しめる",
+   "en": [
+    "to tie; to fasten; to tighten",
+    "to wear (necktie, belt); to put on",
+    "to total; to sum"
+   ],
+   "pos": [
+    "v1",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1298790,
+   "w": "撮る",
+   "r": "とる",
+   "en": [
+    "to take (a photograph)",
+    "to record (audio or video); to film; to shoot"
+   ],
+   "pos": [
+    "v5r",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1390930,
+   "w": "洗う",
+   "r": "あらう",
+   "en": [
+    "to wash; to cleanse; to rinse",
+    "to inquire into; to investigate",
+    "to purify (one's heart)"
+   ],
+   "pos": [
+    "v5u",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1253020,
+   "w": "鶏肉",
+   "r": "とりにく",
+   "en": [
+    "chicken meat"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1365850,
+   "w": "辛い",
+   "r": "からい",
+   "en": [
+    "spicy; hot",
+    "salty",
+    "harsh (criticism); severe (punishment); strict"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1347750,
+   "w": "小さい",
+   "r": "ちいさい",
+   "en": [
+    "small; little; tiny",
+    "slight; below average (in degree, amount, etc.); minor",
+    "low (e.g. sound); soft (e.g. voice)"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1324520,
+   "w": "弱い",
+   "r": "よわい",
+   "en": [
+    "weak; frail; delicate"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1381390,
+   "w": "青い",
+   "r": "あおい",
+   "en": [
+    "blue; azure",
+    "green",
+    "pale (facial color); gray; grey"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1542160,
+   "w": "遊ぶ",
+   "r": "あそぶ",
+   "en": [
+    "to play (games, sports); to enjoy oneself; to have a good time",
+    "to mess about (with alcohol, gambling, philandery, etc.)",
+    "to be idle; to do nothing; to be unused"
+   ],
+   "pos": [
+    "v5b",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1335750,
+   "w": "重い",
+   "r": "おもい",
+   "en": [
+    "heavy; weighty",
+    "heavy (feeling); depressed; gloomy",
+    "slow; sluggish; lumbering"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1508590,
+   "w": "閉める",
+   "r": "しめる",
+   "en": [
+    "to close; to shut"
+   ],
+   "pos": [
+    "v1",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1291800,
+   "w": "座る",
+   "r": "すわる",
+   "en": [
+    "to sit (down); to have a seat; to be seated",
+    "to assume (a position); to take on (a duty); to occupy (a post)"
+   ],
+   "pos": [
+    "v5r",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1358280,
+   "w": "食べる",
+   "r": "たべる",
+   "en": [
+    "to eat",
+    "to live on (e.g. a salary); to live off; to subsist on"
+   ],
+   "pos": [
+    "v1",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1465590,
+   "w": "入る",
+   "r": "はいる",
+   "en": [
+    "to enter; to come in; to go in",
+    "to join (a club, company, etc.); to enter (a university, the army, etc.); to enroll (in)",
+    "to be contained (in); to be included (in); to be inside (e.g. a box)"
+   ],
+   "pos": [
+    "v5r",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1418620,
+   "w": "短い",
+   "r": "みじかい",
+   "en": [
+    "short",
+    "brief"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1476960,
+   "w": "八百屋",
+   "r": "やおや",
+   "en": [
+    "greengrocer; fruit and vegetable shop",
+    "jack of all trades"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1198180,
+   "w": "会う",
+   "r": "あう",
+   "en": [
+    "to meet; to encounter; to see",
+    "to have (e.g. an accident); to suffer (e.g. an unpleasant fate); to encounter"
+   ],
+   "pos": [
+    "v5u",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1206050,
+   "w": "覚える",
+   "r": "おぼえる",
+   "en": [
+    "to memorize; to memorise; to commit to memory",
+    "to learn; to pick up; to acquire",
+    "to feel"
+   ],
+   "pos": [
+    "v1",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1293660,
+   "w": "再来年",
+   "r": "さらいねん",
+   "en": [
+    "year after next"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1376470,
+   "w": "晴れる",
+   "r": "はれる",
+   "en": [
+    "to clear up; to clear away; to be sunny",
+    "to refresh (e.g. spirits)",
+    "to be cleared (e.g. of a suspicion)"
+   ],
+   "pos": [
+    "v1",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1546640,
+   "w": "いる",
+   "r": "いる",
+   "k": "要る",
+   "en": [
+    "to be needed; to be necessary; to be required"
+   ],
+   "pos": [
+    "v5r",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1194870,
+   "w": "花瓶",
+   "r": "かびん",
+   "en": [
+    "(flower) vase"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1350110,
+   "w": "消す",
+   "r": "けす",
+   "en": [
+    "to erase; to rub out; to rub off",
+    "to turn off (a light, TV, heater, etc.); to switch off",
+    "to extinguish (a fire, candle, etc.); to put out"
+   ],
+   "pos": [
+    "v5s",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1158880,
+   "w": "違う",
+   "r": "ちがう",
+   "en": [
+    "to differ (from); to be different; to be distinct",
+    "to be wrong; to be incorrect; to be mistaken",
+    "to become abnormal; to go wrong"
+   ],
+   "pos": [
+    "v5u",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1282790,
+   "w": "降る",
+   "r": "ふる",
+   "en": [
+    "to fall (of rain, snow, ash, etc.); to come down",
+    "to form (of frost)",
+    "to beam down (of sunlight or moonlight); to pour in"
+   ],
+   "pos": [
+    "v5r",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1522980,
+   "w": "本棚",
+   "r": "ほんだな",
+   "en": [
+    "bookshelves; bookshelf; bookcase"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1347600,
+   "w": "宵",
+   "r": "よい",
+   "en": [
+    "evening; early night hours"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1483185,
+   "w": "あちら",
+   "r": "あちら",
+   "k": "彼方",
+   "en": [
+    "that way; that direction; over there",
+    "that (one)",
+    "that person"
+   ],
+   "pos": [
+    "pn"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1416840,
+   "w": "誰か",
+   "r": "だれか",
+   "en": [
+    "someone; somebody"
+   ],
+   "pos": [
+    "pn"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1556730,
+   "w": "冷たい",
+   "r": "つめたい",
+   "en": [
+    "cold (to the touch); chilly; icy",
+    "(emotionally) cold; coldhearted; unfeeling"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1598550,
+   "w": "出かける",
+   "r": "でかける",
+   "en": [
+    "to go out (e.g. on an excursion or outing); to leave; to depart",
+    "to be about to leave; to be just going out"
+   ],
+   "pos": [
+    "v1",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1307500,
+   "w": "始まる",
+   "r": "はじまる",
+   "en": [
+    "to begin; to start; to commence",
+    "to happen (again); to begin (anew)",
+    "to date (from); to originate (in)"
+   ],
+   "pos": [
+    "v5r",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1239730,
+   "w": "曲がる",
+   "r": "まがる",
+   "en": [
+    "to bend; to curve; to warp",
+    "to turn",
+    "to be awry; to be askew; to be crooked"
+   ],
+   "pos": [
+    "v5r",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1275320,
+   "w": "厚い",
+   "r": "あつい",
+   "en": [
+    "thick; deep; heavy",
+    "kind; cordial; hospitable",
+    "abundant"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1188760,
+   "w": "いつ",
+   "r": "いつ",
+   "k": "何時",
+   "en": [
+    "when; at what time; how soon",
+    "normal times; ordinary days"
+   ],
+   "pos": [
+    "pn"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1289470,
+   "w": "今晩",
+   "r": "こんばん",
+   "en": [
+    "tonight; this evening"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1483740,
+   "w": "疲れる",
+   "r": "つかれる",
+   "en": [
+    "to get tired; to tire; to get fatigued",
+    "to become worn out (of a well-used object)"
+   ],
+   "pos": [
+    "v1",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1508380,
+   "w": "並ぶ",
+   "r": "ならぶ",
+   "en": [
+    "to line up; to stand in a line",
+    "to rival; to match; to equal"
+   ],
+   "pos": [
+    "v5b",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1289590,
+   "w": "困る",
+   "r": "こまる",
+   "en": [
+    "to be troubled; to have difficulty; to be in a fix",
+    "to be bothered; to be inconvenienced; to be annoyed",
+    "to be badly off; to be hard up; to be in straitened circumstances"
+   ],
+   "pos": [
+    "v5r",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1554370,
+   "w": "涼しい",
+   "r": "すずしい",
+   "en": [
+    "cool; refreshing",
+    "clear (e.g. eyes); bright",
+    "clear; distinct"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1324300,
+   "w": "若い",
+   "r": "わかい",
+   "en": [
+    "young; youthful",
+    "immature; green",
+    "low (number); small"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1223640,
+   "w": "起きる",
+   "r": "おきる",
+   "en": [
+    "to get up; to rise; to blaze up (fire)",
+    "to wake up; to be awake; to stay awake",
+    "to occur (usu. of unfavourable incidents); to happen; to take place"
+   ],
+   "pos": [
+    "v1",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1411160,
+   "w": "貸す",
+   "r": "かす",
+   "en": [
+    "to lend; to loan",
+    "to rent out; to hire out",
+    "to hand (over); to give"
+   ],
+   "pos": [
+    "v5s",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1595020,
+   "w": "醤油",
+   "r": "しょうゆ",
+   "en": [
+    "soy sauce; soya sauce; shoyu"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1511600,
+   "w": "かたかな",
+   "r": "かたかな",
+   "k": "片仮名",
+   "en": [
+    "katakana"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1577200,
+   "w": "かわいい",
+   "r": "かわいい",
+   "k": "可愛い",
+   "en": [
+    "cute; adorable; charming",
+    "dear; precious; darling",
+    "innocent; childlike; childish"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1382590,
+   "w": "石鹸",
+   "r": "せっけん",
+   "en": [
+    "soap"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1160790,
+   "w": "一",
+   "r": "いち",
+   "en": [
+    "one; 1",
+    "best",
+    "first; foremost"
+   ],
+   "pos": [
+    "num",
+    "pref"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1451750,
+   "w": "同じ",
+   "r": "おなじ",
+   "en": [
+    "same; identical; equal",
+    "anyway; in any case; if one must ..."
+   ],
+   "pos": [
+    "adj-f",
+    "adj-na"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1343460,
+   "w": "暑い",
+   "r": "あつい",
+   "en": [
+    "hot; warm; sultry",
+    "passionate; impassioned; burning (desire, etc.)",
+    "on everybody's mind; on the radar; du jour"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1252560,
+   "w": "軽い",
+   "r": "かるい",
+   "en": [
+    "light (i.e. not heavy); feeling light (i.e. offering little resistance, moving easily)",
+    "light (i.e. of foot); effortless; nimble",
+    "non-serious; minor; unimportant"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1449540,
+   "w": "答える",
+   "r": "こたえる",
+   "en": [
+    "to answer; to reply"
+   ],
+   "pos": [
+    "v1",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1228260,
+   "w": "吸う",
+   "r": "すう",
+   "en": [
+    "to breathe in; to inhale; to smoke (a cigarette, etc.)",
+    "to suck; to sip; to slurp",
+    "to absorb; to soak up"
+   ],
+   "pos": [
+    "v5u",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1177800,
+   "w": "遠い",
+   "r": "とおい",
+   "en": [
+    "far; distant; far away",
+    "distant (past); remote (in time); remote",
+    "distant (relationship or kinship); having little to do (with someone)"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1375610,
+   "w": "なる",
+   "r": "なる",
+   "k": "成る",
+   "en": [
+    "to become; to get; to grow",
+    "to result in; to turn out; to end up",
+    "to consist of; to be composed of; to be made up of"
+   ],
+   "pos": [
+    "v5r",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1178940,
+   "w": "汚い",
+   "r": "きたない",
+   "en": [
+    "dirty; filthy; foul",
+    "disordered; messy; untidy",
+    "indecent (language, etc.); dirty; vulgar"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1169870,
+   "w": "飲む",
+   "r": "のむ",
+   "en": [
+    "to drink; to swallow; to take (medicine)",
+    "to smoke (tobacco)",
+    "to swallow up; to engulf"
+   ],
+   "pos": [
+    "v5m",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1259210,
+   "w": "見せる",
+   "r": "みせる",
+   "en": [
+    "to show; to display",
+    "to make (something or someone) look ...; to present an appearance of ...",
+    "to make (something) worth watching; to be entertaining"
+   ],
+   "pos": [
+    "v1",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1507090,
+   "w": "ひらがな",
+   "r": "ひらがな",
+   "k": "平仮名",
+   "en": [
+    "hiragana"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1221270,
+   "w": "帰る",
+   "r": "かえる",
+   "en": [
+    "to return; to come home; to go home",
+    "to leave (of a guest, customer, etc.)",
+    "to get home; to get to home plate"
+   ],
+   "pos": [
+    "v5r",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1557630,
+   "w": "零",
+   "r": "れい",
+   "en": [
+    "zero; nought"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1236900,
+   "w": "教える",
+   "r": "おしえる",
+   "en": [
+    "to teach; to instruct",
+    "to tell; to inform; to show",
+    "to preach"
+   ],
+   "pos": [
+    "v1",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1597150,
+   "w": "タバコ",
+   "r": "タバコ",
+   "k": "煙草",
+   "en": [
+    "tobacco; cigarette; cigar",
+    "tobacco plant (Nicotiana tabacum)"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1597350,
+   "w": "だんだん",
+   "r": "だんだん",
+   "k": "段々",
+   "en": [
+    "gradually; by degrees; little by little",
+    "steps; stairs; staircase"
+   ],
+   "pos": [
+    "adv",
+    "adv-to"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1218380,
+   "w": "危ない",
+   "r": "あぶない",
+   "en": [
+    "dangerous; risky; hazardous",
+    "in danger; in jeopardy; critical",
+    "uncertain; unreliable; insecure"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1350040,
+   "w": "消える",
+   "r": "きえる",
+   "en": [
+    "to disappear; to vanish; to go out of sight",
+    "to go out (of a fire, light, etc.); to die; to turn off (e.g. of a TV screen)",
+    "to fade (of a feeling, impression, etc.); to vanish (e.g. of hope)"
+   ],
+   "pos": [
+    "v1",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1157000,
+   "w": "やさしい",
+   "r": "やさしい",
+   "k": "易しい",
+   "en": [
+    "easy; plain; simple"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1606560,
+   "w": "わかる",
+   "r": "わかる",
+   "k": "分かる",
+   "en": [
+    "to understand; to comprehend; to grasp",
+    "to become clear; to be known; to be discovered",
+    "I know!; I think so too!"
+   ],
+   "pos": [
+    "v5r",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1576050,
+   "w": "一昨日",
+   "r": "おととい",
+   "en": [
+    "day before yesterday"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1002120,
+   "w": "おまわりさん",
+   "r": "おまわりさん",
+   "k": "お巡りさん",
+   "en": [
+    "police officer"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1210360,
+   "w": "寒い",
+   "r": "さむい",
+   "en": [
+    "cold (e.g. weather)",
+    "uninteresting (esp. joke); lame; dull"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1584910,
+   "w": "夕飯",
+   "r": "ゆうはん",
+   "en": [
+    "evening meal; dinner; supper"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1182030,
+   "w": "黄色い",
+   "r": "きいろい",
+   "en": [
+    "yellow",
+    "high-pitched (voice); shrill"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1291330,
+   "w": "差す",
+   "r": "さす",
+   "en": [
+    "to shine",
+    "to be visible",
+    "to be tinged with"
+   ],
+   "pos": [
+    "v5s",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1444680,
+   "w": "渡る",
+   "r": "わたる",
+   "en": [
+    "to cross over; to go across",
+    "to extend; to cover; to range"
+   ],
+   "pos": [
+    "v5r",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1352320,
+   "w": "上げる",
+   "r": "あげる",
+   "en": [
+    "to raise; to elevate",
+    "to move something (to a higher place); to put onto (e.g. a shelf)",
+    "to increase (price, quality, status, etc.); to raise (a wage)"
+   ],
+   "pos": [
+    "v1",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1154330,
+   "w": "暗い",
+   "r": "くらい",
+   "en": [
+    "dark; gloomy; murky",
+    "depressed; dispirited; down in the dumps",
+    "dark (in colour); dull"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1436560,
+   "w": "閉まる",
+   "r": "しまる",
+   "en": [
+    "to be shut; to close; to be closed",
+    "to be locked",
+    "to tighten; to be tightened"
+   ],
+   "pos": [
+    "v5r",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1333070,
+   "w": "習う",
+   "r": "ならう",
+   "en": [
+    "to take lessons in; to be taught; to learn (from a teacher)"
+   ],
+   "pos": [
+    "v5u",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1587850,
+   "w": "いろいろ",
+   "r": "いろいろ",
+   "k": "色々",
+   "en": [
+    "various; a variety of; all sorts of",
+    "variously; in various ways; in many ways",
+    "various things; this and that"
+   ],
+   "pos": [
+    "adj-na",
+    "adj-no"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1457560,
+   "w": "曇る",
+   "r": "くもる",
+   "en": [
+    "to get cloudy; to cloud over; to become overcast",
+    "to cloud up; to fog up; to mist up",
+    "to be gloomy; to be clouded (expression); to be downcast"
+   ],
+   "pos": [
+    "v5r",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1238460,
+   "w": "そば",
+   "r": "そば",
+   "k": "蕎麦",
+   "en": [
+    "buckwheat (Fagopyrum esculentum)",
+    "soba",
+    "Chinese-style wheat noodles"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1415870,
+   "w": "たくさん",
+   "r": "たくさん",
+   "k": "沢山",
+   "en": [
+    "a lot; lots; plenty",
+    "enough; sufficient",
+    "enough; too many; too much"
+   ],
+   "pos": [
+    "adj-no",
+    "adj-na",
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1153520,
+   "w": "飴",
+   "r": "あめ",
+   "en": [
+    "(hard) candy; toffee",
+    "rice-sugar; sugar made from the starch of rice, potatoes, etc.",
+    "amber; yellowish-brown"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1407460,
+   "w": "多い",
+   "r": "おおい",
+   "en": [
+    "many; numerous; a lot",
+    "large amount of; large quantity of; a lot",
+    "frequent; common"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1416400,
+   "w": "脱ぐ",
+   "r": "ぬぐ",
+   "en": [
+    "to take off (clothes, shoes, etc.); to undress"
+   ],
+   "pos": [
+    "v5g",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1529520,
+   "w": "ない",
+   "r": "ない",
+   "k": "無い",
+   "en": [
+    "nonexistent; not being (there)",
+    "unowned; not had; unpossessed",
+    "unique"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1484330,
+   "w": "かぶる",
+   "r": "かぶる",
+   "k": "被る",
+   "en": [
+    "to put on (one's head); to wear; to have on",
+    "to be covered with (dust, snow, etc.); to pour (water, etc.) on oneself; to dash on oneself",
+    "to bear (e.g. someone's debts, faults, etc.); to take (blame); to assume (responsibility)"
+   ],
+   "pos": [
+    "v5r",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1298520,
+   "w": "冊",
+   "r": "さつ",
+   "en": [
+    "counter for books",
+    "volume"
+   ],
+   "pos": [
+    "ctr"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1310730,
+   "w": "死ぬ",
+   "r": "しぬ",
+   "en": [
+    "to die; to pass away",
+    "to lose spirit; to lose vigor; to look dead",
+    "to cease; to stop"
+   ],
+   "pos": [
+    "v5n",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1207590,
+   "w": "かかる",
+   "r": "かかる",
+   "k": "掛かる",
+   "en": [
+    "to take (a resource, e.g. time or money)",
+    "to hang",
+    "to come into view; to arrive"
+   ],
+   "pos": [
+    "v5r",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1270590,
+   "w": "ご飯",
+   "r": "ごはん",
+   "en": [
+    "cooked rice",
+    "meal"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1334040,
+   "w": "住む",
+   "r": "すむ",
+   "en": [
+    "to live (of humans); to reside; to inhabit"
+   ],
+   "pos": [
+    "v5m",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1237680,
+   "w": "狭い",
+   "r": "せまい",
+   "en": [
+    "narrow; confined; small",
+    "limited; narrow-minded; confining"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1577140,
+   "w": "どこ",
+   "r": "どこ",
+   "k": "何処",
+   "en": [
+    "where; what place",
+    "how much (long, far); what extent"
+   ],
+   "pos": [
+    "pn"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1524610,
+   "w": "枚",
+   "r": "まい",
+   "en": [
+    "counter for thin, flat objects (e.g. sheets of paper, plates, coins)",
+    "counter for portions of gyōza or soba",
+    "counter for ranks"
+   ],
+   "pos": [
+    "ctr"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1153670,
+   "w": "安い",
+   "r": "やすい",
+   "en": [
+    "cheap; inexpensive",
+    "calm; peaceful; quiet"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1151260,
+   "w": "悪い",
+   "r": "わるい",
+   "en": [
+    "bad; poor; undesirable",
+    "poor (quality); inferior; insufficient",
+    "evil; sinful"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 2085080,
+   "w": "ああ",
+   "r": "ああ",
+   "en": [
+    "like that; so"
+   ],
+   "pos": [
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 2013900,
+   "w": "赤",
+   "r": "あか",
+   "en": [
+    "red; crimson; scarlet",
+    "red-containing colour (e.g. brown, pink, orange)",
+    "Red (i.e. communist)"
+   ],
+   "pos": [
+    "n",
+    "adj-no"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1586270,
+   "w": "開く",
+   "r": "あく",
+   "en": [
+    "to open (e.g. doors)",
+    "to open (e.g. business, etc.)",
+    "to be empty"
+   ],
+   "pos": [
+    "v5k",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1202450,
+   "w": "開ける",
+   "r": "あける",
+   "en": [
+    "to open (a door, etc.); to unwrap (e.g. parcel, package); to unlock",
+    "to open (for business, etc.)",
+    "to empty; to remove; to make space"
+   ],
+   "pos": [
+    "v1",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1586330,
+   "w": "朝ごはん",
+   "r": "あさごはん",
+   "en": [
+    "breakfast"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1584640,
+   "w": "明後日",
+   "r": "あさって",
+   "en": [
+    "day after tomorrow",
+    "wrong (e.g. direction)"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1000320,
+   "w": "あそこ",
+   "r": "あそこ",
+   "k": "彼処",
+   "en": [
+    "there; over there; that place",
+    "genitals; private parts; nether regions",
+    "that far; that much; that point"
+   ],
+   "pos": [
+    "pn"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1582310,
+   "w": "頭",
+   "r": "あたま",
+   "en": [
+    "head",
+    "hair (on one's head)",
+    "mind; brains; intellect"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1223615,
+   "w": "あなた",
+   "r": "あなた",
+   "k": "貴方",
+   "en": [
+    "you",
+    "dear; honey"
+   ],
+   "pos": [
+    "pn"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1000420,
+   "w": "あの",
+   "r": "あの",
+   "k": "彼の",
+   "en": [
+    "that; those; the"
+   ],
+   "pos": [
+    "adj-pn"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1017760,
+   "w": "アパート",
+   "r": "アパート",
+   "en": [
+    "apartment building; apartment block; apartment house",
+    "apartment"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1514320,
+   "w": "歩く",
+   "r": "あるく",
+   "en": [
+    "to walk"
+   ],
+   "pos": [
+    "v5k",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1000580,
+   "w": "あれ",
+   "r": "あれ",
+   "k": "彼",
+   "en": [
+    "that; that thing",
+    "that person",
+    "then; that time"
+   ],
+   "pos": [
+    "pn"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 2820690,
+   "w": "いい",
+   "r": "いい",
+   "en": [
+    "good; excellent; fine",
+    "sufficient; enough; ready",
+    "profitable (deal, business offer, etc.); beneficial"
+   ],
+   "pos": [
+    "adj-ix"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1191730,
+   "w": "家",
+   "r": "いえ",
+   "en": [
+    "house; residence; dwelling",
+    "family; household",
+    "lineage; family name"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 2845606,
+   "w": "いかが",
+   "r": "いかが",
+   "k": "如何",
+   "en": [
+    "how; in what way; how about",
+    "questionable"
+   ],
+   "pos": [
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1578850,
+   "w": "行く",
+   "r": "いく",
+   "en": [
+    "to go; to move (towards); to head (towards)",
+    "to move through; to travel across; to walk along (e.g. a road)",
+    "to go (well, badly, etc.); to proceed; to turn out"
+   ],
+   "pos": [
+    "v5k-s",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1021180,
+   "w": "イクラ",
+   "r": "イクラ",
+   "en": [
+    "salted salmon roe"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1576260,
+   "w": "一日",
+   "r": "いちにち",
+   "en": [
+    "one day",
+    "all day (long); the whole day; from morning till night",
+    "first day of the month"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1268570,
+   "w": "５日",
+   "r": "いつか",
+   "en": [
+    "5th day of the month",
+    "five days"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1188890,
+   "w": "いつも",
+   "r": "いつも",
+   "k": "何時も",
+   "en": [
+    "always; all the time; at all times",
+    "never",
+    "usual; regular; habitual"
+   ],
+   "pos": [
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1577980,
+   "w": "いる",
+   "r": "いる",
+   "k": "居る",
+   "en": [
+    "to be (of animate objects); to exist",
+    "to stay",
+    "to be ...-ing"
+   ],
+   "pos": [
+    "v1",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1465610,
+   "w": "入れる",
+   "r": "いれる",
+   "en": [
+    "to put in; to let in; to take in",
+    "to admit; to accept; to employ",
+    "to accept; to comply; to grant"
+   ],
+   "pos": [
+    "v1",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1352130,
+   "w": "上",
+   "r": "うえ",
+   "en": [
+    "above; over; up",
+    "top; summit; upper part",
+    "surface; on (top of)"
+   ],
+   "pos": [
+    "n",
+    "adj-no"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1191740,
+   "w": "うち",
+   "r": "うち",
+   "k": "家",
+   "en": [
+    "one's house; one's home; one's family",
+    "house"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1378690,
+   "w": "生まれる",
+   "r": "うまれる",
+   "en": [
+    "to be born"
+   ],
+   "pos": [
+    "v1",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1481920,
+   "w": "うるさい",
+   "r": "うるさい",
+   "k": "煩い",
+   "en": [
+    "noisy; loud",
+    "annoying; troublesome; tiresome",
+    "fussy; finicky; picky"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1001140,
+   "w": "ええ",
+   "r": "ええ",
+   "en": [
+    "yes; that is correct; right",
+    "um; errr; well",
+    "huh?"
+   ],
+   "pos": [
+    "int"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1030630,
+   "w": "エレベーター",
+   "r": "エレベーター",
+   "en": [
+    "elevator; lift",
+    "elevator"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 2826528,
+   "w": "お",
+   "r": "お",
+   "k": "御",
+   "en": [
+    "honorific/polite/humble prefix"
+   ],
+   "pos": [
+    "pref"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1486650,
+   "w": "おいしい",
+   "r": "おいしい",
+   "k": "美味しい",
+   "en": [
+    "good(-tasting); nice; delicious",
+    "attractive (offer, opportunity, etc.); appealing; convenient"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1001710,
+   "w": "お菓子",
+   "r": "おかし",
+   "en": [
+    "confections; sweets; candy"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1421850,
+   "w": "置く",
+   "r": "おく",
+   "en": [
+    "to put; to place",
+    "to leave (behind)",
+    "to establish (an organization, a facility, a position, etc.); to set up"
+   ],
+   "pos": [
+    "v5k",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1179330,
+   "w": "奥さん",
+   "r": "おくさん",
+   "en": [
+    "wife; your wife; his wife"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1329015,
+   "w": "お酒",
+   "r": "おさけ",
+   "en": [
+    "alcohol; sake"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1299685,
+   "w": "お皿",
+   "r": "おさら",
+   "en": [
+    "plate; dish"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1002320,
+   "w": "おじいさん",
+   "r": "おじいさん",
+   "k": "お祖父さん",
+   "en": [
+    "grandfather",
+    "male senior-citizen; old man"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 2261490,
+   "w": "おじさん",
+   "r": "おじさん",
+   "k": "伯父さん",
+   "en": [
+    "uncle",
+    "old man; mister",
+    "manybar goatfish (Parupeneus multifasciatus)"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1002100,
+   "w": "お手洗い",
+   "r": "おてあらい",
+   "en": [
+    "toilet; restroom; lavatory"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1002610,
+   "w": "お腹",
+   "r": "おなか",
+   "en": [
+    "belly; abdomen; stomach"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1001830,
+   "w": "お兄さん",
+   "r": "おにいさん",
+   "en": [
+    "older brother; elder brother",
+    "young man; buddy; fella"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1001990,
+   "w": "お姉さん",
+   "r": "おねえさん",
+   "en": [
+    "older sister; elder sister",
+    "young lady",
+    "miss"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1002330,
+   "w": "おばあさん",
+   "r": "おばあさん",
+   "k": "お祖母さん",
+   "en": [
+    "grandmother",
+    "old woman; female senior citizen"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 2261500,
+   "w": "おばさん",
+   "r": "おばさん",
+   "k": "伯母さん",
+   "en": [
+    "aunt"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 2220600,
+   "w": "お風呂",
+   "r": "おふろ",
+   "en": [
+    "bath"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1513065,
+   "w": "お弁当",
+   "r": "おべんとう",
+   "en": [
+    "bento"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1343950,
+   "w": "書く",
+   "r": "かく",
+   "en": [
+    "to write; to compose; to pen",
+    "to draw; to paint"
+   ],
+   "pos": [
+    "v5k",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1194480,
+   "w": "ヶ月",
+   "r": "かげつ",
+   "en": [
+    "counter for months"
+   ],
+   "pos": [
+    "ctr"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1499720,
+   "w": "風",
+   "r": "かぜ",
+   "en": [
+    "wind; breeze; draught",
+    "manner; behaviour; behavior",
+    "cold; influenza"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1516925,
+   "w": "方",
+   "r": "かた",
+   "en": [
+    "direction; way",
+    "person; lady; gentleman",
+    "method of; manner of; way of"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 2871532,
+   "w": "月",
+   "r": "がつ",
+   "en": [
+    "month (of the year)"
+   ],
+   "pos": [
+    "n-suf"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1037670,
+   "w": "カップ",
+   "r": "カップ",
+   "en": [
+    "cup (drinking vessel, measure, brassiere, prize, etc.)"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1208910,
+   "w": "かばん",
+   "r": "かばん",
+   "k": "鞄",
+   "en": [
+    "bag; satchel; briefcase"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1038350,
+   "w": "カメラ",
+   "r": "カメラ",
+   "en": [
+    "camera"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1631750,
+   "w": "がる",
+   "r": "がる",
+   "en": [
+    "to show signs of being; to feel; to think",
+    "to behave as if one were; to pretend; to act as if"
+   ],
+   "pos": [
+    "suf",
+    "v5r"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1039140,
+   "w": "咖哩",
+   "r": "カレー",
+   "en": [
+    "curry (esp. Japanese curry)",
+    "rice and curry"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1039220,
+   "w": "カレンダー",
+   "r": "カレンダー",
+   "en": [
+    "calendar",
+    "calender (machine for flattening things)"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1581310,
+   "w": "側",
+   "r": "がわ",
+   "en": [
+    "side (of something, or taking someone's side); part",
+    "(watch) case"
+   ],
+   "pos": [
+    "n",
+    "suf"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1591110,
+   "w": "聞く",
+   "r": "きく",
+   "en": [
+    "to hear",
+    "to listen (e.g. to music)",
+    "to ask; to enquire; to query"
+   ],
+   "pos": [
+    "v5k",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1042820,
+   "w": "ギター",
+   "r": "ギター",
+   "en": [
+    "guitar"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1591900,
+   "w": "綺麗",
+   "r": "きれい",
+   "en": [
+    "pretty; lovely; beautiful",
+    "clean; clear; pure",
+    "completely; entirely"
+   ],
+   "pos": [
+    "adj-na"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1042610,
+   "w": "キロ",
+   "r": "キロ",
+   "en": [
+    "kilo-; 1000",
+    "kilogram; kilogramme",
+    "kilometre; kilometer"
+   ],
+   "pos": [
+    "pref"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1042620,
+   "w": "キログラム",
+   "r": "キログラム",
+   "k": "瓩",
+   "en": [
+    "kilogram; kilogramme"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1042650,
+   "w": "キロメートル",
+   "r": "キロメートル",
+   "k": "粁",
+   "en": [
+    "kilometer; kilometre"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1243320,
+   "w": "金曜日",
+   "r": "きんようび",
+   "en": [
+    "Friday"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1154340,
+   "w": "位",
+   "r": "くらい",
+   "en": [
+    "approximately; about; around",
+    "to (about) the extent that; (almost) enough that; so ... that ...",
+    "as ... as ...; like"
+   ],
+   "pos": [
+    "suf",
+    "prt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1044070,
+   "w": "クラス",
+   "r": "クラス",
+   "en": [
+    "class"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1046810,
+   "w": "グラム",
+   "r": "グラム",
+   "k": "瓦",
+   "en": [
+    "gram; gramme"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1255890,
+   "w": "月曜日",
+   "r": "げつようび",
+   "en": [
+    "Monday"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1264740,
+   "w": "個",
+   "r": "こ",
+   "en": [
+    "counter for (small) things or pieces",
+    "counter for military units",
+    "(an) individual; one person"
+   ],
+   "pos": [
+    "ctr"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1049000,
+   "w": "コート",
+   "r": "コート",
+   "en": [
+    "coat",
+    "coating"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1049180,
+   "w": "コーヒー",
+   "r": "コーヒー",
+   "k": "珈琲",
+   "en": [
+    "coffee"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1288810,
+   "w": "ここ",
+   "r": "ここ",
+   "k": "此処",
+   "en": [
+    "here; this place",
+    "this point; here; now",
+    "these past ... (e.g. three years); these last ..."
+   ],
+   "pos": [
+    "pn"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1243850,
+   "w": "９日",
+   "r": "ここのか",
+   "en": [
+    "9th day of the month",
+    "nine days"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1004500,
+   "w": "こちら",
+   "r": "こちら",
+   "k": "此方",
+   "en": [
+    "this way; this direction",
+    "here",
+    "this (one)"
+   ],
+   "pos": [
+    "pn"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1050390,
+   "w": "コップ",
+   "r": "コップ",
+   "k": "洋杯",
+   "en": [
+    "glass (drinking vessel); tumbler",
+    "cups (suit)"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1582920,
+   "w": "この",
+   "r": "この",
+   "k": "此の",
+   "en": [
+    "this",
+    "last (couple of years, etc.); these; past",
+    "you (as in \"you liar\")"
+   ],
+   "pos": [
+    "adj-pn"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1050590,
+   "w": "コピー",
+   "r": "コピー",
+   "en": [
+    "copy; photocopy",
+    "book jacket blurb",
+    "(advertising) slogan"
+   ],
+   "pos": [
+    "n",
+    "vs",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1628530,
+   "w": "これ",
+   "r": "これ",
+   "k": "此れ",
+   "en": [
+    "this; this one",
+    "this person",
+    "now; this point (in time)"
+   ],
+   "pos": [
+    "pn"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1579080,
+   "w": "ころ",
+   "r": "ころ",
+   "k": "頃",
+   "en": [
+    "(approximate) time; around; about",
+    "suitable time (or condition)",
+    "time of year; season"
+   ],
+   "pos": [
+    "n",
+    "adv",
+    "n-suf"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1004880,
+   "w": "こんな",
+   "r": "こんな",
+   "en": [
+    "this sort of; this kind of; like this"
+   ],
+   "pos": [
+    "adj-pn"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1005110,
+   "w": "さあ",
+   "r": "さあ",
+   "en": [
+    "come (on); come now; come along",
+    "all right; right; okay",
+    "well; hmm; uh"
+   ],
+   "pos": [
+    "int"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1387210,
+   "w": "先",
+   "r": "さき",
+   "en": [
+    "point; tip; end",
+    "head (of a line); front",
+    "first; before; ahead (of)"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1297210,
+   "w": "咲く",
+   "r": "さく",
+   "en": [
+    "to bloom; to flower; to blossom"
+   ],
+   "pos": [
+    "v5k",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1005340,
+   "w": "さん",
+   "r": "さん",
+   "en": [
+    "Mr; Mrs; Miss"
+   ],
+   "pos": [
+    "suf"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 2020680,
+   "w": "時",
+   "r": "じ",
+   "en": [
+    "hour; o'clock",
+    "(specified) time; when ...; during ..."
+   ],
+   "pos": [
+    "suf"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1505990,
+   "w": "しかし",
+   "r": "しかし",
+   "k": "然し",
+   "en": [
+    "however; but"
+   ],
+   "pos": [
+    "conj"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1184140,
+   "w": "下",
+   "r": "した",
+   "en": [
+    "below; down; under",
+    "bottom",
+    "beneath; underneath"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1315140,
+   "w": "字引",
+   "r": "じびき",
+   "en": [
+    "dictionary"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1005900,
+   "w": "じゃあ",
+   "r": "じゃあ",
+   "en": [
+    "then; well; so"
+   ],
+   "pos": [
+    "conj"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1061520,
+   "w": "シャツ",
+   "r": "シャツ",
+   "en": [
+    "shirt (undergarment); undershirt; singlet",
+    "shirt (outerwear; usu. with collar and buttons)"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1061820,
+   "w": "シャワー",
+   "r": "シャワー",
+   "en": [
+    "shower"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 2083570,
+   "w": "中",
+   "r": "じゅう",
+   "en": [
+    "(all) through (e.g. the night); throughout (e.g. the year); all ... long",
+    "within (e.g. the week); in the course of (e.g. today); by the end of",
+    "all over; throughout (e.g. the world)"
+   ],
+   "pos": [
+    "suf"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1366410,
+   "w": "人",
+   "r": "じん",
+   "en": [
+    "-ian (e.g. Italian); -ite (e.g. Tokyoite)",
+    "-er (e.g. performer, etc.); person working with ...",
+    "man; person; people"
+   ],
+   "pos": [
+    "suf"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1372190,
+   "w": "水曜日",
+   "r": "すいようび",
+   "en": [
+    "Wednesday"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1067470,
+   "w": "スカート",
+   "r": "スカート",
+   "en": [
+    "skirt"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1277450,
+   "w": "好き",
+   "r": "すき",
+   "en": [
+    "liking; being fond of; to one's liking",
+    "liking (romantically); being in love with; beloved",
+    "faddism; eccentricity"
+   ],
+   "pos": [
+    "adj-na",
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 2452980,
+   "w": "すぎ",
+   "r": "すぎ",
+   "k": "須義",
+   "en": [
+    "cobia (Rachycentron canadum); sergeant fish"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1430620,
+   "w": "すぐに",
+   "r": "すぐに",
+   "k": "直ぐに",
+   "en": [
+    "immediately; right away; at once"
+   ],
+   "pos": [
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 2006560,
+   "w": "ずつ",
+   "r": "ずつ",
+   "k": "宛",
+   "en": [
+    "apiece; each",
+    "at a time; piecemeal"
+   ],
+   "pos": [
+    "suf"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1070790,
+   "w": "ストーブ",
+   "r": "ストーブ",
+   "en": [
+    "(room) heater; stove"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1072590,
+   "w": "スプーン",
+   "r": "スプーン",
+   "en": [
+    "spoon",
+    "spoon lure"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1073210,
+   "w": "スポーツ",
+   "r": "スポーツ",
+   "en": [
+    "sport; sports"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1074260,
+   "w": "ズボン",
+   "r": "ズボン",
+   "k": "洋袴",
+   "en": [
+    "trousers; pants"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1157170,
+   "w": "する",
+   "r": "する",
+   "k": "為る",
+   "en": [
+    "to do; to carry out; to perform",
+    "to cause to become; to make (into); to turn (into)",
+    "to serve as; to act as; to work as"
+   ],
+   "pos": [
+    "vs-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1074270,
+   "w": "セーター",
+   "r": "セーター",
+   "en": [
+    "sweater; jumper"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 2839962,
+   "w": "０",
+   "r": "ゼロ",
+   "en": [
+    "zero; 0; nought",
+    "nothing; zilch"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1006610,
+   "w": "そう",
+   "r": "そう",
+   "en": [
+    "appearing that; seeming that; looking like"
+   ],
+   "pos": [
+    "aux",
+    "adj-na"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1612860,
+   "w": "そうして",
+   "r": "そうして",
+   "k": "然うして",
+   "en": [
+    "and; like that"
+   ],
+   "pos": [
+    "conj"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 2837492,
+   "w": "そうです",
+   "r": "そうです",
+   "en": [
+    "that is so; that is right; it looks to me",
+    "people say that; it is said that; I hear that"
+   ],
+   "pos": [
+    "int"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1006670,
+   "w": "そこ",
+   "r": "そこ",
+   "k": "其処",
+   "en": [
+    "there (place relatively near listener)",
+    "there (place just mentioned); that place",
+    "then (of some incident just spoken of); that (of point just raised)"
+   ],
+   "pos": [
+    "pn"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1006730,
+   "w": "そして",
+   "r": "そして",
+   "k": "而して",
+   "en": [
+    "and; and then; thus"
+   ],
+   "pos": [
+    "conj"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1006780,
+   "w": "そちら",
+   "r": "そちら",
+   "k": "其方",
+   "en": [
+    "that way; that direction",
+    "there",
+    "that (one)"
+   ],
+   "pos": [
+    "pn"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1006830,
+   "w": "その",
+   "r": "その",
+   "k": "其の",
+   "en": [
+    "that; the",
+    "part (as in \"part two\")",
+    "um ...; er ...; uh ..."
+   ],
+   "pos": [
+    "adj-pn"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1245290,
+   "w": "空",
+   "r": "そら",
+   "en": [
+    "sky; the air; the heavens",
+    "weather",
+    "far-off place; distant place"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1006970,
+   "w": "それ",
+   "r": "それ",
+   "k": "其れ",
+   "en": [
+    "that; it",
+    "then; that point (in time); that time"
+   ],
+   "pos": [
+    "pn"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1006980,
+   "w": "其れから",
+   "r": "それから",
+   "en": [
+    "and then; after that"
+   ],
+   "pos": [
+    "exp"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1406050,
+   "w": "其れでは",
+   "r": "それでは",
+   "en": [
+    "well, ...; right, ...; now, ...",
+    "so; then",
+    "that way (would mean ...); if that is the case; in that case"
+   ],
+   "pos": [
+    "conj"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1076190,
+   "w": "タクシー",
+   "r": "タクシー",
+   "en": [
+    "taxi"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1007340,
+   "w": "だけ",
+   "r": "だけ",
+   "k": "丈",
+   "en": [
+    "only; just; merely",
+    "as much as; to the extent of; enough to"
+   ],
+   "pos": [
+    "prt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1416220,
+   "w": "たち",
+   "r": "たち",
+   "k": "達",
+   "en": [
+    "pluralizing suffix (esp. for people and animals; formerly honorific)"
+   ],
+   "pos": [
+    "suf"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1419110,
+   "w": "誕生日",
+   "r": "たんじょうび",
+   "en": [
+    "birthday"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 2136180,
+   "w": "小さな",
+   "r": "ちいさな",
+   "en": [
+    "small; little; tiny"
+   ],
+   "pos": [
+    "adj-pn"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1242160,
+   "w": "近く",
+   "r": "ちかく",
+   "en": [
+    "near; neighbourhood; neighborhood",
+    "nearly (e.g. \"it took nearly one year\"); close to",
+    "shortly; soon"
+   ],
+   "pos": [
+    "n",
+    "adj-no",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1620400,
+   "w": "中",
+   "r": "ちゅう",
+   "en": [
+    "medium (size); average (grade, level, etc.); middle",
+    "in; within; out of (e.g. ten people)",
+    "during; while; in (the course of)"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1427340,
+   "w": "ちょうど",
+   "r": "ちょうど",
+   "k": "丁度",
+   "en": [
+    "exactly; precisely; just",
+    "just (like); as if; as though"
+   ],
+   "pos": [
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1163940,
+   "w": "ちょっと",
+   "r": "ちょっと",
+   "k": "一寸",
+   "en": [
+    "a little; a bit; slightly",
+    "just a minute; for a moment; briefly",
+    "somewhat; rather; fairly"
+   ],
+   "pos": [
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 2225040,
+   "w": "１日",
+   "r": "ついたち",
+   "en": [
+    "first day of the month; the first of the month"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1316380,
+   "w": "次",
+   "r": "つぎ",
+   "en": [
+    "next; following; subsequent",
+    "stage; station"
+   ],
+   "pos": [
+    "n",
+    "adj-no"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1422970,
+   "w": "着く",
+   "r": "つく",
+   "en": [
+    "to arrive at; to reach",
+    "to sit on; to sit at (e.g. the table)"
+   ],
+   "pos": [
+    "v5k",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1495770,
+   "w": "つける",
+   "r": "つける",
+   "k": "付ける",
+   "en": [
+    "to attach; to join; to connect",
+    "to furnish (a house with)",
+    "to wear; to put on"
+   ],
+   "pos": [
+    "v1",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1240825,
+   "w": "勤める",
+   "r": "つとめる",
+   "en": [
+    "to work (for, at, in); to be employed (at); to serve (as)",
+    "to finish (a term); to serve (e.g. a sentence); to serve out (e.g. an apprenticeship)",
+    "to conduct (a ceremony); to perform (a Buddhist memorial service)"
+   ],
+   "pos": [
+    "v1",
+    "vt",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1008190,
+   "w": "つまらない",
+   "r": "つまらない",
+   "k": "詰らない",
+   "en": [
+    "dull; uninteresting; boring",
+    "insignificant; unimportant; trifling",
+    "absurd; foolish; silly"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1078750,
+   "w": "テープ",
+   "r": "テープ",
+   "en": [
+    "tape"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1078630,
+   "w": "テーブル",
+   "r": "テーブル",
+   "en": [
+    "table"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1078810,
+   "w": "テープレコーダー",
+   "r": "テープレコーダー",
+   "en": [
+    "tape recorder"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1079760,
+   "w": "テスト",
+   "r": "テスト",
+   "en": [
+    "test (of ability, knowledge, etc.); exam; examination",
+    "test (of performance, quality, etc.); trial",
+    "rehearsal"
+   ],
+   "pos": [
+    "n",
+    "vs",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1008450,
+   "w": "では",
+   "r": "では",
+   "en": [
+    "then; well; so",
+    "bye then",
+    "at; in; by"
+   ],
+   "pos": [
+    "conj"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1083590,
+   "w": "デパート",
+   "r": "デパート",
+   "en": [
+    "department store",
+    "department"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1008460,
+   "w": "でも",
+   "r": "でも",
+   "en": [
+    "but; however; though",
+    "even",
+    "however; no matter how; even if"
+   ],
+   "pos": [
+    "conj"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1080510,
+   "w": "テレビ",
+   "r": "テレビ",
+   "en": [
+    "television; TV",
+    "TV program; TV programme; TV broadcast"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1445160,
+   "w": "度",
+   "r": "ど",
+   "en": [
+    "degree (angle, temperature, scale, etc.)",
+    "counter for occurrences",
+    "strength (of glasses); glasses prescription"
+   ],
+   "pos": [
+    "n",
+    "n-suf"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1087820,
+   "w": "ドア",
+   "r": "ドア",
+   "en": [
+    "door"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1084810,
+   "w": "トイレ",
+   "r": "トイレ",
+   "en": [
+    "toilet; restroom; bathroom",
+    "going to the toilet; relieving oneself"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1008910,
+   "w": "どう",
+   "r": "どう",
+   "k": "如何",
+   "en": [
+    "how; in what way; how about"
+   ],
+   "pos": [
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1466940,
+   "w": "どうして",
+   "r": "どうして",
+   "k": "如何して",
+   "en": [
+    "how; in what way; by what means",
+    "why; for what reason; for what purpose",
+    "cannot possibly"
+   ],
+   "pos": [
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1189130,
+   "w": "どうぞ",
+   "r": "どうぞ",
+   "en": [
+    "please; kindly; pray",
+    "by all means; certainly; of course",
+    "here you are"
+   ],
+   "pos": [
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1009000,
+   "w": "どうも",
+   "r": "どうも",
+   "en": [
+    "thank you; thanks",
+    "much (thanks); very (sorry); quite (regret)",
+    "quite; really; mostly"
+   ],
+   "pos": [
+    "int"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1335000,
+   "w": "１０日",
+   "r": "とおか",
+   "en": [
+    "10th day of the month",
+    "ten days"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1343100,
+   "w": "所",
+   "r": "ところ",
+   "en": [
+    "place; spot; scene",
+    "address",
+    "district; area; locality"
+   ],
+   "pos": [
+    "n",
+    "adv",
+    "suf"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1189360,
+   "w": "どちら",
+   "r": "どちら",
+   "k": "何方",
+   "en": [
+    "which way; which direction; where",
+    "which one (esp. of two alternatives)",
+    "who"
+   ],
+   "pos": [
+    "pn"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1008630,
+   "w": "とても",
+   "r": "とても",
+   "k": "迚も",
+   "en": [
+    "very; awfully; exceedingly",
+    "(not) at all; by no means; simply (cannot)"
+   ],
+   "pos": [
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1189370,
+   "w": "どなた",
+   "r": "どなた",
+   "k": "何方",
+   "en": [
+    "who"
+   ],
+   "pos": [
+    "pn"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1445590,
+   "w": "土曜日",
+   "r": "どようび",
+   "en": [
+    "Saturday"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1009290,
+   "w": "どれ",
+   "r": "どれ",
+   "k": "何れ",
+   "en": [
+    "which (of three or more)",
+    "well; now; c'mon"
+   ],
+   "pos": [
+    "pn"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1009330,
+   "w": "どんな",
+   "r": "どんな",
+   "en": [
+    "what kind of; what sort of; what",
+    "no matter what (kind of); whatever; any"
+   ],
+   "pos": [
+    "adj-pn"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1089890,
+   "w": "ナイフ",
+   "r": "ナイフ",
+   "en": [
+    "knife"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1423310,
+   "w": "中",
+   "r": "なか",
+   "en": [
+    "inside; interior",
+    "among; within",
+    "middle; center; centre"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1532870,
+   "w": "鳴く",
+   "r": "なく",
+   "en": [
+    "to make sound (of an animal); to call; to cry",
+    "to make a meld call (e.g. pung, kong)"
+   ],
+   "pos": [
+    "v5k",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1529530,
+   "w": "なくす",
+   "r": "なくす",
+   "k": "無くす",
+   "en": [
+    "to lose (something)",
+    "to get rid of; to eliminate; to remove"
+   ],
+   "pos": [
+    "v5s",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1577120,
+   "w": "なぜ",
+   "r": "なぜ",
+   "k": "何故",
+   "en": [
+    "why; how; for what reason"
+   ],
+   "pos": [
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1582300,
+   "w": "など",
+   "r": "など",
+   "k": "等",
+   "en": [
+    "et cetera; etc.; and the like",
+    "or something",
+    "the likes of"
+   ],
+   "pos": [
+    "prt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1579630,
+   "w": "７日",
+   "r": "なのか",
+   "en": [
+    "7th day of the month",
+    "seven days"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1508390,
+   "w": "並べる",
+   "r": "ならべる",
+   "en": [
+    "to line up; to set up; to arrange in a line",
+    "to enumerate; to itemize",
+    "to be equal (to); to compare well (with); to be as good (as)"
+   ],
+   "pos": [
+    "v1",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 2846738,
+   "w": "何",
+   "r": "なん",
+   "en": [
+    "what",
+    "how many",
+    "many; a lot of"
+   ],
+   "pos": [
+    "pn"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1463480,
+   "w": "賑やか",
+   "r": "にぎやか",
+   "en": [
+    "bustling; busy; crowded",
+    "lively (party, voices, etc.); loud; noisy"
+   ],
+   "pos": [
+    "adj-na"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 2083100,
+   "w": "日",
+   "r": "にち",
+   "en": [
+    "Sunday",
+    "nth day (of the month)",
+    "counter for days"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1464900,
+   "w": "日曜日",
+   "r": "にちようび",
+   "en": [
+    "Sunday"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1091500,
+   "w": "ニュース",
+   "r": "ニュース",
+   "en": [
+    "news"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 2149890,
+   "w": "人",
+   "r": "にん",
+   "en": [
+    "counter for people"
+   ],
+   "pos": [
+    "ctr"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1183300,
+   "w": "ぬるい",
+   "r": "ぬるい",
+   "k": "温い",
+   "en": [
+    "lukewarm; tepid",
+    "lenient"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1092820,
+   "w": "ネクタイ",
+   "r": "ネクタイ",
+   "en": [
+    "tie; necktie"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 2084840,
+   "w": "年",
+   "r": "ねん",
+   "en": [
+    "year",
+    "counter for years (e.g. of an era), grades (e.g. school)",
+    "period of an apprentice's contract (usu. ten years)"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1093450,
+   "w": "ノート",
+   "r": "ノート",
+   "en": [
+    "notebook; copy-book; exercise book",
+    "note; noting down",
+    "(musical) note"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1100760,
+   "w": "パーティー",
+   "r": "パーティー",
+   "en": [
+    "party (social gathering)",
+    "party (group of people participating in an activity, esp. mountain climbing)",
+    "(political) party"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1010080,
+   "w": "はい",
+   "r": "はい",
+   "en": [
+    "yes; that is correct",
+    "understood; I see; OK",
+    "present; here"
+   ],
+   "pos": [
+    "int"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 2019640,
+   "w": "杯",
+   "r": "はい",
+   "en": [
+    "sake cup; cup for alcoholic beverages",
+    "counter for cupfuls, bowlfuls, spoonfuls, etc.",
+    "counter for boats"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1546590,
+   "w": "はがき",
+   "r": "はがき",
+   "k": "葉書",
+   "en": [
+    "postcard",
+    "memo; note; card"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1399760,
+   "w": "掃く",
+   "r": "はく",
+   "en": [
+    "to sweep; to brush; to clean",
+    "to gather silkworms"
+   ],
+   "pos": [
+    "v5k",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1342550,
+   "w": "初めて",
+   "r": "はじめて",
+   "en": [
+    "for the first time",
+    "only after ... is it ...; only when ... do you ...; not until ... do you ...",
+    "first time; (one's) first"
+   ],
+   "pos": [
+    "adv",
+    "adj-no"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1098390,
+   "w": "バス",
+   "r": "バス",
+   "en": [
+    "bus",
+    "bus"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1098620,
+   "w": "バター",
+   "r": "バター",
+   "en": [
+    "butter"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1600790,
+   "w": "２０歳",
+   "r": "はたち",
+   "en": [
+    "20 years old"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1451150,
+   "w": "働く",
+   "r": "はたらく",
+   "en": [
+    "to work; to labor; to labour",
+    "to function; to operate; to be effective",
+    "to commit (e.g. a crime); to perpetrate; to do"
+   ],
+   "pos": [
+    "v5k",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1600850,
+   "w": "２０日",
+   "r": "はつか",
+   "en": [
+    "20th day of the month",
+    "20 days"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 2022640,
+   "w": "番",
+   "r": "ばん",
+   "en": [
+    "number (in a series)",
+    "(one's) turn",
+    "watch; guard; lookout"
+   ],
+   "pos": [
+    "n",
+    "n-suf"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1103090,
+   "w": "パン",
+   "r": "パン",
+   "en": [
+    "bread; (sweet) pastry",
+    "staff of life; one's bread"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1096420,
+   "w": "ハンカチ",
+   "r": "ハンカチ",
+   "en": [
+    "handkerchief"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1601340,
+   "w": "晩御飯",
+   "r": "ばんごはん",
+   "en": [
+    "dinner; evening meal"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1169250,
+   "w": "引く",
+   "r": "ひく",
+   "en": [
+    "to pull; to tug; to lead (e.g. a horse)",
+    "to draw (attention, sympathy, etc.); to attract (e.g. interest)",
+    "to draw back (e.g. one's hand); to draw in (one's chin, stomach, etc.); to pull in"
+   ],
+   "pos": [
+    "v5k",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1419370,
+   "w": "弾く",
+   "r": "ひく",
+   "en": [
+    "to play (a stringed or keyboard instrument)"
+   ],
+   "pos": [
+    "v5k",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1580640,
+   "w": "人",
+   "r": "ひと",
+   "en": [
+    "person; someone; somebody",
+    "human beings; mankind; man",
+    "human (Homo sapiens)"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1162130,
+   "w": "一月",
+   "r": "ひとつき",
+   "en": [
+    "one month"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1602340,
+   "w": "昼ご飯",
+   "r": "ひるごはん",
+   "en": [
+    "lunch; midday meal"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1109380,
+   "w": "フィルム",
+   "r": "フィルム",
+   "en": [
+    "film"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1115150,
+   "w": "プール",
+   "r": "プール",
+   "en": [
+    "(swimming) pool",
+    "pool (cue sport)",
+    "pooling (money, resources, etc.)"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1110110,
+   "w": "フォーク",
+   "r": "フォーク",
+   "en": [
+    "fork",
+    "forkball"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1370760,
+   "w": "吹く",
+   "r": "ふく",
+   "en": [
+    "to blow (of the wind)",
+    "to blow (one's breath); to breathe out; to blow on (hot tea, candles, etc.)",
+    "to play (a wind instrument); to blow (a whistle, trumpet, etc.); to whistle (a tune)"
+   ],
+   "pos": [
+    "v5k",
+    "vi"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1462900,
+   "w": "２日",
+   "r": "ふつか",
+   "en": [
+    "2nd day of the month",
+    "two days"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1502840,
+   "w": "分",
+   "r": "ふん",
+   "en": [
+    "minute (unit of time)",
+    "fun (one tenth of a monme, 5.787 grains)"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1120410,
+   "w": "ページ",
+   "r": "ページ",
+   "k": "頁",
+   "en": [
+    "page",
+    "nth page; page ..."
+   ],
+   "pos": [
+    "n",
+    "ctr"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1119650,
+   "w": "ベッド",
+   "r": "ベッド",
+   "en": [
+    "bed"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1120990,
+   "w": "ペット",
+   "r": "ペット",
+   "en": [
+    "pet",
+    "trumpet"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1121380,
+   "w": "ペン",
+   "r": "ペン",
+   "en": [
+    "pen"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1123590,
+   "w": "ボールペン",
+   "r": "ボールペン",
+   "en": [
+    "ball-point pen"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1203260,
+   "w": "他",
+   "r": "ほか",
+   "en": [
+    "another place; some other place; somewhere else",
+    "another (person or thing); other; different",
+    "beyond (one's expectations, imagination, etc.); outside"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1124970,
+   "w": "ポケット",
+   "r": "ポケット",
+   "en": [
+    "pocket"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1125150,
+   "w": "ポスト",
+   "r": "ポスト",
+   "en": [
+    "postbox; mailbox; mail box",
+    "post; position",
+    "post (e.g. goalpost)"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1123880,
+   "w": "ボタン",
+   "r": "ボタン",
+   "k": "釦",
+   "en": [
+    "button (clothing)",
+    "push-button; button"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1122650,
+   "w": "ホテル",
+   "r": "ホテル",
+   "en": [
+    "hotel"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1522150,
+   "w": "本",
+   "r": "ほん",
+   "en": [
+    "book; volume; script",
+    "this; present; current",
+    "main; head; principal"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1392580,
+   "w": "前",
+   "r": "まえ",
+   "en": [
+    "in front (of); before (e.g. a building)",
+    "before; earlier; previously",
+    "(the) front; frontal part; fore"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1495000,
+   "w": "まずい",
+   "r": "まずい",
+   "k": "不味い",
+   "en": [
+    "bad(-tasting); unpalatable; unsavoury",
+    "poor; unskillful; unskilful",
+    "ugly; unattractive; homely"
+   ],
+   "pos": [
+    "adj-i"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1527110,
+   "w": "まだ",
+   "r": "まだ",
+   "k": "未だ",
+   "en": [
+    "still; as yet; only",
+    "(not) yet",
+    "more; (more) still"
+   ],
+   "pos": [
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1580600,
+   "w": "まっすぐ",
+   "r": "まっすぐ",
+   "k": "真っ直ぐ",
+   "en": [
+    "straight (ahead); direct; upright",
+    "straightforward; honest; frank"
+   ],
+   "pos": [
+    "adj-na",
+    "adv",
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1128430,
+   "w": "マッチ",
+   "r": "マッチ",
+   "k": "燐寸",
+   "en": [
+    "match (for lighting a fire)"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1584460,
+   "w": "万",
+   "r": "まん",
+   "en": [
+    "10,000; ten thousand",
+    "myriad"
+   ],
+   "pos": [
+    "num"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1523940,
+   "w": "磨く",
+   "r": "みがく",
+   "en": [
+    "to polish; to shine; to burnish",
+    "to refine (a skill, etc.); to improve; to hone"
+   ],
+   "pos": [
+    "v5k",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1582120,
+   "w": "店",
+   "r": "みせ",
+   "en": [
+    "store; shop; establishment"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1301330,
+   "w": "３日",
+   "r": "みっか",
+   "en": [
+    "3rd day of the month",
+    "three days"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1561470,
+   "w": "６日",
+   "r": "むいか",
+   "en": [
+    "6th day of the month",
+    "six days"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1585315,
+   "w": "六つ",
+   "r": "むっつ",
+   "en": [
+    "six",
+    "six years of age",
+    "six o'clock (old time system)"
+   ],
+   "pos": [
+    "num"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1132570,
+   "w": "メートル",
+   "r": "メートル",
+   "k": "米",
+   "en": [
+    "metre (unit of length); meter",
+    "meter; gauge"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1012480,
+   "w": "もう",
+   "r": "もう",
+   "en": [
+    "already; yet; by now",
+    "soon; shortly; before long",
+    "further; more; again"
+   ],
+   "pos": [
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1534890,
+   "w": "木曜日",
+   "r": "もくようび",
+   "en": [
+    "Thursday"
+   ],
+   "pos": [
+    "n",
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1012550,
+   "w": "もしもし",
+   "r": "もしもし",
+   "en": [
+    "hello (e.g. on phone)",
+    "excuse me! (when calling out to someone)"
+   ],
+   "pos": [
+    "int"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1012620,
+   "w": "もっと",
+   "r": "もっと",
+   "en": [
+    "(some) more; even more; longer"
+   ],
+   "pos": [
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1502390,
+   "w": "物",
+   "r": "もの",
+   "en": [
+    "thing; object; article",
+    "one's things; possessions; property",
+    "things; something; anything"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 2082160,
+   "w": "屋",
+   "r": "や",
+   "en": [
+    "shop; store; restaurant",
+    "someone who sells (something) or works as (something)",
+    "someone with a (certain) personality trait"
+   ],
+   "pos": [
+    "suf"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1583095,
+   "w": "八つ",
+   "r": "やっつ",
+   "en": [
+    "eight",
+    "eight years of age",
+    "two o'clock (old time system)"
+   ],
+   "pos": [
+    "num"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1012980,
+   "w": "やる",
+   "r": "やる",
+   "k": "遣る",
+   "en": [
+    "to do; to undertake; to perform",
+    "to send; to dispatch; to despatch",
+    "to put; to move; to turn (one's head, glance, etc.)"
+   ],
+   "pos": [
+    "v5r",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1476920,
+   "w": "８日",
+   "r": "ようか",
+   "en": [
+    "8th day of the month",
+    "eight days"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1605870,
+   "w": "よく",
+   "r": "よく",
+   "k": "良く",
+   "en": [
+    "nicely; properly; well",
+    "frequently; often",
+    "I'm glad that you ...; thank you for ..."
+   ],
+   "pos": [
+    "adv"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1307320,
+   "w": "４日",
+   "r": "よっか",
+   "en": [
+    "4th day of the month",
+    "four days"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1138860,
+   "w": "ラジオ",
+   "r": "ラジオ",
+   "en": [
+    "radio"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1144940,
+   "w": "レコード",
+   "r": "レコード",
+   "en": [
+    "(phonograph) record",
+    "record (esp. in sports)",
+    "record (data structure)"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1145310,
+   "w": "レストラン",
+   "r": "レストラン",
+   "en": [
+    "restaurant (esp. Western-style)"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1148640,
+   "w": "ワイシャツ",
+   "r": "ワイシャツ",
+   "k": "Ｙシャツ",
+   "en": [
+    "(formal) shirt; dress shirt; business shirt"
+   ],
+   "pos": [
+    "n"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 1519210,
+   "w": "忘れる",
+   "r": "わすれる",
+   "en": [
+    "to forget; to leave carelessly; to be forgetful of"
+   ],
+   "pos": [
+    "v1",
+    "vt"
+   ],
+   "jlpt": "N5"
+  },
+  {
+   "id": 2842390,
+   "w": "私",
+   "r": "わたくし",
+   "en": [
+    "I; me",
+    "personal (affairs, etc.); private",
+    "selfishness; partiality"
+   ],
+   "pos": [
+    "pn"
+   ],
+   "jlpt": "N5"
+  }
+ ],
+ "grammar": [
+  {
+   "id": "だ",
+   "title": "だ"
+  },
+  {
+   "id": "です",
+   "title": "です"
+  },
+  {
+   "id": "は",
+   "title": "は"
+  },
+  {
+   "id": "も",
+   "title": "も"
+  },
+  {
+   "id": "これ",
+   "title": "これ"
+  },
+  {
+   "id": "それ",
+   "title": "それ"
+  },
+  {
+   "id": "あれ",
+   "title": "あれ"
+  },
+  {
+   "id": "の",
+   "title": "の"
+  },
+  {
+   "id": "いい",
+   "title": "いい"
+  },
+  {
+   "id": "い-adjectives",
+   "title": "い-Adjectives"
+  },
+  {
+   "id": "な-adjectives",
+   "title": "な-Adjectives"
+  },
+  {
+   "id": "か",
+   "title": "か"
+  },
+  {
+   "id": "が",
+   "title": "が"
+  },
+  {
+   "id": "よ",
+   "title": "よ"
+  },
+  {
+   "id": "ね",
+   "title": "ね"
+  },
+  {
+   "id": "る-Verbs",
+   "title": "る-Verb (Dictionary)"
+  },
+  {
+   "id": "う-Verbs",
+   "title": "う-Verb (Dictionary)"
+  },
+  {
+   "id": "を",
+   "title": "を"
+  },
+  {
+   "id": "polite-verb-endings",
+   "title": "ます"
+  },
+  {
+   "id": "るverb-ない",
+   "title": "る-Verb (Negative)"
+  },
+  {
+   "id": "うverb--ない",
+   "title": "う-Verb (Negative)"
+  },
+  {
+   "id": "と-and",
+   "title": "と"
+  },
+  {
+   "id": "ここ",
+   "title": "ここ"
+  },
+  {
+   "id": "そこ",
+   "title": "そこ"
+  },
+  {
+   "id": "あそこ",
+   "title": "あそこ"
+  },
+  {
+   "id": "で",
+   "title": "で"
+  },
+  {
+   "id": "に",
+   "title": "に"
+  },
+  {
+   "id": "か-or",
+   "title": "か"
+  },
+  {
+   "id": "と-with",
+   "title": "と"
+  },
+  {
+   "id": "でしょう",
+   "title": "でしょう"
+  },
+  {
+   "id": "だろう",
+   "title": "だろう"
+  },
+  {
+   "id": "がある",
+   "title": "がある"
+  },
+  {
+   "id": "がいる",
+   "title": "がいる"
+  },
+  {
+   "id": "この",
+   "title": "この"
+  },
+  {
+   "id": "その",
+   "title": "その"
+  },
+  {
+   "id": "あの",
+   "title": "あの"
+  },
+  {
+   "id": "-んです-のです",
+   "title": "～んです・のです"
+  },
+  {
+   "id": "の-questions",
+   "title": "の (Questions)"
+  },
+  {
+   "id": "past-tense-い-adjectives",
+   "title": "い-Adjective (Past)"
+  },
+  {
+   "id": "のは",
+   "title": "の"
+  },
+  {
+   "id": "い-adjective-noun",
+   "title": "い-Adjective + Noun"
+  },
+  {
+   "id": "な-adjective-noun",
+   "title": "な-Adjective + Noun"
+  },
+  {
+   "id": "へいく",
+   "title": "へいく"
+  },
+  {
+   "id": "する",
+   "title": "する"
+  },
+  {
+   "id": "くる",
+   "title": "くる"
+  },
+  {
+   "id": "る-verb-past",
+   "title": "る-Verb (Past)"
+  },
+  {
+   "id": "う-verb-past",
+   "title": "う-Verb (Past)"
+  },
+  {
+   "id": "すき",
+   "title": "好き"
+  },
+  {
+   "id": "きらい",
+   "title": "きらい"
+  },
+  {
+   "id": "のがすき",
+   "title": "のがすき"
+  },
+  {
+   "id": "がある-noun",
+   "title": "がある + Noun"
+  },
+  {
+   "id": "negative-い-adjectives",
+   "title": "い-Adjectives くない"
+  },
+  {
+   "id": "で-by",
+   "title": "で"
+  },
+  {
+   "id": "ので",
+   "title": "ので"
+  },
+  {
+   "id": "から-because",
+   "title": "から"
+  },
+  {
+   "id": "から",
+   "title": "から"
+  },
+  {
+   "id": "けど-だけど",
+   "title": "けど・だけど"
+  },
+  {
+   "id": "が-but",
+   "title": "が"
+  },
+  {
+   "id": "る-verb-neg-past",
+   "title": "る-Verb (Negative-Past)"
+  },
+  {
+   "id": "う-verb-neg-past",
+   "title": "う-Verb (Negative-Past)"
+  },
+  {
+   "id": "verb-て",
+   "title": "Verb + て"
+  },
+  {
+   "id": "ている1",
+   "title": "ている①"
+  },
+  {
+   "id": "へ",
+   "title": "へ"
+  },
+  {
+   "id": "verb-にいく",
+   "title": "Verb + にいく"
+  },
+  {
+   "id": "だれ",
+   "title": "誰"
+  },
+  {
+   "id": "なぜ",
+   "title": "なぜ"
+  },
+  {
+   "id": "どうして",
+   "title": "どうして"
+  },
+  {
+   "id": "なんで",
+   "title": "なんで"
+  },
+  {
+   "id": "い-adjective-predicate",
+   "title": "い-Adjective (Predicate)"
+  },
+  {
+   "id": "な-adjective-predicate",
+   "title": "な-Adjective だ"
+  },
+  {
+   "id": "だった-でした",
+   "title": "だった・でした"
+  },
+  {
+   "id": "じゃない",
+   "title": "じゃない"
+  },
+  {
+   "id": "じゃなかった",
+   "title": "じゃなかった"
+  },
+  {
+   "id": "い-Adjective-くなかった",
+   "title": "い-Adjective くなかった"
+  },
+  {
+   "id": "と",
+   "title": "と"
+  },
+  {
+   "id": "って",
+   "title": "って"
+  },
+  {
+   "id": "verb-non-past",
+   "title": "Verbs (Non-past)"
+  },
+  {
+   "id": "verb-た-noun",
+   "title": "Verb［た・ている］+ Noun"
+  },
+  {
+   "id": "の-subject",
+   "title": "が・の (Subject)"
+  },
+  {
+   "id": "の-noun-ommission",
+   "title": "の"
+  },
+  {
+   "id": "な",
+   "title": "な"
+  },
+  {
+   "id": "だけ",
+   "title": "だけ"
+  },
+  {
+   "id": "どれ",
+   "title": "どれ"
+  },
+  {
+   "id": "どこ",
+   "title": "どこ"
+  },
+  {
+   "id": "どの",
+   "title": "どの"
+  },
+  {
+   "id": "ている2",
+   "title": "ている②"
+  },
+  {
+   "id": "てから",
+   "title": "てから"
+  },
+  {
+   "id": "verb-て-b",
+   "title": "Verb + て+ B"
+  },
+  {
+   "id": "もう",
+   "title": "もう"
+  },
+  {
+   "id": "まだ",
+   "title": "まだ"
+  },
+  {
+   "id": "まだ-ていません",
+   "title": "まだ～ていません"
+  },
+  {
+   "id": "てもいい",
+   "title": "てもいい"
+  },
+  {
+   "id": "たい",
+   "title": "たい"
+  },
+  {
+   "id": "たり-たりする",
+   "title": "たり～たりする"
+  },
+  {
+   "id": "けっこう",
+   "title": "けっこう"
+  },
+  {
+   "id": "たくさん",
+   "title": "たくさん"
+  },
+  {
+   "id": "まえに",
+   "title": "まえに"
+  },
+  {
+   "id": "くらい1",
+   "title": "くらい ①"
+  },
+  {
+   "id": "noun-まで",
+   "title": "Noun + まで"
+  },
+  {
+   "id": "v-まで",
+   "title": "Verb + まで"
+  },
+  {
+   "id": "すぎる",
+   "title": "すぎる"
+  },
+  {
+   "id": "にする",
+   "title": "にする"
+  },
+  {
+   "id": "になる-くなる",
+   "title": "～になる・～くなる"
+  },
+  {
+   "id": "のなかで-がいちばん",
+   "title": "のなかで～がいちばん～"
+  },
+  {
+   "id": "より-のほうが",
+   "title": "より～のほうが"
+  },
+  {
+   "id": "なにか-なにも",
+   "title": "なにか・なにも"
+  },
+  {
+   "id": "誰か-どこか-誰も-どこも",
+   "title": "誰か・どこか・誰も・どこも"
+  },
+  {
+   "id": "ましょう",
+   "title": "ましょう"
+  },
+  {
+   "id": "ましょうか",
+   "title": "～ましょうか"
+  },
+  {
+   "id": "ませんか",
+   "title": "ませんか"
+  },
+  {
+   "id": "verb-てもいい",
+   "title": "Verb + てもいい"
+  },
+  {
+   "id": "てください",
+   "title": "てください"
+  },
+  {
+   "id": "ないでください",
+   "title": "ないでください"
+  },
+  {
+   "id": "てはいけない",
+   "title": "てはいけない"
+  },
+  {
+   "id": "なくてはいけない",
+   "title": "なくてはいけない"
+  },
+  {
+   "id": "なくてはならない",
+   "title": "なくてはならない"
+  },
+  {
+   "id": "たほうがいい",
+   "title": "たほうがいい"
+  },
+  {
+   "id": "ないほうがいい",
+   "title": "ないほうがいい"
+  },
+  {
+   "id": "なくちゃ-なきゃ",
+   "title": "なくちゃ・なきゃ"
+  },
+  {
+   "id": "や",
+   "title": "や"
+  },
+  {
+   "id": "たことがある",
+   "title": "たことがある"
+  },
+  {
+   "id": "ている3",
+   "title": "ている③"
+  },
+  {
+   "id": "adjective-て-noun-で",
+   "title": "Adjective + て・Noun + で"
+  },
+  {
+   "id": "adjective-て-b",
+   "title": "Adjective + て + B"
+  },
+  {
+   "id": "のがへた",
+   "title": "のがへた"
+  },
+  {
+   "id": "のがじょうず",
+   "title": "のがじょうず"
+  },
+  {
+   "id": "adjective-の-は",
+   "title": "Adjective + の(は)"
+  },
+  {
+   "id": "あげる",
+   "title": "あげる"
+  },
+  {
+   "id": "くれる",
+   "title": "くれる"
+  },
+  {
+   "id": "もらう",
+   "title": "もらう"
+  },
+  {
+   "id": "けれども",
+   "title": "けれども"
+  },
+  {
+   "id": "つもりだ",
+   "title": "つもりだ"
+  }
+ ]
+}
