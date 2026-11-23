@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>N2 mock exam · Echo</title>
+<link rel="icon" href="./icon.svg">
+<style>
+:root{color-scheme:light dark;--paper:#f5f1e8;--card:#fffdf7;--ink:#29251e;--line:#d8d0c0;--seal:#993727}
+@media(prefers-color-scheme:dark){:root{--paper:#201e19;--card:#292620;--ink:#f3ebd9;--line:#534e43;--seal:#f19a82}}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.5 system-ui,sans-serif}main{max-width:78rem;margin:auto;padding:clamp(1rem,3vw,3rem)}header,.row{display:flex;align-items:center;flex-wrap:wrap;gap:.75rem}header{justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:.8rem}a{color:var(--seal)}h1,h2{font-family:Georgia,serif;line-height:1.15}h1{font-size:clamp(2rem,5vw,3.5rem);margin:.6em 0}button,select{font:inherit;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:.5rem;padding:.6rem .85rem;cursor:pointer}button:disabled{opacity:.45;cursor:default}button[aria-pressed=true],.primary{background:var(--ink);color:var(--paper)}.panel{background:var(--card);border:1px solid var(--line);border-radius:.8rem;padding:1rem}.layout{display:grid;grid-template-columns:minmax(0,2fr) minmax(16rem,1fr);gap:1rem}iframe{display:block;width:100%;height:60vh;border:1px solid var(--line);margin:.75rem 0}audio{width:100%}#clock{font-variant-numeric:tabular-nums;font-weight:bold}.choices button{min-width:3rem}label{display:block;margin:1rem 0}li{margin:.4em 0}[hidden]{display:none!important}progress{width:100%;accent-color:var(--seal)}@media(max-width:700px){.layout{grid-template-columns:1fr}iframe{height:35vh}h1{margin:.4em 0}}
+</style>
+</head><body><main>
+<header><a href="./review">‹ Echo Review</a><strong id="clock"></strong></header>
+<h1>N2 mock exam</h1>
+<div id="intro" class="panel"><h2>Official practice workbooks</h2><p>105 minutes for vocabulary, grammar and reading. Then take a break and start the 50-minute listening section. Answers save on this device. The official booklets and audio require internet access.</p><div class="row" id="books"></div></div>
+<section id="exam" hidden><div class="layout"><article class="panel"><div class="row"><strong id="material"></strong><a id="open" target="_blank" rel="noopener">Open booklet ↗</a></div><iframe id="pdf" title="Official N2 question booklet"></iframe><audio id="audio" controls preload="none" hidden></audio><a id="track" target="_blank" rel="noopener" hidden>Open listening track ↗</a></article>
+<aside class="panel"><span id="volume"></span><h2 id="prompt"></h2><progress id="progress"></progress><p id="count"></p><div id="choices" class="row choices" aria-label="Answer choices"></div><label><input type="checkbox" id="guess"> Mark as a guess</label><div class="row"><button id="prev">Previous</button><button id="next">Next</button></div><label>Jump to question <select id="jump"></select></label><button id="submit">Finish section</button></aside></div></section>
+<section class="panel" id="rest" hidden><h2>Written section complete</h2><p>Take a break. Have your headphones ready before starting the listening timer. Play the track at the start of each question group.</p><button id="listen" class="primary">Start listening · 50 min</button></section>
+<section class="panel" id="results" hidden><h2>Your results</h2><p>Raw practice scores by skill. JLPT uses scaled scores on exam day.</p><div id="scores"></div><details><summary>Time spent per question</summary><ol id="timings"></ol></details><h3>Missed, unanswered and guessed</h3><p id="feedback"></p><ol id="mistakes"></ol><a id="script" target="_blank" rel="noopener">Official listening transcript ↗</a></section>
+<p><a href="./n2-mock.html" id="library" hidden>Choose workbook</a></p><p role="alert" id="warning"></p>
+</main><script type="module" src="./n2-mock.js"></script></body></html>
