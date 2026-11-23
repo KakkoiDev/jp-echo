@@ -1,3 +1,5 @@
+import {bookIds,bookName,EDITION,form} from "./n2-forms.js";
+import {access,activateProgress,currentAttempts,prefix} from "./n2-progress.js";
 // Official workbook answer numbering. Listening examples are excluded.
 const keys = {
   2012: ["23143 32142 12142 4412112 34133 43324", "324413331221 21433 24131", "32212 344314321 13 244 41", "23321 234232 14312 31311332312 3413"],
@@ -7,7 +9,19 @@ const skills = ["Vocabulary", "Grammar", "Reading", "Listening"];
 const pdfCodes = ["V", "G", "R", "L"];
 const $ = id => document.getElementById(id);
 const year = new URLSearchParams(location.search).get("book");
-const native = year === "echo-2026-11";
+const adaptive=/^adaptive-[a-f0-9-]{36}$/.test(year||"");
+const native=bookIds.includes(year)||adaptive;
+let title=bookName(year), archivedView=false;
+let inventory, original;
+async function json(path){
+  const response=await fetch(path);
+  if(!response.ok) throw new Error("Unable to load "+path+". Reconnect and reload.");
+  return response.json();
+}
+async function materials(){
+  [inventory,original]=await Promise.all([json("./n2-inventory.json"),json("./n2-echo-bank.json")]);
+}
+
 const official = "https://www.jlpt.jp/samples/sample";
 const bookUrl = official + year + "/pdf/N2";
 const questions = [];
@@ -15,7 +29,7 @@ let written = 0;
 let state;
 let entered = Date.now();
 let shownGroup = "";
-const storageKey = "echo-n2-mock-v1-" + year;
+const storageKey = prefix + year;
 
 function button(label, click) {
   const element = document.createElement("button");
@@ -24,7 +38,13 @@ function button(label, click) {
   return element;
 }
 function persist() {
-  try { localStorage.setItem(storageKey, JSON.stringify(state)); }
+  if(archivedView||state.phase==="ready")return;
+  try {
+    const other=JSON.parse(localStorage.getItem(storageKey)||"null");
+    if(other?.id && other.id!==state.id)return;
+    if(other?.phase==="results" && state.phase!=="results")return;
+    localStorage.setItem(storageKey,JSON.stringify(state));
+  }
   catch { $("warning").textContent = "Device storage is unavailable. Keep this page open to retain this attempt."; }
 }
 function active() { return state.phase === "written" || state.phase === "listening"; }
@@ -40,7 +60,8 @@ function stopVoice() {
 function finish() {
   stopVoice();
   recordTime();
-  state.phase = state.phase === "written" ? "rest" : "results";
+  state.phase = state.phase === "written" && written<questions.length ? "rest" : "results";
+  if(state.phase==="results")state.completedAt=new Date().toISOString();
   $("audio").pause();
   persist();
   render();
@@ -53,10 +74,13 @@ function tick() {
   return false;
 }
 function start(phase) {
+  if(!state.startedAt)state.startedAt=new Date().toISOString();
+  if(!state.id)state.id=crypto.randomUUID();
   state.phase = phase;
   state.index = phase === "written" ? 0 : written;
   entered = Date.now();
-  state.deadline = entered + (phase === "written" ? 105 : 50) * 60000;
+  const minutes=adaptive ? (phase==="written"?written*1.5:(questions.length-written)*1.5) : (phase==="written"?105:50);
+  state.deadline = entered + Math.ceil(minutes)*60000;
   persist();
   render();
 }
@@ -108,7 +132,7 @@ function renderExam() {
     }
   }
   $("prompt").textContent = q.label;
-  $("volume").textContent = (native ? "Echo · November 2026" : "Workbook " + year) + " · " + skills[q.skill];
+  $("volume").textContent = title + " · " + skills[q.skill];
   const answered = state.answers.slice(first,end).filter(Boolean).length;
   $("progress").max = end-first;
   $("progress").value = answered;
@@ -178,6 +202,7 @@ function renderResults() {
     $("mistakes").append(row);
   }
   $("feedback").textContent = $("mistakes").children.length ? "Compare these answers with the booklet and listening transcript." : "Every answer was correct and confident.";
+  $("retake").hidden=archivedView;
   $("script").hidden = native;
   if (native) $("feedback").textContent = "Open any question below for its explanation and listening script.";
   $("script").href = bookUrl + "script.pdf";
@@ -192,44 +217,80 @@ function render() {
   if (state.phase === "results") renderResults();
 }
 
-if (!native && !Object.hasOwn(keys, year)) {
-  const launch = button("Echo · November 2026", () => location.assign("?book=echo-2026-11"));
-  launch.className = "primary";
-  $("books").append(launch);
-  for (const [i, value] of Object.keys(keys).entries()) {
-    $("books").append(button("Workbook " + (i+1) + " · " + value, () => location.assign("?book=" + value)));
-  }
-} else {
-  $("sources").hidden = true;
-  $("set-title").textContent = native ? "Echo original · November 2026" : "Official workbook · " + year;
-  if (native) {
-    document.body.classList.add("native");
-    try {
-      const response = await fetch("./n2-echo-bank.json");
-      if (!response.ok) throw new Error("missing bank");
-      const bank = await response.json();
-      for (const [index,item] of bank.entries()) questions.push({...item, index, skill:skills.indexOf(item.skill), label:"Question " + (index+1), options:item.choices.length});
-    } catch (error) {
-      $("warning").textContent = "The exam could not load. Reconnect and reload this page.";
-      throw error;
-    }
-  } else for (const [skill, groups] of keys[year].entries()) {
+function officialRows(id) {
+  const rows=[];
+  for (const [skill, groups] of keys[id].entries()) {
     for (const [group, answers] of groups.split(" ").entries()) {
       for (const [i, answer] of [...answers].entries()) {
-        const index = questions.length;
+        const index = rows.length;
         const number = group === 4 && i >= 2 ? "3 (" + (i-1) + ")" : i+1;
-        questions.push({index, skill, group:group+1, key:Number(answer),
+        rows.push({index, skill, group:group+1, key:Number(answer),
           label:skill < 3 ? "Question " + (index+1) : "問題 " + (group+1) + " · " + number,
           options:skill === 3 && group === 3 ? 3 : 4});
       }
     }
   }
+  return rows;
+}
+async function getPaper(id,version) {
+  const existing=await access("papers","get",version||id);
+  if(existing)return existing;
+  let rows;
+  if (bookIds.includes(id)){
+    if(!inventory)await materials();
+    rows=form(id,inventory,original).map((q,index)=>({...q,index,skill:skills.indexOf(q.skill),label:"Question "+(index+1),options:q.choices.length}));
+  } else if(Object.hasOwn(keys,id)) rows=officialRows(id);
+  else throw new Error("This exam is unavailable on this device.");
+  const paper={id:version||id,book:id,title:bookName(id),edition:EDITION,questions:rows};
+  if(Object.hasOwn(keys,id))paper.source="https://www.jlpt.jp/samples/sample"+id+"/pdf/N2";
+  await access("papers","put",paper);
+  return paper;
+}
+async function setup(){
+if (!native && !Object.hasOwn(keys, year)) {
+  for(const id of bookIds){
+    $("books").append(button(bookName(id),()=>location.assign("?book="+id)));
+  }
+  for (const value of Object.keys(keys)) $("books").append(button(bookName(value),()=>location.assign("?book="+value)));
+  await materials();
+  for(const a of currentAttempts())await getPaper(a.book,a.paper);
+  $("dashboard").hidden=$("hubnav").hidden=false;
+  await activateProgress(inventory);
+  if(location.hash)document.getElementById(location.hash.slice(1))?.scrollIntoView();
+} else {
+  const attemptId=new URLSearchParams(location.search).get("attempt");
+  let saved=JSON.parse(localStorage.getItem(storageKey)||"null");
+  if(attemptId && attemptId!==(saved?.id||"legacy-"+year)){
+    const archived=await access("history","get",attemptId);
+    if(!archived||archived.book!==year)throw new Error("This attempt is unavailable on this device.");
+    saved=archived;archivedView=true;
+  }
+  const paper=await getPaper(year,saved?.paper);
+  questions.push(...paper.questions);title=paper.title;
+  $("sources").hidden = true;
+  $("set-title").textContent = title;
+  if(native) document.body.classList.add("native");
   written = questions.findIndex(q => q.skill === 3);
-  state = {phase:"ready", index:0, deadline:0, answers:Array(questions.length).fill(0),
-    guesses:Array(questions.length).fill(false), time:Array(questions.length).fill(0)};
-  try { const saved = JSON.parse(localStorage.getItem(storageKey)); if (saved?.answers?.length === questions.length) state = saved; } catch {}
+  if(written<0)written=questions.length;
+  const firstPhase=written?"written":"listening";
+  const fresh=()=>({id:crypto.randomUUID(),book:year,paper:paper.id,phase:"ready", index:0, deadline:0, answers:Array(questions.length).fill(0),
+    guesses:Array(questions.length).fill(false), time:Array(questions.length).fill(0)});
+  state=fresh();
+  if(saved?.answers?.length===questions.length)state={...state,...saved,id:saved.id||"legacy-"+year};
+  $("retake").onclick=async()=>{
+    try{
+      await access("history","put",{...state,book:year,paper:paper.id});
+      archivedView=true;
+      localStorage.removeItem(storageKey);
+      location.assign("?book="+year);
+    }catch(e){$("warning").textContent="Could not archive this attempt. "+e.message;}
+  };
   $("library").hidden = false;
-  $("books").append(button(native ? "Start November mock" : "Start " + year + " mock", () => start("written")));
+  $("books").append(button("Start exam", () => start(firstPhase)));
+  if(adaptive){
+    $("intro").querySelector("p").textContent=questions.length+" targeted questions. Allow about "+Math.ceil(questions.length*1.5)+" minutes. Topics were selected from your saved evidence.";
+    $("listen").textContent="Start targeted listening";
+  }
   $("listen").onclick = () => start("listening");
   $("guess").onchange = () => { if (tick()) return; state.guesses[state.index] = $("guess").checked; persist(); renderExam(); };
   $("prev").onclick = () => move(state.index-1);
@@ -245,3 +306,6 @@ if (!native && !Object.hasOwn(keys, year)) {
   render();
   setInterval(tick, 1000);
 }
+
+}
+setup().catch(error=>{$("warning").textContent=error.message;});
