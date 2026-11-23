@@ -55,10 +55,10 @@ export function speakOnce(text,{voice=null,rate=1,lang="ja"}={}){try{speechSynth
 // engines drop utterances without firing onend, and Radio must not stall at
 // 2 a.m. waiting on one. Cancelling (stop) resolves it too.
 export function speakAndWait(text,{voice=null,rate=1,lang="ja",volume=1}={}){
-  return new Promise(resolve=>{let done=false;const finish=()=>{if(done)return;done=true;clearTimeout(watchdog);resolve()};
+  return new Promise(resolve=>{let done=false;const finish=(ended=false)=>{if(done)return;done=true;clearTimeout(watchdog);resolve(ended)};
     const watchdog=setTimeout(finish,4000+String(text).length*400);
     try{const utterance=new SpeechSynthesisUtterance(lang==="ja"?speechText(text):text);utterance.lang=lang;utterance.voice=voice||null;utterance.rate=rate;utterance.volume=volume;
-      utterance.onend=finish;utterance.onerror=finish;speechSynthesis.speak(utterance)}catch{finish()}})}
+      utterance.onend=()=>finish(true);utterance.onerror=()=>finish(false);speechSynthesis.speak(utterance)}catch{finish()}})}
 
 // Radio walks the night plan from radio.js: each phase starts again from the
 // newest sentence and wraps. Everything time- and sound-related is injected

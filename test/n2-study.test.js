@@ -50,10 +50,10 @@ test("the daily queue puts weak items first and holds today's checks for tomorro
   assert.ok(recallQueue({type:"reading",inventory}).every(r=>r.item.prompt!==r.item.reading),"kana words are not reading checks");
 });
 
-test("the daily goal spreads first checks to finish two days before the exam",()=>{
+test("the daily goal spreads first checks across the days that actually assign new material",()=>{
   const g=dailyGoal({inventory,recall:[],examDate:new Date(2026,11,6),now:new Date(2026,10,24,9)});
-  assert.equal(g.daysLeft,10);
-  assert.equal(g.goal,Math.ceil((1748+221)/10));
+  assert.equal(g.daysLeft,9);
+  assert.equal(g.goal,Math.ceil((1748+221)/9));
 });
 
 import {todayPlan} from "../n2-study.js";
@@ -74,4 +74,23 @@ test("exam day asks nothing of you: the calm step only plays Day Radio",()=>{
   const day=todayPlan({days:0});
   assert.ok(day.steps.every(s=>s.kind!=="recall"&&s.kind!=="mock"&&s.kind!=="generate"));
   assert.equal(day.steps.find(s=>s.glyph==="温").href,"?view=radio&mode=listen");
+});
+
+import {coverage} from "../n2-study.js";
+test("a newer grammar miss removes automatic status until repaired, within the tested skill", () => {
+  const [row] = recallQueue({type: "grammar", inventory});
+  const first = recallRecord(null, row, "instant", new Date(2026, 10, 20));
+  const record = recallRecord(first, row, "instant", new Date(2026, 10, 21));
+  const miss = {target: row.item.target, answered: true, correct: false, at: "2026-11-23T00:00:00Z"};
+  assert.equal(coverage(inventory, [record], [{...miss, skill: 1}]).grammar.automatic, 0);
+  assert.equal(coverage(inventory, [record], [{...miss, skill: 3}]).grammar.automatic, 1);
+});
+
+test("every allotted first-check day is available in the plan", () => {
+  const examDate = new Date(2026, 11, 6);
+  for (const [day, remaining] of [[2, 1], [3, 0], [6, 0]]) {
+    const goal = dailyGoal({inventory, examDate, now: new Date(2026, 11, day)});
+    assert.equal(goal.daysLeft, remaining);
+    assert.equal(goal.goal > 0, todayPlan({days: 6-day, goal}).steps.some(s => s.href?.includes("queue=new")));
+  }
 });

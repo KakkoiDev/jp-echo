@@ -164,8 +164,7 @@ async function hub() {
   const next = bookIds.find(id => !done.has(id));
   const {providerReady} = await import("./api.js");
   const aiReady = providerReady(settings);
-  const yesterday = localDay(new Date(Date.now() - 86_400_000));
-  const heardYesterday = new Set(data.events.filter(e => e.kind === "exposure" && localDay(new Date(e.at)) === yesterday).map(e => JSON.stringify(e.target))).size;
+  const heardYesterday = yesterdayChecks({events: data.events, recall: data.recall, items: radioItems(inventory), examples: new Map()}).length;
   const base = todayPlan({days, goal, weak: weakAll, aiReady, heardYesterday,
     running: live && {book: live.book, title: papers.get(live.paper || live.book)?.title || titleOf(live.book), progress: live.answers.filter(Boolean).length + " of " + live.answers.length + " answered" + (live.phase === "rest" ? " · listening next" : "")},
     nextMock: next && {id: next, title: titleOf(next)}, lastMockAt: finished[0]?.completedAt,
@@ -504,18 +503,14 @@ async function dayRadio() {
   const player = new DayPlayer({
     speak: (text, opts) => speakAndWait(text, {...opts, voice: opts.lang === "ja" ? voice() : null}),
     cancel: () => window.speechSynthesis?.cancel(),
-    onItem: (item, i) => { draw(item, i); },
-    onReveal: item => { reveal(); },
-    onDone: () => { if (lastItem && mode !== "check") played(lastItem); lastItem = null; release(); finish(); },
+    onItem: (item, i) => {
+      draw(item, i);
+      writeDay({mode, index: i, day: localDay(), ids: queue.map(q => JSON.stringify(q.target))});
+    },
+    onReveal: reveal,
+    onComplete: item => record(radioEvent({target: item.target, kind: "exposure", source: "day-radio", mode, exampleId: exampleFor(item)?.id})),
+    onDone: () => { release(); finish(); },
   });
-  // Exposure is logged when an item has been played through, not on skip.
-  const played = item => {
-    const example = exampleFor(item);
-    record(radioEvent({target: item.target, kind: "exposure", source: "day-radio", mode, exampleId: example?.id}));
-  };
-  const origOnItem = player.onItem;
-  let lastItem = null;
-  player.onItem = (item, i) => { if (lastItem && lastItem !== item && player.running && mode !== "check") played(lastItem); lastItem = item; origOnItem(item, i); writeDay({mode, index: i, day: localDay(), ids: queue.map(q => JSON.stringify(q.target))}); };
   async function hold() { try { wake = await navigator.wakeLock?.request("screen") || null; } catch { wake = null; } }
   function release() { try { wake?.release(); } catch {} wake = null; }
   document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && player.running) hold(); });
@@ -533,14 +528,18 @@ async function dayRadio() {
     }[mode];
     $("day-play").textContent = mode === "check" ? "Play" : player.running ? "Pause" : "Play";
   }
-  async function build() {
-    player.stop(); release(); lastItem = null;
+  async function build(resume = false) {
+    player.stop(); release();
     if (mode === "check") {
       queue = yesterdayChecks({events: data.events, recall: data.recall, items, examples: await allExamples()});
     } else {
       queue = dayQueue({inventory, recall: data.recall, evidence, events: data.events, later: later.map(k => JSON.parse(k))});
     }
-    const resumeAt = saved.day === localDay() && saved.mode === mode && JSON.stringify(saved.ids) === JSON.stringify(queue.map(q => JSON.stringify(q.target))) ? saved.index || 0 : 0;
+    if (resume && mode !== "check" && saved.day === localDay() && saved.mode === mode && saved.ids?.length && saved.ids.every(k => items.has(k))) {
+      const reasons = new Map(queue.map(q => [JSON.stringify(q.target), q.why]));
+      queue = saved.ids.map(k => ({...items.get(k), why: reasons.get(k) || "resume"}));
+    }
+    const resumeAt = resume && saved.day === localDay() && saved.mode === mode && JSON.stringify(saved.ids) === JSON.stringify(queue.map(q => JSON.stringify(q.target))) ? saved.index || 0 : 0;
     index = Math.min(resumeAt, Math.max(0, queue.length - 1));
     sync();
     $("day-done").hidden = true; $("day-card").hidden = false; $("day-bar-actions").hidden = false;
@@ -554,7 +553,7 @@ async function dayRadio() {
     draw(queue[index], index);
   }
   let index = 0;
-  const WHY = {weak: "Weak · missed, guessed or slow", later: "Marked for later", new: "New · not checked yet", yesterday: "Heard yesterday"};
+  const WHY = {weak: "Weak · missed, guessed or slow", later: "Marked for later", new: "New · not checked yet", review: "Previously checked", resume: "Resumed session", yesterday: "Heard yesterday"};
   function draw(item, i) {
     current = item; index = i; revealed = false;
     const example = exampleFor(item);
@@ -562,7 +561,7 @@ async function dayRadio() {
     $("day-bar").style.width = (i / queue.length * 100) + "%";
     $("day-why").textContent = WHY[item.why] || "";
     const hide = mode !== "listen";
-    $("day-text").textContent = hide && example ? "…" : item.text;
+    $("day-text").textContent = hide ? "…" : item.text;
     $("day-text").classList.toggle("long", item.text.length > 8);
     $("day-reading").textContent = item.reading && item.reading !== item.text ? item.reading : "";
     $("day-meaning").textContent = item.meaning;
@@ -595,7 +594,7 @@ async function dayRadio() {
     const today = localDay(), mine = data.events.filter(e => localDay(new Date(e.at)) === today);
     $("day-done-title").textContent = mode === "check" ? "Yesterday checked" : "Queue played through";
     $("day-done-line").textContent = mine.filter(e => e.kind === "exposure").length + " heard today · " + mine.filter(e => e.kind === "recall" && e.grade === "got").length + " caught by ear · " + mine.filter(e => e.kind === "recall" && e.grade !== "got").length + " not yet";
-    writeDay({index: 0});
+    writeDay({index: 0, ids: []});
     sync();
   }
   function play() {
@@ -626,7 +625,7 @@ async function dayRadio() {
   document.querySelectorAll("#day [role=tab]").forEach(b => b.onclick = () => { mode = b.dataset.mode; writeDay({mode}); build(); });
   $("day-again").onclick = () => { writeDay({index: 0}); index = 0; saved.index = 0; build(); };
   window.addEventListener("pagehide", () => { player.stop(); release(); });
-  await build();
+  await build(true);
 }
 
 /* ───────── Exam ───────── */

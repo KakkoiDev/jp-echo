@@ -28,15 +28,26 @@ export function priorities(data){
     }
   }
   for(const r of data.recall.filter(r=>r.last!=="instant"))focus.push({skill:r.dimension==="grammar"?"Grammar":"Vocabulary",prompt:r.prompt,correct:r.answer,target:r.target,dimension:r.dimension,reason:r.last==="slow"?"slow":"missed",exam:"Recall check",at:r.updatedAt});
-  // A target answered cleanly after its miss is no longer a weakness.
-  const cleared=new Map();
-  for(const o of observations)if(o.target&&o.reason==="correct"){const k=JSON.stringify(o.target);if((o.at||"")>(cleared.get(k)||""))cleared.set(k,o.at||"")}
-  for(const r of data.recall)if(r.last==="instant"){const k=JSON.stringify(r.target);if((r.updatedAt||"")>(cleared.get(k)||""))cleared.set(k,r.updatedAt)}
-  const seen=new Set();
-  return focus.filter(o=>!o.target||!cleared.has(JSON.stringify(o.target))||(o.at||"")>cleared.get(JSON.stringify(o.target)))
-    .sort((a,b)=>rank[b.reason]-rank[a.reason]||(b.at||"").localeCompare(a.at||"")||(b.seconds||0)-(a.seconds||0)).filter(o=>{
-    const k=JSON.stringify([o.skill,o.target||o.prompt,o.dimension]);if(seen.has(k))return false;seen.add(k);return true;
-  }).slice(0,40);
+  const checked = observations.filter(o => o.reason === "correct");
+  for (const r of data.recall.filter(r => r.last === "instant")) {
+    checked.push({skill: r.dimension === "grammar" ? "Grammar" : "Vocabulary", target: r.target, dimension: r.dimension, reason: "correct", at: r.updatedAt});
+  }
+  for (const e of data.events || []) {
+    if (e.kind !== "recall" || e.skill !== "listening" || !e.target) continue;
+    const row = {skill: "Listening", target: e.target, dimension: "listening", prompt: e.target[1], exam: "Day Radio", at: e.at,
+      reason: e.grade === "got" ? "correct" : "missed"};
+    (row.reason === "correct" ? checked : focus).push(row);
+  }
+  const latest = new Map();
+  for (const row of [...focus, ...checked]) {
+    const dimension = row.target?.[0] === "grammar" && row.skill === "Grammar" ? "grammar" : row.dimension;
+    const key = JSON.stringify([row.skill, row.target || row.prompt, dimension]);
+    const prior = latest.get(key);
+    if (!prior || (row.at || "") >= (prior.at || "")) latest.set(key, row);
+  }
+  return [...latest.values()].filter(row => row.reason !== "correct")
+    .sort((a,b)=>rank[b.reason]-rank[a.reason]||(b.at||"").localeCompare(a.at||"")||(b.seconds||0)-(a.seconds||0))
+    .slice(0,40);
 }
 
 export const FOCUS=Object.freeze({weak:"My weak points",Vocabulary:"文字・語彙 Vocabulary",Grammar:"文法 Grammar",Reading:"読解 Reading",Listening:"聴解 Listening",mixed:"Mini mock (all four)"});

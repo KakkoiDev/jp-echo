@@ -75,3 +75,33 @@ test("the player walks the queue, reveals, jumps and stops",async()=>{
   p.start(queue,{index:2,steps:item=>daySteps("listen",item,null)});
   p.stop();assert.equal(p.running,false);
 });
+
+test("hearing a word correctly preserves an outstanding reading miss", () => {
+  const miss = {target: mitooshi, dimension: "reading", answered: true, correct: false, at: "2026-11-21"};
+  const got = {target: mitooshi, kind: "recall", skill: "listening", grade: "got", at: "2026-11-22"};
+  assert.equal(dayQueue({inventory, evidence: [miss], events: [got], size: 1})[0].why, "weak");
+});
+
+test("a second batch can reach fresh items, and a checked inventory still plays", () => {
+  const first = dayQueue({inventory, size: 3});
+  const events = first.map(item => radioEvent({target: item.target, kind: "exposure"}));
+  const second = dayQueue({inventory, events, size: 3});
+  assert.ok(second.every(item => !first.some(old => K(old.target) === K(item.target))));
+  const recall = [...items.values()].map(item => ({target: item.target}));
+  assert.deepEqual(dayQueue({inventory, recall, size: 2}).map(x => x.why), ["review", "review"]);
+});
+
+test("skipped and failed playback never emit completion, including the final item", async () => {
+  const completed = [];
+  let release, finish;
+  const done = new Promise(resolve => { finish = resolve; });
+  const p = new DayPlayer({
+    speak: text => text === "skip" ? new Promise(resolve => { release = resolve; }) : Promise.resolve(text === "ok"),
+    onComplete: item => completed.push(item), onDone: finish
+  });
+  p.start(["skip", "ok", "failed"], {steps: item => [{say: item, lang: "en"}]});
+  p.jump(1);
+  release(true);
+  await done;
+  assert.deepEqual(completed, ["ok"]);
+});

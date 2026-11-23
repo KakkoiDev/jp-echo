@@ -69,7 +69,7 @@ export function recallItems(inventory) {
 }
 export const recallId = (type, target) => JSON.stringify([type, ...target]);
 function evidenceFits(type, row) {
-  if (!row.target || !row.answered) return false;
+  if (!row.target || !row.answered || row.skill === 3) return false;
   return type === "grammar" ? row.target[0] === "grammar" : row.target[0] === "word" && row.dimension === type;
 }
 
@@ -117,8 +117,8 @@ export function recallRecord(previous, {id, type, item}, grade, now = new Date()
     events: [...(previous?.events || []), {at: now.toISOString(), grade}]};
 }
 
-// First checks of words and grammar, spread so every target has been seen
-// two days before the exam (the last days are for mocks and weak items).
+// Reserve the last three pre-exam days for consolidation.
+const CONSOLIDATION_DAYS = 3;
 export function dailyGoal({inventory, recall = [], examDate, now = new Date()}) {
   const today = localDay(now);
   const types = ["meaning", "grammar"];
@@ -127,16 +127,17 @@ export function dailyGoal({inventory, recall = [], examDate, now = new Date()}) 
   const firstToday = mine.filter(r => localDay(new Date(r.events?.[0]?.at || r.updatedAt)) === today).length;
   const checkedToday = recall.filter(r => (r.events || []).some(e => localDay(new Date(e.at)) === today)).length;
   const unchecked = total - mine.length;
-  const daysLeft = Math.max(1, daysUntil(examDate, now) - 2);
-  return {goal: Math.ceil((unchecked + firstToday) / daysLeft), firstToday, checkedToday, unchecked, daysLeft, total};
+  const daysLeft = Math.max(0, daysUntil(examDate, now) - CONSOLIDATION_DAYS);
+  return {goal: daysLeft ? Math.ceil((unchecked + firstToday) / daysLeft) : 0, firstToday, checkedToday, unchecked, daysLeft, total};
 }
 
 export function coverage(inventory, recall, evidence) {
   const items = recallItems(inventory);
   return Object.fromEntries(Object.entries(items).map(([type, list]) => {
     const records = recall.filter(r => r.dimension === type);
-    const automatic = records.filter(r => r.days?.length >= 2 && r.last === "instant").length;
-    const weak = [...weakTargets(type, recall, evidence).values()].filter(v => v.weak).length;
+    const latest = weakTargets(type, recall, evidence);
+    const automatic = records.filter(r => r.days?.length >= 2 && r.last === "instant" && !latest.get(JSON.stringify(r.target))?.weak).length;
+    const weak = [...latest.values()].filter(v => v.weak).length;
     return [type, {total: list.length, checked: records.length, automatic, weak}];
   }));
 }
@@ -158,9 +159,9 @@ export function todayPlan({days, goal = {goal: 0, firstToday: 0, unchecked: 0}, 
     {kind: "recall", glyph: "温", title: "Weak items, once", line: Math.min(weak, 30) + " items · 15 minutes, then stop", href: "?view=recall&queue=weak", minutes: 15},
     {kind: "checklist", glyph: "券", title: "Pack tonight", line: "The checklist below, then the route and the time"},
     {kind: "rest", glyph: "眠", title: "Sleep early", line: "Sleep fixes what you studied this week. No new material tonight."}]};
-  if (heardYesterday) steps.push({kind: "radio", glyph: "昨", title: "Check yesterday by ear", line: heardYesterday + " items you heard on Day Radio, in new sentences", href: "?view=radio&mode=check", minutes: 10});
+  if (heardYesterday) steps.push({kind: "radio", glyph: "昨", title: "Check yesterday by ear", line: heardYesterday + " listening checks from yesterday · fresh sentences when available", href: "?view=radio&mode=check", minutes: 10});
   if (weak) steps.push({kind: "recall", glyph: "温", title: "Warm up · your weak items", line: Math.min(weak, 20) + " of " + weak + " · say each one aloud before you check", href: "?view=recall&queue=weak", minutes: 15});
-  const final = days <= 3;
+  const final = days <= CONSOLIDATION_DAYS;
   if (!final && goal.unchecked) {
     const left = Math.max(0, goal.goal - goal.firstToday);
     steps.push({kind: "recall", glyph: "憶", title: left ? "New words and grammar" : "New checks done for today", line: left ? left + " first checks left today · rounds of 20" : goal.firstToday + " first checks today. More is a bonus.", href: "?view=recall&queue=new", minutes: Math.ceil(left / 20) * 12, done: !left});

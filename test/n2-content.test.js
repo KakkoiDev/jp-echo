@@ -57,3 +57,16 @@ test("generated exams keep the requested mix and only well-formed questions in r
   assert.equal(validateGenerated({mondai: 4, context: "女：いいですか。", prompt: "", choices: ["a", "b", "c", "d"], key: 1, why: "x"}, {skill: "Listening", aims: [], used}), null, "即時応答 has three choices");
   assert.equal(validateGenerated({mondai: 99, prompt: "x", choices: ["a", "b", "c", "d"], key: 1, why: "x"}, {skill: "Grammar", aims: [], used}), null);
 });
+
+import {priorities} from "../n2-adaptive.js";
+test("targeted exams keep weaknesses separate by skill and use active radio checks", () => {
+  const target = ["word", "就任", "しゅうにん"];
+  const data = {papers: [], attempts: [], recall: [
+    {target, dimension: "reading", last: "missed", updatedAt: "2026-11-20"},
+    {target, dimension: "meaning", last: "instant", updatedAt: "2026-11-21"}
+  ], events: [{target, kind: "exposure", at: "2026-11-21"},
+    {target, skill: "listening", kind: "recall", grade: "missed", at: "2026-11-22"}]};
+  assert.deepEqual(priorities(data).map(x => x.dimension), ["listening", "reading"]);
+  data.events.push({target, skill: "listening", kind: "recall", grade: "got", at: "2026-11-23"});
+  assert.deepEqual(priorities(data).map(x => x.dimension), ["reading"]);
+});

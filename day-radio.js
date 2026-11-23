@@ -62,18 +62,32 @@ export function listeningWeak(events = []) {
 // moving forward. Items heard today go to the back.
 export function dayQueue({inventory, recall = [], evidence = [], events = [], later = [], size = 40, freshShare = .25, today = localDay(), items = radioItems(inventory)}) {
   const weak = new Map();
-  for (const type of ["meaning", "reading", "grammar"]) for (const [k, v] of weakTargets(type, recall, evidence)) if (v.weak) weak.set(k, v.at);
-  for (const [k, v] of listeningWeak(events)) if (v.weak) weak.set(k, v.at); else if ((weak.get(k) || "") <= v.at) weak.delete(k);
-  const heardToday = new Set(events.filter(e => e.kind === "exposure" && localDay(new Date(e.at)) === today).map(e => keyOf(e.target)));
+  for (const type of ["meaning", "reading", "grammar"]) for (const [k, v] of weakTargets(type, recall, evidence)) if (v.weak && (!weak.has(k) || weak.get(k) < v.at)) weak.set(k, v.at);
+  for (const [k, v] of listeningWeak(events)) if (v.weak && (!weak.has(k) || weak.get(k) < v.at)) weak.set(k, v.at);
+  const lastHeard = new Map();
+  for (const event of events) {
+    if (event.kind !== "exposure") continue;
+    const key = keyOf(event.target);
+    if (!lastHeard.has(key) || event.at > lastHeard.get(key)) lastHeard.set(key, event.at);
+  }
+  const heardToday = new Set([...lastHeard].filter(([, at]) => localDay(new Date(at)) === today).map(([key]) => key));
   const checked = new Set(recall.map(r => keyOf(r.target)));
   const pick = [], seen = new Set();
   const add = (k, why) => { const it = items.get(k); if (it && !seen.has(k)) { seen.add(k); pick.push({...it, why}); } };
   const laterKeys = later.map(keyOf);
   const weakKeys = [...weak.entries()].sort((a, b) => b[1].localeCompare(a[1])).map(([k]) => k);
-  const fresh = Math.max(1, Math.round(size * freshShare));
+  const fresh = Math.min(Math.max(0, size - 1), Math.round(size * freshShare));
   for (const k of laterKeys) if (pick.length < size - fresh) add(k, "later");
   for (const k of weakKeys) if (pick.length < size - fresh) add(k, "weak");
-  for (const [k] of items) { if (pick.length >= size) break; if (!checked.has(k) && !weak.has(k)) add(k, "new"); }
+  const keys = [...items.keys()].sort((a, b) => (lastHeard.get(a) || "").localeCompare(lastHeard.get(b) || ""));
+  for (const k of keys) {
+    if (pick.length >= size) break;
+    if (!checked.has(k) && !weak.has(k)) add(k, "new");
+  }
+  for (const k of [...weakKeys, ...keys]) {
+    if (pick.length >= size) break;
+    add(k, weak.has(k) ? "weak" : "review");
+  }
   return [...pick.filter(p => !heardToday.has(keyOf(p.target))), ...pick.filter(p => heardToday.has(keyOf(p.target)))];
 }
 
@@ -129,8 +143,8 @@ export function radioEvent({target, kind, skill = "listening", grade, source, mo
 // The player: walks the queue from an index, one item at a time, and can be
 // paused, skipped, repeated and resumed. speak/wait are injected.
 export class DayPlayer {
-  constructor({speak, wait = ms => new Promise(r => setTimeout(r, ms)), cancel = () => {}, onItem = () => {}, onReveal = () => {}, onDone = () => {}} = {}) {
-    Object.assign(this, {speak, wait, cancel, onItem, onReveal, onDone}); this.run = 0; this.running = false; this.index = 0;
+  constructor({speak, wait = ms => new Promise(r => setTimeout(r, ms)), cancel = () => {}, onItem = () => {}, onReveal = () => {}, onComplete = () => {}, onDone = () => {}} = {}) {
+    Object.assign(this, {speak, wait, cancel, onItem, onReveal, onComplete, onDone}); this.run = 0; this.running = false; this.index = 0;
   }
   start(queue, {index = 0, steps, voiceFor = () => null, rate = 1} = {}) {
     if (!queue.length) return false;
@@ -141,13 +155,19 @@ export class DayPlayer {
   async loop(run) {
     while (run === this.run && this.index < this.queue.length) {
       const item = this.queue[this.index];
+      let audible = true;
       this.onItem(item, this.index);
       for (const step of this.steps(item)) {
         if (run !== this.run) return;
         if (step.reveal) this.onReveal(item, this.index);
-        else if (step.say) await this.speak(plainOr(step), {lang: step.lang, rate: this.rate, voice: this.voiceFor(step.lang)});
+        else if (step.say) {
+          const ended = await this.speak(plainOr(step), {lang: step.lang, rate: this.rate, voice: this.voiceFor(step.lang)});
+          if (ended === false) audible = false;
+        }
         else await this.wait(step.pause);
       }
+      if (run !== this.run) return;
+      if (audible) await this.onComplete(item, this.index);
       if (run !== this.run) return;
       this.index++;
     }
