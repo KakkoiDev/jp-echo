@@ -1,0 +1,1305 @@
+[
+ {
+  "skill": "Vocabulary",
+  "context": "",
+  "prompt": "予算案は議会で【承認】された。読み方はどれか。",
+  "choices": [
+   "しょうにん",
+   "じょうにん",
+   "じょうねん",
+   "しょうねん"
+  ],
+  "key": 1,
+  "why": "承認 is しょうにん, approval."
+ },
+ {
+  "skill": "Vocabulary",
+  "context": "",
+  "prompt": "棚の位置を【調整】した。読み方はどれか。",
+  "choices": [
+   "ちょうぜい",
+   "ちょうせい",
+   "ちょせい",
+   "ちゅうせい"
+  ],
+  "key": 2,
+  "why": "調整 means making an adjustment."
+ },
+ {
+  "skill": "Vocabulary",
+  "context": "",
+  "prompt": "通行の【妨げ】になる。読み方はどれか。",
+  "choices": [
+   "さまたげ",
+   "かたむけ",
+   "へだて",
+   "さだめ"
+  ],
+  "key": 1,
+  "why": "妨げ is an obstacle."
+ },
+ {
+  "skill": "Vocabulary",
+  "context": "",
+  "prompt": "工事は【順調】に進んでいる。読み方はどれか。",
+  "choices": [
+   "しゅんちょう",
+   "じゅんじょう",
+   "じゅんちょう",
+   "じゅんちゅう"
+  ],
+  "key": 3,
+  "why": "順調 means smoothly or on track."
+ },
+ {
+  "skill": "Vocabulary",
+  "context": "",
+  "prompt": "【率直】な感想を聞きたい。読み方はどれか。",
+  "choices": [
+   "そっちょく",
+   "そつじき",
+   "りつじき",
+   "りっちょく"
+  ],
+  "key": 1,
+  "why": "率直 means frank or candid."
+ },
+ {
+  "skill": "Vocabulary",
+  "context": "",
+  "prompt": "応募の【しめきり】が近い。",
+  "choices": [
+   "締め切り",
+   "占め切り",
+   "閉め切り",
+   "絞め切り"
+  ],
+  "key": 1,
+  "why": "締め切り is a deadline."
+ },
+ {
+  "skill": "Vocabulary",
+  "context": "",
+  "prompt": "足りない資料を【おぎなう】。",
+  "choices": [
+   "償う",
+   "養う",
+   "補う",
+   "担う"
+  ],
+  "key": 3,
+  "why": "補う means to supply what is missing."
+ },
+ {
+  "skill": "Vocabulary",
+  "context": "",
+  "prompt": "関係者に【はいりょ】した。",
+  "choices": [
+   "拝領",
+   "配旅",
+   "配慮",
+   "配置"
+  ],
+  "key": 3,
+  "why": "配慮 is consideration for others."
+ },
+ {
+  "skill": "Vocabulary",
+  "context": "",
+  "prompt": "費用を【ふたん】する。",
+  "choices": [
+   "負担",
+   "負段",
+   "分担",
+   "普段"
+  ],
+  "key": 1,
+  "why": "負担する means to bear a cost."
+ },
+ {
+  "skill": "Vocabulary",
+  "context": "",
+  "prompt": "現状を【はあく】する。",
+  "choices": [
+   "掌握力",
+   "把握",
+   "派閥",
+   "波及"
+  ],
+  "key": 2,
+  "why": "把握する means to grasp the situation."
+ },
+ {
+  "skill": "Vocabulary",
+  "context": "",
+  "prompt": "この町では住宅の（　）不足が続いている。",
+  "choices": [
+   "配属",
+   "交付",
+   "支出",
+   "供給"
+  ],
+  "key": 4,
+  "why": "住宅の供給 is the supply of housing."
+ },
+ {
+  "skill": "Vocabulary",
+  "context": "",
+  "prompt": "要望は予算にできる限り（　）させる。",
+  "choices": [
+   "反省",
+   "上映",
+   "反映",
+   "反抗"
+  ],
+  "key": 3,
+  "why": "意見を反映させる means to reflect views in a decision."
+ },
+ {
+  "skill": "Vocabulary",
+  "context": "",
+  "prompt": "計画はまだ検討の（　）にある。",
+  "choices": [
+   "段階",
+   "階段",
+   "段落",
+   "段差"
+  ],
+  "key": 1,
+  "why": "検討の段階 means the consideration stage."
+ },
+ {
+  "skill": "Vocabulary",
+  "context": "",
+  "prompt": "停電で作業が（　）した。",
+  "choices": [
+   "仲介",
+   "中継",
+   "中立",
+   "中断"
+  ],
+  "key": 4,
+  "why": "中断する means to be interrupted."
+ },
+ {
+  "skill": "Vocabulary",
+  "context": "",
+  "prompt": "故障に備え、予備の機械を一台（　）している。",
+  "choices": [
+   "確保",
+   "確約",
+   "確信",
+   "確定"
+  ],
+  "key": 1,
+  "why": "確保する means to secure or keep available."
+ },
+ {
+  "skill": "Vocabulary",
+  "context": "",
+  "prompt": "職員の負担を（　）するため、受付を予約制にした。",
+  "choices": [
+   "縮尺",
+   "短縮",
+   "減速",
+   "軽減"
+  ],
+  "key": 4,
+  "why": "負担を軽減する means to ease a burden."
+ },
+ {
+  "skill": "Vocabulary",
+  "context": "",
+  "prompt": "念の（　）、予約番号を控えた。",
+  "choices": [
+   "うえ",
+   "ほど",
+   "よし",
+   "ため"
+  ],
+  "key": 4,
+  "why": "念のため means as a precaution."
+ },
+ {
+  "skill": "Vocabulary",
+  "context": "",
+  "prompt": "来場者は昨年を大きく（　）。",
+  "choices": [
+   "上った",
+   "上げた",
+   "上がった",
+   "上回った"
+  ],
+  "key": 4,
+  "why": "Aを上回る means to exceed A."
+ },
+ {
+  "skill": "Vocabulary",
+  "context": "",
+  "prompt": "取材の申し込みが（　）し、電話がつながりにくい。",
+  "choices": [
+   "集計",
+   "中心",
+   "集合体",
+   "集中"
+  ],
+  "key": 4,
+  "why": "申し込みが集中する means requests arrive all at once."
+ },
+ {
+  "skill": "Vocabulary",
+  "context": "",
+  "prompt": "来月の予定は今のところ（　）だ。",
+  "choices": [
+   "未熟",
+   "未満",
+   "未定",
+   "未遂"
+  ],
+  "key": 3,
+  "why": "未定 means undecided."
+ },
+ {
+  "skill": "Vocabulary",
+  "context": "",
+  "prompt": "「手続きを省いた」に近い意味はどれか。",
+  "choices": [
+   "手続きを急いだ",
+   "手続きを丁寧にした",
+   "手続きの順序を変えた",
+   "手続きの一部をしなかった"
+  ],
+  "key": 4,
+  "why": "省く means to omit."
+ },
+ {
+  "skill": "Vocabulary",
+  "context": "",
+  "prompt": "「わずかに増加した」に近い意味はどれか。",
+  "choices": [
+   "絶えず増えた",
+   "急に増えた",
+   "かなり増えた",
+   "ほんの少し増えた"
+  ],
+  "key": 4,
+  "why": "わずかに describes a small amount."
+ },
+ {
+  "skill": "Vocabulary",
+  "context": "",
+  "prompt": "「申し出を断った」に近い意味はどれか。",
+  "choices": [
+   "受け入れなかった",
+   "聞こえなかった",
+   "思いつかなかった",
+   "伝え忘れた"
+  ],
+  "key": 1,
+  "why": "断る means to decline."
+ },
+ {
+  "skill": "Vocabulary",
+  "context": "",
+  "prompt": "「当分ここで働く」に近い意味はどれか。",
+  "choices": [
+   "一度だけここで働く",
+   "しばらくここで働く",
+   "必ずここで働く",
+   "交代でここで働く"
+  ],
+  "key": 2,
+  "why": "当分 means for the time being."
+ },
+ {
+  "skill": "Vocabulary",
+  "context": "",
+  "prompt": "「先方に確認する」の先方とは誰か。",
+  "choices": [
+   "先に着いた人",
+   "前の担当者",
+   "上司",
+   "相手側"
+  ],
+  "key": 4,
+  "why": "先方 refers to the other party."
+ },
+ {
+  "skill": "Vocabulary",
+  "context": "",
+  "prompt": "「見込み」の使い方が自然なのはどれか。",
+  "choices": [
+   "鏡に見込みが映った。",
+   "窓から見込みがよく見える。",
+   "午後には運転を再開する見込みだ。",
+   "見込みをかけて新聞を読んだ。"
+  ],
+  "key": 3,
+  "why": "再開する見込み expresses an expectation."
+ },
+ {
+  "skill": "Vocabulary",
+  "context": "",
+  "prompt": "「余裕」の使い方が自然なのはどれか。",
+  "choices": [
+   "故障を余裕して直した。",
+   "締め切りまでまだ余裕がある。",
+   "雨が激しく余裕した。",
+   "机を余裕に置いた。"
+  ],
+  "key": 2,
+  "why": "余裕がある means to have time or capacity to spare."
+ },
+ {
+  "skill": "Vocabulary",
+  "context": "",
+  "prompt": "「見直す」の使い方が自然なのはどれか。",
+  "choices": [
+   "利用状況を調べて料金を見直す。",
+   "駅員に切符を見直して改札を通った。",
+   "夕方に鳥が空を見直す。",
+   "財布を駅に見直す。"
+  ],
+  "key": 1,
+  "why": "料金を見直す means to reconsider pricing."
+ },
+ {
+  "skill": "Vocabulary",
+  "context": "",
+  "prompt": "「一律」の使い方が自然なのはどれか。",
+  "choices": [
+   "迷った末に一律で帰った。",
+   "その事件は一律な偶然だった。",
+   "参加費は年齢を問わず一律千円だ。",
+   "毎日一律に寝不足が治った。"
+  ],
+  "key": 3,
+  "why": "一律 describes a uniform rule."
+ },
+ {
+  "skill": "Vocabulary",
+  "context": "",
+  "prompt": "「控える」の使い方が自然なのはどれか。",
+  "choices": [
+   "荷物を駅まで控えた。",
+   "橋を控えて向こう岸に着いた。",
+   "検査の前日は飲酒を控えた。",
+   "雨を控えて傘を貸した。"
+  ],
+  "key": 3,
+  "why": "飲酒を控える means to limit or avoid drinking."
+ },
+ {
+  "skill": "Grammar",
+  "context": "",
+  "prompt": "引っ越し（　）、使っていない家具を処分した。",
+  "choices": [
+   "を除き",
+   "に反して",
+   "を機に",
+   "に限り"
+  ],
+  "key": 3,
+  "why": "を機に marks an occasion that prompts change."
+ },
+ {
+  "skill": "Grammar",
+  "context": "",
+  "prompt": "天候（　）、開始時刻が変わることがあります。",
+  "choices": [
+   "のくせに",
+   "どころか",
+   "次第で",
+   "に限り"
+  ],
+  "key": 3,
+  "why": "次第で makes the outcome depend on a condition."
+ },
+ {
+  "skill": "Grammar",
+  "context": "",
+  "prompt": "会員（　）、先行予約を受け付けます。",
+  "choices": [
+   "につれて",
+   "に限り",
+   "を問わず",
+   "を通じて"
+  ],
+  "key": 2,
+  "why": "に限り restricts eligibility to members."
+ },
+ {
+  "skill": "Grammar",
+  "context": "",
+  "prompt": "人気があるからといって、自分に合う（　）。",
+  "choices": [
+   "どころだった",
+   "に限る",
+   "にすぎる",
+   "とは限らない"
+  ],
+  "key": 4,
+  "why": "とは限らない denies that a conclusion always holds."
+ },
+ {
+  "skill": "Grammar",
+  "context": "",
+  "prompt": "参加を約束した（　）、途中で投げ出せない。",
+  "choices": [
+   "ものなら",
+   "ついでに",
+   "以上は",
+   "最中に"
+  ],
+  "key": 3,
+  "why": "以上は introduces an obligation following a commitment."
+ },
+ {
+  "skill": "Grammar",
+  "context": "",
+  "prompt": "工事（　）、一部の窓口を移転します。",
+  "choices": [
+   "に伴い",
+   "に反し",
+   "に比べて",
+   "に代わって"
+  ],
+  "key": 1,
+  "why": "に伴い signals an accompanying change."
+ },
+ {
+  "skill": "Grammar",
+  "context": "",
+  "prompt": "残念（　）、今年の開催は見送ります。",
+  "choices": [
+   "だけあって",
+   "きり",
+   "がちで",
+   "ながら"
+  ],
+  "key": 4,
+  "why": "残念ながら introduces unwelcome news."
+ },
+ {
+  "skill": "Grammar",
+  "context": "",
+  "prompt": "忙しくて、旅行（　）、昼休みさえ取れない。",
+  "choices": [
+   "に応じて",
+   "どころか",
+   "をめぐり",
+   "とともに"
+  ],
+  "key": 2,
+  "why": "どころか introduces a stronger counterexample."
+ },
+ {
+  "skill": "Grammar",
+  "context": "",
+  "prompt": "ご意見（　）、受付時間を延長しました。",
+  "choices": [
+   "に先立って",
+   "をめぐって",
+   "に応えて",
+   "を通して"
+  ],
+  "key": 3,
+  "why": "に応えて means in response to."
+ },
+ {
+  "skill": "Grammar",
+  "context": "",
+  "prompt": "話し合った（　）、結論は出なかった。",
+  "choices": [
+   "ところへ",
+   "かぎり",
+   "にあたって",
+   "ものの"
+  ],
+  "key": 4,
+  "why": "ものの concedes the effort before describing the disappointing outcome."
+ },
+ {
+  "skill": "Grammar",
+  "context": "",
+  "prompt": "本人が不在の（　）、代理の方でも結構です。",
+  "choices": [
+   "せいで",
+   "あまりに",
+   "場合に限り",
+   "ばかりに"
+  ],
+  "key": 3,
+  "why": "場合に限り restricts this exception to one condition."
+ },
+ {
+  "skill": "Grammar",
+  "context": "",
+  "prompt": "彼は何事もなかった（　）、作業を続けた。",
+  "choices": [
+   "うちに",
+   "かのように",
+   "ところへ",
+   "にあたり"
+  ],
+  "key": 2,
+  "why": "かのように means as if."
+ },
+ {
+  "skill": "Grammar",
+  "context": "",
+  "prompt": "調査結果（　）、来期の計画を立てる。",
+  "choices": [
+   "に限って",
+   "に基づいて",
+   "をこめて",
+   "をはじめ"
+  ],
+  "key": 2,
+  "why": "に基づいて identifies the basis for a plan."
+ },
+ {
+  "skill": "Grammar",
+  "context": "",
+  "prompt": "予算に余裕がある（　）。ほかの事業を延期して費用を出したのだ。",
+  "choices": [
+   "わけではない",
+   "に違いない",
+   "ばかりである",
+   "に決まっている"
+  ],
+  "key": 1,
+  "why": "The second sentence explains how money was freed up despite a tight budget."
+ },
+ {
+  "skill": "Grammar",
+  "context": "",
+  "prompt": "再三確認した（　）、記入漏れがあった。",
+  "choices": [
+   "に先立って",
+   "おかげで",
+   "にもかかわらず",
+   "に際して"
+  ],
+  "key": 3,
+  "why": "にもかかわらず marks an unexpected outcome."
+ },
+ {
+  "skill": "Grammar",
+  "context": "",
+  "prompt": "年齢（　）、どなたでも参加できます。",
+  "choices": [
+   "に応じた",
+   "に限り",
+   "を問わず",
+   "を込めて"
+  ],
+  "key": 3,
+  "why": "を問わず means regardless of age."
+ },
+ {
+  "skill": "Grammar",
+  "context": "",
+  "prompt": "並べ替えたとき★に入るのは？　住民の ＿＿ ＿＿ ★ ＿＿ 変更した。",
+  "choices": [
+   "一部",
+   "運行時間を",
+   "要望に",
+   "応じて"
+  ],
+  "key": 2,
+  "why": "住民の要望に応じて運行時間を一部変更した。"
+ },
+ {
+  "skill": "Grammar",
+  "context": "",
+  "prompt": "並べ替えたとき★に入るのは？　実際に ＿＿ ＿＿ ★ ＿＿ 分からない。",
+  "choices": [
+   "使って",
+   "みないと",
+   "使いやすさは",
+   "なかなか"
+  ],
+  "key": 3,
+  "why": "実際に使ってみないと使いやすさはなかなか分からない。"
+ },
+ {
+  "skill": "Grammar",
+  "context": "",
+  "prompt": "並べ替えたとき★に入るのは？　この制度は ＿＿ ＿＿ ★ ＿＿ 作られた。",
+  "choices": [
+   "減らすために",
+   "子育て中の",
+   "負担を",
+   "家庭の"
+  ],
+  "key": 3,
+  "why": "この制度は子育て中の家庭の負担を減らすために作られた。"
+ },
+ {
+  "skill": "Grammar",
+  "context": "",
+  "prompt": "町では自転車通勤を勧めている。（　）、職場に駐輪場がなければ実行は難しい。",
+  "choices": [
+   "したがって",
+   "そのうえ",
+   "つまり",
+   "もっとも"
+  ],
+  "key": 4,
+  "why": "もっとも qualifies the preceding recommendation."
+ },
+ {
+  "skill": "Grammar",
+  "context": "",
+  "prompt": "参加者数は増えた。一方、運営に必要な人手は変わらない。（　）、受付で待つ人が増えている。",
+  "choices": [
+   "それにもかかわらず",
+   "あるいは",
+   "それに先立って",
+   "その結果"
+  ],
+  "key": 4,
+  "why": "その結果 introduces the consequence of the staffing mismatch."
+ },
+ {
+  "skill": "Reading",
+  "context": "図書館からのお知らせ　書棚の移動に伴い、来週は二階に入れません。二階の本でも、金曜の閉館までに申し込めば、翌週の火曜以降に一階で受け取れます。当日の取り寄せはできません。返却は通常どおりです。",
+  "prompt": "来週の水曜に二階の本を借りたい人はどうするか。",
+  "choices": [
+   "水曜の朝に一階で頼む",
+   "来週の火曜までに二階で予約する",
+   "水曜に返却口で探す",
+   "今週の金曜までに申し込む"
+  ],
+  "key": 4,
+  "why": "The request must be made before Friday closing, even for a Wednesday pickup."
+ },
+ {
+  "skill": "Reading",
+  "context": "図書館からのお知らせ　書棚の移動に伴い、来週は二階に入れません。二階の本でも、金曜の閉館までに申し込めば、翌週の火曜以降に一階で受け取れます。当日の取り寄せはできません。返却は通常どおりです。",
+  "prompt": "来週も普段と同じようにできることは何か。",
+  "choices": [
+   "二階で本を受け取ること",
+   "当日に別の階から本を取り寄せること",
+   "借りた本を返すこと",
+   "二階の本を自分で探すこと"
+  ],
+  "key": 3,
+  "why": "The last sentence explicitly preserves returns."
+ },
+ {
+  "skill": "Reading",
+  "context": "ある会社では、会議の資料を短くすることにした。ところが、説明が足りず質問が増え、かえって会議が長引いた。そこで、全員に必要な結論を一枚目に置き、詳しい数字は別紙に残した。枚数は少し増えたが、何を決める会議なのかは伝わりやすくなった。",
+  "prompt": "最初の変更が期待どおりにいかなかった理由は何か。",
+  "choices": [
+   "数字が別紙に残っていたから",
+   "判断に必要な説明まで減ったから",
+   "結論が最初に書かれていたから",
+   "資料を事前に渡さなかったから"
+  ],
+  "key": 2,
+  "why": "Removing explanation increased questions during the meeting."
+ },
+ {
+  "skill": "Reading",
+  "context": "ある会社では、会議の資料を短くすることにした。ところが、説明が足りず質問が増え、かえって会議が長引いた。そこで、全員に必要な結論を一枚目に置き、詳しい数字は別紙に残した。枚数は少し増えたが、何を決める会議なのかは伝わりやすくなった。",
+  "prompt": "二度目の変更で重視されたことは何か。",
+  "choices": [
+   "説明の時間を全員同じにすること",
+   "質問を受け付けないこと",
+   "すべての数字を一枚に収めること",
+   "目的を早くつかめる構成にすること"
+  ],
+  "key": 4,
+  "why": "The conclusion comes first while the details remain available."
+ },
+ {
+  "skill": "Reading",
+  "context": "商店街の共同配送を試してみると、配達に使う車の台数は減った。しかし、集荷時刻が一つに決められたため、焼きたてを届けたい店には利用しにくかった。参加率の低さを見て「需要がない」と結論づける前に、何が参加の条件になっているかを聞く必要がある。",
+  "prompt": "参加しにくい店があるのはなぜか。",
+  "choices": [
+   "注文の締め切りがなくなったから",
+   "車の台数が多くなったから",
+   "共同配送の料金が高いから",
+   "商品の特徴と集荷時刻が合わないから"
+  ],
+  "key": 4,
+  "why": "A single pickup time clashes with selling freshly baked goods."
+ },
+ {
+  "skill": "Reading",
+  "context": "商店街の共同配送を試してみると、配達に使う車の台数は減った。しかし、集荷時刻が一つに決められたため、焼きたてを届けたい店には利用しにくかった。参加率の低さを見て「需要がない」と結論づける前に、何が参加の条件になっているかを聞く必要がある。",
+  "prompt": "筆者が次にすべきだと考えていることは何か。",
+  "choices": [
+   "個別の配送を禁止する",
+   "参加率だけで需要を予測する",
+   "店が参加できる条件を調べる",
+   "すべての店を参加させる"
+  ],
+  "key": 3,
+  "why": "The final sentence recommends asking about the barriers to participation."
+ },
+ {
+  "skill": "Reading",
+  "context": "最近「失敗を記録しよう」と言われる。だが、失敗の一覧だけを読むと、どんな工夫も危険に見えてしまう。うまくいった日に何をしたかも残してこそ、同じ手順でも結果が違った理由を探れる。記録の価値は件数より、比べられるかどうかにある。",
+  "prompt": "「どんな工夫も危険に見えてしまう」のはどんな時か。",
+  "choices": [
+   "毎回の手順を比べた時",
+   "成功した日も記録した時",
+   "理由を書き残した時",
+   "失敗例だけを集めた時"
+  ],
+  "key": 4,
+  "why": "A collection restricted to failures makes every approach appear risky."
+ },
+ {
+  "skill": "Reading",
+  "context": "最近「失敗を記録しよう」と言われる。だが、失敗の一覧だけを読むと、どんな工夫も危険に見えてしまう。うまくいった日に何をしたかも残してこそ、同じ手順でも結果が違った理由を探れる。記録の価値は件数より、比べられるかどうかにある。",
+  "prompt": "筆者にとって価値のある記録とは何か。",
+  "choices": [
+   "失敗件数をできるだけ多くした記録",
+   "手順を一種類に統一した記録",
+   "成功した人だけが書いた記録",
+   "条件の違う結果を比較できる記録"
+  ],
+  "key": 4,
+  "why": "The author wants comparisons between successful and unsuccessful days."
+ },
+ {
+  "skill": "Reading",
+  "context": "修理教室では、講師がその場で品物を直せば参加者は助かる。だが、直ったという結果だけを持ち帰れば、次の故障でも誰かに頼ることになる。そのため講師は、難しい箇所だけ手本を示し、最後の組み立ては持ち主に任せている。時間は余分にかかるが、質問の内容は以前より具体的になった。",
+  "prompt": "講師が最後の作業を任せる主な目的は何か。",
+  "choices": [
+   "講師の仕事を全部減らす",
+   "修理を短時間で終える",
+   "持ち主が次の故障にも対応できるようにする",
+   "質問の数を減らす"
+  ],
+  "key": 3,
+  "why": "The contrast is between receiving a repaired object and gaining the skill to repair."
+ },
+ {
+  "skill": "Reading",
+  "context": "修理教室では、講師がその場で品物を直せば参加者は助かる。だが、直ったという結果だけを持ち帰れば、次の故障でも誰かに頼ることになる。そのため講師は、難しい箇所だけ手本を示し、最後の組み立ては持ち主に任せている。時間は余分にかかるが、質問の内容は以前より具体的になった。",
+  "prompt": "教室の変化として書かれていることは何か。",
+  "choices": [
+   "参加者が作業について詳しく尋ねるようになった",
+   "手本を見せる必要がなくなった",
+   "一件あたりの修理時間が短くなった",
+   "参加者全員が一人で修理できるようになった"
+  ],
+  "key": 1,
+  "why": "Questions became more specific, while repairs took longer."
+ },
+ {
+  "skill": "Reading",
+  "context": "意見Ａ　美術館の開館を一時間早めれば、出勤前にも寄れる。試行するなら、どの時間に何人入ったかだけでなく、早朝の利用者が以前からの客なのかも確認したい。／意見Ｂ　延長するなら私は夕方を選ぶ。朝に来られる人の数は読めない。ただ、閉館後に来て引き返す人は実際に見てきた。まずは金曜の夕方だけ試してはどうか。",
+  "prompt": "二人に共通する考えは何か。",
+  "choices": [
+   "毎日一時間延長すべきだ",
+   "朝の利用者は必ず増える",
+   "開館時間の変更を試す余地がある",
+   "今の開館時間が最適だ"
+  ],
+  "key": 3,
+  "why": "Both writers propose a trial, although they choose different hours."
+ },
+ {
+  "skill": "Reading",
+  "context": "意見Ａ　美術館の開館を一時間早めれば、出勤前にも寄れる。試行するなら、どの時間に何人入ったかだけでなく、早朝の利用者が以前からの客なのかも確認したい。／意見Ｂ　延長するなら私は夕方を選ぶ。朝に来られる人の数は読めない。ただ、閉館後に来て引き返す人は実際に見てきた。まずは金曜の夕方だけ試してはどうか。",
+  "prompt": "Ａが早朝の利用者について知りたいことは何か。",
+  "choices": [
+   "来館前にどこで朝食を取るか",
+   "利用者が勤めている会社",
+   "以前から金曜に来ていたかだけ",
+   "従来の客が時間を変えただけかどうか"
+  ],
+  "key": 4,
+  "why": "A wants to distinguish new visitors from existing visitors shifting their schedule."
+ },
+ {
+  "skill": "Reading",
+  "context": "意見Ａ　美術館の開館を一時間早めれば、出勤前にも寄れる。試行するなら、どの時間に何人入ったかだけでなく、早朝の利用者が以前からの客なのかも確認したい。／意見Ｂ　延長するなら私は夕方を選ぶ。朝に来られる人の数は読めない。ただ、閉館後に来て引き返す人は実際に見てきた。まずは金曜の夕方だけ試してはどうか。",
+  "prompt": "Ｂの提案の根拠は何か。",
+  "choices": [
+   "夕方の延長を客全員が希望したこと",
+   "早朝の利用率を調べたこと",
+   "閉館後にも来館希望者を見かけたこと",
+   "金曜がすでに最も混むこと"
+  ],
+  "key": 3,
+  "why": "B cites direct observations of visitors arriving too late."
+ },
+ {
+  "skill": "Reading",
+  "context": "私の町の案内地図には、駅からの「徒歩十分」が並んでいる。ところが初めて来た人に尋ねると、十分という数字は同じでも歩きやすさは全く違うと言う。目印を探しながら上る坂と、川沿いをまっすぐ歩く道とでは負担が違うのだ。そこで地図を作り直したときには、距離を細かく測り直す代わりに、坂や曲がり角の写真を載せた。地図が厚くなると反対する人もいたが、必要な情報は使う人が何を決めたいかによって変わる。",
+  "prompt": "筆者が距離を測り直さなかった理由は何か。",
+  "choices": [
+   "距離の精度だけでは実際の負担が伝わらないから",
+   "以前の数字に誤りがなかったと証明されたから",
+   "坂には距離を表示できないから",
+   "写真のほうが印刷費が安いから"
+  ],
+  "key": 1,
+  "why": "The problem was what the number omitted, rather than its precision."
+ },
+ {
+  "skill": "Reading",
+  "context": "私の町の案内地図には、駅からの「徒歩十分」が並んでいる。ところが初めて来た人に尋ねると、十分という数字は同じでも歩きやすさは全く違うと言う。目印を探しながら上る坂と、川沿いをまっすぐ歩く道とでは負担が違うのだ。そこで地図を作り直したときには、距離を細かく測り直す代わりに、坂や曲がり角の写真を載せた。地図が厚くなると反対する人もいたが、必要な情報は使う人が何を決めたいかによって変わる。",
+  "prompt": "坂や曲がり角の写真は主に何の判断に役立つか。",
+  "choices": [
+   "駅からの正確な標高差",
+   "地図が何ページになるか",
+   "自分が歩きやすい経路かどうか",
+   "地域の観光客数"
+  ],
+  "key": 3,
+  "why": "The added information lets different users judge the route for themselves."
+ },
+ {
+  "skill": "Reading",
+  "context": "私の町の案内地図には、駅からの「徒歩十分」が並んでいる。ところが初めて来た人に尋ねると、十分という数字は同じでも歩きやすさは全く違うと言う。目印を探しながら上る坂と、川沿いをまっすぐ歩く道とでは負担が違うのだ。そこで地図を作り直したときには、距離を細かく測り直す代わりに、坂や曲がり角の写真を載せた。地図が厚くなると反対する人もいたが、必要な情報は使う人が何を決めたいかによって変わる。",
+  "prompt": "本文全体の主張に最も近いのはどれか。",
+  "choices": [
+   "地図には必ず写真が要る",
+   "利用者の判断に合わせて情報を選ぶべきだ",
+   "地図は情報が多いほどよい",
+   "時間の表示はすべて取り除くべきだ"
+  ],
+  "key": 2,
+  "why": "The final sentence gives a principle rather than a universal rule about photos."
+ },
+ {
+  "skill": "Reading",
+  "context": "市民講座のご案内　Ａ 写真入門：土曜午前、全三回、三千円。カメラ持参。Ｂ 写真散歩：土曜午後、一回、千五百円。スマホ可。雨天は翌週に延期。Ｃ 写真整理：日曜午前、一回、千円。パソコン持参。全講座とも前日正午までに要予約。Ａのみ初回の一週間前に受付終了。",
+  "prompt": "スマホだけで撮影を楽しみたい人が選べる講座はどれか。",
+  "choices": [
+   "Ｃ",
+   "Ａ",
+   "ＡとＣ",
+   "Ｂ"
+  ],
+  "key": 4,
+  "why": "Only the photo walk explicitly accepts a phone for shooting."
+ },
+ {
+  "skill": "Reading",
+  "context": "市民講座のご案内　Ａ 写真入門：土曜午前、全三回、三千円。カメラ持参。Ｂ 写真散歩：土曜午後、一回、千五百円。スマホ可。雨天は翌週に延期。Ｃ 写真整理：日曜午前、一回、千円。パソコン持参。全講座とも前日正午までに要予約。Ａのみ初回の一週間前に受付終了。",
+  "prompt": "Ａの予約期限はいつか。",
+  "choices": [
+   "初回の一週間前",
+   "初回当日の午前",
+   "二回目の前日",
+   "初回前日の正午"
+  ],
+  "key": 1,
+  "why": "The last sentence gives an exception for A."
+ },
+ {
+  "skill": "Reading",
+  "context": "体育館利用案内　平日九時から十七時は一時間六百円、それ以外は九百円。市内の学生は学生証提示で基本料金が半額。照明は一時間二百円で、割引の対象外。キャンセルは利用日の三日前まで無料、それ以降は基本料金の半額。",
+  "prompt": "市内の学生が平日十八時から一時間、照明付きで利用する。支払額はいくらか。",
+  "choices": [
+   "七百円",
+   "五百五十円",
+   "四百五十円",
+   "六百五十円"
+  ],
+  "key": 4,
+  "why": "The evening fee is 900 yen. Half plus the full lighting charge is 650."
+ },
+ {
+  "skill": "Reading",
+  "context": "体育館利用案内　平日九時から十七時は一時間六百円、それ以外は九百円。市内の学生は学生証提示で基本料金が半額。照明は一時間二百円で、割引の対象外。キャンセルは利用日の三日前まで無料、それ以降は基本料金の半額。",
+  "prompt": "無料でキャンセルできる最終日は、金曜利用の場合いつか。",
+  "choices": [
+   "火曜",
+   "水曜",
+   "月曜",
+   "木曜"
+  ],
+  "key": 1,
+  "why": "Three days before Friday is Tuesday."
+ },
+ {
+  "skill": "Listening",
+  "context": "来週の展示会、机はもう手配しました。案内状も送りましたが、会場の入り口が変更になったんです。看板は私が直しますから、あなたは参加予定の方に変更を知らせてください。",
+  "prompt": "頼まれた人が次にすることは何か。",
+  "choices": [
+   "案内状を印刷する",
+   "机を予約する",
+   "看板を書き直す",
+   "参加者に連絡する"
+  ],
+  "key": 4,
+  "why": "The speaker keeps the sign task and assigns notification to the listener."
+ },
+ {
+  "skill": "Listening",
+  "context": "検査結果はメールでお送りします。紙をご希望の場合は窓口でも受け取れますが、郵送には先に申請が必要です。郵送をご希望ですね。ではこちらに住所をお願いします。",
+  "prompt": "客が今することは何か。",
+  "choices": [
+   "住所を記入する",
+   "郵便局へ行く",
+   "メールを印刷する",
+   "結果を窓口で受け取る"
+  ],
+  "key": 1,
+  "why": "The request for an address follows the customer's choice of postal delivery."
+ },
+ {
+  "skill": "Listening",
+  "context": "商品の写真を先に送ってと言ったけれど、値段が決まらないと掲載できないんだ。写真の準備は後でいいから、まず仕入れ先に見積もりを頼んでくれる？",
+  "prompt": "最初に何をするか。",
+  "choices": [
+   "サイトに載せる",
+   "仕入れ先に金額を問い合わせる",
+   "写真を撮る",
+   "販売価格を公表する"
+  ],
+  "key": 2,
+  "why": "まず overrides the earlier request about photos."
+ },
+ {
+  "skill": "Listening",
+  "context": "見学の人数は八人ですね。十人未満なら名簿は当日で結構です。ただ、食堂を利用する方の人数だけは今日中にお願いします。食事の内容は来週選べます。",
+  "prompt": "今日中に知らせるのは何か。",
+  "choices": [
+   "食事の内容",
+   "食堂を使う人数",
+   "見学者全員の氏名",
+   "到着する車の数"
+  ],
+  "key": 2,
+  "why": "The only same-day deadline is the dining headcount."
+ },
+ {
+  "skill": "Listening",
+  "context": "電車が遅れて会議に間に合いそうもありません。代わりに私の資料を配っていただけますか。説明は着いてから私がしますので。",
+  "prompt": "頼まれた人はどうするか。",
+  "choices": [
+   "資料だけ先に配る",
+   "駅まで迎えに行く",
+   "会議を延期する",
+   "説明も代わりにする"
+  ],
+  "key": 1,
+  "why": "The caller explicitly reserves the explanation for after arrival."
+ },
+ {
+  "skill": "Listening",
+  "context": "注文した椅子ですが、色を変えると納品は再来週です。同じ色なら今週中です。色は部屋に合わないけれど、来週の開店には間に合わせたいので、そのままでお願いします。",
+  "prompt": "客が優先したことは何か。",
+  "choices": [
+   "安く買えること",
+   "部屋の色と合うこと",
+   "椅子の数を増やすこと",
+   "開店前に届くこと"
+  ],
+  "key": 4,
+  "why": "The opening date outweighs the colour preference."
+ },
+ {
+  "skill": "Listening",
+  "context": "在宅勤務で一番助かったのは、通勤時間がなくなったこと、と思われるでしょう。でも私にとっては、昼休みに父の薬を確認できるようになったことのほうが大きいんです。",
+  "prompt": "話し手が最も助かった点は何か。",
+  "choices": [
+   "交通費を節約できること",
+   "朝遅く起きられること",
+   "父の世話をしやすくなったこと",
+   "仕事の量を減らせたこと"
+  ],
+  "key": 3,
+  "why": "でも introduces the speaker's real priority."
+ },
+ {
+  "skill": "Listening",
+  "context": "店が混んでいたので改装したんですか。ええ、ただ席を増やしたわけじゃありません。席はむしろ二つ減らして、車いすでも奥まで通れるようにしました。",
+  "prompt": "改装の目的は何か。",
+  "choices": [
+   "入り口を二つにすること",
+   "奥まで移動しやすくすること",
+   "席を二つ増やすこと",
+   "待ち時間を短くすること"
+  ],
+  "key": 2,
+  "why": "The speaker traded two seats for a clearer route."
+ },
+ {
+  "skill": "Listening",
+  "context": "求人を出す前は、賃金への問い合わせが多いと思っていました。ところが実際は、曜日を毎週変えられるかという質問が一番でした。学生の応募が多かったせいかもしれません。",
+  "prompt": "応募者が最もよく質問したのは何か。",
+  "choices": [
+   "勤務曜日を変更できるか",
+   "時給が上がるか",
+   "交通費が出るか",
+   "学生割引があるか"
+  ],
+  "key": 1,
+  "why": "ところが contrasts expectation with the actual questions."
+ },
+ {
+  "skill": "Listening",
+  "context": "講演会の録画は全員に公開されますか。講師の話だけなら可能ですが、質疑には個人の相談が含まれます。そこで、その部分を切ってから申し込み者だけに送ることにしました。",
+  "prompt": "録画について決まったことは何か。",
+  "choices": [
+   "質疑を除いて申し込み者に送る",
+   "全編を誰でも見られるようにする",
+   "相談した人だけに全編を送る",
+   "講師の話を除いて公開する"
+  ],
+  "key": 1,
+  "why": "Both the edited portion and the recipients matter."
+ },
+ {
+  "skill": "Listening",
+  "context": "農園で野菜を受け取る仕組みを始めました。最初は袋を減らすのが目的でしたが、来た人と食べ方を話すうち、形の悪い野菜まで買ってもらえるようになりました。これは予想外でした。",
+  "prompt": "話し手が意外に思ったことは何か。",
+  "choices": [
+   "袋が必要になったこと",
+   "見た目の悪い野菜も売れたこと",
+   "農園に誰も来なかったこと",
+   "レシピを書籍にできたこと"
+  ],
+  "key": 2,
+  "why": "これは予想外 refers to the sales described immediately before it."
+ },
+ {
+  "skill": "Listening",
+  "context": "忙しい人向けに予約を十分刻みにしたら、かえって遅刻が増えました。予定が少しずれただけで間に合わないからです。便利さは細かく選べることだけではないと気づきました。",
+  "prompt": "話し手が主張したいことは何か。",
+  "choices": [
+   "選択肢は多いほど便利だ",
+   "予定に余裕を持てる仕組みも大切だ",
+   "遅刻の理由は本人にしかない",
+   "予約はすべて廃止すべきだ"
+  ],
+  "key": 2,
+  "why": "Narrow slots leave little room for real-world variation."
+ },
+ {
+  "skill": "Listening",
+  "context": "新人の質問が少ないので、説明がうまくなったと思っていました。匿名で聞けるようにしたら、基本的な質問が次々に来ました。分からないと言いやすい雰囲気を作るほうが先だったんですね。",
+  "prompt": "話し手が気づいたことは何か。",
+  "choices": [
+   "匿名の質問は難しすぎる",
+   "質問の少なさは理解の深さを示すとは限らない",
+   "説明を省いたほうが質問は減る",
+   "新人には基本的な研修が不要だ"
+  ],
+  "key": 2,
+  "why": "Anonymous questions revealed uncertainty that had been hidden."
+ },
+ {
+  "skill": "Listening",
+  "context": "古い建物を残すというと、昔の姿のまま保存する話だと思われます。でも、毎週ここで市場が開かれてこそ修理代が出せます。私たちにとって使い続けることが保存なんです。",
+  "prompt": "話し手の考えに合うのはどれか。",
+  "choices": [
+   "市場は別の建物に移すべきだ",
+   "活用することが建物の維持につながる",
+   "修理が終わるまで市場を休むべきだ",
+   "建物は人を入れずに守るべきだ"
+  ],
+  "key": 2,
+  "why": "The market funds repairs and gives preservation a practical basis."
+ },
+ {
+  "skill": "Listening",
+  "context": "町のアンケートではバスの増便を望む声が多かったんです。ところが詳しく聞くと、朝の一本が列車を逃す時刻なのが問題でした。便数を増やす前に、接続を調整してみます。",
+  "prompt": "町はまず何を試すか。",
+  "choices": [
+   "夜のバスを減らす",
+   "朝の列車を増やす",
+   "増便の希望を取り下げてもらう",
+   "列車に合わせてバスの時刻を変える"
+  ],
+  "key": 4,
+  "why": "The problem is the connection rather than the overall number of services."
+ },
+ {
+  "skill": "Listening",
+  "context": "それ、今日中じゃなくても構いませんよ。",
+  "prompt": "最も自然な返事はどれか。",
+  "choices": [
+   "では、明日の朝お届けします。",
+   "今日しか受け取れないんですね。",
+   "どうぞ今日中に召し上がってください。"
+  ],
+  "key": 1,
+  "why": "The speaker relaxes the deadline."
+ },
+ {
+  "skill": "Listening",
+  "context": "あいにく担当者は席を外しております。",
+  "prompt": "最も自然な返事はどれか。",
+  "choices": [
+   "ご担当、おめでとうございます。",
+   "では、その席を片付けましょう。",
+   "では、戻られたらお電話いただけますか。"
+  ],
+  "key": 3,
+  "why": "席を外す means the person is temporarily away."
+ },
+ {
+  "skill": "Listening",
+  "context": "これ、私から部長に渡しておきましょうか。",
+  "prompt": "最も自然な返事はどれか。",
+  "choices": [
+   "いいえ、部長からいただきましたか。",
+   "部長がお渡しになったんですね。",
+   "そうしていただけると助かります。"
+  ],
+  "key": 3,
+  "why": "ましょうか offers to pass the item on."
+ },
+ {
+  "skill": "Listening",
+  "context": "せっかくお越しいただいたのに、申し訳ありません。",
+  "prompt": "最も自然な返事はどれか。",
+  "choices": [
+   "それでは私がお越しになります。",
+   "ええ、お帰りをお待ちしていました。",
+   "いえ、また都合のよい時に伺います。"
+  ],
+  "key": 3,
+  "why": "The visitor responds to the host's regret."
+ },
+ {
+  "skill": "Listening",
+  "context": "もう少し早く分かっていれば、手伝えたんだけど。",
+  "prompt": "最も自然な返事はどれか。",
+  "choices": [
+   "手伝ってくれて本当に助かったよ。",
+   "こちらこそ、急に頼んでごめん。",
+   "早く分かってよかったね。"
+  ],
+  "key": 2,
+  "why": "The conditional expresses regret over being unable to help."
+ },
+ {
+  "skill": "Listening",
+  "context": "この見積もり、送料も含んでいましたっけ。",
+  "prompt": "最も自然な返事はどれか。",
+  "choices": [
+   "では、送った人に渡してください。",
+   "いいえ、送料は別にかかります。",
+   "はい、荷物は届きました。"
+  ],
+  "key": 2,
+  "why": "The question asks whether shipping is included in the price."
+ },
+ {
+  "skill": "Listening",
+  "context": "予約なしでは入れないこともないんですが……。",
+  "prompt": "最も自然な返事はどれか。",
+  "choices": [
+   "予約が禁止になったんですね。",
+   "確実に入るには予約したほうがいいんですね。",
+   "予約しても絶対入れないんですね。"
+  ],
+  "key": 2,
+  "why": "The hesitant double negative leaves open the possibility of entry."
+ },
+ {
+  "skill": "Listening",
+  "context": "今さら言い出しにくいんだけど、数字が一つ違うよ。",
+  "prompt": "最も自然な返事はどれか。",
+  "choices": [
+   "数字は言い出しやすいよね。",
+   "気づいてくれてよかった。直せるか確認するよ。",
+   "直してくれたんだね。もう確認はいらないよ。"
+  ],
+  "key": 2,
+  "why": "The speaker reports a discrepancy, without saying it is fixed."
+ },
+ {
+  "skill": "Listening",
+  "context": "私の説明、かえって分かりにくくしちゃったかな。",
+  "prompt": "最も自然な返事はどれか。",
+  "choices": [
+   "そんなことないよ。例を聞いて納得したよ。",
+   "そうか、君にも説明が分からないんだ。",
+   "じゃあ説明を聞く前に帰ったよ。"
+  ],
+  "key": 1,
+  "why": "The speaker worries their explanation made things worse."
+ },
+ {
+  "skill": "Listening",
+  "context": "無理を承知でお願いしているんです。",
+  "prompt": "最も自然な返事はどれか。",
+  "choices": [
+   "無理がないから頼んだんですね。",
+   "お約束はできませんが、調整してみます。",
+   "いいえ、お願いはすでに承知で終わりました。"
+  ],
+  "key": 2,
+  "why": "The request acknowledges that accommodating it will be difficult."
+ },
+ {
+  "skill": "Listening",
+  "context": "研修会場を選びます。東館は駅から近いが階段だけ。西館は坂の上だが送迎がありエレベーターもある。南館は工事中。今回は車いすを使う方も参加します。送迎の時間に合わせて始めましょう。",
+  "prompt": "どこを使うことになりそうか。",
+  "choices": [
+   "どの会場も使わない",
+   "西館",
+   "南館",
+   "東館"
+  ],
+  "key": 2,
+  "why": "Transport and lift access point to the west building."
+ },
+ {
+  "skill": "Listening",
+  "context": "会場を選んだあと、送迎車が九時と九時半に駅を出ると分かりました。乗車時間は十五分です。二便目の方にも到着後十五分は休んでいただきたいので、開会はそれからにします。",
+  "prompt": "開会できる最も早い時刻はいつか。",
+  "choices": [
+   "十時十五分",
+   "十時",
+   "九時半",
+   "九時四十五分"
+  ],
+  "key": 2,
+  "why": "The second trip arrives at 9:45, followed by a fifteen-minute rest."
+ },
+ {
+  "skill": "Listening",
+  "context": "バス旅行の昼食は海辺か山の店です。海辺は安いんですが、団体の予約ができません。山の店は予約できますが火曜は休みです。旅行は火曜の予定ですが、席を確保したいので出発を一日遅らせましょう。",
+  "prompt": "決まった内容は何か。",
+  "choices": [
+   "水曜に海辺で予約する",
+   "火曜に山の店で食べる",
+   "水曜に山の店で食べる",
+   "火曜に海辺で予約する"
+  ],
+  "key": 3,
+  "why": "Moving the trip one day permits a reservation at the mountain restaurant."
+ },
+ {
+  "skill": "Listening",
+  "context": "試作のかばんは軽さが好評でした。ただ、客から肩ひもが細くて痛いと言われました。ひもを厚くすると重くなるので、素材も厚さも変えず、幅だけ広げて試すことになりました。",
+  "prompt": "次の試作品はどこが変わるか。",
+  "choices": [
+   "本体の素材",
+   "肩ひもの幅",
+   "肩ひもの厚さ",
+   "本体の大きさ"
+  ],
+  "key": 2,
+  "why": "The last clause specifies width as the only change."
+ },
+ {
+  "skill": "Listening",
+  "context": "来月から資料の配布方法を変えます。参加者には原則メールで送ります。紙を希望する方には会場で渡しますが、こちらで人数を把握したいので、申し込みのときに知らせてください。印刷代は取りません。",
+  "prompt": "紙で欲しい人はどうすればよいか。",
+  "choices": [
+   "申し込み時に伝え、会場で受け取る",
+   "メールが届いてから別料金で注文する",
+   "当日印刷代を払い郵送を待つ",
+   "自分で印刷して会場に届ける"
+  ],
+  "key": 1,
+  "why": "An advance request is required, with free collection at the venue."
+ }
+]
