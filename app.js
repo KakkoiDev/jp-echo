@@ -56,6 +56,9 @@ async function putNote(...args){const done=await dbPutNote(...args);markBackupDi
 async function deleteNote(...args){const done=await dbDeleteNote(...args);markBackupDirty();return done}
 async function replaceNotes(...args){const done=await dbReplaceNotes(...args);markBackupDirty();return done}
 const $=selector=>document.querySelector(selector);
+// A deck link from Echo's own pages (/settings/import?deck=/decks/…) only fills
+// the import box; the learner still taps Import. Other origins are ignored.
+const offeredDeck=(()=>{try{const v=new URLSearchParams(location.search).get("deck");if(!v)return "";const u=new URL(v,location.origin);return u.origin===location.origin&&/^\/decks\/[\w.-]+\.json$/.test(u.pathname)?u.href:""}catch{return ""}})();
 try{const p=new URLSearchParams(location.search).get("echo-route")||sessionStorage.getItem("echo-route");if(p){sessionStorage.removeItem("echo-route");history.replaceState({echo:true},"",p)}}catch{}
 // Preferences must not prevent the app from opening its IndexedDB library.
 function storePreference(key,value){try{localStorage.setItem(key,value);return true}catch{return false}}
@@ -2709,6 +2712,7 @@ function expireSharedKey(now=Date.now()){const shared=settings.sharedKey;if(!sha
   if(shared.provider&&settings.providerKeys?.[shared.provider])settings.providerKeys={...settings.providerKeys,[shared.provider]:""};
   if(shared.speech&&settings.speechKeys?.groq)settings.speechKeys={...settings.speechKeys,groq:""};delete settings.sharedKey;storePreference("jp-echo-settings",JSON.stringify(settings));resetSettingsForm();
   toast(t("The AI key someone shared with you has expired and was removed."),6000);return true}
+if(offeredDeck){showView("settings");showSettingsPage("import");$("#import-text").value=offeredDeck;$("#import-text").dispatchEvent(new Event("input"))}
 {const params=new URLSearchParams(location.search),install=params.has("install")&&!isInstalled();
   if(params.has("install")){params.delete("install");const rest=params.toString();history.replaceState(history.state,"",location.pathname+(rest?"?"+rest:"")+location.hash)}
   // One filled button at a time: while the code is being typed, Unlock is

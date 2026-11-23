@@ -93,6 +93,8 @@ function chosenProvider(settings){
   if(provider==="local"&&!settings.localEndpoint)throw new Error("Add your Ollama or LM Studio endpoint in Settings.");
   return {provider,key,model};
 }
+// Whether a model is configured, without asking it anything (N2 coach and generator).
+export function providerReady(settings={}){try{chosenProvider(settings);return true}catch{return false}}
 function ask(text,system,{provider,key,model},settings){
   if(provider==="google")return gemini(text,key,model,system);
   if(provider==="anthropic")return anthropicRequest(text,key,model,system);

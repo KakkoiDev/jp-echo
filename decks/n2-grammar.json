@@ -1,0 +1,1554 @@
+{
+ "schemaVersion": 2,
+ "title": "JLPT N2 grammar — one sentence per point",
+ "description": "221 N2 grammar points, each in one natural example sentence with readings. Made for Echo's N2 study.",
+ "sentences": [
+  {
+   "id": "n2-grammar-0",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "With this method, the problem could be solved.",
+   "target": "この方法【ほうほう】なら、問題【もんだい】は解決【かいけつ】し得【う】る。"
+  },
+  {
+   "id": "n2-grammar-1",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "A mistake that would normally be impossible happened.",
+   "target": "普通【ふつう】ならあり得【え】ないミスが起【お】きた。"
+  },
+  {
+   "id": "n2-grammar-2",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "The rain is so heavy that we have no choice but to cancel the trip.",
+   "target": "雨【あめ】がひどいので、旅行【りょこう】は中止【ちゅうし】せざるを得【え】ない。"
+  },
+  {
+   "id": "n2-grammar-3",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "He has kept up unseen efforts.",
+   "target": "彼【かれ】は見【み】えざる努力【どりょく】を続【つづ】けてきた。"
+  },
+  {
+   "id": "n2-grammar-4",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I saved that money, telling myself I'd been on the trip.",
+   "target": "旅行【りょこう】に行【い】ったつもりで、そのお金【かね】を貯金【ちょきん】した。"
+  },
+  {
+   "id": "n2-grammar-5",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "We won't make it anyway, so let's go slowly.",
+   "target": "どうせ間【ま】に合【あ】わないから、ゆっくり行【い】こう。"
+  },
+  {
+   "id": "n2-grammar-6",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I want at least one day off.",
+   "target": "せめて一日【いちにち】だけでも休【やす】みが欲【ほ】しい。"
+  },
+  {
+   "id": "n2-grammar-7",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "It looks like it's going to rain tomorrow.",
+   "target": "どうやら明日【あした】は雨【あめ】になりそうだ。"
+  },
+  {
+   "id": "n2-grammar-8",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Some kind of strange noise is coming from the next room.",
+   "target": "隣【となり】の部屋【へや】から、なにやら変【へん】な音【おと】がする。"
+  },
+  {
+   "id": "n2-grammar-9",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I missed the last train, so I have no choice but to walk home.",
+   "target": "終電【しゅうでん】を逃【のが】したので、歩【ある】いて帰【かえ】るよりほかない。"
+  },
+  {
+   "id": "n2-grammar-10",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I'm sure I left the key right here.",
+   "target": "鍵【かぎ】は確【たし】かにここに置【お】いたはずだ。"
+  },
+  {
+   "id": "n2-grammar-11",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I don't think it'll rain, but let's take an umbrella just in case.",
+   "target": "雨【あめ】は降【ふ】らないと思【おも】うが、一応【いちおう】傘【かさ】を持【も】っていこう。"
+  },
+  {
+   "id": "n2-grammar-12",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "The report is more or less done, but it still needs a review.",
+   "target": "報告書【ほうこくしょ】は一応【いちおう】できたが、まだ見直【みなお】しが必要【ひつよう】だ。"
+  },
+  {
+   "id": "n2-grammar-13",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "This letter was without a doubt written by him.",
+   "target": "これは彼【かれ】が書【か】いた手紙【てがみ】に相違【そうい】ない。"
+  },
+  {
+   "id": "n2-grammar-14",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "In the unlikely event of an earthquake, please gather in this park.",
+   "target": "万【まん】が一【いち】地震【じしん】が起【お】きたら、この公園【こうえん】に集【あつ】まってください。"
+  },
+  {
+   "id": "n2-grammar-15",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I don't know how to contact them, so there's no way to let them know.",
+   "target": "連絡先【れんらくさき】がわからないので、知【し】らせようがない。"
+  },
+  {
+   "id": "n2-grammar-16",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "This success is nothing but the result of everyone's hard work.",
+   "target": "今回【こんかい】の成功【せいこう】は、皆【みな】さんの努力【どりょく】の結果【けっか】にほかならない。"
+  },
+  {
+   "id": "n2-grammar-17",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "There's no way this much work will be finished in one day.",
+   "target": "こんな量【りょう】の仕事【しごと】、一日【いちにち】で終【お】わりっこない。"
+  },
+  {
+   "id": "n2-grammar-18",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "In that case, let's postpone the meeting to next week.",
+   "target": "それなら、会議【かいぎ】は来週【らいしゅう】に延期【えんき】しましょう。"
+  },
+  {
+   "id": "n2-grammar-19",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "If only I could, I'd like to go back to my student days once more.",
+   "target": "できるものなら、もう一度【いちど】学生時代【がくせいじだい】に戻【もど】りたい。"
+  },
+  {
+   "id": "n2-grammar-20",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I decided to try entrusting this job to the new employee.",
+   "target": "この仕事【しごと】を新人【しんじん】に任【まか】せてみることにした。"
+  },
+  {
+   "id": "n2-grammar-21",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I want to put my experience studying abroad to use in my work.",
+   "target": "留学【りゅうがく】の経験【けいけん】を仕事【しごと】に活【い】かしたい。"
+  },
+  {
+   "id": "n2-grammar-22",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "It takes roughly ten minutes from the station to the venue.",
+   "target": "駅【えき】から会場【かいじょう】まで、おおよそ十分【じっぷん】かかります。"
+  },
+  {
+   "id": "n2-grammar-23",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I will never go to that shop again.",
+   "target": "あんな店【みせ】には二度【にど】と行【い】くまい。"
+  },
+  {
+   "id": "n2-grammar-24",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "From an educational standpoint, I don't want children to see this film.",
+   "target": "教育上【きょういくじょう】、子【こ】どもにこの映画【えいが】は見【み】せたくない。"
+  },
+  {
+   "id": "n2-grammar-25",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "This restaurant is cheap, and on top of that the food is good.",
+   "target": "この店【みせ】は安【やす】い上【うえ】に、料理【りょうり】もおいしい。"
+  },
+  {
+   "id": "n2-grammar-26",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Now that I've promised, I'll take responsibility to the end.",
+   "target": "約束【やくそく】した以上【いじょう】、最後【さいご】まで責任【せきにん】を持【も】つ。"
+  },
+  {
+   "id": "n2-grammar-27",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "The exam was even harder than I had expected.",
+   "target": "試験【しけん】は思【おも】っていた以上【いじょう】に難【むずか】しかった。"
+  },
+  {
+   "id": "n2-grammar-28",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "On the way to work, I realized I had forgotten my wallet.",
+   "target": "会社【かいしゃ】へ行【い】く途中【とちゅう】で、財布【さいふ】を忘【わす】れたことに気【き】づいた。"
+  },
+  {
+   "id": "n2-grammar-29",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "He ran to the station through the heavy rain.",
+   "target": "激【はげ】しい雨【あめ】の中【なか】を、彼【かれ】は駅【えき】まで走【はし】った。"
+  },
+  {
+   "id": "n2-grammar-30",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "This festival is growing popular, mainly among young people.",
+   "target": "この祭【まつ】りは、若者【わかもの】を中心【ちゅうしん】に人気【にんき】が広【ひろ】がっている。"
+  },
+  {
+   "id": "n2-grammar-31",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "This room is spacious and bright, and besides, the rent is cheap.",
+   "target": "この部屋【へや】は広【ひろ】くて明【あか】るく、その上【うえ】家賃【やちん】も安【やす】い。"
+  },
+  {
+   "id": "n2-grammar-32",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Now that I've taken it on, I intend to see it through to the end.",
+   "target": "引【ひ】き受【う】けた上【うえ】は、最後【さいご】までやり抜【ぬ】くつもりだ。"
+  },
+  {
+   "id": "n2-grammar-33",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Under the new manager, the team changed greatly.",
+   "target": "新【あたら】しい監督【かんとく】の下【もと】で、チームは大【おお】きく変【か】わった。"
+  },
+  {
+   "id": "n2-grammar-34",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I'll take care of the remaining work.",
+   "target": "後【あと】の仕事【しごと】は私【わたし】がやっておきます。"
+  },
+  {
+   "id": "n2-grammar-35",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Having made a promise, I can't turn it down now.",
+   "target": "約束【やくそく】した手前【てまえ】、今【いま】さら断【ことわ】れない。"
+  },
+  {
+   "id": "n2-grammar-36",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Residents are divided over the construction of the new airport.",
+   "target": "新【あたら】しい空港【くうこう】の建設【けんせつ】を巡【めぐ】って、住民【じゅうみん】の意見【いけん】が分【わ】かれている。"
+  },
+  {
+   "id": "n2-grammar-37",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "The conference was held over three days.",
+   "target": "会議【かいぎ】は三日間【みっかかん】にわたって行【おこな】われた。"
+  },
+  {
+   "id": "n2-grammar-38",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Cherry trees line the river.",
+   "target": "川【かわ】に沿【そ】って、桜【さくら】の木【き】が並【なら】んでいる。"
+  },
+  {
+   "id": "n2-grammar-39",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "After agonizing for a long time, I decided to change jobs.",
+   "target": "長【なが】い間【あいだ】悩【なや】んだ末【すえ】、転職【てんしょく】することに決【き】めた。"
+  },
+  {
+   "id": "n2-grammar-40",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Please follow the staff's instructions and evacuate in order.",
+   "target": "係員【かかりいん】の指示【しじ】にしたがって、順番【じゅんばん】に避難【ひなん】してください。"
+  },
+  {
+   "id": "n2-grammar-41",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Along with the population increase, there is a housing shortage.",
+   "target": "人口【じんこう】の増加【ぞうか】に伴【ともな】って、住宅【じゅうたく】が不足【ふそく】している。"
+  },
+  {
+   "id": "n2-grammar-42",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Because today is our regular holiday, we are closed.",
+   "target": "本日【ほんじつ】は定休日【ていきゅうび】につき、お休【やす】みさせていただきます。"
+  },
+  {
+   "id": "n2-grammar-43",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Every time I see this photo, I think of my hometown.",
+   "target": "この写真【しゃしん】を見【み】るにつけ、故郷【こきょう】を思【おも】い出【だ】す。"
+  },
+  {
+   "id": "n2-grammar-44",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "This is a matter of life and death, so it should be dealt with at once.",
+   "target": "これは命【いのち】にかかわる問題【もんだい】だから、すぐに対応【たいおう】すべきだ。"
+  },
+  {
+   "id": "n2-grammar-45",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I'm studying three hours a day toward the exam.",
+   "target": "試験【しけん】に向【む】けて、毎日【まいにち】三時間【さんじかん】勉強【べんきょう】している。"
+  },
+  {
+   "id": "n2-grammar-46",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "The voices of the people next to me bother me, and I can't concentrate.",
+   "target": "隣【となり】の人【ひと】の話【はな】し声【ごえ】が気【き】になって、集中【しゅうちゅう】できない。"
+  },
+  {
+   "id": "n2-grammar-47",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Please watch out for cars when walking at night.",
+   "target": "夜道【よみち】では車【くるま】に気【き】をつけて歩【ある】いてください。"
+  },
+  {
+   "id": "n2-grammar-48",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "She cried loudly without caring who was watching.",
+   "target": "彼女【かのじょ】は人目【ひとめ】も構【かま】わず、大声【おおごえ】で泣【な】いた。"
+  },
+  {
+   "id": "n2-grammar-49",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "We're sorry, but we are unable to meet that request.",
+   "target": "申【もう】し訳【わけ】ありませんが、そのご要望【ようぼう】にはお応【こた】えしかねます。"
+  },
+  {
+   "id": "n2-grammar-50",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "If you drive like that, you could cause an accident.",
+   "target": "そんな運転【うんてん】をしていたら、事故【じこ】を起【お】こしかねない。"
+  },
+  {
+   "id": "n2-grammar-51",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "We are open every day except Sunday.",
+   "target": "日曜日【にちようび】を除【のぞ】いて、毎日【まいにち】営業【えいぎょう】しています。"
+  },
+  {
+   "id": "n2-grammar-52",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Anyone can apply, with or without experience.",
+   "target": "経験【けいけん】の有無【うむ】にかかわらず、誰【だれ】でも応募【おうぼ】できます。"
+  },
+  {
+   "id": "n2-grammar-53",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Despite the heavy rain, the match went ahead as planned.",
+   "target": "大雨【おおあめ】にもかかわらず、試合【しあい】は予定通【よていどお】り行【おこな】われた。"
+  },
+  {
+   "id": "n2-grammar-54",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "It always rains on precisely the days I don't have an umbrella.",
+   "target": "傘【かさ】を持【も】っていない日【ひ】に限【かぎ】って、雨【あめ】が降【ふ】る。"
+  },
+  {
+   "id": "n2-grammar-55",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "This song is popular not only with young people but also with the elderly.",
+   "target": "この歌【うた】は若者【わかもの】に限【かぎ】らず、お年寄【としよ】りにも人気【にんき】がある。"
+  },
+  {
+   "id": "n2-grammar-56",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I took medicine, but my fever still won't go down.",
+   "target": "薬【くすり】を飲【の】んだが、熱【ねつ】はなお下【さ】がらない。"
+  },
+  {
+   "id": "n2-grammar-57",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "In addition, we will announce the detailed schedule at a later date.",
+   "target": "なお、詳【くわ】しい日程【にってい】は後日【ごじつ】お知【し】らせします。"
+  },
+  {
+   "id": "n2-grammar-58",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "As long as my body can move, I want to continue this work.",
+   "target": "体【からだ】が動【うご】く限【かぎ】り、この仕事【しごと】を続【つづ】けたい。"
+  },
+  {
+   "id": "n2-grammar-59",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "We'll decide the departure time depending on tomorrow's weather.",
+   "target": "明日【あした】の天気次第【てんきしだい】で、出発【しゅっぱつ】の時間【じかん】を決【き】めます。"
+  },
+  {
+   "id": "n2-grammar-60",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "As evening came, the wind gradually grew stronger.",
+   "target": "夕方【ゆうがた】になって、風【かぜ】が次第【しだい】に強【つよ】くなってきた。"
+  },
+  {
+   "id": "n2-grammar-61",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Only by trying it yourself do you understand how hard it is.",
+   "target": "自分【じぶん】でやってみてこそ、その難【むずか】しさがわかる。"
+  },
+  {
+   "id": "n2-grammar-62",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Anyone can enter this competition, regardless of age.",
+   "target": "この大会【たいかい】には、年齢【ねんれい】を問【と】わず誰【だれ】でも参加【さんか】できる。"
+  },
+  {
+   "id": "n2-grammar-63",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "The bus isn't coming, so there's no choice but to go by taxi.",
+   "target": "バスが来【こ】ないので、タクシーで行【い】くよりしかたがない。"
+  },
+  {
+   "id": "n2-grammar-64",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "For your health, it's best to go to bed early and get up early.",
+   "target": "健康【けんこう】のためには、早寝早起【はやねはやお】きするに越【こ】したことはない。"
+  },
+  {
+   "id": "n2-grammar-65",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "In short, what you're saying is that the budget isn't enough.",
+   "target": "要【よう】するに、予算【よさん】が足【た】りないということですね。"
+  },
+  {
+   "id": "n2-grammar-66",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I can't give you an answer until I've consulted the department manager.",
+   "target": "部長【ぶちょう】に相談【そうだん】してからでないと、お返事【へんじ】できません。"
+  },
+  {
+   "id": "n2-grammar-67",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "It's a bit expensive, but it's not an impossible price for me.",
+   "target": "少【すこ】し高【たか】いが、買【か】えなくはない値段【ねだん】だ。"
+  },
+  {
+   "id": "n2-grammar-68",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Unless you actually meet them, you can't tell what kind of person they are.",
+   "target": "実際【じっさい】に会【あ】ってみないことには、どんな人【ひと】かわからない。"
+  },
+  {
+   "id": "n2-grammar-69",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "When I see someone in trouble, I can't help but help them.",
+   "target": "困【こま】っている人【ひと】を見【み】ると、助【たす】けないではいられない。"
+  },
+  {
+   "id": "n2-grammar-70",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I must finish this report by the deadline.",
+   "target": "締【し】め切【き】りまでに、この報告書【ほうこくしょ】を仕上【しあ】げねばならない。"
+  },
+  {
+   "id": "n2-grammar-71",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "You there, copy these documents right away.",
+   "target": "君【きみ】、この書類【しょるい】をすぐにコピーしてくれたまえ。"
+  },
+  {
+   "id": "n2-grammar-72",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Of the four seasons, I like autumn best.",
+   "target": "四季【しき】のうちで、秋【あき】が一番【いちばん】好【す】きだ。"
+  },
+  {
+   "id": "n2-grammar-73",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I walked slowly along the mountain path while enjoying the scenery.",
+   "target": "景色【けしき】を楽【たの】しみつつ、ゆっくりと山道【やまみち】を歩【ある】いた。"
+  },
+  {
+   "id": "n2-grammar-74",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Even though I know it's bad for me, I end up eating ramen in the middle of the night.",
+   "target": "体【からだ】に悪【わる】いと知【し】りつつも、夜中【よなか】にラーメンを食【た】べてしまう。"
+  },
+  {
+   "id": "n2-grammar-75",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Upon enrollment, please submit the required documents.",
+   "target": "入学【にゅうがく】に際【さい】して、必要【ひつよう】な書類【しょるい】を提出【ていしゅつ】してください。"
+  },
+  {
+   "id": "n2-grammar-76",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "When getting off, please make sure you haven't left anything behind.",
+   "target": "お降【お】りの際【さい】には、お忘【わす】れ物【もの】のないようご注意【ちゅうい】ください。"
+  },
+  {
+   "id": "n2-grammar-77",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "When starting the new business, we researched the market.",
+   "target": "新【あたら】しい事業【じぎょう】を始【はじ】めるにあたって、市場【しじょう】を調査【ちょうさ】した。"
+  },
+  {
+   "id": "n2-grammar-78",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I quit smoking when I got married.",
+   "target": "結婚【けっこん】を契機【けいき】に、たばこをやめた。"
+  },
+  {
+   "id": "n2-grammar-79",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "The earth's temperature is rising year by year.",
+   "target": "地球【ちきゅう】の気温【きおん】は年々【ねんねん】上昇【じょうしょう】しつつある。"
+  },
+  {
+   "id": "n2-grammar-80",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Just as I was about to go out, a friend called me.",
+   "target": "出【で】かけようとしているところに、友達【ともだち】から電話【でんわ】がかかってきた。"
+  },
+  {
+   "id": "n2-grammar-81",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "The bell had barely rung when the students rushed out of the classroom.",
+   "target": "ベルが鳴【な】るか鳴【な】らないかのうちに、生徒【せいと】たちは教室【きょうしつ】を飛【と】び出【だ】した。"
+  },
+  {
+   "id": "n2-grammar-82",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Could you pick up some milk at the supermarket on your way home?",
+   "target": "帰【かえ】りがけに、スーパーで牛乳【ぎゅうにゅう】を買【か】ってきてくれる？"
+  },
+  {
+   "id": "n2-grammar-83",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "If you keep taking breaks like that, the work won't get done.",
+   "target": "そんなに休【やす】んでばかりいては、仕事【しごと】が終【お】わらないよ。"
+  },
+  {
+   "id": "n2-grammar-84",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I very nearly ended up late for an important meeting.",
+   "target": "もう少【すこ】しで、大事【だいじ】な会議【かいぎ】に遅【おく】れるところだった。"
+  },
+  {
+   "id": "n2-grammar-85",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I'm so busy with work that a trip is out of the question.",
+   "target": "仕事【しごと】が忙【いそが】しくて、旅行【りょこう】どころではない。"
+  },
+  {
+   "id": "n2-grammar-86",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I met a high school classmate for the first time in ten years.",
+   "target": "十年【じゅうねん】ぶりに、高校【こうこう】の同級生【どうきゅうせい】に会【あ】った。"
+  },
+  {
+   "id": "n2-grammar-87",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "When it's this cold, we can't play outside.",
+   "target": "こんなに寒【さむ】くては、外【そと】で遊【あそ】べない。"
+  },
+  {
+   "id": "n2-grammar-88",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Writing and erasing, writing and erasing, I finally finished the letter.",
+   "target": "書【か】いては消【け】し、書【か】いては消【け】して、やっと手紙【てがみ】を仕上【しあ】げた。"
+  },
+  {
+   "id": "n2-grammar-89",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Failure, too, is one of our important experiences.",
+   "target": "失敗【しっぱい】も又【また】、大切【たいせつ】な経験【けいけん】の一【ひと】つだ。"
+  },
+  {
+   "id": "n2-grammar-90",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "As a result of the discussion, we decided to review the plan.",
+   "target": "話【はな】し合【あ】いの結果【けっか】、計画【けいかく】を見直【みなお】すことになった。"
+  },
+  {
+   "id": "n2-grammar-91",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Ever since I came to Japan, I've eaten natto every morning.",
+   "target": "日本【にほん】に来【き】て以来【いらい】、毎朝【まいあさ】納豆【なっとう】を食【た】べている。"
+  },
+  {
+   "id": "n2-grammar-92",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Prior to the opening, the mayor gave a speech.",
+   "target": "開会【かいかい】に先立【さきだ】ち、市長【しちょう】が挨拶【あいさつ】をした。"
+  },
+  {
+   "id": "n2-grammar-93",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I wonder whether his prediction will really come true.",
+   "target": "はたして、彼【かれ】の予想【よそう】は当【あ】たるだろうか。"
+  },
+  {
+   "id": "n2-grammar-94",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "My hard work paid off, and I passed the exam.",
+   "target": "苦労【くろう】した甲斐【かい】があって、試験【しけん】に合格【ごうかく】できた。"
+  },
+  {
+   "id": "n2-grammar-95",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "When night fell, the rain eventually turned to snow.",
+   "target": "夜【よる】になると、雨【あめ】はやがて雪【ゆき】に変【か】わった。"
+  },
+  {
+   "id": "n2-grammar-96",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "This road is narrow, and therefore large vehicles can't pass.",
+   "target": "この道【みち】は狭【せま】く、したがって大型車【おおがたしゃ】は通【とお】れない。"
+  },
+  {
+   "id": "n2-grammar-97",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "After dithering for ages, I ended up going home without buying anything.",
+   "target": "さんざん迷【まよ】ったあげく、何【なに】も買【か】わずに帰【かえ】った。"
+  },
+  {
+   "id": "n2-grammar-98",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "A single book was what made me start aiming to become a doctor.",
+   "target": "一冊【いっさつ】の本【ほん】がきっかけで、医者【いしゃ】を目指【めざ】すようになった。"
+  },
+  {
+   "id": "n2-grammar-99",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "When it comes to cooking, nobody can beat him.",
+   "target": "料理【りょうり】にかけては、彼【かれ】の右【みぎ】に出【で】る者【もの】はいない。"
+  },
+  {
+   "id": "n2-grammar-100",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "By the time I got to the station, the train had long since left.",
+   "target": "駅【えき】に着【つ】いたときには、電車【でんしゃ】はとっくに出【で】ていた。"
+  },
+  {
+   "id": "n2-grammar-101",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I still remember what happened three years ago.",
+   "target": "三年前【さんねんまえ】のことを、未【いま】だに覚【おぼ】えている。"
+  },
+  {
+   "id": "n2-grammar-102",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "This film was made based on a real incident.",
+   "target": "実際【じっさい】の事件【じけん】をもとに、この映画【えいが】は作【つく】られた。"
+  },
+  {
+   "id": "n2-grammar-103",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Since I'm playing in the match, I absolutely want to win.",
+   "target": "試合【しあい】に出【で】るからには、絶対【ぜったい】に勝【か】ちたい。"
+  },
+  {
+   "id": "n2-grammar-104",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I was reading a book, and before I knew it, dawn had broken.",
+   "target": "本【ほん】を読【よ】んでいたら、いつの間【ま】にか夜【よ】が明【あ】けていた。"
+  },
+  {
+   "id": "n2-grammar-105",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I'll go home once, then head out again.",
+   "target": "一旦【いったん】家【いえ】に帰【かえ】ってから、また出【で】かけます。"
+  },
+  {
+   "id": "n2-grammar-106",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "At this restaurant, not only the food but also the service is wonderful.",
+   "target": "この店【みせ】は、味【あじ】はもとより、サービスも素晴【すば】らしい。"
+  },
+  {
+   "id": "n2-grammar-107",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "This rain doesn't look like it will stop today.",
+   "target": "この雨【あめ】は、今日中【きょうじゅう】にはやみそうにない。"
+  },
+  {
+   "id": "n2-grammar-108",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Contrary to expectations, sales grew significantly.",
+   "target": "予想【よそう】に反【はん】して、売【う】り上【あ】げは大【おお】きく伸【の】びた。"
+  },
+  {
+   "id": "n2-grammar-109",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "When I took the medicine, I actually felt worse.",
+   "target": "薬【くすり】を飲【の】んだら、逆【ぎゃく】に具合【ぐあい】が悪【わる】くなった。"
+  },
+  {
+   "id": "n2-grammar-110",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "City life is convenient, but on the other hand prices are high.",
+   "target": "都会【とかい】の生活【せいかつ】は便利【べんり】な反面【はんめん】、物価【ぶっか】が高【たか】い。"
+  },
+  {
+   "id": "n2-grammar-111",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "He ran the full forty-two kilometers all the way to the end.",
+   "target": "彼【かれ】は四十二【よんじゅうに】キロを最後【さいご】まで走【はし】り抜【ぬ】いた。"
+  },
+  {
+   "id": "n2-grammar-112",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Let's skip the serious talk today and enjoy our drinks.",
+   "target": "今日【きょう】は堅【かた】い話【はなし】は抜【ぬ】きで、楽【たの】しく飲【の】みましょう。"
+  },
+  {
+   "id": "n2-grammar-113",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Summer vacation finally starts tomorrow.",
+   "target": "いよいよ明日【あした】から夏休【なつやす】みだ。"
+  },
+  {
+   "id": "n2-grammar-114",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "A friend drove me, so I got by without using a taxi.",
+   "target": "友達【ともだち】が車【くるま】で送【おく】ってくれたので、タクシーを使【つか】わずに済【す】んだ。"
+  },
+  {
+   "id": "n2-grammar-115",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "You can choose a travel plan according to your budget.",
+   "target": "予算【よさん】に応【おう】じて、旅行【りょこう】のプランを選【えら】べます。"
+  },
+  {
+   "id": "n2-grammar-116",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "This island is warm throughout the year.",
+   "target": "この島【しま】は一年【いちねん】を通【つう】じて暖【あたた】かい。"
+  },
+  {
+   "id": "n2-grammar-117",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "In response to the fans, the singer sang one more song.",
+   "target": "ファンの声【こえ】に応【こた】えて、歌手【かしゅ】はもう一曲【いっきょく】歌【うた】った。"
+  },
+  {
+   "id": "n2-grammar-118",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Would you like coffee, or would you prefer tea?",
+   "target": "コーヒーにしますか、それとも紅茶【こうちゃ】にしますか。"
+  },
+  {
+   "id": "n2-grammar-119",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "From a parent's point of view, a child living alone is a worry.",
+   "target": "親【おや】にしたら、子【こ】どもの一人暮【ひとりぐ】らしは心配【しんぱい】なものだ。"
+  },
+  {
+   "id": "n2-grammar-120",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Whether you go or not, please let us know early.",
+   "target": "行【い】くにしても行【い】かないにしても、早【はや】めに連絡【れんらく】してください。"
+  },
+  {
+   "id": "n2-grammar-121",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "As for me, I'm in favor of this proposal.",
+   "target": "私【わたし】としては、この案【あん】に賛成【さんせい】です。"
+  },
+  {
+   "id": "n2-grammar-122",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Even if people oppose me, I won't give up on my dream.",
+   "target": "たとえ反対【はんたい】されたとしても、自分【じぶん】の夢【ゆめ】をあきらめない。"
+  },
+  {
+   "id": "n2-grammar-123",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Even so, it's really hot today, isn't it?",
+   "target": "それにしても、今日【きょう】は本当【ほんとう】に暑【あつ】いですね。"
+  },
+  {
+   "id": "n2-grammar-124",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Before I knew it, my wallet was gone.",
+   "target": "知【し】らぬ間【ま】に、財布【さいふ】がなくなっていた。"
+  },
+  {
+   "id": "n2-grammar-125",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "He kept practicing without taking a single day off.",
+   "target": "彼【かれ】は一日【いちにち】も休【やす】むことなく、練習【れんしゅう】を続【つづ】けた。"
+  },
+  {
+   "id": "n2-grammar-126",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "The briefing will be held in the conference room at head office.",
+   "target": "説明会【せつめいかい】は、本社【ほんしゃ】の会議室【かいぎしつ】にて行【おこな】います。"
+  },
+  {
+   "id": "n2-grammar-127",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "To get to the station, go straight along this road.",
+   "target": "駅【えき】に行【い】くには、この道【みち】をまっすぐ進【すす】んでください。"
+  },
+  {
+   "id": "n2-grammar-128",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Because of the rain, the construction isn't progressing as hoped.",
+   "target": "雨【あめ】のせいで、工事【こうじ】が思【おも】うように進【すす】まない。"
+  },
+  {
+   "id": "n2-grammar-129",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Just when I thought it had cleared up, it suddenly started to rain.",
+   "target": "晴【は】れたかと思【おも】ったら、急【きゅう】に雨【あめ】が降【ふ】り出【だ】した。"
+  },
+  {
+   "id": "n2-grammar-130",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I hope these materials will be of use to you all.",
+   "target": "この資料【しりょう】が皆様【みなさま】のお役【やく】に立【た】てばと思【おも】います。"
+  },
+  {
+   "id": "n2-grammar-131",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "A higher price doesn't necessarily mean better quality.",
+   "target": "値段【ねだん】が高【たか】ければ品質【ひんしつ】がいいというものでもない。"
+  },
+  {
+   "id": "n2-grammar-132",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "The cause of the accident is thought to be the driver's carelessness.",
+   "target": "事故【じこ】の原因【げんいん】は、運転手【うんてんしゅ】の不注意【ふちゅうい】と考【かんが】えられる。"
+  },
+  {
+   "id": "n2-grammar-133",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Considering it from a safety standpoint, this plan has problems.",
+   "target": "安全【あんぜん】という点【てん】から考【かんが】えると、この計画【けいかく】には問題【もんだい】がある。"
+  },
+  {
+   "id": "n2-grammar-134",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "The lights being off means they've probably gone to bed.",
+   "target": "電気【でんき】が消【き】えているということは、もう寝【ね】たのだろう。"
+  },
+  {
+   "id": "n2-grammar-135",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "If you practice a little every day like this, you'll improve.",
+   "target": "こんなふうに、毎日【まいにち】少【すこ】しずつ練習【れんしゅう】すれば上達【じょうたつ】します。"
+  },
+  {
+   "id": "n2-grammar-136",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I planned my schedule so that mornings are meetings and afternoons are client visits.",
+   "target": "午前【ごぜん】は会議【かいぎ】、午後【ごご】は外回【そとまわ】りという風【ふう】に予定【よてい】を組【く】んだ。"
+  },
+  {
+   "id": "n2-grammar-137",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Although I got my license, I haven't driven even once.",
+   "target": "免許【めんきょ】は取【と】ったものの、まだ一度【いちど】も運転【うんてん】していない。"
+  },
+  {
+   "id": "n2-grammar-138",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Helping a friend in trouble is what true friendship is.",
+   "target": "困【こま】っている友人【ゆうじん】を助【たす】けるのが、本当【ほんとう】の友情【ゆうじょう】というものだ。"
+  },
+  {
+   "id": "n2-grammar-139",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "From a foreigner's point of view, Japanese customs apparently seem strange.",
+   "target": "外国人【がいこくじん】から見【み】ると、日本【にほん】の習慣【しゅうかん】は不思議【ふしぎ】に思【おも】えるらしい。"
+  },
+  {
+   "id": "n2-grammar-140",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Judging from the way they're smiling, the exam seems to have gone well.",
+   "target": "笑【わら】っているところを見【み】ると、試験【しけん】はうまくいったようだ。"
+  },
+  {
+   "id": "n2-grammar-141",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Judging from the way he talks, he's probably from the Kansai region.",
+   "target": "あの話【はな】し方【かた】からすると、彼【かれ】は関西【かんさい】の出身【しゅっしん】だろう。"
+  },
+  {
+   "id": "n2-grammar-142",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Even from the entrance, this restaurant has an upscale atmosphere.",
+   "target": "この店【みせ】は入【い】り口【ぐち】からして、高級【こうきゅう】な雰囲気【ふんいき】がある。"
+  },
+  {
+   "id": "n2-grammar-143",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Just because something is cheap doesn't mean you should buy things you don't need.",
+   "target": "安【やす】いからといって、必要【ひつよう】のない物【もの】を買【か】うべきではない。"
+  },
+  {
+   "id": "n2-grammar-144",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Come to think of it, I heard a new café opened in front of the station.",
+   "target": "そういえば、駅前【えきまえ】に新【あたら】しいカフェができたらしいよ。"
+  },
+  {
+   "id": "n2-grammar-145",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Please write your name on this form.",
+   "target": "こちらの用紙【ようし】にお名前【なまえ】をお書【か】き願【ねが】います。"
+  },
+  {
+   "id": "n2-grammar-146",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Hey, pass me that salt, would you?",
+   "target": "ちょっと、その塩【しお】を取【と】って頂戴【ちょうだい】。"
+  },
+  {
+   "id": "n2-grammar-147",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I hear a big bookstore is opening in front of the station next month.",
+   "target": "来月【らいげつ】、駅前【えきまえ】に大【おお】きな本屋【ほんや】ができるとか。"
+  },
+  {
+   "id": "n2-grammar-148",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Let us all protect our local environment together.",
+   "target": "地域【ちいき】の環境【かんきょう】を、皆【みな】で守【まも】ろうではないか。"
+  },
+  {
+   "id": "n2-grammar-149",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "He's wearing a look as if he knows nothing.",
+   "target": "彼【かれ】は何【なに】も知【し】らないかのような顔【かお】をしている。"
+  },
+  {
+   "id": "n2-grammar-150",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Might this plan be a little unrealistic?",
+   "target": "この計画【けいかく】は、少【すこ】し無理【むり】があるのではないだろうか。"
+  },
+  {
+   "id": "n2-grammar-151",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "After practicing that much, it's only natural that they won.",
+   "target": "あれだけ練習【れんしゅう】したのだから、勝【か】って当然【とうぜん】だ。"
+  },
+  {
+   "id": "n2-grammar-152",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "You work late every night, so it's no wonder you're tired.",
+   "target": "毎晩【まいばん】遅【おそ】くまで働【はたら】いているのだから、疲【つか】れるのも当然【とうぜん】だ。"
+  },
+  {
+   "id": "n2-grammar-153",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I finished my homework in just five minutes.",
+   "target": "たった五分【ごふん】で、宿題【しゅくだい】を終【お】わらせた。"
+  },
+  {
+   "id": "n2-grammar-154",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "With heavy rain tomorrow, there is a risk the river will flood.",
+   "target": "明日【あした】は大雨【おおあめ】で、川【かわ】が氾濫【はんらん】する恐【おそ】れがある。"
+  },
+  {
+   "id": "n2-grammar-155",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "He probably won't come to today's meeting.",
+   "target": "おそらく、彼【かれ】は今日【きょう】の会議【かいぎ】には来【こ】ないだろう。"
+  },
+  {
+   "id": "n2-grammar-156",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "That awful restaurant? As if I'd ever go there again!",
+   "target": "あんなまずい店【みせ】、二度【にど】と行【い】くものか。"
+  },
+  {
+   "id": "n2-grammar-157",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I got lost, and on top of that it started raining.",
+   "target": "道【みち】に迷【まよ】い、おまけに雨【あめ】まで降【ふ】ってきた。"
+  },
+  {
+   "id": "n2-grammar-158",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Something that expensive is bound not to sell.",
+   "target": "そんな高【たか】い物【もの】、売【う】れないに決【き】まっている。"
+  },
+  {
+   "id": "n2-grammar-159",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "The meeting is supposed to be held every Monday.",
+   "target": "会議【かいぎ】は毎週【まいしゅう】月曜日【げつようび】に開【ひら】くことになっている。"
+  },
+  {
+   "id": "n2-grammar-160",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Somehow, today I don't feel like doing anything.",
+   "target": "今日【きょう】はなんだか、何【なに】もする気【き】になれない。"
+  },
+  {
+   "id": "n2-grammar-161",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "She was looking out the window with a lonely expression.",
+   "target": "彼女【かのじょ】は寂【さび】しげな顔【かお】で、窓【まど】の外【そと】を見【み】ていた。"
+  },
+  {
+   "id": "n2-grammar-162",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "He's so conscientious that he'll surely arrive on time.",
+   "target": "真面目【まじめ】な彼【かれ】のことだから、きっと時間通【じかんどお】りに来【く】るだろう。"
+  },
+  {
+   "id": "n2-grammar-163",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "The roads were so crowded that I ended up late for my appointment.",
+   "target": "道【みち】が混【こ】んでいたものだから、約束【やくそく】に遅【おく】れてしまった。"
+  },
+  {
+   "id": "n2-grammar-164",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I'm sorry, the trains had stopped, so I'm late.",
+   "target": "すみません、電車【でんしゃ】が止【と】まっていたもので、遅【おく】れてしまいました。"
+  },
+  {
+   "id": "n2-grammar-165",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "There is something in his playing that moves people's hearts.",
+   "target": "彼【かれ】の演奏【えんそう】には、人【ひと】の心【こころ】を動【うご】かすものがある。"
+  },
+  {
+   "id": "n2-grammar-166",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Young people these days tend not to buy cars.",
+   "target": "最近【さいきん】の若者【わかもの】は、車【くるま】を買【か】わない傾向【けいこう】がある。"
+  },
+  {
+   "id": "n2-grammar-167",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "His effort is worthy of respect.",
+   "target": "彼【かれ】の努力【どりょく】は、尊敬【そんけい】に値【あたい】する。"
+  },
+  {
+   "id": "n2-grammar-168",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I barely slept last night, so I'm terribly sleepy.",
+   "target": "昨日【きのう】あまり寝【ね】ていないので、眠【ねむ】くてしょうがない。"
+  },
+  {
+   "id": "n2-grammar-169",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "The pay is low, but at least I have a job.",
+   "target": "給料【きゅうりょう】は安【やす】いが、仕事【しごと】があるだけましだ。"
+  },
+  {
+   "id": "n2-grammar-170",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Fortunately, nobody was injured.",
+   "target": "幸【さいわ】い、けがをした人【ひと】はいなかった。"
+  },
+  {
+   "id": "n2-grammar-171",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "If you can't solve a problem this simple, passing will be difficult.",
+   "target": "こんな簡単【かんたん】な問題【もんだい】ができないようでは、合格【ごうかく】は難【むずか】しい。"
+  },
+  {
+   "id": "n2-grammar-172",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "As you'd expect of a veteran teacher, the explanation is very easy to follow.",
+   "target": "さすがはベテランの先生【せんせい】、説明【せつめい】がとてもわかりやすい。"
+  },
+  {
+   "id": "n2-grammar-173",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "This soup is spicy, sure, but it's very tasty.",
+   "target": "このスープは辛【から】いことは辛【から】いが、とてもおいしい。"
+  },
+  {
+   "id": "n2-grammar-174",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "If you walk a further ten minutes from the station, you'll see the sea.",
+   "target": "駅【えき】から更【さら】に十分【じっぷん】ほど歩【ある】くと、海【うみ】が見【み】えます。"
+  },
+  {
+   "id": "n2-grammar-175",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Even if I try hard, I'll probably get thirty points at most.",
+   "target": "頑張【がんば】っても、精々【せいぜい】三十点【さんじゅってん】しか取【と】れないだろう。"
+  },
+  {
+   "id": "n2-grammar-176",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "In the exam, I fell just slightly short of the passing mark.",
+   "target": "試験【しけん】では、合格点【ごうかくてん】に僅【わず】かに届【とど】かなかった。"
+  },
+  {
+   "id": "n2-grammar-177",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Just under a hundred people gathered at the venue.",
+   "target": "会場【かいじょう】には百人弱【ひゃくにんじゃく】の人【ひと】が集【あつ】まった。"
+  },
+  {
+   "id": "n2-grammar-178",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "It takes just over twenty minutes on foot from the station to my house.",
+   "target": "駅【えき】から家【いえ】まで、歩【ある】いて二十分強【にじゅっぷんきょう】かかる。"
+  },
+  {
+   "id": "n2-grammar-179",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Please fill in your name and address here.",
+   "target": "氏名【しめい】および住所【じゅうしょ】を、こちらにご記入【きにゅう】ください。"
+  },
+  {
+   "id": "n2-grammar-180",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "The new game sold out the moment it was released.",
+   "target": "新【あたら】しいゲームは、発売【はつばい】されるとたちまち売【う】り切【き】れた。"
+  },
+  {
+   "id": "n2-grammar-181",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "The person walking in front of me suddenly stopped.",
+   "target": "前【まえ】を歩【ある】いていた人【ひと】が、いきなり立【た】ち止【ど】まった。"
+  },
+  {
+   "id": "n2-grammar-182",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I love old towns such as Kyoto and Nara.",
+   "target": "京都【きょうと】や奈良【なら】といった古【ふる】い町【まち】が好【す】きだ。"
+  },
+  {
+   "id": "n2-grammar-183",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I put my heart into baking a cake for my mother.",
+   "target": "母【はは】のために、心【こころ】を込【こ】めてケーキを焼【や】いた。"
+  },
+  {
+   "id": "n2-grammar-184",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "On top of the strong wind, the rain has also grown heavy.",
+   "target": "強【つよ】い風【かぜ】に加【くわ】えて、雨【あめ】も激【はげ】しくなってきた。"
+  },
+  {
+   "id": "n2-grammar-185",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "You helped me with absolutely everything during the move.",
+   "target": "引【ひ】っ越【こ】しでは、何【なに】から何【なに】までお世話【せわ】になりました。"
+  },
+  {
+   "id": "n2-grammar-186",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Whether you like them or not, you should eat your vegetables.",
+   "target": "好【す】き嫌【きら】いは別【べつ】として、野菜【やさい】は食【た】べたほうがいい。"
+  },
+  {
+   "id": "n2-grammar-187",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Precisely because I had high hopes, the shock of losing was great.",
+   "target": "期待【きたい】していただけに、負【ま】けたときのショックは大【おお】きかった。"
+  },
+  {
+   "id": "n2-grammar-188",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I did all I could, so whatever the result, I have no regrets.",
+   "target": "やるだけはやったので、結果【けっか】がどうでも後悔【こうかい】はない。"
+  },
+  {
+   "id": "n2-grammar-189",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "As you'd expect from someone who lived here ten years, he knows this town well.",
+   "target": "十年【じゅうねん】も住【す】んでいただけあって、彼【かれ】はこの町【まち】に詳【くわ】しい。"
+  },
+  {
+   "id": "n2-grammar-190",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Above all, what matters is keeping it up every day.",
+   "target": "何【なに】より大切【たいせつ】なのは、毎日【まいにち】続【つづ】けることだ。"
+  },
+  {
+   "id": "n2-grammar-191",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "The highlight of a Japanese summer is, without doubt, the fireworks.",
+   "target": "日本【にほん】の夏【なつ】の楽【たの】しみは、何【なん】といっても花火【はなび】だ。"
+  },
+  {
+   "id": "n2-grammar-192",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I'm thirsty, so I'd like some tea or something.",
+   "target": "喉【のど】が渇【かわ】いたから、お茶【ちゃ】か何【なに】か飲【の】みたい。"
+  },
+  {
+   "id": "n2-grammar-193",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I can't help worrying about my child's future.",
+   "target": "子【こ】どもの将来【しょうらい】が心配【しんぱい】でならない。"
+  },
+  {
+   "id": "n2-grammar-194",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Applications are accepted online only.",
+   "target": "応募【おうぼ】は、インターネットでのみ受【う】け付【つ】けます。"
+  },
+  {
+   "id": "n2-grammar-195",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "This problem is happening not only in Japan but all over the world.",
+   "target": "この問題【もんだい】は日本【にほん】のみならず、世界中【せかいじゅう】で起【お】きている。"
+  },
+  {
+   "id": "n2-grammar-196",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I've practiced every day, and yet I can't win even once.",
+   "target": "毎日【まいにち】練習【れんしゅう】してきた、それなのに一度【いちど】も勝【か】てない。"
+  },
+  {
+   "id": "n2-grammar-197",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "He's the type of person people call a so-called genius.",
+   "target": "彼【かれ】は、いわゆる天才【てんさい】と呼【よ】ばれるタイプの人【ひと】だ。"
+  },
+  {
+   "id": "n2-grammar-198",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "This is merely my personal opinion.",
+   "target": "これは私【わたし】の個人的【こじんてき】な意見【いけん】にすぎない。"
+  },
+  {
+   "id": "n2-grammar-199",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "She speaks English, and she speaks Chinese too.",
+   "target": "彼女【かのじょ】は英語【えいご】も話【はな】せば、中国語【ちゅうごくご】も話【はな】せる。"
+  },
+  {
+   "id": "n2-grammar-200",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "However famous he is, at home he's nothing but an ordinary father.",
+   "target": "どんなに有名【ゆうめい】でも、家【いえ】ではただの父親【ちちおや】でしかない。"
+  },
+  {
+   "id": "n2-grammar-201",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "The exam is over, and I'm dying to go out and have fun.",
+   "target": "試験【しけん】が終【お】わって、早【はや】く遊【あそ】びに行【い】きたくてたまらない。"
+  },
+  {
+   "id": "n2-grammar-202",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Whatever the reason may be, violence cannot be tolerated.",
+   "target": "どんな理由【りゆう】があるにせよ、暴力【ぼうりょく】は許【ゆる】されない。"
+  },
+  {
+   "id": "n2-grammar-203",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "After all, it's my first trip abroad, so I'm nervous.",
+   "target": "何【なに】しろ初【はじ】めての海外旅行【かいがいりょこう】なので、緊張【きんちょう】している。"
+  },
+  {
+   "id": "n2-grammar-204",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Whether you're for it or against it, please state your reasons clearly.",
+   "target": "賛成【さんせい】にしろ反対【はんたい】にしろ、理由【りゆう】をはっきり言【い】ってください。"
+  },
+  {
+   "id": "n2-grammar-205",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Looks aside, it tastes very good.",
+   "target": "見【み】た目【め】はともかく、味【あじ】はとてもいい。"
+  },
+  {
+   "id": "n2-grammar-206",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "A child, maybe, but I can't believe an adult would do something like that.",
+   "target": "子【こ】どもならともかく、大人【おとな】がそんなことをするなんて。"
+  },
+  {
+   "id": "n2-grammar-207",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "What with preparing for the move and work and so on, I'm busy every day.",
+   "target": "引【ひ】っ越【こ】しの準備【じゅんび】やら仕事【しごと】やらで、毎日【まいにち】忙【いそが】しい。"
+  },
+  {
+   "id": "n2-grammar-208",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "However, the budget problem has not yet been resolved.",
+   "target": "しかしながら、予算【よさん】の問題【もんだい】はまだ解決【かいけつ】していない。"
+  },
+  {
+   "id": "n2-grammar-209",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Apologizing once doesn't amount to taking responsibility.",
+   "target": "一度【いちど】謝【あやま】っただけでは、責任【せきにん】を果【は】たしたことにはならない。"
+  },
+  {
+   "id": "n2-grammar-210",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "The taste of this dish makes the high price no surprise.",
+   "target": "この料理【りょうり】の味【あじ】は、値段【ねだん】が高【たか】いだけのことはある。"
+  },
+  {
+   "id": "n2-grammar-211",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "You must not talk to the person next to you during the exam.",
+   "target": "試験中【しけんちゅう】に、隣【となり】の人【ひと】と話【はな】してはならない。"
+  },
+  {
+   "id": "n2-grammar-212",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "There's only a week until the exam, so I can't afford to take it easy.",
+   "target": "試験【しけん】まであと一週間【いっしゅうかん】だから、のんびりしてはいられない。"
+  },
+  {
+   "id": "n2-grammar-213",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I'm so busy I've hardly even eaten properly.",
+   "target": "忙【いそが】しくて、陸【ろく】にご飯【はん】も食【た】べていない。"
+  },
+  {
+   "id": "n2-grammar-214",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "This bag is light, and what's more, it's sturdy.",
+   "target": "このかばんは軽【かる】くて、しかも丈夫【じょうぶ】だ。"
+  },
+  {
+   "id": "n2-grammar-215",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "I want to keep this shop going, even if I have to borrow money.",
+   "target": "借金【しゃっきん】をしてでも、この店【みせ】を続【つづ】けたい。"
+  },
+  {
+   "id": "n2-grammar-216",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "No matter how hard it gets, I won't give up until the end.",
+   "target": "どんなに辛【つら】くとも、最後【さいご】まであきらめない。"
+  },
+  {
+   "id": "n2-grammar-217",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "There's an important meeting tomorrow, so I can't not go.",
+   "target": "明日【あした】は大事【だいじ】な会議【かいぎ】があるので、行【い】かないわけにはいかない。"
+  },
+  {
+   "id": "n2-grammar-218",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "It's not that I dislike it, but I don't eat much meat.",
+   "target": "嫌【きら】いというわけではないが、あまり肉【にく】は食【た】べない。"
+  },
+  {
+   "id": "n2-grammar-219",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "After being told something that awful, it's understandable that he's angry.",
+   "target": "あんなにひどいことを言【い】われたら、彼【かれ】が怒【おこ】るのももっともだ。"
+  },
+  {
+   "id": "n2-grammar-220",
+   "sourceLang": "en",
+   "targetLang": "ja",
+   "source": "Even if you hurry now, you won't make it in time.",
+   "target": "今【いま】から急【いそ】いだって、もう間【ま】に合【あ】わないよ。"
+  }
+ ]
+}

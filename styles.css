@@ -2081,3 +2081,27 @@ body.n2 main{max-width:760px;margin:0 auto;padding-bottom:calc(120px + env(safe-
 @media(min-width:760px){.n2-prompt{font-size:64px}.n2-card{min-height:40dvh}}
 a.welcome-tools{text-decoration:none}
 .welcome-tools+.welcome-n2{margin-top:0;border-top:0}
+.n2-mark{text-decoration:underline;text-decoration-color:var(--seal);text-decoration-thickness:1.5px;text-underline-offset:5px}
+.n2-instruction{margin-top:4px;font-size:12px}
+.n2-stem:empty{display:none}
+.n2-headline{margin:12px 0 0;font-family:var(--display);font-size:18px;line-height:1.5}
+.n2-coach-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.n2 .library-tool[aria-disabled=true]{opacity:.55}
+.n2 .library-tool.n2-done strong{text-decoration:line-through;text-decoration-color:var(--seal)}
+.n2-field{margin:16px 0 0}
+.n2-generate-status{margin-top:12px}
+.n2-checklist{display:flex;flex-direction:column;margin-top:6px}
+.n2-check{display:flex;align-items:center;gap:12px;min-height:48px;border-bottom:1px solid var(--rule);font-size:14px;color:var(--sumi);cursor:pointer}
+.n2-check input{width:20px;height:20px;accent-color:var(--seal);flex-shrink:0}
+.n2-check input:checked+span{color:var(--ink-muted);text-decoration:line-through}
+.n2-breathe{text-align:center}
+.n2-breath{display:flex;align-items:center;justify-content:center;height:180px;margin-top:10px}
+.n2-breath span{width:70px;height:70px;border-radius:50%;border:1px solid var(--seal-edge);background:var(--seal-tint);transform:scale(1);transition:transform var(--breath-secs,4s) ease-in-out}
+.n2-breath[data-phase=in] span,.n2-breath[data-phase=hold] span{transform:scale(2.1)}
+.n2-breath[data-phase=out] span,.n2-breath[data-phase=rest] span{transform:scale(1)}
+html.motion-off .n2-breath span{transition:none}
+@media(prefers-reduced-motion:reduce){html:not(.motion-on) .n2-breath span{transition:none}}
+.n2-breath-cue{margin:6px 0 0;font-family:var(--display);font-size:22px;min-height:1.6em}
+.n2-ai-hint{margin-top:10px}
+.n2-plan li .n2-meter-ja{flex-shrink:0;white-space:nowrap}
+.n2-plan li .n2-meter-n{flex-shrink:0;white-space:nowrap}

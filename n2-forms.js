@@ -1,6 +1,46 @@
 // Fixed edition. Changing its contents requires a new edition ID so saved answers
 // always refer to the same prompts, choices and answer keys.
 export const EDITION = "2026.11-v1";
+// Sets 02–20 from the realistic edition (n2-sets.json). A new edition gets new
+// paper IDs, so attempts saved on the old forms keep their own questions.
+export const SETS_EDITION = "2026.11-r2";
+
+// The JLPT N2 paper, part by part. One definition for the app, the validator
+// (tools/n2-validate-set.mjs) and the authors of n2-sets.json.
+export const BLUEPRINT = [
+  {skill:"Vocabulary",mondai:1,kind:"漢字読み",count:5,options:4,targeted:true,instruction:"＿＿の言葉の読み方として最もよいものを、1・2・3・4から一つ選びなさい。"},
+  {skill:"Vocabulary",mondai:2,kind:"表記",count:5,options:4,targeted:true,instruction:"＿＿の言葉を漢字で書くとき、最もよいものを1・2・3・4から一つ選びなさい。"},
+  {skill:"Vocabulary",mondai:3,kind:"語形成",count:3,options:4,targeted:true,instruction:"（　）に入れるのに最もよいものを、1・2・3・4から一つ選びなさい。"},
+  {skill:"Vocabulary",mondai:4,kind:"文脈規定",count:7,options:4,targeted:true,instruction:"（　）に入れるのに最もよいものを、1・2・3・4から一つ選びなさい。"},
+  {skill:"Vocabulary",mondai:5,kind:"言い換え類義",count:5,options:4,targeted:true,instruction:"＿＿の言葉に意味が最も近いものを、1・2・3・4から一つ選びなさい。"},
+  {skill:"Vocabulary",mondai:6,kind:"用法",count:5,options:4,targeted:true,instruction:"次の言葉の使い方として最もよいものを、1・2・3・4から一つ選びなさい。"},
+  {skill:"Grammar",mondai:7,kind:"文法形式の判断",count:12,options:4,targeted:true,instruction:"次の文の（　）に入れるのに最もよいものを、1・2・3・4から一つ選びなさい。"},
+  {skill:"Grammar",mondai:8,kind:"文の組み立て",count:5,options:4,instruction:"次の文の ★ に入る最もよいものを、1・2・3・4から一つ選びなさい。"},
+  {skill:"Grammar",mondai:9,kind:"文章の文法",count:5,options:4,needsContext:true,instruction:"次の文章を読んで、文章全体の内容を考えて、（１）から（５）の中に入る最もよいものを選びなさい。"},
+  {skill:"Reading",mondai:10,kind:"内容理解（短文）",count:5,options:4,needsContext:true,instruction:"次の文章を読んで、後の問いに対する答えとして最もよいものを選びなさい。"},
+  {skill:"Reading",mondai:11,kind:"内容理解（中文）",count:9,options:4,needsContext:true,instruction:"次の文章を読んで、後の問いに対する答えとして最もよいものを選びなさい。"},
+  {skill:"Reading",mondai:12,kind:"統合理解",count:2,options:4,needsContext:true,instruction:"次のＡとＢの文章を読んで、後の問いに対する答えとして最もよいものを選びなさい。"},
+  {skill:"Reading",mondai:13,kind:"主張理解（長文）",count:3,options:4,needsContext:true,instruction:"次の文章を読んで、後の問いに対する答えとして最もよいものを選びなさい。"},
+  {skill:"Reading",mondai:14,kind:"情報検索",count:2,options:4,needsContext:true,instruction:"右のページの情報を読んで、後の問いに対する答えとして最もよいものを選びなさい。"},
+  {skill:"Listening",mondai:1,kind:"課題理解",count:5,options:4,needsContext:true,instruction:"まず質問を聞いてください。それから話を聞いて、最もよいものを一つ選んでください。"},
+  {skill:"Listening",mondai:2,kind:"ポイント理解",count:6,options:4,needsContext:true,instruction:"まず質問を聞いてください。そのあと、選択肢を読んでください。話を聞いて、最もよいものを一つ選んでください。"},
+  {skill:"Listening",mondai:3,kind:"概要理解",count:5,options:4,needsContext:true,instruction:"話の前に質問はありません。話を聞いて、質問と選択肢を聞いて、最もよいものを一つ選んでください。"},
+  {skill:"Listening",mondai:4,kind:"即時応答",count:12,options:3,needsContext:true,instruction:"文を聞いて、その返事を聞いて、最もよいものを一つ選んでください。"},
+  {skill:"Listening",mondai:5,kind:"統合理解",count:4,options:4,needsContext:true,instruction:"長めの話を聞きます。質問と選択肢を聞いて、最もよいものを一つ選んでください。"},
+];
+export const blueprintFor = q => BLUEPRINT.find(b => b.skill === q.skill && b.mondai === q.mondai);
+export const realisticPaperId = id => id + "@" + SETS_EDITION;
+export const setFile = id => "./n2-sets/" + id + ".json";
+// A realistic set (n2-sets/<id>.json) as exam rows: each question carries its
+// 問題 number, kind and the official-style instruction.
+export function realisticRows(set) {
+  const skills = ["Vocabulary", "Grammar", "Reading", "Listening"];
+  return set.questions.map((q, index) => {
+    const b = blueprintFor(q);
+    return {...q, index, skill: skills.indexOf(q.skill), kind: b?.kind, instruction: b?.instruction,
+      label: (q.skill === "Listening" ? "聴解 " : "") + "問題" + q.mondai + " · " + (b?.kind || ""), options: q.choices.length};
+  });
+}
 export const topics = [
   ["図書館","本の修理講座","傷んだ本を自分で直せるようにする","手順を覚えても道具の使い方に迷う","修理した本","司書"],
   ["商店街","共同配送の説明会","配達に出る車の数を減らす","集荷の時間が商品の焼き上がりと合わない","配送記録","店主"],

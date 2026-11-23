@@ -2,6 +2,23 @@
 
 Practice is the entry point for N2 exams and study. Open **Practice → N2 exams & study**. The exam picker, recall checks, passage results, attempt history and AI actions share this page. Existing exam bookmarks continue to work.
 
+## A day with Echo, step by step
+
+Echo is meant to be the only thing you open. The N2 page (Practice → 試 JLPT N2) answers one question every time: *what do I do now?*
+
+1. **Open the N2 page.** The countdown says how many days are left. **Today** lists the day in order, with minutes, about six hours in a full day. Tap the first row that isn't crossed out.
+2. **Warm up · weak items (15 min).** The things you missed, guessed or were slow on yesterday, in mocks or checks. Say each one aloud *before* you reveal it, then be honest: Missed / Slow / Instant. A clean answer clears the weakness; the newest evidence always wins.
+3. **New words and grammar (rounds of 20).** First checks, paced so all 1,969 items are seen once two days before the exam. The bar under the row fills as you go.
+4. **Exam practice.** Every third day or so, a **full mock** (105 min written, break, 50 min listening), exactly like the paper: 問題1–14, then listening 問題1–5, one question per screen, flag what you're unsure of. On other days, a **practice exam on your weak points**: 10, 20 or 35 new questions in the same 問題 formats, written by your AI from your misses.
+5. **Go over the misses (20 min).** Results show estimated 言語知識 / 読解 / 聴解 scores out of 60, the 19-point floors and the 90 pass line. Open each miss: the right answer, your answer struck through, and why. Then **Drill my weak items**.
+6. **Wind down.** One minute of slow breathing (in 4, hold 4, out 6), then Night Radio with your N2 sentences as you fall asleep. The page tells you what you did today, so you can stop without guilt.
+
+**Plan my day with AI** asks your provider to read your checks and mocks and rewrite today's plan: a short diagnosis (strongest, weakest, the one thing that will raise the score most) and steps that each open the right screen. **Make a practice exam** lets you choose the focus (weak points, one skill, or a mini mock) and the length. Without an AI key the standard plan still works; generation and the coach need one (Settings → AI service).
+
+**The Review tab.** Two Echo decks put the N2 material into ordinary Review and Radio: one sentence per grammar point (221) and per word (1,748), with readings. On the N2 page, Wind down → *Add N2 grammar / vocabulary to Review* opens Import with the link filled in; tap *Bring it in*. Review then schedules them with everything else (listening, reading, writing).
+
+**The last days.** Three days out, new material stops: weak items, one last mock and the **exam checklist** (voucher with photo, HB pencils, a watch, ID, route, water, a warm layer). The eve is light and ends early. On the day, the page offers only a calm ten minutes of things you know and the breathing minute.
+
 ## Layout (November 24 redesign)
 
 The N2 page is drawn with Echo's own `styles.css` (tool-head, Library two-line rows, the drill card and bar, review-actions, sheet-dialog), so it reads as the same app in light, dark and system themes. Practice's welcome screen opens it from the 試 row under 話読本.

@@ -9,7 +9,7 @@
 <link rel="icon" href="./favicon.ico" sizes="32x32"><link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="./apple-touch-icon.png"><link rel="manifest" href="./manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
-<link rel="stylesheet" href="./styles.css?v=180">
+<link rel="stylesheet" href="./styles.css?v=181">
 </head>
 <body class="n2">
 <main id="n2-main">
@@ -20,12 +20,27 @@
   <div class="n2-countdown"><strong id="hub-days"></strong><span id="hub-days-label"></span></div>
 
   <h3 class="rule-heading">Today</h3>
-  <div class="n2-rows">
-    <a class="library-tool two-line" id="today-recall" href="?view=recall"><span class="library-tool-glyph" lang="ja" aria-hidden="true">憶</span><span class="library-tool-label"><strong>Recall check</strong><span id="today-recall-line"></span></span><svg width="8" height="13" viewBox="0 0 8 13" fill="none" aria-hidden="true"><path d="m1.5 1.5 5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-    <div class="progress-track n2-goal-track" aria-hidden="true"><span id="today-goal-bar"></span></div>
-    <a class="library-tool two-line" id="today-exam" href="#exams"><span class="library-tool-glyph" lang="ja" aria-hidden="true">試</span><span class="library-tool-label"><strong id="today-exam-title"></strong><span id="today-exam-line"></span></span><svg width="8" height="13" viewBox="0 0 8 13" fill="none" aria-hidden="true"><path d="m1.5 1.5 5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-    <a class="library-tool two-line" id="today-weak" href="?view=recall&amp;queue=weak"><span class="library-tool-glyph" lang="ja" aria-hidden="true">弱</span><span class="library-tool-label"><strong>Weak items</strong><span id="today-weak-line"></span></span><svg width="8" height="13" viewBox="0 0 8 13" fill="none" aria-hidden="true"><path d="m1.5 1.5 5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-  </div>
+  <p class="n2-headline" id="plan-headline"></p>
+  <div class="n2-rows n2-plan-steps" id="plan-steps"></div>
+  <div class="notice n2-coach" id="coach-box" hidden><div class="notice-body"><span class="notice-title" id="coach-title">Your coach</span><p class="notice-copy n2-analysis" id="coach-copy" role="status"></p><div class="notice-actions"><button data-ui="button" class="outline" id="coach-reset" type="button" hidden>Use the standard plan</button></div></div></div>
+  <div class="n2-coach-actions"><button data-ui="button" class="outlined small" id="coach" type="button">Plan my day with AI</button><button data-ui="button" class="outlined small" id="generate-open" type="button">Make a practice exam</button></div>
+  <p class="hint n2-ai-hint" id="ai-hint" hidden>The coach and the exam generator use your own AI key. <a href="./settings/ai">Add one in Settings → AI service</a>.</p>
+
+  <section class="n2-zone" id="checklist-zone" hidden>
+    <h3 class="rule-heading">Exam checklist</h3>
+    <div class="n2-checklist" id="checklist"></div>
+  </section>
+
+  <section class="n2-zone" id="rest-zone" hidden>
+    <h3 class="rule-heading">Wind down</h3>
+    <p class="hint" id="rest-summary"></p>
+    <div class="n2-rows">
+      <button data-ui="button" class="library-tool two-line" id="breathe-open" type="button"><span class="library-tool-glyph" lang="ja" aria-hidden="true">息</span><span class="library-tool-label"><strong>Breathe for one minute</strong><span>In 4 · hold 4 · out 6. Before a mock, after a bad section, at night.</span></span></button>
+      <a class="library-tool two-line" href="./radio"><span class="library-tool-glyph" lang="ja" aria-hidden="true">夜</span><span class="library-tool-label"><strong>Night Radio</strong><span>Your sentences, softly, as you fall asleep</span></span></a>
+      <a class="library-tool two-line" href="./settings/import?deck=/decks/n2-grammar.json"><span class="library-tool-glyph" lang="ja" aria-hidden="true">文</span><span class="library-tool-label"><strong>Add N2 grammar to Review</strong><span>221 example sentences, one per grammar point · opens Import, you tap Import</span></span></a>
+      <a class="library-tool two-line" href="./settings/import?deck=/decks/n2-words.json"><span class="library-tool-glyph" lang="ja" aria-hidden="true">語</span><span class="library-tool-label"><strong>Add N2 vocabulary to Review</strong><span>1,748 example sentences, one per word · Review introduces a few new each day</span></span></a>
+    </div>
+  </section>
 
   <h3 class="rule-heading" id="study">Readiness</h3>
   <div id="readiness"></div>
@@ -43,14 +58,11 @@
     </ul>
   </details>
 
-  <h3 class="rule-heading" id="history">Coach and history</h3>
+  <h3 class="rule-heading" id="history">History and data</h3>
   <div class="n2-rows">
-    <button data-ui="button" class="library-tool two-line" id="adaptive" type="button"><span class="library-tool-glyph" lang="ja" aria-hidden="true">狙</span><span class="library-tool-label"><strong>Create a targeted exam</strong><span>New questions on your misses, written by your AI provider</span></span></button>
-    <button data-ui="button" class="library-tool two-line" id="analyze-report" type="button"><span class="library-tool-glyph" lang="ja" aria-hidden="true">診</span><span class="library-tool-label"><strong>Analyze my results</strong><span>A diagnosis and a six-hour plan from your AI provider</span></span></button>
     <button data-ui="button" class="library-tool two-line" id="export-report" type="button"><span class="library-tool-glyph" lang="ja" aria-hidden="true">出</span><span class="library-tool-label"><strong>Export study JSON</strong><span>Every attempt and check, for another tool</span></span></button>
   </div>
-  <p class="hint">The AI actions send your scores and selected mistakes to the provider set in Echo Settings.</p>
-  <div class="notice" id="analysis-box" hidden><div class="notice-body"><span class="notice-title">From your coach</span><p class="notice-copy n2-analysis" id="analysis" role="status"></p></div></div>
+  <p class="hint">The coach and the exam generator send your scores and recent mistakes to the AI provider set in Echo Settings.</p>
   <div class="n2-rows" id="adaptive-list"></div>
   <div class="n2-rows" id="history-list"></div>
 </section>
@@ -95,6 +107,7 @@
   <div class="drill-bar"><span id="progress"></span></div>
   <article class="n2-question">
     <p class="overline" id="prompt"></p>
+    <p class="hint n2-instruction" id="instruction" lang="ja"></p>
     <div class="n2-passage" id="passage" lang="ja"></div>
     <div class="n2-listen" id="listen-box" hidden><button data-ui="button" class="drill-sound" id="speak" type="button" aria-label="Play the Japanese audio"><svg width="34" height="30" viewBox="0 0 18 16" fill="none" aria-hidden="true"><path d="M2 5.5h3l4-3.5v12l-4-3.5H2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M12 5a4 4 0 0 1 0 6M14.5 2.5a7.5 7.5 0 0 1 0 11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button><span class="hint" id="plays"></span></div>
     <h2 class="n2-stem" id="stem" lang="ja"></h2>
@@ -130,6 +143,21 @@
   <div id="review-items" class="n2-review-list"></div>
   <a id="script" class="link-button" target="_blank" rel="noopener" hidden>Official listening transcript</a>
 </section>
+
+<dialog id="generate-dialog" class="sheet-dialog" aria-labelledby="generate-title">
+  <p class="overline" id="generate-title">Make a practice exam</p>
+  <p class="hint">New questions in the real 問題 formats, written by your AI provider from what you get wrong.</p>
+  <p class="field-label n2-field">Focus</p><div class="chips" id="generate-focus" role="group" aria-label="Focus"></div>
+  <p class="field-label n2-field">Length</p><div class="chips" id="generate-count" role="group" aria-label="Length"></div>
+  <p class="hint n2-generate-status" id="generate-status" role="status"></p>
+  <div class="dialog-actions"><button data-ui="button" class="quiet" id="generate-close" type="button">Cancel</button><button data-ui="button" class="primary" id="generate-go" type="button">Write it</button></div>
+</dialog>
+<dialog id="breathe-dialog" class="sheet-dialog n2-breathe" aria-labelledby="breathe-title">
+  <p class="overline" id="breathe-title">One minute</p>
+  <div class="n2-breath" id="breath" aria-hidden="true"><span></span></div>
+  <p class="n2-breath-cue" id="breath-cue" lang="ja" role="status"></p>
+  <div class="dialog-actions"><button data-ui="button" class="quiet" id="breathe-close" type="button">Done</button><button data-ui="button" class="outline" id="breathe-again" type="button">Again</button></div>
+</dialog>
 
 <p role="alert" class="hint n2-warning" id="warning"></p>
 </main>

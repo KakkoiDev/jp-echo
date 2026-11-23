@@ -192,6 +192,19 @@ Before considering the change complete:
   and reuses its primitives; the only N2-specific CSS is the block headed
   "JLPT N2" (choice rows, question grid, section meter). Logic without DOM
   lives in `n2-study.js`. Never give it a second palette or font again.
+  Sets 02–20 are authored papers in `n2-sets/` that follow `BLUEPRINT`
+  (n2-forms.js: the real 問題 layout) and pass `tools/n2-validate-set.mjs`;
+  they load as edition `SETS_EDITION`, so older attempts keep their papers.
+  Revise a set → bump `SETS_EDITION`. Rebuild with `tools/n2-build-content.mjs`.
+- **The N2 decks are offered, never imported.** `decks/n2-grammar.json` and
+  `decks/n2-words.json` (one sentence per inventory item, ids
+  `n2-grammar-<i>` / `n2-word-<i>`) reach the library only when the learner
+  taps Import: the N2 page links `/settings/import?deck=/decks/…`, which only
+  pre-fills the box, and only for same-origin `/decks/*.json`.
+- **The N2 coach and generator act only through app actions.** The coach's
+  plan steps are limited to recall / mock / generate / review / rest /
+  checklist (`STEP_KINDS`); generated questions must name a `BLUEPRINT` 問題
+  and pass `validateGenerated`. Without a provider, `todayPlan` still plans.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 
