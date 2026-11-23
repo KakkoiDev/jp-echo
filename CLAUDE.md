@@ -201,6 +201,11 @@ Before considering the change complete:
   `n2-grammar-<i>` / `n2-word-<i>`) reach the library only when the learner
   taps Import: the N2 page links `/settings/import?deck=/decks/…`, which only
   pre-fills the box, and only for same-origin `/decks/*.json`.
+- **Day Radio is awake listening, kept apart from other evidence.** It lives
+  on the N2 page (`?view=radio`, logic in `day-radio.js`, tested in
+  `test/day-radio.test.js`); Echo's Radio screen links to it. Exposure and
+  listening recall go to the `events` store (IndexedDB v2), never to `recall`,
+  so a written-reading record changes only after a written-reading check.
 - **The N2 coach and generator act only through app actions.** The coach's
   plan steps are limited to recall / mock / generate / review / rest /
   checklist (`STEP_KINDS`); generated questions must name a `BLUEPRINT` 問題

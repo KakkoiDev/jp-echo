@@ -3,7 +3,7 @@
 export const EDITION = "2026.11-v1";
 // Sets 02–20 from the realistic edition (n2-sets.json). A new edition gets new
 // paper IDs, so attempts saved on the old forms keep their own questions.
-export const SETS_EDITION = "2026.11-r2";
+export const SETS_EDITION = "2026.11-r3";
 
 // The JLPT N2 paper, part by part. One definition for the app, the validator
 // (tools/n2-validate-set.mjs) and the authors of n2-sets.json.

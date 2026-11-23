@@ -1,14 +1,16 @@
 import {bookIds,bookName} from "./n2-forms.js";
 
 export const prefix="echo-n2-mock-v1-";
-const tables=["papers","history","recall"];
+const tables=["papers","history","recall","events"];
 let connection;
 function open() {
   if(!connection) connection=new Promise((resolve,reject)=>{
-    const request=indexedDB.open("echo-n2-training",1);
-    request.onupgradeneeded=()=>tables.forEach(name=>request.result.createObjectStore(name,{keyPath:"id"}));
-    request.onsuccess=()=>resolve(request.result);
+    // v2 adds "events": Day Radio exposure and listening recall, one row each.
+    const request=indexedDB.open("echo-n2-training",2);
+    request.onupgradeneeded=()=>tables.forEach(name=>{if(!request.result.objectStoreNames.contains(name))request.result.createObjectStore(name,{keyPath:"id"})});
+    request.onsuccess=()=>{request.result.onversionchange=()=>request.result.close();resolve(request.result)};
     request.onerror=()=>reject(request.error);
+    request.onblocked=()=>reject(new Error("Another Echo tab is holding the N2 data. Close other Echo tabs and reload."));
   });
   return connection;
 }
@@ -31,10 +33,10 @@ export function currentAttempts() {
   return result;
 }
 export async function report() {
-  const [papers,archived,recall]=await Promise.all(tables.map(t=>access(t,"getAll")));
+  const [papers,archived,recall,events]=await Promise.all(tables.map(t=>access(t,"getAll")));
   const attempts=new Map(archived.map(a=>[a.id,a]));
   currentAttempts().forEach(a=>attempts.set(a.id,a));
-  return {schema:"echo.n2.study.v1",exportedAt:new Date().toISOString(),papers,attempts:[...attempts.values()],recall};
+  return {schema:"echo.n2.study.v1",exportedAt:new Date().toISOString(),papers,attempts:[...attempts.values()],recall,events};
 }
 export function scored(data) {
   const papers=new Map(data.papers.map(p=>[p.id,p]));

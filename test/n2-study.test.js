@@ -60,7 +60,8 @@ import {todayPlan} from "../n2-study.js";
 test("the day plan runs warm-up → new checks → exam practice → review → wind-down, and lightens near the exam",()=>{
   const goal={goal:197,firstToday:40,unchecked:1800};
   const build=todayPlan({days:12,goal,weak:25,nextMock:{id:"n2-set-2",title:"02"},aiReady:true,latestResults:"?book=x&attempt=y"});
-  assert.deepEqual(build.steps.map(s=>s.kind),["recall","recall","mock","review","rest"]);
+  assert.deepEqual(build.steps.map(s=>s.kind),["recall","recall","radio","mock","review","rest"]);
+  assert.equal(todayPlan({days:12,goal,heardYesterday:4}).steps[0].href,"?view=radio&mode=check","yesterday's Day Radio is checked first");
   assert.match(build.steps[1].line,/157 first checks left/);
   const recent=todayPlan({days:12,goal,weak:0,nextMock:{id:"n2-set-3",title:"03"},lastMockAt:"2026-11-23T10:00:00Z",aiReady:true,now:new Date(2026,10,24,9)});
   assert.equal(recent.steps.find(s=>s.kind==="generate")?.disabled,false,"a mock yesterday means targeted practice today");
@@ -68,4 +69,9 @@ test("the day plan runs warm-up → new checks → exam practice → review → 
   assert.equal(week.phase,"final");assert.ok(!week.steps.some(s=>s.title.startsWith("New words")),"no new material in exam week");
   assert.equal(todayPlan({days:1,weak:5}).phase,"eve");
   assert.equal(todayPlan({days:0}).phase,"exam-day");
+});
+test("exam day asks nothing of you: the calm step only plays Day Radio",()=>{
+  const day=todayPlan({days:0});
+  assert.ok(day.steps.every(s=>s.kind!=="recall"&&s.kind!=="mock"&&s.kind!=="generate"));
+  assert.equal(day.steps.find(s=>s.glyph==="温").href,"?view=radio&mode=listen");
 });

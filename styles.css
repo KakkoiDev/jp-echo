@@ -2105,3 +2105,21 @@ html.motion-off .n2-breath span{transition:none}
 .n2-ai-hint{margin-top:10px}
 .n2-plan li .n2-meter-ja{flex-shrink:0;white-space:nowrap}
 .n2-plan li .n2-meter-n{flex-shrink:0;white-space:nowrap}
+/* Day Radio */
+.n2-day-lede{margin-top:12px}
+.n2-day-card{min-height:40dvh;cursor:default}
+.n2-day-card .n2-answer[hidden]{display:none}
+.n2-day-example{width:100%;margin-top:10px;padding:12px 14px;border-left:2px solid var(--hairline);background:var(--panel);text-align:left}
+.n2-day-example p{margin:0}
+.n2-day-example [lang=ja]{font-family:var(--display);font-size:17px;line-height:1.8}
+.n2-day-example:has(p:empty:first-child){display:none}
+.n2-day-rate{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-top:14px}
+.n2-day-rate button{min-height:52px}
+.n2-day-bar{grid-template-columns:52px 52px 1fr 64px 52px;align-items:center}
+.n2-day-bar #day-prev,.n2-day-bar #day-next{font-size:24px;padding:0}
+.n2-day-bar #day-repeat{font-size:20px;padding:0}
+.n2-day-bar #day-later{padding:0;font-size:13px}
+.n2-day-bar [aria-pressed=true]{background:var(--seal-tint);border-color:var(--seal-edge);color:var(--seal-deep)}
+a.library-tool.n2-day-link{text-decoration:none;color:inherit;margin:4px 0 12px;border-bottom:1px solid var(--rule)}
+/* The N2 page has no sidebar: undo the app's desktop grid and centre the bars. */
+@media(min-width:1024px){body.n2{display:block}body.n2 main{grid-column:auto;margin:0 auto;padding-inline:32px}.n2 .review-actions{left:50%;right:auto;transform:translateX(-50%);width:min(760px,100%)}}

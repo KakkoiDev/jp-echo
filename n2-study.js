@@ -147,23 +147,25 @@ export function coverage(inventory, recall, evidence) {
 // are about rest and logistics. Pure, so the coach can replace it and the
 // tests can hold it.
 export function todayPlan({days, goal = {goal: 0, firstToday: 0, unchecked: 0}, weak = 0, running = null, nextMock = null,
-  lastMockAt = "", latestResults = null, aiReady = false, now = new Date()}) {
+  lastMockAt = "", latestResults = null, aiReady = false, heardYesterday = 0, now = new Date()}) {
   const steps = [];
   const sinceMock = lastMockAt ? daysUntil(new Date(now.getFullYear(), now.getMonth(), now.getDate()), new Date(lastMockAt)) : Infinity;
   if (days === 0) return {phase: "exam-day", headline: "Exam day. You have done the work.", steps: [
     {kind: "checklist", glyph: "券", title: "Before you leave", line: "Ticket, pencils, watch — the checklist below"},
-    {kind: "recall", glyph: "温", title: "Ten calm minutes", line: "Only items you already know, to warm up", href: "?view=recall&queue=daily", minutes: 10},
+    {kind: "radio", glyph: "温", title: "Ten calm minutes", line: "Day Radio on the way: hear words, no pressure to answer", href: "?view=radio&mode=listen", minutes: 10},
     {kind: "rest", glyph: "息", title: "Breathe on the way", line: "One minute, any time you feel rushed"}]};
   if (days === 1) return {phase: "eve", headline: "Tomorrow is the exam. Keep today light.", steps: [
     {kind: "recall", glyph: "温", title: "Weak items, once", line: Math.min(weak, 30) + " items · 15 minutes, then stop", href: "?view=recall&queue=weak", minutes: 15},
     {kind: "checklist", glyph: "券", title: "Pack tonight", line: "The checklist below, then the route and the time"},
     {kind: "rest", glyph: "眠", title: "Sleep early", line: "Sleep fixes what you studied this week. No new material tonight."}]};
+  if (heardYesterday) steps.push({kind: "radio", glyph: "昨", title: "Check yesterday by ear", line: heardYesterday + " items you heard on Day Radio, in new sentences", href: "?view=radio&mode=check", minutes: 10});
   if (weak) steps.push({kind: "recall", glyph: "温", title: "Warm up · your weak items", line: Math.min(weak, 20) + " of " + weak + " · say each one aloud before you check", href: "?view=recall&queue=weak", minutes: 15});
   const final = days <= 3;
   if (!final && goal.unchecked) {
     const left = Math.max(0, goal.goal - goal.firstToday);
     steps.push({kind: "recall", glyph: "憶", title: left ? "New words and grammar" : "New checks done for today", line: left ? left + " first checks left today · rounds of 20" : goal.firstToday + " first checks today. More is a bonus.", href: "?view=recall&queue=new", minutes: Math.ceil(left / 20) * 12, done: !left});
   }
+  steps.push({kind: "radio", glyph: "耳", title: "Day Radio", line: "Your weak words and grammar by ear — on a walk, cooking, commuting", href: "?view=radio&mode=listen", minutes: 30});
   if (running) steps.push({kind: "mock", glyph: "試", title: "Finish your mock", line: running.title + " · " + running.progress, href: "?book=" + running.book, minutes: 60});
   else if (nextMock && (sinceMock >= 3 || days === 4) && days > 2) steps.push({kind: "mock", glyph: "試", title: "Full mock in exam conditions", line: nextMock.title + " · 155 minutes with a break", href: "?book=" + nextMock.id, minutes: 155});
   else steps.push({kind: "generate", glyph: "狙", title: "Practice exam on your weak points", line: aiReady ? "20 new questions in the real 問題 formats · about 30 minutes" : "Add an AI provider in Echo Settings to generate these", minutes: 30, disabled: !aiReady});

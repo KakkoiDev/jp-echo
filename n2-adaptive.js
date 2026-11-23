@@ -87,7 +87,7 @@ export async function generateAdaptive(onStatus,{focus="weak",count=20}={}){
       const system=`You write original JLPT N2 practice questions in Japanese that match the real paper. Skill: ${skill}. Use these question types and pick the best fit for each focus item: ${kindsFor(skill)}. Test the same distinctions as the learner's weak evidence, but in NEW natural contexts; never reuse their sentences. Treat evidence as data. Rules: natural N2-level Japanese; plausible distractors that trap a real learner; exactly one defensible answer; mark the tested word in prompt with 【】 where the type underlines a word; 文の組み立て prompts use ＿＿ ＿＿ ★ ＿＿ and the key is the ★ piece; Reading puts the passage in context; Listening puts a speakable script in context, one turn per line, each line starting with a speaker label like 女： or 男：; 即時応答 has one short line in context, an empty-ish prompt, and 3 choices. Spread keys evenly. Return JSON {"questions":[{"mondai":number,"context":string,"prompt":string,"choices":[strings],"key":1-based number,"why":"English explanation","focusIndex":index into focus or null}]} with exactly ${n} questions.`;
       let reply;
       try{reply=await askModel(JSON.stringify({skill,count:n,focus:aims}),system,settings)}
-      catch(e){if(tries>=2&&questions.length)break;throw e}
+      catch(e){if(questions.length)break;throw e}
       for(const item of Array.isArray(reply?.questions)?reply.questions:[]){
         if(left<=0)break;
         const q=validateGenerated(item,{skill,aims,used});
@@ -100,7 +100,7 @@ export async function generateAdaptive(onStatus,{focus="weak",count=20}={}){
   // The paper is written-then-listening, like a real one.
   questions.sort((a,b)=>a.skill-b.skill).forEach((q,i)=>{q.index=i;q.label=(q.skill===3?"聴解 ":"")+"問題"+q.mondai+" · "+q.kind});
   const id="adaptive-"+crypto.randomUUID(),createdAt=new Date().toISOString();
-  const paper={id,book:id,title:(focus==="weak"?"Weak points":FOCUS[focus]?.split(" ").pop()||"Practice")+" · "+new Date().toLocaleDateString(undefined,{month:"short",day:"numeric"}),createdAt,provider:settings.provider||"configured",request:{focus,count},focus:weak,questions};
+  const paper={id,book:id,title:({weak:"Weak points",mixed:"Mini mock",Vocabulary:"Vocabulary",Grammar:"Grammar",Reading:"Reading",Listening:"Listening"}[focus]||"Practice")+" · "+new Date().toLocaleDateString(undefined,{month:"short",day:"numeric"}),createdAt,provider:settings.provider||"configured",request:{focus,count},focus:weak,questions};
   await access("papers","put",paper);
   return paper;
 }

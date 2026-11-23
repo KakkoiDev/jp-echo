@@ -3,6 +3,7 @@ import {access,currentAttempts,download,prefix,report,scored} from "./n2-progres
 import {SKILLS,SKILL_JA,SECTIONS,PASS_TOTAL,SECTION_MIN,SECTION_MAX,estimate,nextExamDate,daysUntil,recallQueue,recallRecord,dailyGoal,coverage,localDay,todayPlan,EXAM_CHECKLIST} from "./n2-study.js";
 import {flagSvg} from "./components.js";
 import {speakOnce,speakAndWait,japaneseVoices} from "./speech.js";
+import {radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,yesterdayChecks,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
 
 // Official workbook answer numbering. Listening examples are excluded.
 const keys = {
@@ -41,7 +42,7 @@ function row({glyph, title, line, href, onclick, chip}) {
   return node;
 }
 function warn(message) { $("warning").textContent = message; }
-function show(id) { for (const s of ["hub", "recall", "intro", "exam", "rest", "results"]) $(s).hidden = s !== id; document.body.dataset.view = id; }
+function show(id) { for (const s of ["hub", "recall", "day", "intro", "exam", "rest", "results"]) $(s).hidden = s !== id; document.body.dataset.view = id; }
 async function json(path) {
   const response = await fetch(path);
   if (!response.ok) throw new Error("Unable to load " + path + ". Reconnect and reload.");
@@ -122,7 +123,7 @@ async function getPaper(id, version) {
   const existing = await access("papers", "get", key);
   if (existing) return existing;
   let rows;
-  if (realistic(id)) {
+  if (realistic(id) && (!version || version === realisticPaperId(id))) {
     const set = await json(setFile(id));
     const paper = {id: key, book: id, title: titleOf(id), edition: SETS_EDITION, questions: realisticRows(set)};
     await access("papers", "put", paper);
@@ -163,12 +164,16 @@ async function hub() {
   const next = bookIds.find(id => !done.has(id));
   const {providerReady} = await import("./api.js");
   const aiReady = providerReady(settings);
-  const base = todayPlan({days, goal, weak: weakAll, aiReady,
+  const yesterday = localDay(new Date(Date.now() - 86_400_000));
+  const heardYesterday = new Set(data.events.filter(e => e.kind === "exposure" && localDay(new Date(e.at)) === yesterday).map(e => JSON.stringify(e.target))).size;
+  const base = todayPlan({days, goal, weak: weakAll, aiReady, heardYesterday,
     running: live && {book: live.book, title: papers.get(live.paper || live.book)?.title || titleOf(live.book), progress: live.answers.filter(Boolean).length + " of " + live.answers.length + " answered" + (live.phase === "rest" ? " · listening next" : "")},
     nextMock: next && {id: next, title: titleOf(next)}, lastMockAt: finished[0]?.completedAt,
     latestResults: latestDone && localDay(new Date(latestDone.completedAt)) === localDay() ? "?book=" + latestDone.book + "&attempt=" + encodeURIComponent(latestDone.id) : null});
   const context = {data, evidence, goal, weakAll, days, base, aiReady, next, latestDone};
-  drawPlan(readCoachPlan() || base, context);
+  const coached = readCoachPlan();
+  drawPlan(coached || base, context);
+  if (coached) { $("coach-box").hidden = false; $("coach-reset").hidden = false; try { $("coach-copy").textContent = JSON.parse(localStorage.getItem(COACH_KEY)).diagnosis || "Today's plan from your coach."; } catch {} }
   $("coach").onclick = () => coach(context);
   $("coach").disabled = !aiReady;
   $("coach").title = aiReady ? "" : "Add an AI provider in Echo Settings";
@@ -182,7 +187,7 @@ async function hub() {
   $("breathe-open").onclick = breathe;
 
   // Readiness: the latest scored attempt.
-  const latest = attempts.find(a => a.phase === "results" && papers.get(a.paper || a.book));
+  const latest = [...attempts].filter(a => a.phase === "results" && !a.book.startsWith("adaptive-") && papers.get(a.paper || a.book)).sort((a, b) => (b.completedAt || "").localeCompare(a.completedAt || ""))[0];
   $("readiness").replaceChildren(latest ? scoreCard(papers.get(latest.paper || latest.book), latest, true)
     : el("div", {class: "empty-panel"}, el("strong", {text: "No score yet"}), el("span", {text: "Finish a whole mock to see an estimated score for each JLPT section."})));
   const cov = coverage(inventory, data.recall, evidence);
@@ -227,7 +232,7 @@ async function hub() {
 
 /* ───────── Coach ───────── */
 const COACH_KEY = "echo-n2-coach";
-const STEP_KINDS = ["recall", "mock", "generate", "review", "rest", "checklist"];
+const STEP_KINDS = ["recall", "radio", "mock", "generate", "review", "rest", "checklist"];
 function readCoachPlan() {
   try { const saved = JSON.parse(localStorage.getItem(COACH_KEY) || "null"); return saved?.day === localDay() ? saved.plan : null; } catch { return null; }
 }
@@ -236,6 +241,7 @@ function readCoachPlan() {
 function stepHref(step, ctx) {
   if (step.href) return step.href;
   if (step.kind === "recall") return "?view=recall&type=" + (["meaning", "reading", "grammar"].includes(step.type) ? step.type : "meaning") + "&queue=" + (["daily", "weak", "new"].includes(step.queue) ? step.queue : "daily");
+  if (step.kind === "radio") return "?view=radio&mode=" + (["listen", "recall", "check"].includes(step.mode) ? step.mode : "listen");
   if (step.kind === "mock") return ctx.next ? "?book=" + ctx.next : "#exams";
   if (step.kind === "review") return ctx.latestDone ? "?book=" + ctx.latestDone.book + "&attempt=" + encodeURIComponent(ctx.latestDone.id) : "#history";
   return null;
@@ -277,12 +283,12 @@ async function coach(ctx) {
     const weak = data.recall.filter(x => x.last !== "instant").sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)).slice(0, 40).map(x => [x.dimension, x.prompt, x.last]);
     const {askModel} = await import("./api.js");
     const input = {today: localDay(), daysUntilExam: ctx.days, hoursAvailable: 6, coverage: cov, dailyGoal: ctx.goal, weakItemCount: ctx.weakAll, attempts, misses, weakChecks: weak, standardPlan: ctx.base.steps.map(s => ({kind: s.kind, title: s.title}))};
-    const system = `You are a calm, precise JLPT N2 coach inside the Echo app. Use only the supplied observations; Echo's mock scores are uncalibrated estimates. Plan today's study (up to 6 hours) in the order the learner should do it, and say what to study next and why. Each step must be one of these app actions: recall (type: meaning|reading|grammar, queue: daily|weak|new), mock (the next full mock), generate (a practice exam: focus weak|Vocabulary|Grammar|Reading|Listening|mixed, count 10|20|35), review (the latest results), rest, checklist. Include a short wind-down. In the last three days avoid new material. Write English, kind and direct, no filler. Return JSON {"headline":string,"diagnosis":string (2-4 sentences: strongest, weakest, the one thing that will raise the score most),"steps":[{"kind":string,"title":string,"line":string (what and why, one sentence),"minutes":number,"type"?:string,"queue"?:string,"focus"?:string,"count"?:number}]} with 4-7 steps.`;
+    const system = `You are a calm, precise JLPT N2 coach inside the Echo app. Use only the supplied observations; Echo's mock scores are uncalibrated estimates. Plan today's study (up to 6 hours) in the order the learner should do it, and say what to study next and why. Each step must be one of these app actions: recall (type: meaning|reading|grammar, queue: daily|weak|new), radio (Day Radio by ear, mode: listen|recall|check — check tests yesterday's listening), mock (the next full mock), generate (a practice exam: focus weak|Vocabulary|Grammar|Reading|Listening|mixed, count 10|20|35), review (the latest results), rest, checklist. Include a short wind-down. In the last three days avoid new material. Write English, kind and direct, no filler. Return JSON {"headline":string,"diagnosis":string (2-4 sentences: strongest, weakest, the one thing that will raise the score most),"steps":[{"kind":string,"title":string,"line":string (what and why, one sentence),"minutes":number,"type"?:string,"queue"?:string,"focus"?:string,"count"?:number}]} with 4-7 steps.`;
     const reply = await askModel(JSON.stringify(input), system, settings);
-    const glyphs = {recall: "憶", mock: "試", generate: "狙", review: "直", rest: "休", checklist: "券"};
+    const glyphs = {recall: "憶", radio: "耳", mock: "試", generate: "狙", review: "直", rest: "休", checklist: "券"};
     const steps = (Array.isArray(reply?.steps) ? reply.steps : []).filter(s => STEP_KINDS.includes(s?.kind) && typeof s.title === "string").slice(0, 8).map(s => ({
       kind: s.kind, glyph: glyphs[s.kind], title: s.title.slice(0, 80), line: String(s.line || "").slice(0, 200), minutes: Math.min(240, Math.max(0, Number(s.minutes) || 0)),
-      type: s.type, queue: s.queue, focus: s.focus, count: [10, 20, 35].includes(s.count) ? s.count : 20}));
+      type: s.type, queue: s.queue, focus: s.focus, mode: s.mode, count: [10, 20, 35].includes(s.count) ? s.count : 20}));
     if (!steps.length) throw new Error("The coach's answer had no usable steps.");
     const plan = {headline: String(reply.headline || "Today's plan").slice(0, 120), steps};
     try { localStorage.setItem(COACH_KEY, JSON.stringify({day: localDay(), plan, diagnosis: reply.diagnosis || ""})); } catch {}
@@ -292,6 +298,7 @@ async function coach(ctx) {
   } catch (e) { $("coach-copy").textContent = "The coach is unavailable. " + e.message + " The standard plan still works."; }
   finally { button.disabled = false; }
 }
+let generating = null;
 function openGenerator({aiReady, focus = "weak", count = 20} = {}) {
   if (!aiReady) { warn("Add an AI provider and key in Echo Settings to generate exams."); return; }
   import("./n2-adaptive.js").then(({FOCUS, generateAdaptive}) => {
@@ -301,14 +308,16 @@ function openGenerator({aiReady, focus = "weak", count = 20} = {}) {
       $("generate-count").replaceChildren(...[10, 20, 35].map(n => el("button", {type: "button", "data-ui": "button", "aria-pressed": String(n === size), onclick: () => { size = n; chips(); }, text: n + " questions · ~" + Math.round(n * 1.6) + " min"})));
     };
     chips();
-    $("generate-status").textContent = "";
-    $("generate-go").disabled = false;
+    if (!generating) { $("generate-status").textContent = ""; $("generate-go").disabled = false; }
     $("generate-close").onclick = () => $("generate-dialog").close();
     $("generate-go").onclick = async () => {
       $("generate-go").disabled = true;
-      try { const paper = await generateAdaptive(t => $("generate-status").textContent = t, {focus: pick, count: size}); location.assign("?book=" + paper.id); }
-      catch (e) { $("generate-status").textContent = e.message; $("generate-go").disabled = false; }
+      const run = generating = Symbol("run");
+      try { const paper = await generateAdaptive(t => { if (run === generating) $("generate-status").textContent = t; }, {focus: pick, count: size}); if (run === generating && $("generate-dialog").open) location.assign("?book=" + paper.id); else if (run === generating) $("generate-status").textContent = "Ready: " + paper.title + " is in Coach and history."; }
+      catch (e) { if (run === generating) $("generate-status").textContent = e.message; }
+      finally { if (run === generating) { generating = null; $("generate-go").disabled = false; } }
     };
+    $("generate-dialog").onclose = () => { if (generating) { generating = null; $("generate-go").disabled = false; } };
     $("generate-dialog").showModal();
   });
 }
@@ -369,8 +378,18 @@ async function recall() {
   show("recall");
   await materials();
   let data = await report(), evidence = scored(data);
-  let type = ["meaning", "reading", "grammar"].includes(params.get("type")) ? params.get("type") : (localStorage.getItem("echo-n2-recall-type") || "meaning");
   let queue = ["daily", "weak", "new"].includes(params.get("queue")) ? params.get("queue") : "daily";
+  // From the plan (no type): new checks go to whichever of words and grammar
+  // is further behind; weak items to the deck with the most of them.
+  const autoType = () => {
+    if (queue === "weak") {
+      const [best, n] = ["meaning", "reading", "grammar"].map(t => [t, recallQueue({type: t, filter: "weak", inventory, recall: data.recall, evidence, size: Infinity}).length]).sort((a, b) => b[1] - a[1])[0];
+      return n ? best : "meaning";
+    }
+    const left = t => 1 - data.recall.filter(r => r.dimension === t).length / (t === "grammar" ? inventory.grammar.length : inventory.words.length);
+    return left("grammar") > left("meaning") ? "grammar" : "meaning";
+  };
+  let type = ["meaning", "reading", "grammar"].includes(params.get("type")) ? params.get("type") : params.get("queue") ? autoType() : (localStorage.getItem("echo-n2-recall-type") || "meaning");
   let session = [], index = 0, revealed = false, tally = {instant: 0, slow: 0, missed: 0}, missed = [];
   const sync = () => {
     const url = new URL(location.href); url.searchParams.set("view", "recall"); url.searchParams.set("type", type); url.searchParams.set("queue", queue);
@@ -443,10 +462,171 @@ async function recall() {
   document.querySelectorAll("#recall [data-queue]").forEach(b => b.onclick = () => { queue = b.dataset.queue; begin(); });
   document.addEventListener("keydown", e => {
     if (e.target.closest("input,textarea,select") || e.metaKey || e.ctrlKey) return;
-    if ((e.key === " " || e.key === "Enter") && !revealed) { e.preventDefault(); reveal(); }
+    if ((e.key === " " || e.key === "Enter") && !revealed) { if (e.target.closest("button,a,summary") || !session[index]) return; e.preventDefault(); reveal(); }
     else if (revealed && ["1", "2", "3"].includes(e.key)) grade(["missed", "slow", "instant"][Number(e.key) - 1]);
   });
   begin();
+}
+
+/* ───────── Day Radio ───────── */
+const DAY_KEY = "echo-n2-day";
+function readDay() { try { return JSON.parse(localStorage.getItem(DAY_KEY) || "{}"); } catch { return {}; } }
+function writeDay(patch) { try { localStorage.setItem(DAY_KEY, JSON.stringify({...readDay(), ...patch})); } catch {} }
+async function dayRadio() {
+  show("day");
+  await materials();
+  const [data, decks] = await Promise.all([report(), Promise.all(["./decks/n2-words.json", "./decks/n2-grammar.json"].map(p => json(p).catch(() => null)))]);
+  const evidence = scored(data), items = radioItems(inventory);
+  const examples = examplesFromDecks(inventory, decks.filter(Boolean));
+  let setExamples = null;
+  const allExamples = async () => {
+    if (!setExamples) {
+      const ids = Object.keys(themes);
+      const sets = await Promise.all(ids.map(id => json(setFile(id)).catch(() => null)));
+      setExamples = examplesFromSets(sets.filter(Boolean));
+    }
+    const merged = new Map(examples);
+    for (const [k, list] of setExamples) merged.set(k, [...(merged.get(k) || []), ...list]);
+    return merged;
+  };
+  const saved = readDay();
+  let mode = ["listen", "recall", "check"].includes(params.get("mode")) ? params.get("mode") : saved.mode || "listen";
+  let pause = RECALL_PAUSES.includes(saved.pause) ? saved.pause : 5;
+  let later = Array.isArray(saved.later) ? saved.later : [];
+  let queue = [], heard = new Set(), revealed = false, current = null, wake = null;
+  const heardIds = new Map();
+  for (const e of data.events) if (e.kind === "exposure" && e.context?.exampleId) heardIds.set(JSON.stringify(e.target), new Set([...(heardIds.get(JSON.stringify(e.target)) || []), e.context.exampleId]));
+  const record = async event => { try { await access("events", "put", event); data.events.push(event); } catch (e) { warn("Could not save: " + e.message); } };
+  const exampleFor = item => item.example !== undefined ? item.example
+    : mode === "listen" ? (examples.get(JSON.stringify(item.target)) || [])[0] || null
+    : chooseExample(examples.get(JSON.stringify(item.target)) || [], heardIds.get(JSON.stringify(item.target)) || new Set());
+  const voices = () => japaneseVoices("ja");
+  const player = new DayPlayer({
+    speak: (text, opts) => speakAndWait(text, {...opts, voice: opts.lang === "ja" ? voice() : null}),
+    cancel: () => window.speechSynthesis?.cancel(),
+    onItem: (item, i) => { draw(item, i); },
+    onReveal: item => { reveal(); },
+    onDone: () => { if (lastItem && mode !== "check") played(lastItem); lastItem = null; release(); finish(); },
+  });
+  // Exposure is logged when an item has been played through, not on skip.
+  const played = item => {
+    const example = exampleFor(item);
+    record(radioEvent({target: item.target, kind: "exposure", source: "day-radio", mode, exampleId: example?.id}));
+  };
+  const origOnItem = player.onItem;
+  let lastItem = null;
+  player.onItem = (item, i) => { if (lastItem && lastItem !== item && player.running && mode !== "check") played(lastItem); lastItem = item; origOnItem(item, i); writeDay({mode, index: i, day: localDay(), ids: queue.map(q => JSON.stringify(q.target))}); };
+  async function hold() { try { wake = await navigator.wakeLock?.request("screen") || null; } catch { wake = null; } }
+  function release() { try { wake?.release(); } catch {} wake = null; }
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && player.running) hold(); });
+
+  function sync() {
+    const url = new URL(location.href); url.searchParams.set("view", "radio"); url.searchParams.set("mode", mode);
+    history.replaceState(history.state, "", url);
+    document.querySelectorAll("#day [role=tab]").forEach(b => b.setAttribute("aria-selected", b.dataset.mode === mode));
+    $("day-pace").hidden = mode !== "recall";
+    $("day-pace").replaceChildren(...RECALL_PAUSES.map(n => el("button", {type: "button", "data-ui": "button", "aria-pressed": String(n === pause), text: n + " s pause", onclick: () => { pause = n; writeDay({pause}); sync(); }})));
+    $("day-lede").textContent = {
+      listen: "Each item: the word, its meaning, a natural sentence, the word again. Leave it playing while you walk, cook or tidy. Keep Echo open — a locked phone stops speech.",
+      recall: "Echo says a sentence, pauses, then reveals. Say the meaning aloud in the pause. Tap Got it or Not yet if you can — that is a listening check; otherwise it counts as listening only.",
+      check: "Yesterday's words, in a different sentence from the one you heard. Play, say what it means, reveal, then be honest.",
+    }[mode];
+    $("day-play").textContent = mode === "check" ? "Play" : player.running ? "Pause" : "Play";
+  }
+  async function build() {
+    player.stop(); release(); lastItem = null;
+    if (mode === "check") {
+      queue = yesterdayChecks({events: data.events, recall: data.recall, items, examples: await allExamples()});
+    } else {
+      queue = dayQueue({inventory, recall: data.recall, evidence, events: data.events, later: later.map(k => JSON.parse(k))});
+    }
+    const resumeAt = saved.day === localDay() && saved.mode === mode && JSON.stringify(saved.ids) === JSON.stringify(queue.map(q => JSON.stringify(q.target))) ? saved.index || 0 : 0;
+    index = Math.min(resumeAt, Math.max(0, queue.length - 1));
+    sync();
+    $("day-done").hidden = true; $("day-card").hidden = false; $("day-bar-actions").hidden = false;
+    if (!queue.length) {
+      $("day-why").textContent = ""; $("day-text").textContent = mode === "check" ? "Nothing from yesterday." : "Nothing to play yet.";
+      $("day-answer").hidden = true; $("day-example-ja").textContent = $("day-example-en").textContent = "";
+      $("day-note").textContent = mode === "check" ? "Play Day Radio today; tomorrow this checks what you heard." : "";
+      $("day-progress").textContent = ""; $("day-bar-actions").hidden = true; return;
+    }
+    $("day-sub").textContent = queue.length + " items · " + queue.filter(q => q.why === "weak").length + " weak · " + queue.filter(q => q.why === "new").length + " new";
+    draw(queue[index], index);
+  }
+  let index = 0;
+  const WHY = {weak: "Weak · missed, guessed or slow", later: "Marked for later", new: "New · not checked yet", yesterday: "Heard yesterday"};
+  function draw(item, i) {
+    current = item; index = i; revealed = false;
+    const example = exampleFor(item);
+    $("day-progress").textContent = (i + 1) + " / " + queue.length;
+    $("day-bar").style.width = (i / queue.length * 100) + "%";
+    $("day-why").textContent = WHY[item.why] || "";
+    const hide = mode !== "listen";
+    $("day-text").textContent = hide && example ? "…" : item.text;
+    $("day-text").classList.toggle("long", item.text.length > 8);
+    $("day-reading").textContent = item.reading && item.reading !== item.text ? item.reading : "";
+    $("day-meaning").textContent = item.meaning;
+    $("day-answer").hidden = hide;
+    $("day-example-ja").textContent = example ? example.ja.replace(/【[^】]*】/g, "") : "";
+    $("day-example-en").textContent = example?.en || "";
+    $("day-example").hidden = hide || !example;
+    $("day-rate").hidden = true;
+    $("day-note").textContent = !example ? (mode === "listen" ? "No example sentence for this one yet — the word and its meaning only." : "No sentence for this one yet — you will hear the word itself.")
+      : item.sameAsYesterday ? "Only one sentence for this word, so it is the one you heard yesterday." : "";
+    $("day-later").setAttribute("aria-pressed", String(later.includes(JSON.stringify(item.target))));
+    $("day-prev").disabled = i === 0; $("day-next").disabled = i >= queue.length - 1;
+  }
+  function reveal() {
+    if (!current) return; revealed = true;
+    $("day-text").textContent = current.text;
+    $("day-answer").hidden = false;
+    $("day-example").hidden = !$("day-example-ja").textContent;
+    if (mode !== "listen") $("day-rate").hidden = false;
+  }
+  async function rate(grade) {
+    if (!current || !revealed) return;
+    $("day-rate").hidden = true;
+    await record(radioEvent({target: current.target, kind: "recall", grade, source: mode === "check" ? "check-yesterday" : "day-radio", mode, exampleId: exampleFor(current)?.id}));
+    if (mode === "check") { if (index < queue.length - 1) { index++; draw(queue[index], index); } else finish(); }
+  }
+  function finish() {
+    $("day-card").hidden = true; $("day-bar-actions").hidden = true; $("day-done").hidden = false;
+    $("day-bar").style.width = "100%";
+    const today = localDay(), mine = data.events.filter(e => localDay(new Date(e.at)) === today);
+    $("day-done-title").textContent = mode === "check" ? "Yesterday checked" : "Queue played through";
+    $("day-done-line").textContent = mine.filter(e => e.kind === "exposure").length + " heard today · " + mine.filter(e => e.kind === "recall" && e.grade === "got").length + " caught by ear · " + mine.filter(e => e.kind === "recall" && e.grade !== "got").length + " not yet";
+    writeDay({index: 0});
+    sync();
+  }
+  function play() {
+    if (!queue.length) return;
+    if (mode === "check") { // one at a time: the learner reveals
+      const example = exampleFor(current);
+      speakAndWait(example ? example.ja : (current.reading || current.text), {lang: "ja", voice: voice(), rate: Number(settings.rate) || 1});
+      return;
+    }
+    if (player.running) { const at = player.index; player.stop(); release(); index = at; sync(); return; }
+    hold();
+    player.start(queue, {index, steps: item => daySteps(mode, item, exampleFor(item), {pause}), rate: Number(settings.rate) || 1});
+    sync();
+  }
+  $("day-play").onclick = play;
+  $("day-next").onclick = () => { if (index >= queue.length - 1) return; if (player.running) player.jump(index + 1); else draw(queue[++index], index); };
+  $("day-prev").onclick = () => { if (index <= 0) return; if (player.running) player.jump(index - 1); else draw(queue[--index], index); };
+  $("day-repeat").onclick = () => { if (mode === "check") { play(); return; } if (player.running) player.jump(index); else play(); };
+  $("day-later").onclick = () => {
+    if (!current) return;
+    const k = JSON.stringify(current.target);
+    later = later.includes(k) ? later.filter(x => x !== k) : [...later, k].slice(-60);
+    writeDay({later});
+    $("day-later").setAttribute("aria-pressed", String(later.includes(k)));
+  };
+  $("day-card").onclick = e => { if (mode === "check" && !revealed && !e.target.closest("button")) reveal(); };
+  document.querySelectorAll("#day [data-rate]").forEach(b => b.onclick = () => rate(b.dataset.rate));
+  document.querySelectorAll("#day [role=tab]").forEach(b => b.onclick = () => { mode = b.dataset.mode; writeDay({mode}); build(); });
+  $("day-again").onclick = () => { writeDay({index: 0}); index = 0; saved.index = 0; build(); };
+  window.addEventListener("pagehide", () => { player.stop(); release(); });
+  await build();
 }
 
 /* ───────── Exam ───────── */
@@ -472,6 +652,12 @@ async function exam() {
     guesses: Array(questions.length).fill(false), time: Array(questions.length).fill(0)});
   state = fresh();
   if (saved?.answers?.length === questions.length) state = {...state, ...saved, id: saved.id || "legacy-" + year};
+  else if (saved && !archivedView && saved.phase !== "results") {
+    // A sitting saved on a paper this device no longer has: keep it in
+    // history rather than overwrite it, then start clean on the current paper.
+    try { await access("history", "put", {...saved, id: saved.id || "legacy-" + year, book: year, unscorable: true}); localStorage.removeItem(storageKey); }
+    catch { warn("An earlier unfinished attempt could not be moved aside; this sitting will not be saved."); }
+  }
 
   const minutes = phase => adaptive ? Math.ceil((phase === "written" ? written : questions.length - written) * 1.5) : (phase === "written" ? 105 : 50);
   function persist() {
@@ -661,7 +847,7 @@ async function exam() {
     } catch (e) { warn("Could not archive this attempt. " + e.message); }
   };
   document.addEventListener("keydown", e => {
-    if (!active() || $("grid-dialog").open || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (!active() || $("grid-dialog").open || e.metaKey || e.ctrlKey || e.altKey || e.target.closest("audio,video,a,input,textarea,select,iframe")) return;
     const q = questions[state.index];
     if (/^[1-4]$/.test(e.key) && Number(e.key) <= q.options) choose(Number(e.key));
     else if (e.key === "ArrowRight") move(state.index + 1);
@@ -669,9 +855,10 @@ async function exam() {
     else if (e.key.toLowerCase() === "f") $("guess").click();
   });
   window.addEventListener("pagehide", () => { stopVoice(); recordTime(); persist(); });
+  window.addEventListener("pageshow", e => { if (e.persisted) entered = Date.now(); });
   render();
   setInterval(tick, 1000);
 }
 
-const route = year ? exam : params.get("view") === "recall" ? recall : hub;
+const route = year ? exam : params.get("view") === "recall" ? recall : params.get("view") === "radio" ? dayRadio : hub;
 route().catch(error => { show(""); warn(error.message); });
