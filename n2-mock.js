@@ -1,8 +1,8 @@
 import {dateKey, parseGoalDate, firstPassEnd, goalKey, readGoal, shortDate, longDate} from "./jlpt-goal.js";
 import {bookIds,bookName,EDITION,SETS_EDITION,form,realisticRows,realisticPaperId,setFile} from "./n2-forms.js";
 import {access,currentAttempts,download,prefix,report,scored} from "./n2-progress.js";
-import {SKILLS,SKILL_JA,SECTIONS,PASS_TOTAL,SECTION_MIN,SECTION_MAX,estimate,sprintCheckpoint,nextExamDate,daysUntil,recallQueue,recallRecord,recallId,dailyGoal,coverage,localDay,todayPlan,measuredPace,capMinutes,DAY_MINUTES,EXAM_CHECKLIST,goalDates,formatMinutes} from "./n2-study.js";
-import {flagSvg} from "./components.js";
+import {SKILLS,SKILL_JA,SECTIONS,PASS_TOTAL,SECTION_MIN,SECTION_MAX,estimate,sprintCheckpoint,nextExamDate,daysUntil,recallQueue,recallRecord,recallId,dailyGoal,coverage,localDay,todayPlan,measuredPace,capMinutes,DAY_MINUTES,EXAM_CHECKLIST,goalDates,formatMinutes,shortenPlan,maintenancePlan,resultsMonth} from "./n2-study.js";
+import {flagSvg,planSteps,loadMeter} from "./components.js";
 import {speakOnce,speakAndWait,japaneseVoices} from "./speech.js";
 import {radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
 import {TAG,TAGS,HELD_OUT,CAUSES,comprehensionStats,weakestTag,tagDrill,attemptTags,tagsOf,sourceOf} from "./n2-comprehension.js";
@@ -190,9 +190,12 @@ async function hub() {
   const planGoal = readGoal(), exam = planGoal ? parseGoalDate(planGoal.exam) : nextExamDate(), days = daysUntil(exam);
   const today = dateKey(new Date());
   $("hub-exam-line").textContent = planGoal ? "Exam " + shortDate(exam) + " · first pass by " + shortDate(goalDates(planGoal).firstPass) : "No date set yet";
-  $("hub-days").textContent = Math.abs(days);
-  $("hub-days-label").textContent = days < 0 ? "days since exam" : days === 1 ? "day to go" : days === 0 ? "Exam day. 頑張って。" : "days to go";
+  const dates = goalDates(planGoal);
+  $("hub-days").textContent = days;
+  $("hub-days-label").textContent = days === 1 ? "day to " + shortDate(exam) : days === 0 ? "Exam day. 頑張って。" : "days to " + shortDate(exam);
+  $("hub-first-pass").textContent = days > 0 ? "first pass by " + shortDate(dates.firstPass) : "";
   if (days === 0) $("hub-days").textContent = "今日";
+  $("hub-countdown").hidden = days < 0;
 
   // Today: one ordered plan. The coach may replace it for the day.
   const goal = dailyGoal({inventory, recall: data.recall, examDate: exam, firstPassDate: planGoal && firstPassEnd(planGoal)});
@@ -213,14 +216,14 @@ async function hub() {
   const comprehension = weakestTag(comprehensionStats({papers: data.papers, evidence, tagMap: await tagMap()}));
   const latestRun = checkpoint.recent[0];
   const weakest = latestRun && [...latestRun.sections].sort((a,b)=>a.rate-b.rate)[0];
-  const base = days < 0 ? {phase:"finished", headline:"Your exam date has passed. Set another goal or continue reviewing.", steps:[{kind:"recall",glyph:"憶",title:"Continue recall",line:"Review your N2 targets",href:"?view=recall"}]} : todayPlan({days, goal, checkpoint, comprehension, weak: weakAll, aiReady, checks, pace, examDate: exam, firstPassDate: planGoal?.days ? firstPassEnd(planGoal) : null,
+  const base = days < 0 ? maintenancePlan({checks, pace}) : todayPlan({days, goal, checkpoint, comprehension, weak: weakAll, aiReady, checks, pace, examDate: exam, firstPassDate: planGoal?.days ? firstPassEnd(planGoal) : null,
     running: live && {book: live.book, title: papers.get(live.paper || live.book)?.title || titleOf(live.book), progress: live.answers.filter(Boolean).length + " of " + live.answers.length + " answered" + (live.phase === "rest" ? " · listening next" : "")},
     nextMock: next && {id: next, title: titleOf(next)}, lastMockAt: finished[0]?.completedAt,
     latestResults: latestDone && localDay(new Date(latestDone.completedAt)) === localDay() ? "?book=" + latestDone.book + "&attempt=" + encodeURIComponent(latestDone.id) : null});
   const context = {data, evidence, goal, weakAll, days, base, aiReady, next, latestDone, comprehension};
   goalEditor({...context, planGoal, exam, checks, pace, checkpoint});
-  const coached = readCoachPlan();
-  drawPlan(coached?.plan || base, context);
+  const coached = days < 0 ? null : readCoachPlan();
+  drawToday({...context, planGoal, exam, dates, coached, attempts});
   drawForecast(base, data, goal);
   if (coached) {
     $("coach-box").hidden = false; $("coach-reset").hidden = false;
@@ -230,11 +233,12 @@ async function hub() {
   $("coach").onclick = () => coach(context);
   $("coach").disabled = !aiReady;
   $("coach").title = aiReady ? "" : "Add an AI provider in Echo Settings";
-  $("coach-reset").onclick = () => { try { localStorage.removeItem(COACH_KEY); } catch {} $("coach-box").hidden = true; drawPlan(base, context); };
+  $("coach-reset").onclick = () => { try { localStorage.removeItem(COACH_KEY); } catch {} $("coach-box").hidden = true; drawToday({...context, planGoal, exam, dates, coached: null, attempts}); };
   $("generate-open").onclick = () => openGenerator({aiReady});
   $("generate-open").disabled = !aiReady;
   $("ai-hint").hidden = aiReady;
   $("checklist-zone").hidden = days > 3;
+  $("plan-checklist-link").onclick = () => { $("checklist-zone").hidden = false; };
   drawChecklist();
   $("rest-summary").textContent = todaySummary(data);
   $("breathe-open").onclick = breathe;
@@ -291,6 +295,77 @@ async function hub() {
   }));
   $("export-report").onclick = async () => { try { download(await report()); } catch (e) { warn(e.message); } };
   if (location.hash) document.getElementById(location.hash.slice(1))?.scrollIntoView();
+}
+
+/* ───────── Today and its states ───────── */
+// Per-day choices about the plan: kept the overflow, or shortened the day.
+const DAY_STATE_KEY = "echo-n2-today";
+function readDayState() { try { const s = JSON.parse(localStorage.getItem(DAY_STATE_KEY) || "null"); return s?.day === localDay() ? s : {}; } catch { return {}; } }
+function writeDayState(patch) { try { localStorage.setItem(DAY_STATE_KEY, JSON.stringify({...readDayState(), ...patch, day: localDay()})); } catch {} }
+function statePanel(...children) { $("plan-state").replaceChildren(...children.filter(Boolean)); $("plan-state").hidden = !children.length; }
+const para = (text, cls) => el("p", {class: cls, text});
+function drawToday(ctx) {
+  const {base, days, dates, exam, coached, planGoal} = ctx;
+  if (new URLSearchParams(location.search).get("shorten")) {
+    writeDayState({short: Number(new URLSearchParams(location.search).get("shorten")) || 90});
+    history.replaceState(history.state, "", location.pathname);
+  }
+  const state = readDayState();
+  statePanel();
+  $("plan-moved").hidden = true;
+  $("plan-links").hidden = days < 0;
+  document.querySelector(".n2-coach-actions").hidden = days < 0;
+  if (days < 0) $("ai-hint").hidden = true;
+  // After the exam (J3After): the plan stops; maintenance only when chosen.
+  if (days < 0) {
+    const results = ctx.attempts.filter(a => a.phase === "results");
+    const firstAt = [...ctx.data.recall.flatMap(r => (r.events || []).map(e => e.at)), ...ctx.attempts.map(a => a.startedAt)].filter(Boolean).sort()[0];
+    $("hub-exam-line").textContent = "Exam passed · " + shortDate(exam);
+    statePanel(el("strong", {class: "n2-state-title", text: "The " + exam.getDate() + " " + shortDate(exam).slice(-3) + " exam has passed"}),
+      para("Your plan has stopped. Results day is in " + resultsMonth(exam) + "; nothing here changes until you choose."),
+      el("h3", {class: "rule-heading", text: "Keep it going"}),
+      el("div", {class: "n2-state-actions"},
+        planGoal?.maintenance ? null : el("a", {class: "button primary", href: "#", text: "Start maintenance · 15 min a day", onclick: event => { event.preventDefault(); try { localStorage.setItem(goalKey, JSON.stringify({...planGoal, maintenance: true})); } catch {} location.reload(); }}),
+        el("a", {class: "button outline", href: "#training-goal", text: "Set the next exam date", onclick: () => { $("training-goal").open = true; }})),
+      para("Maintenance: Today's checks and one Day Radio round, no new first checks. Sentence Review carries on as usual in the Review tab.", "hint"),
+      el("h3", {class: "rule-heading", text: "Kept as it was"}),
+      el("ul", {}, el("li", {text: results.length + " mock attempts, each with its paper edition"}),
+        el("li", {text: "Every grade and check" + (firstAt ? " from " + shortDate(new Date(firstAt)).slice(4) + " to " + shortDate(exam).slice(4) : "")}),
+        el("li", {}, "Export: ", el("a", {href: "#history", text: "History and data → N2 analysis"}))));
+    if (planGoal?.maintenance) drawPlan(base, ctx, {title: "Maintenance · about 15 min a day"});
+    else { $("plan-title").textContent = ""; $("plan-steps").replaceChildren(); $("plan-start-wrap").hidden = true; }
+    return;
+  }
+  // A shortened day (J3Short).
+  if (state.short && !coached) {
+    const short = shortenPlan(base, state.short);
+    statePanel(para("Today: " + formatMinutes(short.minutes) + ". Echo keeps what decides tomorrow and moves the rest."),
+      loadMeter({fits: short.minutes, needs: Math.max(short.of, short.minutes), caption: formatMinutes(short.minutes) + " of the " + formatMinutes(short.of) + " plan"}));
+    drawPlan({...base, steps: short.steps}, ctx, {title: "Kept"});
+    const f = base.forecast;
+    $("plan-moved").replaceChildren(el("h3", {class: "rule-heading", text: "Moved to tomorrow"}),
+      para(short.moved.map(s => s.title).join(" · ") + (f?.finish ? ". First pass now about " + shortDate(f.finish) + (daysUntil(f.finish) >= days ? " — the exam day itself or later." : ".") : ".")),
+      el("p", {class: "n2-plan-links"}, el("a", {href: "#training-goal", text: "Choose a later first-pass date instead", onclick: () => { $("training-goal").open = true; }}),
+        el("a", {href: "#", text: "Back to the full day", onclick: event => { event.preventDefault(); writeDayState({short: 0}); drawToday(ctx); }})));
+    $("plan-moved").hidden = false;
+    return;
+  }
+  // Over budget (J1Overload): what moves to tomorrow, keep the goal or pick a later date.
+  const over = !coached && base.overflow && !state.kept ? base.overflow : null;
+  if (over) {
+    const later = base.forecast?.finish;
+    statePanel(el("strong", {class: "n2-state-title", text: "Today needs " + formatMinutes(over.needs)}),
+      loadMeter({fits: over.fits, needs: over.needs, caption: formatMinutes(over.fits) + " of " + formatMinutes(over.needs) + " fits today"}),
+      para("Your day holds 6 h, breaks included. To keep first pass by " + shortDate(dates.firstPass) + ", these move to tomorrow:"),
+      el("ul", {}, el("li", {text: over.checks + " word and grammar first checks (" + formatMinutes(over.minutes) + ")"})),
+      el("div", {class: "n2-state-actions"},
+        el("a", {class: "button primary", href: "#", text: "Keep " + dates.firstPass.getDate() + " " + shortDate(dates.firstPass).slice(-3) + " — move " + formatMinutes(over.minutes) + " to tomorrow", onclick: event => { event.preventDefault(); writeDayState({kept: true}); drawToday(ctx); }}),
+        el("a", {class: "button outline", href: "#training-goal", text: "Choose a later first-pass date", onclick: () => { $("training-goal").open = true; }})),
+      para("Moving work never deletes it." + (later ? " If tomorrow also overflows, the first pass would finish on " + shortDate(later) + " instead." : ""), "hint"));
+    drawPlan(base, ctx, {title: "What stays today", primary: false});
+    return;
+  }
+  drawPlan(coached?.plan ? {...coached.plan, coach: true} : base, ctx);
 }
 
 /* ───────── Goal editor (J1Goal, J3Adjust) ───────── */
@@ -387,20 +462,36 @@ function stepHref(step, ctx) {
   if (step.kind === "review") return ctx.latestDone ? "?book=" + ctx.latestDone.book + "&attempt=" + encodeURIComponent(ctx.latestDone.id) : "#history";
   return null;
 }
-function drawPlan(plan, ctx) {
-  $("plan-headline").textContent = plan.headline || "";
-  $("plan-steps").replaceChildren(...plan.steps.map((step, i) => {
-    const href = stepHref(step, ctx);
-    const onclick = step.kind === "generate" ? () => openGenerator({aiReady: ctx.aiReady, focus: step.focus, count: step.count})
-      : step.kind === "section" ? () => startSection(step.section, ctx)
-      : step.kind === "drill" ? () => startTagDrill(step.tag, ctx)
-      : step.kind === "rest" ? () => { $("rest-zone").hidden = false; $("rest-zone").scrollIntoView({behavior: "smooth"}); }
-      : step.kind === "checklist" ? () => { $("checklist-zone").hidden = false; $("checklist-zone").scrollIntoView({behavior: "smooth"}); } : undefined;
-    const node = row({glyph: step.glyph || String(i + 1), title: step.title, line: [step.line, step.minutes ? step.minutes + " min" : ""].filter(Boolean).join(" · "), href: href || undefined, onclick});
-    if (step.disabled) node.setAttribute("aria-disabled", "true");
-    if (step.done) node.classList.add("n2-done");
-    return node;
-  }));
+// What a step does when opened: a route, or an action on this page.
+function stepAction(step, ctx) {
+  const href = stepHref(step, ctx);
+  const onOpen = step.kind === "generate" ? () => openGenerator({aiReady: ctx.aiReady, focus: step.focus, count: step.count})
+    : step.kind === "section" ? () => startSection(step.section, ctx)
+    : step.kind === "drill" ? () => startTagDrill(step.tag, ctx)
+    : step.kind === "rest" ? () => { $("rest-zone").hidden = false; $("rest-zone").scrollIntoView({behavior: "smooth"}); }
+    : step.kind === "checklist" ? () => { $("checklist-zone").hidden = false; $("checklist-zone").scrollIntoView({behavior: "smooth"}); } : undefined;
+  return {href: href || undefined, onOpen: step.disabled ? undefined : onOpen};
+}
+// Today (J1Today): the steps as PlanSteps, the next one marked, and one Start
+// button for it. `primary` is false while a state panel holds the filled button.
+function drawPlan(plan, ctx, {title, primary = true} = {}) {
+  const total = plan.steps.reduce((n, s) => n + (s.minutes || 0), 0);
+  $("plan-title").textContent = title || "Today · " + (plan.coach ? "your coach's plan" : "standard plan") + (total ? " · " + formatMinutes(total) : "");
+  const phaseNote = plan.phase && plan.phase !== "build" ? plan.headline || "" : "";
+  $("plan-headline").textContent = phaseNote; $("plan-headline").hidden = !phaseNote;
+  const actions = plan.steps.map(step => stepAction(step, ctx));
+  const next = plan.steps.findIndex((step, i) => !step.done && !step.disabled && step.kind !== "rest" && step.kind !== "checklist" && (actions[i].href || actions[i].onOpen));
+  $("plan-steps").replaceChildren(planSteps(plan.steps.map((step, i) => ({
+    title: step.title, line: step.line, minutes: step.minutes, disabled: step.disabled,
+    state: step.done ? "done" : i === next ? "next" : "", ...actions[i]}))));
+  const start = $("plan-start"), step = plan.steps[next];
+  $("plan-start-wrap").hidden = !step;
+  if (step) {
+    start.textContent = "Start: " + step.title.charAt(0).toLowerCase() + step.title.slice(1) + (step.minutes ? " · " + step.minutes + " min" : "");
+    start.className = "button " + (primary ? "primary" : "outline");
+    start.href = actions[next].href || "#";
+    start.onclick = actions[next].href ? null : event => { event.preventDefault(); actions[next].onOpen?.(); };
+  }
 }
 function todaySummary(data) {
   const today = localDay();
@@ -441,7 +532,7 @@ async function coach(ctx) {
     try { localStorage.setItem(COACH_KEY, JSON.stringify({day: localDay(), plan, diagnosis: reply.diagnosis || "", basis: resultsBasis(data)})); } catch {}
     $("coach-copy").textContent = reply.diagnosis || "Here is today's plan.";
     $("coach-reset").hidden = false;
-    drawPlan(plan, ctx);
+    drawPlan({...plan, coach: true}, ctx);
   } catch (e) { $("coach-copy").textContent = "The coach is unavailable. " + e.message + " The standard plan still works."; }
   finally { button.disabled = false; }
 }

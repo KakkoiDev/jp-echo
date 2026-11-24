@@ -1477,13 +1477,35 @@ const REVIEW_MODES_FOR_STATS=["listening","reading","writing"];
 // the one filled button whenever sentences are due.
 async function renderReviewN2(dueCount){
   const host=$("#review-n2");if(!host)return;
-  const [{report,scored},{delayedChecks,checksSummary},{measuredPace,DEFAULT_PACE,goalDates,daysUntil,formatMinutes},{shortDate},{examLine}]=await Promise.all([import("./n2-progress.js"),import("./n2-delayed.js"),import("./n2-study.js"),import("./jlpt-goal.js"),import("./components.js")]);
+  const [{report,scored},{delayedChecks,checksSummary},{measuredPace,DEFAULT_PACE,goalDates,daysUntil,formatMinutes,recallQueue,dailyGoal,firstCheckForecast,localDay},{shortDate},{examLine}]=await Promise.all([import("./n2-progress.js"),import("./n2-delayed.js"),import("./n2-study.js"),import("./jlpt-goal.js"),import("./components.js")]);
   const goal=readGoal();let data=null;try{data=await report()}catch{}
   const started=goal||data&&(data.recall.length||data.events.length||data.attempts.length);
   if(!started){host.replaceChildren(examLine({text:t("JLPT N2 · set your exam date to get a daily plan"),action:t("Set")}));return}
   const {exam,firstPass}=goalDates(goal),days=daysUntil(exam);
-  let checks=[];try{const inventory=await (await fetch("./n2-inventory.json")).json();checks=delayedChecks({inventory,recall:data?.recall||[],evidence:data?scored(data):[],events:data?.events||[]})}catch{}
-  const minutes=Math.ceil(checks.length*(measuredPace(data?.recall||[])||DEFAULT_PACE)/60);
+  let checks=[],inventory=null;try{inventory=await (await fetch("./n2-inventory.json")).json();checks=delayedChecks({inventory,recall:data?.recall||[],evidence:data?scored(data):[],events:data?.events||[]})}catch{}
+  const pace=measuredPace(data?.recall||[])||DEFAULT_PACE,minutes=Math.ceil(checks.length*pace/60);
+  // Back after a gap (J3Return): three or more days since the last N2 work.
+  const last=data?[...data.recall.flatMap(r=>(r.events||[]).map(e=>e.at)),...data.events.map(e=>e.at),...data.attempts.map(a=>a.completedAt||a.startedAt)].filter(Boolean).sort().at(-1):null;
+  const gap=last?Math.round((new Date(localDay()+"T12:00:00")-new Date(localDay(new Date(last))+"T12:00:00"))/86400000):0;
+  if(gap>=3&&days>0&&inventory){
+    const evidence=scored(data),weak=["meaning","reading","grammar"].reduce((n,type)=>n+recallQueue({type,filter:"weak",inventory,recall:data.recall,evidence,size:Infinity}).length,0);
+    const goalNow=dailyGoal({inventory,recall:data.recall,examDate:exam,firstPassDate:goal?.days?firstPass:null});
+    const forecast=firstCheckForecast({unchecked:goalNow.unchecked,pace,examDate:exam,firstPassDate:goal?.days?firstPass:null});
+    const panel=document.createElement("div");panel.className="review-n2-return";
+    const p=(text,cls="")=>{const el=document.createElement("p");if(cls)el.className=cls;el.textContent=text;return el};
+    const a=(text,href,cls)=>{const el=document.createElement("a");el.className=cls;el.href=href;el.textContent=text;return el};
+    const head=document.createElement("strong");head.className="review-n2-return-title";head.textContent=t("{n} days to {date}",{n:days,date:shortDate(exam)});
+    const due=weak+checks.length;
+    panel.append(head,
+      p(t("Welcome back — last session {date}.",{date:shortDate(new Date(last))})+" "+(due?t("{n} checks are due (about {m} at your measured pace).",{n:due,m:formatMinutes(Math.ceil(due*pace/60))}):t("Nothing is overdue."))),
+      p(forecast.finish&&!forecast.onTime?t("First pass was {was} → now about {now}",{was:shortDate(firstPass),now:shortDate(forecast.finish)}):t("First pass still by {date}",{date:shortDate(firstPass)}),"review-n2-line"),
+      p(t("Left to check once: {left} of {total} items",{left:goalNow.unchecked.toLocaleString(),total:goalNow.total.toLocaleString()}),"review-n2-line"),
+      a(t("Resume · today’s plan, 6 h"),"./n2-mock.html","button "+(dueCount?"outline":"primary")),
+      a(t("Shorten today to 90 min"),"./n2-mock.html?shorten=90","button outline"),
+      a(t("Adjust the goal"),"./n2-mock.html#training-goal","review-n2-link"),
+      p(t("Estimates use your pace from the last 7 days. Nothing you did before is lost."),"hint"));
+    host.replaceChildren(panel,examLine({text:t("Exam {exam} · first pass by {first}",{exam:shortDate(exam),first:shortDate(firstPass)}),action:t("Change")}));
+    return}
   const card=document.createElement("div");card.className="notice alert review-n2-card";
   const head=document.createElement("div");head.className="review-n2-head";
   const title=document.createElement("span");title.className="review-n2-title";title.textContent=t("N2 · Today’s checks");

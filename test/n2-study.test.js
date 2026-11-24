@@ -62,7 +62,7 @@ test("the day plan runs delayed checks → new checks → timed reading and list
   const build=todayPlan({days:12,goal,weak:25,checks:12,aiReady:true,latestResults:"?book=x&attempt=y",examDate:new Date(2026,11,6),now:new Date(2026,10,24,9)});
   assert.deepEqual(build.steps.map(s=>s.kind),["check","recall","section","section","review","generate","recall","radio","rest"]);
   assert.equal(build.steps[0].href,"?view=check","yesterday's misses are checked first");
-  assert.match(build.steps[1].line,/157 first checks left/);
+  assert.match(build.steps[1].line,/^157 unchecked N2 words and grammar points/);
   assert.ok(build.minutes<=360,"six hours including breaks");
   assert.equal(build.steps.find(s=>s.kind==="rest").minutes,40,"breaks are in the budget");
   const week=todayPlan({days:3,goal,weak:5,aiReady:false});
@@ -88,7 +88,8 @@ test("first checks follow the measured pace: zero history, slow pace, missed day
   assert.ok(zero.minutes<=360);
   assert.ok(zero.forecast && !zero.forecast.done);
   const slow=todayPlan({days:12,goal:fresh,pace:90,examDate,now});
-  assert.match(slow.steps.find(s=>s.href?.includes("queue=new")).line,/fit your time/,"a slow pace says what fits");
+  assert.ok(slow.overflow && slow.overflow.checks>0 && slow.overflow.needs>slow.overflow.fits,"a slow pace says what does not fit today (J1Overload)");
+  assert.equal(slow.overflow.fits,360);
   assert.ok(slow.forecast.spill>zero.forecast.spill,"a slower pace spills more past the cut-off");
   assert.equal(slow.forecast.lastDay.toDateString(),new Date(2026,11,2).toDateString());
   // Missed days: fewer days left, the same inventory, a later finish.
@@ -161,4 +162,20 @@ test("the sprint day plan reserves breaks on baseline day and directs repair fro
   const latest={meets:false,attempt:{book:"a",id:"1",completedAt:"2026-11-23T10:00:00"},sections:[{name:"Listening",rate:.4}]};
   const repair=todayPlan({...options,checkpoint:{recent:[latest],met:false}});
   assert.ok(repair.steps.some(s=>s.title==="Repair Listening"));
+});
+
+import {shortenPlan,maintenancePlan,resultsMonth} from "../n2-study.js";
+test("a shortened day keeps checks, the weakest section, radio and a break in 90 minutes, and lists what moves (J3Short)",()=>{
+  const plan=todayPlan({days:10,goal:{goal:150,firstToday:0,unchecked:1500},weak:20,checks:30,examDate:new Date(2026,11,6),now:new Date(2026,10,26,9)});
+  const short=shortenPlan(plan,90);
+  assert.deepEqual(short.steps.map(s=>s.kind),["check","section","radio","rest"]);
+  assert.ok(short.minutes<=90);
+  assert.ok(short.moved.some(s=>s.href?.includes("queue=new")),"first checks move to tomorrow");
+  assert.ok(!short.moved.some(s=>s.kind==="check"));
+});
+test("after the exam, maintenance is checks and one radio round in about 15 minutes, with no first checks (J3After)",()=>{
+  const m=maintenancePlan({checks:6,pace:30});
+  assert.deepEqual(m.steps.map(s=>s.kind),["check","radio"]);
+  assert.ok(m.minutes<=15);
+  assert.equal(resultsMonth(new Date(2026,11,6)),"late January");
 });

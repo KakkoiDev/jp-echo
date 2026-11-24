@@ -39,3 +39,26 @@ test("there is one goal editor: dates under each field, a no-AI note, works befo
   assert.match(mock, /\$\("training-preview"\)\.hidden = !changed/);
   assert.match(mock, /\$\("training-no-ai"\)\.hidden = aiReady/);
 });
+
+test("Today is PlanSteps with one Start button; over budget, a shortened day and after the exam are states of it", () => {
+  assert.match(mock, /planSteps\(plan\.steps\.map/);
+  assert.match(page, /id="plan-start"/);
+  assert.match(mock, /drawPlan\(base, ctx, \{title: "What stays today", primary: false\}\)/, "the overload panel holds the one filled button (J1Overload)");
+  assert.match(mock, /"Keep " \+ dates\.firstPass\.getDate\(\)/);
+  assert.match(mock, /Choose a later first-pass date/);
+  assert.match(mock, /Moving work never deletes it\./);
+  assert.match(mock, /shortenPlan\(base, state\.short\)/, "J3Short");
+  assert.match(mock, /Moved to tomorrow/);
+  assert.match(mock, /Your plan has stopped\. Results day is in/, "J3After");
+  assert.match(mock, /Start maintenance · 15 min a day/);
+  assert.match(mock, /mock attempts, each with its paper edition/);
+});
+
+test("back after a gap, Review offers Resume, Shorten today and Adjust the goal with a revised estimate (J3Return)", () => {
+  assert.match(app, /gap>=3&&days>0/);
+  assert.match(app, /Welcome back — last session \{date\}\./);
+  assert.match(app, /First pass was \{was\} → now about \{now\}/);
+  assert.match(app, /Left to check once: \{left\} of \{total\} items/);
+  assert.match(app, /"\.\/n2-mock\.html\?shorten=90"/);
+  assert.match(app, /Resume · today’s plan, 6 h"\),"\.\/n2-mock\.html","button "\+\(dueCount\?"outline":"primary"\)/);
+});

@@ -248,7 +248,7 @@ export function todayPlan({days, checkpoint = null, comprehension = null, goal =
   const targetedNeed = (latestResults ? 20 : 0) + (comprehension ? 20 : 0) + (repair ? 30 + (aiReady ? 15 : 0) : aiReady ? 30 : 0);
   if (!mockDay && !weak && acquire) spare += Math.max(0, b.targeted - targetedNeed);
   const targetedBase = !mockDay && !weak && acquire ? Math.min(b.targeted, targetedNeed) : b.targeted;
-  let forecast = null;
+  let forecast = null, overflow = null;
   if (acquire) {
     const pool = b.first + spare;
     const capacity = firstCapacity(pool, p);
@@ -256,8 +256,12 @@ export function todayPlan({days, checkpoint = null, comprehension = null, goal =
     const minutes = left ? minutesFor(left) : 0;
     spare = pool - minutes;
     const short = goal.goal > capacity;
-    steps.push({kind: "recall", glyph: "憶", title: left ? "New words and grammar" : "New checks done for today",
-      line: left ? left + " first checks left today · rounds of 20" + (short ? " · " + capacity + " fit your time; " + goal.goal + " would keep the schedule" : "") : goal.firstToday + " first checks today. More is a bonus.",
+    // What the schedule needs today but the six hours cannot hold (J1Overload).
+    const wanted = Math.max(0, goal.goal - goal.firstToday);
+    // A few minutes over is noise; a quarter hour or more is worth a decision.
+    if (wanted > left && minutesFor(wanted) - minutes >= 15) overflow = {checks: wanted - left, minutes: minutesFor(wanted) - minutes};
+    steps.push({kind: "recall", glyph: "憶", title: left ? "Word and grammar first checks" : "New checks done for today",
+      line: left ? left + " unchecked N2 words and grammar points · rounds of 20" : goal.firstToday + " first checks today. More is a bonus.",
       href: "?view=recall&queue=new", minutes, done: !left});
     if (examDate) forecast = firstCheckForecast({unchecked: goal.unchecked, todayLeft: Math.max(0, capacity - goal.firstToday), pace: p, examDate, firstPassDate, now});
   }
@@ -292,8 +296,38 @@ export function todayPlan({days, checkpoint = null, comprehension = null, goal =
   const minutes = capped.reduce((sum, s) => sum + (s.minutes || 0), 0);
   const hours = Math.round(minutes / 60 * 2) / 2;
   return {phase: final && !custom ? "final" : "build", headline: (final ? "Exam week: consolidate, don't cram. " : "") + "About " + hours + " hours today, breaks included.",
-    steps: capped, minutes, forecast, pace: p, measured: !!pace};
+    steps: capped, minutes, forecast, pace: p, measured: !!pace, overflow: overflow && {...overflow, needs: minutes + overflow.minutes, fits: DAY_MINUTES}};
 }
+
+// A shortened day (J3Short): keep what decides tomorrow — the delayed checks
+// and weak items, the weakest timed section, Day Radio, a break — inside
+// `minutes`, and list what moves to tomorrow. Nothing is deleted.
+export function shortenPlan(plan, minutes = 90) {
+  const share = {check: 35, section: 35, radio: 15, rest: 5};
+  const keep = [], moved = [];
+  const first = (pred) => plan.steps.find(s => pred(s) && !keep.includes(s));
+  const checks = first(s => s.kind === "check") || first(s => s.kind === "recall" && /weak/.test(s.href || ""));
+  const section = first(s => s.kind === "section" && s.weakest) || first(s => s.kind === "section" && s.section === "listening") || first(s => s.kind === "section");
+  const radio = first(s => s.kind === "radio");
+  for (const [step, budget] of [[checks, share.check], [section, share.section], [radio, share.radio]]) if (step) keep.push({...step, minutes: Math.min(step.minutes || budget, budget)});
+  keep.push({kind: "rest", glyph: "休", title: "Break", line: "", minutes: share.rest});
+  for (const s of plan.steps) if (!keep.some(k => k.title === s.title) && s.minutes && s.kind !== "rest") moved.push(s);
+  const total = keep.reduce((n, s) => n + (s.minutes || 0), 0);
+  const scale = total > minutes ? minutes / total : 1;
+  return {steps: keep.map(s => ({...s, minutes: Math.max(1, Math.round(s.minutes * scale))})), moved, minutes: Math.min(total, minutes), of: plan.minutes || DAY_MINUTES};
+}
+
+// After the exam (J3After) the plan stops; maintenance is Today's checks and
+// one Day Radio round, no new first checks.
+export function maintenancePlan({checks = 0, pace = null} = {}) {
+  const p = pace || DEFAULT_PACE;
+  const steps = [];
+  if (checks) steps.push({kind: "check", glyph: "昨", title: "Today's checks", line: checks + " from yesterday", href: "?view=check", minutes: Math.min(10, Math.max(3, Math.ceil(checks * p / 60)))});
+  steps.push({kind: "radio", glyph: "耳", title: "Day Radio", line: "One round of your weak items by ear", href: "?view=radio&mode=listen", minutes: 15 - (steps[0]?.minutes || 0) || 10});
+  return {phase: "maintenance", headline: "Maintenance · about 15 min a day", steps, minutes: steps.reduce((n, s) => n + s.minutes, 0)};
+}
+// JLPT results come out about two months later: late January for December, late August for July.
+export const resultsMonth = exam => exam.getMonth() === 11 ? "late January" : exam.getMonth() === 6 ? "late August" : "about two months";
 
 export const EXAM_CHECKLIST = Object.freeze([
   ["ticket", "受験票 — exam voucher, with your photo attached"],
