@@ -1,7 +1,7 @@
 // Day Radio: N2 words and grammar you hesitate over, played while you are
 // awake. Listen plays the target, its meaning and a natural example; Recall
-// plays a prompt, leaves a pause, then reveals. Check yesterday tests what you
-// heard yesterday with a different sentence the next day.
+// plays a prompt, leaves a pause, then reveals. The next-day check is Today's
+// checks (n2-delayed.js), one session for print and audio.
 // Pure queue and step logic plus a small player with speech injected, so it is
 // tested without a speech engine (test/day-radio.test.js).
 import {recallItems, weakTargets, localDay} from "./n2-study.js";
@@ -114,30 +114,11 @@ export function chooseExample(examples = [], heardIds = new Set()) {
   return examples.find(e => !heardIds.has(e.id)) || examples[0] || null;
 }
 
-// Yesterday's targets: heard on Day Radio or marked weak yesterday. Each check
-// uses a different sentence from the one heard when one exists.
-export function yesterdayChecks({events = [], recall = [], items, examples, today = localDay(), size = 20}) {
-  const yesterday = localDay(new Date(new Date(today + "T12:00:00").getTime() - 86_400_000));
-  const heard = new Map();
-  for (const e of events) if (e.kind === "exposure" && localDay(new Date(e.at)) === yesterday) {
-    const k = keyOf(e.target); heard.set(k, new Set([...(heard.get(k) || []), e.context?.exampleId].filter(Boolean)));
-  }
-  for (const r of recall) if (r.last !== "instant" && r.day === yesterday && !heard.has(keyOf(r.target))) heard.set(keyOf(r.target), new Set());
-  const checkedToday = new Set(events.filter(e => e.kind === "recall" && e.context?.source === "check-yesterday" && localDay(new Date(e.at)) === today).map(e => keyOf(e.target)));
-  const out = [];
-  for (const [k, ids] of heard) {
-    if (out.length >= size || checkedToday.has(k)) continue;
-    const item = items.get(k); if (!item) continue;
-    const pool = examples.get(k) || [];
-    const fresh = pool.find(e => !ids.has(e.id));
-    out.push({...item, why: "yesterday", example: fresh || null, sameAsYesterday: !fresh && pool.length > 0});
-  }
-  return out;
-}
+// Next-day checks moved to one session for print and audio: n2-delayed.js.
 
-export function radioEvent({target, kind, skill = "listening", grade, source, mode, exampleId, now = new Date()}) {
+export function radioEvent({target, kind, skill = "listening", grade, source, mode, exampleId, detail = {}, now = new Date()}) {
   return {id: (globalThis.crypto?.randomUUID?.() || String(now.getTime()) + Math.random()), target, kind, skill, ...(grade ? {grade} : {}),
-    at: now.toISOString(), context: {source, mode, ...(exampleId ? {exampleId} : {})}};
+    at: now.toISOString(), context: {...detail, source, mode, ...(exampleId ? {exampleId} : {})}};
 }
 
 // The player: walks the queue from an index, one item at a time, and can be

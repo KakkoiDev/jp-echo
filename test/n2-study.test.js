@@ -56,19 +56,59 @@ test("the daily goal spreads first checks across the days that actually assign n
   assert.equal(g.goal,Math.ceil((1748+221)/9));
 });
 
-import {todayPlan} from "../n2-study.js";
-test("the day plan runs warm-up → new checks → exam practice → review → wind-down, and lightens near the exam",()=>{
+import {todayPlan,measuredPace,capMinutes} from "../n2-study.js";
+test("the day plan runs delayed checks → new checks → timed reading and listening → targeted work → radio → breaks, inside six hours",()=>{
   const goal={goal:197,firstToday:40,unchecked:1800};
-  const build=todayPlan({days:12,goal,weak:25,nextMock:{id:"n2-set-2",title:"02"},aiReady:true,latestResults:"?book=x&attempt=y"});
-  assert.deepEqual(build.steps.map(s=>s.kind),["recall","recall","radio","mock","review","rest"]);
-  assert.equal(todayPlan({days:12,goal,heardYesterday:4}).steps[0].href,"?view=radio&mode=check","yesterday's Day Radio is checked first");
+  const build=todayPlan({days:12,goal,weak:25,checks:12,aiReady:true,latestResults:"?book=x&attempt=y",examDate:new Date(2026,11,6),now:new Date(2026,10,24,9)});
+  assert.deepEqual(build.steps.map(s=>s.kind),["check","recall","section","section","review","generate","recall","radio","rest"]);
+  assert.equal(build.steps[0].href,"?view=check","yesterday's misses are checked first");
   assert.match(build.steps[1].line,/157 first checks left/);
-  const recent=todayPlan({days:12,goal,weak:0,nextMock:{id:"n2-set-3",title:"03"},lastMockAt:"2026-11-23T10:00:00Z",aiReady:true,now:new Date(2026,10,24,9)});
-  assert.equal(recent.steps.find(s=>s.kind==="generate")?.disabled,false,"a mock yesterday means targeted practice today");
+  assert.ok(build.minutes<=360,"six hours including breaks");
+  assert.equal(build.steps.find(s=>s.kind==="rest").minutes,40,"breaks are in the budget");
   const week=todayPlan({days:3,goal,weak:5,aiReady:false});
-  assert.equal(week.phase,"final");assert.ok(!week.steps.some(s=>s.title.startsWith("New words")),"no new material in exam week");
+  assert.equal(week.phase,"final");assert.ok(!week.steps.some(s=>s.href?.includes("queue=new")),"no new material in exam week");
+  assert.ok(week.minutes<=360);
   assert.equal(todayPlan({days:1,weak:5}).phase,"eve");
   assert.equal(todayPlan({days:0}).phase,"exam-day");
+});
+test("a scheduled full mock replaces the timed sections, and the day still fits six hours",()=>{
+  const goal={goal:197,firstToday:0,unchecked:1800};
+  const mock=todayPlan({days:10,goal,checks:5,nextMock:{id:"n2-set-2",title:"02"},examDate:new Date(2026,11,6),now:new Date(2026,10,26,9)});
+  assert.deepEqual(mock.steps.slice(0,3).map(s=>s.kind),["check","mock","review"]);
+  assert.ok(!mock.steps.some(s=>s.kind==="section"));
+  assert.ok(mock.minutes<=360);
+  const recent=todayPlan({days:12,goal,nextMock:{id:"n2-set-3",title:"03"},lastMockAt:"2026-11-23T10:00:00Z",aiReady:true,now:new Date(2026,10,24,9)});
+  assert.ok(!recent.steps.some(s=>s.kind==="mock"),"a mock yesterday means sections today");
+});
+test("first checks follow the measured pace: zero history, slow pace, missed days, the last acquisition day",()=>{
+  const examDate=new Date(2026,11,6), now=new Date(2026,10,24,9);
+  const fresh=dailyGoal({inventory,recall:[],examDate,now});
+  const zero=todayPlan({days:12,goal:fresh,examDate,now});
+  assert.equal(zero.measured,false); assert.equal(zero.pace,36);
+  assert.ok(zero.minutes<=360);
+  assert.ok(zero.forecast && !zero.forecast.done);
+  const slow=todayPlan({days:12,goal:fresh,pace:90,examDate,now});
+  assert.match(slow.steps.find(s=>s.href?.includes("queue=new")).line,/fit your time/,"a slow pace says what fits");
+  assert.ok(slow.forecast.spill>zero.forecast.spill,"a slower pace spills more past the cut-off");
+  assert.equal(slow.forecast.lastDay.toDateString(),new Date(2026,11,2).toDateString());
+  // Missed days: fewer days left, the same inventory, a later finish.
+  const late=new Date(2026,10,29,9), missed=dailyGoal({inventory,recall:[],examDate,now:late});
+  const behind=todayPlan({days:daysUntil(examDate,late),goal:missed,examDate,now:late});
+  assert.ok(missed.goal>fresh.goal); assert.ok(behind.forecast.spill>=zero.forecast.spill);
+  // The last acquisition day still offers first checks; the next day does not.
+  const last=new Date(2026,11,2,9);
+  assert.ok(todayPlan({days:4,goal:dailyGoal({inventory,recall:[],examDate,now:last}),examDate,now:last}).steps.some(s=>s.href?.includes("queue=new")));
+  const fast=todayPlan({days:12,goal:{goal:100,firstToday:0,unchecked:900},pace:20,examDate,now});
+  assert.equal(fast.forecast.onTime,true);
+});
+test("measured pace needs enough checks; plans are trimmed to the budget in order",()=>{
+  const now=new Date(2026,10,24,12);
+  const events=Array.from({length:20},(_,i)=>({at:new Date(2026,10,24,9,i).toISOString(),grade:"instant",activeMs:20000+i*100}));
+  assert.equal(measuredPace([{events}],now),21);
+  assert.equal(measuredPace([{events:events.slice(0,5)}],now),null);
+  const capped=capMinutes([{kind:"a",minutes:300},{kind:"b",minutes:100},{kind:"c",minutes:30},{kind:"rest",minutes:0}]);
+  assert.deepEqual(capped.map(s=>s.minutes),[300,60,0]);
+  assert.equal(capped.reduce((n,s)=>n+s.minutes,0),360);
 });
 test("exam day asks nothing of you: the calm step only plays Day Radio",()=>{
   const day=todayPlan({days:0});
@@ -115,7 +155,9 @@ test("the sprint day plan reserves breaks on baseline day and directs repair fro
   const options={days:12,now:new Date(2026,10,24),goal:{goal:800,firstToday:0,unchecked:1000},nextMock:{id:"b",title:"B"},weak:20,heardYesterday:8};
   const baseline=todayPlan({...options,checkpoint:{recent:[],met:false}});
   assert.ok(baseline.steps.some(s=>s.kind==="mock"));
-  assert.ok(baseline.minutes<=320);
+  // Breaks are a 40-minute step inside the 360, so study time stays at or under 320.
+  assert.ok(baseline.minutes<=360);
+  assert.ok(baseline.minutes-baseline.steps.filter(s=>s.kind==="rest").reduce((n,s)=>n+s.minutes,0)<=320);
   const latest={meets:false,attempt:{book:"a",id:"1",completedAt:"2026-11-23T10:00:00"},sections:[{name:"Listening",rate:.4}]};
   const repair=todayPlan({...options,checkpoint:{recent:[latest],met:false}});
   assert.ok(repair.steps.some(s=>s.title==="Repair Listening"));

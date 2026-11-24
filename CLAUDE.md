@@ -206,9 +206,18 @@ Before considering the change complete:
   `test/day-radio.test.js`); Echo's Radio screen links to it. Exposure and
   listening recall go to the `events` store (IndexedDB v2), never to `recall`,
   so a written-reading record changes only after a written-reading check.
+- **Today's checks is the one next-day check.** `n2-delayed.js` picks
+  yesterday's misses, slow answers, guesses and Day Radio plays (`?view=check`);
+  the hub counts the same `delayedChecks` batch it opens. A print check writes
+  the recall record of its dimension; an audio check writes a listening event,
+  so the two never move each other. Day Radio has no check mode of its own.
+- **The N2 day fits six hours including breaks.** `BUDGET`, `capMinutes` and
+  `firstCheckForecast` (n2-study.js) size every plan, the coach's included;
+  first-check minutes follow `measuredPace`. Timed reading and listening sections
+  are adaptive-style papers built from an unsat set (`paper.drill`).
 - **The N2 coach and generator act only through app actions.** The coach's
-  plan steps are limited to recall / mock / generate / review / rest /
-  checklist (`STEP_KINDS`); generated questions must name a `BLUEPRINT` 問題
+  plan steps are limited to check / recall / section / radio / mock / generate /
+  review / rest / checklist (`STEP_KINDS`); generated questions must name a `BLUEPRINT` 問題
   and pass `validateGenerated`. Without a provider, `todayPlan` still plans.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.

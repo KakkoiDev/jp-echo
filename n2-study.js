@@ -109,12 +109,14 @@ export function recallQueue({type, filter = "daily", inventory, recall = [], evi
   return (rows.length ? rows : later.sort(order)).slice(0, size);
 }
 
-export function recallRecord(previous, {id, type, item}, grade, now = new Date()) {
+// detail travels on the event: source, modality, context, assistance and
+// active time (activeMs) when the screen measured them.
+export function recallRecord(previous, {id, type, item}, grade, now = new Date(), detail = {}) {
   const day = localDay(now);
   return {id, target: item.target, dimension: type, prompt: item.prompt, answer: item.answer, last: grade, day,
     updatedAt: now.toISOString(), checks: (previous?.checks || 0) + 1,
     days: grade === "instant" ? [...new Set([...(previous?.days || []), day])] : [],
-    events: [...(previous?.events || []), {at: now.toISOString(), grade}]};
+    events: [...(previous?.events || []), {at: now.toISOString(), grade, ...detail}]};
 }
 
 // Reserve the last three pre-exam days for consolidation.
@@ -142,60 +144,149 @@ export function coverage(inventory, recall, evidence) {
   }));
 }
 
-// The day, in the order a person studies it: warm up on yesterday's weak
-// items, first-check new material, sit exam practice, go over the misses,
-// then stop. The last days drop new material; the eve and the day itself
-// are about rest and logistics. Pure, so the coach can replace it and the
-// tests can hold it.
+// Six hours a day, breaks included: the learner's budget before the exam.
+export const DAY_MINUTES = 360;
+// Seconds per recall check until the learner's own pace is measured.
+export const DEFAULT_PACE = 36;
+// Median active seconds per recall check over the last week, from checks
+// whose screen measured it (activeMs); null until there are enough.
+export function measuredPace(recall = [], now = new Date(), {min = 15} = {}) {
+  const since = now.getTime() - 7 * 86_400_000;
+  const ms = recall.flatMap(r => r.events || []).filter(e => e.activeMs > 0 && e.activeMs < 180_000 && Date.parse(e.at) >= since).map(e => e.activeMs).sort((a, b) => a - b);
+  if (ms.length < min) return null;
+  return Math.min(120, Math.max(8, Math.round(ms[Math.floor(ms.length / 2)] / 1000)));
+}
+
+// Minutes per block. A regular day and a mock day both fill six hours,
+// breaks included; minutes a block does not need roll to the next one.
+export const BUDGET = Object.freeze({
+  regular: Object.freeze({check: 35, first: 95, reading: 55, listening: 50, targeted: 55, radio: 30, breaks: 40}),
+  mock: Object.freeze({check: 35, mock: 155, review: 50, first: 65, radio: 15, breaks: 40}),
+});
+const firstCapacity = (minutes, pace) => Math.floor(minutes * 60 / pace);
+const dayAfter = (now, n) => new Date(now.getFullYear(), now.getMonth(), now.getDate() + n);
+
+// When first checks finish at the learner's pace. todayLeft is what still
+// fits today; later days average two regular days and a mock day.
+// A custom first-pass end (the training goal) replaces the default cut-off.
+export function firstCheckForecast({unchecked, todayLeft = 0, pace = DEFAULT_PACE, examDate, firstPassDate = null, now = new Date()}) {
+  const daysLeft = Math.max(0, firstPassDate ? daysUntil(firstPassDate, now) + 1 : daysUntil(examDate, now) - CONSOLIDATION_DAYS);
+  const lastDay = firstPassDate ? new Date(firstPassDate.getFullYear(), firstPassDate.getMonth(), firstPassDate.getDate())
+    : new Date(examDate.getFullYear(), examDate.getMonth(), examDate.getDate() - CONSOLIDATION_DAYS - 1);
+  const perDay = Math.round((2 * firstCapacity(BUDGET.regular.first, pace) + firstCapacity(BUDGET.mock.first, pace)) / 3);
+  if (!unchecked) return {done: true, finish: null, spill: 0, perDay, lastDay, daysLeft, onTime: true};
+  const after = Math.max(0, unchecked - todayLeft);
+  const finish = dayAfter(now, after ? Math.ceil(after / perDay) : 0);
+  const spill = Math.max(0, after - perDay * Math.max(0, daysLeft - 1));
+  return {done: false, finish, spill, perDay, lastDay, daysLeft, onTime: !!daysLeft && finish <= lastDay};
+}
+
+// Trim a plan to the day's budget in order; steps with no minutes stay.
+export function capMinutes(steps, budget = DAY_MINUTES) {
+  let used = 0;
+  const out = [];
+  for (const step of steps) {
+    const minutes = Math.max(0, Number(step.minutes) || 0);
+    if (minutes && used >= budget) continue;
+    const take = Math.min(minutes, budget - used);
+    used += take;
+    out.push({...step, minutes: take});
+  }
+  return out;
+}
+
+// The day, in the order a person studies it, inside six hours with breaks:
+// yesterday's delayed checks, first checks of new material, timed reading and
+// listening every day (or a full mock), targeted work on weak points, Day
+// Radio, then stop. The last days drop new material; the eve and the day
+// itself are about rest and logistics. Pure, so the coach can replace it and
+// the tests can hold it.
+// In the last two weeks full mocks follow the sprint checkpoint (two fresh
+// first sittings on separate days within seven days); a missed checkpoint
+// turns targeted time into repairing its weakest section. A custom first-pass
+// goal (goal.custom) may keep new material going into the last days.
 export function todayPlan({days, checkpoint = null, goal = {goal: 0, firstToday: 0, unchecked: 0}, weak = 0, running = null, nextMock = null,
-  lastMockAt = "", latestResults = null, aiReady = false, heardYesterday = 0, now = new Date()}) {
-  const steps = [];
+  lastMockAt = "", latestResults = null, aiReady = false, checks = 0, pace = null, examDate = null, firstPassDate = null, now = new Date()}) {
+  const custom = !!(goal.custom && goal.goal && goal.unchecked);
   const sinceMock = lastMockAt ? daysUntil(new Date(now.getFullYear(), now.getMonth(), now.getDate()), new Date(lastMockAt)) : Infinity;
   if (days === 0) return {phase: "exam-day", headline: "Exam day. You have done the work.", steps: [
     {kind: "checklist", glyph: "券", title: "Before you leave", line: "Ticket, pencils, watch — the checklist below"},
     {kind: "radio", glyph: "温", title: "Ten calm minutes", line: "Day Radio on the way: hear words, no pressure to answer", href: "?view=radio&mode=listen", minutes: 10},
     {kind: "rest", glyph: "息", title: "Breathe on the way", line: "One minute, any time you feel rushed"}]};
-  if (days === 1 && !(goal.custom && goal.goal && goal.unchecked)) return {phase: "eve", headline: "Tomorrow is the exam. Keep today light.", steps: [
+  if (days === 1 && !custom) return {phase: "eve", headline: "Tomorrow is the exam. Keep today light.", steps: [
     {kind: "recall", glyph: "温", title: "Weak items, once", line: Math.min(weak, 30) + " items · 15 minutes, then stop", href: "?view=recall&queue=weak", minutes: 15},
     {kind: "checklist", glyph: "券", title: "Pack tonight", line: "The checklist below, then the route and the time"},
     {kind: "rest", glyph: "眠", title: "Sleep early", line: "Sleep fixes what you studied this week. No new material tonight."}]};
-  if (heardYesterday) steps.push({kind: "radio", glyph: "昨", title: "Check yesterday by ear", line: heardYesterday + " listening checks from yesterday · fresh sentences when available", href: "?view=radio&mode=check", minutes: 10});
-  if (weak) steps.push({kind: "recall", glyph: "温", title: "Warm up · your weak items", line: Math.min(weak, 20) + " of " + weak + " · say each one aloud before you check", href: "?view=recall&queue=weak", minutes: 15});
+  const p = pace || DEFAULT_PACE, minutesFor = n => Math.ceil(n * p / 60);
   const final = days <= CONSOLIDATION_DAYS;
-  if ((!final || goal.custom) && goal.goal > 0 && goal.unchecked) {
-    const left = Math.max(0, goal.goal - goal.firstToday);
-    steps.push({kind: "recall", glyph: "憶", title: left ? "New words and grammar" : "New checks done for today", line: left ? left + " first checks left today · rounds of 20" : goal.firstToday + " first checks today. More is a bonus.", href: "?view=recall&queue=new", minutes: Math.ceil(left / 20) * 12, done: !left});
-  }
-  steps.push({kind: "radio", glyph: "耳", title: "Day Radio", line: "Your weak words and grammar by ear — on a walk, cooking, commuting", href: "?view=radio&mode=listen", minutes: 30});
-  const latest = checkpoint?.recent[0];
-  const sprint = checkpoint && days <= 14;
+  const latest = checkpoint?.recent?.[0];
+  const sprint = !!checkpoint && days <= 14;
   const examIn = run => days + daysUntil(new Date(now.getFullYear(), now.getMonth(), now.getDate()), new Date(run.attempt.completedAt));
   const checkpointDue = sprint && days >= 2 && (!latest ||
     (days <= 7 && examIn(latest) > 7) || (days <= 3 && examIn(latest) > 3 && !checkpoint.met));
-  if (running) steps.push({kind: "mock", glyph: "試", title: "Finish your mock", line: running.title + " · " + running.progress, href: "?book=" + running.book, minutes: 60});
-  else if (nextMock && (sprint ? checkpointDue : (sinceMock >= 3 || days === 4) && days > 2)) steps.push({kind: "mock", glyph: "試", title: "Full mock in exam conditions", line: nextMock.title + " · 155 minutes with a break", href: "?book=" + nextMock.id, minutes: 155});
-  else if (sprint && latest && !latest.meets) {
-    const weakest = [...latest.sections].sort((a,b)=>a.rate-b.rate)[0];
-    steps.push({kind:"review", glyph:"直", title:"Repair " + weakest.name, line:"Find the decisive cue in the answers you missed or guessed. Then try a different example.",
-      href:"?book="+latest.attempt.book+"&attempt="+encodeURIComponent(latest.attempt.id), minutes:30});
-    if (aiReady) steps.push({kind:"generate",glyph:"狙",title:"Check the same skill on fresh questions",line:"10 targeted questions",
-      count:10,focus:weakest.name === "Reading" || weakest.name === "Listening" ? weakest.name : "weak",minutes:15});
+  const mockDay = !!running || !!(nextMock && (sprint ? checkpointDue : (sinceMock >= 3 || days === 4) && days > 2));
+  const repair = sprint && latest && !latest.meets ? [...latest.sections].sort((a, b) => a.rate - b.rate)[0] : null;
+  const b = BUDGET[mockDay ? "mock" : "regular"];
+  const steps = [];
+  let spare = 0;
+
+  const checkMinutes = checks ? Math.min(b.check, Math.max(5, minutesFor(checks))) : 0;
+  spare += b.check - checkMinutes;
+  if (checks) steps.push({kind: "check", glyph: "昨", title: "Today's checks", line: checks + " from yesterday · misses and guesses, in print and by ear, in a new context", href: "?view=check", minutes: checkMinutes});
+
+  if (running) steps.push({kind: "mock", glyph: "試", title: "Finish your mock", line: running.title + " · " + running.progress, href: "?book=" + running.book, minutes: 90});
+  else if (mockDay) steps.push({kind: "mock", glyph: "試", title: "Full mock in exam conditions", line: nextMock.title + " · 155 minutes with a break", href: "?book=" + nextMock.id, minutes: b.mock});
+  if (mockDay) {
+    spare += running ? b.mock - 90 : 0;
+    steps.push({kind: "review", glyph: "直", title: "Go over the mock", line: "Each miss: find the sentence or line that decides it, then drill the words", href: latestResults || undefined, minutes: b.review});
   }
-  else steps.push({kind: "generate", glyph: "狙", title: "Practice exam on your weak points", line: aiReady ? "20 new questions in the real 問題 formats · about 30 minutes" : "Add an AI provider in Echo Settings to generate these", minutes: 30, disabled: !aiReady});
-  if (latestResults) steps.push({kind: "review", glyph: "直", title: "Go over the misses", line: "Read why each answer is right, then drill them", href: latestResults, minutes: 20});
-  steps.push({kind: "rest", glyph: "休", title: "Wind down", line: "Breathe, hear your sentences, stop for the day"});
-  if (final && !(goal.custom && goal.goal && goal.unchecked)) steps.unshift({kind: "checklist", glyph: "券", title: "Exam week", line: "No new material now: weak items, one last mock, and the checklist"});
-  const acquisition = steps.find(step => step.href === "?view=recall&queue=new");
-  if (acquisition && sprint) {
-    const otherMinutes = steps.reduce((n,s)=>n+(s === acquisition ? 0 : s.minutes || 0),0);
-    const rounds = Math.max(0, Math.floor((360 - 40 - otherMinutes) / 12));
-    if (acquisition.minutes > rounds * 12) {
-      acquisition.minutes = rounds * 12;
-      acquisition.line = "Up to " + (rounds * 20) + " first checks fit today. Remaining coverage carries forward.";
-    }
+
+  // Targeted minutes with nothing to target (no misses, no weak items, no AI)
+  // go to first checks instead of leaving the day short.
+  const acquire = (!final || custom) && goal.goal > 0 && goal.unchecked;
+  const targetedNeed = (latestResults ? 20 : 0) + (repair ? 30 + (aiReady ? 15 : 0) : aiReady ? 30 : 0);
+  if (!mockDay && !weak && acquire) spare += Math.max(0, b.targeted - targetedNeed);
+  const targetedBase = !mockDay && !weak && acquire ? Math.min(b.targeted, targetedNeed) : b.targeted;
+  let forecast = null;
+  if (acquire) {
+    const pool = b.first + spare;
+    const capacity = firstCapacity(pool, p);
+    const left = Math.max(0, Math.min(goal.goal, capacity) - goal.firstToday);
+    const minutes = left ? minutesFor(left) : 0;
+    spare = pool - minutes;
+    const short = goal.goal > capacity;
+    steps.push({kind: "recall", glyph: "憶", title: left ? "New words and grammar" : "New checks done for today",
+      line: left ? left + " first checks left today · rounds of 20" + (short ? " · " + capacity + " fit your time; " + goal.goal + " would keep the schedule" : "") : goal.firstToday + " first checks today. More is a bonus.",
+      href: "?view=recall&queue=new", minutes, done: !left});
+    if (examDate) forecast = firstCheckForecast({unchecked: goal.unchecked, todayLeft: Math.max(0, capacity - goal.firstToday), pace: p, examDate, firstPassDate, now});
   }
-  const minutes = steps.reduce((sum, s) => sum + (s.minutes || 0), 0);
-  return {phase: final ? "final" : "build", headline: final ? "Exam week: consolidate, don't cram." : "About " + Math.round(minutes / 60 * 2) / 2 + " hours today, in this order.", steps, minutes};
+
+  if (!mockDay) {
+    steps.push({kind: "section", section: "reading", glyph: "読", title: "Timed reading", line: "問題10–14 from a set you have not sat · 21 questions, then read why", minutes: b.reading});
+    steps.push({kind: "section", section: "listening", glyph: "聴", title: "Listening, one play each", line: "問題1–5 from a set you have not sat · 32 questions", minutes: b.listening});
+    let targeted = targetedBase + spare;
+    spare = 0;
+    if (latestResults) { steps.push({kind: "review", glyph: "直", title: "Go over the misses", line: "Read why each answer is right, then drill them", href: latestResults, minutes: 20}); targeted -= 20; }
+    if (repair) {
+      steps.push({kind: "review", glyph: "直", title: "Repair " + repair.name, line: "Find the decisive cue in the answers you missed or guessed. Then try a different example.",
+        href: "?book=" + latest.attempt.book + "&attempt=" + encodeURIComponent(latest.attempt.id), minutes: Math.max(0, Math.min(30, targeted))});
+      targeted -= 30;
+      if (aiReady && targeted >= 15) { steps.push({kind: "generate", glyph: "狙", title: "Check the same skill on fresh questions", line: "10 targeted questions", count: 10,
+        focus: repair.name === "Reading" || repair.name === "Listening" ? repair.name : "weak", minutes: 15}); targeted -= 15; }
+    } else if (aiReady && targeted >= 30) { steps.push({kind: "generate", glyph: "狙", title: "Practice exam on your weak points", line: "New questions in the real 問題 formats, from your misses", minutes: 30}); targeted -= 30; }
+    if (weak && targeted > 0) steps.push({kind: "recall", glyph: "温", title: "Your weak items", line: weak + " weak · say each one aloud before you check", href: "?view=recall&queue=weak", minutes: targeted});
+    else if (!aiReady && !weak && !repair) steps.push({kind: "generate", glyph: "狙", title: "Practice exam on your weak points", line: "Add an AI provider in Echo Settings to generate these", minutes: 0, disabled: true});
+  } else if (weak && spare > 0) {
+    steps.push({kind: "recall", glyph: "温", title: "Your weak items", line: weak + " weak · say each one aloud before you check", href: "?view=recall&queue=weak", minutes: spare});
+  }
+  steps.push({kind: "radio", glyph: "耳", title: "Day Radio", line: "Your weak words and grammar by ear — on a walk, cooking, commuting", href: "?view=radio&mode=listen", minutes: b.radio});
+  steps.push({kind: "rest", glyph: "休", title: "Breaks, then stop", line: "Five to ten minutes between blocks; breathe, and stop for the day", minutes: b.breaks});
+  if (final && !custom) steps.unshift({kind: "checklist", glyph: "券", title: "Exam week", line: "No new material now: delayed checks, weak items, timed sections and the checklist"});
+  const capped = capMinutes(steps);
+  const minutes = capped.reduce((sum, s) => sum + (s.minutes || 0), 0);
+  const hours = Math.round(minutes / 60 * 2) / 2;
+  return {phase: final && !custom ? "final" : "build", headline: (final ? "Exam week: consolidate, don't cram. " : "") + "About " + hours + " hours today, breaks included.",
+    steps: capped, minutes, forecast, pace: p, measured: !!pace};
 }
 
 export const EXAM_CHECKLIST = Object.freeze([

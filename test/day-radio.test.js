@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
-import {radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,yesterdayChecks,radioEvent,listeningWeak,DayPlayer} from "../day-radio.js";
+import {radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,listeningWeak,DayPlayer} from "../day-radio.js";
 import {weakTargets,recallQueue} from "../n2-study.js";
 
 const read=p=>JSON.parse(readFileSync(new URL(p,import.meta.url),"utf8"));
@@ -41,20 +41,18 @@ test("listen plays word, meaning, example and the word again; recall pauses befo
   assert.equal(daySteps("recall",item,null)[0].say.startsWith("就任"),true);
 });
 
-test("the 見通し case (with 就任): missed by ear, heard on Day Radio, checked next day in a fresh sentence; the written reading record is untouched",()=>{
+// The next-day check itself is held in test/n2-delayed.test.js (Today's checks).
+test("the 見通し case (with 就任): missed by ear, caught by ear later; the written reading record is untouched",()=>{
   const examples=new Map([[K(mitooshi),[{id:"deck",ja:"A。",en:"a"},{id:"exam",ja:"B。",en:""}]]]);
   const recall=[{id:K(["reading",...mitooshi]),target:mitooshi,dimension:"reading",last:"instant",days:["2026-11-22","2026-11-23"],updatedAt:"2026-11-23T08:00:00Z",events:[{at:"2026-11-23T08:00:00Z",grade:"instant"}]}];
   const missedByEar=radioEvent({target:mitooshi,kind:"recall",grade:"missed",source:"day-radio",mode:"recall",exampleId:"deck",now:new Date("2026-11-23T09:00:00Z")});
   const heard=radioEvent({target:mitooshi,kind:"exposure",source:"day-radio",mode:"listen",exampleId:"deck",now:new Date("2026-11-23T10:00:00")});
   assert.equal(listeningWeak([missedByEar]).get(K(mitooshi)).weak,true);
-  const checks=yesterdayChecks({events:[missedByEar,heard],recall,items,examples,today:"2026-11-24"});
-  assert.equal(checks.length,1);assert.equal(checks[0].example.id,"exam","a sentence other than the one heard");
-  const caught=radioEvent({target:mitooshi,kind:"recall",grade:"got",source:"check-yesterday",mode:"check",exampleId:"exam",now:new Date("2026-11-24T09:00:00Z")});
+  const caught=radioEvent({target:mitooshi,kind:"recall",grade:"got",source:"delayed-check",mode:"check",exampleId:"exam",now:new Date("2026-11-24T09:00:00Z")});
   assert.equal(listeningWeak([missedByEar,caught]).get(K(mitooshi)).weak,false);
   // Written reading: still instant, still not weak, still out of the weak queue.
   assert.equal(weakTargets("reading",recall,[]).get(K(mitooshi)).weak,false);
   assert.ok(!recallQueue({type:"reading",filter:"weak",inventory,recall}).length);
-  assert.equal(yesterdayChecks({events:[missedByEar,heard,caught],recall,items,examples,today:"2026-11-24"}).length,0,"done once per day");
   assert.equal(chooseExample(examples.get(K(mitooshi)),new Set(["deck"])).id,"exam");
 });
 

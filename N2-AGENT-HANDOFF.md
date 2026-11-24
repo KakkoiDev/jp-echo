@@ -8,7 +8,7 @@
 
 **Start with a budgeted delayed-check session in Practice → N2 exams & study.** The learner has six hours per day before December 6 in Japan. Their question is “Can I recall this tomorrow and use it under exam conditions?” Keep first exposure, first check, delayed recall and transfer visible as different milestones.
 
-Read the [audit, research and scheduler designs](./N2-LEARNING-AUDIT.md), [N2 workflow](./N2-PRACTICE.md), [export notes](./N2-EXAM-DATA.md), [maintainer guide](./CLAUDE.md) and [components](./COMPONENTS.md). Baseline before this patch is `c098b8b`. This change bumps the offline cache to v235. The data stores and paper IDs retain their existing formats.
+Read the [audit, research and scheduler designs](./N2-LEARNING-AUDIT.md), [N2 workflow](./N2-PRACTICE.md), [export notes](./N2-EXAM-DATA.md), [maintainer guide](./CLAUDE.md) and [components](./COMPONENTS.md). Baseline before this patch is `c098b8b`. The learning-audit patch bumped the offline cache to v235; Today's checks and the six-hour plan bump it to v236. The data stores and paper IDs retain their existing formats.
 
 ## Current implementation
 
@@ -20,12 +20,14 @@ Read the [audit, research and scheduler designs](./N2-LEARNING-AUDIT.md), [N2 wo
 | `n2-forms.js`, `n2-sets/`, `n2-inventory.json`, `decks/n2-*.json` | 20 Echo forms including 19 authored 105-item sets, the 1,748-word and 221-grammar inventory, examples and stable paper editions. |
 | `srs.js`, `test/day-radio.test.js`, `test/n2-*.test.js` | Existing sentence scheduler and regression fixtures. Full checks are `npm test` and `npm run check`. |
 
-## Next changes, in order
+## Status (25 Nov) and next changes, in order
 
-1. **One action for today's delayed checks.** Start with yesterday's misses and uncertain answers across print and audio, mix meanings and grammar, use an unfamiliar context when available, reveal the cue after an attempt, and save source, modality, context ID, assistance and elapsed active time. If there is only one context, label it. Acceptance case: someone knows the reading of 就任, misses its meaning in a dialogue, then understands it in a different dialogue tomorrow. Only the listening evidence improves.
-2. **Fit the day to the learner.** Forecast new-item capacity from measured pace, reserve reading and listening minutes, and cap both standard and AI plans at six hours including breaks. Surface the finish date for first checks and a separate delayed accuracy measure. Test zero history, missed days, slow pace, a scheduled full mock, the last acquisition day and the eve.
-3. **Make comprehension actionable.** Give each passage or dialogue a stable identity and reviewed skill tags. Start with changes of plan, speaker intent, implicit conclusions and exceptions. Allow AI to generate a new scenario from a tag, save the full paper snapshot, and hold some comparable passages out of training. Include a human Japanese review of a sample from each question type before treating scores as readiness evidence.
+1. **Done: one action for today's delayed checks** (`n2-delayed.js`, `?view=check`, `test/n2-delayed.test.js`). Yesterday's misses, slow answers and guesses across recall, mocks and Day Radio (plus passive plays, last), print and audio, meanings, readings and grammar mixed, a context not seen yesterday when one exists (labelled when not), reveal after the attempt. Each save carries source, modality, why, contextId, context, assistance/replays, activeMs and responseMs. The 就任 acceptance case is a test. Day Radio's Yesterday tab is gone; its URL opens Today's checks.
+2. **Done: fit the day to the learner** (`BUDGET`, `capMinutes`, `measuredPace`, `firstCheckForecast` in `n2-study.js`). Regular and mock days fill six hours including breaks, with timed reading and listening sections every regular day (adaptive-style papers built from an unsat set, `paper.drill`). The coach plan is trimmed to 360 minutes. The hub shows the first-check finish date at the measured pace and next-day recall over seven days. Recall screens now save activeMs, which feeds the pace.
+3. **Make comprehension actionable.** Give each passage or dialogue a stable identity and reviewed skill tags. Start with changes of plan, speaker intent, implicit conclusions and exceptions. Allow AI to generate a new scenario from a tag, save the full paper snapshot, and hold some comparable passages out of training (section drills currently take sets from the end, full mocks from the start). Include a human Japanese review of a sample from each question type before treating scores as readiness evidence.
 4. **Add maintenance scheduling.** Extend the existing FSRS wrapper to cover the documented rating mapping per target and dimension. Keep event IDs stable, replay older records conservatively, and compare held-out predictions against defaults before enabling personalized parameters.
+
+The two coach limitations: a saved coach plan now says when newer results exist, and a generated exam that arrives short says "N of M" instead of opening silently.
 
 ## Reproduction and release checks
 
