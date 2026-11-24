@@ -9,7 +9,7 @@
 <link rel="icon" href="./favicon.ico" sizes="32x32"><link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="./apple-touch-icon.png"><link rel="manifest" href="./manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
-<link rel="stylesheet" href="./styles.css?v=193">
+<link rel="stylesheet" href="./styles.css?v=194">
 </head>
 <body class="n2">
 <main id="n2-main">
@@ -181,7 +181,8 @@
 </section>
 
 <section id="exam" hidden>
-  <div class="drill-head n2-exam-head"><a class="icon-button" href="./n2-mock.html#exams" aria-label="Leave. Your answers are saved"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="m2 2 10 10M12 2 2 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></a><span class="tool-titles"><span class="drill-title" id="material"></span><span class="overline" id="count"></span></span><strong class="n2-clock" id="clock" role="timer"></strong></div>
+  <div class="drill-head n2-exam-head"><a class="icon-button" href="./n2-mock.html#exams" aria-label="Leave. Your answers are saved"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="m2 2 10 10M12 2 2 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></a><span class="tool-titles"><span class="drill-title" id="material"></span><span class="overline" id="count"></span></span><strong class="n2-clock" id="clock" role="timer"></strong><button data-ui="button" class="icon-button" id="exam-pause" type="button" aria-label="Pause the timer"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M4.5 2.5v9M9.5 2.5v9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div>
+  <div class="n2-paused" id="exam-paused" hidden><p class="overline" lang="ja">一時停止</p><h2 class="drill-title">Paused</h2><p class="hint">The timer has stopped and the question is hidden. Your answers are saved; resume when you are back. The real exam has no pause, so the results note the time paused.</p><button data-ui="button" class="primary" id="exam-resume" type="button">Resume</button></div>
   <div class="drill-bar"><span id="progress"></span></div>
   <article class="n2-question">
     <p class="overline" id="prompt"></p>

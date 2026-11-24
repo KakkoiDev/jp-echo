@@ -1,10 +1,10 @@
 import {dateKey, parseGoalDate, firstPassEnd, goalKey, readGoal, writeGoal, shortDate, longDate} from "./jlpt-goal.js";
-import {bookIds,bookName,EDITION,SETS_EDITION,form,realisticRows,realisticPaperId,setFile} from "./n2-forms.js";
+import {bookIds,bookName,EDITION,SETS_EDITION,form,realisticRows,realisticPaperId,setFile,instructionFor} from "./n2-forms.js";
 import {access,currentAttempts,download,prefix,report,scored,n2Adapter} from "./n2-progress.js";
-import {startAutoSync,markDirty} from "./sync.js";
-import {SKILLS,SKILL_JA,SECTIONS,PASS_TOTAL,SECTION_MIN,SECTION_MAX,estimate,sprintCheckpoint,nextExamDate,daysUntil,recallQueue,recallRecord,recallId,dailyGoal,coverage,localDay,todayPlan,measuredPace,capMinutes,DAY_MINUTES,EXAM_CHECKLIST,goalDates,formatMinutes,shortenPlan,maintenancePlan,resultsMonth} from "./n2-study.js";
+import {startAutoSync,markDirty,gistSettings} from "./sync.js";
+import {SKILLS,SKILL_JA,SECTIONS,PASS_TOTAL,SECTION_MIN,SECTION_MAX,estimate,sprintCheckpoint,nextExamDate,daysUntil,recallQueue,recallRecord,recallId,dailyGoal,coverage,localDay,todayPlan,measuredPace,capMinutes,DAY_MINUTES,EXAM_CHECKLIST,goalDates,formatMinutes,shortenPlan,maintenancePlan,resultsMonth,doneToday,markDone} from "./n2-study.js";
 import {flagSvg,planSteps,loadMeter,evidenceRow,pauseRing,openReportSheet,mountReportButtons} from "./components.js";
-import {REPORT_REASONS,createReport,fileReport,reportSyncLine,reportsAdapter,screenOf,appVersion,deviceInfo} from "./reports.js";
+import {REPORT_REASONS,createReport,fileReport,reportSyncLine,reportsAdapter,reportHistory,screenOf,appVersion,deviceInfo} from "./reports.js";
 import {recognitionFactory} from "./speech.js";
 import {speakOnce,speakAndWait,japaneseVoices} from "./speech.js";
 import {spokenWord,radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
@@ -56,10 +56,20 @@ function setNotice(key, node) {
   if (node) notices.set(key, node); else notices.delete(key);
   $("n2-notices").replaceChildren(...notices.values());
 }
+// Offline is shown only when it lasts (a phone changing networks reports a
+// moment offline), never over the page (it scrolls away), and can be closed
+// (report 04301125: a false "offline" covered the reading passage).
+let offlineTimer = 0, offlineDismissed = false;
 function offlineNotice() {
-  setNotice("offline", navigator.onLine === false ? el("div", {class: "notice"},
-    el("p", {text: "You’re offline. Everything on this page still works: the plan, papers, checks and Day Radio with this device’s voice."}),
-    el("p", {class: "hint", text: "Needs a connection now: Plan my day with AI · Make a practice exam · new Echo’s notes. They come back when you’re online."})) : null);
+  clearTimeout(offlineTimer);
+  if (navigator.onLine !== false) { offlineDismissed = false; setNotice("offline", null); return; }
+  offlineTimer = setTimeout(() => {
+    if (navigator.onLine !== false || offlineDismissed) return;
+    setNotice("offline", el("div", {class: "notice"},
+      el("p", {text: "You’re offline. Everything on this page still works: the plan, papers, checks and Day Radio with this device’s voice."}),
+      el("p", {class: "hint", text: "Needs a connection now: Plan my day with AI · Make a practice exam · new Echo’s notes. They come back when you’re online."}),
+      el("div", {class: "notice-actions"}, el("button", {type: "button", class: "outline", "data-ui": "button", text: "Close", onclick: () => { offlineDismissed = true; setNotice("offline", null); }}))));
+  }, 4000);
 }
 function voiceCheck() {
   if (!window.speechSynthesis) return;
@@ -86,29 +96,32 @@ function show(id) { for (const s of ["hub", "recall", "check", "day", "intro", "
 // Reports (reports.js, ReportSheet): every head has the report button. Each
 // view sets `reportCard` to describe the word, check or question on screen, so
 // a flag names exactly what was wrong.
-let reportCard = () => null;
+let reportCard = () => null, autoSync = null;
 const visibleTitle = () => [...document.querySelectorAll("main section:not([hidden]) :is(.tool-title,.drill-title)")].map(n => n.textContent.trim()).find(Boolean) || document.title;
+// The mic shows it is listening (report b8daef9e) and a second tap stops it.
 function bindReportDictation(mic, field, status) {
   const make = () => recognitionFactory("en-US");
   if (!make()) { mic.hidden = true; return; }
   mic.hidden = false;
+  let active = null;
+  const idle = () => { active = null; mic.classList.remove("is-listening"); mic.setAttribute("aria-pressed", "false"); };
   mic.onclick = () => {
+    if (active) { try { active.stop(); } catch { idle(); } return; }
     const r = make(); if (!r) return;
-    mic.setAttribute("aria-pressed", "true"); status.textContent = "Listening…";
-    r.onresult = e => { const text = [...e.results].map(x => x[0].transcript).join(" ").trim(); if (text) field.value = (field.value ? field.value + " " : "") + text; };
-    r.onend = () => { mic.setAttribute("aria-pressed", "false"); status.textContent = ""; };
-    r.onerror = () => { status.textContent = "Could not hear that. Type it instead."; };
-    try { r.start(); } catch { r.onend(); }
+    active = r; mic.classList.add("is-listening"); mic.setAttribute("aria-pressed", "true"); status.textContent = "Listening… tap the mic again to stop.";
+    r.onresult = e => { const text = [...e.results].map(x => x[0].transcript).join(" ").trim(); if (text) { field.value = (field.value ? field.value.trimEnd() + " " : "") + text; field.dispatchEvent(new Event("input")); status.textContent = "Edit anything it mishears before you send."; } };
+    r.onend = () => { idle(); if (/^Listening/.test(status.textContent)) status.textContent = ""; };
+    r.onerror = () => { idle(); status.textContent = "Could not hear that. Type it instead."; };
+    try { r.start(); } catch { r.onerror(); }
   };
 }
 async function openReport() {
   const card = reportCard?.() || null, title = visibleTitle();
   const screen = {kind: "bug", label: "This screen", title: "Report a problem", quote: title, subject: {type: "screen", id: location.pathname + location.search, text: title, extra: card ? {card: card.id} : {}}};
   const subjects = card ? [{kind: "card", label: card.label || "This card", title: card.title || "Flag this card", quote: card.quote || card.text, lang: "ja", subject: card}, screen] : [screen];
-  const result = await openReportSheet({subjects, reasons: REPORT_REASONS, syncLine: reportSyncLine(), bindDictation: bindReportDictation, onSubmit: async value => {
+  const result = await openReportSheet({subjects, reasons: REPORT_REASONS, syncLine: reportSyncLine, syncNow: gistSettings().on && autoSync ? () => autoSync.syncNow() : null, history: reportHistory, bindDictation: bindReportDictation, onSubmit: async value => {
     await fileReport(createReport({...value, screen: screenOf(location, title), version: await appVersion(), device: deviceInfo()}));
   }});
-  if (result) announceSaved(result.kind === "card" ? "Flagged with your note" : "Report saved");
 }
 async function json(path) {
   const response = await fetch(path);
@@ -274,7 +287,7 @@ async function hub() {
   const attempts = [...data.attempts].sort((a, b) => (b.startedAt || "").localeCompare(a.startedAt || ""));
   const live = attempts.find(a => ["written", "listening", "rest"].includes(a.phase));
   const done = new Set(attempts.filter(a => a.phase === "results").map(a => a.book));
-  const finished = attempts.filter(a => a.phase === "results" && !a.book.startsWith("adaptive-")).sort((a, b) => (b.completedAt || "").localeCompare(a.completedAt || ""));
+  const finished = attempts.filter(a => a.phase === "results" && !String(a.book || "").startsWith("adaptive-")).sort((a, b) => (b.completedAt || "").localeCompare(a.completedAt || ""));
   const latestDone = attempts.filter(a => a.phase === "results").sort((a, b) => (b.completedAt || "").localeCompare(a.completedAt || ""))[0];
   const {firstUse} = drillExposure(data.papers, data.attempts);
   const next = bookIds.find(id => !done.has(id) && !firstUse.has(id));
@@ -291,7 +304,7 @@ async function hub() {
     running: live && {book: live.book, title: papers.get(live.paper || live.book)?.title || titleOf(live.book), progress: live.answers.filter(Boolean).length + " of " + live.answers.length + " answered" + (live.phase === "rest" ? " · listening next" : "")},
     nextMock: next && {id: next, title: titleOf(next)}, lastMockAt: finished[0]?.completedAt,
     latestResults: latestDone && localDay(new Date(latestDone.completedAt)) === localDay() ? "?book=" + latestDone.book + "&attempt=" + encodeURIComponent(latestDone.id) : null});
-  const context = {data, evidence, goal, weakAll, days, base, aiReady, next, latestDone, comprehension};
+  const context = {data, evidence, goal, weakAll, days, base, aiReady, next, latestDone, comprehension, done: doneToday({recall: data.recall, events: data.events, attempts: data.attempts, papers: data.papers})};
   goalEditor({...context, planGoal, exam, checks, pace, checkpoint});
   const coached = days < 0 ? null : readCoachPlan();
   drawToday({...context, planGoal, exam, dates, coached, attempts});
@@ -313,7 +326,7 @@ async function hub() {
   $("breathe-open").onclick = breathe;
 
   // Readiness: the latest scored attempt.
-  const latest = [...attempts].filter(a => a.phase === "results" && !a.book.startsWith("adaptive-") && papers.get(a.paper || a.book)).sort((a, b) => (b.completedAt || "").localeCompare(a.completedAt || ""))[0];
+  const latest = [...attempts].filter(a => a.phase === "results" && !String(a.book || "").startsWith("adaptive-") && papers.get(a.paper || a.book)).sort((a, b) => (b.completedAt || "").localeCompare(a.completedAt || ""))[0];
   $("readiness").replaceChildren(latest ? scoreCard(papers.get(latest.paper || latest.book), latest, true)
     : el("div", {class: "empty-panel"}, el("strong", {text: "No score yet"}), el("span", {text: "Finish a whole mock to see an estimated score for each JLPT section."})));
   const box = $("readiness");
@@ -551,6 +564,7 @@ function stepAction(step, ctx) {
 // Today (J1Today): the steps as PlanSteps, the next one marked, and one Start
 // button for it. `primary` is false while a state panel holds the filled button.
 function drawPlan(plan, ctx, {title, primary = true} = {}) {
+  plan = markDone(plan, ctx.done);
   const total = plan.steps.reduce((n, s) => n + (s.minutes || 0), 0);
   $("plan-title").textContent = title || "Today · " + (plan.coach ? "your coach's plan" : "standard plan") + (total ? " · " + formatMinutes(total) : "");
   const phaseNote = plan.phase && plan.phase !== "build" ? plan.headline || "" : "";
@@ -1209,7 +1223,7 @@ async function exam() {
   const range = () => state.phase === "written" ? [0, written] : [written, questions.length];
   function recordTime() {
     const now = Date.now();
-    if (active()) state.time[state.index] += Math.max(0, Math.min(now, state.deadline) - entered);
+    if (active() && !state.pausedAt) state.time[state.index] += Math.max(0, Math.min(now, state.deadline) - entered);
     entered = now;
   }
   const stopVoice = () => { if (native) stopScript(); };
@@ -1221,8 +1235,30 @@ async function exam() {
     $("audio").pause();
     persist(); render(); scrollTo(0, 0);
   }
+  // Pause (report 88181095: "a pause button for emergencies"). The deadline
+  // moves by the time paused; the question is hidden meanwhile, and the
+  // paused minutes are kept on the attempt (pausedMs) for the results.
+  function drawPause() {
+    const on = active() && !!state.pausedAt;
+    document.body.classList.toggle("n2-is-paused", on);
+    $("exam-paused").hidden = !on; $("exam-pause").hidden = !active() || archivedView;
+    if (on) $("clock").textContent = "Paused";
+  }
+  function pause() {
+    if (!active() || state.pausedAt || tick()) return;
+    recordTime(); stopVoice(); $("audio").pause();
+    state.pausedAt = Date.now(); persist(); drawPause(); $("exam-resume").focus();
+  }
+  function resume() {
+    if (!state.pausedAt) return;
+    const gap = Math.max(0, Date.now() - state.pausedAt);
+    state.deadline += gap; state.pausedMs = (state.pausedMs || 0) + gap; state.pauses = (state.pauses || 0) + 1;
+    delete state.pausedAt; entered = Date.now();
+    persist(); drawPause(); tick(); renderExam();
+  }
   function tick() {
     if (!active()) { $("clock").textContent = ""; return false; }
+    if (state.pausedAt) { $("clock").textContent = "Paused"; return false; }
     const remaining = Math.ceil((state.deadline - Date.now()) / 1000);
     if (remaining <= 0) { finish(); return true; }
     $("clock").textContent = Math.floor(remaining / 60) + ":" + String(remaining % 60).padStart(2, "0");
@@ -1269,7 +1305,7 @@ async function exam() {
     $("count").textContent = (state.index - first + 1) + " of " + (end - first) + " · " + answered + " answered";
     $("progress").style.width = answered / (end - first) * 100 + "%";
     $("prompt").textContent = q.label;
-    $("instruction").textContent = q.instruction || "";
+    $("instruction").textContent = native ? instructionFor({...q, skill: SKILLS[q.skill]}) : (q.instruction || "");
     const listening = q.skill === 3;
     if (native) {
       $("booklet").hidden = true;
@@ -1322,7 +1358,8 @@ async function exam() {
   }
   function renderResults() {
     $("results-title").textContent = paper.title;
-    $("results-date").textContent = "Finished " + dateLabel(state.completedAt) + (archivedView ? " · earlier attempt" : "");
+    const paused = state.pausedMs ? Math.max(1, Math.round(state.pausedMs / 60000)) : 0;
+    $("results-date").textContent = "Finished " + dateLabel(state.completedAt) + (archivedView ? " · earlier attempt" : "") + (paused ? " · paused " + paused + " min" + (state.pauses > 1 ? " in " + state.pauses + " pauses" : "") : "");
     const short = adaptive;
     $("scores").replaceChildren(short ? doneCard() : scoreCard(paper, state), short ? el("span") : byMondai(), slowest());
     resultActions(short);
@@ -1443,6 +1480,7 @@ async function exam() {
     if (tick()) return;
     if (state.phase === "ready") renderIntro();
     if (active()) renderExam();
+    drawPause();
     if (state.phase === "rest") $("rest-score").replaceChildren(scoreCard(paper, state));
     if (state.phase === "results") renderResults();
   }
@@ -1455,7 +1493,7 @@ async function exam() {
       : paper.drill ? (paper.drill.section === "listening" ? "One section, timed. Play each script once, as the hall does. Mark a question unsure with the flag; read why each answer is right at the end." : "One section, timed: about the pace the real paper leaves for reading. Mark a question unsure with the flag; read why each answer is right at the end.")
       : adaptive ? "Questions written for your weak points. Topics come from your saved evidence." : native ? "One sitting, timed like the real paper, with a break before listening. Mark a question unsure with the flag." : "The publisher's booklet opens beside the answer sheet. Its audio needs internet.";
     $("start").textContent = "Start · " + minutes(firstPhase) + " min";
-    $("intro-note").textContent = "Leaving keeps your answers. The timer keeps running, as it would in the hall.";
+    $("intro-note").textContent = "Leaving keeps your answers. The timer keeps running, as it would in the hall, unless you pause it.";
   }
 
   $("start").onclick = () => start(firstPhase);
@@ -1468,6 +1506,7 @@ async function exam() {
   $("grid-open").onclick = openGrid;
   $("grid-close").onclick = () => $("grid-dialog").close();
   $("submit").onclick = () => { if (!tick()) finish(); };
+  $("exam-pause").onclick = pause; $("exam-resume").onclick = resume;
   $("speak").onclick = () => {
     if (tick()) return;
     const q = questions[state.index];
@@ -1504,7 +1543,7 @@ route().catch(error => { show(""); warn(error.message); });
 // Two-way gist sync (sync.js): N2 study and reports. The library file is
 // Echo's; this page leaves it alone. Progress from another device is offered,
 // never forced onto the screen mid-answer.
-startAutoSync({adapters: {n2: n2Adapter(), reports: reportsAdapter()}, page: "n2", onResult: result => {
+autoSync = startAutoSync({adapters: {n2: n2Adapter(), reports: reportsAdapter()}, page: "n2", onResult: result => {
   if (!result?.pulled?.includes("n2")) return;
   setNotice("synced", el("div", {class: "notice"},
     el("p", {text: "Progress from your other device arrived."}),

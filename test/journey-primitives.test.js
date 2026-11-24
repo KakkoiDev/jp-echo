@@ -21,7 +21,7 @@ function withDom(fn) {
   try { return fn(); } finally { global.document = prev; }
 }
 
-test("plan steps number the day, mark one next step and strike done ones", () => withDom(() => {
+test("plan steps number the day, mark one next step and tick done ones with 済", () => withDom(() => {
   let opened = null;
   const list = planSteps([
     {title: "Today's checks", line: "14 from yesterday", minutes: 12, state: "done", href: "?view=check"},
@@ -30,13 +30,13 @@ test("plan steps number the day, mark one next step and strike done ones", () =>
   ]);
   const rows = byClass(list, "plan-step");
   assert.deepEqual(rows.map(r => r.dataset.state), ["done", "next", ""]);
-  assert.deepEqual(byClass(list, "plan-step-mark").map(m => m.textContent), ["一", "二", "三"]);
+  assert.deepEqual(byClass(list, "plan-step-mark").map(m => m.textContent), ["済", "二", "三"], "a finished step stays, ticked (report 1ccf9988)");
   const [doneRow, nextRow, restRow] = byClass(list, "plan-step-row");
   assert.equal(doneRow.tagName, "A"); assert.equal(doneRow.href, "?view=check");
   assert.equal(nextRow.tagName, "BUTTON"); assert.equal(nextRow.attributes["aria-current"], "step");
   nextRow.listeners.click({preventDefault() {}}); assert.equal(opened, "Word first checks");
   assert.equal(restRow.tagName, "SPAN", "a step with nothing to open is not a control");
-  assert.deepEqual(byClass(list, "plan-step-min").map(m => m.textContent), ["12 min", "70 min", "40 min"]);
+  assert.deepEqual(byClass(list, "plan-step-min").map(m => m.textContent), ["Done", "70 min", "40 min"]);
 }));
 
 test("the load meter always names its denominator and hatches what does not fit", () => withDom(() => {

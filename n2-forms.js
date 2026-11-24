@@ -29,6 +29,19 @@ export const BLUEPRINT = [
   {skill:"Listening",mondai:5,kind:"統合理解",count:4,options:4,needsContext:true,instruction:"長めの話を聞きます。質問と選択肢を聞いて、最もよいものを一つ選んでください。"},
 ];
 export const blueprintFor = q => BLUEPRINT.find(b => b.skill === q.skill && b.mondai === q.mondai);
+// The Japanese instruction for a question: its own, its 問題's, or — for the
+// November mock, whose rows carry no 問題 number — the 問題 its shape matches
+// (report 2d7bbf8b: no instruction on screen). `skill` is the name.
+export function instructionFor(q) {
+  if (q.instruction) return q.instruction;
+  const own = blueprintFor(q); if (own) return own.instruction;
+  const p = String(q.prompt || ""), by = (skill, mondai) => BLUEPRINT.find(b => b.skill === skill && b.mondai === mondai).instruction;
+  if (q.skill === "Vocabulary") return /読み方/.test(p) ? by("Vocabulary", 1) : /【[ぁ-ん]+】/.test(p) ? by("Vocabulary", 2) : /近い意味/.test(p) ? by("Vocabulary", 5) : /使い方/.test(p) ? by("Vocabulary", 6) : by("Vocabulary", 4);
+  if (q.skill === "Grammar") return /★/.test(p) ? by("Grammar", 8) : by("Grammar", 7);
+  if (q.skill === "Reading") return by("Reading", 10);
+  if (q.skill === "Listening") return q.options === 3 || (q.choices || []).length === 3 ? by("Listening", 4) : by("Listening", 2);
+  return "";
+}
 export const realisticPaperId = id => id + "@" + SETS_EDITION;
 export const setFile = id => "./n2-sets/" + id + ".json";
 // A realistic set (n2-sets/<id>.json) as exam rows: each question carries its

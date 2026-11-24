@@ -229,6 +229,9 @@ Before considering the change complete:
   the hub counts the same `delayedChecks` batch it opens. A print check writes
   the recall record of its dimension; an audio check writes a listening event,
   so the two never move each other. Day Radio has no check mode of its own.
+- **An N2 exam may be paused, honestly.** The pause stops the clock, hides
+  the question and keeps `pausedMs`/`pauses` on the attempt; the results line
+  says how long it was paused. Paused time is never answer time.
 - **The N2 day fits six hours including breaks.** `BUDGET`, `capMinutes` and
   `firstCheckForecast` (n2-study.js) size every plan, the coach's included;
   first-check minutes follow `measuredPace`. Timed reading and listening sections

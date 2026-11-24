@@ -6,7 +6,7 @@
 //   names it ({type, id, text, reading?, extra?}).
 // - kind "bug": anything else; `subject` is the screen, optionally with the
 //   card that was on it.
-// `status` is "open", "withdrawn" (the learner removed the flag) or "fixed"
+// `status` is "open", "done" (the learner closed it), "withdrawn" (the learner removed the flag) or "fixed"
 // (set by whoever fixed it, in the gist; the merge brings it back here).
 //
 // Reports live in their own IndexedDB database (`jp-echo-reports`), shared
@@ -77,6 +77,21 @@ export function createReport({kind = "bug", reasons = [], note = "", subject = n
 
 // Whether a report says anything: a reason, a note, or (for a card) the card.
 export const reportHasContent = report => !!(report && (report.reasons.length || report.note || report.kind === "card"));
+
+// The learner's own changes to a report they filed (Your reports in the
+// sheet): edit its reasons and words, or mark it done / open again. "done"
+// is the learner closing it; "fixed" is the maintainer's.
+export const REPORT_STATUS = Object.freeze({open: "Open", done: "Done", withdrawn: "Withdrawn", fixed: "Fixed"});
+export function editReport(report, {reasons = report.reasons, note = report.note} = {}, now = new Date()) {
+  const known = new Set(REPORT_REASONS[report.kind === "card" ? "card" : "bug"].map(r => r[0]));
+  return {...report, reasons: [...new Set((Array.isArray(reasons) ? reasons : []).filter(r => known.has(r)))], note: String(note ?? "").trim().slice(0, NOTE_MAX), updatedAt: now.toISOString(), editedAt: now.toISOString()};
+}
+export function setReportStatus(report, status, now = new Date()) {
+  const at = now.toISOString();
+  if (status === "done") return {...report, status: "done", resolvedAt: at, updatedAt: at};
+  const {resolvedAt, ...rest} = report;
+  return {...rest, status: "open", updatedAt: at};
+}
 
 export function withdrawReport(report, now = new Date()) {
   return {...report, status: "withdrawn", updatedAt: now.toISOString()};
@@ -157,6 +172,14 @@ export const reportsAdapter = () => ({
 });
 // File a report: saved first (awaited), then marked for the next sync.
 export async function fileReport(report) { await putReport(report); markDirty("reports"); return report; }
+// What ReportSheet needs for Your reports: the list and the two changes,
+// each saved (awaited) and marked for the next sync.
+export const reportHistory = Object.freeze({
+  list: () => listReports(),
+  edit: async (report, changes) => { const next = editReport(report, changes); await putReport(next); markDirty("reports"); return next; },
+  setStatus: async (report, status) => { const next = setReportStatus(report, status); await putReport(next); markDirty("reports"); return next; },
+  labels: REPORT_STATUS,
+});
 export async function withdrawOpen(type, id) {
   const open = openFor(await listReports(), type, id);
   if (!open.length) return 0;

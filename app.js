@@ -13,7 +13,7 @@ import {isExactMatch,markAttempt,markTarget} from "./diff.js";
 import {applyReadingCorrection,removeArchivedMiniCards,readImportRecovery,saveImportRecovery,deleteSentence as dbDeleteSentence,getSentence,listSentences,migrateStore,replaceAll,mergeIntoStore,saveSentence as persistSentence} from "./db.js";
 import {readGistIndex,readGistFile,parseGistId,gistRevision,listGistRevisions} from "./gist-backup.js";
 import {allDataBundle,isAllDataBundle,bundleCounts,restorePreview,countsLine,previewLine} from "./restore.js";
-import {startAutoSync,breakTies,markDirty,syncState,mergeDeleted,applyDeleted,readDeleted,saveDeleted,recordDeletion,forgetDeletion} from "./sync.js";
+import {startAutoSync,gistSettings,breakTies,markDirty,syncState,mergeDeleted,applyDeleted,readDeleted,saveDeleted,recordDeletion,forgetDeletion} from "./sync.js";
 import {n2Adapter} from "./n2-progress.js";
 import {READINGS_RULE,correctSentenceReadings,analyzeSentenceGrammar,askModel,rewriteSentence,adjustNote,carries,compose,composeFromIntent,PROVIDER_DEFAULTS,tagGrammar,translate,discuss,generateReading,writeNotes,writeWordNote,transcribeAudio} from "./api.js";
 import {grammarListItems,setImportedGrammar,byLevel as grammarByLevel,cleanTags as grammarTags,coverage as grammarCoverage,hasGrammar,isTagged,learned as grammarLearned,LEVELS as GRAMMAR_LEVELS,point as grammarPoint,POINTS as GRAMMAR_POINTS,summarise as grammarSummarise,untagged as untaggedSentences} from "./grammar.js";
@@ -36,7 +36,7 @@ import {saveDiscussionTurn,saveWordAction,removeWordAction} from "./actions.js";
 import {contextSource,getWord,isSaved,listWords,mergeWords,putWord as dbPutWord,replaceWords as dbReplaceWords,savedOnly,validateSavedWords} from "./saved-words.js";
 // New shared UI comes from the component library (COMPONENTS.md).
 import {flagSvg,renderFlagButton,grammarList,skillGlyph,skillTrio,expandableList,fitTextArea,kanjiNumeral,toolShelf,toolList,renderFilterButton,savedMarkHtml,renderSavedButton,wireFilterButton,anchorStripHtml,hydrateHeaderSearch,chevronSvg,cornerMarkHtml,themedPictureHtml,openReportSheet,mountReportButtons,reportSvg} from "./components.js";
-import {REPORT_REASONS,createReport,fileReport,withdrawOpen,reportSyncLine,reportsAdapter,screenOf,appVersion,deviceInfo} from "./reports.js";
+import {REPORT_REASONS,createReport,fileReport,withdrawOpen,reportSyncLine,reportsAdapter,reportHistory,screenOf,appVersion,deviceInfo} from "./reports.js";
 // Settings page state, declared before anything can read it (navigationState).
 const SETTINGS_TITLES={main:"Settings",ai:"AI service",speech:"Speech recognition",backup:"Backup",import:"Import sentences",export:"Export",grammar:"Grammar"};
 let settingsPage="main",settingsReturn="practice";
@@ -703,9 +703,9 @@ function renderLookup(query,sentences){
 }
 // Which sentence the loop is currently speaking, so the row can say so. The
 // loop is the one the rest of the app uses; nothing here owns a second one.
-let kanjiOpen=null;
+let kanjiOpen=null,kanjiCover=null;
 async function openKanji(character,cover,{learn=null,route=true}={}){
-  kanjiOpen={character,learn};saveWorkspace({modal:{kind:"kanji",id:character}});if(route)syncRoute({view:"map",mapView:"kanji",modal:{kind:"kanji",id:character}});
+  kanjiOpen={character,learn};kanjiCover=cover;saveWorkspace({modal:{kind:"kanji",id:character}});if(route)syncRoute({view:"map",mapView:"kanji",modal:{kind:"kanji",id:character}});
   const all=await listSentences(),known=kanjiLearned(all);
   renderLearnNav(cover);
   const ids=cover.get(character)||[],state=cellState(character,cover,known),facts=kanjiFacts(character);
@@ -742,8 +742,11 @@ async function renderKanjiFamily(character,sentences){
     host.replaceChildren();
     if(!family)return;
     $("#kanji-family-meaning").textContent=family.meaning;
-    $("#kanji-family-radical").textContent=family.dictionaryRadical+
-      " · "+(family.dictionaryRadicalName||"dictionary indexing radical");
+    // The radical opens in this same sheet (report 927cfd7e: the radical
+    // should look like the kanji, not like another screen).
+    const radical=String(family.dictionaryRadical||""),rName=" · "+(family.dictionaryRadicalName||"dictionary indexing radical");
+    if(radical&&radical!==character&&kanjiFacts(radical)){const b=el("button","radical-link",radical);b.type="button";b.lang="ja";b.setAttribute("aria-label","Open the radical "+radical);b.onclick=()=>openKanji(radical,kanjiCover||new Map());$("#kanji-family-radical").replaceChildren(b,rName)}
+    else $("#kanji-family-radical").textContent=radical+rName;
     $("#kanji-family-progress").textContent=family.theme+" · "+
       familyVocabulary(family,REFERENCE_WORDS).length+" dictionary words · "+
       family.words.length+" with prepared example sentences";
@@ -1757,19 +1760,29 @@ async function deletePracticeSentence(sentence){
 const sentenceSubject=item=>({type:"sentence",id:item.id,text:preferredTarget(item),meaning:item.source||"",extra:{plain:stripFurigana(preferredTarget(item)),lang:itemTarget(item),deck:item.deck||item.catalogue||""}});
 function screenTitle(){const name=document.body.dataset.view||"";const head=[...document.querySelectorAll("main section:not([hidden]) .tool-title, main section:not([hidden]) .drill-title, main section:not([hidden]) .session-bar h2")].find(el=>el.offsetParent!==null);const names={practice:discussionMode?"Discussion":readingMode?"Reading":extractMode?"Extract from text":"Practice",review:"Review",session:"Review session",library:"Library",sentence:"Sentence",settings:"Settings",radio:"Radio",map:"Kanji, words and grammar"};return (head?.textContent||names[name]||VIEW_TITLES[name]||name||"Echo").trim()}
 function cardOnScreen(){const view=document.body.dataset.view;if(view==="session")return reviewQueue[reviewIndex]||null;if(view==="sentence")return detail||null;if(view==="practice"&&!discussionMode&&!readingMode&&!extractMode)return current||null;return null}
-async function openReport({sentence=cardOnScreen(),start="screen"}={}){
- const title=screenTitle(),subjects=[];
+// The card in an open tool sheet: the kanji, word or grammar point it shows.
+function sheetSubject(sheet){
+ const id=sheet?.id;
+ if(id==="kanji-dialog"&&kanjiOpen){const c=kanjiOpen.character;return {label:"This kanji",title:"Flag this kanji",quote:c,screen:"Kanji "+c,subject:{type:"kanji",id:c,text:c,meaning:(kanjiFacts(c)?.en||[]).join(", ")}}}
+ if(id==="word-dialog"&&wordOpen){const w=wordOpen.word;return {label:"This word",title:"Flag this word",quote:w.w+(w.r&&w.r!==w.w?"（"+w.r+"）":""),screen:"Word "+w.w,subject:{type:"word",id:w.id,text:w.w,reading:w.r,meaning:(w.en||[]).slice(0,3).join("; ")}}}
+ if(id==="grammar-dialog"&&grammarOpen){const p=grammarOpen.point;return {label:"This grammar point",title:"Flag this grammar point",quote:p.title,screen:"Grammar "+p.title,subject:{type:"grammar",id:p.id,text:p.title,meaning:p.hint||""}}}
+ if(id==="dictionary-dialog")return {screen:"Dictionary "+($("#dictionary-title")?.textContent||"").trim()};
+ return null;
+}
+async function openReport({sentence=cardOnScreen(),start="screen",sheet=null}={}){
+ const inSheet=sheetSubject(sheet);if(sheet)sentence=null;
+ const title=inSheet?.screen||screenTitle(),subjects=[];
  const hidden=document.body.dataset.view==="session"&&!reviewRevealed&&sentence?.id===reviewQueue[reviewIndex]?.id;
  const card=sentence?{kind:"card",label:"This card",title:"Flag this card",quote:hidden?"The card on screen — its text stays hidden until you answer":stripFurigana(preferredTarget(sentence)),lang:hidden?"":"ja",subject:sentenceSubject(sentence)}:null;
- const screen={kind:"bug",label:"This screen",title:"Report a problem",quote:title,subject:{type:"screen",id:location.pathname,text:title,extra:sentence?{card:sentence.id}:{}}};
- if(card&&start==="card")subjects.push(card,screen);else{subjects.push(screen);if(card)subjects.push(card)}
+ const screen={kind:"bug",label:"This screen",title:"Report a problem",quote:title,subject:{type:"screen",id:location.pathname,text:title,extra:inSheet?.subject?{[inSheet.subject.type]:inSheet.subject.id}:sentence?{card:sentence.id}:{}}};
+ if(inSheet?.subject)subjects.push({kind:"card",label:inSheet.label,title:inSheet.title,quote:inSheet.quote,lang:"ja",subject:inSheet.subject},screen);
+ else if(card&&start==="card")subjects.push(card,screen);else{subjects.push(screen);if(card)subjects.push(card)}
  let flagged=null;
- const result=await openReportSheet({subjects,reasons:REPORT_REASONS,syncLine:reportSyncLine(),bindDictation,onSubmit:async value=>{
+ const result=await openReportSheet({subjects,reasons:REPORT_REASONS,syncLine:reportSyncLine,syncNow:gistSettings().on?()=>startGistSync().syncNow():null,history:reportHistory,bindDictation,onSubmit:async value=>{
   const report=createReport({...value,screen:screenOf(location,title),version:await appVersion(),device:deviceInfo()});
   if(value.kind==="card"&&sentence){const latest=await getSentence(sentence.id);if(latest&&latest.flagged!==true){flagged={...latest,flagged:true,updatedAt:new Date().toISOString()};await saveSentence(flagged)}}
   await fileReport(report)}});
  if(flagged)syncFlagged(flagged);
- if(result)toast(result.kind==="card"?(flagged?"Flagged. Find it in Library → Cards → Flagged.":"Flag noted."):"Report saved. Thank you.");
  return {result,flagged};
 }
 function syncFlagged(updated){
@@ -2510,8 +2523,8 @@ $("#setup-back").onclick=()=>{if(setupStep===2)return showSetupStep(1);showView(
 // The one home for tools (LibraryTools board): every way into Echo beyond the
 // practice loop, as the ToolShelf at /library#tools. Practice's 話読本 row
 // opens this, never a second list.
-const LIBRARY_TOOLS=[{id:"discussion",glyph:"話",label:"Discussion"},{id:"reading",glyph:"読",label:"Reading"},{id:"extract",glyph:"本",label:"Extract",name:"Extract from text"},{id:"radio",glyph:"夜",label:"Radio"},{id:"map",glyph:"学",label:"Kanji",name:"Kanji, words and grammar",ja:true},{id:"mora",glyph:"音",label:"Mora",name:"Mora memory table",ja:true}];
-function openLibraryTool(id){if(id==="discussion"||id==="reading"){showView("practice");setPracticeMode(id)}else if(id==="extract")openTextExtraction();else showView(id)}
+const LIBRARY_TOOLS=[{id:"discussion",glyph:"話",label:"Discussion"},{id:"reading",glyph:"読",label:"Reading"},{id:"extract",glyph:"本",label:"Extract",name:"Extract from text"},{id:"day-radio",glyph:"昼",label:"Day Radio",name:"Day Radio · awake listening",ja:true},{id:"radio",glyph:"夜",label:"Night Radio",name:"Night Radio · while you sleep"},{id:"map",glyph:"学",label:"Kanji",name:"Kanji, words and grammar",ja:true},{id:"mora",glyph:"音",label:"Mora",name:"Mora memory table",ja:true}];
+function openLibraryTool(id){if(id==="day-radio"){location.assign("./n2-mock.html?view=radio");return}if(id==="discussion"||id==="reading"){showView("practice");setPracticeMode(id)}else if(id==="extract")openTextExtraction();else showView(id)}
 function renderLibraryTools(){toolShelf($("#library-tools"),LIBRARY_TOOLS.filter(tool=>!tool.ja||targetLang()==="ja"),{onOpen:openLibraryTool})}
 // The front door to Echo's notes: the words you asked Echo to help you
 // remember, newest first. The row shows three; /words?notes=1 lists them all.
@@ -2709,7 +2722,7 @@ function currentTool(){const view=document.body.dataset.view;if(view==="practice
 function renderNavTools(){const tools=[...LIBRARY_TOOLS,{id:"notes",glyph:"記",label:"Echo’s notes",ja:true}].filter(tool=>!tool.ja||targetLang()==="ja").map(tool=>({...tool,name:t(NAV_TOOL_NAMES[tool.id]||tool.label)}));
   toolList($("#nav-tools"),tools,{onOpen:openLibraryTool,current:currentTool()})}
 $("#nav-search").onclick=()=>openSearch();
-mountReportButtons(document,()=>openReport());if($("#nav-report"))$("#nav-report .tab-icon").innerHTML=reportSvg,$("#nav-report").onclick=()=>openReport();
+mountReportButtons(document,button=>openReport({sheet:button?.closest(".tool-sheet")||null}));if($("#nav-report"))$("#nav-report .tab-icon").innerHTML=reportSvg,$("#nav-report").onclick=()=>openReport();
 document.addEventListener("keydown",event=>{if(event.key!=="/"||event.metaKey||event.ctrlKey||event.altKey)return;const target=event.target;if(target.closest?.("input,textarea,select,[contenteditable]")||document.querySelector("dialog[open]"))return;event.preventDefault();openSearch()});
 renderNavTools();
 // Desktop: the open cell, beside the table (DesktopMora). The anchor, its

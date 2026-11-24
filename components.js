@@ -180,12 +180,13 @@ export function planSteps(steps=[],{label="Today's steps"}={}){
     if(step.onOpen){if(row.tagName==="BUTTON")row.type="button";row.addEventListener("click",event=>{if(!step.href)event.preventDefault();step.onOpen(step)})}
     if(step.disabled)row.setAttribute("aria-disabled","true");
     if(step.state==="next")row.setAttribute("aria-current","step");
-    const mark=document.createElement("span");mark.className="plan-step-mark";mark.lang="ja";mark.setAttribute("aria-hidden","true");mark.textContent=step.glyph||kanjiNumeral(index+1);
+    const mark=document.createElement("span");mark.className="plan-step-mark";mark.lang="ja";mark.setAttribute("aria-hidden","true");mark.textContent=step.state==="done"?"済":step.glyph||kanjiNumeral(index+1);
     const body=document.createElement("span");body.className="plan-step-body";
     const title=document.createElement("span");title.className="plan-step-title";title.textContent=step.title||"";body.append(title);
     if(step.line){const meta=document.createElement("span");meta.className="plan-step-meta";meta.textContent=step.line;body.append(meta)}
     row.append(mark,body);
-    if(step.minutes){const min=document.createElement("span");min.className="plan-step-min";min.textContent=step.minutes+" min";row.append(min)}
+    if(step.state==="done"){const min=document.createElement("span");min.className="plan-step-min";min.textContent="Done";row.append(min)}
+    else if(step.minutes){const min=document.createElement("span");min.className="plan-step-min";min.textContent=step.minutes+" min";row.append(min)}
     li.append(row);list.append(li)});
   return list}
 
@@ -267,35 +268,91 @@ export function renderSavedButton(button,saved,{saveLabel="Save word",savedLabel
 // subject, reasons, note})`, which must persist before resolving. Resolves
 // with what was submitted, or null when cancelled.
 export const reportSvg=`<svg class="report-glyph" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.5 3.2c0-.66.54-1.2 1.2-1.2h8.6c.66 0 1.2.54 1.2 1.2v6.6c0 .66-.54 1.2-1.2 1.2H7.2L4.2 14v-3H3.7c-.66 0-1.2-.54-1.2-1.2z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M8 4.6v2.9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="9.1" r=".8" fill="currentColor"/></svg>`;
-export function openReportSheet({subjects=[],reasons={},syncLine="",bindDictation=null,onSubmit}={}){
+// After sending, the sheet says it was received and shows the sync line
+// (refreshed after `syncNow`, when given). Unsent words survive a closed
+// sheet as a draft (a day). `history` (reports.js reportHistory) adds Your
+// reports: every report filed here, to edit, mark done or reopen.
+const REPORT_DRAFT="jp-echo-report-draft";
+const readReportDraft=()=>{try{const d=JSON.parse(localStorage.getItem(REPORT_DRAFT)||"null");return d&&Date.now()-(d.at||0)<864e5&&(d.note||d.reasons?.length)?d:null}catch{return null}};
+const writeReportDraft=d=>{try{d&&(d.note||d.reasons?.length)?localStorage.setItem(REPORT_DRAFT,JSON.stringify({...d,at:Date.now()})):localStorage.removeItem(REPORT_DRAFT)}catch{}};
+export const REPORT_KIND_HINT={card:"A flag marks this card in Library → Cards → Flagged and tells the maintainer what is wrong with it.",bug:"A report tells the maintainer about the app itself: something broken, confusing, or an idea."};
+export function openReportSheet({subjects=[],reasons={},syncLine="",syncNow=null,history=null,bindDictation=null,onSubmit}={}){
   let dialog=document.getElementById("report-sheet");
   if(!dialog){
     dialog=document.createElement("dialog");dialog.id="report-sheet";dialog.className="sheet-dialog menu-sheet report-sheet";dialog.setAttribute("aria-labelledby","report-title");
-    dialog.innerHTML=`<p id="report-title" class="overline"></p><p class="report-quote"></p><div class="chips report-about" role="group" aria-label="What it is about"></div><p class="report-label">What’s wrong?</p><div class="chips report-reasons" role="group" aria-label="What’s wrong"></div><div class="input-row report-note"><textarea rows="3" aria-label="Say what you noticed" placeholder="Say what you noticed (optional)"></textarea><span data-role="mic-slot"></span></div><p class="hint report-dictation" aria-live="polite"></p><p class="hint report-sync"></p><p class="report-status" role="status"></p><div class="dialog-actions"><button data-ui="button" type="button" data-role="cancel">Cancel</button><button data-ui="button" type="button" class="primary" data-role="send"></button></div>`;
+    dialog.innerHTML=`<div class="report-pane" data-pane="form"><p id="report-title" class="overline"></p><p class="report-quote"></p><div class="chips report-about" role="group" aria-label="What it is about"></div><p class="hint report-kind"></p><p class="report-label">What’s wrong?</p><div class="chips report-reasons" role="group" aria-label="What’s wrong"></div><div class="input-row report-note"><textarea rows="3" aria-label="Say what you noticed" placeholder="Say what you noticed (optional)"></textarea><span data-role="mic-slot"></span></div><p class="hint report-dictation" aria-live="polite"></p><p class="hint report-draft" hidden>Your unsent words from earlier are back. <button data-ui="button" type="button" class="link-button" data-role="clear-draft">Clear them</button></p><p class="hint report-sync"></p><p class="report-status" role="status"></p><p class="report-history-row"><button data-ui="button" type="button" class="link-button report-history-link" data-role="history">Your reports</button></p><div class="dialog-actions"><button data-ui="button" type="button" data-role="cancel">Cancel</button><button data-ui="button" type="button" class="primary" data-role="send"></button></div></div>`
+      +`<div class="report-pane" data-pane="sent" hidden><p class="overline">Thank you</p><p class="report-sent-title" role="status"></p><p class="hint report-sent-sync" aria-live="polite"></p><p class="report-history-row"><button data-ui="button" type="button" class="link-button report-history-link" data-role="history">Your reports</button></p><div class="dialog-actions"><button data-ui="button" type="button" class="primary" data-role="done">Done</button></div></div>`
+      +`<div class="report-pane" data-pane="history" hidden><p class="overline">Your reports</p><p class="hint report-history-lede"></p><ol class="report-history"></ol><div class="dialog-actions"><button data-ui="button" type="button" data-role="back">New report</button><button data-ui="button" type="button" class="primary" data-role="done">Done</button></div></div>`;
     dialog.querySelector('[data-role="mic-slot"]').replaceWith(recordButton({label:"Say it"}));
     document.body.append(dialog);
   }
-  const q=s=>dialog.querySelector(s),about=q(".report-about"),reasonBox=q(".report-reasons"),field=q("textarea"),mic=q('[data-role="mic"]'),send=q('[data-role="send"]'),status=q(".report-status");
-  let choice=0;const picked=new Set();
-  const draw=()=>{const s=subjects[choice]||{kind:"bug"};
+  const q=s=>dialog.querySelector(s),qa=s=>[...dialog.querySelectorAll(s)],about=q(".report-about"),reasonBox=q(".report-reasons"),field=q("textarea"),mic=q('[data-role="mic"]'),send=q('[data-role="send"]'),status=q(".report-status");
+  const lineOf=()=>typeof syncLine==="function"?syncLine():syncLine;
+  const pane=name=>{for(const p of qa(".report-pane"))p.hidden=p.dataset.pane!==name};
+  let choice=0,editing=null,submitted=null;const picked=new Set();
+  const saveDraft=()=>{if(editing||submitted)return;const s=subjects[choice]||{kind:"bug"};writeReportDraft({kind:s.kind,reasons:[...picked],note:field.value})};
+  const chip=(label,pressed,onclick)=>{const b=document.createElement("button");b.type="button";b.dataset.ui="button";b.textContent=label;b.setAttribute("aria-pressed",String(pressed));b.onclick=onclick;return b};
+  const draw=()=>{const s=editing?{kind:editing.kind,title:editing.kind==="card"?"Edit your flag":"Edit your report",quote:editing.subject?.text||editing.screen?.title||""}:subjects[choice]||{kind:"bug"};
     q("#report-title").textContent=s.title||(s.kind==="card"?"Flag this card":"Report a problem");
     const quote=q(".report-quote");quote.textContent=s.quote||"";quote.hidden=!s.quote;if(s.lang)quote.lang=s.lang;else quote.removeAttribute("lang");
-    send.textContent=s.kind==="card"?"Flag it":"Send report";
-    reasonBox.replaceChildren(...(reasons[s.kind]||[]).map(([id,label])=>{const b=document.createElement("button");b.type="button";b.dataset.ui="button";b.textContent=label;b.setAttribute("aria-pressed",String(picked.has(id)));b.onclick=()=>{picked.has(id)?picked.delete(id):picked.add(id);b.setAttribute("aria-pressed",String(picked.has(id)))};return b}));
-    about.hidden=subjects.length<2;
-    about.replaceChildren(...subjects.map((x,i)=>{const b=document.createElement("button");b.type="button";b.dataset.ui="button";b.textContent=x.label;b.setAttribute("aria-pressed",String(i===choice));b.onclick=()=>{if(i===choice)return;choice=i;picked.clear();draw()};return b}));
+    q(".report-kind").textContent=REPORT_KIND_HINT[s.kind]||"";
+    send.textContent=editing?"Save changes":s.kind==="card"?"Flag it":"Send report";
+    reasonBox.replaceChildren(...(reasons[s.kind]||[]).map(([id,label])=>{const b=chip(label,picked.has(id),()=>{picked.has(id)?picked.delete(id):picked.add(id);b.setAttribute("aria-pressed",String(picked.has(id)));saveDraft()});return b}));
+    about.hidden=!!editing||subjects.length<2;
+    about.replaceChildren(...subjects.map((x,i)=>chip(x.label,i===choice,()=>{if(i===choice)return;choice=i;picked.clear();draw();saveDraft()})));
+    q('[data-role="cancel"]').textContent=editing?"Back":"Cancel";
   };
-  field.value="";status.textContent="";q(".report-dictation").textContent="";q(".report-sync").textContent=syncLine;send.disabled=false;
+  const labelFor=(kind,id)=>(reasons[kind]||[]).find(r=>r[0]===id)?.[1]||id;
+  const when=at=>{const d=new Date(at);return Number.isNaN(+d)?"":d.toLocaleDateString(undefined,{month:"short",day:"numeric"})+" "+d.toLocaleTimeString(undefined,{hour:"2-digit",minute:"2-digit"})};
+  async function showHistory(){
+    pane("history");const list=q(".report-history"),lede=q(".report-history-lede");lede.textContent="Loading…";list.replaceChildren();
+    let all=[];try{all=(await history.list()).slice(0,60)}catch(error){lede.textContent=error?.message||"Could not read your reports.";return}
+    const open=all.filter(r=>r.status==="open").length;
+    lede.textContent=all.length?all.length+(all.length===1?" report":" reports")+" · "+open+" open. Fixed ones say what changed. "+lineOf():"Nothing reported from this device yet.";
+    list.replaceChildren(...all.map(r=>{
+      const li=document.createElement("li");li.className="report-item";li.dataset.status=r.status;
+      const head=document.createElement("p");head.className="report-item-head";
+      const tag=document.createElement("span");tag.className="status-chip"+(r.status==="open"?" due":r.status==="fixed"?" learning":"");tag.textContent=(history.labels||{})[r.status]||r.status;
+      const meta=document.createElement("span");meta.textContent=when(r.at)+" · "+(r.kind==="card"?"Card":"Screen")+(r.subject?.text?" · "+r.subject.text:r.screen?.title?" · "+r.screen.title:"");
+      head.append(tag,meta);li.append(head);
+      if(r.reasons?.length){const p=document.createElement("p");p.className="hint";p.textContent=r.reasons.map(id=>labelFor(r.kind,id)).join(" · ");li.append(p)}
+      if(r.note){const p=document.createElement("p");p.className="report-item-note";p.textContent=r.note;li.append(p)}
+      if(r.status==="fixed"&&r.fix){const p=document.createElement("p");p.className="hint report-item-fix";p.textContent="Fixed: "+r.fix;li.append(p)}
+      const actions=document.createElement("div");actions.className="report-item-actions";
+      const act=(label,fn)=>{const b=document.createElement("button");b.type="button";b.dataset.ui="button";b.className="link-button";b.textContent=label;b.onclick=async()=>{b.disabled=true;try{await fn()}catch(error){lede.textContent=error?.message||"Could not save that change."}finally{b.disabled=false}};return b};
+      if(r.status==="open")actions.append(act("Edit",async()=>{editing=r;picked.clear();for(const id of r.reasons||[])picked.add(id);field.value=r.note||"";q(".report-draft").hidden=true;status.textContent="";send.disabled=false;draw();pane("form");field.focus()}),act("Mark done",async()=>{await history.setStatus(r,"done");showHistory()}));
+      else actions.append(act("Reopen",async()=>{await history.setStatus(r,"open");showHistory()}));
+      li.append(actions);return li}));
+  }
+  // Open on a fresh form, with the draft of an unsent report if there is one.
+  field.value="";status.textContent="";q(".report-dictation").textContent="";q(".report-sync").textContent=lineOf();send.disabled=false;
+  const draft=readReportDraft(),draftAt=draft?subjects.findIndex(s=>s.kind===draft.kind):-1;
+  if(draftAt>=0){choice=draftAt;for(const id of draft.reasons||[])picked.add(id);field.value=draft.note||""}
+  q(".report-draft").hidden=draftAt<0;
+  q('[data-role="clear-draft"]').onclick=()=>{writeReportDraft(null);field.value="";picked.clear();q(".report-draft").hidden=true;draw();field.focus()};
+  field.oninput=saveDraft;
   if(bindDictation)bindDictation(mic,field,q(".report-dictation"));else mic.hidden=true;
-  draw();
+  for(const b of qa('[data-role="history"]'))b.closest(".report-history-row").hidden=!history;
+  draw();pane("form");
   return new Promise(resolve=>{
-    const close=value=>{dialog.onclose=null;if(dialog.open)dialog.close();resolve(value)};
-    q('[data-role="cancel"]').onclick=()=>close(null);
-    dialog.onclose=()=>resolve(null);
-    send.onclick=async()=>{const s=subjects[choice]||{kind:"bug"},value={kind:s.kind,subject:s.subject||null,reasons:[...picked],note:field.value.trim()};
+    const finish=()=>{dialog.onclose=null;if(!submitted)saveDraft();if(dialog.open)dialog.close();resolve(submitted)};
+    q('[data-role="cancel"]').onclick=()=>{if(editing){editing=null;picked.clear();field.value="";showHistory();return}finish()};
+    for(const b of qa('[data-role="done"]'))b.onclick=finish;
+    for(const b of qa('[data-role="history"]'))b.onclick=()=>{saveDraft();showHistory()};
+    q('[data-role="back"]').onclick=()=>{editing=null;picked.clear();const d=readReportDraft();field.value=d?.note||"";for(const id of d?.reasons||[])picked.add(id);q(".report-draft").hidden=!d;status.textContent="";send.disabled=false;draw();pane("form")};
+    dialog.onclose=()=>{dialog.onclose=null;if(!submitted)saveDraft();resolve(submitted)};
+    send.onclick=async()=>{
+      if(editing){send.disabled=true;status.textContent="Saving…";
+        try{await history.edit(editing,{reasons:[...picked],note:field.value});editing=null;picked.clear();field.value="";send.disabled=false;showHistory()}catch(error){send.disabled=false;status.textContent=error?.message||"Could not save the change. Try again."}return}
+      const s=subjects[choice]||{kind:"bug"},value={kind:s.kind,subject:s.subject||null,reasons:[...picked],note:field.value.trim()};
       if(s.kind==="bug"&&!value.reasons.length&&!value.note){status.textContent="Pick what’s wrong, or say it.";field.focus();return}
       send.disabled=true;status.textContent="Saving…";
-      try{await onSubmit?.(value);close(value)}catch(error){send.disabled=false;status.textContent=error?.message||"Could not save the report. Try again."}};
+      try{await onSubmit?.(value)}catch(error){send.disabled=false;status.textContent=error?.message||"Could not save the report. Try again.";return}
+      submitted=value;writeReportDraft(null);
+      q(".report-sent-title").textContent=value.kind==="card"?"Flag received. It is saved on this device.":"Report received. It is saved on this device.";
+      const line=q(".report-sent-sync");line.textContent=lineOf();pane("sent");q('[data-pane="sent"] [data-role="done"]').focus();
+      if(syncNow){line.textContent="Sending it to your gist…";try{await syncNow()}catch{}line.textContent=lineOf()}
+    };
     dialog.showModal();
   });
 }
@@ -303,11 +360,15 @@ export function openReportSheet({subjects=[],reasons={},syncLine="",bindDictatio
 // Puts the one report button in every screen head that lacks it: the app
 // header (before search), .tool-head, .drill-head and .session-bar. A head
 // marked data-no-report (Review's card bar, which has the card flag) is left.
+// A tool sheet's head (kanji, word, grammar, dictionary) gets one too, just
+// before its Close button: a sheet is modal, so the screen's button is out of
+// reach while it is open (report 927cfd7e).
 export function mountReportButtons(root=document,onOpen){
-  for(const head of root.querySelectorAll("header, .tool-head, .drill-head, .session-bar")){
+  for(const head of root.querySelectorAll("header, .tool-head, .drill-head, .session-bar, .tool-sheet .sheet-head, .tool-sheet .dictionary-head")){
     if(head.hasAttribute("data-no-report")||[...head.children].some(c=>c.classList.contains("report-button")))continue;
     const b=document.createElement("button");b.type="button";b.dataset.ui="button";b.className="icon-button report-button";b.setAttribute("aria-label","Report a problem");b.innerHTML=reportSvg;b.onclick=()=>onOpen?.(b);
-    const search=[...head.children].find(c=>c.classList.contains("header-search"));
-    search?head.insertBefore(b,search):head.append(b);
+    const search=[...head.children].find(c=>c.classList.contains("header-search")),close=[...head.children].find(c=>c.getAttribute?.("aria-label")==="Close");
+    if(close&&head.closest(".tool-sheet"))b.classList.add("small","hit");
+    search?head.insertBefore(b,search):close?head.insertBefore(b,close):head.append(b);
   }
 }

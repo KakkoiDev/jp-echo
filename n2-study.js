@@ -303,6 +303,52 @@ export function todayPlan({days, checkpoint = null, comprehension = null, baseli
     steps: capped, minutes, forecast, pace: p, measured: !!pace, overflow: overflow && {...overflow, needs: minutes + overflow.minutes, fits: DAY_MINUTES}};
 }
 
+// What is already done today, so a finished step stays in the plan, ticked,
+// instead of vanishing (report 1ccf9988: "I'm always doing the first item").
+// Counts come from the records themselves: delayed checks, finished papers by
+// kind, Day Radio plays.
+const CHECK_TAGS = new Set(["delayed-check", "check-yesterday"]);
+export function doneToday({recall = [], events = [], attempts = [], papers = [], now = new Date()} = {}) {
+  const today = localDay(now), on = at => !!at && localDay(new Date(at)) === today;
+  const done = {check: 0, radio: 0, sections: new Set(), drills: new Set(), sample: false, generated: 0, mock: ""};
+  for (const r of recall) for (const e of r.events || []) if (CHECK_TAGS.has(e.source) && on(e.at)) done.check++;
+  for (const e of events) {
+    if (!on(e.at)) continue;
+    if (e.kind === "recall" && CHECK_TAGS.has(e.context?.source)) done.check++;
+    else if (e.context?.source === "day-radio") done.radio++;
+  }
+  const byId = new Map(papers.map(p => [p.id, p]));
+  for (const a of attempts) {
+    if (a.phase !== "results" || !on(a.completedAt)) continue;
+    const p = byId.get(a.paper || a.book), d = p?.drill;
+    if (d?.section) done.sections.add(d.section);
+    else if (d?.tag) done.drills.add(d.tag);
+    else if (d?.sample) done.sample = true;
+    else if (String(a.book || "").startsWith("adaptive-")) done.generated++;
+    else done.mock = p?.title || a.book;
+  }
+  return done;
+}
+// The plan with today's finished steps ticked. A step the plan drops once it
+// is finished (Today's checks, today's mock) comes back, ticked, in its place.
+export function markDone(plan, done) {
+  if (!plan || !done) return plan;
+  const steps = plan.steps.map(s => {
+    const tick = s.kind === "section" ? done.sections.has(s.section)
+      : s.kind === "drill" ? done.drills.has(s.tag)
+      : s.kind === "sample" ? done.sample
+      : s.kind === "generate" ? done.generated > 0 && !s.disabled
+      : s.kind === "radio" ? done.radio > 0
+      : s.kind === "check" ? false : !!s.done;
+    const line = s.kind === "radio" && done.radio ? s.line + " · " + done.radio + " heard today" : s.line;
+    return tick || s.done ? {...s, line, done: true} : {...s, line};
+  });
+  const at = steps[0]?.kind === "checklist" ? 1 : 0;
+  if (!steps.some(s => s.kind === "mock") && done.mock) steps.splice(at, 0, {kind: "mock", glyph: "試", title: "Full mock", line: done.mock + " · finished today", minutes: 0, done: true});
+  if (!steps.some(s => s.kind === "check") && done.check) steps.splice(at, 0, {kind: "check", glyph: "昨", title: "Today's checks", line: done.check + " checked today · all done", href: "?view=check", minutes: 0, done: true});
+  return {...plan, steps};
+}
+
 // A shortened day (J3Short): keep what decides tomorrow — the delayed checks
 // and weak items, the weakest timed section, Day Radio, a break — inside
 // `minutes`, and list what moves to tomorrow. Nothing is deleted.

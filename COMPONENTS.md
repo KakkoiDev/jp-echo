@@ -54,7 +54,10 @@ the sentence page and the revealed review answer only.
 shape — kanji numeral, title over one meta line, minutes at the row end. A step
 is `{title, line, minutes, state, href|onOpen, glyph?, disabled?}`; `state` is
 `"next"` (seal-filled numeral, tinted row, `aria-current="step"`) or `"done"`
-(struck through). Rows are quiet links; the screen's one filled button starts
+(struck through, 済 in the mark, "Done" for the minutes). A finished step
+stays in the list: n2-study.js `doneToday` reads today's records and
+`markDone` ticks the plan's steps, bringing back a step the plan drops once
+finished (Today's checks, today's mock). Rows are quiet links; the screen's one filled button starts
 the next step. Used on the N2 Today plan, its over-budget and shortened views.
 
 ### LoadMeter
@@ -93,18 +96,32 @@ flag on opens ReportSheet (the reason is optional) and saves the flag with a
 card report; turning it off withdraws that card's open reports.
 
 ### ReportSheet
-`openReportSheet({subjects, reasons, syncLine, bindDictation, onSubmit})` and
+`openReportSheet({subjects, reasons, syncLine, syncNow, history, bindDictation, onSubmit})` and
 `mountReportButtons(root, onOpen)` (components.js): the one way to flag a card
 with a reason or report a problem, on Echo and on the N2 page.
 - `mountReportButtons` puts one `.icon-button.report-button` (`reportSvg`, a
   speech bubble with !) in every `header`, `.tool-head`, `.drill-head` and
-  `.session-bar`; a head with `data-no-report` (Review's card bar, which has
-  the card flag) is skipped. The desktop sidebar has the `#nav-report` row.
+  `.session-bar`, and in a tool sheet's head (kanji, word, grammar,
+  dictionary) before its Close, since a modal sheet hides the screen's button;
+  a head with `data-no-report` (Review's card bar, which has the card flag) is
+  skipped. The desktop sidebar has the `#nav-report` row. Echo's sheet button
+  offers the sheet's kanji, word or grammar point as the card (`sheetSubject`).
 - The sheet: overline, the subject quote, an About choice when a card is on
   screen ("This card" / "This screen"), reason chips (`.chips`, multi-select,
   `REPORT_REASONS`), a note with a mic, the sync line, Cancel / Flag it or
   Send report. A bug report needs a reason or a note; a card flag does not.
 - `onSubmit` must persist before it resolves (reports.js `fileReport`).
+- After sending, the sheet stays open on "Report received" with the sync line;
+  `syncNow` (the page's `startAutoSync().syncNow`, only when gist sync is on)
+  sends it at once and the line refreshes. `syncLine` may be a function.
+- A one-line hint under the quote says what a flag is (marks the card in
+  Library → Flagged and tells the maintainer) versus a report (about the app).
+- Unsent words and reasons survive a closed sheet for a day
+  (`jp-echo-report-draft`, localStorage) and come back with "Clear them".
+- `history` (reports.js `reportHistory`) adds Your reports: every report on
+  the device, newest first, with its status (Open, Done, Fixed with the fix,
+  Withdrawn); Edit and Mark done for open ones, Reopen for the rest. "done" is
+  the learner's close; "fixed" stays the maintainer's.
 - Each screen describes its card: Echo's `cardOnScreen()` (Practice, Review,
   the sentence page) and the N2 page's `reportCard` (Recall, Today's checks,
   Day Radio, the exam question).

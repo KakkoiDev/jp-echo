@@ -1620,7 +1620,10 @@ button.mora-cell:last-child{border-right:0}
 
 /* November primitives (components.js; docs/design/november). Values from the
    AccessMap, LibraryTools and WordNote boards; colours are the repo tokens. */
-.tool-shelf{display:flex;justify-content:space-between;gap:4px}
+/* Scrolls sideways when the tiles do not fit (report 815cb295). */
+.tool-shelf{display:flex;justify-content:space-between;gap:10px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scrollbar-width:none;padding-bottom:2px}
+.tool-shelf::-webkit-scrollbar{display:none}
+.tool-shelf-tile{flex-shrink:0;scroll-snap-align:start}
 .tool-shelf-tile{width:52px;min-height:0;height:auto;padding:0;display:flex;flex-direction:column;align-items:center;gap:6px;background:transparent;border:0;border-radius:0;color:var(--ink-soft);letter-spacing:normal;font-size:inherit}
 .tool-shelf-glyph{width:52px;height:52px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;border:1px solid var(--hairline);border-radius:4px;background:var(--panel);font-family:var(--display);font-size:21px;color:var(--seal-deep)}
 .tool-shelf-label{font-size:11px;letter-spacing:.02em;white-space:nowrap}
@@ -2045,9 +2048,14 @@ body.n2 main{max-width:760px;margin:0 auto;padding-bottom:calc(120px + env(safe-
 .n2-grades .n2-wide{grid-column:1/-1}
 /* Exam */
 .n2-exam-head{position:sticky;top:0;z-index:5;background:var(--washi)}
-.n2-exam-head .drill-title{font-size:16px}
+.n2-exam-head .drill-title{font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.n2-exam-head .tool-titles{min-width:0;flex:1 1 auto}
+.n2-exam-head .n2-clock{flex-shrink:0}
 .n2-clock{margin-left:auto;font-family:var(--display);font-size:20px;font-variant-numeric:tabular-nums}
 .n2-clock.low{color:var(--seal)}
+.n2-paused{display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding:28px 0}
+.n2-paused .hint{margin:0;max-width:52ch}
+body.n2-is-paused #exam>:not(.n2-exam-head):not(.n2-paused){display:none}
 .n2-question{padding:18px 0 0}
 .n2-passage{margin:12px 0 0;padding:14px 16px;border-left:2px solid var(--hairline);background:var(--panel);font-family:var(--display);font-size:17px;line-height:2;white-space:pre-wrap}
 .n2-passage.small{font-size:15px;line-height:1.85}
@@ -2159,6 +2167,8 @@ a.plan-step-row,button.plan-step-row{cursor:pointer}
 .plan-step[data-state=next] .plan-step-mark{background:var(--seal);border-color:var(--seal);color:var(--seal-on)}
 .plan-step[data-state=next] .plan-step-title{font-weight:500}
 .plan-step[data-state=done] .plan-step-title{text-decoration:line-through;text-decoration-color:var(--seal);color:var(--ink-muted)}
+.plan-step[data-state=done] .plan-step-mark{border-color:var(--seal-edge);color:var(--seal)}
+.plan-step[data-state=done] .plan-step-min{color:var(--seal)}
 .plan-step-row[aria-disabled=true]{opacity:.6}
 .load-meter{display:flex;flex-direction:column;gap:5px}
 .load-meter-bar{display:flex;height:8px;border:1px solid var(--hairline);border-radius:2px;overflow:hidden;background:var(--panel)}
@@ -2257,7 +2267,8 @@ a.plan-step-row,button.plan-step-row{cursor:pointer}
 .n2-day-rate-note{grid-column:1/-1;margin:2px 0 0;text-align:center}
 
 /* N2 notices (StOffline, StNoVoice, StSaveFail, StNoProvider). */
-.n2-notices{display:flex;flex-direction:column;gap:8px;position:sticky;top:0;z-index:5}
+.n2-notices{display:flex;flex-direction:column;gap:8px}
+.n2-notices .notice.alert{position:sticky;top:0;z-index:5}
 .n2-notices:empty{display:none}
 .n2-notices .notice{flex-direction:column;gap:6px;font-size:13px;line-height:1.6}
 .n2-notices .notice p{margin:0}
@@ -2316,6 +2327,8 @@ a.plan-step-row,button.plan-step-row{cursor:pointer}
 /* Reports — the report button in every screen head, and ReportSheet
    (components.js). Built from existing tokens, chips and sheet primitives. */
 .report-button{flex-shrink:0}
+.radical-link{all:unset;cursor:pointer;font-family:var(--display);font-size:16px;color:var(--seal-deep);text-decoration:underline;text-underline-offset:3px;padding:6px 2px}
+.radical-link:focus-visible{outline:2px solid var(--seal);outline-offset:2px}
 :is(.tool-head,.drill-head,.session-bar)>.report-button{margin-left:auto}
 :is(.drill-progress,.n2-clock,#stat-stage)~.report-button,.session-bar h2~.report-button{margin-left:0}
 .tabs>.nav-report{display:none}
@@ -2331,6 +2344,18 @@ body .report-sheet .report-note textarea{flex:1 1 auto;flex-basis:auto;height:au
 .report-sheet .hint{margin:6px 0 0}
 .report-sheet .report-dictation:empty,.report-sheet .report-status:empty{display:none}
 .report-sheet .report-status{margin:8px 0 0;color:var(--seal-deep)}
+.report-sheet .report-kind{margin:10px 0 0}
+.report-history-row{margin:4px 0 0}
+.report-history-row .link-button{margin:0}
+.report-sheet .report-draft .link-button{display:inline;height:auto;min-height:0;margin:0}
+.report-sent-title{margin:8px 0 0;font-family:var(--display);font-size:19px;line-height:1.5;color:var(--sumi)}
+.report-history{list-style:none;margin:8px 0 0;padding:0;max-height:56vh;overflow:auto;border-top:1px solid var(--rule)}
+.report-item{padding:12px 0;border-bottom:1px solid var(--rule)}
+.report-item[data-status=done],.report-item[data-status=withdrawn]{color:var(--ink-muted)}
+.report-item-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0;font-size:12px;color:var(--ink-muted);overflow-wrap:anywhere}
+.report-item-note{margin:6px 0 0;font-size:14px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
+.report-item-actions{display:flex;gap:18px}
+.report-item-actions .link-button{height:36px;min-height:36px;margin-top:2px}
 
 /* Earlier saves (Settings → Backup): a menu sheet of gist revisions and a
    preview before restoring. Existing sheet, row and type tokens only. */

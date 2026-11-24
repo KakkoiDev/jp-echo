@@ -1,9 +1,18 @@
 import {stripFurigana} from './core.js';
 import {validateReadingCorrection} from './japanese-readings.js';
 export const extractionIdentity=text=>stripFurigana(String(text)).normalize('NFC').replace(/\s+/gu,'').trim();
+// A list line keeps its words, not its marker (②, 1., (3), ・, ■ …), and a
+// heading-like line with a bracketed aside — 録音権限（案未定） — becomes its two
+// parts, each its own card (report b9c70269). Sentences keep their brackets.
+const LIST_MARK=/^(?:[\u2460-\u2473\u24f5-\u24fe\u2776-\u277f\u3251-\u325f]|[（(]\s*[0-9０-９一二三四五六七八九十]{1,3}\s*[）)]|[0-9０-９]{1,3}\s*[.．)）、]|[・•\-‐–—*＊■□◆◇●○▪▶►※]|[A-Za-zＡ-Ｚａ-ｚ][.．)）])\s*/u;
+export function cleanSegment(segment){
+ let s=String(segment||'').trim();for(let i=0;i<2&&LIST_MARK.test(s);i++)s=s.replace(LIST_MARK,'').trim();
+ const aside=!/[。！？!?]$/u.test(s)&&s.match(/^([^（(）)]+?)\s*[（(]([^（(）)]+)[）)]$/u);
+ return aside?[aside[1].trim(),aside[2].trim()]:[s];
+}
 export function splitPassage(input,{book=false}={}){
  const text=stripFurigana(String(input||'')).trim();if(!text)throw Error('Paste Japanese text first.');if(!book&&text.length>30000)throw Error('Use up to 30,000 characters at a time.');
- const sentences=(text.match(/[^。！？!?\n]+(?:[。！？!?]+[」』”"]*|$)|[^\n]+$/gmu)||[]).map(s=>s.trim()).filter(s=>/[ぁ-ゖァ-ヺ㐀-鿿]/u.test(s));
+ const sentences=(text.match(/[^。！？!?\n]+(?:[。！？!?]+[」』”"]*|$)|[^\n]+$/gmu)||[]).flatMap(cleanSegment).filter(s=>/[ぁ-ゖァ-ヺ㐀-鿿]/u.test(s));
  if(!sentences.length)throw Error('No Japanese sentences found.');if(!book&&sentences.length>120)throw Error('Use up to 120 sentences at a time.');return sentences;
 }
 export function passageCandidates(text,existing=[],options={}){const seen=new Set(existing.filter(s=>(s.targetLang||'ja')==='ja').flatMap(s=>[s.target,s.casualTarget,s.politeTarget].filter(Boolean).map(extractionIdentity)));return splitPassage(text,options).map((text,index,all)=>({text,index,context:all.slice(Math.max(0,index-1),index+2).join('\n')})).filter(row=>{const key=extractionIdentity(row.text);if(seen.has(key))return false;seen.add(key);return true})}
