@@ -2240,3 +2240,11 @@ a.plan-step-row,button.plan-step-row{cursor:pointer}
 .n2-day-ring p{margin:0}
 .n2-day-ask{font-size:15px}
 .n2-day-rate-note{grid-column:1/-1;margin:2px 0 0;text-align:center}
+
+/* N2 notices (StOffline, StNoVoice, StSaveFail, StNoProvider). */
+.n2-notices{display:flex;flex-direction:column;gap:8px;position:sticky;top:0;z-index:5}
+.n2-notices:empty{display:none}
+.n2-notices .notice{flex-direction:column;gap:6px;font-size:13px;line-height:1.6}
+.n2-notices .notice p{margin:0}
+.n2-notices .notice-actions{display:flex;gap:8px;flex-wrap:wrap}
+.n2-notices .notice-actions .button{min-height:44px;flex:1 1 0}

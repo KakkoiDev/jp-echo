@@ -45,6 +45,39 @@ function row({glyph, title, line, href, onclick, chip}) {
   return node;
 }
 function warn(message) { $("warning").textContent = message; }
+// N2 notices (StOffline, StNoVoice, StSaveFail): what still works first, then
+// what needs something. A failed save is the one alert; a saved grade is
+// announced once on #n2-saved.
+const notices = new Map();
+function setNotice(key, node) {
+  if (node) notices.set(key, node); else notices.delete(key);
+  $("n2-notices").replaceChildren(...notices.values());
+}
+function offlineNotice() {
+  setNotice("offline", navigator.onLine === false ? el("div", {class: "notice"},
+    el("p", {text: "You’re offline. Everything on this page still works: the plan, papers, checks and Day Radio with this device’s voice."}),
+    el("p", {class: "hint", text: "Needs a connection now: Plan my day with AI · Make a practice exam · new Echo’s notes. They come back when you’re online."})) : null);
+}
+function voiceCheck() {
+  if (!window.speechSynthesis) return;
+  const draw = () => setNotice("voice", japaneseVoices("ja").length ? null : el("div", {class: "notice"},
+    el("p", {text: "No Japanese voice on this device. Day Radio, listening checks and Echo’s own listening papers need one to speak."}),
+    el("p", {class: "hint", text: "Add a Japanese voice in your phone’s settings, or choose another voice in Settings. The official sample papers still play: they are recordings."}),
+    el("div", {class: "notice-actions"}, el("a", {class: "button outline", href: "./settings", text: "Open Settings → Voice"}))));
+  // Voices arrive late on some engines; decide after they have had a chance.
+  speechSynthesis.addEventListener?.("voiceschanged", draw);
+  setTimeout(draw, 1200);
+}
+function saved(message = "Saved") { $("n2-saved").textContent = ""; setTimeout(() => { $("n2-saved").textContent = message; }, 30); setNotice("save", null); }
+function saveFailed(retry) {
+  setNotice("save", el("div", {class: "notice alert", role: "alert"},
+    el("p", {text: "Your last answer wasn’t saved. This browser’s storage is full or blocked. Nothing else was lost."}),
+    el("div", {class: "notice-actions"},
+      el("button", {type: "button", class: "primary", "data-ui": "button", text: "Try again", onclick: () => { setNotice("save", null); retry?.(); }}),
+      el("a", {class: "button outline", href: "#history", onclick: async event => { event.preventDefault(); try { download(await report()); } catch (e) { warn(e.message); } }, text: "Back up now"}))));
+  $("n2-notices").scrollIntoView({block: "nearest"});
+}
+addEventListener("online", offlineNotice); addEventListener("offline", offlineNotice);
 function show(id) { for (const s of ["hub", "recall", "check", "day", "intro", "exam", "rest", "results"]) $(s).hidden = s !== id; document.body.dataset.view = id; }
 async function json(path) {
   const response = await fetch(path);
@@ -236,12 +269,10 @@ async function hub() {
     const stale = coached.basis !== resultsBasis(data);
     $("coach-copy").textContent = (coached.diagnosis || "Today's plan from your coach.") + (stale ? " You have new results since this plan; ask the coach again for one that uses them." : "");
   }
-  $("coach").onclick = () => coach(context);
-  $("coach").disabled = !aiReady;
-  $("coach").title = aiReady ? "" : "Add an AI provider in Echo Settings";
+  $("coach").onclick = () => aiReady ? coach(context) : needProvider("Plan my day with AI needs an AI service. The standard plan below is ready without one.");
   $("coach-reset").onclick = () => { try { localStorage.removeItem(COACH_KEY); } catch {} $("coach-box").hidden = true; drawToday({...context, planGoal, exam, dates, coached: null, attempts}); };
   $("generate-open").onclick = () => openGenerator({aiReady});
-  $("generate-open").disabled = !aiReady;
+
   $("ai-hint").hidden = aiReady;
   $("checklist-zone").hidden = days > 3;
   $("plan-checklist-link").onclick = () => { $("checklist-zone").hidden = false; };
@@ -438,6 +469,13 @@ function goalEditor(ctx) {
   $("training-reset").onclick = () => updateGoal(null);
 }
 
+// StNoProvider: a provider action says what it needs at the moment of choice.
+function needProvider(what) {
+  $("provider-what").textContent = what;
+  $("provider-close").onclick = () => $("provider-dialog").close();
+  $("provider-dialog").showModal();
+}
+
 /* ───────── Coach ───────── */
 const COACH_KEY = "echo-n2-coach";
 const STEP_KINDS = ["check", "recall", "section", "drill", "radio", "mock", "generate", "review", "rest", "checklist"];
@@ -545,7 +583,7 @@ async function coach(ctx) {
 }
 let generating = null;
 function openGenerator({aiReady, focus = "weak", count = 20, tag = null} = {}) {
-  if (!aiReady) { warn("Add an AI provider and key in Echo Settings to generate exams."); return; }
+  if (!aiReady) { needProvider("Make a practice exam needs an AI service. The standard plan, the papers and the checks are ready without one."); return; }
   import("./n2-adaptive.js").then(({FOCUS, generateAdaptive}) => {
     let pick = Object.hasOwn(FOCUS, focus) ? focus : "weak", size = [10, 20, 35].includes(count) ? count : 20, hinge = TAG[tag] ? tag : "";
     const chips = () => {
@@ -698,8 +736,9 @@ async function recall() {
       await access("recall", "put", record);
       data.recall = data.recall.filter(x => x.id !== record.id).concat(record);
       tally[value]++; if (value !== "instant") missed.push(current);
+      saved("Saved: " + value);
       index++; draw();
-    } catch (error) { revealed = true; warn("Could not save this rating: " + error.message); }
+    } catch (error) { revealed = true; saveFailed(() => grade(value)); }
   }
   function finishRound() {
     $("recall-done-title").textContent = session.length + " checked";
@@ -897,8 +936,9 @@ async function checks() {
         data.recall = data.recall.filter(r => r.id !== id).concat(record);
       }
       tally[value]++; if (value !== "instant") missed.push(c);
+      saved("Saved: " + value);
       index++; draw(true);
-    } catch (error) { revealed = true; warn("Could not save this check: " + error.message); }
+    } catch (error) { revealed = true; saveFailed(() => grade(value)); }
   }
   function finish() {
     clock?.stop();
@@ -939,7 +979,7 @@ async function dayRadio() {
   let queue = [], heard = new Set(), revealed = false, current = null, wake = null, ringTimer = 0;
   const heardIds = new Map();
   for (const e of data.events) if (e.kind === "exposure" && e.context?.exampleId) heardIds.set(JSON.stringify(e.target), new Set([...(heardIds.get(JSON.stringify(e.target)) || []), e.context.exampleId]));
-  const record = async event => { try { await access("events", "put", event); data.events.push(event); } catch (e) { warn("Could not save: " + e.message); } };
+  const record = async event => { try { await access("events", "put", event); data.events.push(event); if (event.kind === "recall") saved("Saved: " + event.grade); } catch (e) { saveFailed(() => record(event)); } };
   const exampleFor = item => item.example !== undefined ? item.example
     : mode === "listen" ? (examples.get(JSON.stringify(item.target)) || [])[0] || null
     : chooseExample(examples.get(JSON.stringify(item.target)) || [], heardIds.get(JSON.stringify(item.target)) || new Set());
@@ -1294,7 +1334,7 @@ async function exam() {
   // One tap says why a comprehension answer went wrong; it stays on the attempt.
   async function setCause(q, cause) {
     state.causes = {...(state.causes || {}), [q.index]: cause};
-    if (archivedView) { try { await access("history", "put", state); } catch (e) { warn("Could not save: " + e.message); return; } }
+    if (archivedView) { try { await access("history", "put", state); saved(); } catch (e) { saveFailed(() => setCause(q, cause)); return; } }
     else persist();
   }
   function causeRow(q) {
@@ -1383,5 +1423,6 @@ async function exam() {
 
 // The former Day Radio "Yesterday" tab opens Today's checks.
 const view = params.get("view") === "radio" && params.get("mode") === "check" ? "check" : params.get("view");
+offlineNotice(); voiceCheck();
 const route = year ? exam : view === "recall" ? recall : view === "check" ? checks : view === "radio" ? dayRadio : hub;
 route().catch(error => { show(""); warn(error.message); });

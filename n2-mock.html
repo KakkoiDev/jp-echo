@@ -9,10 +9,12 @@
 <link rel="icon" href="./favicon.ico" sizes="32x32"><link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="./apple-touch-icon.png"><link rel="manifest" href="./manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
-<link rel="stylesheet" href="./styles.css?v=186">
+<link rel="stylesheet" href="./styles.css?v=187">
 </head>
 <body class="n2">
 <main id="n2-main">
+<div class="n2-notices" id="n2-notices"></div>
+<p class="sr-only" role="status" id="n2-saved"></p>
 
 <!-- Hub -->
 <section id="hub" hidden>
@@ -44,7 +46,7 @@
   <p class="hint n2-forecast" id="plan-delayed"></p>
   <div class="notice n2-coach" id="coach-box" hidden><div class="notice-body"><span class="notice-title" id="coach-title">Your coach</span><p class="notice-copy n2-analysis" id="coach-copy" role="status"></p><div class="notice-actions"><button data-ui="button" class="outline" id="coach-reset" type="button" hidden>Use the standard plan</button></div></div></div>
   <div class="n2-coach-actions"><button data-ui="button" class="outlined small" id="coach" type="button">Plan my day with AI</button><button data-ui="button" class="outlined small" id="generate-open" type="button">Make a practice exam</button></div>
-  <p class="hint n2-ai-hint" id="ai-hint" hidden>The coach and the exam generator use your own AI key. <a href="./settings/ai">Add one in Settings → AI service</a>.</p>
+  <p class="hint n2-ai-hint" id="ai-hint" hidden>Works offline. The standard plan needs no AI service; “Plan my day with AI” and “Make a practice exam” use your own key. <a href="./settings/ai">Add one in Settings → AI service</a>.</p>
 
   <section class="n2-zone" id="checklist-zone" hidden>
     <h3 class="rule-heading">Exam checklist</h3>
@@ -237,6 +239,13 @@
   <h3 class="rule-heading">Written · reading and meaning</h3><ul class="evidence-list" id="evidence-written"></ul>
   <h3 class="rule-heading">Listening</h3><ul class="evidence-list" id="evidence-listening"></ul>
   <p class="hint" id="evidence-why"></p>
+</dialog>
+
+<dialog id="provider-dialog" class="sheet-dialog" aria-labelledby="provider-title">
+  <p class="overline" id="provider-title">No AI service</p>
+  <p id="provider-what"></p>
+  <p class="hint">Using it sends today’s results and your goal to the provider you choose, on your key. <a href="./settings/ai">Add one in Settings → AI service</a></p>
+  <div class="dialog-actions"><button data-ui="button" class="primary" id="provider-close" type="button">Use the standard plan</button></div>
 </dialog>
 
 <p role="alert" class="hint n2-warning" id="warning"></p>

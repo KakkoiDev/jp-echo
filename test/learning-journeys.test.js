@@ -109,3 +109,16 @@ test("Radio opens on Day and Night as equals, with a resume bar holding the one 
   assert.match(app, /\$\("#radio-start"\)\.classList\.toggle\("primary",!paused\)/);
   assert.match(page, /Not yet \/ Got it marks this play only\. It never changes your written reading record\./);
 });
+
+test("the N2 page says what still works offline, without a voice, after a failed save and without a provider (St*)", () => {
+  assert.match(mock, /You’re offline\. Everything on this page still works/);
+  assert.match(mock, /Needs a connection now: Plan my day with AI · Make a practice exam/);
+  assert.match(mock, /No Japanese voice on this device\./);
+  assert.match(mock, /el\("div", \{class: "notice alert", role: "alert"\}/, "a failed save is the one alert");
+  assert.match(mock, /Your last answer wasn’t saved\./);
+  assert.match(mock, /text: "Try again"/); assert.match(mock, /text: "Back up now"/);
+  assert.match(page, /role="status" id="n2-saved"/, "a saved grade is announced once");
+  assert.equal((mock.match(/saveFailed\(/g) || []).length >= 4, true, "recall, checks and Day Radio all use it");
+  assert.match(page, /Use the standard plan/); assert.match(mock, /Plan my day with AI needs an AI service\. The standard plan below is ready without one\./);
+  assert.doesNotMatch(mock, /warn\("Could not save/);
+});
