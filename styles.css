@@ -2120,7 +2120,11 @@ html.motion-off .n2-breath span{transition:none}
 .n2-day-bar #day-repeat{font-size:20px;padding:0}
 .n2-day-bar #day-later{padding:0;font-size:13px}
 .n2-day-bar [aria-pressed=true]{background:var(--seal-tint);border-color:var(--seal-edge);color:var(--seal-deep)}
-a.library-tool.n2-day-link{text-decoration:none;color:inherit;margin:4px 0 12px;border-bottom:1px solid var(--rule)}
+/* Radio opens on Day and Night as equals, with a resume bar (RadioEntrances). */
+.radio-entrances{display:flex;flex-direction:column;margin-top:8px}
+.radio-entrances a.library-tool{text-decoration:none;color:inherit;border-bottom:1px solid var(--rule)}
+.radio-resume{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;padding:12px 14px;border:1px solid var(--seal-edge);border-radius:4px;background:var(--seal-tint);font-size:13px}
+.radio-resume .button{min-height:44px}
 /* The N2 page has no sidebar: undo the app's desktop grid and centre the bars. */
 @media(min-width:1024px){body.n2{display:block}body.n2 main{grid-column:auto;margin:0 auto;padding-inline:32px}.n2 .review-actions{left:50%;right:auto;transform:translateX(-50%);width:min(760px,100%)}}
 
@@ -2232,3 +2236,7 @@ a.plan-step-row,button.plan-step-row{cursor:pointer}
 .n2-decisive li{padding:2px 8px}
 .n2-decisive li.cue{background:var(--seal-tint);border-left:2px solid var(--seal)}
 .n2-decisive mark{background:transparent;color:inherit;text-decoration:underline;text-decoration-color:var(--seal);text-decoration-thickness:1.5px;text-underline-offset:5px}
+.n2-day-ring{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:10px;text-align:center}
+.n2-day-ring p{margin:0}
+.n2-day-ask{font-size:15px}
+.n2-day-rate-note{grid-column:1/-1;margin:2px 0 0;text-align:center}

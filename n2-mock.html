@@ -9,7 +9,7 @@
 <link rel="icon" href="./favicon.ico" sizes="32x32"><link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="./apple-touch-icon.png"><link rel="manifest" href="./manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
-<link rel="stylesheet" href="./styles.css?v=185">
+<link rel="stylesheet" href="./styles.css?v=186">
 </head>
 <body class="n2">
 <main id="n2-main">
@@ -150,7 +150,8 @@
     <p class="n2-prompt" id="day-text" lang="ja"></p>
     <div class="n2-answer" id="day-answer"><p class="n2-reading" id="day-reading" lang="ja"></p><p class="n2-meaning" id="day-meaning"></p></div>
     <div class="n2-day-example" id="day-example"><p lang="ja" id="day-example-ja"></p><p class="hint" id="day-example-en"></p></div>
-    <div class="n2-day-rate" id="day-rate" hidden><button data-ui="button" class="again" data-rate="missed" type="button">Not yet</button><button data-ui="button" class="outline" data-rate="got" type="button">Got it</button></div>
+    <div class="n2-day-ring" id="day-ring" hidden></div>
+    <div class="n2-day-rate" id="day-rate" hidden><button data-ui="button" class="again" data-rate="missed" type="button">Not yet</button><button data-ui="button" class="outline" data-rate="got" type="button">Got it</button><p class="hint n2-day-rate-note">Not yet / Got it marks this play only. It never changes your written reading record.</p></div>
     <p class="hint" id="day-note"></p>
   </div>
   <div class="drill-done" id="day-done" hidden><span class="drill-done-seal" lang="ja" aria-hidden="true">聴</span><strong id="day-done-title"></strong><p class="hint" id="day-done-line"></p><div class="drill-done-actions"><button data-ui="button" class="primary" id="day-again" type="button">Play again from the start</button><a class="button outline" href="./n2-mock.html">Back to N2</a></div></div>

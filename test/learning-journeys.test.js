@@ -100,3 +100,12 @@ test("results: a short session shows a denominator per section; a full paper off
   assert.match(page, /id="result-next"[^>]*>Back to the plan/);
   assert.match(mock, /The line that decided it/);
 });
+
+test("Radio opens on Day and Night as equals, with a resume bar holding the one filled button (RadioEntrances)", () => {
+  assert.match(index, /<span class="overline">Day or night<\/span>/);
+  assert.match(index, /Day · awake listening/); assert.match(index, /Night · while you sleep/);
+  assert.match(index, /Night never counts as a check\./);
+  assert.match(app, /Paused · Day Radio, sentence \{n\} of \{total\}/);
+  assert.match(app, /\$\("#radio-start"\)\.classList\.toggle\("primary",!paused\)/);
+  assert.match(page, /Not yet \/ Got it marks this play only\. It never changes your written reading record\./);
+});

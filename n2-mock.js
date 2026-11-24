@@ -2,7 +2,7 @@ import {dateKey, parseGoalDate, firstPassEnd, goalKey, readGoal, shortDate, long
 import {bookIds,bookName,EDITION,SETS_EDITION,form,realisticRows,realisticPaperId,setFile} from "./n2-forms.js";
 import {access,currentAttempts,download,prefix,report,scored} from "./n2-progress.js";
 import {SKILLS,SKILL_JA,SECTIONS,PASS_TOTAL,SECTION_MIN,SECTION_MAX,estimate,sprintCheckpoint,nextExamDate,daysUntil,recallQueue,recallRecord,recallId,dailyGoal,coverage,localDay,todayPlan,measuredPace,capMinutes,DAY_MINUTES,EXAM_CHECKLIST,goalDates,formatMinutes,shortenPlan,maintenancePlan,resultsMonth} from "./n2-study.js";
-import {flagSvg,planSteps,loadMeter,evidenceRow} from "./components.js";
+import {flagSvg,planSteps,loadMeter,evidenceRow,pauseRing} from "./components.js";
 import {speakOnce,speakAndWait,japaneseVoices} from "./speech.js";
 import {radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
 import {TAG,TAGS,HELD_OUT,CAUSES,comprehensionStats,weakestTag,tagDrill,attemptTags,tagsOf,sourceOf} from "./n2-comprehension.js";
@@ -936,7 +936,7 @@ async function dayRadio() {
   let mode = params.get("mode") === "recall" ? "recall" : params.get("mode") === "listen" ? "listen" : saved.mode === "recall" ? "recall" : "listen";
   let pause = RECALL_PAUSES.includes(saved.pause) ? saved.pause : 5;
   let later = Array.isArray(saved.later) ? saved.later : [];
-  let queue = [], heard = new Set(), revealed = false, current = null, wake = null;
+  let queue = [], heard = new Set(), revealed = false, current = null, wake = null, ringTimer = 0;
   const heardIds = new Map();
   for (const e of data.events) if (e.kind === "exposure" && e.context?.exampleId) heardIds.set(JSON.stringify(e.target), new Set([...(heardIds.get(JSON.stringify(e.target)) || []), e.context.exampleId]));
   const record = async event => { try { await access("events", "put", event); data.events.push(event); } catch (e) { warn("Could not save: " + e.message); } };
@@ -952,6 +952,14 @@ async function dayRadio() {
       writeDay({mode, index: i, day: localDay(), ids: queue.map(q => JSON.stringify(q.target))});
     },
     onReveal: reveal,
+    // The pause before the meaning, drawn as the PauseRing (J2Recall).
+    onRing: (item, ms) => {
+      const total = Math.round(ms / 1000), started = Date.now(), ring = pauseRing({total});
+      clearInterval(ringTimer);
+      $("day-ring").replaceChildren(el("p", {class: "overline", text: "Sentence " + (index + 1) + " of " + queue.length}), el("p", {class: "n2-day-ask", text: "What does it mean?"}), ring.el);
+      $("day-ring").hidden = false;
+      ringTimer = setInterval(() => { const left = total - (Date.now() - started) / 1000; ring.set(left); if (left <= 0) clearInterval(ringTimer); }, 250);
+    },
     onComplete: item => record(radioEvent({target: item.target, kind: "exposure", source: "day-radio", mode, exampleId: exampleFor(item)?.id})),
     onDone: () => { release(); finish(); },
   });
@@ -995,6 +1003,7 @@ async function dayRadio() {
   const WHY = {weak: "Weak · missed, guessed or slow", later: "Marked for later", new: "New · not checked yet", review: "Previously checked", resume: "Resumed session"};
   function draw(item, i) {
     current = item; index = i; revealed = false;
+    clearInterval(ringTimer); $("day-ring").hidden = true;
     const example = exampleFor(item);
     $("day-progress").textContent = (i + 1) + " / " + queue.length;
     $("day-bar").style.width = (i / queue.length * 100) + "%";
@@ -1015,6 +1024,7 @@ async function dayRadio() {
   }
   function reveal() {
     if (!current) return; revealed = true;
+    clearInterval(ringTimer); $("day-ring").hidden = true;
     $("day-text").textContent = current.text;
     $("day-answer").hidden = false;
     $("day-example").hidden = !$("day-example-ja").textContent;

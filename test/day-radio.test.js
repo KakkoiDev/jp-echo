@@ -103,3 +103,13 @@ test("skipped and failed playback never emit completion, including the final ite
   await done;
   assert.deepEqual(completed, ["ok"]);
 });
+
+test("recall marks its pause for the PauseRing, and the player announces it before waiting (J2Recall)",async()=>{
+  const item=items.get(K(mitooshi)),steps=daySteps("recall",item,null,{pause:5});
+  assert.equal(steps[1].ring,true);assert.equal(steps[1].pause,5000);
+  assert.ok(!daySteps("listen",item,null).some(s=>s.ring),"listen has no countdown");
+  const rings=[];let done;const finished=new Promise(r=>done=r);
+  const p=new DayPlayer({speak:async()=>true,wait:async()=>{},onRing:(i,ms)=>rings.push(ms),onDone:done});
+  p.start([item],{steps:it=>daySteps("recall",it,null,{pause:3})});await finished;
+  assert.deepEqual(rings,[3000]);
+});

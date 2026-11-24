@@ -104,7 +104,7 @@ export function daySteps(mode, item, example, {pause = 5} = {}) {
     {say: word, lang: "ja"}, {pause: 1400}];
   // Recall: the sentence when there is one (a fresh context), else the word.
   return [
-    {say: example ? example.ja : word, lang: "ja"}, {pause: pause * 1000},
+    {say: example ? example.ja : word, lang: "ja"}, {pause: pause * 1000, ring: true},
     {reveal: true}, {say: word, lang: "ja"}, {pause: 400}, {say: item.meaning, lang: "en"}, {pause: 1800}];
 }
 
@@ -124,8 +124,8 @@ export function radioEvent({target, kind, skill = "listening", grade, source, mo
 // The player: walks the queue from an index, one item at a time, and can be
 // paused, skipped, repeated and resumed. speak/wait are injected.
 export class DayPlayer {
-  constructor({speak, wait = ms => new Promise(r => setTimeout(r, ms)), cancel = () => {}, onItem = () => {}, onReveal = () => {}, onComplete = () => {}, onDone = () => {}} = {}) {
-    Object.assign(this, {speak, wait, cancel, onItem, onReveal, onComplete, onDone}); this.run = 0; this.running = false; this.index = 0;
+  constructor({speak, wait = ms => new Promise(r => setTimeout(r, ms)), cancel = () => {}, onItem = () => {}, onReveal = () => {}, onRing = () => {}, onComplete = () => {}, onDone = () => {}} = {}) {
+    Object.assign(this, {speak, wait, cancel, onItem, onReveal, onRing, onComplete, onDone}); this.run = 0; this.running = false; this.index = 0;
   }
   start(queue, {index = 0, steps, voiceFor = () => null, rate = 1} = {}) {
     if (!queue.length) return false;
@@ -145,7 +145,7 @@ export class DayPlayer {
           const ended = await this.speak(plainOr(step), {lang: step.lang, rate: this.rate, voice: this.voiceFor(step.lang)});
           if (ended === false) audible = false;
         }
-        else await this.wait(step.pause);
+        else { if (step.ring) this.onRing(item, step.pause); await this.wait(step.pause); }
       }
       if (run !== this.run) return;
       if (audible) await this.onComplete(item, this.index);

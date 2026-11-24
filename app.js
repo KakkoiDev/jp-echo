@@ -2521,7 +2521,13 @@ $("#word-close").onclick=()=>{loop.stop();$("#word-dialog").close()};$("#word-di
 const radio=new RadioPlayer({onState:renderRadioState,onDone:()=>{releaseRadioWake();radioNoise.stop();setTimeout(()=>{if(!radio.running)$("#radio-night").hidden=true},60000)}}),radioNoise=new NoiseBed();
 let radioWake=null,radioSentences=[];
 function radioOptions(){return {hours:Number(settings.radioHours)||RADIO_DEFAULTS.hours}}
-async function renderRadio(){radioSentences=radioQueue(await listSentences());
+// A paused Day Radio round (n2-mock.js keeps its place in echo-n2-day).
+function renderRadioResume(){let day={};try{day=JSON.parse(localStorage.getItem("echo-n2-day")||"{}")}catch{}
+  const today=new Date().toLocaleDateString("en-CA"),paused=day.day===today&&day.ids?.length&&day.index>0&&day.index<day.ids.length;
+  $("#radio-resume").hidden=!paused;
+  if(paused)$("#radio-resume-text").textContent=t("Paused · Day Radio, sentence {n} of {total}",{n:day.index+1,total:day.ids.length});
+  $("#radio-start").classList.toggle("primary",!paused);$("#radio-start").classList.toggle("outline",!!paused)}
+async function renderRadio(){radioSentences=radioQueue(await listSentences());renderRadioResume();
   $("#radio-empty").hidden=radioSentences.length>0;$("#radio-setup").hidden=!radioSentences.length;
   $("#radio-hours").value=String(radioOptions().hours);$("#radio-noise").checked=settings.radioNoise!==false;
   $("#radio-count").textContent=spell(radioSentences.length)+" studied sentence"+(radioSentences.length===1?"":"s")+", newest first";
