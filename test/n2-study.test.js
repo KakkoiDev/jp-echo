@@ -62,7 +62,8 @@ test("the day plan runs delayed checks → new checks → timed reading and list
   const build=todayPlan({days:12,goal,weak:25,checks:12,aiReady:true,latestResults:"?book=x&attempt=y",examDate:new Date(2026,11,6),now:new Date(2026,10,24,9)});
   assert.deepEqual(build.steps.map(s=>s.kind),["check","recall","section","section","review","generate","recall","radio","rest"]);
   assert.equal(build.steps[0].href,"?view=check","yesterday's misses are checked first");
-  assert.match(build.steps[1].line,/^157 unchecked N2 words and grammar points/);
+  assert.match(build.steps[1].line,/^40 of 197 done today/,"first checks under way say how far they are");
+  assert.deepEqual(build.steps[1].progress,{done:40,of:197});
   assert.ok(build.minutes<=360,"six hours including breaks");
   assert.equal(build.steps.find(s=>s.kind==="rest").minutes,40,"breaks are in the budget");
   const week=todayPlan({days:3,goal,weak:5,aiReady:false});

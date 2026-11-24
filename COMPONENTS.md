@@ -57,8 +57,18 @@ is `{title, line, minutes, state, href|onOpen, glyph?, disabled?}`; `state` is
 (struck through, 済 in the mark, "Done" for the minutes). A finished step
 stays in the list: n2-study.js `doneToday` reads today's records and
 `markDone` ticks the plan's steps, bringing back a step the plan drops once
-finished (Today's checks, today's mock). Rows are quiet links; the screen's one filled button starts
+finished (Today's checks, today's mock). A step under way may carry
+`progress: {done, of}` and shows a thin `.drill-bar` under its line (first
+checks: "40 of 197 done today"). Rows are quiet links; the screen's one filled button starts
 the next step. Used on the N2 Today plan, its over-budget and shortened views.
+
+### ScoreChart
+`scoreChart({points, max, line, caption, label})` (components.js): scores over
+time against a line, as a small SVG on the paper's tokens. Points are
+`{value, ok, label}` in date order; `ok` fills the dot with the seal, otherwise
+it is hollow; the line is dashed seal. No hover: the caption and the accessible
+name carry the numbers. Used for the N2 page's finished exams
+(n2-study.js `scoreSeries` / `scoreCaption`), never a pass probability.
 
 ### LoadMeter
 `loadMeter({fits, needs, caption})`: the library meter line for a day's load.

@@ -184,11 +184,32 @@ export function planSteps(steps=[],{label="Today's steps"}={}){
     const body=document.createElement("span");body.className="plan-step-body";
     const title=document.createElement("span");title.className="plan-step-title";title.textContent=step.title||"";body.append(title);
     if(step.line){const meta=document.createElement("span");meta.className="plan-step-meta";meta.textContent=step.line;body.append(meta)}
+    // A step under way shows how far it is (20 of 190 first checks).
+    if(step.progress?.of&&step.state!=="done"){const bar=document.createElement("span");bar.className="drill-bar plan-step-progress";bar.setAttribute("role","progressbar");bar.setAttribute("aria-valuemin","0");bar.setAttribute("aria-valuemax",String(step.progress.of));bar.setAttribute("aria-valuenow",String(step.progress.done));const fill=document.createElement("span");fill.style.width=Math.min(100,step.progress.done/step.progress.of*100)+"%";bar.append(fill);body.append(bar)}
     row.append(mark,body);
     if(step.state==="done"){const min=document.createElement("span");min.className="plan-step-min";min.textContent="Done";row.append(min)}
     else if(step.minutes){const min=document.createElement("span");min.className="plan-step-min";min.textContent=step.minutes+" min";row.append(min)}
     li.append(row);list.append(li)});
   return list}
+
+// ScoreChart — scores over time against a line (N2 mocks against the pass
+// line). Points are in date order; a point on or over the line is filled with
+// the seal, one under it is hollow. No hover needed: the caption and the
+// accessible name say the same thing.
+export function scoreChart({points=[],max=100,line=null,caption="",label="Scores"}={}){
+  const NS="http://www.w3.org/2000/svg",W=320,H=120,pad={l:28,r:8,t:8,b:18};
+  const fig=document.createElement("figure");fig.className="score-chart";
+  const svg=document.createElementNS(NS,"svg");svg.setAttribute("viewBox",`0 0 ${W} ${H}`);svg.setAttribute("role","img");svg.setAttribute("aria-label",label+": "+caption);
+  const node=(tag,attrs,text)=>{const n=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(attrs))n.setAttribute(k,v);if(text!=null)n.textContent=text;svg.append(n);return n};
+  const x=i=>pad.l+(points.length<2?(W-pad.l-pad.r)/2:i*(W-pad.l-pad.r)/(points.length-1)),y=v=>pad.t+(1-v/max)*(H-pad.t-pad.b);
+  node("line",{x1:pad.l,x2:W-pad.r,y1:y(0),y2:y(0),class:"score-chart-axis"});
+  for(const v of [0,max]) node("text",{x:pad.l-6,y:y(v)+4,class:"score-chart-tick","text-anchor":"end"},String(v));
+  if(line!=null){node("line",{x1:pad.l,x2:W-pad.r,y1:y(line),y2:y(line),class:"score-chart-line"});node("text",{x:pad.l-6,y:y(line)+4,class:"score-chart-tick","text-anchor":"end"},String(line))}
+  if(points.length>1)node("polyline",{points:points.map((p,i)=>x(i)+","+y(p.value)).join(" "),class:"score-chart-path"});
+  points.forEach((p,i)=>{node("circle",{cx:x(i),cy:y(p.value),r:4,class:"score-chart-dot"+(p.ok?" is-ok":"")});if(p.label&&(i===0||i===points.length-1))node("text",{x:x(i),y:H-4,class:"score-chart-tick","text-anchor":points.length<2?"middle":i?"end":"start"},p.label)});
+  fig.append(svg);
+  if(caption){const cap=document.createElement("figcaption");cap.className="hint";cap.textContent=caption;cap.setAttribute("aria-hidden","true");fig.append(cap)}
+  return fig}
 
 // LoadMeter — the library meter line for a day's load, always labelled with
 // its denominator ("6 h of 7 h 10 min fits today"). The part that does not fit

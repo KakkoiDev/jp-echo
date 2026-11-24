@@ -9,7 +9,7 @@
 <link rel="icon" href="./favicon.ico" sizes="32x32"><link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="./apple-touch-icon.png"><link rel="manifest" href="./manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
-<link rel="stylesheet" href="./styles.css?v=194">
+<link rel="stylesheet" href="./styles.css?v=195">
 </head>
 <body class="n2">
 <main id="n2-main">
@@ -85,6 +85,7 @@
   </details>
 
   <h3 class="rule-heading" id="history">History and data</h3>
+  <div id="score-chart" class="n2-score" hidden></div>
   <div class="n2-rows">
     <button data-ui="button" class="library-tool two-line" id="export-report" type="button"><span class="library-tool-glyph" lang="ja" aria-hidden="true">出</span><span class="library-tool-label"><strong>Export study JSON</strong><span>Every attempt and check, for another tool</span></span></button>
   </div>
@@ -95,7 +96,7 @@
 
 <!-- Recall -->
 <section id="recall" hidden>
-  <div class="drill-head"><a class="icon-button" href="./n2-mock.html" aria-label="Back to N2"><svg width="18" height="16" viewBox="0 0 18 16" fill="none" aria-hidden="true"><path d="M8 1 1 8l7 7M1 8h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a><span class="drill-title">Recall</span><span class="drill-progress" id="recall-progress"></span></div>
+  <div class="drill-head"><a class="icon-button" href="./n2-mock.html" aria-label="Back to N2"><svg width="18" height="16" viewBox="0 0 18 16" fill="none" aria-hidden="true"><path d="M8 1 1 8l7 7M1 8h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a><span class="drill-title">Recall</span><button data-ui="button" class="icon-button" id="recall-prev" type="button" aria-label="Previous card" hidden><svg width="18" height="16" viewBox="0 0 18 16" fill="none" aria-hidden="true"><path d="M5 2 1.5 5.5 5 9M1.5 5.5H11a5 5 0 0 1 0 10H6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="drill-progress" id="recall-progress"></span></div>
   <div class="drill-bar"><span id="recall-bar"></span></div>
   <div class="segmented" role="tablist" aria-label="What to recall">
     <button data-ui="button" role="tab" data-type="meaning" type="button">意味 Meaning</button><button data-ui="button" role="tab" data-type="reading" type="button">読み Reading</button><button data-ui="button" role="tab" data-type="grammar" type="button">文法 Grammar</button>
@@ -108,6 +109,7 @@
     <p class="n2-prompt" id="recall-prompt" lang="ja"></p>
     <button data-ui="button" class="plain n2-say" id="recall-say" type="button" aria-label="Hear it"><svg width="18" height="16" viewBox="0 0 18 16" fill="none" aria-hidden="true"><path d="M2 5.5h3l4-3.5v12l-4-3.5H2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M12 5a4 4 0 0 1 0 6M14.5 2.5a7.5 7.5 0 0 1 0 11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span>Hear it</span></button>
     <div id="recall-answer" class="n2-answer" hidden><p class="n2-reading" id="recall-reading" lang="ja"></p><p class="n2-meaning" id="recall-meaning"></p></div>
+    <div class="n2-day-example n2-recall-example" id="recall-example" hidden><p lang="ja" id="recall-example-ja"></p><p class="hint" id="recall-example-en" hidden></p><button data-ui="button" class="plain n2-say" id="recall-example-say" type="button" aria-label="Hear the sentence"><svg width="18" height="16" viewBox="0 0 18 16" fill="none" aria-hidden="true"><path d="M2 5.5h3l4-3.5v12l-4-3.5H2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M12 5a4 4 0 0 1 0 6M14.5 2.5a7.5 7.5 0 0 1 0 11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span>Hear the sentence</span></button></div>
     <p class="hint" id="recall-state"></p>
   </div>
   <div class="drill-done" id="recall-done" hidden><span class="drill-done-seal" lang="ja" aria-hidden="true">済</span><strong id="recall-done-title"></strong><p class="hint" id="recall-done-line"></p><ul class="drill-missed" id="recall-missed"></ul><div class="drill-done-actions"><button data-ui="button" class="primary" id="recall-again" type="button">Another round</button><a class="button outline" href="./n2-mock.html">Back to N2</a></div></div>

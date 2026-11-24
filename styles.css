@@ -2364,3 +2364,22 @@ body .report-sheet .report-note textarea{flex:1 1 auto;flex-basis:auto;height:au
 .saves-when{margin:10px 0 4px;font-family:var(--display);font-size:19px;color:var(--sumi)}
 .saves-diff{margin:10px 0 0;color:var(--sumi)}
 #saves-status:empty,#export-all-status:empty{display:none}
+/* Recall: the example sentence under the card, furigana kept light */
+.n2-recall-example{display:flex;flex-direction:column;gap:6px}
+.n2-recall-example[hidden]{display:none}
+.n2-recall-example rt{font-family:var(--ui);font-size:10px;color:var(--ink-muted)}
+.n2-recall-example .n2-say{align-self:flex-start;min-height:36px;padding-left:0}
+.plan-step-progress{display:block;margin-top:6px;max-width:220px}
+/* ScoreChart (components.js): scores over time against a line */
+.score-chart{margin:8px 0 4px}
+.score-chart svg{display:block;width:100%;max-width:520px;height:auto;overflow:visible}
+.score-chart-axis{stroke:var(--rule);stroke-width:1}
+.score-chart-line{stroke:var(--seal);stroke-width:1;stroke-dasharray:3 3;opacity:.7}
+.score-chart-path{fill:none;stroke:var(--ink-muted);stroke-width:1.2}
+.score-chart-dot{fill:var(--washi);stroke:var(--seal);stroke-width:1.5}
+.score-chart-dot.is-ok{fill:var(--seal)}
+.score-chart-tick{font-family:var(--ui);font-size:9px;fill:var(--ink-muted)}
+.score-chart figcaption{margin-top:4px}
+.n2-solution{margin:8px 0 0;font-family:var(--display);font-size:16px;line-height:2}
+.n2-solution rt,.n2-why rt{font-family:var(--ui);font-size:10px;color:var(--ink-muted)}
+.n2-why{line-height:1.9}

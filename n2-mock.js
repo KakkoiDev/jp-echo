@@ -1,15 +1,15 @@
 import {dateKey, parseGoalDate, firstPassEnd, goalKey, readGoal, writeGoal, shortDate, longDate} from "./jlpt-goal.js";
-import {bookIds,bookName,EDITION,SETS_EDITION,form,realisticRows,realisticPaperId,setFile,instructionFor} from "./n2-forms.js";
+import {bookIds,bookName,EDITION,SETS_EDITION,form,realisticRows,realisticPaperId,setFile,instructionFor,solutionOf,whyReadings} from "./n2-forms.js";
 import {access,currentAttempts,download,prefix,report,scored,n2Adapter} from "./n2-progress.js";
 import {startAutoSync,markDirty,gistSettings} from "./sync.js";
-import {SKILLS,SKILL_JA,SECTIONS,PASS_TOTAL,SECTION_MIN,SECTION_MAX,estimate,sprintCheckpoint,nextExamDate,daysUntil,recallQueue,recallRecord,recallId,dailyGoal,coverage,localDay,todayPlan,measuredPace,capMinutes,DAY_MINUTES,EXAM_CHECKLIST,goalDates,formatMinutes,shortenPlan,maintenancePlan,resultsMonth,doneToday,markDone} from "./n2-study.js";
-import {flagSvg,planSteps,loadMeter,evidenceRow,pauseRing,openReportSheet,mountReportButtons} from "./components.js";
+import {SKILLS,SKILL_JA,SECTIONS,PASS_TOTAL,SECTION_MIN,SECTION_MAX,estimate,sprintCheckpoint,nextExamDate,daysUntil,recallQueue,recallRecord,recallId,dailyGoal,coverage,localDay,todayPlan,measuredPace,capMinutes,DAY_MINUTES,EXAM_CHECKLIST,goalDates,formatMinutes,shortenPlan,maintenancePlan,resultsMonth,doneToday,markDone,scoreSeries,scoreCaption} from "./n2-study.js";
+import {scoreChart,flagSvg,planSteps,loadMeter,evidenceRow,pauseRing,openReportSheet,mountReportButtons} from "./components.js";
 import {REPORT_REASONS,createReport,fileReport,reportSyncLine,reportsAdapter,reportHistory,screenOf,appVersion,deviceInfo} from "./reports.js";
 import {recognitionFactory} from "./speech.js";
 import {speakOnce,speakAndWait,japaneseVoices} from "./speech.js";
 import {spokenWord,radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
 import {TAG,TAGS,HELD_OUT,CAUSES,comprehensionStats,weakestTag,tagDrill,drillExposure,attemptTags,tagsOf,sourceOf} from "./n2-comprehension.js";
-import {delayedChecks,checkItems,checkAsk,contextNote,sentenceParts,checkDetail,audioGrade,delayedAccuracy,CHECK_SOURCE,WHY_LINE,evidenceFor,evidenceLine} from "./n2-delayed.js";
+import {exampleSegments,patternNeedles,delayedChecks,checkItems,checkAsk,contextNote,sentenceParts,checkDetail,audioGrade,delayedAccuracy,CHECK_SOURCE,WHY_LINE,evidenceFor,evidenceLine} from "./n2-delayed.js";
 
 // Official workbook answer numbering. Listening examples are excluded.
 const keys = {
@@ -60,10 +60,17 @@ function setNotice(key, node) {
 // moment offline), never over the page (it scrolls away), and can be closed
 // (report 04301125: a false "offline" covered the reading passage).
 let offlineTimer = 0, offlineDismissed = false;
+async function reachable() {
+  try { await fetch("./online-probe?" + Date.now(), {cache: "no-store", signal: AbortSignal.timeout?.(5000)}); return true; } catch { return false; }
+}
 function offlineNotice() {
   clearTimeout(offlineTimer);
   if (navigator.onLine !== false) { offlineDismissed = false; setNotice("offline", null); return; }
-  offlineTimer = setTimeout(() => {
+  offlineTimer = setTimeout(async () => {
+    if (navigator.onLine !== false || offlineDismissed) return;
+    // Phones report offline when they are not (report 8907ffd7): ask the
+    // network itself. Any answer, even a 404, means there is a connection.
+    if (await reachable()) return;
     if (navigator.onLine !== false || offlineDismissed) return;
     setNotice("offline", el("div", {class: "notice"},
       el("p", {text: "You’re offline. Everything on this page still works: the plan, papers, checks and Day Radio with this device’s voice."}),
@@ -186,11 +193,40 @@ function say(text) {
   if (!window.speechSynthesis) { warn("Japanese speech is unavailable in this browser. Open Echo on a device with a Japanese voice."); return false; }
   return speakOnce(text, {voice: voice(), rate: Number(settings.rate) || 1});
 }
+// An example sentence with furigana, the studied word or pattern underlined.
+function exampleNodes(ja, needles) {
+  return exampleSegments(ja, needles).map(seg => {
+    const node = seg.reading ? el("ruby", {}, seg.text, el("rt", {text: seg.reading})) : document.createTextNode(seg.text);
+    return seg.mark ? el("u", {class: "n2-mark"}, node) : node;
+  });
+}
 // 【word】 in a question is the tested word: shown underlined, as on the paper.
 function marked(text = "") {
   const out = document.createDocumentFragment();
   for (const [i, part] of String(text).split(/【|】/).entries()) out.append(i % 2 ? el("u", {class: "n2-mark", text: part}) : part);
   return out;
+}
+// The dictionary's readings, loaded only when a review needs them (the word
+// list is large). Used for furigana on solutions (reports 6382b2ef, a9a209ae).
+let readingResolver = null;
+function furigana() {
+  return readingResolver ||= Promise.all([import("./words-data.js"), import("./japanese-readings.js")])
+    .then(([{WORDS}, {createReadingResolver}]) => createReadingResolver(WORDS)).catch(() => null);
+}
+async function solutionLine(q) {
+  const sol = solutionOf(q), resolve = await furigana();
+  const nodes = [];
+  if (sol) {
+    const ja = resolve ? resolve(sol.text, sol.overrides).text : sol.text;
+    nodes.push(el("p", {class: "n2-solution", lang: "ja"}, ...exampleNodes(ja, [].concat(sol.mark))));
+  }
+  return nodes;
+}
+async function whyLine(why) {
+  const resolve = await furigana();
+  if (!resolve || !/[㐀-鿿々]/.test(why)) return el("p", {class: "n2-why", text: why});
+  const {text, overrides} = whyReadings(why);
+  return el("p", {class: "n2-why"}, ...exampleNodes(resolve(text, overrides).text, []));
 }
 // A listening script, one line per turn ("女：…"). Each speaker gets their own
 // voice where the device has more than one; the labels are not read aloud.
@@ -371,6 +407,9 @@ async function hub() {
   $("adaptive-list").replaceChildren(...data.papers.filter(p => p.id.startsWith("adaptive-")).map(p =>
     row({glyph: p.drill?.tag ? "解" : p.drill ? (p.drill.section === "listening" ? "聴" : "読") : "狙", title: p.title,
       line: p.drill?.tag ? p.questions.length + " questions · comprehension drill" : p.drill ? p.questions.length + " questions · timed section" : p.questions.length + (p.request?.count > p.questions.length ? " of " + p.request.count : "") + " targeted questions", href: "?book=" + p.id, chip: status(p.id).chip})));
+  const series = scoreSeries(attempts, papers);
+  $("score-chart").replaceChildren(...(series.length ? [el("p", {class: "overline", text: "Exam scores · estimated, against the pass line"}), scoreChart({points: series.map(p => ({...p, label: dateLabel(p.at)})), max: 180, line: PASS_TOTAL, label: "Exam scores", caption: scoreCaption(series)})] : []));
+  $("score-chart").hidden = !series.length;
   $("history-list").replaceChildren(...attempts.filter(a => a.phase === "results").map(a => {
     const p = papers.get(a.paper || a.book), e = p && estimate(p, a);
     return row({glyph: "歴", title: p?.title || titleOf(a.book), line: dateLabel(a.completedAt || a.startedAt) + (e ? " · " + e.total + " / 180" : ""), href: "?book=" + a.book + "&attempt=" + encodeURIComponent(a.id)});
@@ -563,6 +602,12 @@ function stepAction(step, ctx) {
 }
 // Today (J1Today): the steps as PlanSteps, the next one marked, and one Start
 // button for it. `primary` is false while a state panel holds the filled button.
+// First checks under way show a bar (the coach's step too, which has none).
+function progressOf(step, ctx) {
+  if (step.progress) return step.progress;
+  const g = ctx.goal;
+  return step.kind === "recall" && /queue=new/.test(step.href || "") && g?.firstToday && g.firstToday < g.goal ? {done: g.firstToday, of: g.goal} : null;
+}
 function drawPlan(plan, ctx, {title, primary = true} = {}) {
   plan = markDone(plan, ctx.done);
   const total = plan.steps.reduce((n, s) => n + (s.minutes || 0), 0);
@@ -572,7 +617,7 @@ function drawPlan(plan, ctx, {title, primary = true} = {}) {
   const actions = plan.steps.map(step => stepAction(step, ctx));
   const next = plan.steps.findIndex((step, i) => !step.done && !step.disabled && step.kind !== "rest" && step.kind !== "checklist" && (actions[i].href || actions[i].onOpen));
   $("plan-steps").replaceChildren(planSteps(plan.steps.map((step, i) => ({
-    title: step.title, line: step.line, minutes: step.minutes, disabled: step.disabled,
+    title: step.title, line: step.line, minutes: step.minutes, disabled: step.disabled, progress: progressOf(step, ctx),
     state: step.done ? "done" : i === next ? "next" : "", ...actions[i]}))));
   const start = $("plan-start"), step = plan.steps[next];
   $("plan-start-wrap").hidden = !step;
@@ -727,7 +772,10 @@ async function recall() {
     return left("grammar") > left("meaning") ? "grammar" : "meaning";
   };
   let type = ["meaning", "reading", "grammar"].includes(params.get("type")) ? params.get("type") : params.get("queue") ? autoType() : (localStorage.getItem("echo-n2-recall-type") || "meaning");
-  let session = [], index = 0, revealed = false, tally = {instant: 0, slow: 0, missed: 0}, missed = [], clock = null;
+  const examples = await deckExamples();
+  const exampleOf = item => (examples.get(JSON.stringify(item.target)) || [])[0] || null;
+  const needlesOf = item => item.target[0] === "word" ? [item.prompt, item.reading] : patternNeedles(item.prompt);
+  let session = [], index = 0, revealed = false, tally = {instant: 0, slow: 0, missed: 0}, missed = [], clock = null, graded = [];
   const sync = () => {
     const url = new URL(location.href); url.searchParams.set("view", "recall"); url.searchParams.set("type", type); url.searchParams.set("queue", queue);
     history.replaceState(history.state, "", url);
@@ -737,7 +785,7 @@ async function recall() {
   };
   const begin = () => {
     session = recallQueue({type, filter: queue, inventory, recall: data.recall, evidence});
-    index = 0; tally = {instant: 0, slow: 0, missed: 0}; missed = [];
+    index = 0; tally = {instant: 0, slow: 0, missed: 0}; missed = []; graded = [];
     sync(); draw();
   };
   const grades = [...document.querySelectorAll("#recall-actions [data-grade]")];
@@ -748,8 +796,11 @@ async function recall() {
     $("recall-actions").hidden = !current;
     $("recall-progress").textContent = session.length ? Math.min(index + 1, session.length) + " / " + session.length : "";
     $("recall-bar").style.width = (session.length ? index / session.length * 100 : 0) + "%";
-    revealed = false;
+    revealed = false; playAnswer.token = null;
+    try { window.speechSynthesis?.cancel(); } catch {}
+    $("recall-prev").hidden = !graded.length || !session.length;
     $("recall-answer").hidden = true; $("reveal").hidden = false; grades.forEach(b => b.hidden = true);
+    $("recall-example").hidden = true; $("recall-example-en").hidden = true;
     if (!session.length) {
       $("recall-ask").textContent = "";
       $("recall-prompt").textContent = queue === "weak" ? "Nothing weak here." : "All caught up.";
@@ -763,7 +814,28 @@ async function recall() {
     $("recall-prompt").textContent = current.item.prompt;
     $("recall-prompt").classList.toggle("long", current.item.prompt.length > 8);
     $("recall-say").hidden = type === "reading";
-    $("recall-state").textContent = current.weak ? "Weak · missed or slow last time" : !current.r ? "First check" : current.r.checks + " checks · last " + current.r.last;
+    $("recall-state").textContent = (current.item.senses ? "Meaning " + current.item.sense + " of " + current.item.senses + " · the sentence shows which · " : "")
+      + (current.weak ? "Weak · missed or slow last time" : !current.r ? "First check" : current.r.checks + " checks · last " + current.r.last);
+    // The sentence: grammar shows it from the start (a pattern is recalled in
+    // use); a word shows it with the answer. The English comes with the answer.
+    const example = exampleOf(current.item);
+    $("recall-example-ja").replaceChildren(...(example ? exampleNodes(example.ja, needlesOf(current.item)) : []));
+    $("recall-example-en").textContent = example?.en || "";
+    $("recall-example").hidden = !example || type !== "grammar";
+  }
+  // Revealing plays the answer: the word, then its sentence (a pattern: the
+  // sentence). Tapping the card again plays it again.
+  async function playAnswer() {
+    const current = session[index]; if (!current) return;
+    const example = exampleOf(current.item), opts = {voice: voice(), rate: Number(settings.rate) || 1};
+    if (!window.speechSynthesis) { say(""); return; }
+    const token = playAnswer.token = {};
+    try { speechSynthesis.cancel(); } catch {}
+    if (type !== "grammar") {
+      await speakAndWait(type === "reading" ? current.item.reading : spokenWord(current.item.prompt, current.item.reading), opts);
+      if (playAnswer.token !== token || !revealed || session[index] !== current) return;
+    }
+    if (example && type !== "reading" && playAnswer.token === token) await speakAndWait(example.ja, opts);
   }
   function reveal() {
     const current = session[index]; if (!current || revealed) return;
@@ -771,7 +843,17 @@ async function recall() {
     $("recall-reading").textContent = current.item.reading && current.item.reading !== current.item.prompt ? current.item.reading : "";
     $("recall-meaning").textContent = current.item.answer;
     $("recall-answer").hidden = false; $("reveal").hidden = true; grades.forEach(b => b.hidden = false);
-    if (type === "reading" && current.item.reading) say(current.item.reading);
+    $("recall-example").hidden = !$("recall-example-ja").textContent;
+    $("recall-example-en").hidden = !$("recall-example-en").textContent;
+    playAnswer();
+  }
+  // Previous card: back to the last graded card, unrevealed. Grading it again
+  // rebuilds its record from what it was before, so the mistake is replaced.
+  function previous() {
+    const last = graded.pop(); if (!last) return;
+    tally[last.grade]--; missed = missed.filter(m => m !== last.row);
+    data.recall = data.recall.filter(x => x.id !== last.row.id).concat(last.row.r ? [last.row.r] : []);
+    index = last.index; draw();
   }
   async function grade(value) {
     const current = session[index]; if (!current || !revealed) return;
@@ -781,6 +863,7 @@ async function recall() {
       await access("recall", "put", record);
       data.recall = data.recall.filter(x => x.id !== record.id).concat(record);
       tally[value]++; if (value !== "instant") missed.push(current);
+      graded.push({index, row: current, grade: value});
       announceSaved("Saved: " + value);
       index++; draw();
     } catch (error) { revealed = true; saveFailed(() => grade(value)); }
@@ -793,7 +876,9 @@ async function recall() {
     $("recall-bar").style.width = "100%";
   }
   $("reveal").onclick = reveal;
-  $("recall-card").onclick = e => { if (!e.target.closest("button")) reveal(); };
+  $("recall-card").onclick = e => { if (e.target.closest("button")) return; if (revealed) playAnswer(); else reveal(); };
+  $("recall-prev").onclick = previous;
+  $("recall-example-say").onclick = () => { const c = session[index], ex = c && exampleOf(c.item); if (ex) say(ex.ja); };
   grades.forEach(b => b.onclick = () => grade(b.dataset.grade));
   reportCard = () => { const c = session[index]; return c && !$("recall").hidden ? {type: "n2-" + c.item.target[0], id: JSON.stringify(c.item.target), text: c.item.prompt, reading: c.item.reading, meaning: c.item.answer, quote: c.item.prompt, extra: {view: "recall", type}} : null; };
   $("recall-say").onclick = () => { const c = session[index]; if (c) say(spokenWord(c.item.prompt, c.item.reading)); };
@@ -1468,7 +1553,15 @@ async function exam() {
       item.append(el("ol", {class: "n2-review-choices"}, ...q.choices.map((c, i) => el("li", {lang: "ja", class: i + 1 === q.key ? "right" : i + 1 === answer ? "picked" : ""}, c))));
       const tags = results.tags ? tagsOf(results.tags, sourceOf(paper, q)) : [];
       if (tags.length) item.append(el("p", {class: "hint", text: "Hinges on: " + tags.map(t => TAG[t].ja + " " + TAG[t].en.toLowerCase()).join(" · ")}));
-      if (q.why) item.append(el("p", {class: "n2-why", text: q.why}));
+      // Furigana on the solution and the explanation, filled in when opened.
+      const solution = el("div", {class: "n2-solution-wrap"}), why = q.why ? el("p", {class: "n2-why", text: q.why}) : null;
+      item.append(solution); if (why) item.append(why);
+      item.addEventListener("toggle", async () => {
+        if (!item.open || item.dataset.readings) return;
+        item.dataset.readings = "1";
+        solution.replaceChildren(...await solutionLine(q));
+        if (why) why.replaceWith(await whyLine(q.why));
+      });
       if ((q.skill === 2 || q.skill === 3) && (!right || unsure)) { const line = decisive(q); if (line) item.append(line); item.append(causeRow(q)); }
       if (q.skill === 3) item.append(el("button", {class: "link-button", type: "button", text: "Play the script", onclick: () => playScript(listeningLines(q))}));
     }

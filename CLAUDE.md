@@ -229,6 +229,13 @@ Before considering the change complete:
   the hub counts the same `delayedChecks` batch it opens. A print check writes
   the recall record of its dimension; an audio check writes a listening event,
   so the two never move each other. Day Radio has no check mode of its own.
+- **Every N2 recall card carries its example sentence.** The N2 decks give
+  each word and grammar point one (`examplesFromDecks`); Recall shows it with
+  furigana and the item underlined (`exampleSegments`, n2-delayed.js), grammar
+  from the start, words with the answer. A pattern with two meanings is one
+  prompt with `sense`/`senses`, never ①② on the card. Exam solutions get
+  furigana from the dictionary resolver, loaded only when a review is opened
+  (`solutionOf`, `whyReadings`, n2-forms.js).
 - **An N2 exam may be paused, honestly.** The pause stops the clock, hides
   the question and keeps `pausedMs`/`pauses` on the attempt; the results line
   says how long it was paused. Paused time is never answer time.

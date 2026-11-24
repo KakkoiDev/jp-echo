@@ -181,3 +181,54 @@ export function form(id, inventory, original) {
   }
   return rows;
 }
+
+// A vocabulary or grammar question's solution: its sentence with the answer
+// in the blank (or the tested 【word】), furigana throughout, the answer
+// underlined. Pure: the text and the word to mark, readings fixed where the
+// question itself gives them (a 読み方 question's answer is the reading).
+export function solutionOf(q) {
+  if (!(q.skill === 0 || q.skill === 1 || q.skill === "Vocabulary" || q.skill === "Grammar")) return null;
+  const answer = String(q.choices?.[q.key - 1] || "");
+  let text = String(q.prompt || "").split("\n")[0].replace(/[^。？！]*(どれ|どの|誰|何)[^。？！]*か[。？]\s*$/, "").trim();
+  if (!answer) return null;
+  // The older short form: "消化 の読み方はどれか。" — the word and its answer.
+  const bare = /^[〜～]?([^\s。、「」]+)\s+の(読み方|意味|代表的な意味)/.exec(String(q.prompt || ""));
+  if (bare) {
+    const word = bare[1], reading = answer.replace(/^[〜～]/, ""), kana = /^[ぁ-ゖー]+$/.test(reading);
+    if (bare[2] === "読み方" && kana) return {text: word, mark: word, overrides: {[word]: reading}};
+    return /[ぁ-ゖ㐀-鿿]/.test(answer) ? {text: word + " → " + answer, mark: word, overrides: {}} : {text: word, mark: word, overrides: {}};
+  }
+  const tested = /【([^】]+)】/.exec(text)?.[1] || "";
+  text = text.replace(/[【】]/g, "").replace(/★/g, "");
+  const blank = /（\s*）|（　+）|＿+|_{2,}/;
+  if (blank.test(text)) {
+    if (answer.length > 14 || /\s/.test(answer)) return null;
+    return {text: text.replace(blank, answer), mark: answer, overrides: {}};
+  }
+  // 言い換え and 使い方 quote the word: the natural sentence, or the phrase
+  // beside its paraphrase.
+  // 用法 (問題6) gives the bare word: its natural sentence, the word marked
+  // even when conjugated (its stem).
+  if (q.mondai === 6 && !tested && /[。！？]$/.test(answer) && !/[。？]/.test(text)) return {text: answer, mark: [text, text.slice(0, -1)], overrides: {}};
+  const quoted = /「([^」]+)」/.exec(String(q.prompt || ""))?.[1];
+  if (!tested && quoted) {
+    const word = quoted.replace(/[をがはにで].*$/, "") || quoted;
+    return /[。！？]$/.test(answer) ? {text: answer, mark: [word, word.slice(0, -1)], overrides: {}} : {text: quoted + " → " + answer, mark: answer, overrides: {}};
+  }
+  if (!text || !tested || !text.includes(tested)) return null;
+  const kana = /^[ぁ-ゖー]+$/.test(answer), kanji = /[㐀-鿿々]/.test(tested);
+  // 読み方: the word in kanji, the answer its reading. 書き方: the word in kana,
+  // the answer its kanji. Otherwise (言い換え, 使い方) the tested word stays.
+  if (kana && kanji) return {text, mark: tested, overrides: {[tested]: answer}};
+  if (!kanji && /[㐀-鿿々]/.test(answer)) return {text: text.replace(tested, answer), mark: answer, overrides: {[answer]: tested}};
+  return {text, mark: tested, overrides: {}};
+}
+
+// An explanation that gives a reading in brackets, 辛い（づらい）, keeps that
+// reading: the word becomes an override and the brackets go (the furigana
+// says it). Returns the text and the overrides for the resolver.
+export function whyReadings(why = "") {
+  const overrides = {};
+  const text = String(why).replace(/([㐀-鿿々][㐀-鿿々ぁ-ゖ]*)（([ぁ-ゖー]+)）/g, (all, word, reading) => { overrides[word] = reading; return word; });
+  return {text, overrides};
+}

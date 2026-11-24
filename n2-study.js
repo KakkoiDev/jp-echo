@@ -60,14 +60,43 @@ export function estimate(paper, attempt) {
   return {sections, total, complete, pass: complete ? total >= PASS_TOTAL && sections.every(s => s.ok) : null};
 }
 
+// Every finished full exam, oldest first, for the score chart: estimated
+// total against the pass line (a score, never a pass probability). Sections
+// and drills never score all three sections, so they are left out.
+export function scoreSeries(attempts = [], papers = new Map()) {
+  return attempts.filter(a => a.phase === "results" && papers.get(a.paper || a.book))
+    .map(a => ({a, e: estimate(papers.get(a.paper || a.book), a)}))
+    .filter(({e}) => e.complete)
+    .sort((x, y) => String(x.a.completedAt || "").localeCompare(String(y.a.completedAt || "")))
+    .map(({a, e}) => ({at: a.completedAt || "", value: e.total, ok: !!e.pass, book: a.book}));
+}
+export function scoreCaption(series = []) {
+  if (!series.length) return "";
+  const last = series.at(-1), passed = series.filter(p => p.ok).length;
+  return series.length + (series.length === 1 ? " finished exam" : " finished exams") + " · last " + last.value + " / 180 · " + passed + " at or over the pass line with every section's minimum";
+}
+
 // The three recall decks. A target is the stable identity shared with exam
 // questions, so a mock miss and a self-check talk about the same thing.
 export function recallItems(inventory) {
   return {
     meaning: inventory.words.map(([w, r, m]) => ({target: ["word", w, r], prompt: w, reading: r, answer: m})),
     reading: inventory.words.filter(([w, r]) => w !== r).map(([w, r, m]) => ({target: ["word", w, r], prompt: w, reading: r, answer: m})),
-    grammar: inventory.grammar.map(([id, name, hint]) => ({target: ["grammar", id], prompt: name, answer: hint})),
+    grammar: grammarItems(inventory.grammar),
   };
+}
+// A pattern with two meanings is listed twice (一応 ①, 一応 ②). The prompt is
+// the pattern alone; sense/senses say which meaning, and the example sentence
+// shows it in use.
+const SENSE = /\s*([①-⑨])\s*$/;
+function grammarItems(grammar) {
+  const base = name => name.replace(SENSE, "");
+  const count = new Map();
+  for (const [, name] of grammar) if (SENSE.test(name)) count.set(base(name), (count.get(base(name)) || 0) + 1);
+  return grammar.map(([id, name, hint]) => {
+    const m = SENSE.exec(name), senses = m ? Math.max(count.get(base(name)), "①②③④⑤⑥⑦⑧⑨".indexOf(m[1]) + 1) : 0;
+    return {target: ["grammar", id], prompt: base(name), answer: hint, ...(senses > 1 ? {sense: "①②③④⑤⑥⑦⑧⑨".indexOf(m[1]) + 1, senses} : {})};
+  });
 }
 export const recallId = (type, target) => JSON.stringify([type, ...target]);
 function evidenceFits(type, row) {
@@ -265,8 +294,8 @@ export function todayPlan({days, checkpoint = null, comprehension = null, baseli
     // A few minutes over is noise; a quarter hour or more is worth a decision.
     if (wanted > left && minutesFor(wanted) - minutes >= 15) overflow = {checks: wanted - left, minutes: minutesFor(wanted) - minutes};
     steps.push({kind: "recall", glyph: "憶", title: left ? "Word and grammar first checks" : "New checks done for today",
-      line: left ? left + " unchecked N2 words and grammar points · rounds of 20" : goal.firstToday + " first checks today. More is a bonus.",
-      href: "?view=recall&queue=new", minutes, done: !left});
+      line: left ? (goal.firstToday ? goal.firstToday + " of " + (goal.firstToday + left) + " done today · " : left + " unchecked N2 words and grammar points · ") + "rounds of 20" : goal.firstToday + " first checks today. More is a bonus.",
+      href: "?view=recall&queue=new", minutes, done: !left, ...(left && goal.firstToday ? {progress: {done: goal.firstToday, of: goal.firstToday + left}} : {})});
     if (examDate) forecast = firstCheckForecast({unchecked: goal.unchecked, todayLeft: Math.max(0, capacity - goal.firstToday), pace: p, examDate, firstPassDate, now});
   }
 

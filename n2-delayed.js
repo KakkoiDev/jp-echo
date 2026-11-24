@@ -8,6 +8,7 @@
 // listening event. So catching 就任 by ear tomorrow changes the listening
 // evidence only, never the written reading.
 import {localDay, recallItems} from "./n2-study.js";
+import {rubySegments} from "./core.js";
 
 const keyOf = target => JSON.stringify(target);
 const dayOf = at => at ? localDay(new Date(at)) : "";
@@ -138,6 +139,29 @@ export function sentenceParts(check) {
   if (!needle) return [{text: plain}];
   const at = plain.indexOf(needle);
   return [{text: plain.slice(0, at)}, {text: needle, mark: true}, {text: plain.slice(at + needle.length)}].filter(p => p.text);
+}
+
+// An example sentence as ruby segments, the studied word or pattern marked.
+// Needles: the word, or a grammar name split on ・ (〜, ①② and asides
+// dropped); the first one the sentence contains is marked.
+export function patternNeedles(name = "") {
+  return String(name).replace(/[〜～]|[①-⑨]|（[^）]*）|\([^)]*\)/g, "").split(/[・／\s]+/).map(s => s.trim()).filter(s => s.length > 0);
+}
+export function exampleSegments(ja = "", needles = []) {
+  const segments = rubySegments(ja), plain = segments.map(s => s.text).join("");
+  const needle = needles.find(n => n && plain.includes(n));
+  if (!needle) return segments;
+  const a = plain.indexOf(needle), b = a + needle.length, out = [];
+  let at = 0;
+  for (const seg of segments) {
+    const s = at, e = at + seg.text.length; at = e;
+    if (seg.reading || e <= a || s >= b) { out.push(e > a && s < b ? {...seg, mark: true} : seg); continue; }
+    const cut = [Math.max(a, s), Math.min(b, e)];
+    if (cut[0] > s) out.push({text: seg.text.slice(0, cut[0] - s)});
+    out.push({text: seg.text.slice(cut[0] - s, cut[1] - s), mark: true});
+    if (cut[1] < e) out.push({text: seg.text.slice(cut[1] - s)});
+  }
+  return out;
 }
 
 // The detail every delayed check saves with its grade.

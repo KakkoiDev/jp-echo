@@ -70,7 +70,7 @@ test("an exam can be paused: the clock stops, the question hides, the results sa
 
 test("the offline notice waits, scrolls with the page and can be closed (04301125)", () => {
   const js = read("../n2-mock.js"), css = read("../styles.css");
-  assert.match(js, /offlineTimer = setTimeout\(\(\) => \{\n    if \(navigator\.onLine !== false \|\| offlineDismissed\) return;/);
+  assert.match(js, /offlineTimer = setTimeout\(async \(\) => \{\n    if \(navigator\.onLine !== false \|\| offlineDismissed\) return;/);
   assert.match(js, /text: "Close", onclick: \(\) => \{ offlineDismissed = true;/);
   assert.match(css, /\.n2-notices\{display:flex;flex-direction:column;gap:8px\}/, "notices are not stuck over the passage");
   assert.match(css, /\.n2-notices \.notice\.alert\{position:sticky/, "only a failed save stays in view");
@@ -125,4 +125,69 @@ test("the tools shelf has Day and Night Radio and scrolls sideways (815cb295)", 
   assert.match(app, /if\(id==="day-radio"\)\{location\.assign\("\.\/n2-mock\.html\?view=radio"\)/);
   assert.match(css, /\.tool-shelf\{[^}]*overflow-x:auto/);
   assert.match(css, /\.tool-shelf-tile\{flex-shrink:0/);
+});
+
+// ── The second batch (24 Nov 2026, afternoon) ──
+import {exampleSegments, patternNeedles} from "../n2-delayed.js";
+import {recallItems, scoreSeries, scoreCaption} from "../n2-study.js";
+import {examplesFromDecks} from "../day-radio.js";
+import {solutionOf, whyReadings} from "../n2-forms.js";
+
+test("every word and grammar card has an example sentence, shown with furigana and the item underlined (e5f56511)", () => {
+  const inv = JSON.parse(read("../n2-inventory.json"));
+  const map = examplesFromDecks(inv, [JSON.parse(read("../decks/n2-words.json")), JSON.parse(read("../decks/n2-grammar.json"))]);
+  const items = recallItems(inv);
+  for (const type of ["meaning", "grammar"]) assert.ok(items[type].every(i => map.get(JSON.stringify(i.target))?.length), type + ": every card has a sentence");
+  const segs = exampleSegments("この方法【ほうほう】なら、問題【もんだい】は解決【かいけつ】し得【う】る。", patternNeedles("得る（える・うる）"));
+  assert.deepEqual(segs.filter(s => s.mark).map(s => s.text), ["得", "る"]);
+  assert.equal(segs.find(s => s.text === "方法").reading, "ほうほう");
+  assert.deepEqual(patternNeedles("～ところに・～ところへ"), ["ところに", "ところへ"]);
+  const js = read("../n2-mock.js");
+  assert.match(js, /\$\("recall-example"\)\.hidden = !example \|\| type !== "grammar";/, "grammar shows its sentence from the start");
+  assert.match(js, /playAnswer\(\);\n  \}/, "revealing plays the answer (0938f16e)");
+  assert.match(js, /if \(revealed\) playAnswer\(\); else reveal\(\);/, "tapping the card again replays it");
+});
+
+test("a pattern with two meanings says which, and 得る shows both readings (22f408d3, 3ac58df2, 9cca643e)", () => {
+  const g = recallItems(JSON.parse(read("../n2-inventory.json"))).grammar;
+  const ichiou = g.filter(i => i.prompt === "一応");
+  assert.deepEqual(ichiou.map(i => [i.sense, i.senses]), [[1, 2], [2, 2]]);
+  assert.ok(!g.some(i => /[①-⑨]/.test(i.prompt)), "no circled numbers on a card");
+  assert.equal(g.find(i => i.target[1] === "得る-得る").prompt, "得る（える・うる）");
+});
+
+test("Recall has a Previous card that lets a mistaken grade be redone (6799eb65)", () => {
+  const js = read("../n2-mock.js"), html = read("../n2-mock.html");
+  assert.match(html, /id="recall-prev"[^>]*aria-label="Previous card"/);
+  assert.match(js, /data\.recall = data\.recall\.filter\(x => x\.id !== last\.row\.id\)\.concat\(last\.row\.r \? \[last\.row\.r\] : \[\]\);/, "going back restores the record from before");
+});
+
+test("first checks under way show a progress bar on the plan (report of 14:23)", () => {
+  assert.match(read("../components.js"), /bar\.className="drill-bar plan-step-progress";bar\.setAttribute\("role","progressbar"\)/);
+  assert.match(read("../n2-mock.js"), /progress: progressOf\(step, ctx\)/);
+});
+
+test("finished exams are charted against the pass line, drills left out (report of 14:24)", () => {
+  const paper = {questions: [0, 1, 2, 3].flatMap(skill => [1, 2].map(i => ({skill, index: skill * 2 + i - 1, key: 1})))};
+  const all = Array(8).fill(1), half = [1, 2, 2, 2, 1, 2, 1, 2];
+  const papers = new Map([["a", paper], ["b", paper]]);
+  const series = scoreSeries([{book: "b", phase: "results", completedAt: "2026-11-24T10:00:00Z", answers: half}, {book: "a", phase: "results", completedAt: "2026-11-23T10:00:00Z", answers: all}, {book: "a", phase: "written", answers: all}], papers);
+  assert.deepEqual(series.map(p => [p.book, p.value, p.ok]), [["a", 180, true], ["b", 75, false]]);
+  assert.match(scoreCaption(series), /^2 finished exams · last 75 \/ 180 · 1 at or over the pass line/);
+  assert.match(read("../n2-mock.html"), /id="score-chart"/);
+});
+
+test("the offline notice asks the network before it shows (8907ffd7)", () => {
+  assert.match(read("../n2-mock.js"), /if \(await reachable\(\)\) return;/);
+});
+
+test("solutions show the completed sentence with furigana and the answer underlined (6382b2ef, 93015bcb, a9a209ae)", () => {
+  const bank = JSON.parse(read("../n2-echo-bank.json"));
+  const vg = bank.filter(q => q.skill === "Vocabulary" || q.skill === "Grammar");
+  assert.ok(vg.every(q => solutionOf(q)), "every November vocabulary and grammar question has a solution line");
+  assert.deepEqual(solutionOf(bank.find(q => q.prompt.startsWith("計画はまだ検討"))), {text: "計画はまだ検討の段階にある。", mark: "段階", overrides: {}});
+  assert.deepEqual(solutionOf(bank[0]), {text: "予算案は議会で承認された。", mark: "承認", overrides: {承認: "しょうにん"}}, "a 読み方 answer is the word's reading");
+  assert.equal(solutionOf({skill: 0, prompt: "彼は何事もなかった（　）、作業を続けた。", choices: ["かのように"], key: 1}).text, "彼は何事もなかったかのように、作業を続けた。", "何 in a sentence is not a question");
+  assert.deepEqual(whyReadings("～辛い（づらい） · hard to do"), {text: "～辛い · hard to do", overrides: {辛い: "づらい"}});
+  assert.match(read("../n2-mock.js"), /solution\.replaceChildren\(\.\.\.await solutionLine\(q\)\)/);
 });
