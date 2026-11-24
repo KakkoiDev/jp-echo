@@ -5,6 +5,7 @@
 // Pure queue and step logic plus a small player with speech injected, so it is
 // tested without a speech engine (test/day-radio.test.js).
 import {recallItems, weakTargets, localDay} from "./n2-study.js";
+import {spokenWord, withReading} from "./japanese-readings.js";
 
 const keyOf = target => JSON.stringify(target);
 const plainText = s => String(s || "").replace(/【[^】]*】/g, "");
@@ -95,17 +96,9 @@ export const RECALL_PAUSES = Object.freeze([3, 5, 8]);
 // What one item sounds like. Each step is {say, lang} or {pause} or
 // {reveal:true} (the screen shows the answer). Without an example the item
 // still plays, and the screen says so.
-// A word as the voice should say it: its kanji carry the reading, so a device
-// voice never guesses (重役 is じゅうやく, never おもやく). speechText turns
-// 【readings】 into what is spoken; the screen shows the word itself.
-export const spokenWord = (text, reading) => reading && text && text !== reading && !text.includes("【") ? text + "【" + reading + "】" : (text || reading || "");
-// A sentence with its tested word annotated, for examples that came without
-// readings (exam prompts). Only an exact, unannotated occurrence is changed.
-export function withReading(ja, text, reading) {
-  if (!ja || !text || !reading || text === reading || ja.includes(text + "【")) return ja || "";
-  const at = ja.indexOf(text);
-  return at < 0 ? ja : ja.slice(0, at) + spokenWord(text, reading) + ja.slice(at + text.length);
-}
+// spokenWord / withReading come from JP Core (japanese-readings.js): the voice
+// gets the 【reading】, never a bare kanji word to guess.
+export {spokenWord, withReading};
 export function daySteps(mode, item, example, {pause = 5} = {}) {
   const word = item.kind === "word" ? spokenWord(item.text, item.reading) : item.text;
   if (mode === "listen") return [

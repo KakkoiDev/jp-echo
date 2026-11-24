@@ -7,6 +7,16 @@ export const readingText=text=>rubySegments(text).map(part=>part.reading||part.t
 export const speechText=text=>rubySegments(text).map(part=>part.reading
  ?part.reading.replace(/[ぁ-ゖ]/g,char=>String.fromCharCode(char.charCodeAt(0)+0x60))
  :part.text).join('');
+// A word handed to a device voice carries its reading: a bare kanji word is
+// guessed (重役 → おもやく). speechText then speaks the reading; the screen
+// shows the word. withReading annotates the first exact, unannotated
+// occurrence of a word in a sentence that came without readings.
+export const spokenWord=(text,reading)=>reading&&text&&text!==reading&&!text.includes('【')?text+'【'+reading+'】':(text||reading||'');
+export function withReading(sentence,text,reading){
+ if(!sentence||!text||!reading||text===reading||sentence.includes(text+'【'))return sentence||'';
+ const at=sentence.indexOf(text);
+ return at<0?sentence:sentence.slice(0,at)+spokenWord(text,reading)+sentence.slice(at+text.length);
+}
 // Echo's compact dictionary omits some common compounds and spelling variants.
 const FALLBACK_READINGS=new Map([
  ['見積','みつもり'],
