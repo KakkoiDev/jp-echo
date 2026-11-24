@@ -72,3 +72,16 @@ test('one invite carries the AI key, the Groq speech key, or both',async()=>{
  const backup=exportBackup([],{speechKeys:{groq:'gsk_shared'},sharedKey:{speech:true,exp:1}},[]);
  assert.equal(JSON.stringify(backup).includes('gsk_shared'),false,'never in an export');
 });
+
+test('key-share is Echo\'s layer over the vendored link-core; links sealed before it still open',async()=>{
+ const vendored=read('link-core.js'),sw=read('sw.js'),pkg=read('package.json');
+ assert.match(vendored,/^\/\/ Vendored from KakkoiDev\/link-core v\d+\.\d+\.\d+ \(commit [0-9a-f]{40}\)/,'the copy names its source commit');
+ assert.match(read('key-share.js'),/const APP = "echo-ai-key-v1";/,'Echo\'s associated data never changes');
+ assert.match(sw,/"\.\/link-core\.js"/,'cached for offline');
+ assert.match(pkg,/node --check link-core\.js/);
+ // Sealed by Echo's own key-share.js before link-core (24 Nov 2026).
+ const body=await openKey('v1.YoYcqjWDmYHjQiQiOlJlkw.re_mK8lFXNgsWW-2.onbhnLcPu0OIFS3hij3CA4y6wknllAnrcFtBamnvw46OVcNwGgzEKcRuRirycXe220vtM0pNxKav9-XLSsNNmDFGP1rNbwlaGipJlo1_rXxlHHe4n2Ueow','30KE-7SH2-MRED');
+ assert.equal(body.key,'sk-fixture');
+ // Sealed by Minihongo's copy: same scheme, another app, so it never opens here.
+ await assert.rejects(openKey('v1.JOuslNBiyepNr7dhrVhJpA.a-Rt4axUVoUkQEFw.u8kgyK5VDpFkyuZC4dGpSi8RS5xqa6AMGsn20Ri51QU3TUlFasaeotjG-anjzW2EWwzC014oR9_-eLUlWCU','ME8S-TYVQ-HT8T'),e=>e instanceof KeyShareError&&e.code==='wrong-code');
+});

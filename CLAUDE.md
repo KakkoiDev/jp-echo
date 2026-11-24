@@ -147,8 +147,10 @@ Before considering the change complete:
   gist token and the gist URL. Add any new credential there, with a test.
 - **A shared AI key travels encrypted, in the #fragment only.** Settings → Invite
   someone seals `{provider, key, model?}` and/or `speech: {groq}` (the AI key,
-  the Groq speech key, or both) with `key-share.js` (Minihongo's
-  scheme: PBKDF2 600k + AES-GCM, Echo's own associated data). The unlock code
+  the Groq speech key, or both) with `key-share.js`, Echo's thin layer over
+  `link-core.js` (vendored from KakkoiDev/link-core, the header names the
+  commit; never edit the copy, change link-core and bring it over: PBKDF2 600k
+  + AES-GCM, associated data `echo-ai-key-v1` forever). The unlock code
   is shown to the sender only and never goes into the link or the Share sheet.
   On arrival the key is saved like a typed key (an explicit save), marked in
   `settings.sharedKey` (`provider`, `speech`), both removed after its expiry, and once unlocked the token
