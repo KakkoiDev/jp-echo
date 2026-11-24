@@ -24,6 +24,27 @@ export const TAG = Object.freeze(Object.fromEntries(TAGS.map(t => [t.id, t])));
 // unseen-passage check. Full mocks may still use them.
 export const HELD_OUT = Object.freeze(["n2-set-19", "n2-set-20"]);
 
+// A prepared drill reserves its source material even before an answer is
+// recorded. Timestamp the first reservation so later practice cannot
+// invalidate a full sitting that was already completed.
+export function drillExposure(papers) {
+  const firstUse = new Map(), sources = new Set();
+  for (const p of papers) {
+    if (!p.drill) continue;
+    const sets = new Set([p.drill.set, p.drill.sample].filter(Boolean));
+    for (const q of p.questions || []) {
+      if (!q.source) continue;
+      sources.add(q.source);
+      sets.add(q.source.split("#")[0]);
+    }
+    for (const id of sets) {
+      const at = p.createdAt || "";
+      if (!firstUse.has(id) || at < firstUse.get(id)) firstUse.set(id, at);
+    }
+  }
+  return {firstUse, sources};
+}
+
 // Where an authored question came from: a copied question keeps `source`; a
 // question on a full authored paper (a realistic edition, "…-rN") is its set
 // and index. The older template forms share the set ids but not the questions.
@@ -81,9 +102,10 @@ export function tagDrill({tag, sets = [], tagMap = {}, exclude = new Set(), seen
   const pool = [];
   for (const set of sets) {
     if (!set?.id || exclude.has(set.id) || HELD_OUT.includes(set.id)) continue;
+    const familiar = new Set(set.questions.filter((q,i) => seen.has(set.id+"#"+i) && q.context).map(q => q.context));
     set.questions.forEach((q, index) => {
       const source = set.id + "#" + index;
-      if ((q.skill === "Reading" || q.skill === "Listening") && tagsOf(tagMap, source)[0] === tag && !seen.has(source)) pool.push({q, index, source, set: set.id});
+      if ((q.skill === "Reading" || q.skill === "Listening") && tagsOf(tagMap, source)[0] === tag && !seen.has(source) && !familiar.has(q.context)) pool.push({q, index, source, set: set.id});
     });
   }
   // Spread across sets, reading before listening, as on the paper.

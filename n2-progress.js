@@ -49,7 +49,7 @@ export function scored(data) {
     if(!paper) continue;
     paper.questions.forEach((q,index)=>{
       if(a.phase!=="results" && (a.phase==="written" || q.skill===3)) return;
-      rows.push({book:a.book,attemptId:a.id,at:a.completedAt||a.startedAt||"",paper:paper.id,index,skill:q.skill,target:q.target,dimension:q.dimension,context:q.context,
+      rows.push({book:a.book,attemptId:a.id,at:a.completedAt||a.startedAt||"",paper:paper.id,index,source:q.source,skill:q.skill,target:q.target,dimension:q.dimension,context:q.context,
         correct:a.answers[index]===q.key,guessed:!!a.guesses[index],answered:!!a.answers[index],seconds:Math.round(a.time[index]/1000)});
     });
   }

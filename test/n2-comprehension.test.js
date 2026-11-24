@@ -92,3 +92,9 @@ test("every authored reading and listening question names the line that decides 
   });
   assert.equal(Object.keys(cues).length, need);
 });
+
+test("a new question on a passage seen in a timed section is not a fresh drill", () => {
+  const set={id:"n2-set-2",questions:["old","old","different"].map(context=>({skill:"Reading",context}))};
+  const map=Object.fromEntries(set.questions.map((_,i)=>["n2-set-2#"+i,["exception"]]));
+  assert.deepEqual(tagDrill({tag:"exception",sets:[set],tagMap:map,seen:new Set(["n2-set-2#0"])}).map(x=>x.index),[2]);
+});

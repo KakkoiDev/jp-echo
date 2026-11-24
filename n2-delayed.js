@@ -23,7 +23,7 @@ export function previousDay(today = localDay()) {
 }
 
 // The context an exam answer was given in, as examplesFromSets names it.
-export const examContextId = row => String(row.paper || "").split("@")[0] + "#" + row.index;
+export const examContextId = row => row.source || String(row.paper || "").split("@")[0] + "#" + row.index;
 
 const dimensionFor = (target, dimension) => target?.[0] === "grammar" ? "grammar" : dimension === "reading" ? "reading" : "meaning";
 
@@ -34,7 +34,7 @@ function candidates({recall, evidence, events, yesterday}) {
   const out = new Map(), earlierMiss = new Set();
   const add = ({target, modality, dimension, why, at, seen}) => {
     if (!target) return;
-    dimension = dimensionFor(target, dimension);
+    dimension = dimensionFor(target, modality === "audio" ? "meaning" : dimension);
     if (dimension === "reading") modality = "print"; // a kanji reading is a print skill
     const k = keyOf([modality, dimension, target]);
     const prior = out.get(k);
@@ -156,8 +156,8 @@ export const audioGrade = grade => grade === "instant" ? "got" : grade === "slow
 // instantly (print) or caught (audio). Kept apart from first-check counts.
 export function delayedAccuracy({recall = [], events = [], now = new Date(), days = 7}) {
   const since = now.getTime() - days * 86_400_000, grades = [];
-  for (const r of recall) for (const e of r.events || []) if (CHECK_SOURCES.has(e.source) && Date.parse(e.at) >= since) grades.push(e.grade === "instant");
-  for (const e of events) if (e.kind === "recall" && CHECK_SOURCES.has(e.context?.source) && Date.parse(e.at) >= since) grades.push(e.grade === "got");
+  for (const r of recall) for (const e of r.events || []) if (CHECK_SOURCES.has(e.source) && Date.parse(e.at) >= since && Date.parse(e.at) <= now.getTime()) grades.push(e.grade === "instant");
+  for (const e of events) if (e.kind === "recall" && CHECK_SOURCES.has(e.context?.source) && Date.parse(e.at) >= since && Date.parse(e.at) <= now.getTime()) grades.push(e.grade === "got");
   const correct = grades.filter(Boolean).length;
   return {n: grades.length, correct, rate: grades.length ? correct / grades.length : null};
 }

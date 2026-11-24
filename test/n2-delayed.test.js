@@ -101,3 +101,11 @@ test("print sentences underline the target when it is written there", () => {
   assert.deepEqual(sentenceParts(check), [{text: "部長に"}, {text: "就任", mark: true}, {text: "した。"}]);
   assert.deepEqual(sentenceParts({...check, example: {id: "y", ja: "別の文。"}}), [{text: "別の文。"}]);
 });
+
+test("a listening question copied from an authored set preserves skill and excludes its original context", () => {
+  const inventory={words:[["例","れい","example"]],grammar:[]}, target=["word","例","れい"];
+  const evidence=[{target,answered:true,correct:false,at:"2026-11-23T12:00:00Z",skill:3,dimension:"reading",source:"n2-set-8#7",paper:"adaptive-sample",index:0}];
+  const examples=new Map([[JSON.stringify(target),[{id:"n2-set-8#7",ja:"A"},{id:"deck",ja:"B"}]]]);
+  const [q]=delayedChecks({inventory,evidence,examples,today:"2026-11-24"});
+  assert.equal(q.modality,"audio"); assert.equal(q.dimension,"meaning"); assert.equal(q.example.id,"deck");
+});

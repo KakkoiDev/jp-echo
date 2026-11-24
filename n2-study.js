@@ -1,3 +1,4 @@
+import {drillExposure} from "./n2-comprehension.js";
 import {parseGoalDate, firstPassEnd} from "./jlpt-goal.js";
 // N2 study logic with no DOM: the exam calendar, section estimates, the recall
 // queue and the daily goal. n2-mock.js renders it; test/n2-study.test.js holds it.
@@ -345,6 +346,7 @@ export const EXAM_CHECKLIST = Object.freeze([
 // A conservative practice benchmark. Evaluate first sittings and count flagged
 // correct answers as uncertain. This score is independent of JLPT scaled scores.
 export function sprintCheckpoint(attempts, papers, eligibleBooks, now = new Date()) {
+  const {firstUse} = drillExposure(papers.values());
   const first = new Map();
   for (const a of [...attempts].sort((x,y) => (x.startedAt || "").localeCompare(y.startedAt || ""))) {
     if (eligibleBooks.includes(a.book) && !first.has(a.book)) first.set(a.book, a);
@@ -353,6 +355,7 @@ export function sprintCheckpoint(attempts, papers, eligibleBooks, now = new Date
   const runs = [];
   for (const a of first.values()) {
     const finish = new Date(a.completedAt), paper = papers.get(a.paper || a.book);
+    if (firstUse.has(a.book) && firstUse.get(a.book) <= a.completedAt) continue;
     if (a.unscorable || a.phase !== "results" || !a.startedAt || !(finish >= cutoff && finish <= now) ||
         localDay(new Date(a.startedAt)) !== localDay(finish) || !paper || !Array.isArray(a.guesses)) continue;
     const sections = SECTIONS.map(section => {

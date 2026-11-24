@@ -8,7 +8,7 @@ import {REPORT_REASONS,createReport,fileReport,reportSyncLine,reportsAdapter,scr
 import {recognitionFactory} from "./speech.js";
 import {speakOnce,speakAndWait,japaneseVoices} from "./speech.js";
 import {spokenWord,radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
-import {TAG,TAGS,HELD_OUT,CAUSES,comprehensionStats,weakestTag,tagDrill,attemptTags,tagsOf,sourceOf} from "./n2-comprehension.js";
+import {TAG,TAGS,HELD_OUT,CAUSES,comprehensionStats,weakestTag,tagDrill,drillExposure,attemptTags,tagsOf,sourceOf} from "./n2-comprehension.js";
 import {delayedChecks,checkItems,checkAsk,contextNote,sentenceParts,checkDetail,audioGrade,delayedAccuracy,CHECK_SOURCE,WHY_LINE,evidenceFor,evidenceLine} from "./n2-delayed.js";
 
 // Official workbook answer numbering. Listening examples are excluded.
@@ -71,7 +71,7 @@ function voiceCheck() {
   speechSynthesis.addEventListener?.("voiceschanged", draw);
   setTimeout(draw, 1200);
 }
-function saved(message = "Saved") { $("n2-saved").textContent = ""; setTimeout(() => { $("n2-saved").textContent = message; }, 30); setNotice("save", null); }
+function announceSaved(message = "Saved") { $("n2-saved").textContent = ""; setTimeout(() => { $("n2-saved").textContent = message; }, 30); setNotice("save", null); }
 function saveFailed(retry) {
   setNotice("save", el("div", {class: "notice alert", role: "alert"},
     el("p", {text: "Your last answer wasn’t saved. This browser’s storage is full or blocked. Nothing else was lost."}),
@@ -276,7 +276,8 @@ async function hub() {
   const done = new Set(attempts.filter(a => a.phase === "results").map(a => a.book));
   const finished = attempts.filter(a => a.phase === "results" && !a.book.startsWith("adaptive-")).sort((a, b) => (b.completedAt || "").localeCompare(a.completedAt || ""));
   const latestDone = attempts.filter(a => a.phase === "results").sort((a, b) => (b.completedAt || "").localeCompare(a.completedAt || ""))[0];
-  const next = bookIds.find(id => !done.has(id));
+  const {firstUse} = drillExposure(data.papers);
+  const next = bookIds.find(id => !done.has(id) && !firstUse.has(id));
   const {providerReady} = await import("./api.js");
   const aiReady = providerReady(settings);
   // The same batch Today's checks opens (examples only change the context).
@@ -766,7 +767,7 @@ async function recall() {
       await access("recall", "put", record);
       data.recall = data.recall.filter(x => x.id !== record.id).concat(record);
       tally[value]++; if (value !== "instant") missed.push(current);
-      saved("Saved: " + value);
+      announceSaved("Saved: " + value);
       index++; draw();
     } catch (error) { revealed = true; saveFailed(() => grade(value)); }
   }
@@ -803,11 +804,13 @@ async function startSection(section, ctx) {
   await materials();
   const {data} = ctx;
   const sat = new Set(data.attempts.map(a => a.book));
-  const drilled = data.papers.filter(p => p.drill?.section === section).sort((a, b) => (a.createdAt || "").localeCompare(b.createdAt || ""));
-  // A set already used by the short sample counts as seen for sections too.
-  const used = new Set([...drilled.map(p => p.drill.set), ...data.papers.filter(p => p.drill?.sample).map(p => p.drill.sample)]);
+  const used = new Set();
+  for (const p of data.papers.filter(p => p.drill)) {
+    if (p.drill.section === section) used.add(p.drill.set);
+    for (const q of p.questions) if (q.skill === spec.skill && q.source) used.add(q.source.split("#")[0]);
+  }
   const sets = bookIds.filter(realistic).filter(x => !HELD_OUT.includes(x)).reverse();
-  const id = sets.find(x => !used.has(x) && !sat.has(x)) || sets.find(x => !used.has(x)) || drilled[0]?.drill.set;
+  const id = sets.find(x => !used.has(x) && !sat.has(x));
   if (!id) { warn("No set is available for a timed " + spec.en.toLowerCase() + " section on this device."); return; }
   try {
     const set = await json(setFile(id));
@@ -825,7 +828,8 @@ async function startSection(section, ctx) {
 async function startSample(ctx) {
   await materials();
   const sat = new Set(ctx.data.attempts.map(a => a.book));
-  const id = bookIds.filter(realistic).filter(x => !HELD_OUT.includes(x) && !sat.has(x)).at(-1);
+  const {firstUse} = drillExposure(ctx.data.papers);
+  const id = bookIds.filter(realistic).filter(x => !HELD_OUT.includes(x) && !sat.has(x) && !firstUse.has(x)).at(-1);
   if (!id) { warn("No unsat set is left for a short sample."); return; }
   try {
     const rows = realisticRows(await json(setFile(id)));
@@ -848,7 +852,7 @@ async function startTagDrill(tag, ctx) {
   const {data} = ctx;
   try {
     const [map, sets] = await Promise.all([tagMap(), Promise.all(Object.keys(themes).map(id => json(setFile(id)).then(set => ({...set, id})).catch(() => null)))]);
-    const seen = new Set(data.papers.filter(p => p.drill?.tag).flatMap(p => p.questions.map(q => q.source)));
+    const seen = drillExposure(data.papers).sources;
     const picks = tagDrill({tag, sets: sets.filter(Boolean), tagMap: map, exclude: new Set(data.attempts.map(a => a.book)), seen});
     if (!picks.length) {
       if (ctx.aiReady) { openGenerator({aiReady: true, focus: "mixed", count: 10, tag}); return; }
@@ -895,11 +899,18 @@ async function checks() {
   const tally = {instant: 0, slow: 0, missed: 0}, missed = [];
   const grades = [...document.querySelectorAll("#check-actions [data-check-grade]")];
   const audio = c => c.modality === "audio";
-  const speakCurrent = () => {
+  let heardPrompt = false, playback = 0, skipped = 0;
+  const speakCurrent = async () => {
     const c = session[index]; if (!c) return;
-    plays++;
-    $("check-say-label").textContent = "Hear it again";
-    say(audio(c) && !revealed && c.example ? c.example.ja : revealed && c.example ? c.example.ja : spokenWord(c.text, c.reading));
+    if (revealed) { say(c.example?.ja || spokenWord(c.text, c.reading)); return; }
+    const run = ++playback;
+    window.speechSynthesis?.cancel();
+    const ended = await speakAndWait(c.example?.ja || spokenWord(c.text, c.reading), {voice:voice(), rate:Number(settings.rate) || 1});
+    if (run !== playback || session[index] !== c || revealed) return;
+    if (ended) {
+      plays++; heardPrompt = true; $("check-reveal").disabled = false;
+      $("check-say-label").textContent = "Hear it again";
+    } else $("check-note").textContent = "Audio did not finish. Play again or skip this check.";
   };
   const sentence = (c, withEnglish) => {
     $("check-sentence-ja").replaceChildren(...sentenceParts(c).map(p => p.mark ? el("u", {class: "n2-mark", text: p.text}) : document.createTextNode(p.text)));
@@ -911,7 +922,9 @@ async function checks() {
   $("check-sub").textContent = session.length ? session.length + " from yesterday" + (byEar ? " · " + byEar + " by ear" : "") : "";
   function draw(gesture = false) {
     const c = session[index];
-    revealed = false; plays = 0; responseMs = 0;
+    revealed = false; plays = 0; responseMs = 0; heardPrompt = false; playback++;
+    $("check-reveal").disabled = !!c && audio(c);
+    $("check-skip-audio").hidden = !c || !audio(c);
     $("check-progress").textContent = session.length ? Math.min(index + 1, session.length) + " / " + session.length : "";
     $("check-bar").style.width = (session.length ? index / session.length * 100 : 0) + "%";
     $("check-answer").hidden = true; $("check-reveal").hidden = false; grades.forEach(b => b.hidden = true);
@@ -937,7 +950,8 @@ async function checks() {
     if (audio(c) && gesture) speakCurrent();
   }
   function reveal() {
-    const c = session[index]; if (!c || revealed) return;
+    const c = session[index]; if (!c || revealed || (audio(c) && !heardPrompt)) return;
+    $("check-skip-audio").hidden = true;
     responseMs = clock.read(); revealed = true;
     $("check-prompt").textContent = c.prompt;
     $("check-prompt").classList.toggle("long", c.prompt.length > 8);
@@ -967,7 +981,7 @@ async function checks() {
         data.recall = data.recall.filter(r => r.id !== id).concat(record);
       }
       tally[value]++; if (value !== "instant") missed.push(c);
-      saved("Saved: " + value);
+      announceSaved("Saved: " + value);
       index++; draw(true);
     } catch (error) { revealed = true; saveFailed(() => grade(value)); }
   }
@@ -975,14 +989,18 @@ async function checks() {
     clock?.stop();
     $("check-card").hidden = true; $("check-actions").hidden = true; $("check-done").hidden = false;
     $("check-bar").style.width = "100%";
-    $("check-done-title").textContent = session.length + " checked a day later";
-    $("check-done-line").textContent = tally.instant + " instant · " + tally.slow + " slow · " + tally.missed + " missed. Today's misses come back tomorrow.";
+    $("check-done-title").textContent = (session.length - skipped) + " checked a day later";
+    $("check-done-line").textContent = tally.instant + " instant · " + tally.slow + " slow · " + tally.missed + " missed · " + skipped + " skipped. Today's misses come back tomorrow.";
     $("check-missed").replaceChildren(...missed.map(m => el("li", {},
       el("span", {class: "drill-missed-text"}, el("span", {lang: "ja", text: m.prompt + (m.reading && m.reading !== m.prompt ? "（" + m.reading + "）" : "")}), el("span", {class: "hint", text: m.answer + " · " + (audio(m) ? "by ear" : "in print")})))));
   }
   $("check-reveal").onclick = reveal;
   $("check-say").onclick = speakCurrent;
   reportCard = () => { const c = session[index]; return c && !$("check").hidden ? {type: "n2-check", id: JSON.stringify(c.target), text: c.text, reading: c.reading, quote: c.example?.ja ? c.example.ja.replace(/【[^】]*】/g, "") : c.text, extra: {view: "check", example: c.example?.ja, exampleId: c.example?.id, modality: c.modality, dimension: c.dimension}} : null; };
+  $("check-skip-audio").onclick = () => {
+    if (!session[index] || !audio(session[index]) || revealed) return;
+    window.speechSynthesis?.cancel(); skipped++; index++; draw(true);
+  };
   $("check-card").onclick = e => { if (!e.target.closest("button")) reveal(); };
   grades.forEach(b => b.onclick = () => grade(b.dataset.checkGrade));
   document.addEventListener("keydown", e => {
@@ -1011,7 +1029,7 @@ async function dayRadio() {
   let queue = [], heard = new Set(), revealed = false, current = null, wake = null, ringTimer = 0;
   const heardIds = new Map();
   for (const e of data.events) if (e.kind === "exposure" && e.context?.exampleId) heardIds.set(JSON.stringify(e.target), new Set([...(heardIds.get(JSON.stringify(e.target)) || []), e.context.exampleId]));
-  const record = async event => { try { await access("events", "put", event); data.events.push(event); if (event.kind === "recall") saved("Saved: " + event.grade); } catch (e) { saveFailed(() => record(event)); } };
+  const record = async event => { try { await access("events", "put", event); data.events.push(event); if (event.kind === "recall") announceSaved("Saved: " + event.grade); } catch (e) { saveFailed(() => record(event)); } };
   const exampleFor = item => item.example !== undefined ? item.example
     : mode === "listen" ? (examples.get(JSON.stringify(item.target)) || [])[0] || null
     : chooseExample(examples.get(JSON.stringify(item.target)) || [], heardIds.get(JSON.stringify(item.target)) || new Set());
@@ -1105,6 +1123,7 @@ async function dayRadio() {
   }
   async function rate(grade) {
     if (!current || !revealed) return;
+    revealed = false;
     $("day-rate").hidden = true;
     await record(radioEvent({target: current.target, kind: "recall", grade, source: "day-radio", mode, exampleId: exampleFor(current)?.id}));
   }
@@ -1373,7 +1392,7 @@ async function exam() {
   // One tap says why a comprehension answer went wrong; it stays on the attempt.
   async function setCause(q, cause) {
     state.causes = {...(state.causes || {}), [q.index]: cause};
-    if (archivedView) { try { await access("history", "put", state); saved(); } catch (e) { saveFailed(() => setCause(q, cause)); return; } }
+    if (archivedView) { try { await access("history", "put", state); announceSaved(); } catch (e) { saveFailed(() => setCause(q, cause)); return; } }
     else persist();
   }
   function causeRow(q) {

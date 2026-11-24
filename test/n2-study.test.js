@@ -179,3 +179,13 @@ test("after the exam, maintenance is checks and one radio round in about 15 minu
   assert.ok(m.minutes<=15);
   assert.equal(resultsMonth(new Date(2026,11,6)),"late January");
 });
+
+test("drilling part of a set disqualifies a later first sitting, never an earlier completed one", () => {
+  const day = "2026-11-24";
+  const questions = [0,1,2,3].map((skill,index)=>({skill,index,key:1}));
+  const book = "n2-set-8";
+  const attempt = {book, phase:"results", startedAt:day+"T08:00:00Z", completedAt:day+"T11:00:00Z", answers:[1,1,1,1], guesses:[false,false,false,false]};
+  const run = createdAt => sprintCheckpoint([attempt],new Map([[book,{questions}],["short",{createdAt,drill:{tag:"change"},questions:[{source:book+"#89"}]}]]),[book],new Date(day+"T12:00:00Z"));
+  assert.equal(run(day+"T07:00:00Z").recent.length,0);
+  assert.equal(run(day+"T11:30:00Z").recent.length,1);
+});
