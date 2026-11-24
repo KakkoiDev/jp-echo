@@ -2123,3 +2123,19 @@ html.motion-off .n2-breath span{transition:none}
 a.library-tool.n2-day-link{text-decoration:none;color:inherit;margin:4px 0 12px;border-bottom:1px solid var(--rule)}
 /* The N2 page has no sidebar: undo the app's desktop grid and centre the bars. */
 @media(min-width:1024px){body.n2{display:block}body.n2 main{grid-column:auto;margin:0 auto;padding-inline:32px}.n2 .review-actions{left:50%;right:auto;transform:translateX(-50%);width:min(760px,100%)}}
+
+/* Saved words (specs/echo-reader SPEC §4.4; boards SavedStates, SavedWords,
+   SavedWordsEmpty, LibraryToolsSaved, WordSaved, WordUnsaved). SavedMark is
+   one drawn bookmark: off a --sumi outline, on filled --seal. In rows it is
+   the 12px mark, never a button; on the word sheet it is the IconButton whose
+   pressed state is the seal-tint one the flag uses. */
+.saved-glyph{display:block;flex-shrink:0}
+.saved-mark{display:inline-flex;align-items:center;flex-shrink:0;color:var(--sumi)}
+.saved-mark .saved-glyph{color:inherit}
+.saved-mark[data-saved=true],.icon-button[aria-pressed="true"] .saved-glyph{color:var(--seal)}
+.saved-mark[data-saved=true] .saved-glyph,.icon-button[aria-pressed="true"] .saved-glyph{fill:var(--seal)}
+.saved-mark-slot{width:9px;flex-shrink:0}
+.search-row>.saved-mark,.search-row>.saved-mark-slot{align-self:flex-start;margin:8px -4px 0 0}
+.notes-row>.saved-mark,.notes-row>.saved-mark-slot{margin:7px -6px 0 0}
+.point-row i:has(.saved-mark){display:inline-flex;align-items:center;gap:8px}
+.lookup-row .saved-mark{margin-left:-4px}

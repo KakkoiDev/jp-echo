@@ -30,9 +30,9 @@ import {dueSentences,ensureSchedule,isDue,reviewSentence} from "./srs.js";
 import {reviewAvailabilityMessage,reviewStats,dailyReviewBudget,reviewOrder,sessionLimit,limitReviewSession,extraStudySession,dueLine,ensureReviewTrack,nextSkill,recordReviewMode,reviewMode,reviewModeMeta,skillMix,skillReason} from "./review-modes.js";
 import {DEFAULT_TIME,REMINDER_TAG,reminderText,shouldRemind} from "./reminders.js";
 import {saveDiscussionTurn,saveWordAction,removeWordAction} from "./actions.js";
-import {listWords,mergeWords,putWord as dbPutWord,replaceWords as dbReplaceWords,validateSavedWords} from "./saved-words.js";
+import {getWord,isSaved,listWords,mergeWords,putWord as dbPutWord,replaceWords as dbReplaceWords,savedOnly,validateSavedWords} from "./saved-words.js";
 // New shared UI comes from the component library (COMPONENTS.md).
-import {flagSvg,renderFlagButton,grammarList,skillGlyph,skillTrio,expandableList,fitTextArea,kanjiNumeral,toolShelf,toolList,renderFilterButton,wireFilterButton,anchorStripHtml,hydrateHeaderSearch,chevronSvg,cornerMarkHtml,themedPictureHtml} from "./components.js";
+import {flagSvg,renderFlagButton,grammarList,skillGlyph,skillTrio,expandableList,fitTextArea,kanjiNumeral,toolShelf,toolList,renderFilterButton,savedMarkHtml,renderSavedButton,wireFilterButton,anchorStripHtml,hydrateHeaderSearch,chevronSvg,cornerMarkHtml,themedPictureHtml} from "./components.js";
 // Settings page state, declared before anything can read it (navigationState).
 const SETTINGS_TITLES={main:"Settings",ai:"AI service",speech:"Speech recognition",backup:"Backup",import:"Import sentences",export:"Export",grammar:"Grammar"};
 let settingsPage="main",settingsReturn="practice";
@@ -61,6 +61,10 @@ async function replaceNotes(...args){const done=await dbReplaceNotes(...args);ma
 async function saveWord(entry,options={}){const done=await saveWordAction(entry,{...options,save:dbPutWord});markBackupDirty();return done}
 async function removeWord(id){const done=await removeWordAction(id,{save:dbPutWord});markBackupDirty();return done}
 async function replaceWords(records){const done=await dbReplaceWords(records);markBackupDirty();return done}
+// Which words carry the SavedMark in rows. Read off the store when a list
+// renders; never a second copy of the truth that outlives the render.
+async function savedWordIds(){try{return new Set(savedOnly(await listWords()).map(record=>record.id))}catch{return new Set()}}
+let savedIds=new Set();
 const $=selector=>document.querySelector(selector);
 // A deck link from Echo's own pages (/settings/import?deck=/decks/…) only fills
 // the import box; the learner still taps Import. Other origins are ignored.
@@ -483,7 +487,7 @@ function bar(learnedN,metN,total){const wrap=el("span","bar");const a=el("span",
   a.style.width=(total?100*learnedN/total:0).toFixed(2)+"%";b.style.width=(total?100*(metN-learnedN)/total:0).toFixed(2)+"%";wrap.append(a,b);return wrap}
 function legend(rows){const list=el("ul","legend");for(const [cls,label,n] of rows){const li=el("li");const sw=el("span","swatch "+cls);if(cls==="learned")sw.innerHTML=TICK;li.append(sw,document.createTextNode(label+" — "+n.toLocaleString()));list.append(li)}return list}
 async function renderMap(){
-  const sentences=await listSentences();renderCustomReferences();
+  const sentences=await listSentences();savedIds=await savedWordIds();renderCustomReferences();
   $("#map-from").textContent=sentences.length===1?t("From your 1 sentence"):t("From your {n} sentences",{n:sentences.length.toLocaleString()});
   const half=toolHalf();$("#map-tab-grammar").hidden=!hasGrammar();
   for(const button of document.querySelectorAll("#map-toggle [role=tab]")){const on=button.dataset.map===half;button.setAttribute("aria-selected",String(on));button.tabIndex=on?0:-1}
@@ -677,7 +681,7 @@ function renderLookup(query,sentences){
       const sw=el("span","swatch "+(state==="learned"?"learned":state==="met"?"met":""));if(state==="learned")sw.innerHTML=TICK;
       const text=el("span","lookup-text"),title=el("b",null,w.w+(w.r!==w.w?"　"+w.r:""));title.lang="ja";
       text.append(title,el("span",null,w.en[0]||""),el("span",null,[wordLevel(w)==="+"?null:wordLevel(w),kindOf(w),t(STATE_LABELS[state]),count?inYours(count):null].filter(Boolean).join(" · ")));
-      row.append(sw,text);row.insertAdjacentHTML("beforeend",RIGHT);row.onclick=()=>openWord(w,cover);li.append(row);list.append(li)}
+      row.append(sw,text);if(savedIds.has(w.id))row.insertAdjacentHTML("beforeend",savedMarkHtml(true,{label:t("Saved")}));row.insertAdjacentHTML("beforeend",RIGHT);row.onclick=()=>openWord(w,cover);li.append(row);list.append(li)}
     if(!r.words.length)list.append(el("li","hint",t("Nothing in the dictionary matches that. It carries the common words and every JLPT list, not every word there is — say the sentence anyway and Echo translates it.")));
   }else{
     const r=searchGrammar(query),cover=grammarCoverage(sentences),known=grammarLearned(sentences),n=r.points.length;
@@ -1266,8 +1270,8 @@ function wordRow(w,cover,known,onOpen){
   const sw=el("span","swatch "+(state==="learned"?"learned":state==="met"?"met":""));if(state==="learned")sw.innerHTML=TICK;
   const title=el("b",null,w.w);title.lang="ja";row.append(sw,title);
   if(w.r!==w.w){const reading=el("span","reading",w.r);reading.lang="ja";row.append(reading)}
-  row.append(el("span","gloss",w.en[0]||""));if(count)row.append(el("i",null,sentencesPhrase(count)));
-  row.setAttribute("aria-label",w.w+(w.r!==w.w?"（"+w.r+"）":"")+" — "+t(STATE_LABELS[state])+(count?", "+inYours(count):""));
+  row.append(el("span","gloss",w.en[0]||""));const saved=savedIds.has(w.id);if(saved||count){const tail=el("i",null,count?sentencesPhrase(count):"");if(saved)tail.insertAdjacentHTML("afterbegin",savedMarkHtml(true));row.append(tail)}
+  row.setAttribute("aria-label",w.w+(w.r!==w.w?"（"+w.r+"）":"")+" — "+t(STATE_LABELS[state])+(saved?", "+t("saved"):"")+(count?", "+inYours(count):""));
   row.onclick=onOpen;return row}
 function renderWordBand(band,cover,known){
   const section=el("section","band");section.dataset.level=band.level;
@@ -1314,8 +1318,10 @@ async function wordStep(direction){
   wordLearnAt=id;if(loop.running)loop.stop();$("#word-say").value="";
   await openWord(wordById(id),cover,{learn:wordOpen.learn});$("#word-dialog").scrollTop=0;
 }
-async function openWord(w,cover,{learn=null,route=true}={}){
-  wordOpen={word:w,learn};
+async function openWord(w,cover,{learn=null,route=true,context}={}){
+  // The sentence the word was opened from, if any: what Save keeps as its context.
+  if(context===undefined)context=wordOpen?.word?.id===w.id?wordOpen.context:null;
+  wordOpen={word:w,learn,context};
   const all=await listSentences(),known=wordLearned(all),ids=cover.get(w.id)||[],state=known.has(w.id)?"learned":ids.length?"met":"unmet";
   renderWordNav(cover);
   $("#word-level").textContent=wordLevel(w)==="+"?"":wordLevel(w);
@@ -1339,8 +1345,31 @@ async function openWord(w,cover,{learn=null,route=true}={}){
   const byId=new Map(all.map(s=>[s.id,s])),mine=ids.map(id=>byId.get(id)).filter(Boolean);
   expandableList({host:$("#word-sentences"),items:mine,moreLabel:t("See more"),lessLabel:t("See less"),render:shown=>renderSheetSentences($("#word-sentences"),shown,{deletable:true,onDelete:deleteFromWordSheet,mark:wordMarks(w).join("・")})});
   $("#word-mine-head").hidden=!mine.length;sheetCount($("#word-mine-head"),mine.length);
+  await renderWordSaved(w);
   if(!$("#word-dialog").open)$("#word-dialog").showModal();
   await renderWordNote(w);
+}
+// Saved words (SPEC echo-reader §4.4, boards WordSaved / WordUnsaved): the
+// SavedMark toggle in the sheet head. Saved is a mark beside the state, never a
+// state: the chip still says met or learned, and nothing says unmet while saved.
+async function renderWordSaved(w){
+  let record=null;try{record=await getWord(w.id)}catch{record=null}
+  if(wordOpen?.word.id!==w.id)return record;
+  const saved=isSaved(record);renderSavedButton($("#word-save"),saved,{saveLabel:t("Save word"),savedLabel:t("Saved — remove from saved words")});
+  const chip=$("#word-state");chip.hidden=saved&&chip.dataset.state==="unmet";
+  return record}
+async function toggleWordSaved(){
+  const target=wordOpen;if(!target)return;const w=target.word,button=$("#word-save");
+  button.disabled=true;
+  try{
+    if(isSaved(await getWord(w.id)))await removeWord(w.id);
+    else{let context=target.context?{...target.context}:null;
+      // A context names its card only while that sentence is in the Library.
+      if(context?.sentenceId&&!(await getSentence(context.sentenceId).catch(()=>null)))delete context.sentenceId;
+      await saveWord(w,{context,from:"echo"})}
+    await renderWordSaved(w);
+  }catch(error){$("#word-status").textContent=sheetError(error)}
+  finally{button.disabled=false}
 }
 // Echo's way to remember a word is written when you ask, not when the sheet
 // opens: one request, on your key, kept on the device and in every backup.
@@ -1953,7 +1982,7 @@ function enableVocabulary(root,target,lang=targetLang(),sentence=null,{grammarHo
       span.textContent=data.slice(local,local+take);frag.append(span);local+=take}
     offset+=data.length;node.replaceWith(frag)}
   const tokenFor=event=>event.target.closest?.(".review-vocab")||event.target.closest?.("ruby")?.querySelector(".review-vocab");
-  const open=token=>{const hit=hits[Number(token.dataset.vocabularyIndex)];resetSession();openVocabularyHit(hit,stripFurigana(target))};
+  const open=token=>{const hit=hits[Number(token.dataset.vocabularyIndex)];resetSession();openVocabularyHit(hit,stripFurigana(target),sentence)};
   root.onclick=event=>{const token=tokenFor(event);if(token){event.preventDefault();event.stopPropagation();open(token)}};
   root.onkeydown=event=>{if(event.key!=="Enter"&&event.key!==" ")return;const token=tokenFor(event);if(!token)return;event.preventDefault();event.stopPropagation();open(token)};
   if(grammarHost)renderSentenceGrammar(grammarHost,plain,sentence,analysis,{root,target,lang,explain});
@@ -2036,14 +2065,16 @@ async function findSentenceReferences(){
  $("#custom-reference-status").textContent=candidates.length?'Select a phrase as it appears. AI will suggest its dictionary form using this sentence.':'No missing words or kanji detected. You can still look up a grammar construction below.';
 }
 let dictionaryLookupGeneration=0;
-async function openVocabularyHit(hit,context){
+async function openVocabularyHit(hit,context,sentence=null){
+  // The sentence a word is opened from is the context Save keeps (SPEC §4.4).
+  const saveContext={text:context,...(sentence?.id&&!sentence.transient?{sentenceId:sentence.id}:{})};
   const choices=(hit.ids||[hit.id]).map(wordById).filter(Boolean),points=(hit.grammarIds||[]).map(grammarPoint).filter(Boolean);
   if(points.length===1&&!choices.length&&hit.id!==null){await openGrammar(points[0],grammarCoverage(await listSentences()),{route:false});return}
-  if(choices.length===1&&!points.length){const w=choices[0];await openWord(w,wordCoverage(await listSentences()),{route:false});return}
+  if(choices.length===1&&!points.length){const w=choices[0];await openWord(w,wordCoverage(await listSentences()),{route:false,context:saveContext});return}
   const dialog=$("#dictionary-dialog"),list=$("#dictionary-choices"),surface=context.slice(hit.wordStart??hit.start,hit.wordEnd??hit.end),generation=++dictionaryLookupGeneration;
   $("#dictionary-title").textContent=surface;list.replaceChildren();$("#dictionary-explanation").textContent=choices.length||points.length?"Choose vocabulary or the grammar used in this phrase.":"This whole word or name is not in the offline dictionary. It has not been split into unrelated words.";
   $("#dictionary-context").textContent=context;const ask=$("#dictionary-ask");ask.hidden=choices.length>0||points.length>0;ask.disabled=!hasTranslator();
-  for(const w of choices){const button=document.createElement("button");button.type="button";button.className="dictionary-choice";button.textContent="Vocabulary: "+w.w+"（"+w.r+"） — "+w.en[0];button.onclick=async()=>{dialog.close();await openWord(w,wordCoverage(await listSentences()),{route:false})};list.append(button)}
+  for(const w of choices){const button=document.createElement("button");button.type="button";button.className="dictionary-choice";button.textContent="Vocabulary: "+w.w+"（"+w.r+"） — "+w.en[0];button.onclick=async()=>{dialog.close();await openWord(w,wordCoverage(await listSentences()),{route:false,context:saveContext})};list.append(button)}
   for(const point of points){const button=document.createElement("button");button.type="button";button.className="dictionary-choice";button.textContent="Grammar: "+point.title+" — "+(point.hint||"");button.onclick=async()=>{dialog.close();await openGrammar(point,grammarCoverage(await listSentences()),{route:false})};list.append(button)}
     const savedReference=(importedCatalogues.references||[]).find(entry=>entry.id===hit.referenceId||entry.term===surface||(entry.forms||[]).includes(surface));
   if(savedReference)$("#dictionary-explanation").textContent=savedReference.text;
@@ -2306,10 +2337,10 @@ async function rewriteOutdatedNotes(){if(notesRewriting||!hasTranslator())return
   finally{notesRewriting=false}
   await renderNotes();$("#notes-outdated").hidden=false;$("#notes-outdated-text").textContent=failed?t("Rewrote {n}; {failed} could not be rewritten. Try again for those.",{n:done,failed}):t("Rewrote {n} with the new anchors.",{n:done});
   $("#notes-outdated-why").hidden=true;$("#notes-outdated-go").hidden=!failed;$("#notes-outdated-go").disabled=false;status.textContent=""}
-async function renderNotes(){const entries=await wordNotes();renderNotesOutdated(entries);$("#notes-outdated-go").hidden=false;$("#notes-count").textContent=t("{n} words · newest first",{n:entries.length});$("#notes-empty").hidden=entries.length>0;
+async function renderNotes(){const entries=await wordNotes(),saved=await savedWordIds(),gutter=entries.some(({word})=>saved.has(word.id));renderNotesOutdated(entries);$("#notes-outdated-go").hidden=false;$("#notes-count").textContent=t("{n} words · newest first",{n:entries.length});$("#notes-empty").hidden=entries.length>0;
   $("#notes-list").replaceChildren(...entries.map(({note,word})=>{const li=document.createElement("li"),open=document.createElement("button");open.type="button";open.className="notes-row";open.dataset.ui="button";
     const story=stripFurigana(String(wordNoteParts(note.text)?.mora||note.text)).replace(/\s+/g," ").trim();
-    open.innerHTML='<span class="notes-word" lang="ja">'+escapeText(word.w)+'</span><span class="notes-body"><span class="notes-meta"><span lang="ja">'+escapeText(word.r||"")+'</span> · '+escapeText((word.en||[])[0]||"")+'</span><span class="notes-story">'+escapeText(story)+'</span>'+anchorStripHtml(moraMnemonicTokens(word.r||"").map(token=>({...token})),{compact:true})+'</span><svg class="notes-chevron" width="8" height="13" viewBox="0 0 8 13" fill="none" aria-hidden="true"><path d="m1.5 1.5 5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    open.innerHTML=(saved.has(word.id)?savedMarkHtml(true,{label:t("Saved")}):gutter?'<span class="saved-mark-slot" aria-hidden="true"></span>':'')+'<span class="notes-word" lang="ja">'+escapeText(word.w)+'</span><span class="notes-body"><span class="notes-meta"><span lang="ja">'+escapeText(word.r||"")+'</span> · '+escapeText((word.en||[])[0]||"")+'</span><span class="notes-story">'+escapeText(story)+'</span>'+anchorStripHtml(moraMnemonicTokens(word.r||"").map(token=>({...token})),{compact:true})+'</span><svg class="notes-chevron" width="8" height="13" viewBox="0 0 8 13" fill="none" aria-hidden="true"><path d="m1.5 1.5 5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     open.onclick=async()=>openWord(word,wordCoverage(await listSentences()));li.append(open);return li}))}
 // One quiet control names the filter; its sheet holds search, Cards, Sort and
 // Direction, which commit on change as they always have.
@@ -2352,10 +2383,10 @@ async function renderSearch(){const version=++searchVersion,query=$("#search-inp
   if(!query){host.replaceChildren();return}
   const all=await listSentences();if(version!==searchVersion)return;
   const parts=[],want=scope=>searchScope==="all"||searchScope===scope,ja=targetLang()==="ja";
-  if(ja&&want("words")){const r=searchWords(query),notes=new Set((await wordNotes()).map(e=>e.word.id));if(version!==searchVersion)return;
-    const words=(r?.words||[]).slice(0,searchScope==="words"?50:5);
+  if(ja&&want("words")){const r=searchWords(query),notes=new Set((await wordNotes()).map(e=>e.word.id)),saved=await savedWordIds();if(version!==searchVersion)return;
+    const words=(r?.words||[]).slice(0,searchScope==="words"?50:5),gutter=words.some(w=>saved.has(w.id));
     if(words.length){const ul=el("ul","search-list");for(const w of words){const li=el("li"),row=el("button","search-row");row.type="button";
-      row.innerHTML='<span class="search-word" lang="ja">'+escapeText(w.w)+'</span><span class="search-lines"><span class="search-reading" lang="ja">'+escapeText(w.r||"")+'</span><span class="search-gloss">'+escapeText((w.en||[])[0]||"")+'</span></span>'+(notes.has(w.id)?'<span class="status-chip due search-note">'+escapeText(t("Note"))+'</span>':'')+chevronSvg;
+      row.innerHTML=(saved.has(w.id)?savedMarkHtml(true,{label:t("Saved")}):gutter?'<span class="saved-mark-slot" aria-hidden="true"></span>':'')+'<span class="search-word" lang="ja">'+escapeText(w.w)+'</span><span class="search-lines"><span class="search-reading" lang="ja">'+escapeText(w.r||"")+'</span><span class="search-gloss">'+escapeText((w.en||[])[0]||"")+'</span></span>'+(notes.has(w.id)?'<span class="status-chip due search-note">'+escapeText(t("Note"))+'</span>':'')+chevronSvg;
       row.onclick=()=>openWord(w,wordCoverage(all));li.append(row);ul.append(li)}parts.push(searchRule(t("Words"),r.total),ul)}}
   if(ja&&want("kanji")){const r=searchKanji(query),cover=kanjiCoverage(all),known=kanjiLearned(all),chars=(r?.chars||[]).slice(0,searchScope==="kanji"?50:5);
     if(chars.length){const ul=el("ul","search-list kanji");for(const c of chars){const li=el("li"),row=el("button","search-row");row.type="button";
@@ -2475,7 +2506,7 @@ function sheetDrag(dialog,close){
   dialog.addEventListener("click",event=>{if(event.target===dialog)close()});
 }
 sheetDrag($("#kanji-dialog"),()=>{loop.stop();$("#kanji-dialog").close()});sheetDrag($("#grammar-dialog"),()=>{loop.stop();$("#grammar-dialog").close()});sheetDrag($("#word-dialog"),()=>{loop.stop();$("#word-dialog").close()});
-$("#word-close").onclick=()=>{loop.stop();$("#word-dialog").close()};$("#word-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;wordOpen=null;saveWorkspace({modal:null})});$("#word-compose").onclick=composeForWord;$("#word-say-go").onclick=sayForWord;$("#word-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForWord()};$("#word-note-ask").onclick=askWordNote;$("#word-prev").onclick=()=>wordStep(-1);$("#word-next").onclick=()=>wordStep(1);$("#word-dialog").addEventListener("keydown",event=>{if(!wordOpen?.learn||event.target.tagName==="TEXTAREA"||event.target.isContentEditable)return;if(event.key==="ArrowRight")wordStep(1);else if(event.key==="ArrowLeft")wordStep(-1)});
+$("#word-close").onclick=()=>{loop.stop();$("#word-dialog").close()};$("#word-save").onclick=toggleWordSaved;$("#word-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;wordOpen=null;saveWorkspace({modal:null})});$("#word-compose").onclick=composeForWord;$("#word-say-go").onclick=sayForWord;$("#word-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForWord()};$("#word-note-ask").onclick=askWordNote;$("#word-prev").onclick=()=>wordStep(-1);$("#word-next").onclick=()=>wordStep(1);$("#word-dialog").addEventListener("keydown",event=>{if(!wordOpen?.learn||event.target.tagName==="TEXTAREA"||event.target.isContentEditable)return;if(event.key==="ArrowRight")wordStep(1);else if(event.key==="ArrowLeft")wordStep(-1)});
 // Radio: the studied sentences through the night (radio.js plans it,
 // speech.js plays it). The screen is kept on with a wake lock, because a
 // locked phone stops the speech engine on iPhone and on Android alike.

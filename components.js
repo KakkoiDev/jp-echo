@@ -164,3 +164,20 @@ export function anchorStripHtml(items=[],{compact=false,label="Mora anchors"}={}
   const image=item=>{const text=escapeText(item.image);if(item.mark==="giant"&&text.startsWith("巨大な"))return `<span class="anchor-modifier">巨大な</span>${text.slice(3)}`;if(item.mark==="balloon"&&text.startsWith("風船の"))return `<span class="anchor-modifier">風船の</span>${text.slice(3)}`;return text};
   const picture=item=>item.picture?themedPictureHtml(item.picture,{size:30,className:"anchor-picture"}):"";
   return `<div class="anchor-strip" lang="ja" role="list" aria-label="${escapeText(label)}">${items.map((item,i)=>`${i?`<span class="anchor-arrow" aria-hidden="true">→</span>`:""}<a role="listitem" class="anchor-cell" href="${escapeText(item.href||"#")}"><span class="anchor-kana">${escapeText(item.mora)}</span>${picture(item)}<span class="anchor-image">${image(item)}</span>${cornerMarkHtml(item.mark)}</a>`).join("")}</div>`}
+
+// SavedMark: the one mark for a saved word (specs/echo-reader SPEC §4.4,
+// board SavedStates) — a drawn bookmark, viewBox 12×16, stroke 1.4. Saved is
+// a mark beside the word's state, never a fourth state: met and learned keep
+// their chips. Off is a --sumi outline, on is filled --seal (styles.css,
+// "Saved words"). Two forms from one drawing:
+// - savedMarkHtml(saved,{size,label}): the 12px mark in rows (Search results,
+//   the Words map, Echo's notes, Saved words) and status lines; never a button.
+// - renderSavedButton(button,saved): the word sheet's IconButton, aria-pressed,
+//   whose ON state is the seal-tint one the flag uses.
+const SAVED_PATH="M2 1.5h8v13l-4-3.2-4 3.2v-13Z";
+export function savedMarkSvg({size=12}={}){const h=Number(size)||12,w=Math.round(h*.75);return `<svg class="saved-glyph" width="${w}" height="${h}" viewBox="0 0 12 16" fill="none" aria-hidden="true"><path d="${SAVED_PATH}" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>`}
+export function savedMarkHtml(saved=true,{size=12,label=""}={}){
+  return `<span class="saved-mark" data-saved="${saved?"true":"false"}"${label?` role="img" aria-label="${escapeText(label)}"`:` aria-hidden="true"`}>${savedMarkSvg({size})}</span>`}
+export function renderSavedButton(button,saved,{saveLabel="Save word",savedLabel="Saved — remove from saved words"}={}){
+  button.setAttribute("aria-pressed",String(!!saved));button.setAttribute("aria-label",saved?savedLabel:saveLabel);
+  if(!button.querySelector(".saved-glyph"))button.innerHTML=savedMarkSvg({size:16});return button}
