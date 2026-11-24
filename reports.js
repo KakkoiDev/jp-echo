@@ -180,6 +180,27 @@ export const reportHistory = Object.freeze({
   setStatus: async (report, status) => { const next = setReportStatus(report, status); await putReport(next); markDirty("reports"); return next; },
   labels: REPORT_STATUS,
 });
+// Fix this (sentence page): the instruction handed to the rewrite for a
+// flagged card. A flag filed with a reason passes the learner's words on; an
+// old flag without one asks the model to find the problem itself.
+export function fixInstruction(reports = []) {
+  const said = reports.filter(r => r.kind === "card").sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt)))[0];
+  const labels = new Map(REPORT_REASONS.card);
+  const why = said ? [said.reasons.map(r => labels.get(r)).filter(Boolean).join(", "), said.note].filter(Boolean).join(" — ") : "";
+  return "The learner flagged this card as wrong." + (why ? " They said: " + why + "." : "")
+    + " Find what is incorrect or unnatural — the Japanese, its readings, the meaning, or a list marker or bracketed note left from an import — and fix it."
+    + " Keep the intended meaning and keep it a complete natural sentence.";
+}
+// The learner's own fix closes the card's open reports (status done).
+export async function closeOpen(type, id, now = new Date()) {
+  const open = openFor(await listReports(), type, id);
+  if (!open.length) return 0;
+  await putReports(open.map(r => setReportStatus(r, "done", now)));
+  markDirty("reports");
+  return open.length;
+}
+export const cardReports = async (type, id) => (await listReports()).filter(r => r.kind === "card" && r.subject?.type === type && r.subject?.id === id && r.status !== "withdrawn");
+
 export async function withdrawOpen(type, id) {
   const open = openFor(await listReports(), type, id);
   if (!open.length) return 0;

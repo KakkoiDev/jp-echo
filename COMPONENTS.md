@@ -49,6 +49,15 @@ the answered grammar of a sentence as a numbered list (`kanjiNumeral`): the
 phrase over its gloss, the level as a chip at the row end, a chevron. Used on
 the sentence page and the revealed review answer only.
 
+### Fix this (flagged cards)
+On the sentence page a flagged card shows one `notice` with Fix this (app.js
+`renderFlagFix`). It runs the same rewrite as "Tell Echo what to change",
+with `fixInstruction(reports)` (reports.js): the learner's reasons and note
+when the flag has them, otherwise "find what is wrong". The draft opens for
+review; only Save changes the card, lifts the flag and closes the card's open
+reports (`closeOpen`, status done). Without a translator it says how to fix it
+by hand.
+
 ### PlanSteps
 `planSteps(steps)` (components.js): the day as a numbered list in GrammarList's
 shape — kanji numeral, title over one meta line, minutes at the row end. A step

@@ -36,7 +36,7 @@ import {saveDiscussionTurn,saveWordAction,removeWordAction} from "./actions.js";
 import {contextSource,getWord,isSaved,listWords,mergeWords,putWord as dbPutWord,replaceWords as dbReplaceWords,savedOnly,validateSavedWords} from "./saved-words.js";
 // New shared UI comes from the component library (COMPONENTS.md).
 import {flagSvg,renderFlagButton,grammarList,skillGlyph,skillTrio,expandableList,fitTextArea,kanjiNumeral,toolShelf,toolList,renderFilterButton,savedMarkHtml,renderSavedButton,wireFilterButton,anchorStripHtml,hydrateHeaderSearch,chevronSvg,cornerMarkHtml,themedPictureHtml,openReportSheet,mountReportButtons,reportSvg} from "./components.js";
-import {REPORT_REASONS,createReport,fileReport,withdrawOpen,reportSyncLine,reportsAdapter,reportHistory,screenOf,appVersion,deviceInfo} from "./reports.js";
+import {REPORT_REASONS,createReport,fileReport,withdrawOpen,fixInstruction,closeOpen,cardReports,reportSyncLine,reportsAdapter,reportHistory,screenOf,appVersion,deviceInfo} from "./reports.js";
 // Settings page state, declared before anything can read it (navigationState).
 const SETTINGS_TITLES={main:"Settings",ai:"AI service",speech:"Speech recognition",backup:"Backup",import:"Import sentences",export:"Export",grammar:"Grammar"};
 let settingsPage="main",settingsReturn="practice";
@@ -340,6 +340,7 @@ const ICONS={
   alert:'<svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><circle cx="9" cy="9" r="7.6" stroke="currentColor" stroke-width="1.4"/><path d="M9 5v5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="9" cy="12.6" r="1" fill="currentColor"/></svg>',
   failed:'<svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M9 1.6 16.8 15H1.2L9 1.6Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M9 6.6v3.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="9" cy="12.6" r="1" fill="currentColor"/></svg>',
   offline:'<svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M1.4 6.4a11 11 0 0 1 15.2 0M4.2 9.6a7 7 0 0 1 9.6 0M7 12.8a3 3 0 0 1 4 0" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M2.2 2.2 15.8 15.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>',
+  flag:flagSvg,
   voice:'<svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M2 6.6h3l4-3.2v11.2l-4-3.2H2V6.6Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M12.4 6.2 16 9.8M16 6.2l-3.6 3.6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>'};
 // One shape for every blocked state: a hairline box, a mark, what happened, and
 // the one action that fixes it. See Messages.dc.html.
@@ -1661,10 +1662,22 @@ async function renderHistory(){const version=++historyRenderVersion,all=await li
 const formatDate=value=>new Intl.DateTimeFormat(undefined,{day:"numeric",month:"long"}).format(new Date(value));
 const RATING_LABELS={again:"Again",ok:"OK"};
 let practiceEditor=false;
-async function openDetail(id){practiceEditor=false;const sentence=await getSentence(id);if(!sentence)return showView("library");resetSession();detail=ensureSchedule(sentence);showView("sentence");renderDetail()}
+async function openDetail(id){practiceEditor=false;fixingId=null;const sentence=await getSentence(id);if(!sentence)return showView("library");resetSession();detail=ensureSchedule(sentence);showView("sentence");renderDetail()}
 function markSelectedRow(){for(const li of document.querySelectorAll("#history-list li"))li.classList.toggle("selected",li.dataset.id===detail?.id);}
 function renderDetailLearningText(){$("#sentence-grammar").replaceChildren();$("#sentence-grammar").hidden=true;$("#sentence-japanese").innerHTML=rubyHtml(preferredTarget(detail));$("#sentence-japanese").lang=itemTarget(detail);enableVocabulary($("#sentence-japanese"),preferredTarget(detail),itemTarget(detail),detail,{grammarHost:$("#sentence-grammar"),explain:true});}
-function renderDetail(){queueMicrotask(()=>renderInItSummaries());if(!detail)return;renderFlagButton($("#sentence-flag"),detail);closeEditor();markSelectedRow();
+// A flagged card offers Fix this: the rewrite, told what the flag said (or to
+// find the problem when an old flag has no reason). Saving the fix lifts the
+// flag and closes the card's open reports; nothing changes before Save.
+async function renderFlagFix(){const host=$("#sentence-flag-fix");if(!host)return;const item=detail;
+  if(!item?.flagged){host.hidden=true;host.replaceChildren();return}
+  const said=await cardReports("sentence",item.id).catch(()=>[]);if(detail!==item)return;
+  const last=said.sort((a,b)=>String(b.updatedAt).localeCompare(String(a.updatedAt)))[0],labels=new Map(REPORT_REASONS.card);
+  const why=last?[last.reasons.map(r=>labels.get(r)).filter(Boolean).join(", "),last.note].filter(Boolean).join(" — "):"";
+  const ready=hasTranslator();
+  host.replaceChildren(notice({icon:"flag",title:"You flagged this card",copy:(why?"You said: "+why+". ":"No reason was given. ")+(ready?"Echo can find the problem and suggest a fix. You see it before anything changes.":"Add a translator in Settings and Echo can suggest a fix, or edit it below."),
+    actions:ready?[{label:"Fix this",outline:true,onClick:()=>{fixingId=item.id;rewriteDetailSentence(fixInstruction(said))}}]:[]}));
+  host.hidden=false}
+function renderDetail(){queueMicrotask(()=>renderInItSummaries());if(!detail)return;renderFlagButton($("#sentence-flag"),detail);renderFlagFix();closeEditor();markSelectedRow();
   $("#sentence-added").textContent="Added "+formatDate(detail.createdAt);
   renderDetailLearningText();
   $("#sentence-english").textContent=detail.source;
@@ -1695,7 +1708,8 @@ function renderDetail(){queueMicrotask(()=>renderInItSummaries());if(!detail)ret
   // without opening it ("Made 2 Oct · 12 echoes").
   {const echoes=Number(detail.echoCount)||0;$("#sentence-history-count").textContent=t("Made {date}",{date:formatDate(detail.createdAt)})+" · "+(echoes===1?t("1 echo"):t("{n} echoes",{n:echoes}))}
   $("#sentence-play").disabled=false}
-let editorGeneration=0,rewrittenDraft=null,editorOpenId=null;
+// fixingId: the card a Fix this rewrite belongs to (renderFlagFix).
+let editorGeneration=0,rewrittenDraft=null,editorOpenId=null,fixingId=null;
 function openEditor(){$("#sentence-reading-status").textContent="";editorOpenId=detail?.id||null;editorGeneration++;
   const meaningLanguage=detail?.sourceLang&&detail.sourceLang!==itemTarget(detail)?detail.sourceLang:(sourceLang()!==itemTarget(detail)?sourceLang():"en");
   $("#sentence-meaning-language").replaceChildren(...LANGUAGES.map(([code,name])=>new Option(name,code)));$("#sentence-meaning-language").value=meaningLanguage;rewrittenDraft=null;$("#sentence-source-draft").value=detail?.source||"";$("#sentence-instruction").value="";$("#sentence-ai").open=false;$("#sentence-rewrite-status").textContent="";$("#sentence-rewrite").disabled=!hasTranslator();$("#sentence-save").disabled=false;if(!detail)return;resetSession();$("#sentence-draft").value=preferredTarget(detail);$("#sentence-edit-error").hidden=true;$("#sentence-change").hidden=false;if(!$("#sentence-change").open)$("#sentence-change").open=true;for(const id of ["#sentence-draft","#sentence-source-draft"])fitTextArea($(id));$("#sentence-instruction").focus()}
@@ -1711,7 +1725,9 @@ async function saveEdit(event){event.preventDefault();if(!detail)return;
   else detail={...detail,target:japanese,plainTarget:plain,casualTarget:japanese,plainCasualTarget:plain,updatedAt:new Date().toISOString()};
   if(rewrittenDraft){const forms={...rewrittenDraft,source};forms[sentenceRegister(detail)==="polite"?"polite":"casual"]=japanese;detail=replaceSentenceContent(detail,forms);delete detail.grammar}else detail={...detail,source};
   delete detail.grammarAnalysis;delete detail.grammar;
-  detail={...detail,sourceLang:$("#sentence-meaning-language").value||"en"};await saveSentence(detail);if(current?.id===detail.id){current=detail;renderSentence()}renderDetail();if(practiceEditor){practiceEditor=false;detail=null;showView("practice")}}
+  const fixed=fixingId===detail.id&&detail.flagged===true&&!!rewrittenDraft;fixingId=null;
+  detail={...detail,sourceLang:$("#sentence-meaning-language").value||"en",...(fixed?{flagged:false}:{})};await saveSentence(detail);
+  if(fixed){await closeOpen("sentence",detail.id).catch(()=>{});syncFlagged(detail);toast("Fixed. The flag is lifted.")}if(current?.id===detail.id){current=detail;renderSentence()}renderDetail();if(practiceEditor){practiceEditor=false;detail=null;showView("practice")}}
 async function correctEditorReadings(){
  if(!detail)return;
  const generation=editorGeneration,id=detail.id,original=$("#sentence-draft").value;
@@ -1725,12 +1741,12 @@ async function correctEditorReadings(){
  }catch(error){if(generation===editorGeneration)status.textContent=error.message}
  finally{button.disabled=false;if(generation===editorGeneration)$("#sentence-save").disabled=false}
 }
-async function rewriteDetailSentence(){
+async function rewriteDetailSentence(given){
   if(!detail||$("#sentence-rewrite").disabled)return;
   // "Tell Echo what to change" sits up front (SentenceFocus); the draft opens
   // below it so both versions are seen before anything is saved.
   if(editorOpenId!==detail.id){const asked=$("#sentence-instruction").value;openEditor();$("#sentence-instruction").value=asked}
-  const instruction=$("#sentence-instruction").value.trim(),status=$("#sentence-rewrite-status"),button=$("#sentence-rewrite");
+  const instruction=(typeof given==="string"?given:$("#sentence-instruction").value).trim(),status=$("#sentence-rewrite-status"),button=$("#sentence-rewrite");
   if(!instruction){status.textContent="Tell AI what to change.";$("#sentence-instruction").focus();return}
   const generation=editorGeneration,id=detail.id;button.disabled=true;$("#sentence-save").disabled=true;status.textContent="Rewriting…";
   try{const card=await rewriteSentence({current:$("#sentence-draft").value,source:$("#sentence-source-draft").value,instruction,register:sentenceRegister(detail)},{...settings,sourceLang:$("#sentence-meaning-language").value||"en",targetLang:itemTarget(detail)});

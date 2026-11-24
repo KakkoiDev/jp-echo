@@ -191,3 +191,17 @@ test("solutions show the completed sentence with furigana and the answer underli
   assert.deepEqual(whyReadings("～辛い（づらい） · hard to do"), {text: "～辛い · hard to do", overrides: {辛い: "づらい"}});
   assert.match(read("../n2-mock.js"), /solution\.replaceChildren\(\.\.\.await solutionLine\(q\)\)/);
 });
+
+// ── Flagged cards: Fix this ──
+import {fixInstruction} from "../reports.js";
+
+test("a flagged card offers Fix this; the fix lifts the flag and closes its reports only on Save", () => {
+  assert.match(fixInstruction([]), /^The learner flagged this card as wrong\. Find what is incorrect/, "an old flag without a reason asks the model to find it");
+  const r = createReport({kind: "card", reasons: ["reading", "nope"], note: "擦る is こする", subject: {type: "sentence", id: "s1"}});
+  assert.match(fixInstruction([r]), /They said: Wrong reading — 擦る is こする\./, "a flag with a reason passes the learner's words on");
+  const app = read("../app.js"), html = read("../index.html");
+  assert.match(html, /<div id="sentence-ai"><div id="sentence-flag-fix" hidden><\/div>/);
+  assert.match(app, /label:"Fix this",outline:true,onClick:\(\)=>\{fixingId=item\.id;rewriteDetailSentence\(fixInstruction\(said\)\)\}/, "Fix this goes through the one rewrite");
+  assert.match(app, /const fixed=fixingId===detail\.id&&detail\.flagged===true&&!!rewrittenDraft;/, "only a saved rewrite counts as the fix");
+  assert.match(app, /if\(fixed\)\{await closeOpen\("sentence",detail\.id\)/);
+});
