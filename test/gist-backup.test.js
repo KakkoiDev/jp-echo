@@ -96,6 +96,22 @@ test("every write that changes a backup marks it dirty, and imports do too", () 
   assert.match(app, /function markBackupDirty\(\)\{if\(!settings\.gistAuto\)return;/);
 });
 
+test("saved words are written only through wrappers that mark the backup dirty", () => {
+  for (const name of ["saveWord", "removeWord", "replaceWords"]) assert.match(app, new RegExp(`async function ${name}\\([^)]*\\)\\{const done=await \\w+\\([^)]*\\);markBackupDirty\\(\\)`), name);
+  assert.match(app, /async function saveWord\(entry,options=\{\}\)\{const done=await saveWordAction\(entry,\{\.\.\.options,save:dbPutWord\}\)/);
+  assert.match(app, /async function removeWord\(id\)\{const done=await removeWordAction\(id,\{save:dbPutWord\}\)/);
+  // Nothing outside the wrappers writes the words store.
+  assert.equal((app.match(/dbPutWord\b/g) || []).length, 3, "imported once, used by the two wrappers");
+  assert.equal((app.match(/dbReplaceWords\(/g) || []).length, 1, "only replaceWords calls it");
+});
+
+test("the backup carries saved words beside catalogues, and import merges them", () => {
+  assert.match(app, /async function buildBackup\(\)\{return \{\.\.\.exportBackup\([^]*?\),catalogues:importedCatalogues,words:await listWords\(\)\.catch\(\(\)=>\[\]\)\}\}/);
+  assert.match(app, /if\(Array\.isArray\(backup\.words\)\)\{const \{words\}=validateSavedWords\(backup\.words\);if\(words\.length\)await replaceWords\(mergeWords\(await listWords\(\),words\)\)\}/);
+  // After notes, so file import, deck URL and gist restore all carry words.
+  assert.ok(app.indexOf("await replaceNotes(mergeNotes(") < app.indexOf("await replaceWords(mergeWords("));
+});
+
 test("the gist holds the same document Export downloads", () => {
   assert.match(app, /async function buildBackup\(\)\{return \{\.\.\.exportBackup\(/);
   assert.match(app, /async function exportHistory\(\)\{const data=await buildBackup\(\)/);

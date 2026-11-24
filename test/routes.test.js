@@ -17,3 +17,11 @@ test('pretty-route restoration keeps assets rooted at the deployed app',async()=
  const base=html.indexOf('<base href="/">'),restore=html.indexOf('echo-pages-route');assert.ok(base>=0&&base<restore,'asset base is established before history restores a nested route');
 });
 test("kanji group by meaning is URL state; JLPT level is the default",()=>{assert.equal(routeFor({view:"map",mapView:"kanji",kanjiGroup:"meaning"}),"/kanji?group=meaning");assert.equal(routeFor({view:"map",mapView:"kanji",kanjiGroup:"jlpt"}),"/kanji");assert.equal(parseRoute("/kanji?group=meaning").kanjiGroup,"meaning");assert.equal(parseRoute("/kanji").kanjiGroup,"jlpt");assert.equal(parseRoute("/kanji?group=bogus").kanjiGroup,"jlpt");assert.equal(routeFor({view:"map",mapView:"words",kanjiGroup:"meaning"}),"/words")});
+test("Saved words is its own screen at /words?saved=1, never a Cards filter",()=>{
+  assert.equal(routeFor({view:"saved"}),"/words?saved=1");
+  assert.equal(routeFor({view:"saved",mapQuery:"かさ"}),"/words?saved=1","the wall's search never rides along");
+  assert.deepEqual(parseRoute("/words?saved=1"),{view:"saved",discussionMode:false,modal:null});
+  assert.equal(routeFor(parseRoute("/words?saved=1")),"/words?saved=1");
+  assert.equal(parseRoute("/words?notes=1").view,"notes","Echo's notes keeps its route");
+  assert.equal(parseRoute("/words").view,"map");
+});

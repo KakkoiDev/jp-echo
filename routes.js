@@ -15,7 +15,7 @@ export function routeFor(state={}){
   else if(view==="mora")path="/mora";
   else if(view==="drill")path="/mora/drill";
   else if(view==="radio")path="/radio";
-  else if(view==="notes")path="/words";
+  else if(view==="notes"||view==="saved")path="/words";
   else if(view==="search")path="/search";
   // Settings is a page with two sub-pages for what lives only on this device.
   else if(view==="settings")path=SETTINGS_PAGES.includes(state.settingsPage)?"/settings/"+state.settingsPage:"/settings";
@@ -32,7 +32,9 @@ export function routeFor(state={}){
   if(view==="search"&&state.searchQuery)q.set("q",state.searchQuery);
   // Echo's notes is the Words wall filtered to the words with a note.
   if(view==="notes")q.set("notes","1");
-  if(["/words","/kanji","/grammar"].includes(path)&&state.mapQuery&&view!=="notes")q.set("q",state.mapQuery);
+  // Saved words (SPEC echo-reader D6): its own screen, the same pattern.
+  if(view==="saved")q.set("saved","1");
+  if(["/words","/kanji","/grammar"].includes(path)&&state.mapQuery&&view!=="notes"&&view!=="saved")q.set("q",state.mapQuery);
   // Group by: JLPT level is the default wall; Meaning groups the same cells by family topic.
   if(path==="/kanji"&&state.kanjiGroup==="meaning")q.set("group","meaning");
   return path+(q.size?"?"+q:"");
@@ -59,6 +61,7 @@ export function parseRoute(input){
   let m=p.match(/^\/sentences\/([^/]+)$/);if(m)return {...base,view:"sentence",sentenceId:dec(m[1])};
   m=p.match(/^\/(words|kanji|grammar)\/([^/]+)$/);if(m)return {...base,view:"map",mapView:m[1]==="words"?"words":m[1]==="grammar"?"grammar":"kanji",modal:{kind:m[1]==="words"?"word":m[1],id:dec(m[2])}};
   if(p==="/words"&&q.get("notes")==="1")return {...base,view:"notes"};
+  if(p==="/words"&&q.get("saved")==="1")return {...base,view:"saved"};
   m=p.match(/^\/(words|kanji|grammar)$/);if(m)return {...base,view:"map",mapView:m[1]==="words"?"words":m[1]==="grammar"?"grammar":"kanji",mapQuery:q.get("q")||"",...(m[1]==="kanji"?{kanjiGroup:q.get("group")==="meaning"?"meaning":"jlpt"}:{})};
   return {...base,notFound:true};
 }

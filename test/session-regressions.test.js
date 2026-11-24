@@ -164,7 +164,7 @@ test("Listening is audio-only, Reading is bare Japanese, and Writing requires ty
 });
 
 
-test("revealed review vocabulary opens the existing word dictionary sheet",()=>{const revealStart=app.indexOf("async function revealReview"),revealEnd=app.indexOf("function reviewRecognitionLang",revealStart),block=app.slice(revealStart,revealEnd);assert.match(block,/enableReviewVocabulary\(sentence,target\)/);assert.match(app,/function enableReviewVocabulary/);assert.match(app,/sentenceWords\(sentence\)/);assert.match(app,/wordMarks\(w\)/);assert.match(app,/openWord\(w,wordCoverage\(await listSentences\(\)\),\{route:false\}\)/)});
+test("revealed review vocabulary opens the existing word dictionary sheet",()=>{const revealStart=app.indexOf("async function revealReview"),revealEnd=app.indexOf("function reviewRecognitionLang",revealStart),block=app.slice(revealStart,revealEnd);assert.match(block,/enableReviewVocabulary\(sentence,target\)/);assert.match(app,/function enableReviewVocabulary/);assert.match(app,/sentenceWords\(sentence\)/);assert.match(app,/wordMarks\(w\)/);assert.match(app,/openWord\(w,wordCoverage\(await listSentences\(\)\),\{route:false,context:saveContext\}\)/,"the sheet opens with the sentence it was met in, for Save")});
 
 
 test("sentence register choice is stored per card and drives every review form",()=>{

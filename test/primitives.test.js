@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {toolShelfHtml,headerSearchHtml,filterButtonHtml,anchorStripHtml,cornerMarkHtml,themedPictureHtml} from '../components.js';
+import {toolShelfHtml,headerSearchHtml,filterButtonHtml,anchorStripHtml,cornerMarkHtml,themedPictureHtml,savedMarkHtml,savedMarkSvg} from '../components.js';
+const app=readFileSync(new URL('../app.js',import.meta.url),'utf8'),html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
 const css=readFileSync(new URL('../styles.css',import.meta.url),'utf8'),doc=readFileSync(new URL('../COMPONENTS.md',import.meta.url),'utf8');
 
 test('ToolShelf lays every tool out as a glyph tile with a label and an accessible name',()=>{
@@ -61,4 +62,22 @@ test('the settings gear is drawn like the search glyph: a line, not a filled cog
  const gears=html.match(/<svg class="gear-glyph"[^]*?<\/svg>/g)||[];
  assert.equal(gears.length,2,'the header button and the desktop rail');
  for(const gear of gears){assert.match(gear,/viewBox="0 0 16 16" fill="none"/);assert.doesNotMatch(gear,/fill="currentColor"/);assert.match(gear,/stroke-width="1\.3"/)}
+});
+
+test('SavedMark is one drawn bookmark: a 12px row mark or the sheet\'s pressed IconButton, never a new colour',()=>{
+ assert.match(savedMarkSvg(),/^<svg class="saved-glyph" width="9" height="12" viewBox="0 0 12 16" fill="none" aria-hidden="true"><path d="M2 1\.5h8v13l-4-3\.2-4 3\.2v-13Z" stroke="currentColor" stroke-width="1\.4"/);
+ assert.match(savedMarkSvg({size:16}),/width="12" height="16"/);
+ assert.match(savedMarkHtml(true,{label:'Saved'}),/^<span class="saved-mark" data-saved="true" role="img" aria-label="Saved"><svg class="saved-glyph"/);
+ assert.match(savedMarkHtml(false),/data-saved="false" aria-hidden="true"/);
+ assert.match(savedMarkHtml(true,{label:'<b>'}),/aria-label="&lt;b&gt;"/,'labels are escaped');
+ assert.doesNotMatch(savedMarkSvg(),/🔖|#[0-9a-f]{3,6}/i,'drawn, and coloured only by tokens');
+ const block=css.slice(css.indexOf('/* Saved words'));
+ assert.ok(block.length>100,'one block headed Saved words');
+ assert.doesNotMatch(block,/#[0-9a-fA-F]{3,8}\b|rgba?\(/,'no raw colours in the Saved words block');
+ assert.match(block,/\.saved-mark\[data-saved=true\] \.saved-glyph,\.icon-button\[aria-pressed="true"\] \.saved-glyph\{fill:var\(--seal\)\}/);
+ assert.match(html,/<button data-ui="button" id="word-save" class="icon-button small hit word-save" type="button" aria-pressed="false" aria-label="Save word"><\/button><button data-ui="button" id="word-close"/,'the toggle sits in the sheet head, before Close');
+ assert.match(doc,/### SavedMark/);
+ // Rows show the mark, never a button; every row form goes through savedMarkHtml.
+ assert.ok((app.match(/savedMarkHtml\(/g)||[]).length>=4,'search, words map, lookup and notes rows');
+ assert.doesNotMatch(app,/<svg[^>]*viewBox="0 0 12 16"/,'no copied bookmark markup in app.js');
 });

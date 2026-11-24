@@ -68,5 +68,5 @@ test("the page documents GitHub blob links becoming raw links", () => {
 test("the agent instructions name every field a deck needs and forbid the rest", () => {
   const section = doc.slice(doc.indexOf("## Instructions for an AI agent"));
   for (const key of ["id", "sourceLang", "targetLang", "source", "target", "schemaVersion", "casualTarget", "politeTarget"]) assert.match(section, new RegExp("`" + key + "`"), key);
-  for (const key of ["srs", "reviews", "echoCount", "createdAt", "grammar", "vocabulary"]) assert.match(section, new RegExp("`" + key + "`"), "forbids " + key);
+  for (const key of ["srs", "reviews", "echoCount", "createdAt", "grammar", "vocabulary", "notes", "words"]) assert.match(section, new RegExp("`" + key + "`"), "forbids " + key);
 });

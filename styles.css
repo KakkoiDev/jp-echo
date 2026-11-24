@@ -2248,3 +2248,44 @@ a.plan-step-row,button.plan-step-row{cursor:pointer}
 .n2-notices .notice p{margin:0}
 .n2-notices .notice-actions{display:flex;gap:8px;flex-wrap:wrap}
 .n2-notices .notice-actions .button{min-height:44px;flex:1 1 0}
+
+/* Saved words (specs/echo-reader SPEC §4.4; boards SavedStates, SavedWords,
+   SavedWordsEmpty, LibraryToolsSaved, WordSaved, WordUnsaved). SavedMark is
+   one drawn bookmark: off a --sumi outline, on filled --seal. In rows it is
+   the 12px mark, never a button; on the word sheet it is the IconButton whose
+   pressed state is the seal-tint one the flag uses. */
+.saved-glyph{display:block;flex-shrink:0}
+.saved-mark{display:inline-flex;align-items:center;flex-shrink:0;color:var(--sumi)}
+.saved-mark .saved-glyph{color:inherit}
+.saved-mark[data-saved=true],.icon-button[aria-pressed="true"] .saved-glyph{color:var(--seal)}
+.saved-mark[data-saved=true] .saved-glyph,.icon-button[aria-pressed="true"] .saved-glyph{fill:var(--seal)}
+.saved-mark-slot{width:9px;flex-shrink:0}
+.search-row>.saved-mark,.search-row>.saved-mark-slot{align-self:flex-start;margin:8px -4px 0 0}
+.notes-row>.saved-mark,.notes-row>.saved-mark-slot{margin:7px -6px 0 0}
+.point-row i:has(.saved-mark){display:inline-flex;align-items:center;gap:8px}
+.lookup-row .saved-mark{margin-left:-4px}
+/* The 栞 row sits under 記 Echo's notes as one list (LibraryToolsSaved). */
+.library-notes:not([hidden])+.library-saved{margin-top:0;border-top:0}
+/* Saved words (/words?saved=1): Echo's notes rows, with the latest context. */
+.saved-row:disabled{opacity:1;cursor:default}
+.saved-meta-line{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;min-width:0}
+.saved-meta-line .notes-meta{min-width:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.saved-meta-line .state-chip{flex-shrink:0}
+.saved-context{font-family:var(--display);font-size:14px;line-height:1.6;color:var(--sumi);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.saved-context mark,.word-saved-context mark{background:var(--seal-wash);color:var(--seal-deep);padding:0 1px}
+.saved-source{font-size:11px;color:var(--ink-muted)}
+.saved-inline{display:inline-flex;vertical-align:-1px}
+.saved-empty .empty-glyph{font-size:30px;color:var(--seal-deep)}
+.saved-empty .saved-empty-note{font-size:12px;color:var(--ink-muted)}
+.saved-empty .outlined{width:100%;height:44px;min-height:44px;margin-top:8px;border:1px solid var(--sumi);font-size:14px}
+/* The word sheet (WordSaved, WordUnsaved): the status line under the senses,
+   Where you saved it, and Remove at the foot. */
+.word-saved-status{display:flex;align-items:flex-start;gap:8px;margin:10px 0 0;font-size:12px;line-height:1.5;color:var(--ink-soft)}
+.word-saved-status .saved-mark{margin-top:3px}
+.word-saved-list{list-style:none;margin:6px 0 0;padding:0}
+.word-saved-item{padding:12px 0;border-bottom:1px solid var(--rule)}
+.word-saved-context{margin:0;font-family:var(--display);font-size:16px;line-height:1.7;color:var(--sumi)}
+.word-saved-item .saved-source{margin:4px 0 0}
+.word-saved>.hint{margin:10px 0 0}
+.word-remove{gap:8px;margin:12px auto 0;color:var(--ink-soft)}
+.word-remove .saved-mark{color:inherit}

@@ -241,3 +241,20 @@ export function pauseRing({total=5,left=total,label="seconds before the meaning 
   const reduced=()=>globalThis.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
   const set=n=>{n=Math.max(0,Math.ceil(n));num.textContent=String(n);arc.setAttribute("stroke-dashoffset",reduced()?"0":String(C*(1-n/Math.max(1,total))));if(n===total||n===0)live.textContent=n+" "+label};
   set(left);return {el:wrap,set}}
+
+// SavedMark: the one mark for a saved word (specs/echo-reader SPEC §4.4,
+// board SavedStates) — a drawn bookmark, viewBox 12×16, stroke 1.4. Saved is
+// a mark beside the word's state, never a fourth state: met and learned keep
+// their chips. Off is a --sumi outline, on is filled --seal (styles.css,
+// "Saved words"). Two forms from one drawing:
+// - savedMarkHtml(saved,{size,label}): the 12px mark in rows (Search results,
+//   the Words map, Echo's notes, Saved words) and status lines; never a button.
+// - renderSavedButton(button,saved): the word sheet's IconButton, aria-pressed,
+//   whose ON state is the seal-tint one the flag uses.
+const SAVED_PATH="M2 1.5h8v13l-4-3.2-4 3.2v-13Z";
+export function savedMarkSvg({size=12}={}){const h=Number(size)||12,w=Math.round(h*.75);return `<svg class="saved-glyph" width="${w}" height="${h}" viewBox="0 0 12 16" fill="none" aria-hidden="true"><path d="${SAVED_PATH}" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>`}
+export function savedMarkHtml(saved=true,{size=12,label=""}={}){
+  return `<span class="saved-mark" data-saved="${saved?"true":"false"}"${label?` role="img" aria-label="${escapeText(label)}"`:` aria-hidden="true"`}>${savedMarkSvg({size})}</span>`}
+export function renderSavedButton(button,saved,{saveLabel="Save word",savedLabel="Saved — remove from saved words"}={}){
+  button.setAttribute("aria-pressed",String(!!saved));button.setAttribute("aria-label",saved?savedLabel:saveLabel);
+  if(!button.querySelector(".saved-glyph"))button.innerHTML=savedMarkSvg({size:16});return button}

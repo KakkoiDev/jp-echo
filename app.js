@@ -29,9 +29,10 @@ import {downloadAnkiDeck} from "./anki-export.js";
 import {dueSentences,ensureSchedule,isDue,reviewSentence} from "./srs.js";
 import {reviewAvailabilityMessage,reviewStats,dailyReviewBudget,reviewOrder,sessionLimit,limitReviewSession,extraStudySession,dueLine,ensureReviewTrack,nextSkill,recordReviewMode,reviewMode,reviewModeMeta,skillMix,skillReason} from "./review-modes.js";
 import {DEFAULT_TIME,REMINDER_TAG,reminderText,shouldRemind} from "./reminders.js";
-import {saveDiscussionTurn} from "./actions.js";
+import {saveDiscussionTurn,saveWordAction,removeWordAction} from "./actions.js";
+import {contextSource,getWord,isSaved,listWords,mergeWords,putWord as dbPutWord,replaceWords as dbReplaceWords,savedOnly,validateSavedWords} from "./saved-words.js";
 // New shared UI comes from the component library (COMPONENTS.md).
-import {flagSvg,renderFlagButton,grammarList,skillGlyph,skillTrio,expandableList,fitTextArea,kanjiNumeral,toolShelf,toolList,renderFilterButton,wireFilterButton,anchorStripHtml,hydrateHeaderSearch,chevronSvg,cornerMarkHtml,themedPictureHtml} from "./components.js";
+import {flagSvg,renderFlagButton,grammarList,skillGlyph,skillTrio,expandableList,fitTextArea,kanjiNumeral,toolShelf,toolList,renderFilterButton,savedMarkHtml,renderSavedButton,wireFilterButton,anchorStripHtml,hydrateHeaderSearch,chevronSvg,cornerMarkHtml,themedPictureHtml} from "./components.js";
 // Settings page state, declared before anything can read it (navigationState).
 const SETTINGS_TITLES={main:"Settings",ai:"AI service",speech:"Speech recognition",backup:"Backup",import:"Import sentences",export:"Export",grammar:"Grammar"};
 let settingsPage="main",settingsReturn="practice";
@@ -56,6 +57,14 @@ async function deleteSentence(id){const done=await dbDeleteSentence(id);markBack
 async function putNote(...args){const done=await dbPutNote(...args);markBackupDirty();return done}
 async function deleteNote(...args){const done=await dbDeleteNote(...args);markBackupDirty();return done}
 async function replaceNotes(...args){const done=await dbReplaceNotes(...args);markBackupDirty();return done}
+// Saved words (SPEC echo-reader §4): their own store, the same rule.
+async function saveWord(entry,options={}){const done=await saveWordAction(entry,{...options,save:dbPutWord});markBackupDirty();return done}
+async function removeWord(id){const done=await removeWordAction(id,{save:dbPutWord});markBackupDirty();return done}
+async function replaceWords(records){const done=await dbReplaceWords(records);markBackupDirty();return done}
+// Which words carry the SavedMark in rows. Read off the store when a list
+// renders; never a second copy of the truth that outlives the render.
+async function savedWordIds(){try{return new Set(savedOnly(await listWords()).map(record=>record.id))}catch{return new Set()}}
+let savedIds=new Set();
 const $=selector=>document.querySelector(selector);
 // A deck link from Echo's own pages (/settings/import?deck=/decks/…) only fills
 // the import box; the learner still taps Import. Other origins are ignored.
@@ -382,15 +391,15 @@ const wide=matchMedia("(min-width:1024px)");
 const isWide=()=>wide.matches;
 const VIEW_TITLES={review:"Review",library:"Library"};
 function showView(name,{route=true}={}){if(name==="map"&&targetLang()!=="ja")name="library";if(name!=="radio")stopRadio();if(name!=="practice")resetSession();if(name!=="session")stopReviewListening();speechSynthesis.cancel();
-  $("#main-view").hidden=name!=="practice";$("#review-home").hidden=name!=="review";$("#history-view").hidden=!(name==="library"||(name==="sentence"&&isWide()));$("#review-view").hidden=name!=="session";$("#sentence-view").hidden=name!=="sentence";$("#onboard-view").hidden=name!=="onboard";$("#setup-view").hidden=name!=="setup";$("#map-view").hidden=name!=="map";$("#mora-view").hidden=name!=="mora";$("#radio-view").hidden=name!=="radio";$("#notes-view").hidden=name!=="notes";$("#drill-view").hidden=name!=="drill";if(name!=="drill")drill=null;$("#search-view").hidden=name!=="search";$("#settings-view").hidden=name!=="settings";if(name!=="settings")settingsStack=[];$("#settings-nav")?.toggleAttribute("aria-current",name==="settings");if(name!=="settings"&&$("#ai-show-key")?.getAttribute("aria-pressed")==="true")$("#ai-show-key").click();
-  const solo=name==="onboard"||name==="setup"||((name==="session"||name==="sentence"||name==="map"||name==="mora"||name==="drill"||name==="radio"||name==="notes"||name==="settings")&&!isWide());document.querySelector("header").hidden=solo||(name==="search"&&!isWide())||(name==="practice"&&(discussionMode||readingMode||extractMode)&&!isWide());$("#tabs").hidden=solo&&name!=="sentence"&&name!=="notes";
+  $("#main-view").hidden=name!=="practice";$("#review-home").hidden=name!=="review";$("#history-view").hidden=!(name==="library"||(name==="sentence"&&isWide()));$("#review-view").hidden=name!=="session";$("#sentence-view").hidden=name!=="sentence";$("#onboard-view").hidden=name!=="onboard";$("#setup-view").hidden=name!=="setup";$("#map-view").hidden=name!=="map";$("#mora-view").hidden=name!=="mora";$("#radio-view").hidden=name!=="radio";$("#notes-view").hidden=name!=="notes";$("#saved-view").hidden=name!=="saved";$("#drill-view").hidden=name!=="drill";if(name!=="drill")drill=null;$("#search-view").hidden=name!=="search";$("#settings-view").hidden=name!=="settings";if(name!=="settings")settingsStack=[];$("#settings-nav")?.toggleAttribute("aria-current",name==="settings");if(name!=="settings"&&$("#ai-show-key")?.getAttribute("aria-pressed")==="true")$("#ai-show-key").click();
+  const solo=name==="onboard"||name==="setup"||((name==="session"||name==="sentence"||name==="saved"||name==="map"||name==="mora"||name==="drill"||name==="radio"||name==="notes"||name==="settings")&&!isWide());document.querySelector("header").hidden=solo||(name==="search"&&!isWide())||(name==="practice"&&(discussionMode||readingMode||extractMode)&&!isWide());$("#tabs").hidden=solo&&name!=="sentence"&&name!=="notes"&&name!=="saved";
   $("#view-title").textContent=VIEW_TITLES[name]||"";$("#view-title").hidden=!VIEW_TITLES[name];document.querySelector(".brand").hidden=!!VIEW_TITLES[name];
   $("#discussion-play").onclick=playDiscussion;$("#discussion-english").onchange=renderDiscussion;$("#discussion-new").onclick=()=>{discussionLoop.stop();discussionTurns=[];discussionScenario="";renderDiscussion();$("#english-input").value="";$("#english-input").focus()};$("#reading-furigana").onchange=renderReading;$("#reading-english").onchange=renderReading;$("#reading-echo").onclick=playReading;
-for(const tab of document.querySelectorAll(".tab[data-view]")){const on=tab.dataset.view===name||((name==="session"||name==="radio")&&tab.dataset.view==="review")||((name==="sentence"||name==="map"||name==="notes")&&tab.dataset.view==="library");tab.classList.toggle("current",on);tab.setAttribute("aria-current",on?"page":"false")}
+for(const tab of document.querySelectorAll(".tab[data-view]")){const on=tab.dataset.view===name||((name==="session"||name==="radio")&&tab.dataset.view==="review")||((name==="sentence"||name==="map"||name==="notes"||name==="saved")&&tab.dataset.view==="library");tab.classList.toggle("current",on);tab.setAttribute("aria-current",on?"page":"false")}
   // Settings sits in the desktop sidebar as a fourth row without a data-view; it is current on the Settings route.
   {const settingsNav=$("#settings-nav");if(settingsNav){const on=name==="settings";settingsNav.classList.toggle("current",on);settingsNav.setAttribute("aria-current",on?"page":"false")}}
   document.body.dataset.view=name;scrollTo(0,0);renderSidePanel();
-  saveWorkspace({view:name});if(route)syncRoute({view:name});queueMicrotask(()=>{try{renderNavTools()}catch{}});if(name==="library"||(name==="sentence"&&isWide()))renderHistory();else if(name==="map")renderMap();else if(name==="mora")renderMora();else if(name==="radio")renderRadio();else if(name==="notes")renderNotes();else if(name==="drill")startMoraDrill();else if(name==="search")renderSearch();else if(name==="review")renderReviewHome();else if(name==="practice"){renderPracticeNotices();renderWelcome()}else if(name==="setup")resetSetupForm()}
+  saveWorkspace({view:name});if(route)syncRoute({view:name});queueMicrotask(()=>{try{renderNavTools()}catch{}});if(name==="library"||(name==="sentence"&&isWide()))renderHistory();else if(name==="map")renderMap();else if(name==="mora")renderMora();else if(name==="radio")renderRadio();else if(name==="notes")renderNotes();else if(name==="saved")renderSaved();else if(name==="drill")startMoraDrill();else if(name==="search")renderSearch();else if(name==="review")renderReviewHome();else if(name==="practice"){renderPracticeNotices();renderWelcome()}else if(name==="setup")resetSetupForm()}
 // The study tool: the wall of joyo kanji, the dictionary and the list of grammar points,
 // read off your library every time the screen opens. Coverage is never
 // stored, so a sentence added or deleted moves the wall at once, and nothing
@@ -478,7 +487,7 @@ function bar(learnedN,metN,total){const wrap=el("span","bar");const a=el("span",
   a.style.width=(total?100*learnedN/total:0).toFixed(2)+"%";b.style.width=(total?100*(metN-learnedN)/total:0).toFixed(2)+"%";wrap.append(a,b);return wrap}
 function legend(rows){const list=el("ul","legend");for(const [cls,label,n] of rows){const li=el("li");const sw=el("span","swatch "+cls);if(cls==="learned")sw.innerHTML=TICK;li.append(sw,document.createTextNode(label+" — "+n.toLocaleString()));list.append(li)}return list}
 async function renderMap(){
-  const sentences=await listSentences();renderCustomReferences();
+  const sentences=await listSentences();savedIds=await savedWordIds();renderCustomReferences();
   $("#map-from").textContent=sentences.length===1?t("From your 1 sentence"):t("From your {n} sentences",{n:sentences.length.toLocaleString()});
   const half=toolHalf();$("#map-tab-grammar").hidden=!hasGrammar();
   for(const button of document.querySelectorAll("#map-toggle [role=tab]")){const on=button.dataset.map===half;button.setAttribute("aria-selected",String(on));button.tabIndex=on?0:-1}
@@ -672,7 +681,7 @@ function renderLookup(query,sentences){
       const sw=el("span","swatch "+(state==="learned"?"learned":state==="met"?"met":""));if(state==="learned")sw.innerHTML=TICK;
       const text=el("span","lookup-text"),title=el("b",null,w.w+(w.r!==w.w?"　"+w.r:""));title.lang="ja";
       text.append(title,el("span",null,w.en[0]||""),el("span",null,[wordLevel(w)==="+"?null:wordLevel(w),kindOf(w),t(STATE_LABELS[state]),count?inYours(count):null].filter(Boolean).join(" · ")));
-      row.append(sw,text);row.insertAdjacentHTML("beforeend",RIGHT);row.onclick=()=>openWord(w,cover);li.append(row);list.append(li)}
+      row.append(sw,text);if(savedIds.has(w.id))row.insertAdjacentHTML("beforeend",savedMarkHtml(true,{label:t("Saved")}));row.insertAdjacentHTML("beforeend",RIGHT);row.onclick=()=>openWord(w,cover);li.append(row);list.append(li)}
     if(!r.words.length)list.append(el("li","hint",t("Nothing in the dictionary matches that. It carries the common words and every JLPT list, not every word there is — say the sentence anyway and Echo translates it.")));
   }else{
     const r=searchGrammar(query),cover=grammarCoverage(sentences),known=grammarLearned(sentences),n=r.points.length;
@@ -1261,8 +1270,8 @@ function wordRow(w,cover,known,onOpen){
   const sw=el("span","swatch "+(state==="learned"?"learned":state==="met"?"met":""));if(state==="learned")sw.innerHTML=TICK;
   const title=el("b",null,w.w);title.lang="ja";row.append(sw,title);
   if(w.r!==w.w){const reading=el("span","reading",w.r);reading.lang="ja";row.append(reading)}
-  row.append(el("span","gloss",w.en[0]||""));if(count)row.append(el("i",null,sentencesPhrase(count)));
-  row.setAttribute("aria-label",w.w+(w.r!==w.w?"（"+w.r+"）":"")+" — "+t(STATE_LABELS[state])+(count?", "+inYours(count):""));
+  row.append(el("span","gloss",w.en[0]||""));const saved=savedIds.has(w.id);if(saved||count){const tail=el("i",null,count?sentencesPhrase(count):"");if(saved)tail.insertAdjacentHTML("afterbegin",savedMarkHtml(true));row.append(tail)}
+  row.setAttribute("aria-label",w.w+(w.r!==w.w?"（"+w.r+"）":"")+" — "+t(STATE_LABELS[state])+(saved?", "+t("saved"):"")+(count?", "+inYours(count):""));
   row.onclick=onOpen;return row}
 function renderWordBand(band,cover,known){
   const section=el("section","band");section.dataset.level=band.level;
@@ -1309,8 +1318,10 @@ async function wordStep(direction){
   wordLearnAt=id;if(loop.running)loop.stop();$("#word-say").value="";
   await openWord(wordById(id),cover,{learn:wordOpen.learn});$("#word-dialog").scrollTop=0;
 }
-async function openWord(w,cover,{learn=null,route=true}={}){
-  wordOpen={word:w,learn};
+async function openWord(w,cover,{learn=null,route=true,context}={}){
+  // The sentence the word was opened from, if any: what Save keeps as its context.
+  if(context===undefined)context=wordOpen?.word?.id===w.id?wordOpen.context:null;
+  wordOpen={word:w,learn,context};
   const all=await listSentences(),known=wordLearned(all),ids=cover.get(w.id)||[],state=known.has(w.id)?"learned":ids.length?"met":"unmet";
   renderWordNav(cover);
   $("#word-level").textContent=wordLevel(w)==="+"?"":wordLevel(w);
@@ -1334,9 +1345,57 @@ async function openWord(w,cover,{learn=null,route=true}={}){
   const byId=new Map(all.map(s=>[s.id,s])),mine=ids.map(id=>byId.get(id)).filter(Boolean);
   expandableList({host:$("#word-sentences"),items:mine,moreLabel:t("See more"),lessLabel:t("See less"),render:shown=>renderSheetSentences($("#word-sentences"),shown,{deletable:true,onDelete:deleteFromWordSheet,mark:wordMarks(w).join("・")})});
   $("#word-mine-head").hidden=!mine.length;sheetCount($("#word-mine-head"),mine.length);
+  await renderWordSaved(w);
   if(!$("#word-dialog").open)$("#word-dialog").showModal();
   await renderWordNote(w);
 }
+// Saved words (SPEC echo-reader §4.4, boards WordSaved / WordUnsaved): the
+// SavedMark toggle in the sheet head. Saved is a mark beside the state, never a
+// state: the chip still says met or learned, and nothing says unmet while saved.
+// Saved: a status line under the senses ("Saved 6 Nov · from the reader. The
+// sentence is in your Library.") and, at the foot, Where you saved it (five
+// at most, newest first) and Remove. Removed: one line, "Removed from saved
+// words.", and the contexts drop out of view; they stay on the record.
+async function renderWordSaved(w,{removed=false}={}){
+  let record=null;try{record=await getWord(w.id)}catch{record=null}
+  if(wordOpen?.word.id!==w.id)return record;
+  const saved=isSaved(record);renderSavedButton($("#word-save"),saved,{saveLabel:t("Save word"),savedLabel:t("Saved — remove from saved words")});
+  const chip=$("#word-state");chip.hidden=saved&&chip.dataset.state==="unmet";
+  $("#word-meta").textContent=saved&&chip.dataset.state==="unmet"?t("None yet. Saying one is how a saved word becomes met, then learned."):t("Not in any of your sentences yet");
+  const status=$("#word-saved-status"),contexts=saved?record.contexts||[]:[];
+  status.hidden=!saved&&!removed;
+  $("#word-saved-mark").innerHTML=savedMarkHtml(saved);
+  if(saved){const date=new Date(record.updatedAt).toLocaleDateString("en-GB",{day:"numeric",month:"short"});
+    $("#word-saved-text").textContent=[t("Saved {date}",{date})+(record.from==="reader"?" · "+t("from the reader"):"")+".",contexts.some(c=>c.sentenceId)?t("The sentence is in your Library."):""].filter(Boolean).join(" ")}
+  else if(removed)$("#word-saved-text").textContent=t("Removed from saved words.");
+  $("#word-saved").hidden=!saved;
+  if(saved){sheetCount($("#word-saved-head"),contexts.length);const marks=wordMarks(w).join("・");
+    $("#word-saved-list").replaceChildren(...contexts.map(context=>{const li=el("li","word-saved-item"),text=el("p","word-saved-context");text.lang="ja";text.innerHTML=markPattern(escapeText(context.text),marks);
+      li.append(text,el("p","saved-source",contextSource(context,{sentenceOnly:t("Sentence only")})));return li}));
+    $("#word-remove-mark").innerHTML=savedMarkHtml(false)}
+  return record}
+// A save or remove on the sheet redraws the list behind it when it closes:
+// a removed word leaves Saved words quietly, with no toast.
+let savedChanged=false;
+function refreshSavedBehindSheet(){if(!savedChanged)return;savedChanged=false;const view=document.body.dataset.view;
+  if(view==="saved")renderSaved();else if(view==="library")renderLibrarySaved();else if(view==="notes")renderNotes();else if(view==="search")renderSearch();else if(view==="map")renderMap()}
+async function toggleWordSaved(){
+  const target=wordOpen;if(!target)return;const w=target.word,button=$("#word-save");
+  button.disabled=true;savedChanged=true;
+  try{
+    if(isSaved(await getWord(w.id))){await removeWord(w.id);await renderWordSaved(w,{removed:true});return}
+    let context=target.context?{...target.context}:null;
+    // A context names its card only while that sentence is in the Library.
+    if(context?.sentenceId&&!(await getSentence(context.sentenceId).catch(()=>null)))delete context.sentenceId;
+    await saveWord(w,{context,from:"echo"});
+    await renderWordSaved(w);
+  }catch(error){$("#word-status").textContent=sheetError(error)}
+  finally{button.disabled=false}
+}
+// "Remove from saved words" at the foot: the same write as the pressed mark.
+async function removeOpenWord(){const target=wordOpen;if(!target)return;const button=$("#word-remove");button.disabled=true;savedChanged=true;
+  try{await removeWord(target.word.id);await renderWordSaved(target.word,{removed:true});$("#word-dialog").scrollTop=0}
+  catch(error){$("#word-status").textContent=sheetError(error)}finally{button.disabled=false}}
 // Echo's way to remember a word is written when you ask, not when the sheet
 // opens: one request, on your key, kept on the device and in every backup.
 async function renderWordNote(w){
@@ -1587,7 +1646,7 @@ function renderLibraryProgress(all){
  $("#library-progress").hidden=total===0;
 }
 let historyRenderVersion=0;
-async function renderHistory(){const version=++historyRenderVersion,all=await listSentences();if(version!==historyRenderVersion)return;renderLibraryProgress(all);renderLibraryNotes();const list=$("#history-list"),due=dueSentences(all),query=$("#history-search").value.trim().toLocaleLowerCase(),filter=$("#history-filter").value,order=$("#history-order").value,direction=$("#history-direction").value,now=Date.now();let items=all.filter(item=>{const haystack=[item.source,item.target,item.plainTarget,item.casualTarget,item.politeTarget].filter(Boolean).join(" ").toLocaleLowerCase();if(query&&!haystack.includes(query))return false;const state=item.srs?.state??0;if(filter==="due")return !item.srs?.due||Date.parse(item.srs.due)<=now;if(filter==="new")return state===0;if(filter==="learning")return state===1||state===3;if(filter==="review")return state===2;if(filter==="skipped")return item.skipped===true;if(filter==="flagged")return item.flagged===true;return true});const comparators={created:(a,b)=>a.createdAt.localeCompare(b.createdAt),echoes:(a,b)=>(Number(a.echoCount)||0)-(Number(b.echoCount)||0),due:(a,b)=>Date.parse(a.srs?.due||a.createdAt)-Date.parse(b.srs?.due||b.createdAt),english:(a,b)=>a.source.localeCompare(b.source),japanese:(a,b)=>preferredPlainTarget(a).localeCompare(preferredPlainTarget(b),itemTarget(a))},factor=direction==="asc"?1:-1;items.sort((a,b)=>factor*(comparators[order]||comparators.created)(a,b));list.replaceChildren();$("#empty-history").hidden=all.length>0;renderStarterOffer(all);document.querySelector(".history-tools").hidden=all.length===0;$("#empty-results").hidden=all.length===0||items.length>0;$("#empty-results-count").textContent=all.length===1?"One is in your library.":capitalise(spell(all.length))+" are in your library.";updateDueBadge(limitReviewSession(due,settings,all).length);$("#library-count").textContent=items.length===1?"1 sentence":items.length+" sentences";renderFilterButton($("#library-filter"),libraryFilterSummary());$(".list-head").hidden=items.length===0;if(isWide()&&!detail&&items.length)return openDetail(items[0].id);
+async function renderHistory(){const version=++historyRenderVersion,all=await listSentences();if(version!==historyRenderVersion)return;renderLibraryProgress(all);renderLibraryNotes();renderLibrarySaved();const list=$("#history-list"),due=dueSentences(all),query=$("#history-search").value.trim().toLocaleLowerCase(),filter=$("#history-filter").value,order=$("#history-order").value,direction=$("#history-direction").value,now=Date.now();let items=all.filter(item=>{const haystack=[item.source,item.target,item.plainTarget,item.casualTarget,item.politeTarget].filter(Boolean).join(" ").toLocaleLowerCase();if(query&&!haystack.includes(query))return false;const state=item.srs?.state??0;if(filter==="due")return !item.srs?.due||Date.parse(item.srs.due)<=now;if(filter==="new")return state===0;if(filter==="learning")return state===1||state===3;if(filter==="review")return state===2;if(filter==="skipped")return item.skipped===true;if(filter==="flagged")return item.flagged===true;return true});const comparators={created:(a,b)=>a.createdAt.localeCompare(b.createdAt),echoes:(a,b)=>(Number(a.echoCount)||0)-(Number(b.echoCount)||0),due:(a,b)=>Date.parse(a.srs?.due||a.createdAt)-Date.parse(b.srs?.due||b.createdAt),english:(a,b)=>a.source.localeCompare(b.source),japanese:(a,b)=>preferredPlainTarget(a).localeCompare(preferredPlainTarget(b),itemTarget(a))},factor=direction==="asc"?1:-1;items.sort((a,b)=>factor*(comparators[order]||comparators.created)(a,b));list.replaceChildren();$("#empty-history").hidden=all.length>0;renderStarterOffer(all);document.querySelector(".history-tools").hidden=all.length===0;$("#empty-results").hidden=all.length===0||items.length>0;$("#empty-results-count").textContent=all.length===1?"One is in your library.":capitalise(spell(all.length))+" are in your library.";updateDueBadge(limitReviewSession(due,settings,all).length);$("#library-count").textContent=items.length===1?"1 sentence":items.length+" sentences";renderFilterButton($("#library-filter"),libraryFilterSummary());$(".list-head").hidden=items.length===0;if(isWide()&&!detail&&items.length)return openDetail(items[0].id);
   for(const [index,item] of items.entries()){if(index%10===0){await new Promise(resolve=>setTimeout(resolve,0));if(version!==historyRenderVersion)return}const li=document.createElement("li");li.dataset.id=item.id;const state=cardState(item,now);li.innerHTML='<button class="history-open" type="button"><span class="lines"><span lang="'+itemTarget(item)+'">'+rubyHtml(preferredTarget(item))+'</span><span class="source-line">'+escapeText(item.source)+'</span><span class="chip-row"><span class="status-chip '+state+'">'+CARD_STATES[state]+'</span>'+(item.flagged?'<span class="status-chip flagged-chip">'+flagSvg+' Flagged</span>':'')+'</span></span><span class="tally"><strong>'+(Number(item.echoCount)||0)+'</strong><span>echoes</span></span></button>';li.querySelector(".history-open").onclick=()=>openDetail(item.id);list.append(li)}markSelectedRow()}
 const formatDate=value=>new Intl.DateTimeFormat(undefined,{day:"numeric",month:"long"}).format(new Date(value));
 const RATING_LABELS={again:"Again",ok:"OK"};
@@ -1994,7 +2053,7 @@ function enableVocabulary(root,target,lang=targetLang(),sentence=null,{grammarHo
       span.textContent=data.slice(local,local+take);frag.append(span);local+=take}
     offset+=data.length;node.replaceWith(frag)}
   const tokenFor=event=>event.target.closest?.(".review-vocab")||event.target.closest?.("ruby")?.querySelector(".review-vocab");
-  const open=token=>{const hit=hits[Number(token.dataset.vocabularyIndex)];resetSession();openVocabularyHit(hit,stripFurigana(target))};
+  const open=token=>{const hit=hits[Number(token.dataset.vocabularyIndex)];resetSession();openVocabularyHit(hit,stripFurigana(target),sentence)};
   root.onclick=event=>{const token=tokenFor(event);if(token){event.preventDefault();event.stopPropagation();open(token)}};
   root.onkeydown=event=>{if(event.key!=="Enter"&&event.key!==" ")return;const token=tokenFor(event);if(!token)return;event.preventDefault();event.stopPropagation();open(token)};
   if(grammarHost)renderSentenceGrammar(grammarHost,plain,sentence,analysis,{root,target,lang,explain});
@@ -2077,14 +2136,16 @@ async function findSentenceReferences(){
  $("#custom-reference-status").textContent=candidates.length?'Select a phrase as it appears. AI will suggest its dictionary form using this sentence.':'No missing words or kanji detected. You can still look up a grammar construction below.';
 }
 let dictionaryLookupGeneration=0;
-async function openVocabularyHit(hit,context){
+async function openVocabularyHit(hit,context,sentence=null){
+  // The sentence a word is opened from is the context Save keeps (SPEC §4.4).
+  const saveContext={text:context,...(sentence?.id&&!sentence.transient?{sentenceId:sentence.id}:{})};
   const choices=(hit.ids||[hit.id]).map(wordById).filter(Boolean),points=(hit.grammarIds||[]).map(grammarPoint).filter(Boolean);
   if(points.length===1&&!choices.length&&hit.id!==null){await openGrammar(points[0],grammarCoverage(await listSentences()),{route:false});return}
-  if(choices.length===1&&!points.length){const w=choices[0];await openWord(w,wordCoverage(await listSentences()),{route:false});return}
+  if(choices.length===1&&!points.length){const w=choices[0];await openWord(w,wordCoverage(await listSentences()),{route:false,context:saveContext});return}
   const dialog=$("#dictionary-dialog"),list=$("#dictionary-choices"),surface=context.slice(hit.wordStart??hit.start,hit.wordEnd??hit.end),generation=++dictionaryLookupGeneration;
   $("#dictionary-title").textContent=surface;list.replaceChildren();$("#dictionary-explanation").textContent=choices.length||points.length?"Choose vocabulary or the grammar used in this phrase.":"This whole word or name is not in the offline dictionary. It has not been split into unrelated words.";
   $("#dictionary-context").textContent=context;const ask=$("#dictionary-ask");ask.hidden=choices.length>0||points.length>0;ask.disabled=!hasTranslator();
-  for(const w of choices){const button=document.createElement("button");button.type="button";button.className="dictionary-choice";button.textContent="Vocabulary: "+w.w+"（"+w.r+"） — "+w.en[0];button.onclick=async()=>{dialog.close();await openWord(w,wordCoverage(await listSentences()),{route:false})};list.append(button)}
+  for(const w of choices){const button=document.createElement("button");button.type="button";button.className="dictionary-choice";button.textContent="Vocabulary: "+w.w+"（"+w.r+"） — "+w.en[0];button.onclick=async()=>{dialog.close();await openWord(w,wordCoverage(await listSentences()),{route:false,context:saveContext})};list.append(button)}
   for(const point of points){const button=document.createElement("button");button.type="button";button.className="dictionary-choice";button.textContent="Grammar: "+point.title+" — "+(point.hint||"");button.onclick=async()=>{dialog.close();await openGrammar(point,grammarCoverage(await listSentences()),{route:false})};list.append(button)}
     const savedReference=(importedCatalogues.references||[]).find(entry=>entry.id===hit.referenceId||entry.term===surface||(entry.forms||[]).includes(surface));
   if(savedReference)$("#dictionary-explanation").textContent=savedReference.text;
@@ -2141,7 +2202,7 @@ async function previousReview(){
 async function rateReview(rating){const sentence=reviewQueue[reviewIndex];if(!sentence||!reviewRevealed||reviewBusy)return;reviewBusy=true;updateReviewPrevious();const snapshot=reviewSnapshot(sentence);try{resetSession();const now=new Date(),mode=reviewMode(sentence),graded=reviewSentence(sentence,rating,now),progressed=recordReviewMode(graded,rating,now);
   const updated={...progressed,reviews:[...(Array.isArray(sentence.reviews)?sentence.reviews:[]),{at:now.toISOString(),rating,mode,state:sentence.srs?.state??0,echoes:Math.max(0,(Number(sentence.echoCount)||0)-echoesAtCardStart)}]};await saveSentence(updated);reviewUndo.push(snapshot);if(current?.id===updated.id)current=updated;reviewQueue[reviewIndex]=updated;reviewIndex++;renderReview()}finally{reviewBusy=false;updateReviewPrevious()}}
 // The one backup document: the file Export downloads is byte-for-byte what the gist holds.
-async function buildBackup(){return {...exportBackup(await listSentences(),settings,forBackup(await listNotes().catch(()=>[]))),catalogues:importedCatalogues}}
+async function buildBackup(){return {...exportBackup(await listSentences(),settings,forBackup(await listNotes().catch(()=>[]))),catalogues:importedCatalogues,words:await listWords().catch(()=>[])}}
 async function exportHistory(){const data=await buildBackup(),url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"})),link=Object.assign(document.createElement("a"),{href:url,download:"jp-echo-backup.json"});link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);$("#import-status").textContent="Backup saved as jp-echo-backup.json."}
 async function exportAnki(button=$("#export-anki")){const items=await listSentences();const label=button.textContent;button.disabled=true;button.textContent="Building deck…";$("#anki-status").textContent="Creating Echo.apkg on this device…";try{await downloadAnkiDeck(items.map(forAnki));$("#open-anki").hidden=false;const launched=openAnki(true);$("#anki-status").textContent=launched?"Echo.apkg downloaded. Opening Anki… If it stays here, tap Open Anki.":"Echo.apkg downloaded. Open it from Downloads to import it into Anki."}catch(error){$("#anki-status").textContent=error.message||"Anki export failed."}finally{button.disabled=false;button.textContent=label}}
 function openAnki(automatic=false){const android=/android/i.test(navigator.userAgent),ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(android){window.location.href="intent:#Intent;package=com.ichi2.anki;end";return true}if(ios){window.location.href="anki://";return true}if(!automatic)$("#anki-status").textContent="Open Echo.apkg from your Downloads folder to import it into Anki.";return false}
@@ -2183,6 +2244,8 @@ async function importBackupData(backup){
  if(upgrade.removed.length)await saveImportRecovery({schemaVersion:2,sentences:upgrade.removed,catalogues:importedCatalogues,kind:'Minihongo word cards replaced with sentences'},'minihongo-v2-word-cards');
  saveCatalogues(catalogues);try{await replaceAll(merged)}catch(error){saveCatalogues(importedCatalogues);throw error}markBackupDirty();importedCatalogues=catalogues;applyCatalogues();scheduleReadingBackfill();
  if(Array.isArray(backup.notes))await replaceNotes(mergeNotes(await listNotes().catch(()=>[]),backup.notes));
+ // Saved words merge by id; a tombstone wins by time, so a removal survives.
+ if(Array.isArray(backup.words)){const {words}=validateSavedWords(backup.words);if(words.length)await replaceWords(mergeWords(await listWords(),words))}
  const added=merged.length-before.length+upgrade.removed.length,message=`Added ${added} sentence(s). ${backup.sentences.length-added} already present; existing progress kept.${upgrade.removed.length?` Replaced ${upgrade.removed.length} Minihongo word cards with sentences.`:""}`;
  setStatus(message);refreshDueBadge();await renderHistory();return {added,total:merged.length};
 }
@@ -2330,6 +2393,30 @@ async function renderLibraryNotes(){const row=$("#library-notes"),entries=target
   $("#library-notes-count").textContent=String(entries.length);
   $("#library-notes-words").replaceChildren(...entries.slice(0,3).map(({word})=>{const chip=document.createElement("button");chip.type="button";chip.className="library-note-word";chip.lang="ja";chip.dataset.ui="button";
     chip.append(el("span","word",word.w),el("span","reading",word.r||""));chip.setAttribute("aria-label",word.w+" — "+t("Echo’s note"));chip.onclick=async()=>openWord(word,wordCoverage(await listSentences()));return chip}))}
+// Saved words (SPEC echo-reader D6, boards LibraryToolsSaved, SavedWords,
+// SavedWordsEmpty): the 栞 row under 記 Echo's notes shows three, and
+// /words?saved=1 lists them all, newest first. Saved is a mark, not a state:
+// a row carries the Met or Learned chip only when the sentences earned it.
+async function savedEntries(){let records=[];try{records=savedOnly(await listWords())}catch{records=[]}
+  return records.map(record=>({record,word:wordById(record.id)}))}
+async function openSavedWord(entry){if(entry.word)await openWord(entry.word,wordCoverage(await listSentences()))}
+async function renderLibrarySaved(){const row=$("#library-saved"),entries=targetLang()==="ja"?await savedEntries():[];row.hidden=!entries.length;if(!entries.length)return;
+  $("#library-saved-count").textContent=String(entries.length);
+  $("#library-saved-words").replaceChildren(...entries.slice(0,3).map(entry=>{const chip=document.createElement("button");chip.type="button";chip.className="library-note-word";chip.lang="ja";chip.dataset.ui="button";
+    chip.append(el("span","word",entry.record.w),el("span","reading",entry.record.r&&entry.record.r!==entry.record.w?entry.record.r:""));chip.setAttribute("aria-label",entry.record.w+" — "+t("Saved words"));chip.disabled=!entry.word;chip.onclick=()=>openSavedWord(entry);return chip}))}
+let savedVersion=0;
+async function renderSaved(){const version=++savedVersion,entries=await savedEntries(),all=await listSentences();if(version!==savedVersion)return;
+  const cover=wordCoverage(all),known=wordLearned(all),n=entries.length;
+  $("#saved-count").textContent=n?(n===1?t("1 word · newest first"):t("{n} words · newest first",{n})):t("none yet");
+  $("#saved-lede").hidden=!n;$("#saved-list").hidden=!n;$("#saved-empty").hidden=n>0;
+  $("#saved-list").replaceChildren(...entries.map(entry=>savedRow(entry,cover,known)))}
+function savedRow({record,word},cover,known){const li=document.createElement("li"),open=document.createElement("button");open.type="button";open.className="notes-row saved-row";open.dataset.ui="button";
+  const state=word?known.has(word.id)?"learned":(cover.get(word.id)||[]).length?"met":"unmet":"unmet",context=(record.contexts||[])[0],gloss=(word?.en||[])[0]||"";
+  const marks=word?wordMarks(word).join("・"):record.w;
+  open.innerHTML=savedMarkHtml(true)+'<span class="notes-word" lang="ja">'+escapeText(record.w)+'</span><span class="notes-body"><span class="saved-meta-line"><span class="notes-meta"><span lang="ja">'+escapeText(record.r&&record.r!==record.w?record.r:"")+'</span>'+(gloss?(record.r&&record.r!==record.w?' · ':'')+escapeText(gloss):'')+'</span>'+(state!=="unmet"?'<span class="state-chip" data-state="'+state+'">'+escapeText(t(STATE_LABELS[state]))+'</span>':'')+'</span>'+
+    (context?'<span class="saved-context" lang="ja">'+markPattern(escapeText(context.text),marks)+'</span><span class="saved-source">'+escapeText(contextSource(context,{sentenceOnly:t("Sentence only")}))+'</span>':'')+'</span>';
+  open.setAttribute("aria-label",record.w+(record.r&&record.r!==record.w?"（"+record.r+"）":"")+" — "+t("Saved")+(state!=="unmet"?", "+t(STATE_LABELS[state]):""));
+  open.disabled=!word;open.onclick=()=>openSavedWord({record,word});li.append(open);return li}
 // Mora v5: Echo's notes still written with an old anchor. Only Echo's own
 // versions are rewritten; a note you wrote yourself is left as it is.
 const outdatedNotes=entries=>entries.filter(({note,word})=>note.by!=="you"&&moraRetiredIn(word.r||"",note.text||"").length);
@@ -2345,10 +2432,10 @@ async function rewriteOutdatedNotes(){if(notesRewriting||!hasTranslator())return
   finally{notesRewriting=false}
   await renderNotes();$("#notes-outdated").hidden=false;$("#notes-outdated-text").textContent=failed?t("Rewrote {n}; {failed} could not be rewritten. Try again for those.",{n:done,failed}):t("Rewrote {n} with the new anchors.",{n:done});
   $("#notes-outdated-why").hidden=true;$("#notes-outdated-go").hidden=!failed;$("#notes-outdated-go").disabled=false;status.textContent=""}
-async function renderNotes(){const entries=await wordNotes();renderNotesOutdated(entries);$("#notes-outdated-go").hidden=false;$("#notes-count").textContent=t("{n} words · newest first",{n:entries.length});$("#notes-empty").hidden=entries.length>0;
+async function renderNotes(){const entries=await wordNotes(),saved=await savedWordIds(),gutter=entries.some(({word})=>saved.has(word.id));renderNotesOutdated(entries);$("#notes-outdated-go").hidden=false;$("#notes-count").textContent=t("{n} words · newest first",{n:entries.length});$("#notes-empty").hidden=entries.length>0;
   $("#notes-list").replaceChildren(...entries.map(({note,word})=>{const li=document.createElement("li"),open=document.createElement("button");open.type="button";open.className="notes-row";open.dataset.ui="button";
     const story=stripFurigana(String(wordNoteParts(note.text)?.mora||note.text)).replace(/\s+/g," ").trim();
-    open.innerHTML='<span class="notes-word" lang="ja">'+escapeText(word.w)+'</span><span class="notes-body"><span class="notes-meta"><span lang="ja">'+escapeText(word.r||"")+'</span> · '+escapeText((word.en||[])[0]||"")+'</span><span class="notes-story">'+escapeText(story)+'</span>'+anchorStripHtml(moraMnemonicTokens(word.r||"").map(token=>({...token})),{compact:true})+'</span><svg class="notes-chevron" width="8" height="13" viewBox="0 0 8 13" fill="none" aria-hidden="true"><path d="m1.5 1.5 5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    open.innerHTML=(saved.has(word.id)?savedMarkHtml(true,{label:t("Saved")}):gutter?'<span class="saved-mark-slot" aria-hidden="true"></span>':'')+'<span class="notes-word" lang="ja">'+escapeText(word.w)+'</span><span class="notes-body"><span class="notes-meta"><span lang="ja">'+escapeText(word.r||"")+'</span> · '+escapeText((word.en||[])[0]||"")+'</span><span class="notes-story">'+escapeText(story)+'</span>'+anchorStripHtml(moraMnemonicTokens(word.r||"").map(token=>({...token})),{compact:true})+'</span><svg class="notes-chevron" width="8" height="13" viewBox="0 0 8 13" fill="none" aria-hidden="true"><path d="m1.5 1.5 5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     open.onclick=async()=>openWord(word,wordCoverage(await listSentences()));li.append(open);return li}))}
 // One quiet control names the filter; its sheet holds search, Cards, Sort and
 // Direction, which commit on change as they always have.
@@ -2361,6 +2448,7 @@ wireFilterButton($("#library-filter"),$("#library-filter-sheet"));
 $("#library-filter-done").onclick=()=>$("#library-filter-sheet").close();
 $("#library-filter-sheet").addEventListener("click",event=>{if(event.target===$("#library-filter-sheet"))$("#library-filter-sheet").close()});
 $("#library-notes-open").onclick=()=>showView("notes");$("#notes-back").onclick=()=>showView("library");
+$("#library-saved-open").onclick=()=>showView("saved");$("#saved-back").onclick=()=>showView("library");$("#saved-open-words").onclick=()=>{settings.mapView="words";showView("map")};$("#saved-empty-mark").innerHTML=savedMarkHtml(false,{label:t("the bookmark")});
 renderLibraryTools();
 // Review home, action first (ReviewHomeFirst): the evening brings Radio up
 // beside Start review. In the day it is in Library's tools shelf.
@@ -2391,10 +2479,10 @@ async function renderSearch(){const version=++searchVersion,query=$("#search-inp
   if(!query){host.replaceChildren();return}
   const all=await listSentences();if(version!==searchVersion)return;
   const parts=[],want=scope=>searchScope==="all"||searchScope===scope,ja=targetLang()==="ja";
-  if(ja&&want("words")){const r=searchWords(query),notes=new Set((await wordNotes()).map(e=>e.word.id));if(version!==searchVersion)return;
-    const words=(r?.words||[]).slice(0,searchScope==="words"?50:5);
+  if(ja&&want("words")){const r=searchWords(query),notes=new Set((await wordNotes()).map(e=>e.word.id)),saved=await savedWordIds();if(version!==searchVersion)return;
+    const words=(r?.words||[]).slice(0,searchScope==="words"?50:5),gutter=words.some(w=>saved.has(w.id));
     if(words.length){const ul=el("ul","search-list");for(const w of words){const li=el("li"),row=el("button","search-row");row.type="button";
-      row.innerHTML='<span class="search-word" lang="ja">'+escapeText(w.w)+'</span><span class="search-lines"><span class="search-reading" lang="ja">'+escapeText(w.r||"")+'</span><span class="search-gloss">'+escapeText((w.en||[])[0]||"")+'</span></span>'+(notes.has(w.id)?'<span class="status-chip due search-note">'+escapeText(t("Note"))+'</span>':'')+chevronSvg;
+      row.innerHTML=(saved.has(w.id)?savedMarkHtml(true,{label:t("Saved")}):gutter?'<span class="saved-mark-slot" aria-hidden="true"></span>':'')+'<span class="search-word" lang="ja">'+escapeText(w.w)+'</span><span class="search-lines"><span class="search-reading" lang="ja">'+escapeText(w.r||"")+'</span><span class="search-gloss">'+escapeText((w.en||[])[0]||"")+'</span></span>'+(notes.has(w.id)?'<span class="status-chip due search-note">'+escapeText(t("Note"))+'</span>':'')+chevronSvg;
       row.onclick=()=>openWord(w,wordCoverage(all));li.append(row);ul.append(li)}parts.push(searchRule(t("Words"),r.total),ul)}}
   if(ja&&want("kanji")){const r=searchKanji(query),cover=kanjiCoverage(all),known=kanjiLearned(all),chars=(r?.chars||[]).slice(0,searchScope==="kanji"?50:5);
     if(chars.length){const ul=el("ul","search-list kanji");for(const c of chars){const li=el("li"),row=el("button","search-row");row.type="button";
@@ -2514,7 +2602,7 @@ function sheetDrag(dialog,close){
   dialog.addEventListener("click",event=>{if(event.target===dialog)close()});
 }
 sheetDrag($("#kanji-dialog"),()=>{loop.stop();$("#kanji-dialog").close()});sheetDrag($("#grammar-dialog"),()=>{loop.stop();$("#grammar-dialog").close()});sheetDrag($("#word-dialog"),()=>{loop.stop();$("#word-dialog").close()});
-$("#word-close").onclick=()=>{loop.stop();$("#word-dialog").close()};$("#word-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;wordOpen=null;saveWorkspace({modal:null})});$("#word-compose").onclick=composeForWord;$("#word-say-go").onclick=sayForWord;$("#word-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForWord()};$("#word-note-ask").onclick=askWordNote;$("#word-prev").onclick=()=>wordStep(-1);$("#word-next").onclick=()=>wordStep(1);$("#word-dialog").addEventListener("keydown",event=>{if(!wordOpen?.learn||event.target.tagName==="TEXTAREA"||event.target.isContentEditable)return;if(event.key==="ArrowRight")wordStep(1);else if(event.key==="ArrowLeft")wordStep(-1)});
+$("#word-close").onclick=()=>{loop.stop();$("#word-dialog").close()};$("#word-save").onclick=toggleWordSaved;$("#word-remove").onclick=removeOpenWord;$("#word-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;wordOpen=null;saveWorkspace({modal:null});refreshSavedBehindSheet()});$("#word-compose").onclick=composeForWord;$("#word-say-go").onclick=sayForWord;$("#word-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForWord()};$("#word-note-ask").onclick=askWordNote;$("#word-prev").onclick=()=>wordStep(-1);$("#word-next").onclick=()=>wordStep(1);$("#word-dialog").addEventListener("keydown",event=>{if(!wordOpen?.learn||event.target.tagName==="TEXTAREA"||event.target.isContentEditable)return;if(event.key==="ArrowRight")wordStep(1);else if(event.key==="ArrowLeft")wordStep(-1)});
 // Radio: the studied sentences through the night (radio.js plans it,
 // speech.js plays it). The screen is kept on with a wake lock, because a
 // locked phone stops the speech engine on iPhone and on Android alike.

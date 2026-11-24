@@ -226,6 +226,15 @@ Before considering the change complete:
   plan steps are limited to check / recall / section / drill / radio / mock / generate /
   review / rest / checklist (`STEP_KINDS`); generated questions must name a `BLUEPRINT` 問題
   and pass `validateGenerated`. Without a provider, `todayPlan` still plans.
+- **Saved words are a mark, not a state** (specs/echo-reader SPEC §4, D6, R1).
+  They live in their own IndexedDB database (`saved-words.js`, `jp-echo-words`,
+  keyPath word id), never in `sentences`, so they never reach review, the due
+  badge or the Cards filter. Writes go through the `saveWord` / `removeWord` /
+  `replaceWords` wrappers in app.js (which call `markBackupDirty`). Remove is a
+  `removedAt` tombstone, never a delete, and a tombstone wins by time in
+  `mergeWords`. `buildBackup` carries them as a top-level `words` key next to
+  `catalogues`; decks may not. The way in is the 栞 row under 記 Echo's notes,
+  opening `/words?saved=1`; the mark is `SavedMark` (COMPONENTS.md).
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

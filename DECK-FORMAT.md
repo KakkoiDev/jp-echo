@@ -81,8 +81,8 @@ guess it**. Echo shows them as furigana and can hide them.
 
 Leave these out. Echo creates them, and invented values would corrupt
 scheduling or links: `srs`, `reviews`, `reviewTrack`, `echoCount`,
-`createdAt`, `grammar`, `grammarAnalysis`, `vocabulary`, `notes`,
-`preferences`, and any API key or token. (Echo's own backup files do carry
+`createdAt`, `grammar`, `grammarAnalysis`, `vocabulary`, `notes`, `words`
+(saved words), `preferences`, and any API key or token. (Echo's own backup files do carry
 these, and they import through the same door; a deck is the minimal subset.)
 
 ---
@@ -142,7 +142,7 @@ the request:
 >   politeness matters, give `casualTarget` and `politeTarget` (with `target`
 >   equal to the casual form).
 > - Do not include `srs`, `reviews`, `echoCount`, `createdAt`, `grammar`,
->   `vocabulary`, `notes` or any key.
+>   `vocabulary`, `notes`, `words` or any key.
 > - Before answering, check that the JSON parses, every `id` is unique, every
 >   target sentence is unique, and every `source` matches its `target`.
 

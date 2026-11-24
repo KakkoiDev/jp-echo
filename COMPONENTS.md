@@ -90,6 +90,27 @@ Three forms from one function: an `.icon-button` in a session bar (named by
 `aria-label`), a `.settings-row` in a menu sheet, or a labelled text button on
 the sentence page. `toggleSentenceFlag` in app.js owns the write.
 
+### SavedMark
+`savedMarkSvg`, `savedMarkHtml(saved,{size,label})` and
+`renderSavedButton(button,saved)` (components.js): the one mark for a saved
+word — a drawn bookmark, viewBox 12×16, stroke 1.4 (board SavedStates). Off
+is a `--sumi` outline, on is filled `--seal`. Saved is a mark beside the
+word's state, never a fourth state: met and learned keep their chips, and
+the unmet chip is not shown while a word is saved.
+- On the word sheet it is the `#word-save` IconButton with `aria-pressed`
+  (the seal-tint ON state the flag uses), named "Save word" / "Saved — remove
+  from saved words". `toggleWordSaved` in app.js owns the write.
+- In rows (Search results, the Words map, Echo's notes, Saved words) and in
+  the sheet's status line it is the 12px `.saved-mark`, never a button. A
+  list where some rows are saved keeps a `.saved-mark-slot` gutter on the
+  others so the words stay aligned.
+
+The saved-word record lives in `saved-words.js` (its own IndexedDB database,
+`jp-echo-words`). It is written only through the `saveWord` / `removeWord` /
+`replaceWords` wrappers in app.js (which mark the backup dirty), via
+`saveWordAction` / `removeWordAction` in actions.js. Remove is a tombstone
+(`removedAt`), never a delete.
+
 ### MenuSheet
 `.sheet-dialog.menu-sheet` with `.settings-row.menu-row` rows: an overline,
 the subject, then one row per action (icon, title, one line of what happens);
