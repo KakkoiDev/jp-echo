@@ -59,7 +59,7 @@ test("the 見通し case (with 就任): missed by ear, caught by ear later; the 
 test("exam questions give second contexts, without blanks or ordering puzzles",()=>{
   const sets=[{id:"s",questions:[{target:mitooshi,prompt:"今後の【見通し】を説明した。"},{target:mitooshi,prompt:"（　）が立たない。"},{target:mitooshi,prompt:"新しい社長の【就任】が発表された。読み方はどれか。"}]}];
   const ex=examplesFromSets(sets).get(K(mitooshi));
-  assert.deepEqual(ex.map(e=>e.ja),["今後の見通しを説明した。","新しい社長の就任が発表された。"]);
+  assert.deepEqual(ex.map(e=>e.ja),["今後の見通しを説明した。","新しい社長の就任【しゅうにん】が発表された。"]);
 });
 
 test("the player walks the queue, reveals, jumps and stops",async()=>{
@@ -112,4 +112,19 @@ test("recall marks its pause for the PauseRing, and the player announces it befo
   const p=new DayPlayer({speak:async()=>true,wait:async()=>{},onRing:(i,ms)=>rings.push(ms),onDone:done});
   p.start([item],{steps:it=>daySteps("recall",it,null,{pause:3})});await finished;
   assert.deepEqual(rings,[3000]);
+});
+
+test("a spoken word carries its reading, so the voice never guesses (重役 is じゅうやく)", async () => {
+  const {spokenWord, withReading} = await import("../day-radio.js");
+  const {speechText} = await import("../japanese-readings.js");
+  assert.equal(spokenWord("重役", "じゅうやく"), "重役【じゅうやく】");
+  assert.equal(speechText(spokenWord("重役", "じゅうやく")), "ジュウヤク");
+  assert.equal(spokenWord("ほぼ", "ほぼ"), "ほぼ");
+  assert.equal(withReading("重役が来た。", "重役", "じゅうやく"), "重役【じゅうやく】が来た。");
+  assert.equal(withReading("重役【じゅうやく】が来た。", "重役", "じゅうやく"), "重役【じゅうやく】が来た。");
+  const sets = [{id: "n2-set-9", questions: [{target: ["word", "重役", "じゅうやく"], prompt: "【重役】が会議に出た。"}]}];
+  const {examplesFromSets} = await import("../day-radio.js");
+  assert.equal([...examplesFromSets(sets).values()][0][0].ja, "重役【じゅうやく】が会議に出た。");
+  const source = (await import("node:fs")).readFileSync(new URL("../n2-mock.js", import.meta.url), "utf8");
+  assert.ok(!/say\(c\.item\.prompt\)/.test(source), "the recall screen speaks the word with its reading");
 });

@@ -124,7 +124,7 @@ test("an unrecognised gist URL is an error, never a silent new gist", () => {
 
 test("auto backup is triggered by quiet, by leaving the app and by opening it", () => {
   assert.match(app, /visibilitychange",\(\)=>\{if\(document\.hidden\)maybeAutoBackup\("hidden"\)/);
-  assert.match(app, /await restoreRoute\(\);maybeAutoBackup\("open"\)/);
+  assert.match(app, /await restoreRoute\(\);setTimeout\(\(\)=>runReportSync\(\)\.catch\(\(\)=>\{\}\),8000\);maybeAutoBackup\("open"\)/);
   assert.match(app, /scheduleGistBackup\(QUIET_MS\+500\)/);
 });
 

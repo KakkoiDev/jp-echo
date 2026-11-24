@@ -32,7 +32,8 @@ import {DEFAULT_TIME,REMINDER_TAG,reminderText,shouldRemind} from "./reminders.j
 import {saveDiscussionTurn,saveWordAction,removeWordAction} from "./actions.js";
 import {contextSource,getWord,isSaved,listWords,mergeWords,putWord as dbPutWord,replaceWords as dbReplaceWords,savedOnly,validateSavedWords} from "./saved-words.js";
 // New shared UI comes from the component library (COMPONENTS.md).
-import {flagSvg,renderFlagButton,grammarList,skillGlyph,skillTrio,expandableList,fitTextArea,kanjiNumeral,toolShelf,toolList,renderFilterButton,savedMarkHtml,renderSavedButton,wireFilterButton,anchorStripHtml,hydrateHeaderSearch,chevronSvg,cornerMarkHtml,themedPictureHtml} from "./components.js";
+import {flagSvg,renderFlagButton,grammarList,skillGlyph,skillTrio,expandableList,fitTextArea,kanjiNumeral,toolShelf,toolList,renderFilterButton,savedMarkHtml,renderSavedButton,wireFilterButton,anchorStripHtml,hydrateHeaderSearch,chevronSvg,cornerMarkHtml,themedPictureHtml,openReportSheet,mountReportButtons,reportSvg} from "./components.js";
+import {REPORT_REASONS,createReport,fileReport,withdrawOpen,reportSyncLine,runReportSync,screenOf,appVersion,deviceInfo} from "./reports.js";
 // Settings page state, declared before anything can read it (navigationState).
 const SETTINGS_TITLES={main:"Settings",ai:"AI service",speech:"Speech recognition",backup:"Backup",import:"Import sentences",export:"Export",grammar:"Grammar"};
 let settingsPage="main",settingsReturn="practice";
@@ -1743,20 +1744,47 @@ async function deletePracticeSentence(sentence){
  $("#english-input").value=sentence.source;$("#english-input").dispatchEvent(new Event("input",{bubbles:true}));$("#english-input").focus();
  refreshDueBadge();setStatus("Sentence deleted. Edit your words and translate again.");
 }
+// Flags and reports (reports.js, ReportSheet in components.js). Turning a
+// flag on asks why — a reason is optional — and files a card report; turning
+// it off withdraws that card's open reports. Every screen's report button
+// opens the same sheet, offering the card on screen when there is one.
+const sentenceSubject=item=>({type:"sentence",id:item.id,text:preferredTarget(item),meaning:item.source||"",extra:{plain:stripFurigana(preferredTarget(item)),lang:itemTarget(item),deck:item.deck||item.catalogue||""}});
+function screenTitle(){const name=document.body.dataset.view||"";const head=[...document.querySelectorAll("main section:not([hidden]) .tool-title, main section:not([hidden]) .drill-title, main section:not([hidden]) .session-bar h2")].find(el=>el.offsetParent!==null);const names={practice:discussionMode?"Discussion":readingMode?"Reading":extractMode?"Extract from text":"Practice",review:"Review",session:"Review session",library:"Library",sentence:"Sentence",settings:"Settings",radio:"Radio",map:"Kanji, words and grammar"};return (head?.textContent||names[name]||VIEW_TITLES[name]||name||"Echo").trim()}
+function cardOnScreen(){const view=document.body.dataset.view;if(view==="session")return reviewQueue[reviewIndex]||null;if(view==="sentence")return detail||null;if(view==="practice"&&!discussionMode&&!readingMode&&!extractMode)return current||null;return null}
+async function openReport({sentence=cardOnScreen(),start="screen"}={}){
+ const title=screenTitle(),subjects=[];
+ const hidden=document.body.dataset.view==="session"&&!reviewRevealed&&sentence?.id===reviewQueue[reviewIndex]?.id;
+ const card=sentence?{kind:"card",label:"This card",title:"Flag this card",quote:hidden?"The card on screen — its text stays hidden until you answer":stripFurigana(preferredTarget(sentence)),lang:hidden?"":"ja",subject:sentenceSubject(sentence)}:null;
+ const screen={kind:"bug",label:"This screen",title:"Report a problem",quote:title,subject:{type:"screen",id:location.pathname,text:title,extra:sentence?{card:sentence.id}:{}}};
+ if(card&&start==="card")subjects.push(card,screen);else{subjects.push(screen);if(card)subjects.push(card)}
+ let flagged=null;
+ const result=await openReportSheet({subjects,reasons:REPORT_REASONS,syncLine:reportSyncLine(),bindDictation,onSubmit:async value=>{
+  const report=createReport({...value,screen:screenOf(location,title),version:await appVersion(),device:deviceInfo()});
+  if(value.kind==="card"&&sentence){const latest=await getSentence(sentence.id);if(latest&&latest.flagged!==true){flagged={...latest,flagged:true,updatedAt:new Date().toISOString()};await saveSentence(flagged)}}
+  await fileReport(report)}});
+ if(flagged)syncFlagged(flagged);
+ if(result)toast(result.kind==="card"?(flagged?"Flagged. Find it in Library → Cards → Flagged.":"Flag noted."):"Report saved. Thank you.");
+ return {result,flagged};
+}
+function syncFlagged(updated){
+ if(current?.id===updated.id)current=updated;
+ if(detail?.id===updated.id)detail=updated;
+ reviewQueue=reviewQueue.map(item=>item.id===updated.id?updated:item);
+ for(const [id,item] of [["#practice-flag",current],["#review-flag",reviewQueue[reviewIndex]],["#sentence-flag",detail]])if(item?.id===updated.id&&$(id))renderFlagButton($(id),updated);
+}
 async function toggleSentenceFlag(sentence,button){
  if(!sentence||reviewBusy)return;
+ const latest=await getSentence(sentence.id).catch(()=>null);if(!latest)return;
+ if(latest.flagged!==true){button.closest?.("dialog")?.close();await openReport({sentence:latest,start:"card"});return}
  reviewBusy=true;button.disabled=true;updateReviewPrevious();
  try{
-  const latest=await getSentence(sentence.id);if(!latest)return;
-  const updated={...latest,flagged:latest.flagged!==true,updatedAt:new Date().toISOString()};
-  await saveSentence(updated);
-  if(current?.id===updated.id)current=updated;
-  if(detail?.id===updated.id)detail=updated;
-  reviewQueue=reviewQueue.map(item=>item.id===updated.id?updated:item);
-  renderFlagButton(button,updated);toast(updated.flagged?"Flagged. Find it in Library → Cards → Flagged.":"Flag removed.");
+  const updated={...latest,flagged:false,updatedAt:new Date().toISOString()};
+  await saveSentence(updated);await withdrawOpen("sentence",updated.id).catch(()=>{});
+  syncFlagged(updated);renderFlagButton(button,updated);toast("Flag removed.");
  }catch(error){toast(error.message||"Could not save the flag. Try again.")}
  finally{reviewBusy=false;button.disabled=false;updateReviewPrevious()}
 }
+
 // One confirm sheet for every delete — the detail page and the rows on the
 // kanji and grammar sheets — so a slip of the thumb costs a second tap, and
 // the consequence line is read the same way everywhere.
@@ -2581,6 +2609,7 @@ function currentTool(){const view=document.body.dataset.view;if(view==="practice
 function renderNavTools(){const tools=[...LIBRARY_TOOLS,{id:"notes",glyph:"記",label:"Echo’s notes",ja:true}].filter(tool=>!tool.ja||targetLang()==="ja").map(tool=>({...tool,name:t(NAV_TOOL_NAMES[tool.id]||tool.label)}));
   toolList($("#nav-tools"),tools,{onOpen:openLibraryTool,current:currentTool()})}
 $("#nav-search").onclick=()=>openSearch();
+mountReportButtons(document,()=>openReport());if($("#nav-report"))$("#nav-report .tab-icon").innerHTML=reportSvg,$("#nav-report").onclick=()=>openReport();
 document.addEventListener("keydown",event=>{if(event.key!=="/"||event.metaKey||event.ctrlKey||event.altKey)return;const target=event.target;if(target.closest?.("input,textarea,select,[contenteditable]")||document.querySelector("dialog[open]"))return;event.preventDefault();openSearch()});
 renderNavTools();
 // Desktop: the open cell, beside the table (DesktopMora). The anchor, its
@@ -2742,7 +2771,7 @@ async function restoreRoute(){
   await applyRoute();window.echoRouteReady=true;
 }
 window.addEventListener("popstate",()=>applyRoute());
-applyLanguage();startupCleanup=migrateStore().then(()=>cleanupLegacyMiniHongo());startupCleanup.then(async()=>{await repairReversedCards();await restoreRoute();maybeAutoBackup("open").catch(()=>{});scheduleReadingBackfill()}).catch(error=>{window.echoReportError?.(error);setStatus('Minihongo cleanup could not finish: '+error.message,true);restoreRoute().catch(error=>window.echoReportError?.(error))});refreshDueBadge();setupRecognition();updateInstallUI();
+applyLanguage();startupCleanup=migrateStore().then(()=>cleanupLegacyMiniHongo());startupCleanup.then(async()=>{await repairReversedCards();await restoreRoute();setTimeout(()=>runReportSync().catch(()=>{}),8000);maybeAutoBackup("open").catch(()=>{});scheduleReadingBackfill()}).catch(error=>{window.echoReportError?.(error);setStatus('Minihongo cleanup could not finish: '+error.message,true);restoreRoute().catch(error=>window.echoReportError?.(error))});refreshDueBadge();setupRecognition();updateInstallUI();
 // The in-app WaniKani sync is gone (the pull tool feeds the stories instead);
 // what it left in a browser is cleared once, quietly.
 try{localStorage.removeItem("jp-echo-wanikani-token");indexedDB.deleteDatabase("jp-echo-wanikani")}catch{}

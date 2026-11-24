@@ -8,20 +8,27 @@ const source=readFileSync(new URL('../app.js',import.meta.url),'utf8');
 const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
 const functionText=name=>source.slice(source.indexOf(`async function ${name}(`),source.indexOf('\n}',source.indexOf(`async function ${name}(`))+2);
 const card={id:'one',schemaVersion:4,source:'Five people came.',target:'五人が来た。',createdAt:'2026-10-20T00:00:00Z',updatedAt:'2026-10-20T00:00:00Z',reviews:[{rating:'ok'}],srs:{state:2,reps:4},echoCount:3};
-test('review flag persists fresh storage data, updates open copies and can be removed',async()=>{
- let saved={...structuredClone(card),echoCount:8};const messages=[];
+const syncText=source.slice(source.indexOf('function syncFlagged('),source.indexOf('\n}',source.indexOf('function syncFlagged('))+2);
+test('a flag asks why first (fresh storage copy), and removing it withdraws its reports and updates open copies',async()=>{
+ let saved={...structuredClone(card),echoCount:8};const messages=[],asked=[],withdrawn=[];
  const button={disabled:false};
- const ctx=vm.createContext({reviewBusy:false,current:structuredClone(card),detail:structuredClone(card),reviewQueue:[structuredClone(card)],getSentence:async()=>structuredClone(saved),saveSentence:async item=>{saved=structuredClone(item)},updateReviewPrevious(){},renderFlagButton(button,s){button.flagged=s.flagged},toast:message=>messages.push(message)});
- vm.runInContext(functionText('toggleSentenceFlag'),ctx);
+ const ctx=vm.createContext({reviewBusy:false,reviewIndex:0,current:structuredClone(card),detail:structuredClone(card),reviewQueue:[structuredClone(card)],getSentence:async()=>structuredClone(saved),saveSentence:async item=>{saved=structuredClone(item)},updateReviewPrevious(){},renderFlagButton(button,s){button.flagged=s.flagged},toast:message=>messages.push(message),$:()=>null,
+  openReport:async options=>{asked.push(options);saved={...options.sentence,flagged:true}},withdrawOpen:async(type,id)=>{withdrawn.push([type,id]);return 1}});
+ vm.runInContext(functionText('toggleSentenceFlag')+syncText,ctx);
  await ctx.toggleSentenceFlag(card,button);
- assert.equal(saved.flagged,true);assert.equal(saved.echoCount,8);assert.deepEqual(saved.reviews,card.reviews);assert.deepEqual(saved.srs,card.srs);
- assert.equal(ctx.reviewQueue[0].flagged,true);assert.equal(ctx.current.flagged,true);assert.equal(ctx.detail.flagged,true);assert.equal(button.disabled,false);assert.equal(ctx.reviewBusy,false);
- await ctx.toggleSentenceFlag(card,button);assert.equal(saved.flagged,false);assert.equal(messages.length,2);
+ assert.equal(asked.length,1);assert.equal(asked[0].start,'card');assert.equal(asked[0].sentence.echoCount,8,'the sheet gets the stored copy');
+ assert.equal(saved.flagged,true);
+ await ctx.toggleSentenceFlag(card,button);
+ assert.equal(saved.flagged,false);assert.equal(saved.echoCount,8);assert.deepEqual(saved.reviews,card.reviews);assert.deepEqual(saved.srs,card.srs);
+ assert.deepEqual(withdrawn,[['sentence','one']]);
+ assert.equal(ctx.reviewQueue[0].flagged,false);assert.equal(ctx.current.flagged,false);assert.equal(ctx.detail.flagged,false);assert.equal(button.disabled,false);assert.equal(ctx.reviewBusy,false);
+ assert.deepEqual(messages,['Flag removed.']);
 });
-test('failed flag save restores controls without changing the review card',async()=>{
- const ctx=vm.createContext({reviewBusy:false,reviewQueue:[card],getSentence:async()=>card,saveSentence:async()=>{throw Error('Storage full')},updateReviewPrevious(){},toast(){}});
- vm.runInContext(functionText('toggleSentenceFlag'),ctx);const button={};await ctx.toggleSentenceFlag(card,button);
- assert.equal(button.disabled,false);assert.equal(ctx.reviewBusy,false);assert.equal(ctx.reviewQueue[0].flagged,undefined);
+test('failed unflag save restores controls without changing the review card',async()=>{
+ const flagged={...card,flagged:true};
+ const ctx=vm.createContext({reviewBusy:false,reviewIndex:0,reviewQueue:[flagged],getSentence:async()=>flagged,saveSentence:async()=>{throw Error('Storage full')},withdrawOpen:async()=>0,updateReviewPrevious(){},toast(){},$:()=>null});
+ vm.runInContext(functionText('toggleSentenceFlag')+syncText,ctx);const button={};await ctx.toggleSentenceFlag(card,button);
+ assert.equal(button.disabled,false);assert.equal(ctx.reviewBusy,false);assert.equal(ctx.reviewQueue[0].flagged,true);
 });
 test('flagged library filter combines with sentence search and survives route navigation',()=>{
  const body=source.match(/let items=all\.filter\(item=>\{(.*?)\}\);const comparators/s)[1];

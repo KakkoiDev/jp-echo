@@ -40,7 +40,7 @@ export function examplesFromSets(sets = []) {
     // Keep the sentence, not the question line after it (…読み方はどれか。).
     const ja = q.prompt.replace(/[【】]/g, "").replace(/[^。？！]*(どれ|どの|何)[^。？！]*[。？]\s*$/, "").trim();
     if (!/[。！？]$/.test(ja) || ja.length < 6) continue;
-    out.set(keyOf(q.target), [...(out.get(keyOf(q.target)) || []), {id: set.id + "#" + i, ja, en: ""}]);
+    out.set(keyOf(q.target), [...(out.get(keyOf(q.target)) || []), {id: set.id + "#" + i, ja: q.target[0] === "word" ? withReading(ja, q.target[1], q.target[2]) : ja, en: ""}]);
   }
   return out;
 }
@@ -95,8 +95,19 @@ export const RECALL_PAUSES = Object.freeze([3, 5, 8]);
 // What one item sounds like. Each step is {say, lang} or {pause} or
 // {reveal:true} (the screen shows the answer). Without an example the item
 // still plays, and the screen says so.
+// A word as the voice should say it: its kanji carry the reading, so a device
+// voice never guesses (重役 is じゅうやく, never おもやく). speechText turns
+// 【readings】 into what is spoken; the screen shows the word itself.
+export const spokenWord = (text, reading) => reading && text && text !== reading && !text.includes("【") ? text + "【" + reading + "】" : (text || reading || "");
+// A sentence with its tested word annotated, for examples that came without
+// readings (exam prompts). Only an exact, unannotated occurrence is changed.
+export function withReading(ja, text, reading) {
+  if (!ja || !text || !reading || text === reading || ja.includes(text + "【")) return ja || "";
+  const at = ja.indexOf(text);
+  return at < 0 ? ja : ja.slice(0, at) + spokenWord(text, reading) + ja.slice(at + text.length);
+}
 export function daySteps(mode, item, example, {pause = 5} = {}) {
-  const word = item.kind === "word" ? (item.reading && item.text !== item.reading ? item.text + "【" + item.reading + "】" : item.text) : item.text;
+  const word = item.kind === "word" ? spokenWord(item.text, item.reading) : item.text;
   if (mode === "listen") return [
     {say: word, lang: "ja"}, {pause: 700},
     {say: item.meaning, lang: "en"}, {pause: 700},

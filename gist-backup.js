@@ -104,3 +104,33 @@ export async function downloadBackup({gist, token = "", fetchImpl = globalThis.f
   try { return {backup: JSON.parse(text), url: payload.html_url || null, id}; }
   catch { throw new Error("The backup in that gist is not valid JSON."); }
 }
+
+// Flags and bug reports (reports.js) live beside the backup in the same gist,
+// as their own file: PATCH names only that file, so the backup is untouched.
+// Read, merge by id (the later updatedAt wins), write — a report marked
+// "fixed" in the gist comes back to the device, a new one goes up.
+export const REPORTS_FILENAME = "echo-reports.json";
+export async function syncReports({token, gist, reports = [], merge, toDocument, fetchImpl = globalThis.fetch?.bind(globalThis)}) {
+  if (!token) throw new Error("Add a GitHub token with Gists access first.");
+  const id = parseGistId(gist);
+  if (!id) throw new Error("No backup gist yet. Turn on gist backup in Settings → Backup.");
+  const read = await fetchImpl(`${GIST_API}/gists/${id}`, {headers: headers(token)});
+  const payload = await readJson(read);
+  if (!read.ok) throw failure(read, payload, id, "read");
+  let remote = [];
+  const file = payload.files?.[REPORTS_FILENAME];
+  if (file) {
+    let text = file.content;
+    if (file.truncated || typeof text !== "string") { const raw = file.raw_url ? await fetchImpl(file.raw_url) : null; text = raw?.ok ? await raw.text() : ""; }
+    try { remote = JSON.parse(text || "{}").reports || []; } catch { remote = []; }
+  }
+  const merged = merge(remote, reports);
+  const write = await fetchImpl(`${GIST_API}/gists/${id}`, {
+    method: "PATCH",
+    headers: {...headers(token), "content-type": "application/json"},
+    body: JSON.stringify({files: {[REPORTS_FILENAME]: {content: JSON.stringify(toDocument(merged), null, 1)}}}),
+  });
+  const written = await readJson(write);
+  if (!write.ok) throw failure(write, written, id, "update");
+  return {reports: merged, url: written.html_url || payload.html_url || null};
+}

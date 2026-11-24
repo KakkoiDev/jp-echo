@@ -258,3 +258,56 @@ export function savedMarkHtml(saved=true,{size=12,label=""}={}){
 export function renderSavedButton(button,saved,{saveLabel="Save word",savedLabel="Saved — remove from saved words"}={}){
   button.setAttribute("aria-pressed",String(!!saved));button.setAttribute("aria-label",saved?savedLabel:saveLabel);
   if(!button.querySelector(".saved-glyph"))button.innerHTML=savedMarkSvg({size:16});return button}
+
+// ReportSheet — the one way to flag a card with a reason or report a problem
+// (COMPONENTS.md). Both pages call it; reports.js owns the record and sync.
+// `subjects` is one or two choices: [{kind:"card"|"bug", subject, label,
+// title, quote, lang}]. The caller supplies `reasons` (REPORT_REASONS),
+// `syncLine`, optional `bindDictation(mic, field, status)` and `onSubmit({kind,
+// subject, reasons, note})`, which must persist before resolving. Resolves
+// with what was submitted, or null when cancelled.
+export const reportSvg=`<svg class="report-glyph" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.5 3.2c0-.66.54-1.2 1.2-1.2h8.6c.66 0 1.2.54 1.2 1.2v6.6c0 .66-.54 1.2-1.2 1.2H7.2L4.2 14v-3H3.7c-.66 0-1.2-.54-1.2-1.2z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M8 4.6v2.9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="9.1" r=".8" fill="currentColor"/></svg>`;
+export function openReportSheet({subjects=[],reasons={},syncLine="",bindDictation=null,onSubmit}={}){
+  let dialog=document.getElementById("report-sheet");
+  if(!dialog){
+    dialog=document.createElement("dialog");dialog.id="report-sheet";dialog.className="sheet-dialog menu-sheet report-sheet";dialog.setAttribute("aria-labelledby","report-title");
+    dialog.innerHTML=`<p id="report-title" class="overline"></p><p class="report-quote"></p><div class="chips report-about" role="group" aria-label="What it is about"></div><p class="report-label">What’s wrong?</p><div class="chips report-reasons" role="group" aria-label="What’s wrong"></div><div class="input-row report-note"><textarea rows="3" aria-label="Say what you noticed" placeholder="Say what you noticed (optional)"></textarea><span data-role="mic-slot"></span></div><p class="hint report-dictation" aria-live="polite"></p><p class="hint report-sync"></p><p class="report-status" role="status"></p><div class="dialog-actions"><button data-ui="button" type="button" data-role="cancel">Cancel</button><button data-ui="button" type="button" class="primary" data-role="send"></button></div>`;
+    dialog.querySelector('[data-role="mic-slot"]').replaceWith(recordButton({label:"Say it"}));
+    document.body.append(dialog);
+  }
+  const q=s=>dialog.querySelector(s),about=q(".report-about"),reasonBox=q(".report-reasons"),field=q("textarea"),mic=q('[data-role="mic"]'),send=q('[data-role="send"]'),status=q(".report-status");
+  let choice=0;const picked=new Set();
+  const draw=()=>{const s=subjects[choice]||{kind:"bug"};
+    q("#report-title").textContent=s.title||(s.kind==="card"?"Flag this card":"Report a problem");
+    const quote=q(".report-quote");quote.textContent=s.quote||"";quote.hidden=!s.quote;if(s.lang)quote.lang=s.lang;else quote.removeAttribute("lang");
+    send.textContent=s.kind==="card"?"Flag it":"Send report";
+    reasonBox.replaceChildren(...(reasons[s.kind]||[]).map(([id,label])=>{const b=document.createElement("button");b.type="button";b.dataset.ui="button";b.textContent=label;b.setAttribute("aria-pressed",String(picked.has(id)));b.onclick=()=>{picked.has(id)?picked.delete(id):picked.add(id);b.setAttribute("aria-pressed",String(picked.has(id)))};return b}));
+    about.hidden=subjects.length<2;
+    about.replaceChildren(...subjects.map((x,i)=>{const b=document.createElement("button");b.type="button";b.dataset.ui="button";b.textContent=x.label;b.setAttribute("aria-pressed",String(i===choice));b.onclick=()=>{if(i===choice)return;choice=i;picked.clear();draw()};return b}));
+  };
+  field.value="";status.textContent="";q(".report-dictation").textContent="";q(".report-sync").textContent=syncLine;send.disabled=false;
+  if(bindDictation)bindDictation(mic,field,q(".report-dictation"));else mic.hidden=true;
+  draw();
+  return new Promise(resolve=>{
+    const close=value=>{dialog.onclose=null;if(dialog.open)dialog.close();resolve(value)};
+    q('[data-role="cancel"]').onclick=()=>close(null);
+    dialog.onclose=()=>resolve(null);
+    send.onclick=async()=>{const s=subjects[choice]||{kind:"bug"},value={kind:s.kind,subject:s.subject||null,reasons:[...picked],note:field.value.trim()};
+      if(s.kind==="bug"&&!value.reasons.length&&!value.note){status.textContent="Pick what’s wrong, or say it.";field.focus();return}
+      send.disabled=true;status.textContent="Saving…";
+      try{await onSubmit?.(value);close(value)}catch(error){send.disabled=false;status.textContent=error?.message||"Could not save the report. Try again."}};
+    dialog.showModal();
+  });
+}
+
+// Puts the one report button in every screen head that lacks it: the app
+// header (before search), .tool-head, .drill-head and .session-bar. A head
+// marked data-no-report (Review's card bar, which has the card flag) is left.
+export function mountReportButtons(root=document,onOpen){
+  for(const head of root.querySelectorAll("header, .tool-head, .drill-head, .session-bar")){
+    if(head.hasAttribute("data-no-report")||[...head.children].some(c=>c.classList.contains("report-button")))continue;
+    const b=document.createElement("button");b.type="button";b.dataset.ui="button";b.className="icon-button report-button";b.setAttribute("aria-label","Report a problem");b.innerHTML=reportSvg;b.onclick=()=>onOpen?.(b);
+    const search=[...head.children].find(c=>c.classList.contains("header-search"));
+    search?head.insertBefore(b,search):head.append(b);
+  }
+}

@@ -2,9 +2,11 @@ import {dateKey, parseGoalDate, firstPassEnd, goalKey, readGoal, shortDate, long
 import {bookIds,bookName,EDITION,SETS_EDITION,form,realisticRows,realisticPaperId,setFile} from "./n2-forms.js";
 import {access,currentAttempts,download,prefix,report,scored} from "./n2-progress.js";
 import {SKILLS,SKILL_JA,SECTIONS,PASS_TOTAL,SECTION_MIN,SECTION_MAX,estimate,sprintCheckpoint,nextExamDate,daysUntil,recallQueue,recallRecord,recallId,dailyGoal,coverage,localDay,todayPlan,measuredPace,capMinutes,DAY_MINUTES,EXAM_CHECKLIST,goalDates,formatMinutes,shortenPlan,maintenancePlan,resultsMonth} from "./n2-study.js";
-import {flagSvg,planSteps,loadMeter,evidenceRow,pauseRing} from "./components.js";
+import {flagSvg,planSteps,loadMeter,evidenceRow,pauseRing,openReportSheet,mountReportButtons} from "./components.js";
+import {REPORT_REASONS,createReport,fileReport,reportSyncLine,runReportSync,screenOf,appVersion,deviceInfo} from "./reports.js";
+import {recognitionFactory} from "./speech.js";
 import {speakOnce,speakAndWait,japaneseVoices} from "./speech.js";
-import {radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
+import {spokenWord,radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
 import {TAG,TAGS,HELD_OUT,CAUSES,comprehensionStats,weakestTag,tagDrill,attemptTags,tagsOf,sourceOf} from "./n2-comprehension.js";
 import {delayedChecks,checkItems,checkAsk,contextNote,sentenceParts,checkDetail,audioGrade,delayedAccuracy,CHECK_SOURCE,WHY_LINE,evidenceFor,evidenceLine} from "./n2-delayed.js";
 
@@ -79,6 +81,34 @@ function saveFailed(retry) {
 }
 addEventListener("online", offlineNotice); addEventListener("offline", offlineNotice);
 function show(id) { for (const s of ["hub", "recall", "check", "day", "intro", "exam", "rest", "results"]) $(s).hidden = s !== id; document.body.dataset.view = id; }
+
+// Reports (reports.js, ReportSheet): every head has the report button. Each
+// view sets `reportCard` to describe the word, check or question on screen, so
+// a flag names exactly what was wrong.
+let reportCard = () => null;
+const visibleTitle = () => [...document.querySelectorAll("main section:not([hidden]) :is(.tool-title,.drill-title)")].map(n => n.textContent.trim()).find(Boolean) || document.title;
+function bindReportDictation(mic, field, status) {
+  const make = () => recognitionFactory("en-US");
+  if (!make()) { mic.hidden = true; return; }
+  mic.hidden = false;
+  mic.onclick = () => {
+    const r = make(); if (!r) return;
+    mic.setAttribute("aria-pressed", "true"); status.textContent = "Listening…";
+    r.onresult = e => { const text = [...e.results].map(x => x[0].transcript).join(" ").trim(); if (text) field.value = (field.value ? field.value + " " : "") + text; };
+    r.onend = () => { mic.setAttribute("aria-pressed", "false"); status.textContent = ""; };
+    r.onerror = () => { status.textContent = "Could not hear that. Type it instead."; };
+    try { r.start(); } catch { r.onend(); }
+  };
+}
+async function openReport() {
+  const card = reportCard?.() || null, title = visibleTitle();
+  const screen = {kind: "bug", label: "This screen", title: "Report a problem", quote: title, subject: {type: "screen", id: location.pathname + location.search, text: title, extra: card ? {card: card.id} : {}}};
+  const subjects = card ? [{kind: "card", label: card.label || "This card", title: card.title || "Flag this card", quote: card.quote || card.text, lang: "ja", subject: card}, screen] : [screen];
+  const result = await openReportSheet({subjects, reasons: REPORT_REASONS, syncLine: reportSyncLine(), bindDictation: bindReportDictation, onSubmit: async value => {
+    await fileReport(createReport({...value, screen: screenOf(location, title), version: await appVersion(), device: deviceInfo()}));
+  }});
+  if (result) saved(result.kind === "card" ? "Flagged with your note" : "Report saved");
+}
 async function json(path) {
   const response = await fetch(path);
   if (!response.ok) throw new Error("Unable to load " + path + ". Reconnect and reload.");
@@ -750,7 +780,8 @@ async function recall() {
   $("reveal").onclick = reveal;
   $("recall-card").onclick = e => { if (!e.target.closest("button")) reveal(); };
   grades.forEach(b => b.onclick = () => grade(b.dataset.grade));
-  $("recall-say").onclick = () => { const c = session[index]; if (c) say(c.item.prompt); };
+  reportCard = () => { const c = session[index]; return c && !$("recall").hidden ? {type: "n2-" + c.item.target[0], id: JSON.stringify(c.item.target), text: c.item.prompt, reading: c.item.reading, meaning: c.item.answer, quote: c.item.prompt, extra: {view: "recall", type}} : null; };
+  $("recall-say").onclick = () => { const c = session[index]; if (c) say(spokenWord(c.item.prompt, c.item.reading)); };
   $("recall-again").onclick = async () => { data = await report(); evidence = scored(data); begin(); };
   document.querySelectorAll("#recall [role=tab]").forEach(b => b.onclick = () => { type = b.dataset.type; begin(); });
   document.querySelectorAll("#recall [data-queue]").forEach(b => b.onclick = () => { queue = b.dataset.queue; begin(); });
@@ -868,7 +899,7 @@ async function checks() {
     const c = session[index]; if (!c) return;
     plays++;
     $("check-say-label").textContent = "Hear it again";
-    say(audio(c) && !revealed && c.example ? c.example.ja : revealed && c.example ? c.example.ja : (c.reading || c.text));
+    say(audio(c) && !revealed && c.example ? c.example.ja : revealed && c.example ? c.example.ja : spokenWord(c.text, c.reading));
   };
   const sentence = (c, withEnglish) => {
     $("check-sentence-ja").replaceChildren(...sentenceParts(c).map(p => p.mark ? el("u", {class: "n2-mark", text: p.text}) : document.createTextNode(p.text)));
@@ -951,6 +982,7 @@ async function checks() {
   }
   $("check-reveal").onclick = reveal;
   $("check-say").onclick = speakCurrent;
+  reportCard = () => { const c = session[index]; return c && !$("check").hidden ? {type: "n2-check", id: JSON.stringify(c.target), text: c.text, reading: c.reading, quote: c.example?.ja ? c.example.ja.replace(/【[^】]*】/g, "") : c.text, extra: {view: "check", example: c.example?.ja, exampleId: c.example?.id, modality: c.modality, dimension: c.dimension}} : null; };
   $("check-card").onclick = e => { if (!e.target.closest("button")) reveal(); };
   grades.forEach(b => b.onclick = () => grade(b.dataset.checkGrade));
   document.addEventListener("keydown", e => {
@@ -1003,6 +1035,7 @@ async function dayRadio() {
     onComplete: item => record(radioEvent({target: item.target, kind: "exposure", source: "day-radio", mode, exampleId: exampleFor(item)?.id})),
     onDone: () => { release(); finish(); },
   });
+  reportCard = () => current && !$("day").hidden ? {type: "n2-" + current.target[0], id: JSON.stringify(current.target), text: current.text, reading: current.reading, meaning: current.meaning, quote: current.text + (current.reading && current.reading !== current.text ? "（" + current.reading + "）" : ""), extra: {view: "day-radio", mode, example: exampleFor(current)?.ja, exampleId: exampleFor(current)?.id}} : null;
   async function hold() { try { wake = await navigator.wakeLock?.request("screen") || null; } catch { wake = null; } }
   function release() { try { wake?.release(); } catch {} wake = null; }
   document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && player.running) hold(); });
@@ -1236,6 +1269,12 @@ async function exam() {
     $("next").textContent = state.index === end - 1 ? "Finish" : "›";
     $("next").setAttribute("aria-label", state.index === end - 1 ? "Review and finish the section" : "Next question");
   }
+  reportCard = () => {
+    const q = questions[state.index];
+    if (!q || $("exam").hidden) return null;
+    return {type: "n2-question", id: paper.id + "#" + state.index, label: "This question", title: "Flag this question", text: q.prompt || q.label, quote: (q.label || "") + (q.prompt ? " · " + String(q.prompt).replace(/[【】]/g, "") : ""),
+      extra: {paper: paper.title, edition: paper.edition, source: sourceOf(paper, q), mondai: q.mondai, choices: (q.choices || []).join(" / "), context: q.context ? String(q.context).slice(0, 300) : ""}};
+  };
   function openGrid() {
     const [first, end] = range();
     const answers = state.answers.slice(first, end), unsure = state.guesses.slice(first, end).filter(Boolean).length, blanks = answers.filter(a => !a).length;
@@ -1425,4 +1464,6 @@ async function exam() {
 const view = params.get("view") === "radio" && params.get("mode") === "check" ? "check" : params.get("view");
 offlineNotice(); voiceCheck();
 const route = year ? exam : view === "recall" ? recall : view === "check" ? checks : view === "radio" ? dayRadio : hub;
+mountReportButtons(document, () => openReport());
 route().catch(error => { show(""); warn(error.message); });
+setTimeout(() => runReportSync().catch(() => {}), 8000);

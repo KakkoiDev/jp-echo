@@ -235,6 +235,18 @@ Before considering the change complete:
   `mergeWords`. `buildBackup` carries them as a top-level `words` key next to
   `catalogues`; decks may not. The way in is the 栞 row under 記 Echo's notes,
   opening `/words?saved=1`; the mark is `SavedMark` (COMPONENTS.md).
+- **Flags carry a reason and reach the maintainer through the gist.** Every
+  screen head has the one report button (ReportSheet, COMPONENTS.md); a card
+  flag asks why. Reports live in `jp-echo-reports` (reports.js), shared by
+  Echo and the N2 page, and sync as `echo-reports.json` in the learner's
+  backup gist (`syncReports`, gist-backup.js: read, merge by `updatedAt`,
+  PATCH only that file). They are not learning data: never in `buildBackup`,
+  an export or a deck. The screen path drops the #fragment. A maintainer reads
+  the open reports with `gh api gists/<id>` (docs/REPORTS.md) and marks a fix
+  by setting `status: "fixed"`, `fix`, and a newer `updatedAt` in that file.
+- **The voice gets the reading.** Any word or sentence handed to a device
+  voice carries its 【reading】 (`spokenWord` / `withReading`, day-radio.js;
+  `speechText` speaks it) — a bare kanji word is guessed (重役 → おもやく).
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

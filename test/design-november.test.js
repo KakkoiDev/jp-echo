@@ -19,7 +19,7 @@ test('the flag is a drawn icon in every place it appears, never the ⚑ characte
   assert.match(components,/export const flagSvg=`<svg class="flag-glyph"/);
   assert.match(components,/export function renderFlagButton\(/);assert.doesNotMatch(app,/function renderFlagButton\(/);
   // The review flag is an icon button in the session bar, named by its label.
-  const bar=html.match(/<div class="session-bar"><button data-ui="button" id="review-back"[\s\S]*?<\/div>/)[0];
+  const bar=html.match(/<div class="session-bar" data-no-report><button data-ui="button" id="review-back"[\s\S]*?<\/div>/)[0];
   assert.match(bar,/id="review-flag" type="button" class="icon-button" aria-pressed="false" aria-label="Flag for later"/);
   assert.match(css,/\[aria-pressed="true"\] \.flag-glyph\{fill:currentColor\}/);
 });

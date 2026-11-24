@@ -1720,6 +1720,8 @@ button.mora-cell:last-child{border-right:0}
 /* Header search and /search (Search board). */
 header .header-search{margin-left:auto}
 header .header-search+#settings-button{margin-left:-4px}
+header .report-button{margin-left:auto}
+header .report-button+.header-search{margin-left:-4px}
 .search-field{display:flex;align-items:center;gap:10px;height:46px;margin-top:16px;padding:0 12px;box-sizing:border-box;background:var(--panel);border:1px solid var(--sumi);border-radius:4px;color:var(--ink-muted)}
 .search-field input{flex:1 1 auto;min-width:0;min-height:0;height:100%;padding:0;background:transparent;border:0;border-radius:0;font-size:15px;color:var(--sumi)}
 .search-scope{margin-top:12px}
@@ -2300,3 +2302,22 @@ a.plan-step-row,button.plan-step-row{cursor:pointer}
   .n2-hub-side{position:sticky;top:24px}
   .n2-hub-side>.rule-heading:first-child{margin-top:18px}
 }
+
+/* Reports — the report button in every screen head, and ReportSheet
+   (components.js). Built from existing tokens, chips and sheet primitives. */
+.report-button{flex-shrink:0}
+:is(.tool-head,.drill-head,.session-bar)>.report-button{margin-left:auto}
+:is(.drill-progress,.n2-clock,#stat-stage)~.report-button,.session-bar h2~.report-button{margin-left:0}
+.tabs>.nav-report{display:none}
+@media(min-width:1024px){.tabs>.nav-report{display:flex}}
+.report-sheet .report-quote{margin:6px 0 4px;padding-bottom:14px;border-bottom:1px solid var(--rule);font-family:var(--display);font-size:19px;line-height:1.55;overflow-wrap:anywhere}
+.report-sheet .report-quote:not([lang]){font-family:var(--ui);font-size:15px;color:var(--ink-soft)}
+.report-sheet .report-about{margin-top:12px}
+.report-label{margin:16px 0 0;font-size:11px;text-transform:uppercase;letter-spacing:.16em;color:var(--ink-muted)}
+.report-sheet .report-reasons{margin-top:8px}
+.report-sheet .report-note{margin-top:14px}
+body .report-sheet .report-note{flex-wrap:nowrap;align-items:stretch}
+body .report-sheet .report-note textarea{flex:1 1 auto;flex-basis:auto;height:auto;min-height:76px}
+.report-sheet .hint{margin:6px 0 0}
+.report-sheet .report-dictation:empty,.report-sheet .report-status:empty{display:none}
+.report-sheet .report-status{margin:8px 0 0;color:var(--seal-deep)}

@@ -88,7 +88,26 @@ Under reduced motion the arc stays whole and only the number changes.
 flag. The glyph is the drawn Icons/flag line, never ⚑; pressed, it fills.
 Three forms from one function: an `.icon-button` in a session bar (named by
 `aria-label`), a `.settings-row` in a menu sheet, or a labelled text button on
-the sentence page. `toggleSentenceFlag` in app.js owns the write.
+the sentence page. `toggleSentenceFlag` in app.js owns the write: turning a
+flag on opens ReportSheet (the reason is optional) and saves the flag with a
+card report; turning it off withdraws that card's open reports.
+
+### ReportSheet
+`openReportSheet({subjects, reasons, syncLine, bindDictation, onSubmit})` and
+`mountReportButtons(root, onOpen)` (components.js): the one way to flag a card
+with a reason or report a problem, on Echo and on the N2 page.
+- `mountReportButtons` puts one `.icon-button.report-button` (`reportSvg`, a
+  speech bubble with !) in every `header`, `.tool-head`, `.drill-head` and
+  `.session-bar`; a head with `data-no-report` (Review's card bar, which has
+  the card flag) is skipped. The desktop sidebar has the `#nav-report` row.
+- The sheet: overline, the subject quote, an About choice when a card is on
+  screen ("This card" / "This screen"), reason chips (`.chips`, multi-select,
+  `REPORT_REASONS`), a note with a mic, the sync line, Cancel / Flag it or
+  Send report. A bug report needs a reason or a note; a card flag does not.
+- `onSubmit` must persist before it resolves (reports.js `fileReport`).
+- Each screen describes its card: Echo's `cardOnScreen()` (Practice, Review,
+  the sentence page) and the N2 page's `reportCard` (Recall, Today's checks,
+  Day Radio, the exam question).
 
 ### SavedMark
 `savedMarkSvg`, `savedMarkHtml(saved,{size,label})` and
