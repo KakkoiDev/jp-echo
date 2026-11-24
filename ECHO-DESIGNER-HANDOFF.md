@@ -1,5 +1,8 @@
 # Echo UX/UI handoff for the designer
 
+**Sprint outcome:** [Two-week program and readiness checkpoint](N2-TWO-WEEK-PROGRAM.md). The N2 hub now evaluates recent first sittings and points to the weakest section.
+
+
 **Design the journey from “I missed that” to “I can use it tomorrow.”** The learner has six hours on sprint days, also wants a sustainable ordinary routine, and moves between a phone with headphones and a desktop. Build on Echo’s existing Japanese washi-and-seal design, its light/dark themes and its mobile-first layouts. [Maintainer principles](CLAUDE.md) · [Shared components](COMPONENTS.md) · [Existing design work](docs/design/november/README.md)
 
 ## Where the learner goes

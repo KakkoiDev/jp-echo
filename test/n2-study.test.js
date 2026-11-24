@@ -94,3 +94,19 @@ test("every allotted first-check day is available in the plan", () => {
     assert.equal(goal.goal > 0, todayPlan({days: 6-day, goal}).steps.some(s => s.href?.includes("queue=new")));
   }
 });
+
+import {sprintCheckpoint} from "../n2-study.js";
+test("readiness uses recent first sittings with a separate-day repeat and section guard",()=>{
+  const qs=[0,1,2,3].flatMap(skill=>Array.from({length:5},()=>({skill,key:1}))).map((q,index)=>({...q,index}));
+  const papers=new Map(["a","b","c"].map(k=>[k,{questions:qs}]));
+  const sample=(book,day)=>({book,phase:"results",startedAt:day+"T09:00:00",completedAt:day+"T12:00:00",answers:qs.map(()=>1),guesses:qs.map(()=>false)});
+  const a=sample("a","2026-11-22"),b=sample("b","2026-11-23");
+  const check=(...runs)=>sprintCheckpoint(runs,papers,[...papers.keys()],new Date(2026,10,24,20));
+  assert.equal(check(a,b).met,true);
+  assert.equal(check(a,sample("b","2026-11-22")).met,false);
+  assert.equal(check(a,sample("a","2026-11-23")).met,false);
+  assert.equal(check(a,sample("b","2026-11-12")).met,false);
+  for (const q of qs.filter(q=>q.skill===3)) b.guesses[q.index]=true;
+  assert.equal(check(a,b).met,false);
+  assert.equal(check(a,b).recent[0].sections[2].correct,0);
+});

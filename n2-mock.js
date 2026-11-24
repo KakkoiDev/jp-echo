@@ -1,7 +1,7 @@
 import {dateKey, parseGoalDate, firstPassEnd, goalKey, readGoal} from "./jlpt-goal.js";
 import {bookIds,bookName,EDITION,SETS_EDITION,form,realisticRows,realisticPaperId,setFile} from "./n2-forms.js";
 import {access,currentAttempts,download,prefix,report,scored} from "./n2-progress.js";
-import {SKILLS,SKILL_JA,SECTIONS,PASS_TOTAL,SECTION_MIN,SECTION_MAX,estimate,nextExamDate,daysUntil,recallQueue,recallRecord,dailyGoal,coverage,localDay,todayPlan,EXAM_CHECKLIST} from "./n2-study.js";
+import {SKILLS,SKILL_JA,SECTIONS,PASS_TOTAL,SECTION_MIN,SECTION_MAX,estimate,sprintCheckpoint,nextExamDate,daysUntil,recallQueue,recallRecord,dailyGoal,coverage,localDay,todayPlan,EXAM_CHECKLIST} from "./n2-study.js";
 import {flagSvg} from "./components.js";
 import {speakOnce,speakAndWait,japaneseVoices} from "./speech.js";
 import {radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,yesterdayChecks,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
@@ -218,6 +218,17 @@ async function hub() {
   const latest = [...attempts].filter(a => a.phase === "results" && !a.book.startsWith("adaptive-") && papers.get(a.paper || a.book)).sort((a, b) => (b.completedAt || "").localeCompare(a.completedAt || ""))[0];
   $("readiness").replaceChildren(latest ? scoreCard(papers.get(latest.paper || latest.book), latest, true)
     : el("div", {class: "empty-panel"}, el("strong", {text: "No score yet"}), el("span", {text: "Finish a whole mock to see an estimated score for each JLPT section."})));
+  const checkpoint = sprintCheckpoint(attempts, papers, bookIds);
+  const latestRun = checkpoint.recent[0];
+  const weakest = latestRun && [...latestRun.sections].sort((a,b)=>a.rate-b.rate)[0];
+  const box = $("readiness");
+  box.append(el("h3", {text: checkpoint.met ? "Sprint benchmark met" : "Sprint checkpoint"}),
+    el("p", {text:"Aim for two fresh Echo mocks on separate days within seven days. On each, aim for a 70% section average and 60% in every section. Flagged guesses earn no credit here. These are practice targets."}));
+  for (const r of checkpoint.recent) box.append(el("p",{text: titleOf(r.attempt.book) + " · " + r.day + " · " +
+    r.sections.map(s => s.name + " " + s.correct + "/" + s.count).join(" · ")}));
+  if (latestRun && !latestRun.meets) box.append(el("a", {href:"?book=" + latestRun.attempt.book + "&attempt=" + encodeURIComponent(latestRun.attempt.id),
+    text:"Review " + weakest.name + " first · " + weakest.correct + "/" + weakest.count + " confident answers"}));
+  else if (!checkpoint.met && days > 1 && next) box.append(el("a",{href:"?book="+next,text:latestRun ? "Next checkpoint · take a fresh mock on another day" : "Establish your baseline · take a fresh mock"}));
   const cov = coverage(inventory, data.recall, evidence);
   $("coverage").replaceChildren(...[["meaning", "語彙", "Word meanings"], ["reading", "読み", "Kanji readings"], ["grammar", "文法", "Grammar"]].map(([type, ja, en]) => {
     const c = cov[type];

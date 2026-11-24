@@ -1,5 +1,8 @@
 # Echo handoff packet
 
+**Sprint outcome:** [Two-week program and readiness checkpoint](N2-TWO-WEEK-PROGRAM.md). The N2 hub now evaluates recent first sittings and points to the weakest section.
+
+
 Share this file with each agent. The previous shared entry point was [N2 agent handoff](N2-AGENT-HANDOFF.md).
 
 | Reader | Read in order | Deliverable |

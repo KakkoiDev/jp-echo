@@ -186,3 +186,31 @@ export const EXAM_CHECKLIST = Object.freeze([
   ["food", "Water and a light snack for the break"],
   ["layer", "A warm layer — exam rooms are often cold in December"],
 ]);
+
+// A conservative practice benchmark. Evaluate first sittings and count flagged
+// correct answers as uncertain. This score is independent of JLPT scaled scores.
+export function sprintCheckpoint(attempts, papers, eligibleBooks, now = new Date()) {
+  const first = new Map();
+  for (const a of [...attempts].sort((x,y) => (x.startedAt || "").localeCompare(y.startedAt || ""))) {
+    if (eligibleBooks.includes(a.book) && !first.has(a.book)) first.set(a.book, a);
+  }
+  const cutoff = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6);
+  const runs = [];
+  for (const a of first.values()) {
+    const finish = new Date(a.completedAt), paper = papers.get(a.paper || a.book);
+    if (a.unscorable || a.phase !== "results" || !a.startedAt || !(finish >= cutoff && finish <= now) ||
+        localDay(new Date(a.startedAt)) !== localDay(finish) || !paper || !Array.isArray(a.guesses)) continue;
+    const sections = SECTIONS.map(section => {
+      const rows = paper.questions.filter(q => section.skills.includes(q.skill));
+      const correct = rows.filter(q => !a.guesses[q.index] && a.answers[q.index] === q.key).length;
+      return {name:section.en, rate:rows.length ? correct / rows.length : 0, correct, count:rows.length};
+    });
+    if (sections.some(s => !s.count)) continue;
+    const average = sections.reduce((sum,s) => sum+s.rate,0)/sections.length;
+    runs.push({attempt:a, sections, average, day:localDay(finish), meets:average >= .70 && sections.every(s=>s.rate >= .60)});
+  }
+  runs.sort((a,b)=>b.attempt.completedAt.localeCompare(a.attempt.completedAt));
+  const recent = runs.slice(0,2);
+  const met = recent.length === 2 && recent[0].day !== recent[1].day && recent.every(r=>r.meets);
+  return {recent, met};
+}
