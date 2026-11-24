@@ -29,7 +29,8 @@ import {downloadAnkiDeck} from "./anki-export.js";
 import {dueSentences,ensureSchedule,isDue,reviewSentence} from "./srs.js";
 import {reviewAvailabilityMessage,reviewStats,dailyReviewBudget,reviewOrder,sessionLimit,limitReviewSession,extraStudySession,dueLine,ensureReviewTrack,nextSkill,recordReviewMode,reviewMode,reviewModeMeta,skillMix,skillReason} from "./review-modes.js";
 import {DEFAULT_TIME,REMINDER_TAG,reminderText,shouldRemind} from "./reminders.js";
-import {saveDiscussionTurn} from "./actions.js";
+import {saveDiscussionTurn,saveWordAction,removeWordAction} from "./actions.js";
+import {listWords,mergeWords,putWord as dbPutWord,replaceWords as dbReplaceWords,validateSavedWords} from "./saved-words.js";
 // New shared UI comes from the component library (COMPONENTS.md).
 import {flagSvg,renderFlagButton,grammarList,skillGlyph,skillTrio,expandableList,fitTextArea,kanjiNumeral,toolShelf,toolList,renderFilterButton,wireFilterButton,anchorStripHtml,hydrateHeaderSearch,chevronSvg,cornerMarkHtml,themedPictureHtml} from "./components.js";
 // Settings page state, declared before anything can read it (navigationState).
@@ -56,6 +57,10 @@ async function deleteSentence(id){const done=await dbDeleteSentence(id);markBack
 async function putNote(...args){const done=await dbPutNote(...args);markBackupDirty();return done}
 async function deleteNote(...args){const done=await dbDeleteNote(...args);markBackupDirty();return done}
 async function replaceNotes(...args){const done=await dbReplaceNotes(...args);markBackupDirty();return done}
+// Saved words (SPEC echo-reader §4): their own store, the same rule.
+async function saveWord(entry,options={}){const done=await saveWordAction(entry,{...options,save:dbPutWord});markBackupDirty();return done}
+async function removeWord(id){const done=await removeWordAction(id,{save:dbPutWord});markBackupDirty();return done}
+async function replaceWords(records){const done=await dbReplaceWords(records);markBackupDirty();return done}
 const $=selector=>document.querySelector(selector);
 // A deck link from Echo's own pages (/settings/import?deck=/decks/…) only fills
 // the import box; the learner still taps Import. Other origins are ignored.
@@ -2095,7 +2100,7 @@ async function previousReview(){
 async function rateReview(rating){const sentence=reviewQueue[reviewIndex];if(!sentence||!reviewRevealed||reviewBusy)return;reviewBusy=true;updateReviewPrevious();const snapshot=reviewSnapshot(sentence);try{resetSession();const now=new Date(),mode=reviewMode(sentence),graded=reviewSentence(sentence,rating,now),progressed=recordReviewMode(graded,rating,now);
   const updated={...progressed,reviews:[...(Array.isArray(sentence.reviews)?sentence.reviews:[]),{at:now.toISOString(),rating,mode,state:sentence.srs?.state??0,echoes:Math.max(0,(Number(sentence.echoCount)||0)-echoesAtCardStart)}]};await saveSentence(updated);reviewUndo.push(snapshot);if(current?.id===updated.id)current=updated;reviewQueue[reviewIndex]=updated;reviewIndex++;renderReview()}finally{reviewBusy=false;updateReviewPrevious()}}
 // The one backup document: the file Export downloads is byte-for-byte what the gist holds.
-async function buildBackup(){return {...exportBackup(await listSentences(),settings,forBackup(await listNotes().catch(()=>[]))),catalogues:importedCatalogues}}
+async function buildBackup(){return {...exportBackup(await listSentences(),settings,forBackup(await listNotes().catch(()=>[]))),catalogues:importedCatalogues,words:await listWords().catch(()=>[])}}
 async function exportHistory(){const data=await buildBackup(),url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"})),link=Object.assign(document.createElement("a"),{href:url,download:"jp-echo-backup.json"});link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);$("#import-status").textContent="Backup saved as jp-echo-backup.json."}
 async function exportAnki(button=$("#export-anki")){const items=await listSentences();const label=button.textContent;button.disabled=true;button.textContent="Building deck…";$("#anki-status").textContent="Creating Echo.apkg on this device…";try{await downloadAnkiDeck(items.map(forAnki));$("#open-anki").hidden=false;const launched=openAnki(true);$("#anki-status").textContent=launched?"Echo.apkg downloaded. Opening Anki… If it stays here, tap Open Anki.":"Echo.apkg downloaded. Open it from Downloads to import it into Anki."}catch(error){$("#anki-status").textContent=error.message||"Anki export failed."}finally{button.disabled=false;button.textContent=label}}
 function openAnki(automatic=false){const android=/android/i.test(navigator.userAgent),ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(android){window.location.href="intent:#Intent;package=com.ichi2.anki;end";return true}if(ios){window.location.href="anki://";return true}if(!automatic)$("#anki-status").textContent="Open Echo.apkg from your Downloads folder to import it into Anki.";return false}
@@ -2137,6 +2142,8 @@ async function importBackupData(backup){
  if(upgrade.removed.length)await saveImportRecovery({schemaVersion:2,sentences:upgrade.removed,catalogues:importedCatalogues,kind:'Minihongo word cards replaced with sentences'},'minihongo-v2-word-cards');
  saveCatalogues(catalogues);try{await replaceAll(merged)}catch(error){saveCatalogues(importedCatalogues);throw error}markBackupDirty();importedCatalogues=catalogues;applyCatalogues();scheduleReadingBackfill();
  if(Array.isArray(backup.notes))await replaceNotes(mergeNotes(await listNotes().catch(()=>[]),backup.notes));
+ // Saved words merge by id; a tombstone wins by time, so a removal survives.
+ if(Array.isArray(backup.words)){const {words}=validateSavedWords(backup.words);if(words.length)await replaceWords(mergeWords(await listWords(),words))}
  const added=merged.length-before.length+upgrade.removed.length,message=`Added ${added} sentence(s). ${backup.sentences.length-added} already present; existing progress kept.${upgrade.removed.length?` Replaced ${upgrade.removed.length} Minihongo word cards with sentences.`:""}`;
  setStatus(message);refreshDueBadge();await renderHistory();return {added,total:merged.length};
 }
