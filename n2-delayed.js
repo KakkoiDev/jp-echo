@@ -161,3 +161,11 @@ export function delayedAccuracy({recall = [], events = [], now = new Date(), day
   const correct = grades.filter(Boolean).length;
   return {n: grades.length, correct, rate: grades.length ? correct / grades.length : null};
 }
+
+// "14 from yesterday: 6 misses, 3 slow, 2 guesses, 3 Day Radio plays"
+export function checksSummary(checks = []) {
+  const n = why => checks.filter(c => c.why === why).length;
+  const parts = [[n("missed"), "miss", "misses"], [n("slow"), "slow", "slow"], [n("guessed"), "guess", "guesses"], [n("heard"), "Day Radio play", "Day Radio plays"]]
+    .filter(([k]) => k).map(([k, one, many]) => k + " " + (k === 1 ? one : many));
+  return checks.length ? checks.length + " from yesterday: " + parts.join(", ") : "Nothing from yesterday";
+}

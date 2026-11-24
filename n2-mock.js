@@ -1,7 +1,7 @@
-import {dateKey, parseGoalDate, firstPassEnd, goalKey, readGoal} from "./jlpt-goal.js";
+import {dateKey, parseGoalDate, firstPassEnd, goalKey, readGoal, shortDate, longDate} from "./jlpt-goal.js";
 import {bookIds,bookName,EDITION,SETS_EDITION,form,realisticRows,realisticPaperId,setFile} from "./n2-forms.js";
 import {access,currentAttempts,download,prefix,report,scored} from "./n2-progress.js";
-import {SKILLS,SKILL_JA,SECTIONS,PASS_TOTAL,SECTION_MIN,SECTION_MAX,estimate,sprintCheckpoint,nextExamDate,daysUntil,recallQueue,recallRecord,recallId,dailyGoal,coverage,localDay,todayPlan,measuredPace,capMinutes,DAY_MINUTES,EXAM_CHECKLIST} from "./n2-study.js";
+import {SKILLS,SKILL_JA,SECTIONS,PASS_TOTAL,SECTION_MIN,SECTION_MAX,estimate,sprintCheckpoint,nextExamDate,daysUntil,recallQueue,recallRecord,recallId,dailyGoal,coverage,localDay,todayPlan,measuredPace,capMinutes,DAY_MINUTES,EXAM_CHECKLIST,goalDates,formatMinutes} from "./n2-study.js";
 import {flagSvg} from "./components.js";
 import {speakOnce,speakAndWait,japaneseVoices} from "./speech.js";
 import {radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
@@ -189,33 +189,7 @@ async function hub() {
   const papers = new Map(data.papers.map(p => [p.id, p]));
   const planGoal = readGoal(), exam = planGoal ? parseGoalDate(planGoal.exam) : nextExamDate(), days = daysUntil(exam);
   const today = dateKey(new Date());
-  const form = $("training-form");
-  $("training-exam").value = dateKey(exam);
-  $("training-exam").min = today;
-  $("training-days").value = planGoal?.days ?? "";
-  if (location.hash === "#training-goal") $("training-goal").open = true;
-  $("training-priority").checked = planGoal?.priority ?? true;
-  $("training-window").textContent = planGoal?.days ? "First pass through " + dateKey(firstPassEnd(planGoal)) + " · started " + planGoal.started : "Leave days blank to reserve the final three days for review. A duration counts today as day one.";
-  function updateGoal(value) {
-    try {
-      if (value) localStorage.setItem(goalKey, JSON.stringify(value));
-      else localStorage.removeItem(goalKey);
-      localStorage.removeItem(COACH_KEY);
-      location.reload();
-    } catch { $("training-status").textContent = "Could not save this goal on this device."; }
-  }
-  form.onsubmit = event => {
-    event.preventDefault();
-    const end = $("training-exam").value, duration = $("training-days").value ? $("training-days").valueAsNumber : null;
-    const started = planGoal?.exam === end && planGoal.days === duration ? planGoal.started : today;
-    const last = parseGoalDate(started);
-    last.setDate(last.getDate() + duration - 1);
-    if (duration && dateKey(last) >= end) { $("training-status").textContent = "Choose a duration that finishes before exam day."; return; }
-    updateGoal({level:"N2", exam:end, days:duration, started, priority:$("training-priority").checked});
-  };
-  $("training-reset").onclick = () => updateGoal(null);
-  $("hub-exam-line").textContent = "Exam · " + exam.toLocaleDateString(undefined, {weekday: "short", month: "short", day: "numeric"});
-  if (planGoal?.days) $("hub-exam-line").textContent += " · First pass through " + dateKey(firstPassEnd(planGoal));
+  $("hub-exam-line").textContent = planGoal ? "Exam " + shortDate(exam) + " · first pass by " + shortDate(goalDates(planGoal).firstPass) : "No date set yet";
   $("hub-days").textContent = Math.abs(days);
   $("hub-days-label").textContent = days < 0 ? "days since exam" : days === 1 ? "day to go" : days === 0 ? "Exam day. 頑張って。" : "days to go";
   if (days === 0) $("hub-days").textContent = "今日";
@@ -244,6 +218,7 @@ async function hub() {
     nextMock: next && {id: next, title: titleOf(next)}, lastMockAt: finished[0]?.completedAt,
     latestResults: latestDone && localDay(new Date(latestDone.completedAt)) === localDay() ? "?book=" + latestDone.book + "&attempt=" + encodeURIComponent(latestDone.id) : null});
   const context = {data, evidence, goal, weakAll, days, base, aiReady, next, latestDone, comprehension};
+  goalEditor({...context, planGoal, exam, checks, pace, checkpoint});
   const coached = readCoachPlan();
   drawPlan(coached?.plan || base, context);
   drawForecast(base, data, goal);
@@ -316,6 +291,70 @@ async function hub() {
   }));
   $("export-report").onclick = async () => { try { download(await report()); } catch (e) { warn(e.message); } };
   if (location.hash) document.getElementById(location.hash.slice(1))?.scrollIntoView();
+}
+
+/* ───────── Goal editor (J1Goal, J3Adjust) ───────── */
+// The one editor for the exam date and the first-pass days, reached from the
+// hub, Review's "Change" and "Adjust the goal". Each field says its calendar
+// date; a change shows the plan before and after. Saving keeps every attempt.
+function goalEditor(ctx) {
+  const {planGoal, exam, data, aiReady} = ctx;
+  const today = dateKey(new Date());
+  $("training-exam").value = dateKey(exam);
+  $("training-exam").min = today;
+  $("training-days").value = planGoal?.days ?? "";
+  if (location.hash === "#training-goal") { $("training-goal").open = true; $("training-goal").scrollIntoView(); }
+  $("training-priority").checked = planGoal?.priority ?? true;
+  $("training-no-ai").hidden = aiReady;
+  const read = () => {
+    const end = parseGoalDate($("training-exam").value), duration = $("training-days").value ? $("training-days").valueAsNumber : null;
+    const started = planGoal?.exam === $("training-exam").value && planGoal?.days === duration ? planGoal.started : today;
+    return {end, duration, started};
+  };
+  const planFor = goal => {
+    const {exam: e, firstPass, custom} = goalDates(goal);
+    const g = dailyGoal({inventory, recall: data.recall, examDate: e, firstPassDate: custom ? firstPass : null});
+    g.custom = custom;
+    const plan = todayPlan({days: daysUntil(e), goal: g, checkpoint: ctx.checkpoint, weak: ctx.weakAll, aiReady, checks: ctx.checks, pace: ctx.pace, examDate: e, firstPassDate: custom ? firstPass : null});
+    return {firstPass, perDay: g.goal, minutes: plan.minutes || 0, forecast: plan.forecast};
+  };
+  // The cap keeps every day at six hours, so the change shows in the daily
+  // first checks and, when they no longer fit, in the forecast finish.
+  const describe = p => "first pass " + shortDate(p.firstPass) + " · " + p.perDay + " first checks a day" + (p.forecast && !p.forecast.onTime && p.forecast.finish ? " · at your pace about " + shortDate(p.forecast.finish) : "");
+  const before = planFor(planGoal);
+  const refresh = () => {
+    const {end, duration, started} = read();
+    if (!end) { $("training-exam-date").textContent = "Choose a date"; return; }
+    $("training-exam-date").textContent = longDate(end) + " · " + daysUntil(end) + (daysUntil(end) === 1 ? " day" : " days") + " from today";
+    const draft = {level: "N2", exam: dateKey(end), days: duration, started, priority: $("training-priority").checked};
+    const after = planFor(draft);
+    $("training-window").textContent = duration ? "First pass done by " + longDate(after.firstPass) + ". Leave empty and Echo spreads it to the last week."
+      : "Empty: Echo spreads the " + ctx.goal.unchecked.toLocaleString() + " unchecked items to " + shortDate(after.firstPass) + " at up to 6 h a day.";
+    const changed = draft.exam !== (planGoal?.exam ?? dateKey(exam)) || (draft.days ?? null) !== (planGoal?.days ?? null);
+    $("training-preview").hidden = !changed;
+    $("training-before").textContent = describe(before);
+    $("training-after").textContent = describe(after);
+  };
+  $("training-exam").oninput = $("training-days").oninput = refresh;
+  refresh();
+  function updateGoal(value) {
+    try {
+      if (value) localStorage.setItem(goalKey, JSON.stringify(value));
+      else localStorage.removeItem(goalKey);
+      localStorage.removeItem(COACH_KEY);
+      location.reload();
+    } catch { $("training-status").textContent = "Could not save this goal on this device."; }
+  }
+  $("training-form").onsubmit = event => {
+    event.preventDefault();
+    const {end, duration, started} = read();
+    if (!end) { $("training-status").textContent = "Choose an exam date."; return; }
+    const last = parseGoalDate(started);
+    last.setDate(last.getDate() + (duration || 1) - 1);
+    if (duration && last >= end) { $("training-status").textContent = "Choose a duration that finishes before exam day."; return; }
+    updateGoal({level: "N2", exam: dateKey(end), days: duration, started, priority: $("training-priority").checked});
+  };
+  $("training-reset").onclick = () => updateGoal(null);
 }
 
 /* ───────── Coach ───────── */

@@ -1471,10 +1471,33 @@ function renderReviewStats(items){const stats=reviewStats(items),now=Date.now();
  $("#stats-week").textContent=String(stats.last7d);
  $("#stats-week-detail").textContent="this week"+(Number.isFinite(first)?" · "+stats.total+" since "+new Intl.DateTimeFormat(undefined,{day:"numeric",month:"long"}).format(new Date(first)):"")}
 const REVIEW_MODES_FOR_STATS=["listening","reading","writing"];
+// Review's N2 card (board J2Review): Today's checks with what they hold and
+// the minutes at the learner's pace, shown even when no deck sentence is due,
+// then the exam line with "Change" to the one goal editor. Start review keeps
+// the one filled button whenever sentences are due.
+async function renderReviewN2(dueCount){
+  const host=$("#review-n2");if(!host)return;
+  const [{report,scored},{delayedChecks,checksSummary},{measuredPace,DEFAULT_PACE,goalDates,daysUntil,formatMinutes},{shortDate},{examLine}]=await Promise.all([import("./n2-progress.js"),import("./n2-delayed.js"),import("./n2-study.js"),import("./jlpt-goal.js"),import("./components.js")]);
+  const goal=readGoal();let data=null;try{data=await report()}catch{}
+  const started=goal||data&&(data.recall.length||data.events.length||data.attempts.length);
+  if(!started){host.replaceChildren(examLine({text:t("JLPT N2 · set your exam date to get a daily plan"),action:t("Set")}));return}
+  const {exam,firstPass}=goalDates(goal),days=daysUntil(exam);
+  let checks=[];try{const inventory=await (await fetch("./n2-inventory.json")).json();checks=delayedChecks({inventory,recall:data?.recall||[],evidence:data?scored(data):[],events:data?.events||[]})}catch{}
+  const minutes=Math.ceil(checks.length*(measuredPace(data?.recall||[])||DEFAULT_PACE)/60);
+  const card=document.createElement("div");card.className="notice alert review-n2-card";
+  const head=document.createElement("div");head.className="review-n2-head";
+  const title=document.createElement("span");title.className="review-n2-title";title.textContent=t("N2 · Today’s checks");
+  const when=document.createElement("span");when.className="hint";when.textContent=days>0?t("{n} days to {date}",{n:days,date:shortDate(exam)}):days===0?t("Exam day"):t("Exam passed");
+  head.append(title,when);
+  const line=document.createElement("p");line.className="review-n2-line";line.textContent=checks.length?checksSummary(checks)+" · "+t("about {m}",{m:formatMinutes(Math.max(1,minutes))}):t("Nothing from yesterday. Today’s plan is on the N2 page.");
+  const go=document.createElement("a");go.className="button "+(dueCount?"outline":"primary");go.href=checks.length?"./n2-mock.html?view=check":"./n2-mock.html";go.textContent=checks.length?t("Start today’s checks"):t("Open today’s plan");
+  card.append(head,line,go);
+  const parts=[card];
+  if(reviewFocus(goal)){const order=document.createElement("p");order.className="hint";order.textContent=t("Order: exam date first. Items in sections you take on {date} come before deck sentences until then.",{date:exam.getDate()+" "+shortDate(exam).slice(-3)});parts.push(order)}
+  parts.push(examLine({text:t("Exam {exam} · first pass by {first}",{exam:shortDate(exam),first:shortDate(firstPass)}),action:t("Change")}));
+  host.replaceChildren(...parts)}
 async function refreshReviewStats(){const all=(await listSentences()).map(item=>ensureSchedule(item));renderReviewStats(all);updateDueBadge(limitReviewSession(dueSentences(all),settings,all).length)}
 async function renderReviewHome(){const all=(await listSentences()).map(item=>ensureSchedule(item)),now=Date.now(),available=dueSentences(all),due=limitReviewSession(available,settings,all,now),counts={new:0,learning:0,review:0};
-  const goal = readGoal();
-  $("#review-exam-goal").textContent = goal ? "N2 exam · " + goal.exam + (reviewFocus(goal) ? " · due N2 deck sentences first" : " · edit goal") : "Set an N2 training goal";
   renderReviewStats(all);showReviewTab(settings.reviewTab||"session");
   for(const item of due){const state=item.srs?.state??0;if(state===1||state===3)counts.learning++;else if(state===2)counts.review++;else counts.new++}
   $("#due-count").textContent=String(due.length);$("#due-new").textContent=String(counts.new);$("#due-learning").textContent=String(counts.learning);$("#due-review").textContent=String(counts.review);
@@ -1482,6 +1505,7 @@ async function renderReviewHome(){const all=(await listSentences()).map(item=>en
   updateDueBadge(due.length);
   const waiting=all.filter(item=>!available.includes(item)),next=waiting.map(item=>Date.parse(item.srs.due)).filter(Number.isFinite).sort((a,b)=>a-b)[0];
   $("#review-due-block").hidden=due.length===0;$("#review-rest-block").hidden=due.length>0;
+  renderReviewN2(due.length).catch(()=>{});
   renderReviewRadio(all,now);
   $("#start-review").hidden=due.length===0;$("#review-practice").hidden=due.length>0;
   const extra=extraStudySession(available,all,settings),early=extra.length&&!available.some(item=>!item.skipped);

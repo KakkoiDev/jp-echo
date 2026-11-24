@@ -25,3 +25,8 @@ export function firstPassEnd(goal) {
 export function reviewFocus(goal, now = new Date()) {
   return goal?.priority === true && dateKey(now) <= goal.exam;
 }
+// Calendar dates as the plan says them: "Sun 6 Dec", "Sunday 6 December".
+const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+export const shortDate = d => DAYS[d.getDay()].slice(0, 3) + " " + d.getDate() + " " + MONTHS[d.getMonth()].slice(0, 3);
+export const longDate = d => DAYS[d.getDay()] + " " + d.getDate() + " " + MONTHS[d.getMonth()];

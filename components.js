@@ -164,3 +164,80 @@ export function anchorStripHtml(items=[],{compact=false,label="Mora anchors"}={}
   const image=item=>{const text=escapeText(item.image);if(item.mark==="giant"&&text.startsWith("巨大な"))return `<span class="anchor-modifier">巨大な</span>${text.slice(3)}`;if(item.mark==="balloon"&&text.startsWith("風船の"))return `<span class="anchor-modifier">風船の</span>${text.slice(3)}`;return text};
   const picture=item=>item.picture?themedPictureHtml(item.picture,{size:30,className:"anchor-picture"}):"";
   return `<div class="anchor-strip" lang="ja" role="list" aria-label="${escapeText(label)}">${items.map((item,i)=>`${i?`<span class="anchor-arrow" aria-hidden="true">→</span>`:""}<a role="listitem" class="anchor-cell" href="${escapeText(item.href||"#")}"><span class="anchor-kana">${escapeText(item.mora)}</span>${picture(item)}<span class="anchor-image">${image(item)}</span>${cornerMarkHtml(item.mark)}</a>`).join("")}</div>`}
+
+// --- Learning-journey primitives (designer handoff, 24 Nov) -------------------
+// PlanSteps — the day as a numbered list, GrammarList's shape: a kanji numeral,
+// the title over one meta line, the minutes at the row end. One step may be
+// "next" (seal-filled numeral, tinted row); finished steps are "done" (struck
+// through). A step with href or onOpen is a row link; the screen's one filled
+// button starts the next step, so rows stay quiet.
+export function planSteps(steps=[],{label="Today's steps"}={}){
+  const list=document.createElement("ol");list.className="plan-steps";list.setAttribute("aria-label",label);
+  steps.forEach((step,index)=>{
+    const li=document.createElement("li");li.className="plan-step";li.dataset.state=step.state||"";
+    const row=document.createElement(step.href?"a":step.onOpen?"button":"span");row.className="plan-step-row";
+    if(step.href)row.href=step.href;
+    if(step.onOpen){if(row.tagName==="BUTTON")row.type="button";row.addEventListener("click",event=>{if(!step.href)event.preventDefault();step.onOpen(step)})}
+    if(step.disabled)row.setAttribute("aria-disabled","true");
+    if(step.state==="next")row.setAttribute("aria-current","step");
+    const mark=document.createElement("span");mark.className="plan-step-mark";mark.lang="ja";mark.setAttribute("aria-hidden","true");mark.textContent=step.glyph||kanjiNumeral(index+1);
+    const body=document.createElement("span");body.className="plan-step-body";
+    const title=document.createElement("span");title.className="plan-step-title";title.textContent=step.title||"";body.append(title);
+    if(step.line){const meta=document.createElement("span");meta.className="plan-step-meta";meta.textContent=step.line;body.append(meta)}
+    row.append(mark,body);
+    if(step.minutes){const min=document.createElement("span");min.className="plan-step-min";min.textContent=step.minutes+" min";row.append(min)}
+    li.append(row);list.append(li)});
+  return list}
+
+// LoadMeter — the library meter line for a day's load, always labelled with
+// its denominator ("6 h of 7 h 10 min fits today"). The part that does not fit
+// is hatched; the caption and the accessible name say the same words.
+export function loadMeter({fits,needs,caption}={}){
+  const wrap=document.createElement("div");wrap.className="load-meter";
+  const bar=document.createElement("span");bar.className="load-meter-bar";bar.setAttribute("role","img");bar.setAttribute("aria-label",caption);
+  const total=Math.max(needs||0,fits||0,1),fill=document.createElement("span"),over=document.createElement("span");
+  fill.className="load-meter-fill";fill.style.width=Math.min(100,(Math.min(fits,needs||fits)/total)*100)+"%";
+  over.className="load-meter-over";over.style.width=Math.max(0,((needs-fits)/total)*100)+"%";
+  bar.append(fill,over);
+  const text=document.createElement("span");text.className="load-meter-caption";text.textContent=caption;text.setAttribute("aria-hidden","true");
+  wrap.append(bar,text);return wrap}
+
+// ExamLine — one quiet row naming the exam and the first-pass date, with a
+// "Change" link to the one goal editor (n2-mock.html#training-goal).
+export function examLine({text,href="./n2-mock.html#training-goal",action="Change"}={}){
+  const a=document.createElement("a");a.className="exam-line";a.href=href;
+  const t=document.createElement("span");t.className="exam-line-text";t.textContent=text;
+  const c=document.createElement("span");c.className="exam-line-action";c.textContent=action;
+  a.append(t,c);return a}
+
+// EvidenceRow — one piece of evidence for one item and skill: a dimension mark
+// (filled = done, outline = planned or missed), the kind in the copy contract
+// (heard · checked once · recalled on another day · understood in a new
+// passage), a source line and the date.
+export function evidenceRow({done=false,title="",line="",date=""}={}){
+  const li=document.createElement("li");li.className="evidence-row";
+  const mark=document.createElement("span");mark.className="evidence-mark";mark.dataset.done=String(!!done);mark.setAttribute("aria-hidden","true");
+  const body=document.createElement("span");body.className="evidence-body";
+  const t=document.createElement("span");t.className="evidence-title";t.textContent=title;body.append(t);
+  if(line){const l=document.createElement("span");l.className="evidence-line";l.textContent=line;body.append(l)}
+  const d=document.createElement("span");d.className="evidence-date";d.textContent=date;
+  li.append(mark,body,d);return li}
+
+// PauseRing — Day Radio Recall's countdown: a seal arc over a hairline ring,
+// the seconds in display type. set(left) redraws it; under reduced motion the
+// arc stays whole and only the number changes.
+export function pauseRing({total=5,left=total,label="seconds before the meaning plays"}={}){
+  const NS="http://www.w3.org/2000/svg",R=42,C=2*Math.PI*R;
+  const wrap=document.createElement("div");wrap.className="pause-ring";
+  const svg=document.createElementNS(NS,"svg");svg.setAttribute("width","96");svg.setAttribute("height","96");svg.setAttribute("viewBox","0 0 96 96");svg.setAttribute("aria-hidden","true");
+  const ring=document.createElementNS(NS,"circle"),arc=document.createElementNS(NS,"circle"),num=document.createElementNS(NS,"text");
+  for(const c of [ring,arc]){c.setAttribute("cx","48");c.setAttribute("cy","48");c.setAttribute("r",String(R));c.setAttribute("fill","none");c.setAttribute("stroke-width","4")}
+  ring.setAttribute("class","pause-ring-track");arc.setAttribute("class","pause-ring-arc");arc.setAttribute("stroke-linecap","round");arc.setAttribute("transform","rotate(-90 48 48)");arc.setAttribute("stroke-dasharray",String(C));
+  num.setAttribute("x","48");num.setAttribute("y","57");num.setAttribute("text-anchor","middle");num.setAttribute("class","pause-ring-num");
+  svg.append(ring,arc,num);
+  const caption=document.createElement("p");caption.className="pause-ring-caption";caption.textContent=label;
+  const live=document.createElement("span");live.className="sr-only";live.setAttribute("aria-live","polite");
+  wrap.append(svg,caption,live);
+  const reduced=()=>globalThis.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  const set=n=>{n=Math.max(0,Math.ceil(n));num.textContent=String(n);arc.setAttribute("stroke-dashoffset",reduced()?"0":String(C*(1-n/Math.max(1,total))));if(n===total||n===0)live.textContent=n+" "+label};
+  set(left);return {el:wrap,set}}

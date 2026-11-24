@@ -2123,3 +2123,65 @@ html.motion-off .n2-breath span{transition:none}
 a.library-tool.n2-day-link{text-decoration:none;color:inherit;margin:4px 0 12px;border-bottom:1px solid var(--rule)}
 /* The N2 page has no sidebar: undo the app's desktop grid and centre the bars. */
 @media(min-width:1024px){body.n2{display:block}body.n2 main{grid-column:auto;margin:0 auto;padding-inline:32px}.n2 .review-actions{left:50%;right:auto;transform:translateX(-50%);width:min(760px,100%)}}
+
+/* Learning-journey primitives (designer handoff, 24 Nov): plan steps, load
+   meter, exam line, evidence rows, pause ring. Tokens only. */
+.plan-steps{list-style:none;margin:6px 0 0;padding:0}
+.plan-step{border-bottom:1px solid var(--rule)}
+.plan-step-row{all:unset;box-sizing:border-box;display:flex;align-items:flex-start;gap:12px;width:100%;padding:12px 0;color:var(--sumi);cursor:default}
+a.plan-step-row,button.plan-step-row{cursor:pointer}
+.plan-step-row:focus-visible{outline:2px solid var(--seal);outline-offset:2px}
+.plan-step-mark{width:24px;height:24px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:1px solid var(--hairline);border-radius:3px;font-family:var(--display);font-size:13px;color:var(--ink-muted)}
+.plan-step-body{flex-grow:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.plan-step-title{font-size:15px}
+.plan-step-meta,.plan-step-min{font-size:12px;color:var(--ink-muted)}
+.plan-step-min{flex-shrink:0}
+.plan-step[data-state=next]{background:var(--seal-tint);margin:0 -10px;padding:0 10px}
+.plan-step[data-state=next] .plan-step-mark{background:var(--seal);border-color:var(--seal);color:var(--seal-on)}
+.plan-step[data-state=next] .plan-step-title{font-weight:500}
+.plan-step[data-state=done] .plan-step-title{text-decoration:line-through;text-decoration-color:var(--seal);color:var(--ink-muted)}
+.plan-step-row[aria-disabled=true]{opacity:.6}
+.load-meter{display:flex;flex-direction:column;gap:5px}
+.load-meter-bar{display:flex;height:8px;border:1px solid var(--hairline);border-radius:2px;overflow:hidden;background:var(--panel)}
+.load-meter-fill{background:var(--seal)}
+.load-meter-over{background:repeating-linear-gradient(135deg,var(--seal) 0 2px,var(--seal-tint) 2px 5px)}
+.load-meter-caption{font-size:12px;color:var(--ink-muted)}
+.exam-line{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);text-decoration:none;color:inherit}
+.exam-line-text{font-size:13px;color:var(--ink-soft)}
+.exam-line-action{font-size:13px;color:var(--seal-deep)}
+.exam-line:focus-visible{outline:2px solid var(--seal);outline-offset:2px}
+.evidence-list{list-style:none;margin:0;padding:0}
+.evidence-row{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--rule)}
+.evidence-mark{width:10px;height:10px;margin-top:5px;border-radius:2px;flex-shrink:0;box-sizing:border-box;border:1.5px solid var(--seal)}
+.evidence-mark[data-done=true]{background:var(--seal)}
+.evidence-body{flex-grow:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.evidence-title{font-size:14px}
+.evidence-line,.evidence-date{font-size:12px;color:var(--ink-muted)}
+.evidence-date{flex-shrink:0}
+.pause-ring{display:flex;flex-direction:column;align-items:center;gap:8px}
+.pause-ring-track{stroke:var(--rule)}
+.pause-ring-arc{stroke:var(--seal);transition:stroke-dashoffset 1s linear}
+.pause-ring-num{font-family:var(--display);font-size:26px;fill:var(--sumi)}
+.pause-ring-caption{margin:0;font-size:12px;color:var(--ink-muted)}
+@media (prefers-reduced-motion:reduce){.pause-ring-arc{transition:none}}
+
+/* Review's N2 card (J2Review): the seal-tinted notice, its Start link, the exam line. */
+.review-n2{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.review-n2-card{flex-direction:column;gap:8px}
+.review-n2-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.review-n2-title{font-size:15px;font-weight:500}
+.review-n2-line{margin:0;font-size:13px;color:var(--ink-soft)}
+.review-n2-card>.button{align-self:stretch;min-height:44px}
+
+/* The one goal editor (J1Goal, J3Adjust). */
+.n2-goal{margin-top:14px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.n2-goal>summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-size:14px;color:var(--seal-deep)}
+.n2-goal-form{display:flex;flex-direction:column;gap:12px;padding:4px 0 16px}
+.n2-goal-form .hint{margin:0}
+.n2-goal-field{display:flex;flex-direction:column;gap:6px}
+.n2-goal-field input{min-height:44px}
+.n2-goal-check{display:flex;align-items:center;gap:8px;font-size:13px;min-height:44px}
+.n2-goal-preview{display:flex;flex-direction:column;gap:6px;padding:10px 12px;border:1px solid var(--hairline);border-radius:4px;background:var(--panel)}
+.n2-goal-preview p{margin:0;display:flex;gap:10px;align-items:baseline;font-size:13px}
+.n2-goal-preview .overline{width:52px;flex-shrink:0}
+.n2-goal-form>button{width:100%;min-height:48px}

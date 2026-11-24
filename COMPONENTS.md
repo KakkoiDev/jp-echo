@@ -49,6 +49,36 @@ the answered grammar of a sentence as a numbered list (`kanjiNumeral`): the
 phrase over its gloss, the level as a chip at the row end, a chevron. Used on
 the sentence page and the revealed review answer only.
 
+### PlanSteps
+`planSteps(steps)` (components.js): the day as a numbered list in GrammarList's
+shape — kanji numeral, title over one meta line, minutes at the row end. A step
+is `{title, line, minutes, state, href|onOpen, glyph?, disabled?}`; `state` is
+`"next"` (seal-filled numeral, tinted row, `aria-current="step"`) or `"done"`
+(struck through). Rows are quiet links; the screen's one filled button starts
+the next step. Used on the N2 Today plan, its over-budget and shortened views.
+
+### LoadMeter
+`loadMeter({fits, needs, caption})`: the library meter line for a day's load.
+The caption always names its denominator ("6 h of 7 h 10 min fits today") and
+is the bar's accessible name; what does not fit is hatched.
+
+### ExamLine
+`examLine({text, href, action})`: one row naming the exam and first-pass date
+with a "Change" link to the one goal editor (`n2-mock.html#training-goal`).
+Used under Review's N2 card.
+
+### EvidenceRow
+`evidenceRow({done, title, line, date})` in a `.evidence-list`: one piece of
+evidence for one item and skill. The mark is filled when it happened, outlined
+when it is planned or was missed. Titles use the copy contract only: heard,
+checked once, recalled on another day, understood in a new passage. Each skill
+keeps its own list; one never moves another.
+
+### PauseRing
+`pauseRing({total, left})` returns `{el, set(left)}`: Day Radio Recall's
+countdown, a seal arc over a hairline ring with the seconds in display type.
+Under reduced motion the arc stays whole and only the number changes.
+
 ### SettingsRow
 `.settings-row` (static markup in Settings): title, one-line status, chevron,
 64 px floor, `--rule` divider. Opens a settings sub-page.

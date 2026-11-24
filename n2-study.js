@@ -1,3 +1,4 @@
+import {parseGoalDate, firstPassEnd} from "./jlpt-goal.js";
 // N2 study logic with no DOM: the exam calendar, section estimates, the recall
 // queue and the daily goal. n2-mock.js renders it; test/n2-study.test.js holds it.
 
@@ -331,3 +332,13 @@ export function sprintCheckpoint(attempts, papers, eligibleBooks, now = new Date
   const met = recent.length === 2 && recent[0].day !== recent[1].day && recent.every(r=>r.meets);
   return {recent, met};
 }
+
+// The exam and the first-pass end the plan works to: the learner's goal when
+// set, else the next JLPT date and the last day before exam week.
+export function goalDates(goal = null, now = new Date()) {
+  const exam = goal ? parseGoalDate(goal.exam) : nextExamDate(now);
+  const custom = goal?.days ? firstPassEnd(goal) : null;
+  const firstPass = custom || new Date(exam.getFullYear(), exam.getMonth(), exam.getDate() - CONSOLIDATION_DAYS - 1);
+  return {exam, firstPass, custom: !!custom, set: !!goal};
+}
+export const formatMinutes = m => { m = Math.max(0, Math.round(m)); const h = Math.floor(m / 60), r = m % 60; return h ? h + " h" + (r ? " " + r + " min" : "") : r + " min"; };
