@@ -1352,25 +1352,50 @@ async function openWord(w,cover,{learn=null,route=true,context}={}){
 // Saved words (SPEC echo-reader §4.4, boards WordSaved / WordUnsaved): the
 // SavedMark toggle in the sheet head. Saved is a mark beside the state, never a
 // state: the chip still says met or learned, and nothing says unmet while saved.
-async function renderWordSaved(w){
+// Saved: a status line under the senses ("Saved 6 Nov · from the reader. The
+// sentence is in your Library.") and, at the foot, Where you saved it (five
+// at most, newest first) and Remove. Removed: one line, "Removed from saved
+// words.", and the contexts drop out of view; they stay on the record.
+async function renderWordSaved(w,{removed=false}={}){
   let record=null;try{record=await getWord(w.id)}catch{record=null}
   if(wordOpen?.word.id!==w.id)return record;
   const saved=isSaved(record);renderSavedButton($("#word-save"),saved,{saveLabel:t("Save word"),savedLabel:t("Saved — remove from saved words")});
   const chip=$("#word-state");chip.hidden=saved&&chip.dataset.state==="unmet";
+  $("#word-meta").textContent=saved&&chip.dataset.state==="unmet"?t("None yet. Saying one is how a saved word becomes met, then learned."):t("Not in any of your sentences yet");
+  const status=$("#word-saved-status"),contexts=saved?record.contexts||[]:[];
+  status.hidden=!saved&&!removed;
+  $("#word-saved-mark").innerHTML=savedMarkHtml(saved);
+  if(saved){const date=new Date(record.updatedAt).toLocaleDateString("en-GB",{day:"numeric",month:"short"});
+    $("#word-saved-text").textContent=[t("Saved {date}",{date})+(record.from==="reader"?" · "+t("from the reader"):"")+".",contexts.some(c=>c.sentenceId)?t("The sentence is in your Library."):""].filter(Boolean).join(" ")}
+  else if(removed)$("#word-saved-text").textContent=t("Removed from saved words.");
+  $("#word-saved").hidden=!saved;
+  if(saved){sheetCount($("#word-saved-head"),contexts.length);const marks=wordMarks(w).join("・");
+    $("#word-saved-list").replaceChildren(...contexts.map(context=>{const li=el("li","word-saved-item"),text=el("p","word-saved-context");text.lang="ja";text.innerHTML=markPattern(escapeText(context.text),marks);
+      li.append(text,el("p","saved-source",contextSource(context,{sentenceOnly:t("Sentence only")})));return li}));
+    $("#word-remove-mark").innerHTML=savedMarkHtml(false)}
   return record}
+// A save or remove on the sheet redraws the list behind it when it closes:
+// a removed word leaves Saved words quietly, with no toast.
+let savedChanged=false;
+function refreshSavedBehindSheet(){if(!savedChanged)return;savedChanged=false;const view=document.body.dataset.view;
+  if(view==="saved")renderSaved();else if(view==="library")renderLibrarySaved();else if(view==="notes")renderNotes();else if(view==="search")renderSearch();else if(view==="map")renderMap()}
 async function toggleWordSaved(){
   const target=wordOpen;if(!target)return;const w=target.word,button=$("#word-save");
-  button.disabled=true;
+  button.disabled=true;savedChanged=true;
   try{
-    if(isSaved(await getWord(w.id)))await removeWord(w.id);
-    else{let context=target.context?{...target.context}:null;
-      // A context names its card only while that sentence is in the Library.
-      if(context?.sentenceId&&!(await getSentence(context.sentenceId).catch(()=>null)))delete context.sentenceId;
-      await saveWord(w,{context,from:"echo"})}
+    if(isSaved(await getWord(w.id))){await removeWord(w.id);await renderWordSaved(w,{removed:true});return}
+    let context=target.context?{...target.context}:null;
+    // A context names its card only while that sentence is in the Library.
+    if(context?.sentenceId&&!(await getSentence(context.sentenceId).catch(()=>null)))delete context.sentenceId;
+    await saveWord(w,{context,from:"echo"});
     await renderWordSaved(w);
   }catch(error){$("#word-status").textContent=sheetError(error)}
   finally{button.disabled=false}
 }
+// "Remove from saved words" at the foot: the same write as the pressed mark.
+async function removeOpenWord(){const target=wordOpen;if(!target)return;const button=$("#word-remove");button.disabled=true;savedChanged=true;
+  try{await removeWord(target.word.id);await renderWordSaved(target.word,{removed:true});$("#word-dialog").scrollTop=0}
+  catch(error){$("#word-status").textContent=sheetError(error)}finally{button.disabled=false}}
 // Echo's way to remember a word is written when you ask, not when the sheet
 // opens: one request, on your key, kept on the device and in every backup.
 async function renderWordNote(w){
@@ -2531,7 +2556,7 @@ function sheetDrag(dialog,close){
   dialog.addEventListener("click",event=>{if(event.target===dialog)close()});
 }
 sheetDrag($("#kanji-dialog"),()=>{loop.stop();$("#kanji-dialog").close()});sheetDrag($("#grammar-dialog"),()=>{loop.stop();$("#grammar-dialog").close()});sheetDrag($("#word-dialog"),()=>{loop.stop();$("#word-dialog").close()});
-$("#word-close").onclick=()=>{loop.stop();$("#word-dialog").close()};$("#word-save").onclick=toggleWordSaved;$("#word-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;wordOpen=null;saveWorkspace({modal:null})});$("#word-compose").onclick=composeForWord;$("#word-say-go").onclick=sayForWord;$("#word-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForWord()};$("#word-note-ask").onclick=askWordNote;$("#word-prev").onclick=()=>wordStep(-1);$("#word-next").onclick=()=>wordStep(1);$("#word-dialog").addEventListener("keydown",event=>{if(!wordOpen?.learn||event.target.tagName==="TEXTAREA"||event.target.isContentEditable)return;if(event.key==="ArrowRight")wordStep(1);else if(event.key==="ArrowLeft")wordStep(-1)});
+$("#word-close").onclick=()=>{loop.stop();$("#word-dialog").close()};$("#word-save").onclick=toggleWordSaved;$("#word-remove").onclick=removeOpenWord;$("#word-dialog").addEventListener("close",()=>{loop.stop();kanjiPlaying=null;wordOpen=null;saveWorkspace({modal:null});refreshSavedBehindSheet()});$("#word-compose").onclick=composeForWord;$("#word-say-go").onclick=sayForWord;$("#word-say").onkeydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key==="Enter")sayForWord()};$("#word-note-ask").onclick=askWordNote;$("#word-prev").onclick=()=>wordStep(-1);$("#word-next").onclick=()=>wordStep(1);$("#word-dialog").addEventListener("keydown",event=>{if(!wordOpen?.learn||event.target.tagName==="TEXTAREA"||event.target.isContentEditable)return;if(event.key==="ArrowRight")wordStep(1);else if(event.key==="ArrowLeft")wordStep(-1)});
 // Radio: the studied sentences through the night (radio.js plans it,
 // speech.js plays it). The screen is kept on with a wake lock, because a
 // locked phone stops the speech engine on iPhone and on Android alike.

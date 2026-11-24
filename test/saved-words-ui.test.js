@@ -44,3 +44,32 @@ test("the empty state follows SavedWordsEmpty: the 栞 tile, how to save, the Li
   assert.doesNotMatch(empty, /<svg/, "the inline mark comes from SavedMark");
   assert.match(app, /\$\("#saved-empty-mark"\)\.innerHTML=savedMarkHtml\(false/);
 });
+
+test("word sheet (WordSaved / WordUnsaved): toggle, status line, Where you saved it, Remove at the foot", () => {
+  const sheet = html.slice(html.indexOf('id="word-dialog"'), html.indexOf("</dialog>", html.indexOf('id="word-dialog"')));
+  const order = ['id="word-save"', 'id="word-senses"', 'id="word-saved-status"', 'id="word-kanji"', 'id="word-more"', 'id="word-mine-head"', 'class="kanji-say"', 'id="word-saved"', 'id="word-remove"'].map(id => sheet.indexOf(id));
+  assert.ok(order.every(i => i > 0), "every part is on the sheet");
+  assert.deepEqual([...order].sort((a, b) => a - b), order, "board order: header toggle, senses, status, kanji, note, sentences, say, saved contexts, remove");
+  assert.match(sheet, /<p class="hint">Up to five, newest first\. The address keeps the site and path only\.<\/p>/);
+  assert.match(sheet, />Remove from saved words<\/button>/);
+  const render = app.slice(app.indexOf("async function renderWordSaved("), app.indexOf("async function toggleWordSaved("));
+  assert.match(render, /t\("Removed from saved words\."\)/);
+  assert.match(render, /t\("from the reader"\)/);
+  assert.match(render, /t\("The sentence is in your Library\."\)/);
+  assert.match(render, /\$\("#word-saved"\)\.hidden=!saved/, "contexts drop out of view once removed");
+  assert.match(render, /markPattern\(escapeText\(context\.text\),marks\)/, "context text is escaped before the word is marked");
+  assert.match(render, /chip\.hidden=saved&&chip\.dataset\.state==="unmet"/, "nothing says unmet while saved");
+  // Remove is a tombstone through the wrapper, never a delete, and no toast.
+  const remove = app.slice(app.indexOf("async function removeOpenWord("), app.indexOf("// Echo's way to remember a word is written"));
+  assert.match(remove, /await removeWord\(target\.word\.id\);await renderWordSaved\(target\.word,\{removed:true\}\)/);
+  assert.doesNotMatch(remove + render, /toast\(/);
+  assert.match(app, /addEventListener\("close",\(\)=>\{loop\.stop\(\);kanjiPlaying=null;wordOpen=null;saveWorkspace\(\{modal:null\}\);refreshSavedBehindSheet\(\)\}\)/, "the list behind redraws when the sheet closes");
+});
+
+test("Save keeps the sentence the word was opened from, and names its card only if it is in the Library", () => {
+  const toggle = app.slice(app.indexOf("async function toggleWordSaved("), app.indexOf("// \"Remove from saved words\" at the foot"));
+  assert.match(toggle, /if\(context\?\.sentenceId&&!\(await getSentence\(context\.sentenceId\)\.catch\(\(\)=>null\)\)\)delete context\.sentenceId;/);
+  assert.match(toggle, /await saveWord\(w,\{context,from:"echo"\}\);/, "awaited before the sheet says Saved");
+  assert.ok(toggle.indexOf("await saveWord(") < toggle.indexOf("await renderWordSaved(w);"));
+  assert.match(app, /const saveContext=\{text:context,\.\.\.\(sentence\?\.id&&!sentence\.transient\?\{sentenceId:sentence\.id\}:\{\}\)\};/);
+});
