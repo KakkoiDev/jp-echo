@@ -108,7 +108,7 @@ async function openReport() {
   const result = await openReportSheet({subjects, reasons: REPORT_REASONS, syncLine: reportSyncLine(), bindDictation: bindReportDictation, onSubmit: async value => {
     await fileReport(createReport({...value, screen: screenOf(location, title), version: await appVersion(), device: deviceInfo()}));
   }});
-  if (result) saved(result.kind === "card" ? "Flagged with your note" : "Report saved");
+  if (result) announceSaved(result.kind === "card" ? "Flagged with your note" : "Report saved");
 }
 async function json(path) {
   const response = await fetch(path);
@@ -1195,10 +1195,14 @@ async function exam() {
   function persist() {
     if (archivedView || state.phase === "ready") return;
     try {
-      const other = JSON.parse(localStorage.getItem(storageKey) || "null");
+      const previous = localStorage.getItem(storageKey);
+      const other = JSON.parse(previous || "null");
       if (other?.id && other.id !== state.id) return;
       if (other?.phase === "results" && state.phase !== "results") return;
-      localStorage.setItem(storageKey, JSON.stringify(state));
+      const next = JSON.stringify(state);
+      if (next === previous) return;
+      localStorage.setItem(storageKey, next);
+      if (state.phase === "results") markDirty("n2");
     } catch { warn("Device storage is unavailable. Keep this page open to retain this attempt."); }
   }
   const active = () => state.phase === "written" || state.phase === "listening";

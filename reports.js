@@ -148,6 +148,7 @@ export function reportSyncLine() {
   if (!g.on || !g.token) return "Saved on this device. Turn on gist sync in Settings → Backup to send reports.";
   if (!g.gist) return "Saved on this device. Reports sync once the first gist sync has run.";
   if (state.lastError) return "Saved on this device. Last sync failed: " + state.lastError;
+  if (state.dirty?.reports || !state.lastSyncAt) return "Saved on this device. Waiting to sync reports.";
   return "Saved on this device and synced to your gist.";
 }
 export const reportsAdapter = () => ({

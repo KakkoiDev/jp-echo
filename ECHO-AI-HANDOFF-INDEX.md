@@ -1,5 +1,7 @@
 # Echo handoff packet
 
+**Start with the [24 November audit and cross-device recovery handoff](ECHO-POST-UPDATE-HANDOFF.md).** It covers the latest fixes, restore instructions and open verification work.
+
 **Sprint outcome:** [Two-week program and readiness checkpoint](N2-TWO-WEEK-PROGRAM.md). The N2 hub now evaluates recent first sittings and points to the weakest section.
 
 

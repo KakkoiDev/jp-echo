@@ -16,7 +16,7 @@
 import {GIST_API, QUIET_MS, MIN_INTERVAL_MS, parseGistId, readGistIndex, readGistFile, writeGistFiles, gistVersion} from "./gist-backup.js";
 
 export const FILES = Object.freeze({backup: "echo-backup.json", n2: "echo-n2.json", reports: "echo-reports.json"});
-const time = value => Date.parse(value || 0) || 0;
+const time = value => value ? Date.parse(value) || 0 : 0;
 
 // ---- Tombstones ----
 // {sentences: {id: at}, notes: {key: at}}. The later deletion wins a merge;
@@ -72,15 +72,18 @@ export function betterAttempt(a, b) {
 const byId = (list, pick) => { const out = new Map(); for (const x of list || []) if (x?.id) out.set(x.id, out.has(x.id) ? pick(out.get(x.id), x) : x); return out; };
 export function mergeN2(local = {}, remote = {}) {
   const pick = (map, list, choose) => { for (const x of list || []) if (x?.id) map.set(x.id, map.has(x.id) ? choose(map.get(x.id), x) : x); return [...map.values()]; };
-  const goalNewer = time(remote.goalAt) > time(local.goalAt);
+  const localAt = time(local.goalAt), remoteAt = time(remote.goalAt);
+  const useRemote = remoteAt !== localAt ? remoteAt > localAt :
+    remoteAt ? remote.goal == null : local.goal == null;
+  const goalSource = useRemote ? remote : local;
   return {
     app: "echo", kind: "n2", schemaVersion: 1,
     papers: pick(byId(local.papers, a => a), remote.papers, a => a),
     history: pick(byId(local.history, betterAttempt), remote.history, betterAttempt),
     recall: pick(byId(local.recall, mergeRecall), remote.recall, mergeRecall),
     events: pick(byId(local.events, a => a), remote.events, a => a),
-    goal: goalNewer || (!local.goal && remote.goal) ? remote.goal ?? null : local.goal ?? null,
-    goalAt: goalNewer ? remote.goalAt : local.goalAt || (local.goal ? "" : remote.goalAt || ""),
+    goal: goalSource.goal ?? null,
+    goalAt: goalSource.goalAt || "",
   };
 }
 
@@ -95,6 +98,7 @@ export const signatures = {
     rows(doc?.sentences, s => [s.id, time(s.updatedAt), (s.reviews || []).length, s.srs?.reps || 0, s.echoCount || 0, s.flagged ? 1 : 0].join("|")),
     rows(doc?.notes, n => [n.key, time(n.made)].join("|")),
     rows(doc?.words, w => [w.id, time(w.updatedAt), time(w.removedAt)].join("|")),
+    ...["words","grammar","references"].map(key => rows(doc?.catalogues?.[key], item => JSON.stringify(item))),
     rows(Object.entries(doc?.deleted?.sentences || {}), ([id, at]) => id + "|" + time(at)),
     rows(Object.entries(doc?.deleted?.notes || {}), ([id, at]) => id + "|" + time(at)),
   ].join("\n#\n")),
@@ -144,6 +148,18 @@ async function syncOnce({adapters, page, push, create, credentials, fetchImpl, o
   let id = parseGistId(settings.gist);
   const state = syncState(), seen = {...(state.seen || {})}, ahead = {};
   const versions = {...(state.versions || {})};
+  const recovery = {...(state.recovery || {})};
+  // A concurrent PATCH may have displaced a revision carrying offline work.
+  // Merge its touched files before our next upload, even after restarting.
+  const pending = recovery[id] || [];
+  for (const entry of pending) {
+    if (!adapters[entry.kind]) continue;
+    const prior = await readGistIndex({id, revision: entry.revision, token: settings.token, fetchImpl});
+    const file = prior.files[FILES[entry.kind]];
+    if (file) await adapters[entry.kind].merge(await readGistFile({file, fetchImpl}));
+    ahead[entry.kind] = true;
+  }
+  recovery[id] = pending.filter(entry => !adapters[entry.kind]);
   const pulled = [];
   let observed = null;
   if (id) {
@@ -155,7 +171,7 @@ async function syncOnce({adapters, page, push, create, credentials, fetchImpl, o
         const file = index.files[FILES[kind]];
         // Not in the gist yet (a new kind, or a first sync): this device is ahead.
         if (!file) { ahead[kind] = true; continue; }
-        if (seen[FILES[kind]] === file.sha) continue;
+        if (file.sha && seen[FILES[kind]] === file.sha) continue;
         onStatus("pulling");
         const remote = await readGistFile({file, fetchImpl});
         const merged = await adapters[kind].merge(remote);
@@ -166,22 +182,27 @@ async function syncOnce({adapters, page, push, create, credentials, fetchImpl, o
     }
   } else if (!create) return {skipped: "no-gist"};
   const dirty = syncState().dirty || {};
-  const kindsToPush = !id ? kinds : push ? toPush({kinds, dirty, ahead}) : [];
+  for (const kind of Object.keys(ahead)) if (!dirty[kind]) dirty[kind] = Date.now();
+  if (Object.keys(ahead).length) patchSyncState({dirty});
+  const kindsToPush = push ? (!id ? kinds : toPush({kinds, dirty, ahead})) : [];
   let wrote = null;
   if (kindsToPush.length) {
     onStatus("pushing");
-    const startedAt = Date.now(), files = {};
+    const files = {};
     for (const kind of kindsToPush) files[FILES[kind]] = await adapters[kind].read();
     wrote = await writeGistFiles({id, token: settings.token, files, description: create?.description?.(files), fetchImpl});
     if (!id) { id = wrote.id; await create?.created?.(wrote); }
-    for (const [name, sha] of Object.entries(wrote.shas)) if (Object.values(FILES).includes(name)) seen[name] = sha;
+    for (const [name, sha] of Object.entries(wrote.shas)) if (Object.hasOwn(files, name)) seen[name] = sha;
     // Someone else wrote between our check and our write: look again next time.
-    versions[page] = observed && wrote.previous && wrote.previous !== observed ? null : wrote.version;
+    const overlap = observed && wrote.previous && wrote.previous !== observed;
+    versions[page] = overlap ? null : wrote.version;
+    if (overlap) recovery[id] = [...(recovery[id] || []), ...kindsToPush.map(kind => ({kind, revision: wrote.previous}))];
     const now = syncState().dirty || {};
-    const left = {...now}; for (const kind of kindsToPush) if ((now[kind] || 0) <= startedAt) delete left[kind];
-    patchSyncState({dirty: left, lastPushAt: Date.now()});
+    const left = {...now}; for (const kind of kindsToPush) if (now[kind] === dirty[kind]) delete left[kind];
+    if (overlap) for (const kind of kindsToPush) left[kind] ||= Date.now();
+    patchSyncState({dirty: left, recovery, lastPushAt: Date.now()});
   }
-  patchSyncState({seen, versions, lastSyncAt: Date.now(), lastError: ""});
+  patchSyncState({seen, versions, recovery, lastSyncAt: Date.now(), lastError: ""});
   return {pulled, pushed: kindsToPush, wrote};
 }
 // When a page may push: leaving or opening the app, a manual sync, or once

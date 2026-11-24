@@ -1,5 +1,5 @@
 import {readGoal,goalKey,goalAtKey} from "./jlpt-goal.js";
-import {markDirty,mergeN2} from "./sync.js";
+import {betterAttempt,markDirty,mergeN2} from "./sync.js";
 import {bookIds,bookName} from "./n2-forms.js";
 
 export const prefix="echo-n2-mock-v1-";
@@ -72,7 +72,9 @@ async function putMany(table,rows){
 }
 export async function n2Document(){
   const [papers,history,recall,events]=await Promise.all(tables.map(t=>access(t,"getAll")));
-  return {app:"echo",kind:"n2",schemaVersion:1,papers,history,recall,events,goal:readGoal(),goalAt:localStorage.getItem(goalAtKey)||""};
+  const finished=new Map(history.map(a=>[a.id,a]));
+  for(const a of currentAttempts())if(a.phase==="results")finished.set(a.id,betterAttempt(a,finished.get(a.id)));
+  return {app:"echo",kind:"n2",schemaVersion:1,papers,history:[...finished.values()],recall,events,goal:readGoal(),goalAt:localStorage.getItem(goalAtKey)||""};
 }
 export const n2Adapter=()=>({
   read:n2Document,

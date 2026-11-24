@@ -28,9 +28,19 @@ export function parseGistId(input) {
   if (host !== "gist.github.com" && host !== "api.github.com" && host !== "gist.githubusercontent.com") return null;
   const parts = url.pathname.split("/").filter(Boolean);
   // gist.githubusercontent.com/<owner>/<id>/raw/... carries the id second.
-  const candidates = host === "gist.githubusercontent.com" ? [parts[1]] : [parts[parts.length - 1]];
+  const revision = gistRevision(text);
+  const candidates = host === "gist.githubusercontent.com" ? [parts[1]] : [parts.at(revision ? -2 : -1)];
   const id = candidates.find(part => part && /^[0-9a-f]{20,}$/i.test(part));
   return id || null;
+}
+
+// A revision page names both the gist and the immutable commit to restore.
+export function gistRevision(input) {
+  let url;
+  try { url = new URL(input); } catch { return ""; }
+  const parts = url.pathname.split("/").filter(Boolean);
+  if (!["gist.github.com", "api.github.com"].includes(url.host)) return "";
+  return /^[a-f0-9]{20,}$/i.test(parts.at(-2) || "") && /^[a-f0-9]{40}$/i.test(parts.at(-1) || "") ? parts.at(-1) : "";
 }
 
 // Decide whether an automatic upload should run now. `reason` is "change"
@@ -117,8 +127,9 @@ export async function gistVersion({id, token, fetchImpl = globalThis.fetch?.bind
 // A file's content hash is in its raw URL (…/raw/<sha>/<name>): it changes
 // only when that file changes, so unchanged files are never downloaded.
 export const rawSha = url => (String(url || "").match(/\/raw\/([0-9a-f]{20,})\//) || [])[1] || null;
-export async function readGistIndex({id, token, fetchImpl = globalThis.fetch?.bind(globalThis)}) {
-  const response = await fetchImpl(`${GIST_API}/gists/${id}`, {headers: headers(token), cache: "no-store"});
+export async function readGistIndex({id, revision = "", token, fetchImpl = globalThis.fetch?.bind(globalThis)}) {
+  const suffix = revision ? "/" + encodeURIComponent(revision) : "";
+  const response = await fetchImpl(`${GIST_API}/gists/${id}${suffix}`, {headers: headers(token), cache: "no-store"});
   const payload = await readJson(response);
   if (!response.ok) throw failure(response, payload, id, "read");
   const files = {};

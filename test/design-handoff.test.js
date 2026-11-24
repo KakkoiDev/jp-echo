@@ -291,7 +291,7 @@ test("settings is the page the boards draw: chips, rows, honest reminders, sub-p
   assert.match(html, /<h3 class="rule-heading">Furigana check<\/h3>/);
   assert.match(html, /id="reading-backfill" type="button">Resume<\/button>/);
   assert.match(html, /id="onboard-restore" class="plain" type="button">I have a backup file, or a gist<\/button>/);
-  assert.match(app, /#onboard-restore"\)\.onclick=\(\)=>\{finishOnboarding\(\);openSettings\(\)\}/, "both restore paths live in Settings");
+  assert.match(app, /#onboard-restore"\)\.onclick=\(\)=>\{finishOnboarding\(\);openSettings\("import"\)\}/, "onboarding opens the file and gist importer directly");
   assert.match(app, /\$\("#setup-title"\)\.textContent=step===1\?"One thing first":"Which way round\?"/);
 });
 

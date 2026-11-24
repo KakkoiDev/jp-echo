@@ -11,7 +11,7 @@ import {earliestPair,flipSentence,isReversed,pairLooksSwapped,repairPair} from "
 import {moraMnemonicTokens,moraModified,DEFAULT_PAIR,LANGUAGES,safeLanguage,MORA_MNEMONIC_META,MORA_VOICED,MORA_YOON,createSentence,replaceSentenceContent,exportBackup,forAnki,hasFurigana,hasRegisters,languageName,mergeSentences,normalizeFurigana,rubySegments,rubyHtml,SCHEMA_VERSION,stripFurigana} from "./core.js";
 import {isExactMatch,markAttempt,markTarget} from "./diff.js";
 import {applyReadingCorrection,removeArchivedMiniCards,readImportRecovery,saveImportRecovery,deleteSentence as dbDeleteSentence,getSentence,listSentences,migrateStore,replaceAll,mergeIntoStore,saveSentence as persistSentence} from "./db.js";
-import {downloadBackup,parseGistId} from "./gist-backup.js";
+import {readGistIndex,readGistFile,parseGistId,gistRevision} from "./gist-backup.js";
 import {startAutoSync,markDirty,syncState,mergeDeleted,applyDeleted,readDeleted,saveDeleted,recordDeletion,forgetDeletion} from "./sync.js";
 import {n2Adapter} from "./n2-progress.js";
 import {READINGS_RULE,correctSentenceReadings,analyzeSentenceGrammar,askModel,rewriteSentence,adjustNote,carries,compose,composeFromIntent,PROVIDER_DEFAULTS,tagGrammar,translate,discuss,generateReading,writeNotes,writeWordNote,transcribeAudio} from "./api.js";
@@ -2234,8 +2234,8 @@ async function previousReview(){
 async function rateReview(rating){const sentence=reviewQueue[reviewIndex];if(!sentence||!reviewRevealed||reviewBusy)return;reviewBusy=true;updateReviewPrevious();const snapshot=reviewSnapshot(sentence);try{resetSession();const now=new Date(),mode=reviewMode(sentence),graded=reviewSentence(sentence,rating,now),progressed=recordReviewMode(graded,rating,now);
   const updated={...progressed,reviews:[...(Array.isArray(sentence.reviews)?sentence.reviews:[]),{at:now.toISOString(),rating,mode,state:sentence.srs?.state??0,echoes:Math.max(0,(Number(sentence.echoCount)||0)-echoesAtCardStart)}]};await saveSentence(updated);reviewUndo.push(snapshot);if(current?.id===updated.id)current=updated;reviewQueue[reviewIndex]=updated;reviewIndex++;renderReview()}finally{reviewBusy=false;updateReviewPrevious()}}
 // The one backup document: the file Export downloads is byte-for-byte what the gist holds.
-async function buildBackup(){return {...exportBackup(await listSentences(),settings,forBackup(await listNotes().catch(()=>[]))),catalogues:importedCatalogues,words:await listWords().catch(()=>[]),deleted:readDeleted()}}
-async function exportHistory(){const data=await buildBackup(),url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"})),link=Object.assign(document.createElement("a"),{href:url,download:"jp-echo-backup.json"});link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);$("#import-status").textContent="Backup saved as jp-echo-backup.json."}
+async function buildBackup(){return {...exportBackup(await listSentences(),settings,forBackup(await listNotes())),catalogues:importedCatalogues,words:await listWords(),deleted:readDeleted()}}
+async function exportHistory(){try{const data=await buildBackup(),url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"})),link=Object.assign(document.createElement("a"),{href:url,download:"jp-echo-backup.json"});link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);$("#import-status").textContent="Backup saved as jp-echo-backup.json."}catch(error){toast("Backup failed: "+error.message,6000)}}
 async function exportAnki(button=$("#export-anki")){const items=await listSentences();const label=button.textContent;button.disabled=true;button.textContent="Building deck…";$("#anki-status").textContent="Creating Echo.apkg on this device…";try{await downloadAnkiDeck(items.map(forAnki));$("#open-anki").hidden=false;const launched=openAnki(true);$("#anki-status").textContent=launched?"Echo.apkg downloaded. Opening Anki… If it stays here, tap Open Anki.":"Echo.apkg downloaded. Open it from Downloads to import it into Anki."}catch(error){$("#anki-status").textContent=error.message||"Anki export failed."}finally{button.disabled=false;button.textContent=label}}
 function openAnki(automatic=false){const android=/android/i.test(navigator.userAgent),ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(android){window.location.href="intent:#Intent;package=com.ichi2.anki;end";return true}if(ios){window.location.href="anki://";return true}if(!automatic)$("#anki-status").textContent="Open Echo.apkg from your Downloads folder to import it into Anki.";return false}
 // Cards filed while the pair was reversed. Only run when the pair itself was
@@ -2278,7 +2278,7 @@ async function importBackupData(backup){
  // cards the Minihongo upgrade replaces are deletions every device should apply.
  forgetDeletion("sentences",backup.sentences.map(x=>x?.id));if(upgrade.removed.length)recordDeletion("sentences",upgrade.removed.map(x=>x.id));
  saveCatalogues(catalogues);try{await replaceAll(merged)}catch(error){saveCatalogues(importedCatalogues);throw error}markBackupDirty();importedCatalogues=catalogues;applyCatalogues();scheduleReadingBackfill();
- if(Array.isArray(backup.notes))await replaceNotes(mergeNotes(await listNotes().catch(()=>[]),backup.notes));
+ if(Array.isArray(backup.notes))await replaceNotes(mergeNotes(await listNotes(),backup.notes));
  // Saved words merge by id; a tombstone wins by time, so a removal survives.
  if(Array.isArray(backup.words)){const {words}=validateSavedWords(backup.words);if(words.length)await replaceWords(mergeWords(await listWords(),words))}
  const added=merged.length-before.length+upgrade.removed.length,message=`Added ${added} sentence(s). ${backup.sentences.length-added} already present; existing progress kept.${upgrade.removed.length?` Replaced ${upgrade.removed.length} Minihongo word cards with sentences.`:""}`;
@@ -2331,13 +2331,13 @@ async function mergeRemoteBackup(remote){
   const deleted=mergeDeleted(readDeleted(),remote?.deleted);saveDeleted(deleted);
   const incoming=Array.isArray(remote?.sentences)?remote.sentences:[];
   const {merged,changed}=await mergeIntoStore(current=>applyDeleted(mergeSentences(current,incoming),deleted.sentences));
-  const localNotes=await listNotes().catch(()=>[]),notes=applyDeleted(mergeNotes(localNotes,Array.isArray(remote?.notes)?remote.notes:[]),deleted.notes,{key:"key",stamp:n=>n.made});
+  const localNotes=await listNotes(),notes=applyDeleted(mergeNotes(localNotes,Array.isArray(remote?.notes)?remote.notes:[]),deleted.notes,{key:"key",stamp:n=>n.made});
   if(JSON.stringify(notes)!==JSON.stringify(localNotes))await dbReplaceNotes(notes);
-  let words=await listWords().catch(()=>[]);
+  let words=await listWords();
   if(Array.isArray(remote?.words)){const {words:incomingWords}=validateSavedWords(remote.words);if(incomingWords.length){const next=mergeWords(words,incomingWords);if(JSON.stringify(next)!==JSON.stringify(words)){await dbReplaceWords(next);words=next}}}
   if(remote?.catalogues){const catalogues=mergeCatalogues(importedCatalogues,remote.catalogues);if(JSON.stringify(catalogues)!==JSON.stringify(importedCatalogues)){saveCatalogues(catalogues);importedCatalogues=catalogues;applyCatalogues()}}
   if(changed){refreshDueBadge();renderHistory();if(detail){const fresh=merged.find(s=>s.id===detail.id);if(fresh)detail=fresh}}
-  return {sentences:merged,notes:forBackup(notes),words,deleted};
+  return {sentences:merged,notes:forBackup(notes),words,deleted,catalogues:importedCatalogues};
 }
 const backupAdapter={read:buildBackup,merge:mergeRemoteBackup};
 const gistCreate={description:files=>{const n=files["echo-backup.json"]?.sentences?.length;return Number.isFinite(n)?`Echo backup — ${n} sentence${n===1?"":"s"}`:undefined},
@@ -2384,10 +2384,30 @@ async function gistRestore(){
 async function restoreFromGist(gist,{button,status}){
   const token=$("#gist-token").value.trim()||settings.gistToken||"";
   button.disabled=true;status.classList.remove("error");status.textContent="Downloading the backup…";
-  try{const {backup,url}=await downloadBackup({gist,token});const {added}=await importBackupData(backup);
-    // Continue backing up to the gist this device was restored from.
+  try{
+    const id=parseGistId(gist);
+    if(!id)throw new Error("Paste the gist URL or ID.");
+    const {files,url}=await readGistIndex({id,token,revision:gistRevision(gist)});
+    const groups=[["echo-backup.json","library",importBackupData],["echo-n2.json","N2 progress",n2Adapter().merge],["echo-reports.json","reports",reportsAdapter().merge]];
+    const available=groups.filter(([name])=>files[name]);
+    if(!available.length)throw new Error("This gist has no Echo backup files.");
+    const documents=await Promise.all(available.map(([name])=>readGistFile({file:files[name]})));
+    for(const [i,[name]] of available.entries()){
+      const doc=documents[i];
+      if(name==="echo-backup.json")validateDeckBackup(doc);
+      else{
+        const kind=name==="echo-n2.json"?"n2":"reports", arrays=kind==="n2"?["papers","history","recall","events"]:["reports"];
+        if(doc?.app!=="echo"||doc.kind!==kind||doc.schemaVersion!==1||arrays.some(key=>!Array.isArray(doc[key])))throw new Error("Unsupported "+name+".");
+      }
+    }
+    const restored=[];
+    for(const [i,[,label,merge]] of available.entries()){
+      try{await merge(documents[i]);restored.push(label)}
+      catch(error){throw new Error("Could not restore "+label+". "+(restored.length?"Already restored "+restored.join(", ")+". ":"")+error.message)}
+    }
     if(url&&!settings.gistUrl){settings.gistUrl=url;storePreference("jp-echo-settings",JSON.stringify(settings));$("#gist-url").value=url}
-    status.textContent=added?`Restored ${added} sentence${added===1?"":"s"} from the gist. Everything already here was kept.`:"Everything in that gist is already on this device."}
+    status.textContent="Restored "+restored.join(", ")+" from the gist.";
+  }
   catch(error){status.classList.add("error");status.textContent=error.message}
   finally{button.disabled=false}}
 // "Your sentences with it  2": the count sits at the end of the rule heading.
@@ -2425,7 +2445,7 @@ $("#remind").onchange=async()=>{const wanted=$("#remind").checked;
   if(wanted&&!await enableReminders()){$("#remind").checked=false;$("#remind-hint").textContent="Notifications are blocked for Echo. Allow them in your browser settings, then turn this on again.";$("#remind-hint").hidden=false;$("#remind-hint").classList.add("error");$("#remind-reach").textContent="";return}
   $("#remind-hint").textContent="";$("#remind-hint").hidden=true;$("#remind-hint").classList.remove("error");
   settings.remind=wanted;$("#remind-reach").textContent=reminderReach()};$("#export-anki").onclick=()=>exportAnki($("#export-anki"));$("#open-anki").onclick=()=>openAnki();$("#export").onclick=exportHistory;$("#export-file").onclick=exportHistory;$("#settings-extract").onclick=()=>{settingsStack=[];openTextExtraction()};$("#import").onclick=()=>$("#import-file").click();$("#import-file").onchange=async event=>{const file=event.target.files[0];event.target.value="";if(file)await importAny({file})};
-$("#voice-install").onclick=installTargetVoice;$("#voice-manage").onclick=installTargetVoice;$("#settings-swap-langs").onclick=()=>setPair(targetLang(),sourceLang());window.addEventListener("focus",()=>setTimeout(populateVoices,250));document.addEventListener("visibilitychange",()=>{if(!document.hidden)setTimeout(populateVoices,250)});$("#onboard-start").onclick=()=>showView("setup");$("#onboard-restore").onclick=()=>{finishOnboarding();openSettings()};
+$("#voice-install").onclick=installTargetVoice;$("#voice-manage").onclick=installTargetVoice;$("#settings-swap-langs").onclick=()=>setPair(targetLang(),sourceLang());window.addEventListener("focus",()=>setTimeout(populateVoices,250));document.addEventListener("visibilitychange",()=>{if(!document.hidden)setTimeout(populateVoices,250)});$("#onboard-start").onclick=()=>showView("setup");$("#onboard-restore").onclick=()=>{finishOnboarding();openSettings("import")};
 $("#setup-next").onclick=()=>{storeTranslator();showSetupStep(2)};
 $("#setup-back").onclick=()=>{if(setupStep===2)return showSetupStep(1);showView(settings.onboarded?"practice":"onboard")};$("#setup-provider").onchange=showSetupFields;$("#setup-save").onclick=saveSetup;$("#setup-skip").onclick=finishOnboarding;
 // The one home for tools (LibraryTools board): every way into Echo beyond the

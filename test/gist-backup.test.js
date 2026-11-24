@@ -107,7 +107,7 @@ test("saved words are written only through wrappers that mark the backup dirty",
 });
 
 test("the backup carries saved words beside catalogues, and import merges them", () => {
-  assert.match(app, /async function buildBackup\(\)\{return \{\.\.\.exportBackup\([^]*?\),catalogues:importedCatalogues,words:await listWords\(\)\.catch\(\(\)=>\[\]\),deleted:readDeleted\(\)\}\}/);
+  assert.match(app, /async function buildBackup\(\)\{return \{\.\.\.exportBackup\([^]*?\),catalogues:importedCatalogues,words:await listWords\(\),deleted:readDeleted\(\)\}\}/);
   assert.match(app, /if\(Array\.isArray\(backup\.words\)\)\{const \{words\}=validateSavedWords\(backup\.words\);if\(words\.length\)await replaceWords\(mergeWords\(await listWords\(\),words\)\)\}/);
   // After notes, so file import, deck URL and gist restore all carry words.
   assert.ok(app.indexOf("await replaceNotes(mergeNotes(") < app.indexOf("await replaceWords(mergeWords("));
@@ -115,7 +115,7 @@ test("the backup carries saved words beside catalogues, and import merges them",
 
 test("the gist holds the same document Export downloads", () => {
   assert.match(app, /async function buildBackup\(\)\{return \{\.\.\.exportBackup\(/);
-  assert.match(app, /async function exportHistory\(\)\{const data=await buildBackup\(\)/);
+  assert.match(app, /async function exportHistory\(\)\{try\{const data=await buildBackup\(\)/);
   assert.match(app, /const backupAdapter=\{read:buildBackup,merge:mergeRemoteBackup\}/, "the gist's library file is buildBackup() and nothing else");
 });
 
@@ -133,4 +133,13 @@ test("Settings offers the switch, token, gist, back up now and restore; the modu
   for (const id of ["gist-auto", "gist-token", "gist-url", "gist-now", "gist-restore", "gist-status"]) assert.match(html, new RegExp(`id="${id}"`), id);
   assert.match(html, /id="gist-token" type="password"/);
   assert.match(sw, /"\.\/gist-backup\.js"/);
+});
+
+test("restoring a dated gist reads that revision under the original gist ID", async () => {
+  const {gistRevision,readGistIndex}=await import("../gist-backup.js");
+  const revision="c".repeat(40), page="https://gist.github.com/u/"+ID+"/"+revision;
+  assert.equal(parseGistId(page),ID);
+  const {fetchImpl,calls}=github({files:{}});
+  await readGistIndex({id:parseGistId(page),revision:gistRevision(page),fetchImpl});
+  assert.equal(calls[0].url,"https://api.github.com/gists/"+ID+"/"+revision);
 });

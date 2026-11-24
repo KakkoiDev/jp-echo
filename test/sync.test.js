@@ -174,3 +174,37 @@ test("both pages sync; every N2 write marks N2 dirty; a link carries no credenti
   for (const id of ["link-dialog", "link-device", "link-code", "link-url"]) assert.match(html, new RegExp(`id="${id}"`));
   assert.match(sw, /"\.\/sync\.js"/);
 });
+
+test("a pull-only visit remembers this device's extra work for the next upload", async () => {
+  const gist = fakeGist(), a = device("phone", gist), b = device("laptop", gist);
+  await a.change("backup", () => { a.sentences = [sentence("phone")]; }); await a.sync();
+  b.sentences = [sentence("offline")];
+  await asDevice(b, () => syncGist({adapters:b.adapters,page:"app",push:false,fetchImpl:gist.fetch}));
+  await b.sync(); await a.sync();
+  assert.deepEqual(a.sentences.map(s=>s.id).sort(), ["offline","phone"]);
+});
+
+test("a cleared goal survives older copies in either merge order", () => {
+  const clear = {goal:null, goalAt:"2026-11-24T12:00:00Z"};
+  for (const stamp of ["", "2026-11-23T12:00:00Z", clear.goalAt]) {
+    const old = {goal:{exam:"2026-12-06"},goalAt:stamp};
+    for (const [a,b] of [[clear,old],[old,clear]]) {
+      const merged=mergeN2(a,b); assert.equal(merged.goal,null); assert.equal(merged.goalAt,clear.goalAt);
+    }
+  }
+});
+
+test("a device restarts after displacing another writer and recovers the intervening review", async () => {
+  const gist=fakeGist(), d=device("phone",gist);
+  await d.change("backup",()=>{d.sentences=[sentence("own")]});
+  let conflict=true;
+  const fetchImpl=async (url,init={})=>{
+    if(url.endsWith("/v1"))return {ok:true,json:async()=>({files:{[FILES.backup]:{content:JSON.stringify({sentences:[sentence("concurrent")]})}}})};
+    if(init.method==="PATCH" && conflict){conflict=false;gist.version++}
+    return gist.fetch(url,init);
+  };
+  const run=()=>asDevice(d,()=>syncGist({adapters:d.adapters,page:"app",fetchImpl}));
+  await run(); await run();
+  const restored=JSON.parse(gist.files[FILES.backup].content);
+  assert.deepEqual(restored.sentences.map(s=>s.id).sort(),["concurrent","own"]);
+});
