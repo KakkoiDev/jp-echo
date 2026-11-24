@@ -194,7 +194,10 @@ async function hub() {
   const {providerReady} = await import("./api.js");
   const aiReady = providerReady(settings);
   const heardYesterday = yesterdayChecks({events: data.events, recall: data.recall, items: radioItems(inventory), examples: new Map()}).length;
-  const base = days < 0 ? {phase:"finished", headline:"Your exam date has passed. Set another goal or continue reviewing.", steps:[{kind:"recall",glyph:"憶",title:"Continue recall",line:"Review your N2 targets",href:"?view=recall"}]} : todayPlan({days, goal, weak: weakAll, aiReady, heardYesterday,
+  const checkpoint = sprintCheckpoint(attempts, papers, bookIds);
+  const latestRun = checkpoint.recent[0];
+  const weakest = latestRun && [...latestRun.sections].sort((a,b)=>a.rate-b.rate)[0];
+  const base = days < 0 ? {phase:"finished", headline:"Your exam date has passed. Set another goal or continue reviewing.", steps:[{kind:"recall",glyph:"憶",title:"Continue recall",line:"Review your N2 targets",href:"?view=recall"}]} : todayPlan({days, goal, checkpoint, weak: weakAll, aiReady, heardYesterday,
     running: live && {book: live.book, title: papers.get(live.paper || live.book)?.title || titleOf(live.book), progress: live.answers.filter(Boolean).length + " of " + live.answers.length + " answered" + (live.phase === "rest" ? " · listening next" : "")},
     nextMock: next && {id: next, title: titleOf(next)}, lastMockAt: finished[0]?.completedAt,
     latestResults: latestDone && localDay(new Date(latestDone.completedAt)) === localDay() ? "?book=" + latestDone.book + "&attempt=" + encodeURIComponent(latestDone.id) : null});
@@ -218,9 +221,6 @@ async function hub() {
   const latest = [...attempts].filter(a => a.phase === "results" && !a.book.startsWith("adaptive-") && papers.get(a.paper || a.book)).sort((a, b) => (b.completedAt || "").localeCompare(a.completedAt || ""))[0];
   $("readiness").replaceChildren(latest ? scoreCard(papers.get(latest.paper || latest.book), latest, true)
     : el("div", {class: "empty-panel"}, el("strong", {text: "No score yet"}), el("span", {text: "Finish a whole mock to see an estimated score for each JLPT section."})));
-  const checkpoint = sprintCheckpoint(attempts, papers, bookIds);
-  const latestRun = checkpoint.recent[0];
-  const weakest = latestRun && [...latestRun.sections].sort((a,b)=>a.rate-b.rate)[0];
   const box = $("readiness");
   box.append(el("h3", {text: checkpoint.met ? "Sprint benchmark met" : "Sprint checkpoint"}),
     el("p", {text:"Aim for two fresh Echo mocks on separate days within seven days. On each, aim for a 70% section average and 60% in every section. Flagged guesses earn no credit here. These are practice targets."}));

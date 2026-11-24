@@ -147,7 +147,7 @@ export function coverage(inventory, recall, evidence) {
 // then stop. The last days drop new material; the eve and the day itself
 // are about rest and logistics. Pure, so the coach can replace it and the
 // tests can hold it.
-export function todayPlan({days, goal = {goal: 0, firstToday: 0, unchecked: 0}, weak = 0, running = null, nextMock = null,
+export function todayPlan({days, checkpoint = null, goal = {goal: 0, firstToday: 0, unchecked: 0}, weak = 0, running = null, nextMock = null,
   lastMockAt = "", latestResults = null, aiReady = false, heardYesterday = 0, now = new Date()}) {
   const steps = [];
   const sinceMock = lastMockAt ? daysUntil(new Date(now.getFullYear(), now.getMonth(), now.getDate()), new Date(lastMockAt)) : Infinity;
@@ -167,12 +167,33 @@ export function todayPlan({days, goal = {goal: 0, firstToday: 0, unchecked: 0}, 
     steps.push({kind: "recall", glyph: "憶", title: left ? "New words and grammar" : "New checks done for today", line: left ? left + " first checks left today · rounds of 20" : goal.firstToday + " first checks today. More is a bonus.", href: "?view=recall&queue=new", minutes: Math.ceil(left / 20) * 12, done: !left});
   }
   steps.push({kind: "radio", glyph: "耳", title: "Day Radio", line: "Your weak words and grammar by ear — on a walk, cooking, commuting", href: "?view=radio&mode=listen", minutes: 30});
+  const latest = checkpoint?.recent[0];
+  const sprint = checkpoint && days <= 14;
+  const examIn = run => days + daysUntil(new Date(now.getFullYear(), now.getMonth(), now.getDate()), new Date(run.attempt.completedAt));
+  const checkpointDue = sprint && days >= 2 && (!latest ||
+    (days <= 7 && examIn(latest) > 7) || (days <= 3 && examIn(latest) > 3 && !checkpoint.met));
   if (running) steps.push({kind: "mock", glyph: "試", title: "Finish your mock", line: running.title + " · " + running.progress, href: "?book=" + running.book, minutes: 60});
-  else if (nextMock && (sinceMock >= 3 || days === 4) && days > 2) steps.push({kind: "mock", glyph: "試", title: "Full mock in exam conditions", line: nextMock.title + " · 155 minutes with a break", href: "?book=" + nextMock.id, minutes: 155});
+  else if (nextMock && (sprint ? checkpointDue : (sinceMock >= 3 || days === 4) && days > 2)) steps.push({kind: "mock", glyph: "試", title: "Full mock in exam conditions", line: nextMock.title + " · 155 minutes with a break", href: "?book=" + nextMock.id, minutes: 155});
+  else if (sprint && latest && !latest.meets) {
+    const weakest = [...latest.sections].sort((a,b)=>a.rate-b.rate)[0];
+    steps.push({kind:"review", glyph:"直", title:"Repair " + weakest.name, line:"Find the decisive cue in the answers you missed or guessed. Then try a different example.",
+      href:"?book="+latest.attempt.book+"&attempt="+encodeURIComponent(latest.attempt.id), minutes:30});
+    if (aiReady) steps.push({kind:"generate",glyph:"狙",title:"Check the same skill on fresh questions",line:"10 targeted questions",
+      count:10,focus:weakest.name === "Reading" || weakest.name === "Listening" ? weakest.name : "weak",minutes:15});
+  }
   else steps.push({kind: "generate", glyph: "狙", title: "Practice exam on your weak points", line: aiReady ? "20 new questions in the real 問題 formats · about 30 minutes" : "Add an AI provider in Echo Settings to generate these", minutes: 30, disabled: !aiReady});
   if (latestResults) steps.push({kind: "review", glyph: "直", title: "Go over the misses", line: "Read why each answer is right, then drill them", href: latestResults, minutes: 20});
   steps.push({kind: "rest", glyph: "休", title: "Wind down", line: "Breathe, hear your sentences, stop for the day"});
   if (final && !(goal.custom && goal.goal && goal.unchecked)) steps.unshift({kind: "checklist", glyph: "券", title: "Exam week", line: "No new material now: weak items, one last mock, and the checklist"});
+  const acquisition = steps.find(step => step.href === "?view=recall&queue=new");
+  if (acquisition && sprint) {
+    const otherMinutes = steps.reduce((n,s)=>n+(s === acquisition ? 0 : s.minutes || 0),0);
+    const rounds = Math.max(0, Math.floor((360 - 40 - otherMinutes) / 12));
+    if (acquisition.minutes > rounds * 12) {
+      acquisition.minutes = rounds * 12;
+      acquisition.line = "Up to " + (rounds * 20) + " first checks fit today. Remaining coverage carries forward.";
+    }
+  }
   const minutes = steps.reduce((sum, s) => sum + (s.minutes || 0), 0);
   return {phase: final ? "final" : "build", headline: final ? "Exam week: consolidate, don't cram." : "About " + Math.round(minutes / 60 * 2) / 2 + " hours today, in this order.", steps, minutes};
 }

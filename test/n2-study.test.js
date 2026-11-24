@@ -110,3 +110,13 @@ test("readiness uses recent first sittings with a separate-day repeat and sectio
   assert.equal(check(a,b).met,false);
   assert.equal(check(a,b).recent[0].sections[2].correct,0);
 });
+
+test("the sprint day plan reserves breaks on baseline day and directs repair from checkpoint evidence",()=>{
+  const options={days:12,now:new Date(2026,10,24),goal:{goal:800,firstToday:0,unchecked:1000},nextMock:{id:"b",title:"B"},weak:20,heardYesterday:8};
+  const baseline=todayPlan({...options,checkpoint:{recent:[],met:false}});
+  assert.ok(baseline.steps.some(s=>s.kind==="mock"));
+  assert.ok(baseline.minutes<=320);
+  const latest={meets:false,attempt:{book:"a",id:"1",completedAt:"2026-11-23T10:00:00"},sections:[{name:"Listening",rate:.4}]};
+  const repair=todayPlan({...options,checkpoint:{recent:[latest],met:false}});
+  assert.ok(repair.steps.some(s=>s.title==="Repair Listening"));
+});
