@@ -1,3 +1,4 @@
+import {dateKey, parseGoalDate, firstPassEnd, goalKey, readGoal} from "./jlpt-goal.js";
 import {bookIds,bookName,EDITION,SETS_EDITION,form,realisticRows,realisticPaperId,setFile} from "./n2-forms.js";
 import {access,currentAttempts,download,prefix,report,scored} from "./n2-progress.js";
 import {SKILLS,SKILL_JA,SECTIONS,PASS_TOTAL,SECTION_MIN,SECTION_MAX,estimate,nextExamDate,daysUntil,recallQueue,recallRecord,dailyGoal,coverage,localDay,todayPlan,EXAM_CHECKLIST} from "./n2-study.js";
@@ -147,14 +148,42 @@ async function hub() {
   for (const a of currentAttempts()) await getPaper(a.book, a.paper).catch(() => {});
   const data = await report(), evidence = scored(data);
   const papers = new Map(data.papers.map(p => [p.id, p]));
-  const exam = nextExamDate(), days = daysUntil(exam);
+  const planGoal = readGoal(), exam = planGoal ? parseGoalDate(planGoal.exam) : nextExamDate(), days = daysUntil(exam);
+  const today = dateKey(new Date());
+  const form = $("training-form");
+  $("training-exam").value = dateKey(exam);
+  $("training-exam").min = today;
+  $("training-days").value = planGoal?.days ?? "";
+  if (location.hash === "#training-goal") $("training-goal").open = true;
+  $("training-priority").checked = planGoal?.priority ?? true;
+  $("training-window").textContent = planGoal?.days ? "First pass through " + dateKey(firstPassEnd(planGoal)) + " · started " + planGoal.started : "Leave days blank to reserve the final three days for review. A duration counts today as day one.";
+  function updateGoal(value) {
+    try {
+      if (value) localStorage.setItem(goalKey, JSON.stringify(value));
+      else localStorage.removeItem(goalKey);
+      localStorage.removeItem(COACH_KEY);
+      location.reload();
+    } catch { $("training-status").textContent = "Could not save this goal on this device."; }
+  }
+  form.onsubmit = event => {
+    event.preventDefault();
+    const end = $("training-exam").value, duration = $("training-days").value ? $("training-days").valueAsNumber : null;
+    const started = planGoal?.exam === end && planGoal.days === duration ? planGoal.started : today;
+    const last = parseGoalDate(started);
+    last.setDate(last.getDate() + duration - 1);
+    if (duration && dateKey(last) >= end) { $("training-status").textContent = "Choose a duration that finishes before exam day."; return; }
+    updateGoal({level:"N2", exam:end, days:duration, started, priority:$("training-priority").checked});
+  };
+  $("training-reset").onclick = () => updateGoal(null);
   $("hub-exam-line").textContent = "Exam · " + exam.toLocaleDateString(undefined, {weekday: "short", month: "short", day: "numeric"});
-  $("hub-days").textContent = days;
-  $("hub-days-label").textContent = days === 1 ? "day to go" : days === 0 ? "Exam day. 頑張って。" : "days to go";
+  if (planGoal?.days) $("hub-exam-line").textContent += " · First pass through " + dateKey(firstPassEnd(planGoal));
+  $("hub-days").textContent = Math.abs(days);
+  $("hub-days-label").textContent = days < 0 ? "days since exam" : days === 1 ? "day to go" : days === 0 ? "Exam day. 頑張って。" : "days to go";
   if (days === 0) $("hub-days").textContent = "今日";
 
   // Today: one ordered plan. The coach may replace it for the day.
-  const goal = dailyGoal({inventory, recall: data.recall, examDate: exam});
+  const goal = dailyGoal({inventory, recall: data.recall, examDate: exam, firstPassDate: planGoal && firstPassEnd(planGoal)});
+  goal.custom = !!planGoal?.days;
   const weakAll = ["meaning", "reading", "grammar"].reduce((n, type) => n + recallQueue({type, filter: "weak", inventory, recall: data.recall, evidence, size: Infinity}).length, 0);
   const attempts = [...data.attempts].sort((a, b) => (b.startedAt || "").localeCompare(a.startedAt || ""));
   const live = attempts.find(a => ["written", "listening", "rest"].includes(a.phase));
@@ -165,7 +194,7 @@ async function hub() {
   const {providerReady} = await import("./api.js");
   const aiReady = providerReady(settings);
   const heardYesterday = yesterdayChecks({events: data.events, recall: data.recall, items: radioItems(inventory), examples: new Map()}).length;
-  const base = todayPlan({days, goal, weak: weakAll, aiReady, heardYesterday,
+  const base = days < 0 ? {phase:"finished", headline:"Your exam date has passed. Set another goal or continue reviewing.", steps:[{kind:"recall",glyph:"憶",title:"Continue recall",line:"Review your N2 targets",href:"?view=recall"}]} : todayPlan({days, goal, weak: weakAll, aiReady, heardYesterday,
     running: live && {book: live.book, title: papers.get(live.paper || live.book)?.title || titleOf(live.book), progress: live.answers.filter(Boolean).length + " of " + live.answers.length + " answered" + (live.phase === "rest" ? " · listening next" : "")},
     nextMock: next && {id: next, title: titleOf(next)}, lastMockAt: finished[0]?.completedAt,
     latestResults: latestDone && localDay(new Date(latestDone.completedAt)) === localDay() ? "?book=" + latestDone.book + "&attempt=" + encodeURIComponent(latestDone.id) : null});
@@ -281,7 +310,7 @@ async function coach(ctx) {
     const cov = coverage(inventory, data.recall, evidence);
     const weak = data.recall.filter(x => x.last !== "instant").sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)).slice(0, 40).map(x => [x.dimension, x.prompt, x.last]);
     const {askModel} = await import("./api.js");
-    const input = {today: localDay(), daysUntilExam: ctx.days, hoursAvailable: 6, coverage: cov, dailyGoal: ctx.goal, weakItemCount: ctx.weakAll, attempts, misses, weakChecks: weak, standardPlan: ctx.base.steps.map(s => ({kind: s.kind, title: s.title}))};
+    const input = {today: localDay(), daysUntilExam: ctx.days, trainingGoal: readGoal(), hoursAvailable: 6, coverage: cov, dailyGoal: ctx.goal, weakItemCount: ctx.weakAll, attempts, misses, weakChecks: weak, standardPlan: ctx.base.steps.map(s => ({kind: s.kind, title: s.title}))};
     const system = `You are a calm, precise JLPT N2 coach inside the Echo app. Use only the supplied observations; Echo's mock scores are uncalibrated estimates. Plan today's study (up to 6 hours) in the order the learner should do it, and say what to study next and why. Each step must be one of these app actions: recall (type: meaning|reading|grammar, queue: daily|weak|new), radio (Day Radio by ear, mode: listen|recall|check — check tests yesterday's listening), mock (the next full mock), generate (a practice exam: focus weak|Vocabulary|Grammar|Reading|Listening|mixed, count 10|20|35), review (the latest results), rest, checklist. Include a short wind-down. In the last three days avoid new material. Write English, kind and direct, no filler. Return JSON {"headline":string,"diagnosis":string (2-4 sentences: strongest, weakest, the one thing that will raise the score most),"steps":[{"kind":string,"title":string,"line":string (what and why, one sentence),"minutes":number,"type"?:string,"queue"?:string,"focus"?:string,"count"?:number}]} with 4-7 steps.`;
     const reply = await askModel(JSON.stringify(input), system, settings);
     const glyphs = {recall: "憶", radio: "耳", mock: "試", generate: "狙", review: "直", rest: "休", checklist: "券"};

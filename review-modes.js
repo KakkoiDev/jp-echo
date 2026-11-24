@@ -1,3 +1,4 @@
+import {readGoal, reviewFocus} from "./jlpt-goal.js";
 import {stripFurigana} from "./core.js";
 export const REVIEW_MODES=Object.freeze(["listening","reading","writing"]);
 // Skill glyphs extend the app's single-kanji motif (休 了 学 音): 聴 listen,
@@ -110,7 +111,12 @@ export function dailyReviewBudget(sentences,settings={},now=Date.now()){
 export function limitReviewSession(due,settings={},all=due,now=Date.now()){
   const budget=dailyReviewBudget(all,settings,now);
   let fresh=budget.remaining.new,reviews=budget.remaining.review;
-  return orderReviewSentences(due,settings.reviewOrder).filter(item=>(item.srs?.state??0)===0?fresh-->0:reviews-->0);
+  let ordered = orderReviewSentences(due,settings.reviewOrder);
+  if (reviewFocus(readGoal(), new Date(now))) {
+    const isN2 = item => /^n2-(word|grammar)-\d+$/.test(item.id);
+    ordered = [...ordered.filter(isN2), ...ordered.filter(item => !isN2(item))];
+  }
+  return ordered.filter(item=>(item.srs?.state??0)===0?fresh-->0:reviews-->0);
 }
 
 // Extra study is an explicit one-session bypass, never a settings change.

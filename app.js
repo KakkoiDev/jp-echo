@@ -1,3 +1,4 @@
+import {readGoal, reviewFocus} from "./jlpt-goal.js";
 import {createReviewSpeechCapture} from './review-speech.js';
 import {readEpub} from './epub-import.js';
 import {passageCandidates,analyzePassage,vocabularyInventory,classifyExtraction,extractionIdentity,extractionAdaptationQueue,adaptExtractionRows} from './text-extraction.js';
@@ -1472,6 +1473,8 @@ function renderReviewStats(items){const stats=reviewStats(items),now=Date.now();
 const REVIEW_MODES_FOR_STATS=["listening","reading","writing"];
 async function refreshReviewStats(){const all=(await listSentences()).map(item=>ensureSchedule(item));renderReviewStats(all);updateDueBadge(limitReviewSession(dueSentences(all),settings,all).length)}
 async function renderReviewHome(){const all=(await listSentences()).map(item=>ensureSchedule(item)),now=Date.now(),available=dueSentences(all),due=limitReviewSession(available,settings,all,now),counts={new:0,learning:0,review:0};
+  const goal = readGoal();
+  $("#review-exam-goal").textContent = goal ? "N2 exam · " + goal.exam + (reviewFocus(goal) ? " · due N2 deck sentences first" : " · edit goal") : "Set an N2 training goal";
   renderReviewStats(all);showReviewTab(settings.reviewTab||"session");
   for(const item of due){const state=item.srs?.state??0;if(state===1||state===3)counts.learning++;else if(state===2)counts.review++;else counts.new++}
   $("#due-count").textContent=String(due.length);$("#due-new").textContent=String(counts.new);$("#due-learning").textContent=String(counts.learning);$("#due-review").textContent=String(counts.review);

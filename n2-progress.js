@@ -1,3 +1,4 @@
+import {readGoal} from "./jlpt-goal.js";
 import {bookIds,bookName} from "./n2-forms.js";
 
 export const prefix="echo-n2-mock-v1-";
@@ -36,7 +37,7 @@ export async function report() {
   const [papers,archived,recall,events]=await Promise.all(tables.map(t=>access(t,"getAll")));
   const attempts=new Map(archived.map(a=>[a.id,a]));
   currentAttempts().forEach(a=>attempts.set(a.id,a));
-  return {schema:"echo.n2.study.v1",exportedAt:new Date().toISOString(),papers,attempts:[...attempts.values()],recall,events};
+  return {schema:"echo.n2.study.v1",exportedAt:new Date().toISOString(),trainingGoal:readGoal(),papers,attempts:[...attempts.values()],recall,events};
 }
 export function scored(data) {
   const papers=new Map(data.papers.map(p=>[p.id,p]));

@@ -1,5 +1,8 @@
 # JLPT expansion research and agent handoff
 
+**Current packet:** [AI handoff index](ECHO-AI-HANDOFF-INDEX.md) · [Designer brief](ECHO-DESIGNER-HANDOFF.md) · [Spaced-repetition research](ECHO-SRS-RESEARCH.md). The N2 hub and Review share an editable exam goal. The optional duration sets the first-pass deadline from the day it is set. Changing only Review priority preserves that anchor. Due imported N2 word and grammar sentences can move ahead within the existing limits. The goal is included in the N2 analysis export. This integration is live code for N2; use it as the starting point for the other level profiles.
+
+
 24 November 2026 · Echo baseline `61ee780`
 
 **Build one level-aware Practice flow.** Echo already has 6,074 vocabulary entries and 758 grammar targets assigned to the four additional levels. The expensive work is building independent reading passages, listening situations and defensible answer choices. Start with the datasets below. The new levels are at the research-data stage.

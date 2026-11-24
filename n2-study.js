@@ -119,7 +119,7 @@ export function recallRecord(previous, {id, type, item}, grade, now = new Date()
 
 // Reserve the last three pre-exam days for consolidation.
 const CONSOLIDATION_DAYS = 3;
-export function dailyGoal({inventory, recall = [], examDate, now = new Date()}) {
+export function dailyGoal({inventory, recall = [], examDate, firstPassDate, now = new Date()}) {
   const today = localDay(now);
   const types = ["meaning", "grammar"];
   const total = inventory.words.length + inventory.grammar.length;
@@ -127,7 +127,7 @@ export function dailyGoal({inventory, recall = [], examDate, now = new Date()}) 
   const firstToday = mine.filter(r => localDay(new Date(r.events?.[0]?.at || r.updatedAt)) === today).length;
   const checkedToday = recall.filter(r => (r.events || []).some(e => localDay(new Date(e.at)) === today)).length;
   const unchecked = total - mine.length;
-  const daysLeft = Math.max(0, daysUntil(examDate, now) - CONSOLIDATION_DAYS);
+  const daysLeft = Math.max(0, firstPassDate ? daysUntil(firstPassDate, now) + 1 : daysUntil(examDate, now) - CONSOLIDATION_DAYS);
   return {goal: daysLeft ? Math.ceil((unchecked + firstToday) / daysLeft) : 0, firstToday, checkedToday, unchecked, daysLeft, total};
 }
 
@@ -155,14 +155,14 @@ export function todayPlan({days, goal = {goal: 0, firstToday: 0, unchecked: 0}, 
     {kind: "checklist", glyph: "券", title: "Before you leave", line: "Ticket, pencils, watch — the checklist below"},
     {kind: "radio", glyph: "温", title: "Ten calm minutes", line: "Day Radio on the way: hear words, no pressure to answer", href: "?view=radio&mode=listen", minutes: 10},
     {kind: "rest", glyph: "息", title: "Breathe on the way", line: "One minute, any time you feel rushed"}]};
-  if (days === 1) return {phase: "eve", headline: "Tomorrow is the exam. Keep today light.", steps: [
+  if (days === 1 && !(goal.custom && goal.goal && goal.unchecked)) return {phase: "eve", headline: "Tomorrow is the exam. Keep today light.", steps: [
     {kind: "recall", glyph: "温", title: "Weak items, once", line: Math.min(weak, 30) + " items · 15 minutes, then stop", href: "?view=recall&queue=weak", minutes: 15},
     {kind: "checklist", glyph: "券", title: "Pack tonight", line: "The checklist below, then the route and the time"},
     {kind: "rest", glyph: "眠", title: "Sleep early", line: "Sleep fixes what you studied this week. No new material tonight."}]};
   if (heardYesterday) steps.push({kind: "radio", glyph: "昨", title: "Check yesterday by ear", line: heardYesterday + " listening checks from yesterday · fresh sentences when available", href: "?view=radio&mode=check", minutes: 10});
   if (weak) steps.push({kind: "recall", glyph: "温", title: "Warm up · your weak items", line: Math.min(weak, 20) + " of " + weak + " · say each one aloud before you check", href: "?view=recall&queue=weak", minutes: 15});
   const final = days <= CONSOLIDATION_DAYS;
-  if (!final && goal.unchecked) {
+  if ((!final || goal.custom) && goal.goal > 0 && goal.unchecked) {
     const left = Math.max(0, goal.goal - goal.firstToday);
     steps.push({kind: "recall", glyph: "憶", title: left ? "New words and grammar" : "New checks done for today", line: left ? left + " first checks left today · rounds of 20" : goal.firstToday + " first checks today. More is a bonus.", href: "?view=recall&queue=new", minutes: Math.ceil(left / 20) * 12, done: !left});
   }
@@ -172,7 +172,7 @@ export function todayPlan({days, goal = {goal: 0, firstToday: 0, unchecked: 0}, 
   else steps.push({kind: "generate", glyph: "狙", title: "Practice exam on your weak points", line: aiReady ? "20 new questions in the real 問題 formats · about 30 minutes" : "Add an AI provider in Echo Settings to generate these", minutes: 30, disabled: !aiReady});
   if (latestResults) steps.push({kind: "review", glyph: "直", title: "Go over the misses", line: "Read why each answer is right, then drill them", href: latestResults, minutes: 20});
   steps.push({kind: "rest", glyph: "休", title: "Wind down", line: "Breathe, hear your sentences, stop for the day"});
-  if (final) steps.unshift({kind: "checklist", glyph: "券", title: "Exam week", line: "No new material now: weak items, one last mock, and the checklist"});
+  if (final && !(goal.custom && goal.goal && goal.unchecked)) steps.unshift({kind: "checklist", glyph: "券", title: "Exam week", line: "No new material now: weak items, one last mock, and the checklist"});
   const minutes = steps.reduce((sum, s) => sum + (s.minutes || 0), 0);
   return {phase: final ? "final" : "build", headline: final ? "Exam week: consolidate, don't cram." : "About " + Math.round(minutes / 60 * 2) / 2 + " hours today, in this order.", steps, minutes};
 }

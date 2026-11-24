@@ -1,5 +1,8 @@
 # Echo N2 handoff · 24 November 2026 · learning audit
 
+**Current packet:** [AI handoff index](ECHO-AI-HANDOFF-INDEX.md) · [Designer brief](ECHO-DESIGNER-HANDOFF.md) · [Spaced-repetition research](ECHO-SRS-RESEARCH.md). The N2 hub and Review share an editable exam goal. The optional duration sets the first-pass deadline from the day it is set. Changing only Review priority preserves that anchor. Due imported N2 word and grammar sentences can move ahead within the existing limits. The goal is included in the N2 analysis export. This integration is live code for N2; use it as the starting point for the other level profiles.
+
+
 **Start with a budgeted delayed-check session in Practice → N2 exams & study.** The learner has six hours per day before December 6 in Japan. Their question is “Can I recall this tomorrow and use it under exam conditions?” Keep first exposure, first check, delayed recall and transfer visible as different milestones.
 
 Read the [audit, research and scheduler designs](./N2-LEARNING-AUDIT.md), [N2 workflow](./N2-PRACTICE.md), [export notes](./N2-EXAM-DATA.md), [maintainer guide](./CLAUDE.md) and [components](./COMPONENTS.md). Baseline before this patch is `c098b8b`. This change bumps the offline cache to v235. The data stores and paper IDs retain their existing formats.
