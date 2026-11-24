@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
-import {FILES, mergeDeleted, applyDeleted, recordDeletion, readDeleted, mergeRecall, mergeN2, betterAttempt, signatures, toPush, mayPush, syncGist, markDirty, syncState} from "../sync.js";
+import {breakTies, mergeCauses, FILES, mergeDeleted, applyDeleted, recordDeletion, readDeleted, mergeRecall, mergeN2, betterAttempt, signatures, toPush, mayPush, syncGist, markDirty, syncState} from "../sync.js";
 import {rawSha} from "../gist-backup.js";
 import {mergeSentences} from "../core.js";
 import {readToken, sealKey, openKey} from "../key-share.js";
@@ -43,7 +43,7 @@ function device(name, gist) {
       merge: async remote => {
         const deleted = mergeDeleted(readDeleted(), remote.deleted);
         localStorage.setItem("jp-echo-deleted", JSON.stringify(deleted));
-        d.sentences = applyDeleted(mergeSentences(d.sentences, remote.sentences || []), deleted.sentences);
+        d.sentences = applyDeleted(mergeSentences(breakTies(d.sentences, remote.sentences || []), remote.sentences || []), deleted.sentences);
         return {sentences: d.sentences, deleted};
       },
     },
@@ -167,7 +167,7 @@ test("both pages sync; every N2 write marks N2 dirty; a link carries no credenti
   const app = read("../app.js"), n2 = read("../n2-mock.js"), progress = read("../n2-progress.js"), core = read("../core.js"), html = read("../index.html"), sw = read("../sw.js");
   assert.match(n2, /startAutoSync\(\{adapters: \{n2: n2Adapter\(\), reports: reportsAdapter\(\)\}, page: "n2"/);
   assert.match(progress, /tx\.oncomplete=\(\)=>\{if\(method==="put"\)markDirty\("n2"\)/);
-  assert.match(app, /mergeIntoStore\(current=>applyDeleted\(mergeSentences\(current,incoming\),deleted\.sentences\)\)/, "sentences merge in one transaction");
+  assert.match(app, /mergeIntoStore\(current=>applyDeleted\(mergeSentences\(breakTies\(current,incoming\),incoming\),deleted\.sentences\)\)/, "sentences merge in one transaction, ties broken the same way everywhere");
   assert.match(app, /linkSeal=await sealKey\(linkPayload\(\),1\)/, "a device link lasts a day");
   assert.match(app, /url\.hash="link="\+linkSeal\.token/);
   assert.match(core, /const \{apiKey, providerKeys, speechKeys, gistToken, gistUrl, \.\.\.safe\} = preferences;/, "the gist token never enters a backup");
@@ -207,4 +207,49 @@ test("a device restarts after displacing another writer and recovers the interve
   await run(); await run();
   const restored=JSON.parse(gist.files[FILES.backup].content);
   assert.deepEqual(restored.sentences.map(s=>s.id).sort(),["concurrent","own"]);
+});
+
+// Content-level conflict fixtures (ECHO-POST-UPDATE-HANDOFF.md, next work 4).
+test("error causes tagged on two devices for the same exam are both kept, and the later edit wins a clash", async () => {
+  const gist = fakeGist(), a = device("phone", gist), b = device("laptop", gist);
+  a.adapters.n2.read = async () => ({recall: a.recall, history: a.history || []});
+  b.adapters.n2.read = async () => ({recall: b.recall, history: b.history || []});
+  for (const d of [a, b]) d.adapters.n2.merge = async remote => { const m = mergeN2({recall: d.recall, history: d.history || []}, remote); d.recall = m.recall; d.history = m.history; return m; };
+  const exam = {id: "set5", phase: "results", answers: [1, 2, 3, 4, 1, 2, 3, 4], completedAt: "2026-11-24T08:00:00Z"};
+  await a.change("n2", () => { a.history = [exam]; }); await a.sync(); await b.sync();
+  await a.change("n2", () => { a.history = [{...exam, causes: {5: "words", 2: "time"}, causesAt: {5: "2026-11-24T09:00:00Z", 2: "2026-11-24T09:00:00Z"}}]; });
+  await b.change("n2", () => { b.history = [{...exam, causes: {7: "cue", 2: "question"}, causesAt: {7: "2026-11-24T09:30:00Z", 2: "2026-11-24T09:30:00Z"}}]; });
+  await a.sync(); await b.sync(); await a.sync();
+  for (const d of [a, b]) assert.deepEqual(d.history[0].causes, {2: "question", 5: "words", 7: "cue"}, d.name);
+  const writes = gist.writes; await a.sync(); await b.sync();
+  assert.equal(gist.writes, writes, "converged devices stop writing");
+  // Undated tags (from before causesAt) still settle the same way on both sides.
+  const x = {id: "e", phase: "results", answers: [1], causes: {1: "words"}}, y = {...x, causes: {1: "cue"}};
+  assert.deepEqual(betterAttempt(x, y).causes, betterAttempt(y, x).causes);
+  assert.deepEqual(mergeCauses({causes: {1: "a"}}, {causes: {2: "b"}}).causes, {1: "a", 2: "b"});
+});
+
+test("same-millisecond edits to one sentence settle on the same copy everywhere, keeping both reviews", async () => {
+  const gist = fakeGist(), a = device("phone", gist), b = device("laptop", gist);
+  await a.change("backup", () => { a.sentences = [sentence("s1")]; }); await a.sync(); await b.sync();
+  const at = "2026-11-24T10:00:00.000Z";
+  await a.change("backup", () => { a.sentences = [{...a.sentences[0], source: "Phone wording", updatedAt: at, reviews: [{at: "2026-11-24T09:00:00Z", rating: "ok"}]}]; });
+  await b.change("backup", () => { b.sentences = [{...b.sentences[0], source: "Laptop wording", updatedAt: at, reviews: [{at: "2026-11-24T09:30:00Z", rating: "again"}]}]; });
+  await a.sync(); await b.sync(); await a.sync(); await b.sync();
+  assert.equal(a.sentences[0].source, b.sentences[0].source, "one wording on both devices");
+  for (const d of [a, b]) assert.equal(d.sentences[0].reviews.length, 2, d.name);
+});
+
+test("a merge interrupted by a failed write is retried on the next sync and nothing is lost", async () => {
+  const gist = fakeGist(), a = device("phone", gist), b = device("laptop", gist);
+  await a.change("backup", () => { a.sentences = [sentence("s1"), sentence("s2")]; }); await a.sync();
+  const merge = b.adapters.backup.merge;
+  let fail = true;
+  b.adapters.backup.merge = async remote => { if (fail) { fail = false; b.sentences = [remote.sentences[0]]; throw new Error("QuotaExceededError"); } return merge(remote); };
+  await assert.rejects(b.sync(), /QuotaExceeded/);
+  assert.deepEqual(b.sentences.map(x => x.id), ["s1"], "the failed merge left a partial write");
+  await b.sync();
+  assert.deepEqual(b.sentences.map(x => x.id).sort(), ["s1", "s2"], "the next sync merges the file again");
+  await a.sync();
+  assert.deepEqual(a.sentences.map(x => x.id).sort(), ["s1", "s2"]);
 });

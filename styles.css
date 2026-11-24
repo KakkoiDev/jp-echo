@@ -2331,3 +2331,11 @@ body .report-sheet .report-note textarea{flex:1 1 auto;flex-basis:auto;height:au
 .report-sheet .hint{margin:6px 0 0}
 .report-sheet .report-dictation:empty,.report-sheet .report-status:empty{display:none}
 .report-sheet .report-status{margin:8px 0 0;color:var(--seal-deep)}
+
+/* Earlier saves (Settings → Backup): a menu sheet of gist revisions and a
+   preview before restoring. Existing sheet, row and type tokens only. */
+.saves-sheet .saves-lede{margin:6px 0 10px}
+.saves-list{max-height:52vh;overflow:auto;border-top:1px solid var(--rule)}
+.saves-when{margin:10px 0 4px;font-family:var(--display);font-size:19px;color:var(--sumi)}
+.saves-diff{margin:10px 0 0;color:var(--sumi)}
+#saves-status:empty,#export-all-status:empty{display:none}

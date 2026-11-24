@@ -169,3 +169,11 @@ export async function writeGistFiles({id, token, files, description, retryMs = 2
   for (const [name, f] of Object.entries(payload.files || {})) shas[name] = rawSha(f.raw_url);
   return {id: payload.id, url: payload.html_url, created: !id, version: payload.history?.[0]?.version || null, previous: payload.history?.[1]?.version || null, shas};
 }
+
+// The gist's saves, newest first: each commit is one save (version + time).
+export async function listGistRevisions({id, token, perPage = 30, fetchImpl = globalThis.fetch?.bind(globalThis)}) {
+  const response = await fetchImpl(`${GIST_API}/gists/${id}/commits?per_page=${perPage}`, {headers: headers(token), cache: "no-store"});
+  const payload = await readJson(response);
+  if (!response.ok) throw failure(response, payload, id, "read");
+  return (Array.isArray(payload) ? payload : []).filter(c => c?.version).map(c => ({version: c.version, at: c.committed_at || "", changes: (c.change_status?.additions || 0) + (c.change_status?.deletions || 0)}));
+}

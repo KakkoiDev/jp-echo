@@ -24,23 +24,34 @@ export const TAG = Object.freeze(Object.fromEntries(TAGS.map(t => [t.id, t])));
 // unseen-passage check. Full mocks may still use them.
 export const HELD_OUT = Object.freeze(["n2-set-19", "n2-set-20"]);
 
-// A prepared drill reserves its source material even before an answer is
-// recorded. Timestamp the first reservation so later practice cannot
-// invalidate a full sitting that was already completed.
-export function drillExposure(papers) {
+// Which authored material a drill has exposed, and since when, so a full
+// sitting of that set no longer counts as unseen readiness evidence.
+// Exposure starts when a question is first shown (`shownAt` on the drill's
+// attempt, `firstShownAt` on the paper), not when the paper was generated:
+// a drill prepared and never opened reserves nothing, and a drill left after
+// two questions reserves those two. Papers made before shown-tracking
+// (no `shownTracked`) keep the old, conservative rule: everything in them,
+// from their creation time, so historical results do not change.
+export function drillExposure(papers, attempts = []) {
   const firstUse = new Map(), sources = new Set();
+  const reserve = (id, at) => { if (id && (!firstUse.has(id) || at < firstUse.get(id))) firstUse.set(id, at); };
+  const shownFor = new Map();
+  for (const a of attempts || []) {
+    if (!a?.shownAt) continue;
+    for (const key of [a.paper, a.book]) if (key) shownFor.set(key, {...(shownFor.get(key) || {}), ...a.shownAt});
+  }
   for (const p of papers) {
     if (!p.drill) continue;
-    const sets = new Set([p.drill.set, p.drill.sample].filter(Boolean));
-    for (const q of p.questions || []) {
+    const legacy = !p.shownTracked, shown = shownFor.get(p.id) || {};
+    const exposed = (p.questions || []).map((q, i) => ({q, at: legacy ? p.createdAt || "" : shown[q.index ?? i] || ""})).filter(x => legacy || x.at);
+    if (!legacy && !exposed.length && !p.firstShownAt) continue;
+    const start = legacy ? p.createdAt || "" : p.firstShownAt || exposed.map(x => x.at).sort()[0] || "";
+    for (const {q, at} of exposed) {
       if (!q.source) continue;
       sources.add(q.source);
-      sets.add(q.source.split("#")[0]);
+      reserve(q.source.split("#")[0], at || start);
     }
-    for (const id of sets) {
-      const at = p.createdAt || "";
-      if (!firstUse.has(id) || at < firstUse.get(id)) firstUse.set(id, at);
-    }
+    for (const id of [p.drill.set, p.drill.sample]) if (id && (legacy || exposed.length || p.firstShownAt)) reserve(id, start);
   }
   return {firstUse, sources};
 }

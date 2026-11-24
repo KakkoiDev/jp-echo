@@ -11,8 +11,9 @@ import {earliestPair,flipSentence,isReversed,pairLooksSwapped,repairPair} from "
 import {moraMnemonicTokens,moraModified,DEFAULT_PAIR,LANGUAGES,safeLanguage,MORA_MNEMONIC_META,MORA_VOICED,MORA_YOON,createSentence,replaceSentenceContent,exportBackup,forAnki,hasFurigana,hasRegisters,languageName,mergeSentences,normalizeFurigana,rubySegments,rubyHtml,SCHEMA_VERSION,stripFurigana} from "./core.js";
 import {isExactMatch,markAttempt,markTarget} from "./diff.js";
 import {applyReadingCorrection,removeArchivedMiniCards,readImportRecovery,saveImportRecovery,deleteSentence as dbDeleteSentence,getSentence,listSentences,migrateStore,replaceAll,mergeIntoStore,saveSentence as persistSentence} from "./db.js";
-import {readGistIndex,readGistFile,parseGistId,gistRevision} from "./gist-backup.js";
-import {startAutoSync,markDirty,syncState,mergeDeleted,applyDeleted,readDeleted,saveDeleted,recordDeletion,forgetDeletion} from "./sync.js";
+import {readGistIndex,readGistFile,parseGistId,gistRevision,listGistRevisions} from "./gist-backup.js";
+import {allDataBundle,isAllDataBundle,bundleCounts,restorePreview,countsLine,previewLine} from "./restore.js";
+import {startAutoSync,breakTies,markDirty,syncState,mergeDeleted,applyDeleted,readDeleted,saveDeleted,recordDeletion,forgetDeletion} from "./sync.js";
 import {n2Adapter} from "./n2-progress.js";
 import {READINGS_RULE,correctSentenceReadings,analyzeSentenceGrammar,askModel,rewriteSentence,adjustNote,carries,compose,composeFromIntent,PROVIDER_DEFAULTS,tagGrammar,translate,discuss,generateReading,writeNotes,writeWordNote,transcribeAudio} from "./api.js";
 import {grammarListItems,setImportedGrammar,byLevel as grammarByLevel,cleanTags as grammarTags,coverage as grammarCoverage,hasGrammar,isTagged,learned as grammarLearned,LEVELS as GRAMMAR_LEVELS,point as grammarPoint,POINTS as GRAMMAR_POINTS,summarise as grammarSummarise,untagged as untaggedSentences} from "./grammar.js";
@@ -225,6 +226,7 @@ function renderSettingsRows(){if(!$("#settings-status-ai"))return;
   $("#settings-status-grammar").textContent="Reads new sentences automatically: "+(settings.autoTag?"on":"off");$("#settings-row-grammar").hidden=targetLang()!=="ja";
   $("#settings-status-import").textContent=targetLang()==="ja"?"A deck, a backup, a gist, a book or text":"A deck, a backup or a gist";
   $("#import-gist-row").hidden=!settings.gistUrl;
+  if($("#saves-row"))$("#saves-row").hidden=!parseGistId(settings.gistUrl);
   if($("#link-device-row"))$("#link-device-row").hidden=!(settings.gistAuto&&settings.gistToken&&parseGistId(settings.gistUrl)&&keyShareSupported());
   $("#settings-status-export").textContent="Anki deck · backup file";
   const gist=gistState(),status=$("#settings-status-backup");status.classList.toggle("ok",!!(settings.gistAuto&&gist.lastSuccessAt&&!gist.lastError));status.classList.toggle("error",!!gist.lastError);
@@ -2292,10 +2294,10 @@ async function importHistory(file){if(!file)return;
  const status=importStatusNode();
  try{await runImportFeedback({status,buttons:[$("#import"),$("#empty-import"),$("#import-go")].filter(Boolean),label:file.name,
   load:async()=>{try{return JSON.parse(await file.text())}catch{throw new Error("That file is not valid JSON. See DECK-FORMAT.md for the deck format.")}},
-  save:importBackupData,onComplete:message=>toast(message,6000)});
+  save:importAnything,onComplete:message=>toast(message,6000)});
  }finally{importStatus=null}}
 // A deck or backup pasted as JSON: the same merge as a file.
-async function importDeckData(data,status=$("#import-status")){return runImportFeedback({status,buttons:[$("#import-go"),$("#import")],label:"deck",load:async()=>data,save:importBackupData,onComplete:message=>toast(message,6000)})}
+async function importDeckData(data,status=$("#import-status")){return runImportFeedback({status,buttons:[$("#import-go"),$("#import")],label:"deck",load:async()=>data,save:importAnything,onComplete:message=>toast(message,6000)})}
 async function importDeckURL(url,button,status=$("#import-status")){
  if(!String(url||"").trim()){status.textContent="Paste the deck's URL first.";$("#import-text").focus();return}
  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),30000);
@@ -2330,7 +2332,7 @@ function markBackupDirty(){markDirty("backup")}
 async function mergeRemoteBackup(remote){
   const deleted=mergeDeleted(readDeleted(),remote?.deleted);saveDeleted(deleted);
   const incoming=Array.isArray(remote?.sentences)?remote.sentences:[];
-  const {merged,changed}=await mergeIntoStore(current=>applyDeleted(mergeSentences(current,incoming),deleted.sentences));
+  const {merged,changed}=await mergeIntoStore(current=>applyDeleted(mergeSentences(breakTies(current,incoming),incoming),deleted.sentences));
   const localNotes=await listNotes(),notes=applyDeleted(mergeNotes(localNotes,Array.isArray(remote?.notes)?remote.notes:[]),deleted.notes,{key:"key",stamp:n=>n.made});
   if(JSON.stringify(notes)!==JSON.stringify(localNotes))await dbReplaceNotes(notes);
   let words=await listWords();
@@ -2364,7 +2366,7 @@ const gistWhen=value=>new Intl.DateTimeFormat(undefined,{dateStyle:"medium",time
 function renderGistStatus(){
   const node=$("#gist-status");if(!node)return;const state=gistState();node.replaceChildren();node.classList.remove("error","ok");
   if(state.lastError){node.classList.add("error");node.textContent="Last sync failed: "+state.lastError;return}
-  if(state.lastSuccessAt){node.classList.add("ok");node.append("Synced "+gistWhen(state.lastSuccessAt)+(Number.isFinite(state.sentences)?" · "+state.sentences+(state.sentences===1?" sentence":" sentences")+", "+(state.notes||0)+(state.notes===1?" note":" notes"):"")+". ");
+  if(state.lastSuccessAt){node.classList.add("ok");const sync=syncState();node.append((sync.lastPushAt?"Last upload "+gistWhen(sync.lastPushAt):"Nothing uploaded from this device yet")+" · last check "+gistWhen(sync.lastSyncAt||state.lastSuccessAt)+(Number.isFinite(state.sentences)?" · "+state.sentences+(state.sentences===1?" sentence":" sentences")+", "+(state.notes||0)+(state.notes===1?" note":" notes"):"")+". ");
     if(state.url&&parseGistId(state.url)){const link=document.createElement("a");link.href=state.url;link.target="_blank";link.rel="noopener noreferrer";link.textContent="Open the gist";node.append(link)}
     if(settings.gistAuto&&Object.keys(syncState().dirty||{}).length)node.append(" Newer changes are waiting.");return}
   node.textContent=settings.gistAuto?(settings.gistToken?"Nothing synced yet — the first sync runs shortly.":"Add a token to start syncing."):"";
@@ -2381,35 +2383,92 @@ async function gistRestore(){
   if(!parseGistId(gist)){$("#gist-status").textContent="Paste the gist's URL to restore from it.";$("#gist-url").focus();return}
   return restoreFromGist(gist,{button:$("#gist-restore"),status:$("#gist-status")})}
 // One restore, from Backup's button or from a gist link pasted into Import.
+// One restore for a gist, an earlier save of it and an all-data file: read
+// the documents, check every one, then merge each group (library, N2
+// progress, reports) and name what was restored. A restore only adds.
+const listJoin=items=>{try{return new Intl.ListFormat("en",{type:"conjunction"}).format(items)}catch{return items.join(", ")}};
+const RESTORE_GROUPS=[["echo-backup.json","library",doc=>importBackupData(doc)],["echo-n2.json","N2 progress",doc=>n2Adapter().merge(doc)],["echo-reports.json","reports",doc=>reportsAdapter().merge(doc)]];
+async function readGistDocuments(gist,token=$("#gist-token").value.trim()||settings.gistToken||""){
+  const id=parseGistId(gist);
+  if(!id)throw new Error("Paste the gist URL or ID.");
+  const {files,url}=await readGistIndex({id,token,revision:gistRevision(gist)});
+  const names=RESTORE_GROUPS.map(([name])=>name).filter(name=>files[name]);
+  if(!names.length)throw new Error("This gist has no Echo backup files.");
+  const docs={};for(const name of names)docs[name]=await readGistFile({file:files[name]});
+  return {docs,url};
+}
+function validateDocuments(docs){
+  for(const [name,doc] of Object.entries(docs)){
+    if(name==="echo-backup.json")validateDeckBackup(doc);
+    else{const kind=name==="echo-n2.json"?"n2":"reports",arrays=kind==="n2"?["papers","history","recall","events"]:["reports"];
+      if(doc?.app!=="echo"||doc.kind!==kind||doc.schemaVersion!==1||arrays.some(key=>!Array.isArray(doc[key])))throw new Error("Unsupported "+name+".")}
+  }
+}
+async function applyDocuments(docs){
+  validateDocuments(docs);
+  const restored=[];
+  for(const [name,label,merge] of RESTORE_GROUPS){if(!docs[name])continue;
+    try{await merge(docs[name]);restored.push(label)}
+    catch(error){throw new Error("Could not restore "+label+". "+(restored.length?"Already restored "+restored.join(", ")+". ":"")+error.message)}}
+  return restored;
+}
 async function restoreFromGist(gist,{button,status}){
-  const token=$("#gist-token").value.trim()||settings.gistToken||"";
   button.disabled=true;status.classList.remove("error");status.textContent="Downloading the backup…";
   try{
-    const id=parseGistId(gist);
-    if(!id)throw new Error("Paste the gist URL or ID.");
-    const {files,url}=await readGistIndex({id,token,revision:gistRevision(gist)});
-    const groups=[["echo-backup.json","library",importBackupData],["echo-n2.json","N2 progress",n2Adapter().merge],["echo-reports.json","reports",reportsAdapter().merge]];
-    const available=groups.filter(([name])=>files[name]);
-    if(!available.length)throw new Error("This gist has no Echo backup files.");
-    const documents=await Promise.all(available.map(([name])=>readGistFile({file:files[name]})));
-    for(const [i,[name]] of available.entries()){
-      const doc=documents[i];
-      if(name==="echo-backup.json")validateDeckBackup(doc);
-      else{
-        const kind=name==="echo-n2.json"?"n2":"reports", arrays=kind==="n2"?["papers","history","recall","events"]:["reports"];
-        if(doc?.app!=="echo"||doc.kind!==kind||doc.schemaVersion!==1||arrays.some(key=>!Array.isArray(doc[key])))throw new Error("Unsupported "+name+".");
-      }
-    }
-    const restored=[];
-    for(const [i,[,label,merge]] of available.entries()){
-      try{await merge(documents[i]);restored.push(label)}
-      catch(error){throw new Error("Could not restore "+label+". "+(restored.length?"Already restored "+restored.join(", ")+". ":"")+error.message)}
-    }
+    const {docs,url}=await readGistDocuments(gist);
+    const restored=await applyDocuments(docs);
     if(url&&!settings.gistUrl){settings.gistUrl=url;storePreference("jp-echo-settings",JSON.stringify(settings));$("#gist-url").value=url}
-    status.textContent="Restored "+restored.join(", ")+" from the gist.";
+    status.textContent="Restored "+listJoin(restored)+" from the gist.";
   }
   catch(error){status.classList.add("error");status.textContent=error.message}
   finally{button.disabled=false}}
+// Everything this device has, as the three documents sync writes, in one
+// file that Import restores offline.
+async function localDocuments(){return {"echo-backup.json":await buildBackup(),"echo-n2.json":await n2Adapter().read(),"echo-reports.json":await reportsAdapter().read()}}
+async function exportEverything(){
+  const button=$("#export-all"),status=$("#export-all-status");button.disabled=true;status.classList.remove("error");status.textContent="Gathering everything…";
+  try{const bundle=allDataBundle(await localDocuments()),c=bundleCounts(bundle.files),name="echo-everything-"+new Date().toISOString().slice(0,10)+".json";
+    const url=URL.createObjectURL(new Blob([JSON.stringify(bundle)],{type:"application/json"})),link=Object.assign(document.createElement("a"),{href:url,download:name});link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+    status.textContent="Saved "+name+": "+countsLine(c)+"."}
+  catch(error){status.classList.add("error");status.textContent="Could not gather everything: "+(error.message||error)}
+  finally{button.disabled=false}}
+// Import takes an all-data file as well as a deck or a library backup.
+async function importAnything(data){
+  if(!isAllDataBundle(data))return importBackupData(data);
+  const before=(await listSentences()).length,restored=await applyDocuments(data.files),total=(await listSentences()).length;
+  return {added:total-before,total,message:"Restored "+listJoin(restored)+" from the file. Everything already here was kept."};
+}
+// Earlier saves: every sync is a revision of the gist. Choose one, see what
+// it holds and what it would add here, then bring it in (a merge).
+let savesChosen=null;
+// Saves seconds apart are told apart by their seconds.
+const saveWhen=value=>new Intl.DateTimeFormat(undefined,{dateStyle:"medium",timeStyle:"medium"}).format(new Date(value));
+async function openSaves(){
+  const id=parseGistId(settings.gistUrl);if(!id)return;
+  const list=$("#saves-list"),status=$("#saves-status");savesChosen=null;$("#saves-preview").hidden=true;list.hidden=false;list.replaceChildren();status.classList.remove("error");status.textContent="Loading saves…";
+  $("#saves-dialog").showModal();
+  try{const saves=await listGistRevisions({id,token:settings.gistToken||""});status.textContent=saves.length?"":"No saves yet.";
+    list.replaceChildren(...saves.map((save,i)=>{const b=document.createElement("button");b.type="button";b.dataset.ui="button";b.className="settings-row menu-row";
+      b.innerHTML=`<span class="settings-row-text"><span class="settings-row-title"></span><span class="settings-row-status"></span></span>`;
+      b.querySelector(".settings-row-title").textContent=saveWhen(save.at);b.querySelector(".settings-row-status").textContent=i===0?"Latest":"";
+      b.onclick=()=>previewSave(id,save);return b}))}
+  catch(error){status.classList.add("error");status.textContent=error.message}}
+async function previewSave(id,save){
+  const status=$("#saves-status");status.classList.remove("error");status.textContent="Reading that save…";
+  try{const {docs}=await readGistDocuments("https://gist.github.com/"+id+"/"+save.version,settings.gistToken||"");validateDocuments(docs);
+    savesChosen={docs,save};
+    $("#saves-when").textContent=saveWhen(save.at);$("#saves-counts").textContent="This save holds "+countsLine(bundleCounts(docs))+".";
+    $("#saves-diff").textContent=previewLine(restorePreview(await localDocuments(),docs));
+    $("#saves-list").hidden=true;$("#saves-preview").hidden=false;status.textContent="";$("#saves-apply").focus()}
+  catch(error){status.classList.add("error");status.textContent=error.message}}
+$("#saves-open").onclick=openSaves;
+$("#saves-back").onclick=()=>{savesChosen=null;$("#saves-preview").hidden=true;$("#saves-list").hidden=false};
+$("#saves-apply").onclick=async()=>{if(!savesChosen)return;const button=$("#saves-apply"),status=$("#saves-status");button.disabled=true;status.classList.remove("error");status.textContent="Bringing it in…";
+  try{const restored=await applyDocuments(savesChosen.docs);status.textContent="Restored "+listJoin(restored)+" from the save of "+saveWhen(savesChosen.save.at)+".";$("#saves-preview").hidden=true;savesChosen=null;refreshDueBadge();renderHistory()}
+  catch(error){status.classList.add("error");status.textContent=error.message}finally{button.disabled=false}};
+$("#saves-done").onclick=()=>$("#saves-dialog").close();
+$("#saves-dialog").addEventListener("click",event=>{if(event.target===$("#saves-dialog"))$("#saves-dialog").close()});
+$("#export-all").onclick=exportEverything;
 // "Your sentences with it  2": the count sits at the end of the rule heading.
 function sheetCount(head,n){let count=head.querySelector(".count");if(!count){count=el("span","count","");head.append(count)}count.textContent=String(n);head.classList.add("counted")}
 // Echo has one built-in deck, the ミニ本語 Minihongo starter, offered only to seed an

@@ -346,7 +346,7 @@ export const EXAM_CHECKLIST = Object.freeze([
 // A conservative practice benchmark. Evaluate first sittings and count flagged
 // correct answers as uncertain. This score is independent of JLPT scaled scores.
 export function sprintCheckpoint(attempts, papers, eligibleBooks, now = new Date()) {
-  const {firstUse} = drillExposure(papers.values());
+  const {firstUse} = drillExposure(papers.values(), attempts);
   const first = new Map();
   for (const a of [...attempts].sort((x,y) => (x.startedAt || "").localeCompare(y.startedAt || ""))) {
     if (eligibleBooks.includes(a.book) && !first.has(a.book)) first.set(a.book, a);

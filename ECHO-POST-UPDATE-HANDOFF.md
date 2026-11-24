@@ -22,10 +22,19 @@
 
 ## Next work, in order
 
-1. Exercise an installed mobile PWA and desktop browser against one disposable Gist. Add a different review offline on each, finish one exam, reconnect, sync twice, and restore on an empty profile. Compare review IDs, attempt answers, timings, goal and report status. Repeat with a revoked token, an interrupted restore and a second sync after recovery. Automated coverage uses simulated devices and GitHub responses.
-2. Put a dated restore picker in Backup with counts for library items, completed attempts and recall checks. Preview differences before applying. Show the last successful **upload** separately from the last check. Add a single portable all-data download using the existing three documents so disaster recovery also works offline.
-3. Record actual first question display separately from paper generation. Test readiness across a partial drill, a retake, a skipped audio check and an uninterrupted unseen sitting. Preserve historical grades and their dates during any migration.
-4. Evaluate merge ties for competing edits to the same attempt’s error causes. Add content-level conflict fixtures for same-timestamp edits and interrupted IndexedDB transactions before claiming general convergence.
+Status after the follow-up pass (24 November, after `23aec93`):
+
+1. **Real devices against one disposable Gist — owner run still needed.** Automated and scripted coverage now includes a live run against a throwaway Gist (two simulated devices; adds, a delete, an error-cause tag; listing saves; reading an older revision; preview and restore). What remains needs the installed PWA and a desktop browser. Checklist for the owner, on a disposable Gist:
+   - On each device, review a different card while offline; finish one N2 exam on one device.
+   - Reconnect both; **Sync now** on each, twice. Compare: review count on the shared card, the exam's answers and timings, the goal, a report's status.
+   - On a clean browser profile: Settings → Backup → **Choose a save**, pick the latest, check the preview counts, **Bring it in**.
+   - Revoke the token on GitHub; confirm Backup shows "GitHub rejected the token" and nothing local is lost. Make a new token and sync again.
+   - Start a restore and close the tab midway; reopen and restore again: counts must match a clean restore.
+2. **Done.** Backup → **Earlier saves** lists the Gist's revisions (seconds shown), previews what a save holds and what is new to this device, and restores through the one restore path (`readGistDocuments` → `validateDocuments` → `applyDocuments`). The status line shows **last upload** and **last check** separately. **Download everything** saves the three sync documents in one file (`restore.js` `allDataBundle`); Import restores it offline (`importAnything`).
+3. **Done.** Each exam question records its first display (`shownAt` on the attempt; `firstShownAt` on drill papers, which are made `shownTracked`). `drillExposure(papers, attempts)` counts only shown material from the moment it was shown: an unopened drill reserves nothing, a partial drill reserves what was seen. Drills made before tracking keep the conservative creation-time rule, so historical readiness does not change. Tests: unopened, partial, shown-after, legacy, retake, unseen sitting (`test/n2-study.test.js`).
+4. **Done.** Error causes from two devices on one attempt are combined per question (`mergeCauses`; the later dated edit wins via `causesAt`, ties settle identically everywhere) and are part of the N2 signature, so devices converge instead of each keeping its own. Same-millisecond sentence edits settle on one copy everywhere (`breakTies`) with reviews combined. A merge interrupted by a failed write is retried on the next sync (`test/sync.test.js`).
+
+Still open: a restore applies groups one after another, so a failure in a later group leaves earlier groups applied (retrying merges by identity, as before). Clearing a cause on one device does not clear it on another (a cleared tag has no tombstone).
 
 ## Engineering entry points
 

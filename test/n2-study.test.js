@@ -189,3 +189,45 @@ test("drilling part of a set disqualifies a later first sitting, never an earlie
   assert.equal(run(day+"T07:00:00Z").recent.length,0);
   assert.equal(run(day+"T11:30:00Z").recent.length,1);
 });
+
+// Readiness across exposure cases (ECHO-POST-UPDATE-HANDOFF.md, next work 3):
+// exposure is when a drill question was first on screen, not when its paper was made.
+test("readiness counts exposure from questions actually shown: unopened, partial, legacy, retake and unseen sittings", () => {
+  const day = "2026-11-24", book = "n2-set-8";
+  const questions = [0,1,2,3].map((skill,index)=>({skill,index,key:1}));
+  const sitting = (start, end) => ({book, phase:"results", startedAt:day+"T"+start+":00Z", completedAt:day+"T"+end+":00Z", answers:[1,1,1,1], guesses:[false,false,false,false]});
+  const drill = extra => ({id:"drill-1", createdAt:day+"T06:00:00Z", drill:{tag:"change"}, questions:[{index:0, source:book+"#60"}, {index:1, source:book+"#61"}], ...extra});
+  const check = (attempts, drillPaper) => sprintCheckpoint(attempts, new Map([[book,{questions}], ...(drillPaper ? [["drill-1", drillPaper]] : [])]), [book], new Date(day+"T20:00:00Z"));
+  const full = sitting("09:00", "12:00");
+  // An uninterrupted unseen sitting counts.
+  assert.equal(check([full]).recent.length, 1);
+  // A drill prepared at 06:00 but never opened reserves nothing.
+  assert.equal(check([full], drill({shownTracked:true})).recent.length, 1, "prepared, never shown");
+  // A drill opened at 08:00 (one question seen) makes the 09:00 sitting not fresh.
+  const partial = {book:"drill-1", paper:"drill-1", phase:"written", startedAt:day+"T08:00:00Z", shownAt:{0:day+"T08:00:00Z"}, answers:[0,0]};
+  assert.equal(check([full, partial], drill({shownTracked:true, firstShownAt:day+"T08:00:00Z"})).recent.length, 0, "partial drill shown before the sitting");
+  // Opened only after the sitting finished: the earlier sitting stays valid.
+  const later = {...partial, startedAt:day+"T13:00:00Z", shownAt:{0:day+"T13:00:00Z"}};
+  assert.equal(check([full, later], drill({shownTracked:true, firstShownAt:day+"T13:00:00Z"})).recent.length, 1, "shown after the sitting");
+  // A drill from before shown-tracking keeps the conservative rule (made at 06:00).
+  assert.equal(check([full], drill({})).recent.length, 0, "legacy drill: historical results unchanged");
+  // A retake is never a first sitting: only the first attempt of a set counts.
+  const retake = {...sitting("14:00", "17:00"), answers:[1,1,1,1]};
+  const first = {...sitting("09:00", "12:00"), answers:[2,2,2,2]};
+  const result = check([retake, first]);
+  assert.equal(result.recent.length, 1);
+  assert.equal(result.recent[0].attempt.startedAt, first.startedAt, "the 09:00 first sitting, not the retake");
+});
+
+test("exposure lists only the sources of questions that were shown", async () => {
+  const {drillExposure} = await import("../n2-comprehension.js");
+  const paper = {id:"d", drill:{tag:"change"}, shownTracked:true, createdAt:"2026-11-24T06:00:00Z", questions:[{index:0, source:"n2-set-5#60"}, {index:1, source:"n2-set-7#81"}]};
+  const shown = drillExposure([paper], [{paper:"d", shownAt:{1:"2026-11-24T08:00:00Z"}}]);
+  assert.deepEqual([...shown.sources], ["n2-set-7#81"]);
+  assert.deepEqual([...shown.firstUse.keys()], ["n2-set-7"], "set 5 was never on screen");
+  const legacy = drillExposure([{...paper, shownTracked:undefined}]);
+  assert.deepEqual([...legacy.sources].sort(), ["n2-set-5#60", "n2-set-7#81"]);
+  const n2 = (await import("node:fs")).readFileSync(new URL("../n2-mock.js", import.meta.url), "utf8");
+  assert.match(n2, /function renderExam\(\) \{\n    markShown\(\);/, "every question records its first display");
+  assert.equal((n2.match(/shownTracked: true,/g) || []).length, 3, "every drill paper is made shown-tracked");
+});

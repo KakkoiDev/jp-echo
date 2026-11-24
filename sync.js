@@ -47,6 +47,15 @@ export function forgetDeletion(kind, ids) {
   saveDeleted(current);
 }
 
+// Two copies of one sentence edited in the same millisecond: the library
+// merge keeps the local copy on a tie, so each device would keep its own.
+// Before merging, the copy with the greater content takes the local place on
+// every device; reviews are still combined by the merge.
+export function breakTies(current, incoming) {
+  const byId = new Map((incoming || []).map(x => [x?.id, x]));
+  return current.map(c => { const o = byId.get(c?.id); return o && o.updatedAt === c.updatedAt && JSON.stringify(o) > JSON.stringify(c) ? {...o, reviews: c.reviews} : c; });
+}
+
 // ---- N2 study ----
 // A recall record's history is its events: two devices' records for one item
 // combine their events, and the counters are recomputed from them.
@@ -63,11 +72,30 @@ export function mergeRecall(a, b) {
 const localDayOf = at => { const d = new Date(at); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
 // A finished attempt beats an unfinished one, then more answers, more causes, later.
 const attemptRank = a => [a?.phase === "results" ? 1 : 0, (a?.answers || []).filter(Boolean).length, Object.keys(a?.causes || {}).length, time(a?.completedAt || a?.startedAt)];
+// Which copy of an attempt leads; a full tie is broken by content, so every
+// device picks the same one.
+function leader(a, b) {
+  const ra = attemptRank(a), rb = attemptRank(b);
+  for (let i = 0; i < ra.length; i++) if (ra[i] !== rb[i]) return rb[i] > ra[i] ? [b, a] : [a, b];
+  return JSON.stringify(b) > JSON.stringify(a) ? [b, a] : [a, b];
+}
+// Error causes are per question and can be tagged on either device: both
+// devices' tags are kept. For the same question the later dated edit wins
+// (causesAt), then the leading copy's tag.
+export function mergeCauses(lead, other) {
+  const causes = {...(other?.causes || {}), ...(lead?.causes || {})}, at = {...(other?.causesAt || {}), ...(lead?.causesAt || {})};
+  for (const index of Object.keys(other?.causes || {})) {
+    const mine = time(lead?.causesAt?.[index]), theirs = time(other?.causesAt?.[index]);
+    if (lead?.causes?.[index] !== undefined && theirs > mine) { causes[index] = other.causes[index]; at[index] = other.causesAt[index]; }
+  }
+  return {causes, causesAt: at};
+}
 export function betterAttempt(a, b) {
   if (!a) return b; if (!b) return a;
-  const ra = attemptRank(a), rb = attemptRank(b);
-  for (let i = 0; i < ra.length; i++) if (ra[i] !== rb[i]) return rb[i] > ra[i] ? b : a;
-  return a;
+  const [lead, other] = leader(a, b);
+  if (!lead.causes && !other.causes) return lead;
+  const {causes, causesAt} = mergeCauses(lead, other);
+  return {...lead, causes, ...(Object.keys(causesAt).length ? {causesAt} : {})};
 }
 const byId = (list, pick) => { const out = new Map(); for (const x of list || []) if (x?.id) out.set(x.id, out.has(x.id) ? pick(out.get(x.id), x) : x); return out; };
 export function mergeN2(local = {}, remote = {}) {
@@ -104,7 +132,7 @@ export const signatures = {
   ].join("\n#\n")),
   n2: doc => hash([
     rows(doc?.papers, p => p.id),
-    rows(doc?.history, a => attemptRank(a).join("|") + "|" + a.id),
+    rows(doc?.history, a => attemptRank(a).join("|") + "|" + a.id + "|" + JSON.stringify(Object.entries(a.causes || {}).sort())),
     rows(doc?.recall, r => [r.id, (r.events || []).length, time(r.updatedAt)].join("|")),
     rows(doc?.events, e => e.id),
     JSON.stringify(doc?.goal || null), time(doc?.goalAt),

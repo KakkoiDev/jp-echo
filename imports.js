@@ -37,9 +37,9 @@ export async function runImportFeedback({status,buttons=[],label='file',load,sav
  try{
   show(`Reading ${label}…`,'pending');await yieldUI();
   const data=await load();
-  show(`Importing ${(data.sentences?.length||0).toLocaleString()} sentences…`,'pending');await yieldUI();
+  show(data?.kind==='echo-all'?'Restoring everything in the file…':`Importing ${(data.sentences?.length||0).toLocaleString()} sentences…`,'pending');await yieldUI();
   const result=await save(data);
-  const message=`Import complete. ${result.added.toLocaleString()} new sentences added; existing sentences merged. ${result.total.toLocaleString()} in your library.`;
+  const message=result.message||`Import complete. ${result.added.toLocaleString()} new sentences added; existing sentences merged. ${result.total.toLocaleString()} in your library.`;
   show(message,'success');onComplete(message);return result;
  }catch(error){show(`Import failed: ${error.message||'Please try again.'}`,'error');return null}
  finally{status.setAttribute('aria-busy','false');buttons.forEach((button,index)=>button.disabled=previous[index])}

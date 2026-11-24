@@ -276,7 +276,7 @@ async function hub() {
   const done = new Set(attempts.filter(a => a.phase === "results").map(a => a.book));
   const finished = attempts.filter(a => a.phase === "results" && !a.book.startsWith("adaptive-")).sort((a, b) => (b.completedAt || "").localeCompare(a.completedAt || ""));
   const latestDone = attempts.filter(a => a.phase === "results").sort((a, b) => (b.completedAt || "").localeCompare(a.completedAt || ""))[0];
-  const {firstUse} = drillExposure(data.papers);
+  const {firstUse} = drillExposure(data.papers, data.attempts);
   const next = bookIds.find(id => !done.has(id) && !firstUse.has(id));
   const {providerReady} = await import("./api.js");
   const aiReady = providerReady(settings);
@@ -816,7 +816,7 @@ async function startSection(section, ctx) {
     const set = await json(setFile(id));
     const questions = realisticRows(set).filter(q => q.skill === spec.skill).map((q, index) => ({...q, source: id + "#" + q.index, index}));
     const paperId = "adaptive-" + crypto.randomUUID(), createdAt = new Date().toISOString();
-    await access("papers", "put", {id: paperId, book: paperId, title: spec.ja + " · Set " + titleOf(id), edition: SETS_EDITION, createdAt,
+    await access("papers", "put", {id: paperId, book: paperId, shownTracked: true, title: spec.ja + " · Set " + titleOf(id), edition: SETS_EDITION, createdAt,
       drill: {set: id, section}, minutes: spec.minutes, questions});
     location.assign("?book=" + paperId);
   } catch (e) { warn("Could not prepare the section: " + e.message); }
@@ -828,7 +828,7 @@ async function startSection(section, ctx) {
 async function startSample(ctx) {
   await materials();
   const sat = new Set(ctx.data.attempts.map(a => a.book));
-  const {firstUse} = drillExposure(ctx.data.papers);
+  const {firstUse} = drillExposure(ctx.data.papers, ctx.data.attempts);
   const id = bookIds.filter(realistic).filter(x => !HELD_OUT.includes(x) && !sat.has(x) && !firstUse.has(x)).at(-1);
   if (!id) { warn("No unsat set is left for a short sample."); return; }
   try {
@@ -836,7 +836,7 @@ async function startSample(ctx) {
     const spread = (skill, n = 6) => { const list = rows.filter(q => q.skill === skill); return Array.from({length: Math.min(n, list.length)}, (_, i) => list[Math.floor(i * list.length / n)]); };
     const questions = [0, 1, 2, 3].flatMap(skill => spread(skill)).map((q, index) => ({...q, source: id + "#" + q.index, index}));
     const paperId = "adaptive-" + crypto.randomUUID();
-    await access("papers", "put", {id: paperId, book: paperId, title: "Short sample · four skills", edition: SETS_EDITION, createdAt: new Date().toISOString(),
+    await access("papers", "put", {id: paperId, book: paperId, shownTracked: true, title: "Short sample · four skills", edition: SETS_EDITION, createdAt: new Date().toISOString(),
       drill: {sample: id}, minutes: {written: 14, listening: 6}, questions});
     location.assign("?book=" + paperId);
   } catch (e) { warn("Could not prepare the sample: " + e.message); }
@@ -852,7 +852,7 @@ async function startTagDrill(tag, ctx) {
   const {data} = ctx;
   try {
     const [map, sets] = await Promise.all([tagMap(), Promise.all(Object.keys(themes).map(id => json(setFile(id)).then(set => ({...set, id})).catch(() => null)))]);
-    const seen = drillExposure(data.papers).sources;
+    const seen = drillExposure(data.papers, data.attempts).sources;
     const picks = tagDrill({tag, sets: sets.filter(Boolean), tagMap: map, exclude: new Set(data.attempts.map(a => a.book)), seen});
     if (!picks.length) {
       if (ctx.aiReady) { openGenerator({aiReady: true, focus: "mixed", count: 10, tag}); return; }
@@ -862,7 +862,7 @@ async function startTagDrill(tag, ctx) {
     const rows = realisticRows({questions: picks.map(p => p.q)}).map((q, index) => ({...q, index, source: picks[index].source}));
     const written = rows.filter(q => q.skill !== 3).length, listening = rows.length - written;
     const paperId = "adaptive-" + crypto.randomUUID();
-    await access("papers", "put", {id: paperId, book: paperId, title: info.ja + " · " + info.en, edition: SETS_EDITION, createdAt: new Date().toISOString(),
+    await access("papers", "put", {id: paperId, book: paperId, shownTracked: true, title: info.ja + " · " + info.en, edition: SETS_EDITION, createdAt: new Date().toISOString(),
       drill: {tag}, minutes: {written: Math.max(5, Math.ceil(written * 2.5)), listening: Math.max(5, listening * 2)}, questions: rows});
     location.assign("?book=" + paperId);
   } catch (e) { warn("Could not prepare the drill: " + e.message); }
@@ -1251,7 +1251,17 @@ async function exam() {
     state.answers[state.index] = n;
     persist(); renderExam();
   }
+  // The first time each question is on screen, separate from when the paper
+  // was made: readiness counts only material actually seen (drillExposure).
+  function markShown() {
+    if (archivedView || state.shownAt?.[state.index]) return;
+    const at = new Date().toISOString();
+    state.shownAt = {...(state.shownAt || {}), [state.index]: at};
+    persist();
+    if (paper.shownTracked && !paper.firstShownAt) { paper.firstShownAt = at; access("papers", "put", paper).catch(() => {}); }
+  }
   function renderExam() {
+    markShown();
     const q = questions[state.index];
     const [first, end] = range();
     const answered = state.answers.slice(first, end).filter(Boolean).length;
@@ -1396,6 +1406,8 @@ async function exam() {
   // One tap says why a comprehension answer went wrong; it stays on the attempt.
   async function setCause(q, cause) {
     state.causes = {...(state.causes || {}), [q.index]: cause};
+    // When each tag was set, so the later edit wins between devices (sync.js mergeCauses).
+    state.causesAt = {...(state.causesAt || {}), [q.index]: new Date().toISOString()};
     if (archivedView) { try { await access("history", "put", state); announceSaved(); } catch (e) { saveFailed(() => setCause(q, cause)); return; } }
     else persist();
   }

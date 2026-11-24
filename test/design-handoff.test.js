@@ -285,7 +285,7 @@ test("settings is the page the boards draw: chips, rows, honest reminders, sub-p
   assert.match(html, /<span class="collapse-title">Advanced<\/span><span class="collapse-meta">Optional translation proxy, for browsers a provider blocks<\/span>/);
   assert.match(app, /settings\.aiCheckedAt=new Date\(\)\.toISOString\(\);persistSettings\(\)/, "the check time is remembered, not the key");
   assert.match(app, /"Key checked "\+gistWhen\(checked\)\+" · working"/);
-  assert.match(html, /<h3 class="rule-heading">Backup file<\/h3><div class="asset-row"><span class="asset-copy"><strong>Export a file<\/strong><span class="hint">Every sentence, note and review as JSON\. No keys, ever\.<\/span>/);
+  assert.match(html, /<h3 class="rule-heading">Backup file<\/h3><div class="asset-row"><span class="asset-copy"><strong>Download everything<\/strong>[^]*?<strong>Export the library<\/strong><span class="hint">Every sentence, note and review as JSON\. No keys, ever\.<\/span>/);
   assert.match(app, /\$\("#export"\)\.onclick=exportHistory;\$\("#export-file"\)\.onclick=exportHistory;/, "one action, one implementation: both export buttons run exportHistory");
   assert.match(html, /<h3 class="rule-heading">From a book or a passage<\/h3><button data-ui="button" id="settings-extract" class="library-tool two-line"/);
   assert.match(html, /<h3 class="rule-heading">Furigana check<\/h3>/);
