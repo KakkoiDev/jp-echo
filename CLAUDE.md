@@ -153,10 +153,24 @@ Before considering the change complete:
   On arrival the key is saved like a typed key (an explicit save), marked in
   `settings.sharedKey` (`provider`, `speech`), both removed after its expiry, and once unlocked the token
   leaves the address. It is a credential: never in an export, a backup or the gist.
-- **Gist backup is one document.** `buildBackup()` is the only producer; Export
-  downloads it and the gist holds it. Writes that change a backup go through
-  the `saveSentence` / `deleteSentence` / note wrappers in `app.js` (which call
-  `markBackupDirty`), never straight to `db.js` or `notes.js`.
+  Settings → Backup → Link another device seals `{sync: {token, gist}}` (and,
+  if chosen, the AI keys) the same way into `#link=…`, valid for one day; on
+  arrival the gist sync is switched on and a first sync pulls everything.
+  Linked keys are the learner's own, so they are not marked `sharedKey`.
+- **The gist is a two-way sync of three files** (sync.js). `echo-backup.json`
+  is the library and `buildBackup()` is its only producer (Export downloads
+  the same document); `echo-n2.json` is N2 study (`n2Adapter`, n2-progress.js);
+  `echo-reports.json` is reports. A sync checks the gist version (tiny), pulls
+  only files whose raw-URL hash changed, merges each into the device, then
+  pushes what is dirty or what the merge left ahead (compared by `signatures`,
+  so devices never echo each other). Sentences merge in one IndexedDB
+  transaction (`mergeIntoStore`). Deletions travel as dated tombstones
+  (`recordDeletion`; `deleted` in the library file): every removal of a
+  sentence or note must record one, or another device brings it back. Writes
+  that change the library go through the `saveSentence` / `deleteSentence` /
+  note / word wrappers in `app.js` (which call `markBackupDirty`); every N2
+  write goes through `access` (which marks N2 dirty). Never PATCH a file the
+  page did not build; never write the library from the N2 page.
 - **Updates are offered, never forced.** A new worker waits while Echo is open
   (no `skipWaiting` on install). `app.js` shows "A new version of Echo is ready"
   and, on the person's tap, posts `echo:activate-update`; the page reloads only
@@ -238,9 +252,8 @@ Before considering the change complete:
 - **Flags carry a reason and reach the maintainer through the gist.** Every
   screen head has the one report button (ReportSheet, COMPONENTS.md); a card
   flag asks why. Reports live in `jp-echo-reports` (reports.js), shared by
-  Echo and the N2 page, and sync as `echo-reports.json` in the learner's
-  backup gist (`syncReports`, gist-backup.js: read, merge by `updatedAt`,
-  PATCH only that file). They are not learning data: never in `buildBackup`,
+  Echo and the N2 page, and sync as `echo-reports.json` through the gist sync
+  (sync.js; merged by `updatedAt`). They are not learning data: never in `buildBackup`,
   an export or a deck. The screen path drops the #fragment. A maintainer reads
   the open reports with `gh api gists/<id>` (docs/REPORTS.md) and marks a fix
   by setting `status: "fixed"`, `fix`, and a newer `updatedAt` in that file.

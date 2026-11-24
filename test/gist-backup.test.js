@@ -91,9 +91,10 @@ test("auto backup waits for quiet, respects the minimum interval, and catches up
 
 test("every write that changes a backup marks it dirty, and imports do too", () => {
   assert.match(app, /const saved=await persistSentence\(sentence\);markBackupDirty\(\)/);
-  for (const name of ["deleteSentence", "putNote", "deleteNote", "replaceNotes"]) assert.match(app, new RegExp(`async function ${name}\\([^)]*\\)\\{const done=await db\\w+\\([^)]*\\);markBackupDirty\\(\\)`), name);
+  for (const name of ["deleteSentence", "putNote", "deleteNote", "replaceNotes"]) assert.match(app, new RegExp(`async function ${name}\\([^)]*\\)\\{const done=await db\\w+\\([^)]*\\);(recordDeletion\\([^)]*\\);)?markBackupDirty\\(\\)`), name);
+  for (const name of ["deleteSentence", "deleteNote"]) assert.match(app, new RegExp(`async function ${name}\\([^)]*\\)\\{const done=await db\\w+\\([^)]*\\);recordDeletion\\(`), name + " leaves a tombstone so other devices delete it too");
   assert.match(app, /await replaceAll\(merged\)\}catch\(error\)\{saveCatalogues\(importedCatalogues\);throw error\}markBackupDirty\(\)/);
-  assert.match(app, /function markBackupDirty\(\)\{if\(!settings\.gistAuto\)return;/);
+  assert.match(app, /function markBackupDirty\(\)\{markDirty\("backup"\)\}/);
 });
 
 test("saved words are written only through wrappers that mark the backup dirty", () => {
@@ -102,11 +103,11 @@ test("saved words are written only through wrappers that mark the backup dirty",
   assert.match(app, /async function removeWord\(id\)\{const done=await removeWordAction\(id,\{save:dbPutWord\}\)/);
   // Nothing outside the wrappers writes the words store.
   assert.equal((app.match(/dbPutWord\b/g) || []).length, 3, "imported once, used by the two wrappers");
-  assert.equal((app.match(/dbReplaceWords\(/g) || []).length, 1, "only replaceWords calls it");
+  assert.equal((app.match(/dbReplaceWords\(/g) || []).length, 2, "replaceWords and the sync merge (which writes a merge, not a change)");
 });
 
 test("the backup carries saved words beside catalogues, and import merges them", () => {
-  assert.match(app, /async function buildBackup\(\)\{return \{\.\.\.exportBackup\([^]*?\),catalogues:importedCatalogues,words:await listWords\(\)\.catch\(\(\)=>\[\]\)\}\}/);
+  assert.match(app, /async function buildBackup\(\)\{return \{\.\.\.exportBackup\([^]*?\),catalogues:importedCatalogues,words:await listWords\(\)\.catch\(\(\)=>\[\]\),deleted:readDeleted\(\)\}\}/);
   assert.match(app, /if\(Array\.isArray\(backup\.words\)\)\{const \{words\}=validateSavedWords\(backup\.words\);if\(words\.length\)await replaceWords\(mergeWords\(await listWords\(\),words\)\)\}/);
   // After notes, so file import, deck URL and gist restore all carry words.
   assert.ok(app.indexOf("await replaceNotes(mergeNotes(") < app.indexOf("await replaceWords(mergeWords("));
@@ -115,17 +116,17 @@ test("the backup carries saved words beside catalogues, and import merges them",
 test("the gist holds the same document Export downloads", () => {
   assert.match(app, /async function buildBackup\(\)\{return \{\.\.\.exportBackup\(/);
   assert.match(app, /async function exportHistory\(\)\{const data=await buildBackup\(\)/);
-  assert.match(app, /const backup=await buildBackup\(\),result=await uploadBackup\(\{token,gist,backup\}\)/, "the gist receives buildBackup() and nothing else");
+  assert.match(app, /const backupAdapter=\{read:buildBackup,merge:mergeRemoteBackup\}/, "the gist's library file is buildBackup() and nothing else");
 });
 
 test("an unrecognised gist URL is an error, never a silent new gist", () => {
   assert.match(app, /if\(String\(gist\|\|""\)\.trim\(\)&&!parseGistId\(gist\)\)throw new Error/);
 });
 
-test("auto backup is triggered by quiet, by leaving the app and by opening it", () => {
-  assert.match(app, /visibilitychange",\(\)=>\{if\(document\.hidden\)maybeAutoBackup\("hidden"\)/);
-  assert.match(app, /await restoreRoute\(\);setTimeout\(\(\)=>runReportSync\(\)\.catch\(\(\)=>\{\}\),8000\);maybeAutoBackup\("open"\)/);
-  assert.match(app, /scheduleGistBackup\(QUIET_MS\+500\)/);
+test("sync starts with the app, on switch-on and runs the library, N2 and reports files", () => {
+  assert.match(app, /await restoreRoute\(\);startGistSync\(\);/);
+  assert.match(app, /startAutoSync\(\{adapters:\{backup:backupAdapter,n2:n2Adapter\(\),reports:reportsAdapter\(\)\},page:"app"/);
+  assert.match(app, /if\(settings\.gistAuto&&!gistWasOn\)\{markDirty\("backup"\);startGistSync\(\)\.syncNow\(\)/);
 });
 
 test("Settings offers the switch, token, gist, back up now and restore; the module works offline", () => {

@@ -10,8 +10,10 @@ import {applyI18n,setDictionary,t} from "./i18n.js";
 import {earliestPair,flipSentence,isReversed,pairLooksSwapped,repairPair} from "./repair.js";
 import {moraMnemonicTokens,moraModified,DEFAULT_PAIR,LANGUAGES,safeLanguage,MORA_MNEMONIC_META,MORA_VOICED,MORA_YOON,createSentence,replaceSentenceContent,exportBackup,forAnki,hasFurigana,hasRegisters,languageName,mergeSentences,normalizeFurigana,rubySegments,rubyHtml,SCHEMA_VERSION,stripFurigana} from "./core.js";
 import {isExactMatch,markAttempt,markTarget} from "./diff.js";
-import {applyReadingCorrection,removeArchivedMiniCards,readImportRecovery,saveImportRecovery,deleteSentence as dbDeleteSentence,getSentence,listSentences,migrateStore,replaceAll,saveSentence as persistSentence} from "./db.js";
-import {MIN_INTERVAL_MS,QUIET_MS,downloadBackup,parseGistId,shouldAutoBackup,uploadBackup} from "./gist-backup.js";
+import {applyReadingCorrection,removeArchivedMiniCards,readImportRecovery,saveImportRecovery,deleteSentence as dbDeleteSentence,getSentence,listSentences,migrateStore,replaceAll,mergeIntoStore,saveSentence as persistSentence} from "./db.js";
+import {downloadBackup,parseGistId} from "./gist-backup.js";
+import {startAutoSync,markDirty,syncState,mergeDeleted,applyDeleted,readDeleted,saveDeleted,recordDeletion,forgetDeletion} from "./sync.js";
+import {n2Adapter} from "./n2-progress.js";
 import {READINGS_RULE,correctSentenceReadings,analyzeSentenceGrammar,askModel,rewriteSentence,adjustNote,carries,compose,composeFromIntent,PROVIDER_DEFAULTS,tagGrammar,translate,discuss,generateReading,writeNotes,writeWordNote,transcribeAudio} from "./api.js";
 import {grammarListItems,setImportedGrammar,byLevel as grammarByLevel,cleanTags as grammarTags,coverage as grammarCoverage,hasGrammar,isTagged,learned as grammarLearned,LEVELS as GRAMMAR_LEVELS,point as grammarPoint,POINTS as GRAMMAR_POINTS,summarise as grammarSummarise,untagged as untaggedSentences} from "./grammar.js";
 import {speakOnce,japaneseVoices,recognitionFactory,ShadowLoop,ConversationLoop,RadioPlayer,NoiseBed} from "./speech.js";
@@ -33,7 +35,7 @@ import {saveDiscussionTurn,saveWordAction,removeWordAction} from "./actions.js";
 import {contextSource,getWord,isSaved,listWords,mergeWords,putWord as dbPutWord,replaceWords as dbReplaceWords,savedOnly,validateSavedWords} from "./saved-words.js";
 // New shared UI comes from the component library (COMPONENTS.md).
 import {flagSvg,renderFlagButton,grammarList,skillGlyph,skillTrio,expandableList,fitTextArea,kanjiNumeral,toolShelf,toolList,renderFilterButton,savedMarkHtml,renderSavedButton,wireFilterButton,anchorStripHtml,hydrateHeaderSearch,chevronSvg,cornerMarkHtml,themedPictureHtml,openReportSheet,mountReportButtons,reportSvg} from "./components.js";
-import {REPORT_REASONS,createReport,fileReport,withdrawOpen,reportSyncLine,runReportSync,screenOf,appVersion,deviceInfo} from "./reports.js";
+import {REPORT_REASONS,createReport,fileReport,withdrawOpen,reportSyncLine,reportsAdapter,screenOf,appVersion,deviceInfo} from "./reports.js";
 // Settings page state, declared before anything can read it (navigationState).
 const SETTINGS_TITLES={main:"Settings",ai:"AI service",speech:"Speech recognition",backup:"Backup",import:"Import sentences",export:"Export",grammar:"Grammar"};
 let settingsPage="main",settingsReturn="practice";
@@ -54,9 +56,9 @@ async function saveSentence(sentence){
 }
 // Every write that changes what a backup would contain goes through one of
 // these, so the gist backup knows there is something new to upload.
-async function deleteSentence(id){const done=await dbDeleteSentence(id);markBackupDirty();return done}
+async function deleteSentence(id){const done=await dbDeleteSentence(id);recordDeletion("sentences",id);markBackupDirty();return done}
 async function putNote(...args){const done=await dbPutNote(...args);markBackupDirty();return done}
-async function deleteNote(...args){const done=await dbDeleteNote(...args);markBackupDirty();return done}
+async function deleteNote(key){const done=await dbDeleteNote(key);recordDeletion("notes",key);markBackupDirty();return done}
 async function replaceNotes(...args){const done=await dbReplaceNotes(...args);markBackupDirty();return done}
 // Saved words (SPEC echo-reader §4): their own store, the same rule.
 async function saveWord(entry,options={}){const done=await saveWordAction(entry,{...options,save:dbPutWord});markBackupDirty();return done}
@@ -187,7 +189,7 @@ function saveSettings(){settings.theme=$("#theme").value;settings.motion=$("#mot
   // Turning automatic backup on is an explicit act, so it takes the token typed beside it.
   if(settings.gistAuto&&!gistWasOn)settings.gistToken=$("#gist-token").value.trim();
   const saved=persistSettings();applyTheme();applyMotion();
-  if(settings.gistAuto&&!gistWasOn){patchGistState({dirty:true,lastChangeAt:0});maybeAutoBackup("open").catch(()=>{})}renderGistStatus();renderSettingsRows();if(saved)flashSaved();return saved}
+  if(settings.gistAuto&&!gistWasOn){markDirty("backup");startGistSync().syncNow().catch(()=>{})}renderGistStatus();renderSettingsRows();if(saved)flashSaved();return saved}
 // One write path; true only when the browser actually kept it.
 function persistSettings(){try{storePreference("jp-echo-settings",JSON.stringify(settings));return JSON.parse(localStorage.getItem("jp-echo-settings")||"null")!==null}catch{return false}}
 let savedTimer=null;
@@ -222,9 +224,10 @@ function renderSettingsRows(){if(!$("#settings-status-ai"))return;
   $("#settings-status-grammar").textContent="Reads new sentences automatically: "+(settings.autoTag?"on":"off");$("#settings-row-grammar").hidden=targetLang()!=="ja";
   $("#settings-status-import").textContent=targetLang()==="ja"?"A deck, a backup, a gist, a book or text":"A deck, a backup or a gist";
   $("#import-gist-row").hidden=!settings.gistUrl;
+  if($("#link-device-row"))$("#link-device-row").hidden=!(settings.gistAuto&&settings.gistToken&&parseGistId(settings.gistUrl)&&keyShareSupported());
   $("#settings-status-export").textContent="Anki deck · backup file";
   const gist=gistState(),status=$("#settings-status-backup");status.classList.toggle("ok",!!(settings.gistAuto&&gist.lastSuccessAt&&!gist.lastError));status.classList.toggle("error",!!gist.lastError);
-  status.textContent=gist.lastError?"Last backup failed — open to see why":settings.gistAuto&&gist.lastSuccessAt?"Gist · backed up "+gistWhen(gist.lastSuccessAt):settings.gistAuto?"Gist backup is on — nothing backed up yet":"Off — back up to a GitHub gist"}
+  status.textContent=gist.lastError?"Last sync failed — open to see why":settings.gistAuto&&gist.lastSuccessAt?"Gist sync · "+gistWhen(gist.lastSuccessAt):settings.gistAuto?"Gist sync is on — nothing synced yet":"Off — back up to a GitHub gist"}
 // Credentials: explicit saves. The AI key is checked only when asked (one request).
 function aiFormSettings(){const provider=$("#provider").value,keys={...(settings.providerKeys||{})},models={...(settings.providerModels||{})};
   if(provider!=="local"){keys[provider]=$("#"+provider+"-key").value.trim()}models[provider]=$("#"+provider+"-model").value.trim();
@@ -2230,7 +2233,7 @@ async function previousReview(){
 async function rateReview(rating){const sentence=reviewQueue[reviewIndex];if(!sentence||!reviewRevealed||reviewBusy)return;reviewBusy=true;updateReviewPrevious();const snapshot=reviewSnapshot(sentence);try{resetSession();const now=new Date(),mode=reviewMode(sentence),graded=reviewSentence(sentence,rating,now),progressed=recordReviewMode(graded,rating,now);
   const updated={...progressed,reviews:[...(Array.isArray(sentence.reviews)?sentence.reviews:[]),{at:now.toISOString(),rating,mode,state:sentence.srs?.state??0,echoes:Math.max(0,(Number(sentence.echoCount)||0)-echoesAtCardStart)}]};await saveSentence(updated);reviewUndo.push(snapshot);if(current?.id===updated.id)current=updated;reviewQueue[reviewIndex]=updated;reviewIndex++;renderReview()}finally{reviewBusy=false;updateReviewPrevious()}}
 // The one backup document: the file Export downloads is byte-for-byte what the gist holds.
-async function buildBackup(){return {...exportBackup(await listSentences(),settings,forBackup(await listNotes().catch(()=>[]))),catalogues:importedCatalogues,words:await listWords().catch(()=>[])}}
+async function buildBackup(){return {...exportBackup(await listSentences(),settings,forBackup(await listNotes().catch(()=>[]))),catalogues:importedCatalogues,words:await listWords().catch(()=>[]),deleted:readDeleted()}}
 async function exportHistory(){const data=await buildBackup(),url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"})),link=Object.assign(document.createElement("a"),{href:url,download:"jp-echo-backup.json"});link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);$("#import-status").textContent="Backup saved as jp-echo-backup.json."}
 async function exportAnki(button=$("#export-anki")){const items=await listSentences();const label=button.textContent;button.disabled=true;button.textContent="Building deck…";$("#anki-status").textContent="Creating Echo.apkg on this device…";try{await downloadAnkiDeck(items.map(forAnki));$("#open-anki").hidden=false;const launched=openAnki(true);$("#anki-status").textContent=launched?"Echo.apkg downloaded. Opening Anki… If it stays here, tap Open Anki.":"Echo.apkg downloaded. Open it from Downloads to import it into Anki."}catch(error){$("#anki-status").textContent=error.message||"Anki export failed."}finally{button.disabled=false;button.textContent=label}}
 function openAnki(automatic=false){const android=/android/i.test(navigator.userAgent),ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(android){window.location.href="intent:#Intent;package=com.ichi2.anki;end";return true}if(ios){window.location.href="anki://";return true}if(!automatic)$("#anki-status").textContent="Open Echo.apkg from your Downloads folder to import it into Anki.";return false}
@@ -2270,6 +2273,9 @@ async function importBackupData(backup){
  if(!(Number(backup.schemaVersion)>=1&&Number(backup.schemaVersion)<=SCHEMA_VERSION)||!Array.isArray(backup.sentences))throw new Error("Unsupported backup.");
  const before=await listSentences(),upgrade=planMiniSentenceUpgrade(before,backup),merged=upgrade.sentences,catalogues=mergeCatalogues(importedCatalogues,backup.catalogues);
  if(upgrade.removed.length)await saveImportRecovery({schemaVersion:2,sentences:upgrade.removed,catalogues:importedCatalogues,kind:'Minihongo word cards replaced with sentences'},'minihongo-v2-word-cards');
+ // An explicit import brings back what it holds, even if it was deleted here;
+ // cards the Minihongo upgrade replaces are deletions every device should apply.
+ forgetDeletion("sentences",backup.sentences.map(x=>x?.id));if(upgrade.removed.length)recordDeletion("sentences",upgrade.removed.map(x=>x.id));
  saveCatalogues(catalogues);try{await replaceAll(merged)}catch(error){saveCatalogues(importedCatalogues);throw error}markBackupDirty();importedCatalogues=catalogues;applyCatalogues();scheduleReadingBackfill();
  if(Array.isArray(backup.notes))await replaceNotes(mergeNotes(await listNotes().catch(()=>[]),backup.notes));
  // Saved words merge by id; a tombstone wins by time, so a removal survives.
@@ -2297,7 +2303,7 @@ async function importDeckURL(url,button,status=$("#import-status")){
 async function cleanupLegacyMiniHongo(){
  const marker='jp-echo-minihongo-cleanup-v2';
  if(localStorage.getItem(marker)!=='done'){
-  const plan=await repairMiniImport(await listSentences(),importedCatalogues,{archive:saveImportRecovery,replace:(kept,removed)=>removeArchivedMiniCards(kept,removed,importedCatalogues),saveCatalogues});
+  const plan=await repairMiniImport(await listSentences(),importedCatalogues,{archive:saveImportRecovery,replace:async(kept,removed)=>{const done=await removeArchivedMiniCards(kept,removed,importedCatalogues);recordDeletion("sentences",removed.map(x=>x.id));markBackupDirty();return done},saveCatalogues});
   if(plan.changed){importedCatalogues=plan.catalogues;applyCatalogues();storePreference('jp-echo-minihongo-cleanup-message',`Removed ${plan.removed.length} old Minihongo cards. Kept ${plan.kept.length} existing sentences.`)}
   storePreference(marker,'done');
  }
@@ -2306,53 +2312,67 @@ async function cleanupLegacyMiniHongo(){
  await refreshDueBadge();
 }
 async function undoMiniCleanup(){const button=$('#undo-mini-cleanup');button.disabled=true;try{const backup=await readImportRecovery();if(!backup)throw new Error('No cleanup backup is available.');await importBackupData(backup);$('#mini-cleanup-status').textContent='Restored the removed Minihongo cards from the recovery copy.'}catch(error){$('#mini-cleanup-status').textContent=error.message}finally{button.disabled=false}}
-// Automatic backup to a secret GitHub gist (see gist-backup.js). The token,
-// gist URL and the on/off switch are settings (stripped from every backup);
-// the bookkeeping — dirty, last attempt, last success, last error — is its
-// own key, so Settings' Save/Cancel never rolls it back.
+// Two-way sync through a secret GitHub gist (sync.js; gist-backup.js does the
+// requests). The token, gist URL and the on/off switch are settings (stripped
+// from every backup). The library is one file of the gist (buildBackup), the
+// N2 study and the reports are two more. Bookkeeping for Settings — last
+// success, last error, counts — is its own key, so Save/Cancel never rolls it
+// back; what is dirty and what was merged lives in sync.js's state.
 const GIST_STATE_KEY="jp-echo-gist-state";
 function gistState(){try{const value=JSON.parse(localStorage.getItem(GIST_STATE_KEY)||"{}");return value&&typeof value==="object"?value:{}}catch{return {}}}
 function patchGistState(patch){const next={...gistState(),...patch};storePreference(GIST_STATE_KEY,JSON.stringify(next));return next}
-let gistTimer=null,gistRunning=null,gistWarned=false;
-function scheduleGistBackup(delay){clearTimeout(gistTimer);gistTimer=setTimeout(()=>maybeAutoBackup("change").catch(()=>{}),Math.max(1000,delay))}
-function markBackupDirty(){if(!settings.gistAuto)return;patchGistState({dirty:true,lastChangeAt:Date.now()});scheduleGistBackup(QUIET_MS+500)}
-async function maybeAutoBackup(reason){
-  const state=gistState(),now=Date.now(),ready=!!settings.gistAuto&&!!settings.gistToken&&!!state.dirty;
-  if(!shouldAutoBackup({enabled:!!settings.gistAuto,hasToken:!!settings.gistToken,dirty:!!state.dirty,lastAttemptAt:state.lastAttemptAt,lastChangeAt:state.lastChangeAt,now,reason})){
-    // Too soon after the last upload: come back when the interval allows.
-    if(ready&&reason!=="hidden")scheduleGistBackup(Math.max((Number(state.lastAttemptAt)||0)+MIN_INTERVAL_MS,(Number(state.lastChangeAt)||0)+QUIET_MS)-now+500);
-    return null}
-  return runGistBackup({auto:true})}
-async function runGistBackup({auto=false,token=settings.gistToken,gist=settings.gistUrl}={}){
-  if(gistRunning)return gistRunning;
+let gistWarned=false;
+function markBackupDirty(){markDirty("backup")}
+// The library file: merge the gist's copy into this device. Sentences merge
+// in one transaction (reviews are unions; the schedule with more repetitions
+// wins), then deletions from either device are applied.
+async function mergeRemoteBackup(remote){
+  const deleted=mergeDeleted(readDeleted(),remote?.deleted);saveDeleted(deleted);
+  const incoming=Array.isArray(remote?.sentences)?remote.sentences:[];
+  const {merged,changed}=await mergeIntoStore(current=>applyDeleted(mergeSentences(current,incoming),deleted.sentences));
+  const localNotes=await listNotes().catch(()=>[]),notes=applyDeleted(mergeNotes(localNotes,Array.isArray(remote?.notes)?remote.notes:[]),deleted.notes,{key:"key",stamp:n=>n.made});
+  if(JSON.stringify(notes)!==JSON.stringify(localNotes))await dbReplaceNotes(notes);
+  let words=await listWords().catch(()=>[]);
+  if(Array.isArray(remote?.words)){const {words:incomingWords}=validateSavedWords(remote.words);if(incomingWords.length){const next=mergeWords(words,incomingWords);if(JSON.stringify(next)!==JSON.stringify(words)){await dbReplaceWords(next);words=next}}}
+  if(remote?.catalogues){const catalogues=mergeCatalogues(importedCatalogues,remote.catalogues);if(JSON.stringify(catalogues)!==JSON.stringify(importedCatalogues)){saveCatalogues(catalogues);importedCatalogues=catalogues;applyCatalogues()}}
+  if(changed){refreshDueBadge();renderHistory();if(detail){const fresh=merged.find(s=>s.id===detail.id);if(fresh)detail=fresh}}
+  return {sentences:merged,notes:forBackup(notes),words,deleted};
+}
+const backupAdapter={read:buildBackup,merge:mergeRemoteBackup};
+const gistCreate={description:files=>{const n=files["echo-backup.json"]?.sentences?.length;return Number.isFinite(n)?`Echo backup — ${n} sentence${n===1?"":"s"}`:undefined},
+  created:result=>{settings.gistUrl=result.url;storePreference("jp-echo-settings",JSON.stringify(settings));if(document.body.dataset.view==="settings")$("#gist-url").value=result.url;renderSettingsRows()}};
+async function onSyncResult(result){
+  if(!result||result.skipped)return;
+  const backup=await buildBackup().catch(()=>null);
+  patchGistState({lastSuccessAt:Date.now(),lastError:"",url:settings.gistUrl||gistState().url||"",sentences:backup?.sentences?.length??gistState().sentences,notes:Array.isArray(backup?.notes)?backup.notes.length:gistState().notes,dirty:false});
+  if(result.pulled?.length&&!document.hidden){const what=result.pulled.filter(k=>k!=="reports");if(what.length)toast("Brought in changes from your other device.",4000)}
+  renderGistStatus();renderSettingsRows();
+}
+function onSyncError(error,reason){patchGistState({lastError:error.message||String(error)});if(reason!=="manual"&&!gistWarned){gistWarned=true;toast("Gist sync failed: "+(error.message||error),6000)}renderGistStatus();renderSettingsRows()}
+let gistSync=null;
+function startGistSync(){if(!gistSync)gistSync=startAutoSync({adapters:{backup:backupAdapter,n2:n2Adapter(),reports:reportsAdapter()},page:"app",create:gistCreate,onResult:onSyncResult,onError:onSyncError});return gistSync}
+// Back up now / first switch-on: a full sync with what is in the form.
+async function runGistBackup({token=settings.gistToken,gist=settings.gistUrl}={}){
   // A URL that does not parse must not silently become "create a new gist".
   if(String(gist||"").trim()&&!parseGistId(gist))throw new Error("That gist URL is not one Echo recognises. Paste the gist's page URL, or leave it blank.");
-  const startedAt=Date.now();patchGistState({lastAttemptAt:startedAt});
-  gistRunning=(async()=>{
-    try{const backup=await buildBackup(),result=await uploadBackup({token,gist,backup});
-      const state=patchGistState({dirty:(Number(gistState().lastChangeAt)||0)>startedAt,lastSuccessAt:Date.now(),lastError:"",url:result.url,sentences:Array.isArray(backup.sentences)?backup.sentences.length:0,notes:Array.isArray(backup.notes)?backup.notes.length:Object.keys(backup.notes||{}).length});
-      if(settings.gistUrl!==result.url||settings.gistToken!==token){settings.gistUrl=result.url;settings.gistToken=token;storePreference("jp-echo-settings",JSON.stringify(settings));if(document.body.dataset.view==="settings")$("#gist-url").value=result.url;renderSettingsRows()}
-      if(state.dirty)scheduleGistBackup(MIN_INTERVAL_MS+500);
-      return result}
-    catch(error){patchGistState({lastError:error.message||String(error)});
-      if(auto&&!gistWarned){gistWarned=true;toast("Gist backup failed: "+(error.message||error),6000)}
-      throw error}
-    finally{gistRunning=null;renderGistStatus()}})();
-  return gistRunning}
+  if(settings.gistToken!==token||settings.gistUrl!==gist){settings.gistToken=token;settings.gistUrl=gist;storePreference("jp-echo-settings",JSON.stringify(settings))}
+  markDirty("backup");
+  try{const result=await startGistSync().run({credentials:{on:true,token,gist},push:true});return {...result,created:!!result?.wrote?.created,sentences:gistState().sentences||0}}
+  catch(error){onSyncError(error,"manual");throw error}}
 const gistWhen=value=>new Intl.DateTimeFormat(undefined,{dateStyle:"medium",timeStyle:"short"}).format(new Date(value));
 function renderGistStatus(){
   const node=$("#gist-status");if(!node)return;const state=gistState();node.replaceChildren();node.classList.remove("error","ok");
-  if(state.lastError){node.classList.add("error");node.textContent="Last backup failed: "+state.lastError;return}
-  if(state.lastSuccessAt){node.classList.add("ok");node.append("Backed up "+gistWhen(state.lastSuccessAt)+(Number.isFinite(state.sentences)?" · "+state.sentences+(state.sentences===1?" sentence":" sentences")+", "+(state.notes||0)+(state.notes===1?" note":" notes"):"")+". ");
+  if(state.lastError){node.classList.add("error");node.textContent="Last sync failed: "+state.lastError;return}
+  if(state.lastSuccessAt){node.classList.add("ok");node.append("Synced "+gistWhen(state.lastSuccessAt)+(Number.isFinite(state.sentences)?" · "+state.sentences+(state.sentences===1?" sentence":" sentences")+", "+(state.notes||0)+(state.notes===1?" note":" notes"):"")+". ");
     if(state.url&&parseGistId(state.url)){const link=document.createElement("a");link.href=state.url;link.target="_blank";link.rel="noopener noreferrer";link.textContent="Open the gist";node.append(link)}
-    if(settings.gistAuto&&state.dirty)node.append(" Newer changes are waiting.");return}
-  node.textContent=settings.gistAuto?(settings.gistToken?"Nothing backed up yet — the first backup runs shortly.":"Add a token to start backing up."):"";
+    if(settings.gistAuto&&Object.keys(syncState().dirty||{}).length)node.append(" Newer changes are waiting.");return}
+  node.textContent=settings.gistAuto?(settings.gistToken?"Nothing synced yet — the first sync runs shortly.":"Add a token to start syncing."):"";
 }
 async function gistBackupNow(){
   const button=$("#gist-now"),token=$("#gist-token").value.trim(),gist=$("#gist-url").value.trim();
   if(!token){$("#gist-status").textContent="Add a GitHub token first.";$("#gist-token").focus();return}
   button.disabled=true;$("#gist-status").textContent="Uploading…";
-  try{const result=await runGistBackup({token,gist});$("#gist-status").textContent=(result.created?"Created a secret gist with ":"Updated the gist with ")+result.sentences+(result.sentences===1?" sentence.":" sentences.");setTimeout(renderGistStatus,4000)}
+  try{const result=await runGistBackup({token,gist});$("#gist-status").textContent=(result.created?"Created a secret gist with ":"Synced the gist: ")+result.sentences+(result.sentences===1?" sentence":" sentences")+(result.pulled?.length?", with changes from your other devices.":".");setTimeout(renderGistStatus,4000)}
   catch(error){$("#gist-status").classList.add("error");$("#gist-status").textContent=error.message}
   finally{button.disabled=false}}
 async function gistRestore(){
@@ -2771,7 +2791,7 @@ async function restoreRoute(){
   await applyRoute();window.echoRouteReady=true;
 }
 window.addEventListener("popstate",()=>applyRoute());
-applyLanguage();startupCleanup=migrateStore().then(()=>cleanupLegacyMiniHongo());startupCleanup.then(async()=>{await repairReversedCards();await restoreRoute();setTimeout(()=>runReportSync().catch(()=>{}),8000);maybeAutoBackup("open").catch(()=>{});scheduleReadingBackfill()}).catch(error=>{window.echoReportError?.(error);setStatus('Minihongo cleanup could not finish: '+error.message,true);restoreRoute().catch(error=>window.echoReportError?.(error))});refreshDueBadge();setupRecognition();updateInstallUI();
+applyLanguage();startupCleanup=migrateStore().then(()=>cleanupLegacyMiniHongo());startupCleanup.then(async()=>{await repairReversedCards();await restoreRoute();startGistSync();scheduleReadingBackfill()}).catch(error=>{window.echoReportError?.(error);setStatus('Minihongo cleanup could not finish: '+error.message,true);restoreRoute().catch(error=>window.echoReportError?.(error))});refreshDueBadge();setupRecognition();updateInstallUI();
 // The in-app WaniKani sync is gone (the pull tool feeds the stories instead);
 // what it left in a browser is cleared once, quietly.
 try{localStorage.removeItem("jp-echo-wanikani-token");indexedDB.deleteDatabase("jp-echo-wanikani")}catch{}
@@ -2836,7 +2856,7 @@ $("#import-text").onkeydown=event=>{if(event.key==="Enter"&&(event.metaKey||even
 $("#import-gist").onclick=()=>restoreFromGist(settings.gistUrl,{button:$("#import-gist"),status:$("#import-status")});
 $("#gist-now").onclick=gistBackupNow;$("#gist-restore").onclick=gistRestore;
 // Leaving the app is the last chance to save pending changes; opening it catches up.
-document.addEventListener("visibilitychange",()=>{if(document.hidden)maybeAutoBackup("hidden").catch(()=>{});else{refreshDueBadge();if(document.body.dataset.view==="review")renderReviewHome()}});
+document.addEventListener("visibilitychange",()=>{if(!document.hidden){refreshDueBadge();if(document.body.dataset.view==="review")renderReviewHome()}});
 $("#import-minihongo").onclick=()=>seedStarter($("#import-minihongo"));
 $("#empty-starter").onclick=()=>seedStarter($("#empty-starter"),$("#empty-starter-status"));
 $("#empty-practice").onclick=()=>{showView("practice");setPracticeMode("sentence");$("#english-input").focus()};
@@ -2878,12 +2898,33 @@ $("#invite-dialog").addEventListener("click",event=>{if(event.target===$("#invit
 // Forget the sealed key: reopening the sheet makes a fresh code.
 $("#invite-dialog").addEventListener("close",()=>{invite.sealed=null;$("#invite-key").checked=false;$("#invite-key-options").hidden=true});
 
+// Link another device (Settings → Backup): the gist sync's token and address,
+// and optionally this device's AI keys, sealed like an invite (key-share.js)
+// into "#link=…". The unlock code is shown here only. It opens for 24 hours.
+let linkSeal=null;
+function linkPayload(){const keys=$("#link-keys").checked?shareableKey():null;return {...(keys||{}),sync:{token:settings.gistToken,gist:settings.gistUrl}}}
+async function refreshLink(){$("#link-copy").textContent=t("Copy link");$("#link-code").textContent="…";$("#link-url").value="";
+  linkSeal=await sealKey(linkPayload(),1);const url=new URL("/",location.origin);url.searchParams.set("install","1");url.hash="link="+linkSeal.token;
+  $("#link-code").textContent=linkSeal.code;$("#link-copy-code").textContent=t("Copy code");$("#link-url").value=url.href}
+async function openLinkDialog(){if(!(settings.gistToken&&parseGistId(settings.gistUrl)))return;const keys=shareableKey();
+  $("#link-keys-row").hidden=!keys;$("#link-keys").checked=!!keys;$("#link-keys-which").textContent=keys?sharedKeysLabel(keys).replace(/^./,c=>c.toUpperCase()):"";
+  $("#link-share").hidden=!(navigator.share&&matchMedia("(pointer: coarse)").matches);
+  $("#link-dialog").showModal();await refreshLink();$("#link-url").select()}
+$("#link-device").onclick=openLinkDialog;
+$("#link-keys").addEventListener("change",refreshLink);
+$("#link-url").addEventListener("focus",()=>$("#link-url").select());
+$("#link-copy").onclick=()=>copyText($("#link-url").value,$("#link-copy"),t("Link copied"));
+$("#link-copy-code").onclick=()=>{if(linkSeal)copyText(linkSeal.code,$("#link-copy-code"),t("Code copied"))};
+$("#link-share").onclick=async()=>{try{await navigator.share({title:"Echo",url:$("#link-url").value})}catch(error){if(error?.name!=="AbortError")$("#link-copy").click()}};
+$("#link-done").onclick=()=>$("#link-dialog").close();
+$("#link-dialog").addEventListener("click",event=>{if(event.target===$("#link-dialog"))$("#link-dialog").close()});
+$("#link-dialog").addEventListener("close",()=>{linkSeal=null;$("#link-url").value="";$("#link-code").textContent="…"});
 // Arriving from an invite: ?install=1 offers to install once (then the
 // parameter is dropped), #key=… asks for the unlock code. The key is
 // decrypted here and saved like a key typed in Settings, as an explicit save;
 // the encrypted token is then removed from the address so it does not linger
 // in history, bookmarks or a re-shared URL.
-const arrivalToken=readToken(location.hash);
+const arrivalLink=readToken(location.hash,"link"),arrivalToken=readToken(location.hash)||arrivalLink;
 function sharedKeyLine(){const shared=settings.sharedKey;if(!shared||shared.provider!==(settings.provider||"deepseek")||!providerKey(shared.provider))return "";
   return shared.exp?t("shared with you, until {date}",{date:formatDate(shared.exp)}):t("shared with you")}
 // A shared key with an expiry is removed once it has passed.
@@ -2896,6 +2937,7 @@ if(offeredDeck){showView("settings");showSettingsPage("import");$("#import-text"
   if(params.has("install")){params.delete("install");const rest=params.toString();history.replaceState(history.state,"",location.pathname+(rest?"?"+rest:"")+location.hash)}
   // One filled button at a time: while the code is being typed, Unlock is
   // the action and Install waits, outlined (ArrivalKey / ArrivalKeyUnlocked).
+  if(arrivalLink){$("#arrival-key-title").textContent=t("Link this device to your Echo");$("#arrival-key-intro").textContent=t("Type the unlock code shown on your other device. Sync starts here, and your library, N2 progress and reports come in. Everything is decrypted on this device and saved only in this browser.")}
   if(arrivalToken||install){$("#arrival-key").hidden=!arrivalToken;$("#arrival-install").hidden=!install;$("#arrival-install-yes").className=arrivalToken?"outline":"primary";
     $("#arrival-dialog").setAttribute("aria-labelledby",arrivalToken?"arrival-key-title":"arrival-install-title");
     setTimeout(()=>{$("#arrival-dialog").showModal();if(arrivalToken)$("#arrival-key-code").focus()},install&&!arrivalToken?1200:0)}}
@@ -2904,17 +2946,22 @@ $("#arrival-key-form").addEventListener("submit",async event=>{event.preventDefa
   if(!keyShareSupported()){status.textContent=t(ARRIVAL_MESSAGES.unsupported);return}
   button.disabled=true;status.classList.remove("error");status.textContent=t("Unlocking…");
   try{const shared=await openKey(arrivalToken,$("#arrival-key-code").value);
-    const ai=!!shared.key,groq=shared.speech?.groq;
+    const ai=!!shared.key,groq=shared.speech?.groq,sync=shared.sync?.token&&parseGistId(shared.sync?.gist)?shared.sync:null;
+    if(arrivalLink&&!sync)throw Object.assign(new Error("malformed"),{code:"malformed"});
     if(ai&&!SHAREABLE_PROVIDERS.includes(shared.provider))throw Object.assign(new Error("malformed"),{code:"malformed"});
     if(ai){settings.provider=shared.provider;settings.providerKeys={...(settings.providerKeys||{}),[shared.provider]:String(shared.key)};
       if(shared.model)settings.providerModels={...(settings.providerModels||{}),[shared.provider]:String(shared.model)}}
     if(groq)settings.speechKeys={...(settings.speechKeys||{}),groq:String(groq)};
-    settings.sharedKey={...(ai?{provider:shared.provider}:{}),...(groq?{speech:true}:{}),...(shared.exp?{exp:shared.exp}:{})};
+    // A device link carries your own keys: they are not someone else's shared
+    // keys and do not expire with the link.
+    if(sync){settings.gistAuto=true;settings.gistToken=String(sync.token);settings.gistUrl=String(sync.gist)}
+    else settings.sharedKey={...(ai?{provider:shared.provider}:{}),...(groq?{speech:true}:{}),...(shared.exp?{exp:shared.exp}:{})};
     storePreference("jp-echo-settings",JSON.stringify(settings));resetSettingsForm();renderSettingsRows();setupRecognition?.();
     // First visit: the setup screen asks for a key; fill it in, so it is not asked for twice.
     if(ai&&!settings.onboarded){$("#setup-provider").value=shared.provider;showSetupFields();$("#setup-key").value=String(shared.key)}
     history.replaceState(history.state,"",location.pathname+location.search);
-    $("#arrival-key-form").hidden=true;status.textContent="";$("#arrival-key-done").hidden=false;$("#arrival-install-yes").className="primary"}
+    $("#arrival-key-form").hidden=true;status.textContent="";$("#arrival-key-done").hidden=false;$("#arrival-install-yes").className="primary";
+    if(sync){$("#arrival-key-done").textContent=t("Linked. Your library and N2 progress are coming in now.");startGistSync().syncNow().then(()=>{$("#arrival-key-done").textContent=t("Linked and synced. This device now stays in step with your others.");refreshDueBadge();renderHistory()}).catch(error=>{$("#arrival-key-done").textContent=t("Linked, but the first sync failed: {error}. Echo tries again when it next opens.",{error:error.message||error})})}}
   catch(error){status.classList.add("error");status.textContent=t(ARRIVAL_MESSAGES[error?.code]||ARRIVAL_MESSAGES.malformed);button.disabled=false;if(error?.code==="wrong-code")$("#arrival-key-code").select()}});
 $("#arrival-install-yes").onclick=async()=>{await installApp();$("#arrival-install-status").textContent=$("#install-status").textContent;if(isInstalled())$("#arrival-dialog").close()};
 $("#arrival-install-no").onclick=()=>{$("#arrival-install").hidden=true;if($("#arrival-key").hidden)$("#arrival-dialog").close()};

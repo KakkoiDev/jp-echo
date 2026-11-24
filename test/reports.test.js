@@ -2,7 +2,6 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
 import {REPORT_REASONS, createReport, mergeReports, withdrawReport, openFor, reportsDocument, screenOf, reportHasContent} from "../reports.js";
-import {syncReports, REPORTS_FILENAME, GIST_FILENAME} from "../gist-backup.js";
 
 const read = p => readFileSync(new URL(p, import.meta.url), "utf8");
 
@@ -40,23 +39,13 @@ test("merging keeps the later update, so a fix written in the gist and a withdra
   assert.equal(reportsDocument([a, b]).open, 2);
 });
 
-test("syncing reads the gist's reports file, merges and writes only that file", async () => {
+test("reports are one file of the gist sync: filing marks them dirty, a fix in the gist comes back by merge", () => {
+  const src = read("../reports.js");
+  assert.match(src, /export async function fileReport\(report\) \{ await putReport\(report\); markDirty\("reports"\);/, "saved before it is marked");
+  assert.match(src, /merge: async remote => \{ const merged = mergeReports\(await listReports\(\), remote\?\.reports \|\| \[\]\)/);
   const mine = createReport({kind: "bug", reasons: ["looks"], now: new Date("2026-11-24T10:00:00Z")});
-  const theirs = {...createReport({kind: "card", subject: {type: "sentence", id: "x"}}), status: "fixed"};
-  const calls = [];
-  const fetchImpl = async (url, init = {}) => {
-    calls.push({url, init});
-    if (!init.method) return {ok: true, status: 200, json: async () => ({html_url: "https://gist.github.com/abc", files: {[GIST_FILENAME]: {content: "{}"}, [REPORTS_FILENAME]: {content: JSON.stringify({reports: [theirs]})}}})};
-    return {ok: true, status: 200, json: async () => ({html_url: "https://gist.github.com/abc"})};
-  };
-  const {reports} = await syncReports({token: "t", gist: "0667891e19f8f468e0362ce22c8c25f3", reports: [mine], merge: mergeReports, toDocument: reportsDocument, fetchImpl});
-  assert.equal(reports.length, 2);
-  const patch = calls.find(c => c.init.method === "PATCH");
-  const body = JSON.parse(patch.init.body);
-  assert.deepEqual(Object.keys(body.files), [REPORTS_FILENAME], "the backup file is never rewritten by a report sync");
-  const doc = JSON.parse(body.files[REPORTS_FILENAME].content);
-  assert.equal(doc.kind, "reports"); assert.equal(doc.reports.length, 2); assert.equal(doc.open, 1);
-  await assert.rejects(syncReports({token: "t", gist: "", reports: [], merge: mergeReports, toDocument: reportsDocument, fetchImpl}), /No backup gist/);
+  const fixedInGist = {...mine, status: "fixed", fix: "abc123", updatedAt: "2026-11-25T00:00:00Z"};
+  assert.equal(mergeReports([mine], reportsDocument([fixedInGist]).reports)[0].status, "fixed");
 });
 
 test("every screen head gets the one report button; a card flag asks why and withdraws on removal", () => {

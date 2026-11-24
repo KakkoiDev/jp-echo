@@ -38,6 +38,18 @@ export async function removeArchivedMiniCards(kept,removed,catalogues){
  try{await new Promise((resolve,reject)=>{const tx=db.transaction(STORE,'readwrite'),store=tx.objectStore(STORE),request=store.getAll();request.onsuccess=()=>{const records=request.result,clean=new Map(planMiniCleanup(records,catalogues).kept.map(s=>[s.id,s]));for(const record of records){if(ids.has(record.id))store.delete(record.id);else if(clean.has(record.id))store.put(clean.get(record.id))}};tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error)})}finally{db.close()}
 }
 
+// A sync merge in one transaction: read the store, merge, write only what
+// changed and remove what a tombstone deleted. A review saved meanwhile waits
+// for this transaction instead of being overwritten by a stale copy.
+export async function mergeIntoStore(apply){
+ const db=await openDb();
+ return new Promise((resolve,reject)=>{const tx=db.transaction(STORE,"readwrite"),store=tx.objectStore(STORE),request=store.getAll();let result=null;
+  request.onsuccess=()=>{const current=request.result.map(migrateSentence).filter(Boolean),merged=apply(current),before=new Map(current.map(s=>[s.id,JSON.stringify(s)])),keep=new Set(merged.map(s=>s.id));let changed=0;
+   for(const item of merged)if(before.get(item.id)!==JSON.stringify(item)){store.put(item);changed++}
+   for(const item of current)if(!keep.has(item.id)){store.delete(item.id);changed++}
+   result={merged,changed}};
+  tx.oncomplete=()=>resolve(result);tx.onerror=tx.onabort=()=>reject(tx.error)})}
+
 // Apply readings against the CURRENT record in one transaction, preserving reviews
 // and concurrent changes. A sentence edited during the model request is deferred.
 export async function applyReadingCorrection(id,expected,correction){

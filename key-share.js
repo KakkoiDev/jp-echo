@@ -66,8 +66,8 @@ export class KeyShareError extends Error {
 
 export const isSupported = () => !!((globalThis.isSecureContext ?? true) && globalThis.crypto?.subtle);
 
-// payload: {provider?, key?, model?, speech?: {groq}}: an AI key, a Groq
-// speech key, or both. days: a number, or 0 for no expiry.
+// payload: {provider?, key?, model?, speech?: {groq}, sync?: {token, gist}}:
+// an AI key, a Groq speech key, the gist sync (a device link), or several. days: a number, or 0 for no expiry.
 // Returns {token, code}: the token goes after '#key=', the code is shown to the sender.
 export async function sealKey(payload, days = 0, now = Date.now()) {
   if (!isSupported()) throw new KeyShareError("unsupported");
@@ -82,8 +82,10 @@ export async function sealKey(payload, days = 0, now = Date.now()) {
   return {token, code};
 }
 
-export function readToken(hash = globalThis.location?.hash || "") {
-  const match = String(hash).match(/[#&]key=([A-Za-z0-9._-]+)/);
+// "#key=…" is an invite (someone's AI keys); "#link=…" links one of your own
+// devices: the gist sync's token and address, and optionally your AI keys.
+export function readToken(hash = globalThis.location?.hash || "", name = "key") {
+  const match = String(hash).match(new RegExp("[#&]" + name + "=([A-Za-z0-9._-]+)"));
   return match ? match[1] : null;
 }
 
@@ -105,8 +107,8 @@ export async function openKey(token, code, now = Date.now()) {
   let body;
   try { body = JSON.parse(new TextDecoder().decode(plain)); }
   catch { throw new KeyShareError("malformed"); }
-  const ai = !!(body?.provider && body?.key), speech = !!body?.speech?.groq;
-  if (!ai && !speech) throw new KeyShareError("malformed");
+  const ai = !!(body?.provider && body?.key), speech = !!body?.speech?.groq, sync = !!(body?.sync?.token && body?.sync?.gist);
+  if (!ai && !speech && !sync) throw new KeyShareError("malformed");
   if (body.exp && now > body.exp) throw new KeyShareError("expired");
   return body;
 }

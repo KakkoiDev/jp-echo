@@ -1,9 +1,10 @@
-import {dateKey, parseGoalDate, firstPassEnd, goalKey, readGoal, shortDate, longDate} from "./jlpt-goal.js";
+import {dateKey, parseGoalDate, firstPassEnd, goalKey, readGoal, writeGoal, shortDate, longDate} from "./jlpt-goal.js";
 import {bookIds,bookName,EDITION,SETS_EDITION,form,realisticRows,realisticPaperId,setFile} from "./n2-forms.js";
-import {access,currentAttempts,download,prefix,report,scored} from "./n2-progress.js";
+import {access,currentAttempts,download,prefix,report,scored,n2Adapter} from "./n2-progress.js";
+import {startAutoSync,markDirty} from "./sync.js";
 import {SKILLS,SKILL_JA,SECTIONS,PASS_TOTAL,SECTION_MIN,SECTION_MAX,estimate,sprintCheckpoint,nextExamDate,daysUntil,recallQueue,recallRecord,recallId,dailyGoal,coverage,localDay,todayPlan,measuredPace,capMinutes,DAY_MINUTES,EXAM_CHECKLIST,goalDates,formatMinutes,shortenPlan,maintenancePlan,resultsMonth} from "./n2-study.js";
 import {flagSvg,planSteps,loadMeter,evidenceRow,pauseRing,openReportSheet,mountReportButtons} from "./components.js";
-import {REPORT_REASONS,createReport,fileReport,reportSyncLine,runReportSync,screenOf,appVersion,deviceInfo} from "./reports.js";
+import {REPORT_REASONS,createReport,fileReport,reportSyncLine,reportsAdapter,screenOf,appVersion,deviceInfo} from "./reports.js";
 import {recognitionFactory} from "./speech.js";
 import {speakOnce,speakAndWait,japaneseVoices} from "./speech.js";
 import {spokenWord,radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
@@ -392,7 +393,7 @@ function drawToday(ctx) {
       para("Your plan has stopped. Results day is in " + resultsMonth(exam) + "; nothing here changes until you choose."),
       el("h3", {class: "rule-heading", text: "Keep it going"}),
       el("div", {class: "n2-state-actions"},
-        planGoal?.maintenance ? null : el("a", {class: "button primary", href: "#", text: "Start maintenance · 15 min a day", onclick: event => { event.preventDefault(); try { localStorage.setItem(goalKey, JSON.stringify({...planGoal, maintenance: true})); } catch {} location.reload(); }}),
+        planGoal?.maintenance ? null : el("a", {class: "button primary", href: "#", text: "Start maintenance · 15 min a day", onclick: event => { event.preventDefault(); try { writeGoal({...planGoal, maintenance: true}); markDirty("n2"); } catch {} location.reload(); }}),
         el("a", {class: "button outline", href: "#training-goal", text: "Set the next exam date", onclick: () => { $("training-goal").open = true; }})),
       para("Maintenance: Today's checks and one Day Radio round, no new first checks. Sentence Review carries on as usual in the Review tab.", "hint"),
       el("h3", {class: "rule-heading", text: "Kept as it was"}),
@@ -481,8 +482,7 @@ function goalEditor(ctx) {
   refresh();
   function updateGoal(value) {
     try {
-      if (value) localStorage.setItem(goalKey, JSON.stringify(value));
-      else localStorage.removeItem(goalKey);
+      writeGoal(value); markDirty("n2");
       localStorage.removeItem(COACH_KEY);
       location.reload();
     } catch { $("training-status").textContent = "Could not save this goal on this device."; }
@@ -1466,4 +1466,12 @@ offlineNotice(); voiceCheck();
 const route = year ? exam : view === "recall" ? recall : view === "check" ? checks : view === "radio" ? dayRadio : hub;
 mountReportButtons(document, () => openReport());
 route().catch(error => { show(""); warn(error.message); });
-setTimeout(() => runReportSync().catch(() => {}), 8000);
+// Two-way gist sync (sync.js): N2 study and reports. The library file is
+// Echo's; this page leaves it alone. Progress from another device is offered,
+// never forced onto the screen mid-answer.
+startAutoSync({adapters: {n2: n2Adapter(), reports: reportsAdapter()}, page: "n2", onResult: result => {
+  if (!result?.pulled?.includes("n2")) return;
+  setNotice("synced", el("div", {class: "notice"},
+    el("p", {text: "Progress from your other device arrived."}),
+    el("div", {class: "notice-actions"}, el("button", {type: "button", class: "outline", "data-ui": "button", text: "Show it", onclick: () => location.reload()}))));
+}});

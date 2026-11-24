@@ -1,5 +1,12 @@
 // A duration counts local calendar days, including the day the goal was set.
 export const goalKey = "echo-jlpt-goal-v1";
+// When the goal was last saved, so the newer goal wins between devices (sync.js).
+export const goalAtKey = "echo-jlpt-goal-at";
+export function writeGoal(value, now = new Date()) {
+  if (value) localStorage.setItem(goalKey, JSON.stringify(value)); else localStorage.removeItem(goalKey);
+  localStorage.setItem(goalAtKey, now.toISOString());
+  try { globalThis.dispatchEvent?.(new CustomEvent("echo:goal-saved")); } catch {}
+}
 export function dateKey(date) {
   return [date.getFullYear(), String(date.getMonth()+1).padStart(2,"0"), String(date.getDate()).padStart(2,"0")].join("-");
 }

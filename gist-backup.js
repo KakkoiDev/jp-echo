@@ -105,32 +105,56 @@ export async function downloadBackup({gist, token = "", fetchImpl = globalThis.f
   catch { throw new Error("The backup in that gist is not valid JSON."); }
 }
 
-// Flags and bug reports (reports.js) live beside the backup in the same gist,
-// as their own file: PATCH names only that file, so the backup is untouched.
-// Read, merge by id (the later updatedAt wins), write — a report marked
-// "fixed" in the gist comes back to the device, a new one goes up.
-export const REPORTS_FILENAME = "echo-reports.json";
-export async function syncReports({token, gist, reports = [], merge, toDocument, fetchImpl = globalThis.fetch?.bind(globalThis)}) {
-  if (!token) throw new Error("Add a GitHub token with Gists access first.");
-  const id = parseGistId(gist);
-  if (!id) throw new Error("No backup gist yet. Turn on gist backup in Settings → Backup.");
-  const read = await fetchImpl(`${GIST_API}/gists/${id}`, {headers: headers(token)});
-  const payload = await readJson(read);
-  if (!read.ok) throw failure(read, payload, id, "read");
-  let remote = [];
-  const file = payload.files?.[REPORTS_FILENAME];
-  if (file) {
-    let text = file.content;
-    if (file.truncated || typeof text !== "string") { const raw = file.raw_url ? await fetchImpl(file.raw_url) : null; text = raw?.ok ? await raw.text() : ""; }
-    try { remote = JSON.parse(text || "{}").reports || []; } catch { remote = []; }
+// ---- Sync primitives (sync.js) ----
+// The gist's latest version, from its newest commit: a tiny request, so a
+// device can tell "nothing changed" without downloading anything.
+export async function gistVersion({id, token, fetchImpl = globalThis.fetch?.bind(globalThis)}) {
+  const response = await fetchImpl(`${GIST_API}/gists/${id}/commits?per_page=1`, {headers: headers(token), cache: "no-store"});
+  const payload = await readJson(response);
+  if (!response.ok) throw failure(response, payload, id, "read");
+  return Array.isArray(payload) && payload[0]?.version || null;
+}
+// A file's content hash is in its raw URL (…/raw/<sha>/<name>): it changes
+// only when that file changes, so unchanged files are never downloaded.
+export const rawSha = url => (String(url || "").match(/\/raw\/([0-9a-f]{20,})\//) || [])[1] || null;
+export async function readGistIndex({id, token, fetchImpl = globalThis.fetch?.bind(globalThis)}) {
+  const response = await fetchImpl(`${GIST_API}/gists/${id}`, {headers: headers(token), cache: "no-store"});
+  const payload = await readJson(response);
+  if (!response.ok) throw failure(response, payload, id, "read");
+  const files = {};
+  for (const [name, f] of Object.entries(payload.files || {})) files[name] = {name, sha: rawSha(f.raw_url), raw_url: f.raw_url, content: f.content, truncated: !!f.truncated};
+  return {id: payload.id || id, url: payload.html_url || null, version: payload.history?.[0]?.version || null, files};
+}
+export async function readGistFile({file, fetchImpl = globalThis.fetch?.bind(globalThis)}) {
+  let text = !file.truncated && typeof file.content === "string" ? file.content : null;
+  if (text === null) {
+    if (!file.raw_url) throw new Error(`GitHub did not return ${file.name}.`);
+    const raw = await fetchImpl(file.raw_url, {cache: "no-store"});
+    if (!raw.ok) throw new Error(`Could not download ${file.name} (${raw.status}).`);
+    text = await raw.text();
   }
-  const merged = merge(remote, reports);
-  const write = await fetchImpl(`${GIST_API}/gists/${id}`, {
-    method: "PATCH",
-    headers: {...headers(token), "content-type": "application/json"},
-    body: JSON.stringify({files: {[REPORTS_FILENAME]: {content: JSON.stringify(toDocument(merged), null, 1)}}}),
-  });
-  const written = await readJson(write);
-  if (!write.ok) throw failure(write, written, id, "update");
-  return {reports: merged, url: written.html_url || payload.html_url || null};
+  try { return JSON.parse(text); } catch { throw new Error(`${file.name} in the gist is not valid JSON.`); }
+}
+// Write several files at once. PATCH names only these files; the others in
+// the gist stay as they are. No id: a new secret gist.
+export async function writeGistFiles({id, token, files, description, retryMs = 2000, fetchImpl = globalThis.fetch?.bind(globalThis)}) {
+  if (!token) throw new Error("Add a GitHub token with Gists access first.");
+  const body = {files: Object.fromEntries(Object.entries(files).map(([name, doc]) => [name, {content: typeof doc === "string" ? doc : JSON.stringify(doc)}]))};
+  if (description) body.description = description;
+  if (!id) body.public = false;
+  // GitHub answers 409 to a write that lands right after another one ("Gist
+  // cannot be updated"): wait a moment and try again, twice.
+  let response;
+  for (let attempt = 0; ; attempt++) {
+    response = await fetchImpl(id ? `${GIST_API}/gists/${id}` : `${GIST_API}/gists`, {
+      method: id ? "PATCH" : "POST", headers: {...headers(token), "content-type": "application/json"}, body: JSON.stringify(body)});
+    if (response.status !== 409 || attempt >= 2) break;
+    await new Promise(resolve => setTimeout(resolve, retryMs * (attempt + 1)));
+  }
+  const payload = await readJson(response);
+  if (!response.ok) throw failure(response, payload, id, "update");
+  if (!payload.id || !payload.html_url) throw new Error("GitHub returned no gist URL.");
+  const shas = {};
+  for (const [name, f] of Object.entries(payload.files || {})) shas[name] = rawSha(f.raw_url);
+  return {id: payload.id, url: payload.html_url, created: !id, version: payload.history?.[0]?.version || null, previous: payload.history?.[1]?.version || null, shas};
 }

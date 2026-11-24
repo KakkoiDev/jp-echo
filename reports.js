@@ -10,13 +10,12 @@
 // (set by whoever fixed it, in the gist; the merge brings it back here).
 //
 // Reports live in their own IndexedDB database (`jp-echo-reports`), shared
-// by Echo and the N2 page, and sync to the learner's backup gist as a second
-// file, `echo-reports.json` (gist-backup.js `syncReports`): read, merge by
-// id (the later `updatedAt` wins), write. They are not learning data, so they
+// by Echo and the N2 page, and sync through the gist as `echo-reports.json`
+// (sync.js): merged by id, the later `updatedAt` wins. They are not learning data, so they
 // are not in `buildBackup`, an export or a deck. Pure parts are tested in
 // test/reports.test.js.
 
-import {syncReports} from "./gist-backup.js";
+import {markDirty, gistSettings, syncState} from "./sync.js";
 
 export const REPORT_REASONS = Object.freeze({
   card: Object.freeze([
@@ -141,46 +140,25 @@ export function deviceInfo() {
 }
 
 // ---- Sync (browser only) ----
-// Both pages read the gist settings Echo keeps in localStorage. A report is
-// uploaded a moment after it is filed; each page also syncs once on open, so
-// a report marked "fixed" in the gist comes back. Bookkeeping is its own key.
-const SYNC_KEY = "jp-echo-reports-sync", MIN_GAP_MS = 60_000;
-export function reportSyncState() { try { const v = JSON.parse(localStorage.getItem(SYNC_KEY) || "{}"); return v && typeof v === "object" ? v : {}; } catch { return {}; } }
-function patchSync(patch) { const next = {...reportSyncState(), ...patch}; try { localStorage.setItem(SYNC_KEY, JSON.stringify(next)); } catch {} return next; }
-function gistSettings() { try { const s = JSON.parse(localStorage.getItem("jp-echo-settings") || "{}"); return {on: !!s.gistAuto, token: s.gistToken || "", gist: s.gistUrl || ""}; } catch { return {on: false, token: "", gist: ""}; } }
+// Reports are one of the gist sync's files (sync.js, FILES.reports): filing
+// one saves it here, marks reports dirty and the page's sync uploads it.
+// A report marked "fixed" in the gist comes back with the next pull.
 export function reportSyncLine() {
-  const g = gistSettings(), state = reportSyncState();
-  if (!g.on || !g.token) return "Saved on this device. Turn on gist backup in Settings → Backup to sync reports.";
-  if (!g.gist) return "Saved on this device. Reports sync once the first gist backup has run.";
+  const g = gistSettings(), state = syncState();
+  if (!g.on || !g.token) return "Saved on this device. Turn on gist sync in Settings → Backup to send reports.";
+  if (!g.gist) return "Saved on this device. Reports sync once the first gist sync has run.";
   if (state.lastError) return "Saved on this device. Last sync failed: " + state.lastError;
-  return "Saved on this device and synced to your backup gist.";
+  return "Saved on this device and synced to your gist.";
 }
-let timer = null, running = null;
-export function scheduleReportSync(delay = 1500) { clearTimeout(timer); timer = setTimeout(() => runReportSync().catch(() => {}), delay); }
-export async function runReportSync({force = false} = {}) {
-  if (running) return running;
-  const g = gistSettings();
-  if (!g.on || !g.token || !g.gist) return null;
-  const state = reportSyncState();
-  if (!force && !state.dirty && Date.now() - (Number(state.lastAttemptAt) || 0) < MIN_GAP_MS) return null;
-  patchSync({lastAttemptAt: Date.now()});
-  running = (async () => {
-    try {
-      const local = await listReports();
-      const {reports} = await syncReports({token: g.token, gist: g.gist, reports: local, merge: mergeReports, toDocument: reportsDocument});
-      await putReports(reports);
-      patchSync({dirty: false, lastError: "", lastSuccessAt: Date.now(), open: reports.filter(r => r.status === "open").length});
-      return reports;
-    } catch (error) { patchSync({lastError: error.message || String(error)}); throw error; }
-    finally { running = null; }
-  })();
-  return running;
-}
-// File a report: saved first (awaited), then a sync is scheduled.
-export async function fileReport(report) { await putReport(report); patchSync({dirty: true}); scheduleReportSync(); return report; }
+export const reportsAdapter = () => ({
+  read: async () => reportsDocument(await listReports()),
+  merge: async remote => { const merged = mergeReports(await listReports(), remote?.reports || []); await putReports(merged); return reportsDocument(merged); },
+});
+// File a report: saved first (awaited), then marked for the next sync.
+export async function fileReport(report) { await putReport(report); markDirty("reports"); return report; }
 export async function withdrawOpen(type, id) {
   const open = openFor(await listReports(), type, id);
   if (!open.length) return 0;
-  await putReports(open.map(r => withdrawReport(r))); patchSync({dirty: true}); scheduleReportSync();
+  await putReports(open.map(r => withdrawReport(r))); markDirty("reports");
   return open.length;
 }
