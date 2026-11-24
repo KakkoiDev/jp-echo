@@ -8,7 +8,7 @@
 
 **Start with a budgeted delayed-check session in Practice → N2 exams & study.** The learner has six hours per day before December 6 in Japan. Their question is “Can I recall this tomorrow and use it under exam conditions?” Keep first exposure, first check, delayed recall and transfer visible as different milestones.
 
-Read the [audit, research and scheduler designs](./N2-LEARNING-AUDIT.md), [N2 workflow](./N2-PRACTICE.md), [export notes](./N2-EXAM-DATA.md), [maintainer guide](./CLAUDE.md) and [components](./COMPONENTS.md). Baseline before this patch is `c098b8b`. The learning-audit patch bumped the offline cache to v235; Today's checks and the six-hour plan bump it to v236. The data stores and paper IDs retain their existing formats.
+Read the [audit, research and scheduler designs](./N2-LEARNING-AUDIT.md), [N2 workflow](./N2-PRACTICE.md), [export notes](./N2-EXAM-DATA.md), [maintainer guide](./CLAUDE.md) and [components](./COMPONENTS.md). Baseline before this patch is `c098b8b`. The learning-audit patch bumped the offline cache to v235; Today's checks and the six-hour plan bump it to v239. The data stores and paper IDs retain their existing formats.
 
 ## Current implementation
 
