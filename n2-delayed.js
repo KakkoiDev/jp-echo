@@ -169,3 +169,50 @@ export function checksSummary(checks = []) {
     .filter(([k]) => k).map(([k, one, many]) => k + " " + (k === 1 ? one : many));
   return checks.length ? checks.length + " from yesterday: " + parts.join(", ") : "Nothing from yesterday";
 }
+
+// One item's evidence by skill (J2Evidence). Each skill keeps its own record;
+// one never moves another. Titles use the copy contract only: heard, checked
+// once, recalled on another day, understood in a new passage.
+const fmtDay = at => { const d = new Date(at); return d.getDate() + " " + ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getMonth()]; };
+const DIM_LABEL = {meaning: "意味 Meaning", reading: "読み Reading", grammar: "文法 Grammar"};
+export function evidenceFor(target, {recall = [], events = [], evidence = [], paperTitle = () => ""} = {}) {
+  const key = keyOf(target), written = [], listening = [];
+  for (const r of recall.filter(r => keyOf(r.target) === key)) {
+    const evs = r.events?.length ? r.events : [{at: r.updatedAt, grade: r.last}];
+    const first = evs[0];
+    written.push({done: true, title: "Checked once · " + (first.grade === "instant" ? "right" : first.grade === "slow" ? "slow" : "missed"), line: "Word check, " + DIM_LABEL[r.dimension], date: fmtDay(first.at), at: first.at});
+    const later = evs.filter(e => dayOf(e.at) > dayOf(first.at));
+    const recalled = later.find(e => e.grade === "instant");
+    if (recalled) written.push({done: true, title: "Recalled on another day · right", line: (CHECK_SOURCES.has(recalled.source) ? "Today's checks" : "Word check") + ", " + DIM_LABEL[r.dimension], date: fmtDay(recalled.at), at: recalled.at});
+    else if (later.length) written.push({done: false, title: "Recalled on another day · not yet", line: "Missed or slow on " + fmtDay(later.at(-1).at), date: fmtDay(later.at(-1).at), at: later.at(-1).at});
+    else if (first.grade !== "instant") written.push({done: false, title: "Recalled on another day · 0 of 1 planned", line: "Comes back in Today's checks", date: fmtDay(new Date(new Date(first.at).getTime() + 86_400_000)), at: first.at});
+    const fresh = evs.find(e => CHECK_SOURCES.has(e.source) && e.context === "fresh" && e.grade === "instant");
+    if (fresh) written.push({done: true, title: "Understood in a new passage", line: "Today's checks, a sentence not seen before", date: fmtDay(fresh.at), at: fresh.at});
+  }
+  for (const row of evidence.filter(x => x.target && keyOf(x.target) === key && x.answered)) {
+    const into = row.skill === 3 ? listening : written;
+    into.push({done: row.correct && !row.guessed, title: row.correct && !row.guessed ? (row.skill === 3 ? "Understood in a new passage" : "Checked once · right") : row.skill === 3 ? "Missed in a dialogue" : "Missed in a mock", line: paperTitle(row.paper) || "Mock exam", date: fmtDay(row.at), at: row.at});
+  }
+  const heard = events.filter(e => e.kind === "exposure" && keyOf(e.target) === key);
+  if (heard.length) listening.push({done: true, title: heard.length === 1 ? "Heard once" : "Heard " + heard.length + " times", line: "Day Radio · Listen", date: fmtDay(heard.at(-1).at), at: heard.at(-1).at});
+  for (const e of events.filter(e => e.kind === "recall" && keyOf(e.target) === key)) {
+    const got = e.grade === "got", check = CHECK_SOURCES.has(e.context?.source);
+    listening.push({done: got, title: check ? (got ? "Recalled on another day · right" : "Recalled on another day · missed") : got ? "Caught by ear" : "Missed by ear",
+      line: check ? "Today's checks" + (e.context?.context === "fresh" ? ", a sentence not heard before" : "") : "Day Radio · Recall", date: fmtDay(e.at), at: e.at});
+    if (check && got && e.context?.context === "fresh") listening.push({done: true, title: "Understood in a new passage", line: "Today's checks, new sentence", date: fmtDay(e.at), at: e.at});
+  }
+  const byTime = (a, b) => (a.at || "").localeCompare(b.at || "");
+  return {written: written.sort(byTime), listening: listening.sort(byTime)};
+}
+
+// The one line shown after an audio check (J2CheckAnswered): what this check
+// added and that the written record did not move.
+export function evidenceLine(target, {recall = [], events = []} = {}) {
+  const key = keyOf(target);
+  const heard = events.filter(e => e.kind === "exposure" && keyOf(e.target) === key).at(-1);
+  const written = recall.filter(r => keyOf(r.target) === key && r.dimension !== "grammar").sort((a, b) => (b.updatedAt || "").localeCompare(a.updatedAt || ""))[0];
+  const parts = [];
+  if (heard) parts.push("Heard " + fmtDay(heard.at) + " on Day Radio");
+  const writtenPart = written ? "Your written " + (written.dimension === "reading" ? "reading" : "meaning") + " record (checked " + (written.checks === 1 ? "once" : written.checks + " times") + ", " + fmtDay(written.updatedAt) + ") is unchanged." : "Your written record is unchanged.";
+  return (parts.length ? parts.join(" · ") + ". " : "") + writtenPart;
+}

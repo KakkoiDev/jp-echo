@@ -62,3 +62,41 @@ test("back after a gap, Review offers Resume, Shorten today and Adjust the goal 
   assert.match(app, /"\.\/n2-mock\.html\?shorten=90"/);
   assert.match(app, /Resume · today’s plan, 6 h"\),"\.\/n2-mock\.html","button "\+\(dueCount\?"outline":"primary"\)/);
 });
+
+import {evidenceFor, evidenceLine} from "../n2-delayed.js";
+import {radioEvent} from "../day-radio.js";
+import {recallRecord, recallId, todayPlan} from "../n2-study.js";
+test("evidence keeps written and listening apart, in the copy contract's words (J2Evidence)", () => {
+  const target = ["word", "就任", "しゅうにん"];
+  const row = {id: recallId("meaning", target), type: "meaning", item: {target, prompt: "就任", reading: "しゅうにん", answer: "taking office"}};
+  const written = recallRecord(null, row, "instant", new Date("2026-11-21T09:00:00"));
+  const events = [
+    radioEvent({target, kind: "exposure", source: "day-radio", mode: "listen", now: new Date("2026-11-25T09:00:00")}),
+    radioEvent({target, kind: "exposure", source: "day-radio", mode: "listen", now: new Date("2026-11-25T10:00:00")}),
+    radioEvent({target, kind: "recall", grade: "got", source: "delayed-check", mode: "check", detail: {context: "fresh"}, now: new Date("2026-11-26T09:00:00")}),
+  ];
+  const missedByEar = {target, skill: 3, answered: true, correct: false, guessed: false, at: "2026-11-24T10:00:00", paper: "n2-set-7@2026.11-r3"};
+  const ev = evidenceFor(target, {recall: [written], events, evidence: [missedByEar], paperTitle: () => "Mock 07"});
+  assert.deepEqual(ev.written.map(r => r.title), ["Checked once · right"]);
+  assert.deepEqual(ev.listening.map(r => r.title), ["Missed in a dialogue", "Heard 2 times", "Recalled on another day · right", "Understood in a new passage"]);
+  assert.deepEqual(ev.listening.map(r => r.done), [false, true, true, true]);
+  const allowed = /^(Checked once|Recalled on another day|Understood in a new passage|Heard|Missed in a (dialogue|mock)|Caught by ear|Missed by ear)/;
+  assert.ok([...ev.written, ...ev.listening].every(r => allowed.test(r.title)));
+  assert.match(evidenceLine(target, {recall: [written], events}), /Heard 25 Nov on Day Radio\. Your written meaning record \(checked once, 21 Nov\) is unchanged\./);
+});
+
+test("a new learner's day starts with a 20-minute short sample of all four skills (J1Today)", () => {
+  const goal = {goal: 150, firstToday: 0, unchecked: 1500};
+  const plan = todayPlan({days: 12, goal, baseline: true, examDate: new Date(2026, 11, 6), now: new Date(2026, 10, 24, 9)});
+  assert.equal(plan.steps[0].kind, "sample"); assert.equal(plan.steps[0].minutes, 20);
+  assert.ok(plan.minutes <= 360);
+  assert.ok(!todayPlan({days: 12, goal, examDate: new Date(2026, 11, 6), now: new Date(2026, 10, 24, 9)}).steps.some(s => s.kind === "sample"));
+});
+
+test("results: a short session shows a denominator per section; a full paper offers practising its weakest section (J1Done, J2Result)", () => {
+  assert.match(mock, /got \+ " of " \+ questions\.length \+ " right"/);
+  assert.match(mock, /r\.got \+ " of " \+ r\.items\.length/);
+  assert.match(mock, /"Practise listening", "\?view=radio&mode=recall"/);
+  assert.match(page, /id="result-next"[^>]*>Back to the plan/);
+  assert.match(mock, /The line that decided it/);
+});

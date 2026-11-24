@@ -206,7 +206,7 @@ export function capMinutes(steps, budget = DAY_MINUTES) {
 // first sittings on separate days within seven days); a missed checkpoint
 // turns targeted time into repairing its weakest section. A custom first-pass
 // goal (goal.custom) may keep new material going into the last days.
-export function todayPlan({days, checkpoint = null, comprehension = null, goal = {goal: 0, firstToday: 0, unchecked: 0}, weak = 0, running = null, nextMock = null,
+export function todayPlan({days, checkpoint = null, comprehension = null, baseline = false, goal = {goal: 0, firstToday: 0, unchecked: 0}, weak = 0, running = null, nextMock = null,
   lastMockAt = "", latestResults = null, aiReady = false, checks = 0, pace = null, examDate = null, firstPassDate = null, now = new Date()}) {
   const custom = !!(goal.custom && goal.goal && goal.unchecked);
   const sinceMock = lastMockAt ? daysUntil(new Date(now.getFullYear(), now.getMonth(), now.getDate()), new Date(lastMockAt)) : Infinity;
@@ -231,6 +231,9 @@ export function todayPlan({days, checkpoint = null, comprehension = null, goal =
   const steps = [];
   let spare = 0;
 
+  // A new learner starts with a short sample of all four skills (J1Today):
+  // it tells the plan where to start. Its minutes come out of targeted work.
+  if (baseline && !running) steps.push({kind: "sample", glyph: "試", title: "Short sample of all four skills", line: "Your baseline: tells today’s plan where to start", minutes: 20});
   const checkMinutes = checks ? Math.min(b.check, Math.max(5, minutesFor(checks))) : 0;
   spare += b.check - checkMinutes;
   if (checks) steps.push({kind: "check", glyph: "昨", title: "Today's checks", line: checks + " from yesterday · misses and guesses, in print and by ear, in a new context", href: "?view=check", minutes: checkMinutes});
@@ -269,7 +272,7 @@ export function todayPlan({days, checkpoint = null, comprehension = null, goal =
   if (!mockDay) {
     steps.push({kind: "section", section: "reading", glyph: "読", title: "Timed reading", line: "問題10–14 from a set you have not sat · 21 questions, then read why", minutes: b.reading});
     steps.push({kind: "section", section: "listening", glyph: "聴", title: "Listening, one play each", line: "問題1–5 from a set you have not sat · 32 questions", minutes: b.listening});
-    let targeted = targetedBase + spare;
+    let targeted = targetedBase + spare - (baseline && !running ? 20 : 0);
     spare = 0;
     if (latestResults) { steps.push({kind: "review", glyph: "直", title: "Go over the misses", line: "Read why each answer is right, then drill them", href: latestResults, minutes: 20}); targeted -= 20; }
     // The comprehension distinction missed most lately, on unseen passages.

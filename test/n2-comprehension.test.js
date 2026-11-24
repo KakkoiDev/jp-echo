@@ -80,3 +80,15 @@ test("the plan gives the weakest distinction twenty minutes of unseen passages o
   assert.equal(step.tag, "change"); assert.equal(step.minutes, 20); assert.match(step.line, /3 of 5/);
   assert.ok(plan.minutes <= 360);
 });
+
+test("every authored reading and listening question names the line that decides it, copied exactly from its context", () => {
+  const cues = read("../n2-sets/cues.json").cues;
+  let need = 0;
+  for (const set of sets) set.questions.forEach((q, i) => {
+    if (q.skill !== "Reading" && q.skill !== "Listening") return;
+    need++;
+    const c = cues[set.id + "#" + i];
+    assert.ok(typeof c === "string" && c.length >= 4 && c.length <= 80 && q.context.includes(c), set.id + "#" + i);
+  });
+  assert.equal(Object.keys(cues).length, need);
+});

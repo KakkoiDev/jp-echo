@@ -9,7 +9,7 @@
 <link rel="icon" href="./favicon.ico" sizes="32x32"><link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="./apple-touch-icon.png"><link rel="manifest" href="./manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
-<link rel="stylesheet" href="./styles.css?v=184">
+<link rel="stylesheet" href="./styles.css?v=185">
 </head>
 <body class="n2">
 <main id="n2-main">
@@ -125,6 +125,7 @@
     <div id="check-answer" class="n2-answer" hidden><p class="n2-reading" id="check-reading" lang="ja"></p><p class="n2-meaning" id="check-meaning"></p></div>
     <p class="hint" id="check-why"></p>
     <p class="hint" id="check-note"></p>
+    <div class="n2-evidence-after" id="check-evidence" hidden><p class="n2-evidence-kind" id="check-evidence-kind"></p><p class="hint" id="check-evidence-line"></p><button data-ui="button" class="link-button" id="check-evidence-open" type="button">See the evidence</button></div>
   </div>
   <div class="drill-done" id="check-done" hidden><span class="drill-done-seal" lang="ja" aria-hidden="true">確</span><strong id="check-done-title"></strong><p class="hint" id="check-done-line"></p><ul class="drill-missed" id="check-missed"></ul><div class="drill-done-actions"><a class="button primary" href="./n2-mock.html">Back to today's plan</a></div></div>
   <div class="review-actions n2-grades" id="check-actions">
@@ -206,7 +207,7 @@
 <section id="results" hidden>
   <div class="tool-head"><a class="icon-button" href="./n2-mock.html" aria-label="Back to N2"><svg width="18" height="16" viewBox="0 0 18 16" fill="none" aria-hidden="true"><path d="M8 1 1 8l7 7M1 8h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a><span class="tool-titles"><span class="tool-title" id="results-title">Results</span><span class="overline" id="results-date"></span></span></div>
   <div id="scores"></div>
-  <div class="drill-done-actions"><a class="button primary" id="drill-misses" href="?view=recall&amp;queue=weak">Drill my weak items</a><button data-ui="button" class="outline" id="retake" type="button">Take this exam again</button></div>
+  <div class="drill-done-actions n2-result-actions"><a class="button primary" id="result-next" href="./n2-mock.html">Back to the plan</a><a class="button outline" id="result-back" href="./n2-mock.html">Back to the plan</a><a class="link-button" id="drill-misses" href="?view=recall&amp;queue=weak">Drill my weak items</a><button data-ui="button" class="link-button" id="retake" type="button">Take this exam again</button></div>
   <h3 class="rule-heading">Review</h3>
   <div class="chips" role="group" aria-label="Show"><button data-ui="button" type="button" data-show="wrong" aria-pressed="true">Missed and unsure</button><button data-ui="button" type="button" data-show="all" aria-pressed="false">All</button></div>
   <div id="review-items" class="n2-review-list"></div>
@@ -227,6 +228,14 @@
   <div class="n2-breath" id="breath" aria-hidden="true"><span></span></div>
   <p class="n2-breath-cue" id="breath-cue" lang="ja" role="status"></p>
   <div class="dialog-actions"><button data-ui="button" class="quiet" id="breathe-close" type="button">Done</button><button data-ui="button" class="outline" id="breathe-again" type="button">Again</button></div>
+</dialog>
+
+<dialog id="evidence-dialog" class="sheet-dialog n2-evidence" aria-labelledby="evidence-word">
+  <div class="n2-evidence-head"><span class="n2-evidence-word" id="evidence-word" lang="ja"></span><span class="n2-evidence-reading" id="evidence-reading" lang="ja"></span><span class="n2-evidence-meaning" id="evidence-meaning"></span><button data-ui="button" class="icon-button" id="evidence-close" type="button" aria-label="Close"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="m1 1 12 12M13 1 1 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button></div>
+  <p class="hint">Each skill keeps its own record. One never moves another.</p>
+  <h3 class="rule-heading">Written · reading and meaning</h3><ul class="evidence-list" id="evidence-written"></ul>
+  <h3 class="rule-heading">Listening</h3><ul class="evidence-list" id="evidence-listening"></ul>
+  <p class="hint" id="evidence-why"></p>
 </dialog>
 
 <p role="alert" class="hint n2-warning" id="warning"></p>
