@@ -215,8 +215,15 @@ Before considering the change complete:
   `firstCheckForecast` (n2-study.js) size every plan, the coach's included;
   first-check minutes follow `measuredPace`. Timed reading and listening sections
   are adaptive-style papers built from an unsat set (`paper.drill`).
+- **Comprehension is tagged by what decides it.** Every authored reading and
+  listening question has 1–2 reviewed tags from `TAGS` (n2-comprehension.js) in
+  `n2-sets/tags.json`, keyed `n2-set-N#index` (copies keep `source`), built by
+  `tools/n2-build-tags.mjs` and held by `test/n2-comprehension.test.js`. Misses
+  group by tag; drills take unseen tagged questions from unsat sets and never
+  from `HELD_OUT` (sets 19–20, kept for unseen-passage mocks). Scores are
+  practice signals until `docs/N2-REVIEW-SAMPLE.md` has a native review.
 - **The N2 coach and generator act only through app actions.** The coach's
-  plan steps are limited to check / recall / section / radio / mock / generate /
+  plan steps are limited to check / recall / section / drill / radio / mock / generate /
   review / rest / checklist (`STEP_KINDS`); generated questions must name a `BLUEPRINT` 問題
   and pass `validateGenerated`. Without a provider, `todayPlan` still plans.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped

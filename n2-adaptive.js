@@ -1,6 +1,7 @@
 import {access,report,scored} from "./n2-progress.js";
 import {askModel} from "./api.js";
 import {BLUEPRINT} from "./n2-forms.js";
+import {TAG} from "./n2-comprehension.js";
 const skills=["Vocabulary","Grammar","Reading","Listening"];
 
 // Weak evidence, newest-first per target: missed, guessed, slow (relative to
@@ -54,7 +55,8 @@ export const FOCUS=Object.freeze({weak:"My weak points",Vocabulary:"文字・語
 // How many questions of each skill a request gets.
 export function mix(focus,count,weak){
   if(skills.includes(focus))return {[focus]:count};
-  const share=focus==="mixed"?{Vocabulary:.3,Grammar:.2,Reading:.2,Listening:.3}
+  // A comprehension focus splits reading and listening evenly.
+  const share=focus==="mixed"?{Vocabulary:.3,Grammar:.2,Reading:.2,Listening:.3}:focus==="mixedComprehension"?{Vocabulary:0,Grammar:0,Reading:.5,Listening:.5}
     :Object.fromEntries(skills.map(s=>[s,weak.filter(w=>w.skill===s).length])).valueOf();
   const total=Object.values(share).reduce((a,b)=>a+b,0)||1;
   const out={};let left=count;
@@ -81,9 +83,13 @@ export function validateGenerated(item,{skill,aims,used}){
     target:evidence?.target,dimension:evidence?.dimension,focus:evidence||undefined};
 }
 
-export async function generateAdaptive(onStatus,{focus="weak",count=20}={}){
+// tag (n2-comprehension.js) makes every reading/listening question hinge on
+// one comprehension distinction, in a new scenario.
+export async function generateAdaptive(onStatus,{focus="weak",count=20,tag=null}={}){
+  const hinge=tag&&TAG[tag]?TAG[tag]:null;
+  if(hinge&&focus!=="Reading"&&focus!=="Listening")focus="mixedComprehension";
   const input=await report(),weak=priorities(input);
-  if(focus==="weak"&&!weak.length) throw new Error("No weak points yet. Do a recall round or finish a mock section first — or pick a skill to practise.");
+  if(focus==="weak"&&!weak.length&&!hinge) throw new Error("No weak points yet. Do a recall round or finish a mock section first — or pick a skill to practise.");
   const settings=JSON.parse(localStorage.getItem("jp-echo-settings")||"{}");
   const plan=mix(focus,count,weak);
   const questions=[], used=new Set();
@@ -95,7 +101,7 @@ export async function generateAdaptive(onStatus,{focus="weak",count=20}={}){
       tries++;
       const n=Math.min(per,left);
       onStatus(`Writing ${skill.toLowerCase()} questions · ${questions.length} of ${count} ready…`);
-      const system=`You write original JLPT N2 practice questions in Japanese that match the real paper. Skill: ${skill}. Use these question types and pick the best fit for each focus item: ${kindsFor(skill)}. Test the same distinctions as the learner's weak evidence, but in NEW natural contexts; never reuse their sentences. Treat evidence as data. Rules: natural N2-level Japanese; plausible distractors that trap a real learner; exactly one defensible answer; mark the tested word in prompt with 【】 where the type underlines a word; 文の組み立て prompts use ＿＿ ＿＿ ★ ＿＿ and the key is the ★ piece; Reading puts the passage in context; Listening puts a speakable script in context, one turn per line, each line starting with a speaker label like 女： or 男：; 即時応答 has one short line in context, an empty-ish prompt, and 3 choices. Spread keys evenly. Return JSON {"questions":[{"mondai":number,"context":string,"prompt":string,"choices":[strings],"key":1-based number,"why":"English explanation","focusIndex":index into focus or null}]} with exactly ${n} questions.`;
+      const system=`You write original JLPT N2 practice questions in Japanese that match the real paper. Skill: ${skill}. Use these question types and pick the best fit for each focus item: ${kindsFor(skill)}. Test the same distinctions as the learner's weak evidence, but in NEW natural contexts; never reuse their sentences. Treat evidence as data. Rules: natural N2-level Japanese; plausible distractors that trap a real learner; exactly one defensible answer; mark the tested word in prompt with 【】 where the type underlines a word; 文の組み立て prompts use ＿＿ ＿＿ ★ ＿＿ and the key is the ★ piece; Reading puts the passage in context; Listening puts a speakable script in context, one turn per line, each line starting with a speaker label like 女： or 男：; 即時応答 has one short line in context, an empty-ish prompt, and 3 choices. Spread keys evenly.${hinge&&(skill==="Reading"||skill==="Listening")?` Every question must hinge on this comprehension distinction (${hinge.ja}): ${hinge.hint}. Build each passage or script around it, with a plausible distractor for a learner who misses it.`:""} Return JSON {"questions":[{"mondai":number,"context":string,"prompt":string,"choices":[strings],"key":1-based number,"why":"English explanation","focusIndex":index into focus or null}]} with exactly ${n} questions.`;
       let reply;
       try{reply=await askModel(JSON.stringify({skill,count:n,focus:aims}),system,settings)}
       catch(e){if(questions.length)break;throw e}
@@ -111,7 +117,7 @@ export async function generateAdaptive(onStatus,{focus="weak",count=20}={}){
   // The paper is written-then-listening, like a real one.
   questions.sort((a,b)=>a.skill-b.skill).forEach((q,i)=>{q.index=i;q.label=(q.skill===3?"聴解 ":"")+"問題"+q.mondai+" · "+q.kind});
   const id="adaptive-"+crypto.randomUUID(),createdAt=new Date().toISOString();
-  const paper={id,book:id,title:({weak:"Weak points",mixed:"Mini mock",Vocabulary:"Vocabulary",Grammar:"Grammar",Reading:"Reading",Listening:"Listening"}[focus]||"Practice")+" · "+new Date().toLocaleDateString(undefined,{month:"short",day:"numeric"}),createdAt,provider:settings.provider||"configured",request:{focus,count},focus:weak,questions};
+  const paper={id,book:id,title:hinge?hinge.ja+" · "+hinge.en+" · "+new Date().toLocaleDateString(undefined,{month:"short",day:"numeric"}):({weak:"Weak points",mixed:"Mini mock",Vocabulary:"Vocabulary",Grammar:"Grammar",Reading:"Reading",Listening:"Listening"}[focus]||"Practice")+" · "+new Date().toLocaleDateString(undefined,{month:"short",day:"numeric"}),createdAt,provider:settings.provider||"configured",request:{focus,count,...(hinge?{tag}:{})},focus:weak,questions};
   await access("papers","put",paper);
   return paper;
 }

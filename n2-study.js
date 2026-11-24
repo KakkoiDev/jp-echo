@@ -205,7 +205,7 @@ export function capMinutes(steps, budget = DAY_MINUTES) {
 // first sittings on separate days within seven days); a missed checkpoint
 // turns targeted time into repairing its weakest section. A custom first-pass
 // goal (goal.custom) may keep new material going into the last days.
-export function todayPlan({days, checkpoint = null, goal = {goal: 0, firstToday: 0, unchecked: 0}, weak = 0, running = null, nextMock = null,
+export function todayPlan({days, checkpoint = null, comprehension = null, goal = {goal: 0, firstToday: 0, unchecked: 0}, weak = 0, running = null, nextMock = null,
   lastMockAt = "", latestResults = null, aiReady = false, checks = 0, pace = null, examDate = null, firstPassDate = null, now = new Date()}) {
   const custom = !!(goal.custom && goal.goal && goal.unchecked);
   const sinceMock = lastMockAt ? daysUntil(new Date(now.getFullYear(), now.getMonth(), now.getDate()), new Date(lastMockAt)) : Infinity;
@@ -244,7 +244,7 @@ export function todayPlan({days, checkpoint = null, goal = {goal: 0, firstToday:
   // Targeted minutes with nothing to target (no misses, no weak items, no AI)
   // go to first checks instead of leaving the day short.
   const acquire = (!final || custom) && goal.goal > 0 && goal.unchecked;
-  const targetedNeed = (latestResults ? 20 : 0) + (repair ? 30 + (aiReady ? 15 : 0) : aiReady ? 30 : 0);
+  const targetedNeed = (latestResults ? 20 : 0) + (comprehension ? 20 : 0) + (repair ? 30 + (aiReady ? 15 : 0) : aiReady ? 30 : 0);
   if (!mockDay && !weak && acquire) spare += Math.max(0, b.targeted - targetedNeed);
   const targetedBase = !mockDay && !weak && acquire ? Math.min(b.targeted, targetedNeed) : b.targeted;
   let forecast = null;
@@ -267,6 +267,11 @@ export function todayPlan({days, checkpoint = null, goal = {goal: 0, firstToday:
     let targeted = targetedBase + spare;
     spare = 0;
     if (latestResults) { steps.push({kind: "review", glyph: "直", title: "Go over the misses", line: "Read why each answer is right, then drill them", href: latestResults, minutes: 20}); targeted -= 20; }
+    // The comprehension distinction missed most lately, on unseen passages.
+    if (comprehension && targeted >= 20) {
+      steps.push({kind: "drill", tag: comprehension.id, glyph: "解", title: "Comprehension · " + comprehension.ja, line: comprehension.en + " · " + comprehension.wrong + " of " + comprehension.n + " missed lately · unseen passages", minutes: 20});
+      targeted -= 20;
+    }
     if (repair) {
       steps.push({kind: "review", glyph: "直", title: "Repair " + repair.name, line: "Find the decisive cue in the answers you missed or guessed. Then try a different example.",
         href: "?book=" + latest.attempt.book + "&attempt=" + encodeURIComponent(latest.attempt.id), minutes: Math.max(0, Math.min(30, targeted))});

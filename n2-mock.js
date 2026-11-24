@@ -5,6 +5,7 @@ import {SKILLS,SKILL_JA,SECTIONS,PASS_TOTAL,SECTION_MIN,SECTION_MAX,estimate,spr
 import {flagSvg} from "./components.js";
 import {speakOnce,speakAndWait,japaneseVoices} from "./speech.js";
 import {radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
+import {TAG,TAGS,HELD_OUT,CAUSES,comprehensionStats,weakestTag,tagDrill,attemptTags,tagsOf,sourceOf} from "./n2-comprehension.js";
 import {delayedChecks,checkItems,checkAsk,contextNote,sentenceParts,checkDetail,audioGrade,delayedAccuracy,CHECK_SOURCE,WHY_LINE} from "./n2-delayed.js";
 
 // Official workbook answer numbering. Listening examples are excluded.
@@ -70,6 +71,12 @@ async function everyExample() {
   const merged = new Map(decks);
   for (const [k, list] of setMap) merged.set(k, [...(merged.get(k) || []), ...list]);
   return merged;
+}
+// Reviewed comprehension tags for authored reading and listening questions.
+let tagCache = null;
+async function tagMap() {
+  if (!tagCache) tagCache = await json("./n2-sets/tags.json").then(t => t.tags || {}).catch(() => ({}));
+  return tagCache;
 }
 // Active time on one item: it runs only while the page is visible.
 function activeClock() {
@@ -229,13 +236,14 @@ async function hub() {
   const checks = delayedChecks({inventory, recall: data.recall, evidence, events: data.events}).length;
   const pace = measuredPace(data.recall);
   const checkpoint = sprintCheckpoint(attempts, papers, bookIds);
+  const comprehension = weakestTag(comprehensionStats({papers: data.papers, evidence, tagMap: await tagMap()}));
   const latestRun = checkpoint.recent[0];
   const weakest = latestRun && [...latestRun.sections].sort((a,b)=>a.rate-b.rate)[0];
-  const base = days < 0 ? {phase:"finished", headline:"Your exam date has passed. Set another goal or continue reviewing.", steps:[{kind:"recall",glyph:"憶",title:"Continue recall",line:"Review your N2 targets",href:"?view=recall"}]} : todayPlan({days, goal, checkpoint, weak: weakAll, aiReady, checks, pace, examDate: exam, firstPassDate: planGoal?.days ? firstPassEnd(planGoal) : null,
+  const base = days < 0 ? {phase:"finished", headline:"Your exam date has passed. Set another goal or continue reviewing.", steps:[{kind:"recall",glyph:"憶",title:"Continue recall",line:"Review your N2 targets",href:"?view=recall"}]} : todayPlan({days, goal, checkpoint, comprehension, weak: weakAll, aiReady, checks, pace, examDate: exam, firstPassDate: planGoal?.days ? firstPassEnd(planGoal) : null,
     running: live && {book: live.book, title: papers.get(live.paper || live.book)?.title || titleOf(live.book), progress: live.answers.filter(Boolean).length + " of " + live.answers.length + " answered" + (live.phase === "rest" ? " · listening next" : "")},
     nextMock: next && {id: next, title: titleOf(next)}, lastMockAt: finished[0]?.completedAt,
     latestResults: latestDone && localDay(new Date(latestDone.completedAt)) === localDay() ? "?book=" + latestDone.book + "&attempt=" + encodeURIComponent(latestDone.id) : null});
-  const context = {data, evidence, goal, weakAll, days, base, aiReady, next, latestDone};
+  const context = {data, evidence, goal, weakAll, days, base, aiReady, next, latestDone, comprehension};
   const coached = readCoachPlan();
   drawPlan(coached?.plan || base, context);
   drawForecast(base, data, goal);
@@ -268,6 +276,7 @@ async function hub() {
   if (latestRun && !latestRun.meets) box.append(el("a", {href:"?book=" + latestRun.attempt.book + "&attempt=" + encodeURIComponent(latestRun.attempt.id),
     text:"Review " + weakest.name + " first · " + weakest.correct + "/" + weakest.count + " confident answers"}));
   else if (!checkpoint.met && days > 1 && next) box.append(el("a",{href:"?book="+next,text:latestRun ? "Next checkpoint · take a fresh mock on another day" : "Establish your baseline · take a fresh mock"}));
+  if (comprehension) box.append(el("p", {class: "hint", text: "Comprehension to repair: " + comprehension.ja + " " + comprehension.en.toLowerCase() + " · " + comprehension.wrong + " of " + comprehension.n + " missed or guessed in the last two weeks."}));
   const cov = coverage(inventory, data.recall, evidence);
   $("coverage").replaceChildren(...[["meaning", "語彙", "Word meanings"], ["reading", "読み", "Kanji readings"], ["grammar", "文法", "Grammar"]].map(([type, ja, en]) => {
     const c = cov[type];
@@ -299,8 +308,8 @@ async function hub() {
 
   // Coach and history
   $("adaptive-list").replaceChildren(...data.papers.filter(p => p.id.startsWith("adaptive-")).map(p =>
-    row({glyph: p.drill ? (p.drill.section === "listening" ? "聴" : "読") : "狙", title: p.title,
-      line: p.drill ? p.questions.length + " questions · timed section" : p.questions.length + (p.request?.count > p.questions.length ? " of " + p.request.count : "") + " targeted questions", href: "?book=" + p.id, chip: status(p.id).chip})));
+    row({glyph: p.drill?.tag ? "解" : p.drill ? (p.drill.section === "listening" ? "聴" : "読") : "狙", title: p.title,
+      line: p.drill?.tag ? p.questions.length + " questions · comprehension drill" : p.drill ? p.questions.length + " questions · timed section" : p.questions.length + (p.request?.count > p.questions.length ? " of " + p.request.count : "") + " targeted questions", href: "?book=" + p.id, chip: status(p.id).chip})));
   $("history-list").replaceChildren(...attempts.filter(a => a.phase === "results").map(a => {
     const p = papers.get(a.paper || a.book), e = p && estimate(p, a);
     return row({glyph: "歴", title: p?.title || titleOf(a.book), line: dateLabel(a.completedAt || a.startedAt) + (e ? " · " + e.total + " / 180" : ""), href: "?book=" + a.book + "&attempt=" + encodeURIComponent(a.id)});
@@ -311,7 +320,7 @@ async function hub() {
 
 /* ───────── Coach ───────── */
 const COACH_KEY = "echo-n2-coach";
-const STEP_KINDS = ["check", "recall", "section", "radio", "mock", "generate", "review", "rest", "checklist"];
+const STEP_KINDS = ["check", "recall", "section", "drill", "radio", "mock", "generate", "review", "rest", "checklist"];
 function readCoachPlan() {
   try { const saved = JSON.parse(localStorage.getItem(COACH_KEY) || "null"); return saved?.day === localDay() ? saved : null; } catch { return null; }
 }
@@ -345,6 +354,7 @@ function drawPlan(plan, ctx) {
     const href = stepHref(step, ctx);
     const onclick = step.kind === "generate" ? () => openGenerator({aiReady: ctx.aiReady, focus: step.focus, count: step.count})
       : step.kind === "section" ? () => startSection(step.section, ctx)
+      : step.kind === "drill" ? () => startTagDrill(step.tag, ctx)
       : step.kind === "rest" ? () => { $("rest-zone").hidden = false; $("rest-zone").scrollIntoView({behavior: "smooth"}); }
       : step.kind === "checklist" ? () => { $("checklist-zone").hidden = false; $("checklist-zone").scrollIntoView({behavior: "smooth"}); } : undefined;
     const node = row({glyph: step.glyph || String(i + 1), title: step.title, line: [step.line, step.minutes ? step.minutes + " min" : ""].filter(Boolean).join(" · "), href: href || undefined, onclick});
@@ -378,14 +388,14 @@ async function coach(ctx) {
     const {askModel} = await import("./api.js");
     const input = {today: localDay(), daysUntilExam: ctx.days, trainingGoal: readGoal(), minutesAvailableIncludingBreaks: DAY_MINUTES, coverage: cov, dailyGoal: ctx.goal, weakItemCount: ctx.weakAll, attempts, misses, weakChecks: weak,
       delayedChecksToday: ctx.base.steps.find(s => s.kind === "check") ? Number.parseInt(ctx.base.steps.find(s => s.kind === "check").line, 10) : 0,
-      secondsPerCheck: ctx.base.pace, nextDayRecall: delayedAccuracy({recall: data.recall, events: data.events}),
+      secondsPerCheck: ctx.base.pace, comprehensionByTag: comprehensionStats({papers: data.papers, evidence, tagMap: await tagMap()}).filter(t => t.n).map(t => ({tag: t.id, answered: t.n, missedOrGuessed: t.wrong})), nextDayRecall: delayedAccuracy({recall: data.recall, events: data.events}),
       standardPlan: ctx.base.steps.map(s => ({kind: s.kind, title: s.title, minutes: s.minutes || 0}))};
-    const system = `You are a calm, precise JLPT N2 coach inside the Echo app. Use only the supplied observations; Echo's mock scores are uncalibrated estimates. Plan today's study in the order the learner should do it, and say what to study next and why. The whole plan, breaks included, must fit 360 minutes; give every step realistic minutes and include breaks as a rest step. Each step must be one of these app actions: check (today's delayed checks of yesterday's misses — put it first when delayedChecksToday > 0), recall (type: meaning|reading|grammar, queue: daily|weak|new), section (section: reading|listening — a timed section from a set not yet sat; keep some reading and listening every day), radio (Day Radio by ear, mode: listen|recall), mock (the next full mock, 155 minutes), generate (a practice exam: focus weak|Vocabulary|Grammar|Reading|Listening|mixed, count 10|20|35), review (the latest results), rest, checklist. Use secondsPerCheck to size recall steps. In the last three days avoid new material unless trainingGoal sets a first-pass end later than that. Write English, kind and direct, no filler. Return JSON {"headline":string,"diagnosis":string (2-4 sentences: strongest, weakest, the one thing that will raise the score most),"steps":[{"kind":string,"title":string,"line":string (what and why, one sentence),"minutes":number,"type"?:string,"queue"?:string,"focus"?:string,"count"?:number}]} with 4-7 steps.`;
+    const system = `You are a calm, precise JLPT N2 coach inside the Echo app. Use only the supplied observations; Echo's mock scores are uncalibrated estimates. Plan today's study in the order the learner should do it, and say what to study next and why. The whole plan, breaks included, must fit 360 minutes; give every step realistic minutes and include breaks as a rest step. Each step must be one of these app actions: check (today's delayed checks of yesterday's misses — put it first when delayedChecksToday > 0), recall (type: meaning|reading|grammar, queue: daily|weak|new), section (section: reading|listening — a timed section from a set not yet sat; keep some reading and listening every day), drill (tag: one of ${TAGS.map(t => t.id).join("|")} — unseen authored passages that hinge on that comprehension distinction; use comprehensionByTag), radio (Day Radio by ear, mode: listen|recall), mock (the next full mock, 155 minutes), generate (a practice exam: focus weak|Vocabulary|Grammar|Reading|Listening|mixed, count 10|20|35), review (the latest results), rest, checklist. Use secondsPerCheck to size recall steps. In the last three days avoid new material unless trainingGoal sets a first-pass end later than that. Write English, kind and direct, no filler. Return JSON {"headline":string,"diagnosis":string (2-4 sentences: strongest, weakest, the one thing that will raise the score most),"steps":[{"kind":string,"title":string,"line":string (what and why, one sentence),"minutes":number,"type"?:string,"queue"?:string,"focus"?:string,"count"?:number}]} with 4-7 steps.`;
     const reply = await askModel(JSON.stringify(input), system, settings);
-    const glyphs = {check: "昨", recall: "憶", section: "読", radio: "耳", mock: "試", generate: "狙", review: "直", rest: "休", checklist: "券"};
+    const glyphs = {check: "昨", recall: "憶", section: "読", drill: "解", radio: "耳", mock: "試", generate: "狙", review: "直", rest: "休", checklist: "券"};
     const steps = capMinutes((Array.isArray(reply?.steps) ? reply.steps : []).filter(s => STEP_KINDS.includes(s?.kind) && typeof s.title === "string").slice(0, 9).map(s => ({
       kind: s.kind, glyph: glyphs[s.kind], title: s.title.slice(0, 80), line: String(s.line || "").slice(0, 200), minutes: Math.min(240, Math.max(0, Number(s.minutes) || 0)),
-      type: s.type, queue: s.queue, focus: s.focus, mode: s.mode, section: s.section === "listening" ? "listening" : "reading", count: [10, 20, 35].includes(s.count) ? s.count : 20})).map(s => s.kind === "section" && s.section === "listening" ? {...s, glyph: "聴"} : s));
+      type: s.type, queue: s.queue, focus: s.focus, mode: s.mode, section: s.section === "listening" ? "listening" : "reading", tag: TAG[s.tag] ? s.tag : (ctx.comprehension?.id || "detail"), count: [10, 20, 35].includes(s.count) ? s.count : 20})).map(s => s.kind === "section" && s.section === "listening" ? {...s, glyph: "聴"} : s));
     if (!steps.length) throw new Error("The coach's answer had no usable steps.");
     const total = steps.reduce((n, s) => n + s.minutes, 0);
     const plan = {headline: String(reply.headline || "Today's plan").slice(0, 120) + " · about " + Math.round(total / 30) / 2 + " hours, breaks included", steps};
@@ -397,12 +407,13 @@ async function coach(ctx) {
   finally { button.disabled = false; }
 }
 let generating = null;
-function openGenerator({aiReady, focus = "weak", count = 20} = {}) {
+function openGenerator({aiReady, focus = "weak", count = 20, tag = null} = {}) {
   if (!aiReady) { warn("Add an AI provider and key in Echo Settings to generate exams."); return; }
   import("./n2-adaptive.js").then(({FOCUS, generateAdaptive}) => {
-    let pick = Object.hasOwn(FOCUS, focus) ? focus : "weak", size = [10, 20, 35].includes(count) ? count : 20;
+    let pick = Object.hasOwn(FOCUS, focus) ? focus : "weak", size = [10, 20, 35].includes(count) ? count : 20, hinge = TAG[tag] ? tag : "";
     const chips = () => {
       $("generate-focus").replaceChildren(...Object.entries(FOCUS).map(([k, label]) => el("button", {type: "button", "data-ui": "button", "aria-pressed": String(k === pick), onclick: () => { pick = k; chips(); }, text: label})));
+      $("generate-tag").replaceChildren(...[["", "None"], ...TAGS.map(t => [t.id, t.ja + " " + t.en])].map(([k, label]) => el("button", {type: "button", "data-ui": "button", "aria-pressed": String(k === hinge), onclick: () => { hinge = k; chips(); }, text: label})));
       $("generate-count").replaceChildren(...[10, 20, 35].map(n => el("button", {type: "button", "data-ui": "button", "aria-pressed": String(n === size), onclick: () => { size = n; chips(); }, text: n + " questions · ~" + Math.round(n * 1.6) + " min"})));
     };
     chips();
@@ -412,7 +423,7 @@ function openGenerator({aiReady, focus = "weak", count = 20} = {}) {
       $("generate-go").disabled = true;
       const run = generating = Symbol("run");
       try {
-        const paper = await generateAdaptive(t => { if (run === generating) $("generate-status").textContent = t; }, {focus: pick, count: size});
+        const paper = await generateAdaptive(t => { if (run === generating) $("generate-status").textContent = t; }, {focus: pick, count: size, tag: hinge || null});
         const short = paper.questions.length < size;
         if (run !== generating) return;
         // A provider that stops early still leaves a usable paper: say how many.
@@ -587,17 +598,43 @@ async function startSection(section, ctx) {
   const sat = new Set(data.attempts.map(a => a.book));
   const drilled = data.papers.filter(p => p.drill?.section === section).sort((a, b) => (a.createdAt || "").localeCompare(b.createdAt || ""));
   const used = new Set(drilled.map(p => p.drill.set));
-  const sets = bookIds.filter(realistic).reverse();
+  const sets = bookIds.filter(realistic).filter(x => !HELD_OUT.includes(x)).reverse();
   const id = sets.find(x => !used.has(x) && !sat.has(x)) || sets.find(x => !used.has(x)) || drilled[0]?.drill.set;
   if (!id) { warn("No set is available for a timed " + spec.en.toLowerCase() + " section on this device."); return; }
   try {
     const set = await json(setFile(id));
-    const questions = realisticRows(set).filter(q => q.skill === spec.skill).map((q, index) => ({...q, index}));
+    const questions = realisticRows(set).filter(q => q.skill === spec.skill).map((q, index) => ({...q, source: id + "#" + q.index, index}));
     const paperId = "adaptive-" + crypto.randomUUID(), createdAt = new Date().toISOString();
     await access("papers", "put", {id: paperId, book: paperId, title: spec.ja + " · Set " + titleOf(id), edition: SETS_EDITION, createdAt,
       drill: {set: id, section}, minutes: spec.minutes, questions});
     location.assign("?book=" + paperId);
   } catch (e) { warn("Could not prepare the section: " + e.message); }
+}
+
+/* ───────── Comprehension drills ───────── */
+// Unseen authored questions that hinge on one distinction (an exception, a
+// change of plan…), each with its whole passage or script. Held-out forms and
+// sets already sat are left alone; without a pool, the AI writes new ones.
+async function startTagDrill(tag, ctx) {
+  const info = TAG[tag]; if (!info) return;
+  await materials();
+  const {data} = ctx;
+  try {
+    const [map, sets] = await Promise.all([tagMap(), Promise.all(Object.keys(themes).map(id => json(setFile(id)).then(set => ({...set, id})).catch(() => null)))]);
+    const seen = new Set(data.papers.filter(p => p.drill?.tag).flatMap(p => p.questions.map(q => q.source)));
+    const picks = tagDrill({tag, sets: sets.filter(Boolean), tagMap: map, exclude: new Set(data.attempts.map(a => a.book)), seen});
+    if (!picks.length) {
+      if (ctx.aiReady) { openGenerator({aiReady: true, focus: "mixed", count: 10, tag}); return; }
+      warn("No unseen passages left for " + info.en.toLowerCase() + ". Add an AI provider to write new ones.");
+      return;
+    }
+    const rows = realisticRows({questions: picks.map(p => p.q)}).map((q, index) => ({...q, index, source: picks[index].source}));
+    const written = rows.filter(q => q.skill !== 3).length, listening = rows.length - written;
+    const paperId = "adaptive-" + crypto.randomUUID();
+    await access("papers", "put", {id: paperId, book: paperId, title: info.ja + " · " + info.en, edition: SETS_EDITION, createdAt: new Date().toISOString(),
+      drill: {tag}, minutes: {written: Math.max(5, Math.ceil(written * 2.5)), listening: Math.max(5, listening * 2)}, questions: rows});
+    location.assign("?book=" + paperId);
+  } catch (e) { warn("Could not prepare the drill: " + e.message); }
 }
 
 /* ───────── Today's checks ───────── */
@@ -873,7 +910,7 @@ async function exam() {
     catch { warn("An earlier unfinished attempt could not be moved aside; this sitting will not be saved."); }
   }
 
-  const minutes = phase => paper.minutes ? paper.minutes : adaptive ? Math.ceil((phase === "written" ? written : questions.length - written) * 1.5) : (phase === "written" ? 105 : 50);
+  const minutes = phase => paper.minutes ? (typeof paper.minutes === "object" ? paper.minutes[phase] || 5 : paper.minutes) : adaptive ? Math.ceil((phase === "written" ? written : questions.length - written) * 1.5) : (phase === "written" ? 105 : 50);
   function persist() {
     if (archivedView || state.phase === "ready") return;
     try {
@@ -986,10 +1023,17 @@ async function exam() {
     $("results-title").textContent = paper.title;
     $("results-date").textContent = "Finished " + dateLabel(state.completedAt) + (archivedView ? " · earlier attempt" : "");
     $("scores").replaceChildren(scoreCard(paper, state), slowest());
+    tagMap().then(map => {
+      const slips = attemptTags({paper, attempt: state, tagMap: map});
+      if (!slips.length) return;
+      $("scores").append(el("details", {class: "n2-more", open: true}, el("summary", {text: "Where comprehension slipped"}),
+        el("ol", {class: "n2-times"}, ...slips.map(t => el("li", {}, el("span", {lang: "ja", text: t.ja}), " " + t.en + " · " + t.wrong + " of " + t.n + " missed or unsure")))));
+      results.tags = map; draw();
+    });
     $("retake").hidden = archivedView;
     $("script").hidden = native; $("script").href = bookUrl + "script.pdf";
     let filter = "wrong";
-    const draw = () => {
+    var draw = () => {
       document.querySelectorAll("#results [data-show]").forEach(b => b.setAttribute("aria-pressed", b.dataset.show === filter));
       const items = questions.filter(q => filter === "all" || state.answers[q.index] !== q.key || state.guesses[q.index]);
       $("review-items").replaceChildren(...(items.length ? items.map(reviewItem) : [el("div", {class: "empty-panel"}, el("strong", {text: "Clean sheet"}), el("span", {text: "Every answer was correct and confident."}))]));
@@ -1004,6 +1048,21 @@ async function exam() {
     return el("details", {class: "n2-more"}, el("summary", {text: "Time · " + total + " min in all · slowest questions"}),
       el("ol", {class: "n2-times"}, ...top.map(q => el("li", {}, SKILLS[q.skill] + " · " + q.label + " · " + Math.round(state.time[q.index] / 1000) + "s"))));
   }
+  const results = {tags: null};
+  // One tap says why a comprehension answer went wrong; it stays on the attempt.
+  async function setCause(q, cause) {
+    state.causes = {...(state.causes || {}), [q.index]: cause};
+    if (archivedView) { try { await access("history", "put", state); } catch (e) { warn("Could not save: " + e.message); return; } }
+    else persist();
+  }
+  function causeRow(q) {
+    const pick = state.causes?.[q.index];
+    const group = el("div", {class: "chips", role: "group", "aria-label": "Why it went wrong"});
+    const drawChips = () => group.replaceChildren(...CAUSES.map(([id, label]) => el("button", {type: "button", "data-ui": "button", "aria-pressed": String((state.causes?.[q.index]) === id), text: label,
+      onclick: async () => { await setCause(q, id); drawChips(); }})));
+    drawChips();
+    return el("div", {class: "n2-cause"}, el("p", {class: "hint", text: pick ? "Why it went wrong" : "Why did this one go wrong?"}), group);
+  }
   function reviewItem(q) {
     const answer = state.answers[q.index], right = answer === q.key, unsure = state.guesses[q.index];
     const chip = right ? (unsure ? {text: "Unsure", kind: "learning"} : {text: "Correct", kind: ""}) : {text: answer ? "Missed" : "Blank", kind: "due"};
@@ -1014,7 +1073,10 @@ async function exam() {
     if (native) {
       if (q.context) item.append(el("p", {class: "n2-passage small", lang: "ja", text: (q.skill === 3 ? "Script · " : "") + q.context}));
       item.append(el("ol", {class: "n2-review-choices"}, ...q.choices.map((c, i) => el("li", {lang: "ja", class: i + 1 === q.key ? "right" : i + 1 === answer ? "picked" : ""}, c))));
+      const tags = results.tags ? tagsOf(results.tags, sourceOf(paper, q)) : [];
+      if (tags.length) item.append(el("p", {class: "hint", text: "Hinges on: " + tags.map(t => TAG[t].ja + " " + TAG[t].en.toLowerCase()).join(" · ")}));
       if (q.why) item.append(el("p", {class: "n2-why", text: q.why}));
+      if ((q.skill === 2 || q.skill === 3) && (!right || unsure)) item.append(causeRow(q));
       if (q.skill === 3) item.append(el("button", {class: "link-button", type: "button", text: "Play the script", onclick: () => playScript(listeningLines(q))}));
     }
     return item;
@@ -1030,10 +1092,11 @@ async function exam() {
   }
   function renderIntro() {
     $("set-title").textContent = paper.title;
-    const writtenPart = paper.drill?.section === "reading" ? ["読解", "Reading"] : ["言語知識・読解", "Vocabulary, grammar, reading"];
+    const writtenPart = paper.drill?.section === "reading" || paper.drill?.tag ? ["読解", "Reading"] : ["言語知識・読解", "Vocabulary, grammar, reading"];
     const parts = [[0, written, ...writtenPart], [written, questions.length, "聴解", "Listening"]].filter(([a, b]) => b > a);
-    $("intro-plan").replaceChildren(...parts.map(([a, b, ja, en], i) => el("li", {}, el("span", {lang: "ja", class: "n2-meter-ja", text: ja}), el("span", {text: en + " · " + (b - a) + " questions"}), el("span", {class: "n2-meter-n", text: minutes(i === 0 && written ? "written" : "listening") + " min"}))));
-    $("intro-copy").textContent = paper.drill ? (paper.drill.section === "listening" ? "One section, timed. Play each script once, as the hall does. Mark a question unsure with the flag; read why each answer is right at the end." : "One section, timed: about the pace the real paper leaves for reading. Mark a question unsure with the flag; read why each answer is right at the end.")
+    $("intro-plan").replaceChildren(...parts.map(([a, b, ja, en], i) => el("li", {}, el("span", {lang: "ja", class: "n2-meter-ja", text: ja}), el("span", {text: en + " · " + (b - a) + (b - a === 1 ? " question" : " questions")}), el("span", {class: "n2-meter-n", text: minutes(i === 0 && written ? "written" : "listening") + " min"}))));
+    $("intro-copy").textContent = paper.drill?.tag ? "Unseen passages that all hinge on one thing: " + TAG[paper.drill.tag].hint + ". Find the line that decides each answer; the reasons come at the end."
+      : paper.drill ? (paper.drill.section === "listening" ? "One section, timed. Play each script once, as the hall does. Mark a question unsure with the flag; read why each answer is right at the end." : "One section, timed: about the pace the real paper leaves for reading. Mark a question unsure with the flag; read why each answer is right at the end.")
       : adaptive ? "Questions written for your weak points. Topics come from your saved evidence." : native ? "One sitting, timed like the real paper, with a break before listening. Mark a question unsure with the flag." : "The publisher's booklet opens beside the answer sheet. Its audio needs internet.";
     $("start").textContent = "Start · " + minutes(firstPhase) + " min";
     $("intro-note").textContent = "Leaving keeps your answers. The timer keeps running, as it would in the hall.";
