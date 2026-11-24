@@ -158,6 +158,8 @@ Before considering the change complete:
   Settings → Backup → Link another device seals `{sync: {token, gist}}` (and,
   if chosen, the AI keys) the same way into `#link=…`, valid for one day; on
   arrival the gist sync is switched on and a first sync pulls everything.
+  The sheet also shows that link as a QR (`link-core-qr.js`, ScanCode); the
+  code is never in the QR.
   Linked keys are the learner's own, so they are not marked `sharedKey`.
 - **The gist is a two-way sync of three files** (sync.js). `echo-backup.json`
   is the library and `buildBackup()` is its only producer (Export downloads

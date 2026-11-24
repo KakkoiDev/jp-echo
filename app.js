@@ -41,6 +41,7 @@ const SETTINGS_TITLES={main:"Settings",ai:"AI service",speech:"Speech recognitio
 let settingsPage="main",settingsReturn="practice";
 import {parseRoute,routeFor} from "./routes.js";
 import {sealKey,openKey,readToken,isSupported as keyShareSupported} from "./key-share.js";
+import {qrSvg} from "./link-core-qr.js";
 import {mergeCatalogues,readCatalogues,saveCatalogues} from "./catalogues.js";
 let importedCatalogues=readCatalogues();
 function applyCatalogues(){setImportedWords(importedCatalogues.words);setImportedGrammar([...(importedCatalogues.grammar||[]),...(importedCatalogues.references||[]).filter(entry=>entry.kind==="grammar").map(entry=>({id:entry.id,title:entry.term,level:"Custom",hint:entry.text.slice(0,160),explanation:entry.text,origin:"custom",sourceUrl:entry.sourceUrl,sourceLabel:entry.sourceLabel}))])}
@@ -2903,9 +2904,11 @@ $("#invite-dialog").addEventListener("close",()=>{invite.sealed=null;$("#invite-
 // into "#link=…". The unlock code is shown here only. It opens for 24 hours.
 let linkSeal=null;
 function linkPayload(){const keys=$("#link-keys").checked?shareableKey():null;return {...(keys||{}),sync:{token:settings.gistToken,gist:settings.gistUrl}}}
-async function refreshLink(){$("#link-copy").textContent=t("Copy link");$("#link-code").textContent="…";$("#link-url").value="";
+async function refreshLink(){$("#link-copy").textContent=t("Copy link");$("#link-code").textContent="…";$("#link-url").value="";$("#link-qr").innerHTML="";
   linkSeal=await sealKey(linkPayload(),1);const url=new URL("/",location.origin);url.searchParams.set("install","1");url.hash="link="+linkSeal.token;
-  $("#link-code").textContent=linkSeal.code;$("#link-copy-code").textContent=t("Copy code");$("#link-url").value=url.href}
+  $("#link-code").textContent=linkSeal.code;$("#link-copy-code").textContent=t("Copy code");$("#link-url").value=url.href;
+  // The QR carries the link only; the code stays on this screen, typed there by hand.
+  $("#link-qr").innerHTML=qrSvg(url.href,{ecc:"L",dark:"currentColor",light:null,label:t("Device link as a QR code")})}
 async function openLinkDialog(){if(!(settings.gistToken&&parseGistId(settings.gistUrl)))return;const keys=shareableKey();
   $("#link-keys-row").hidden=!keys;$("#link-keys").checked=!!keys;$("#link-keys-which").textContent=keys?sharedKeysLabel(keys).replace(/^./,c=>c.toUpperCase()):"";
   $("#link-share").hidden=!(navigator.share&&matchMedia("(pointer: coarse)").matches);
@@ -2918,7 +2921,7 @@ $("#link-copy-code").onclick=()=>{if(linkSeal)copyText(linkSeal.code,$("#link-co
 $("#link-share").onclick=async()=>{try{await navigator.share({title:"Echo",url:$("#link-url").value})}catch(error){if(error?.name!=="AbortError")$("#link-copy").click()}};
 $("#link-done").onclick=()=>$("#link-dialog").close();
 $("#link-dialog").addEventListener("click",event=>{if(event.target===$("#link-dialog"))$("#link-dialog").close()});
-$("#link-dialog").addEventListener("close",()=>{linkSeal=null;$("#link-url").value="";$("#link-code").textContent="…"});
+$("#link-dialog").addEventListener("close",()=>{linkSeal=null;$("#link-url").value="";$("#link-code").textContent="…";$("#link-qr").innerHTML=""});
 // Arriving from an invite: ?install=1 offers to install once (then the
 // parameter is dropped), #key=… asks for the unlock code. The key is
 // decrypted here and saved like a key typed in Settings, as an explicit save;

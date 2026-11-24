@@ -1,4 +1,4 @@
-// Vendored from KakkoiDev/link-core v0.1.0 (commit 99ff9ffdc707c7ea4056dd9ce566d591a763ddf2),
+// Vendored from KakkoiDev/link-core v0.2.0 (commit 4551c013d417307efe46f69980391b54305556cf),
 // link-core.js, verbatim below this header. Change it in link-core first and
 // bring the copy over in the same change; Echo's own rules live in key-share.js.
 
@@ -11,7 +11,7 @@
 // code that the sender passes on separately.
 //
 //   unlock code ──PBKDF2-SHA256 (600k rounds, random salt)──▶ AES-256 key
-//   {…payload, v: 1, exp?} ──AES-GCM (random IV, app as associated data)──▶ ciphertext
+//   {…payload, v: 1, exp?} ──deflate if shorter──AES-GCM (random IV, app as associated data)──▶ ciphertext
 //   link: https://app.example/#key=v1.<salt>.<iv>.<ciphertext>   (base64url)
 //
 // The salt and IV are random per link and not secret. Everything depends on
@@ -22,6 +22,7 @@
 // is enforced by the opening app: it stops casual reuse, not a determined
 // holder of the link and the code.
 //
+// The exact format, with test vectors, is SPEC.md.
 // Zero dependencies; Web Crypto only (browsers in a secure context, Node 20+).
 
 export const LINK_VERSION = "v1";
@@ -80,11 +81,49 @@ async function deriveAesKey(code, salt) {
   );
 }
 
+// The plaintext's first byte says how the body is stored (SPEC.md):
+// "{" (0x7B) is the JSON itself, as every v0.1 link has it; 0x00 is followed
+// by the JSON compressed with deflate-raw. Old links open unchanged.
+const PLAIN_JSON = 0x7b, PLAIN_DEFLATE = 0x00;
+// An opened link never inflates past this: a link is a few hundred bytes.
+const MAX_BODY = 65536;
+const canCompress = () => typeof CompressionStream === "function";
+
+async function deflate(bytes) {
+  const stream = new Blob([bytes]).stream().pipeThrough(new CompressionStream("deflate-raw"));
+  return new Uint8Array(await new Response(stream).arrayBuffer());
+}
+
+async function inflate(bytes) {
+  if (typeof DecompressionStream !== "function") throw new LinkError("unsupported");
+  const reader = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw")).getReader();
+  const chunks = [];
+  let size = 0;
+  try {
+    for (;;) {
+      const {done, value} = await reader.read();
+      if (done) break;
+      size += value.length;
+      if (size > MAX_BODY) throw new Error("too large");
+      chunks.push(value);
+    }
+  } catch {
+    reader.cancel().catch(() => {});
+    throw new LinkError("malformed");
+  }
+  const out = new Uint8Array(size);
+  let at = 0;
+  for (const chunk of chunks) { out.set(chunk, at); at += chunk.length; }
+  return out;
+}
+
 // payload: any JSON object. app: the associated data that binds the link to
-// one app (keep it fixed forever: changing it orphans every link already sent).
-// days: lifetime, or 0 for no expiry. Returns {token, code}: the token goes in
-// the #fragment, the code is shown to the sender only.
-export async function sealLink(payload, {app, days = 0, now = Date.now()} = {}) {
+// one app (keep it fixed; to rename, see openLink's previousApps).
+// days: lifetime, or 0 for no expiry. compress: deflate the body first when
+// that makes the link shorter (default) or never (false).
+// Returns {token, code}: the token goes in the #fragment, the code is shown
+// to the sender only.
+export async function sealLink(payload, {app, days = 0, now = Date.now(), compress = true} = {}) {
   const aad = associatedData(app);
   if (!isLinkSupported()) throw new LinkError("unsupported");
   const code = makeUnlockCode();
@@ -92,8 +131,13 @@ export async function sealLink(payload, {app, days = 0, now = Date.now()} = {}) 
   const iv = crypto.getRandomValues(new Uint8Array(12));
   const body = {...payload, v: 1};
   if (days > 0) body.exp = now + days * DAY;
+  let plain = new TextEncoder().encode(JSON.stringify(body));
+  if (compress && canCompress()) {
+    const packed = await deflate(plain);
+    if (packed.length + 1 < plain.length) plain = Uint8Array.of(PLAIN_DEFLATE, ...packed);
+  }
   const aes = await deriveAesKey(code, salt);
-  const sealed = new Uint8Array(await crypto.subtle.encrypt({name: "AES-GCM", iv, additionalData: aad}, aes, new TextEncoder().encode(JSON.stringify(body))));
+  const sealed = new Uint8Array(await crypto.subtle.encrypt({name: "AES-GCM", iv, additionalData: aad}, aes, plain));
   const token = [LINK_VERSION, ...[salt, iv, sealed].map(b64url.encode)].join(".");
   return {token, code};
 }
@@ -103,23 +147,29 @@ const hasContent = body => Object.keys(body).some(key => key !== "v" && key !== 
 // Returns the payload as sealed, plus `v` and, if it expires, `exp` (ms).
 // accept(body) → boolean lets the app refuse a well-formed link that carries
 // nothing it can use ('malformed'); by default any non-empty payload passes.
-export async function openLink(token, code, {app, now = Date.now(), accept = hasContent} = {}) {
-  const aad = associatedData(app);
+// previousApps: ids the app was sealed under before a rename, tried after
+// `app` (the slow key derivation runs once, so each costs almost nothing).
+export async function openLink(token, code, {app, previousApps = [], now = Date.now(), accept = hasContent} = {}) {
+  const bindings = [app, ...previousApps].map(associatedData);
   if (!isLinkSupported()) throw new LinkError("unsupported");
   const parts = String(token).split(".");
   if (parts.length !== 4 || parts[0] !== LINK_VERSION) throw new LinkError("malformed");
   let salt, iv, sealed;
   try { [salt, iv, sealed] = parts.slice(1).map(b64url.decode); }
   catch { throw new LinkError("malformed"); }
-  let plain;
+  let plain = null;
   try {
     const aes = await deriveAesKey(code, salt);
-    plain = await crypto.subtle.decrypt({name: "AES-GCM", iv, additionalData: aad}, aes, sealed);
-  } catch {
-    // AES-GCM authenticates: a wrong code, a tampered link, or a link sealed
-    // for another app all fail here, and are indistinguishable by design.
-    throw new LinkError("wrong-code");
-  }
+    for (const additionalData of bindings) {
+      try { plain = new Uint8Array(await crypto.subtle.decrypt({name: "AES-GCM", iv, additionalData}, aes, sealed)); break; }
+      catch { /* try the next binding */ }
+    }
+  } catch { /* key derivation failed */ }
+  // AES-GCM authenticates: a wrong code, a tampered link, or a link sealed
+  // for another app all fail here, and are indistinguishable by design.
+  if (!plain) throw new LinkError("wrong-code");
+  if (plain[0] === PLAIN_DEFLATE) plain = await inflate(plain.subarray(1));
+  else if (plain[0] !== PLAIN_JSON) throw new LinkError("malformed");
   let body;
   try { body = JSON.parse(new TextDecoder().decode(plain)); }
   catch { throw new LinkError("malformed"); }

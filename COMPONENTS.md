@@ -284,3 +284,11 @@ Mora cells and the AnchorStrip share `mora-pictures.js` (domain: which drawing,
 which section, which cell) and `themedPictureHtml` / `cornerMarkHtml`
 (presentation). A link to `a.anchor-cell` is handled once in app.js
 (`openMoraCell`): it closes any sheet, opens the section and lands on the cell.
+
+### ScanCode
+`qrSvg(href,{ecc:"L",dark:"currentColor",light:null,label})` from the vendored
+`link-core-qr.js`, placed in `<figure class="scan-code-figure"><div
+class="scan-code">…</div><figcaption class="hint">…</figcaption></figure>`.
+The plate uses `--scan-ground` / `--scan-ink`, which stay dark-on-paper in
+every theme (many scanners do not read inverted codes). A QR carries a link
+only, never an unlock code. Used by Link another device (`#link-qr`).

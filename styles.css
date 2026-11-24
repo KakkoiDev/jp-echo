@@ -11,6 +11,9 @@
   --chip-rev-bd:#C8C0AE;--chip-rev-bg:#F1EDE2;--chip-rev-fg:#55504A;
   --diff-wave:#B8342A;--diff-target-bg:#FAEDE9;
   --texture:rgba(28,26,23,.022);--texture-soft:rgba(28,26,23,.014);
+  /* A scannable code stays dark on paper in every theme: many phone scanners
+     do not read inverted codes. Deliberately not redefined for dark. */
+  --scan-ground:#FBF9F3;--scan-ink:#1C1A17;
   /* Theme-dependent values that are not plain colours. As tokens they follow
      the palette; as their own [data-theme="dark"] rules they missed the
      default theme, "system", which flips the palette but keeps that name. */
@@ -1972,6 +1975,13 @@ header .report-button+.header-search{margin-left:-4px}
 .invite-code .overline{margin:0;color:var(--seal-deep)}
 #invite-key-code,#link-code{font-family:var(--display);font-size:22px;letter-spacing:.12em;color:var(--sumi)}
 #invite-copy-code{align-self:flex-start;min-height:40px}
+/* A QR of a link (link-core-qr.js): the quiet zone is inside the SVG, on the
+   scan ground; the sheet's hairline frames it like any other paper surface. */
+.scan-code-figure{margin:14px 0 0;display:flex;flex-direction:column;align-items:center;gap:6px}
+.scan-code-figure .hint{margin:0;text-align:center}
+.scan-code{width:min(100%,264px);aspect-ratio:1;background:var(--scan-ground);color:var(--scan-ink);border:1px solid var(--hairline);border-radius:4px;overflow:hidden}
+.scan-code:empty{visibility:hidden}
+.scan-code svg{display:block;width:100%;height:100%}
 .invite-link{display:flex;flex-direction:column;gap:6px;margin-top:12px}
 #invite-url,#link-url{font-family:var(--ui);font-size:13px;color:var(--ink-soft)}
 .invite-actions:has(#invite-share[hidden]){grid-template-columns:1fr}

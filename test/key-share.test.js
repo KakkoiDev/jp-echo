@@ -85,3 +85,19 @@ test('key-share is Echo\'s layer over the vendored link-core; links sealed befor
  // Sealed by Minihongo's copy: same scheme, another app, so it never opens here.
  await assert.rejects(openKey('v1.JOuslNBiyepNr7dhrVhJpA.a-Rt4axUVoUkQEFw.u8kgyK5VDpFkyuZC4dGpSi8RS5xqa6AMGsn20Ri51QU3TUlFasaeotjG-anjzW2EWwzC014oR9_-eLUlWCU','ME8S-TYVQ-HT8T'),e=>e instanceof KeyShareError&&e.code==='wrong-code');
 });
+
+test('Link another device shows the link as a QR code, never the unlock code',async()=>{
+ const app=read('app.js'),html=read('index.html'),css=read('styles.css'),sw=read('sw.js'),pkg=read('package.json');
+ assert.match(read('link-core-qr.js'),/^\/\/ Vendored from KakkoiDev\/link-core v\d+\.\d+\.\d+ \(commit [0-9a-f]{40}\)/);
+ assert.match(html,/<figure class="scan-code-figure"><div id="link-qr" class="scan-code"><\/div>/);
+ assert.match(app,/\$\("#link-qr"\)\.innerHTML=qrSvg\(url\.href,\{/,'the QR is drawn from the link');
+ assert.deepEqual(app.match(/qrSvg\([^,]*,/g),['qrSvg(url.href,'],'and never from the code: the one QR is the link');
+ assert.match(app,/addEventListener\("close",\(\)=>\{linkSeal=null;[^}]*\$\("#link-qr"\)\.innerHTML=""/,'closing the sheet clears it');
+ assert.match(css,/:root\{[\s\S]*?--scan-ground:#FBF9F3;--scan-ink:#1C1A17;/,'a scan ground token');
+ for(const dark of css.match(/\[data-theme="(?:dark|system)"\]\{[^}]*\}/g))assert.doesNotMatch(dark,/--scan-/,'stays dark-on-paper in dark themes');
+ assert.match(css,/\.scan-code\{[^}]*background:var\(--scan-ground\);color:var\(--scan-ink\)/);
+ assert.match(sw,/"\.\/link-core-qr\.js"/);assert.match(pkg,/node --check link-core-qr\.js/);
+ const {qrMatrix}=await import('../link-core-qr.js');
+ const {token}=await sealKey({sync:{token:'ghp_'+'x'.repeat(36),gist:'https://gist.github.com/u/0667891e19f8f468e0362ce22c8c25f3'},provider:'openai',key:'sk-proj-'+'y'.repeat(156)},1);
+ assert.ok(qrMatrix('https://echo.kakkoi.dev/?install=1#link='+token,{ecc:'L'}).version<=15,'a device link with a key stays a phone-scannable size');
+});
