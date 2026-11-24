@@ -2465,6 +2465,13 @@ async function renderWelcome(){let all=[];try{all=await listSentences()}catch{al
     row.innerHTML='<span class="recent-lines"><span class="recent-ja" lang="'+itemTarget(item)+'">'+escapeText(stripFurigana(preferredTarget(item)))+'</span><span class="recent-en">'+escapeText(item.source||"")+'</span></span><span class="recent-count">'+(Number(item.echoCount)||0)+'×</span><svg class="recent-play" width="11" height="13" viewBox="0 0 11 13" fill="currentColor" aria-hidden="true"><path d="M1 1.2 10 6.5 1 11.8Z"/></svg>';
     row.setAttribute("aria-label",t("Play the loop")+": "+stripFurigana(preferredTarget(item)));
     row.onclick=async()=>{const fresh=await getSentence(item.id)||item;openSentence(ensureSchedule(fresh));$("#play-pause").click()};li.append(row);return li}))}
+// The goal row on Practice (J1Practice): what setting a date gives you, or
+// the days left once it is set.
+async function renderWelcomeN2(){const link=$("#welcome-n2");if(!link)return;const goal=readGoal();
+  if(!goal){link.href="./n2-mock.html#training-goal";$("#welcome-n2-line").textContent=t("N2 · set your exam date to get a daily plan");return}
+  const [{goalDates,daysUntil},{shortDate}]=await Promise.all([import("./n2-study.js"),import("./jlpt-goal.js")]);const {exam}=goalDates(goal),days=daysUntil(exam);
+  link.href="./n2-mock.html";$("#welcome-n2-line").textContent=days>0?t("N2 · {n} days to {date} · today’s plan",{n:days,date:shortDate(exam)}):days===0?t("N2 · exam day"):t("N2 · exam passed · history and maintenance")}
+renderWelcomeN2().catch(()=>{});
 $("#welcome-tools").onclick=()=>{showView("library");history.replaceState(history.state,"",location.pathname+location.search+"#tools");requestAnimationFrame(()=>$("#tools")?.scrollIntoView({block:"start"}))};
 // One search (Search board): the magnifier in every tab header opens
 // /search?q=. Words and kanji come from the bundled dictionary (lookup.js),

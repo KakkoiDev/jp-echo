@@ -122,3 +122,13 @@ test("the N2 page says what still works offline, without a voice, after a failed
   assert.match(page, /Use the standard plan/); assert.match(mock, /Plan my day with AI needs an AI service\. The standard plan below is ready without one\./);
   assert.doesNotMatch(mock, /warn\("Could not save/);
 });
+
+test("Practice offers the JLPT goal row above 話読本, and the N2 day puts readiness beside the plan on desktop (J1Practice, DesktopN2Today)", () => {
+  const i = index.indexOf('id="welcome-n2"'), j = index.indexOf('id="welcome-tools"');
+  assert.ok(i > 0 && i < j, "the goal row comes first");
+  assert.match(index, /<strong>JLPT exams<\/strong><span id="welcome-n2-line">N2 · set your exam date to get a daily plan<\/span>/);
+  assert.match(app, /renderWelcomeN2\(\)/);
+  assert.match(page, /<aside class="n2-hub-side" aria-labelledby="study">/);
+  const css = read("../styles.css");
+  assert.match(css, /\.n2-hub-grid\{display:grid;grid-template-columns:minmax\(0,1fr\) 340px/);
+});

@@ -9,7 +9,7 @@
 <link rel="icon" href="./favicon.ico" sizes="32x32"><link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="./apple-touch-icon.png"><link rel="manifest" href="./manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
-<link rel="stylesheet" href="./styles.css?v=188">
+<link rel="stylesheet" href="./styles.css?v=189">
 </head>
 <body class="n2">
 <main id="n2-main">
@@ -19,6 +19,7 @@
 <!-- Hub -->
 <section id="hub" hidden>
   <div class="tool-head"><a class="icon-button" href="./" aria-label="Back to Echo"><svg width="18" height="16" viewBox="0 0 18 16" fill="none" aria-hidden="true"><path d="M8 1 1 8l7 7M1 8h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a><span class="tool-titles"><span class="tool-title">JLPT N2</span><span class="overline" id="hub-exam-line"></span></span></div>
+  <div class="n2-hub-grid"><div class="n2-hub-main">
   <div class="n2-countdown" id="hub-countdown"><strong id="hub-days"></strong><span id="hub-days-label"></span><span class="n2-countdown-pass" id="hub-first-pass"></span></div>
 
   <details id="training-goal" class="n2-goal"><summary>Exam date and training goal</summary>
@@ -64,9 +65,12 @@
     </div>
   </section>
 
+  </div>
+  <aside class="n2-hub-side" aria-labelledby="study">
   <h3 class="rule-heading" id="study">Readiness</h3>
   <div id="readiness"></div>
   <div class="n2-coverage" id="coverage"></div>
+  </aside></div>
 
   <h3 class="rule-heading" id="exams">Mock exams</h3>
   <p class="hint n2-lede">Each Echo set has vocabulary, grammar and reading (105 min), then listening (50 min). Answers save on this device as you go.</p>
