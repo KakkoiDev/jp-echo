@@ -63,8 +63,10 @@ test("a round is ten, mixes the kinds, opens with last round's misses and skips 
 test("points reward speed hard, punish mistakes hard, and a blind guess always loses", () => {
   assert.deepEqual(scoreAnswer({outcome: "right", ms: 0, seconds: 10, streak: 0}), {points: 300, streak: 1, fast: true});
   assert.equal(scoreAnswer({outcome: "right", ms: 10000, seconds: 10, streak: 0}).points, 50, "right but at the buzzer");
-  assert.equal(scoreAnswer({outcome: "right", ms: 0, seconds: 10, streak: 10}).points, 600, "fast with a full combo");
-  assert.equal(scoreAnswer({outcome: "wrong", streak: 5}).points, -200);
+  assert.equal(scoreAnswer({outcome: "right", ms: 0, seconds: 10, streak: 10}).points, 600, "fast with a full combo, before the cap");
+  assert.equal(scoreAnswer({outcome: "wrong", streak: 0}).points, -200);
+  assert.equal(scoreAnswer({outcome: "wrong", streak: 5}).points, -300, "a broken streak of 5 costs ×1.5");
+  assert.equal(scoreAnswer({outcome: "wrong", streak: 14}).points, -400, "up to ×2");
   assert.deepEqual(scoreAnswer({outcome: "dontknow", streak: 5}), {points: 0, streak: 0, fast: false});
   // A blind guess among four, even instant: ¼ × 300 − ¾ × 200 < 0.
   assert.ok(.25 * 300 + .75 * -200 < 0);
@@ -149,7 +151,7 @@ test("the audit pack is in step with the game: rebuild it with node tools/build-
     assert.equal(lines, pool.filter(q => q.kind === kind).length, kind);
   }
   for (const f of ["README.md", "CONCEPT.md", "RULES.md"]) assert.ok(src("../audit/quick-round/" + f).length > 500, f);
-  assert.match(src("../audit/quick-round/RULES.md"), /\*\*Wrong\*\*: −200\./, "the rules say what POINTS says");
+  assert.match(src("../audit/quick-round/RULES.md"), /\*\*Wrong\*\*: −200, times the same step for the streak it breaks/, "the rules say what POINTS says");
 });
 
 test("blitz, not shogi: a few seconds a question and almost no pause between them", () => {
@@ -205,10 +207,10 @@ test("the level changes the mix, the clock and how close the wrong choices are",
 });
 
 test("surprise: bonus questions pay three times, never cost more, and combos of 5 and 10 pay a jackpot", () => {
-  assert.deepEqual(bonusPoints({points: 200, bonus: true, streak: 2}), {points: 600, jackpot: 0, capped: false});
+  assert.deepEqual(bonusPoints({points: 150, bonus: true, streak: 2}), {points: 450, jackpot: 0, capped: false}); assert.deepEqual(bonusPoints({points: 200, bonus: true, streak: 2}), {points: 550, jackpot: 0, capped: true}, "a bonus is capped at 550 too");
   assert.deepEqual(bonusPoints({points: -200, bonus: true, streak: 0}), {points: -200, jackpot: 0, capped: false}, "no extra penalty");
   assert.deepEqual(bonusPoints({points: 200, streak: 5}), {points: 200, jackpot: 500, capped: false}, "a jackpot is celebrated, not paid");
-  assert.deepEqual(bonusPoints({points: 300, bonus: true, streak: 10}), {points: 600, jackpot: 1500, capped: true}, "capped at 600");
+  assert.deepEqual(bonusPoints({points: 300, bonus: true, streak: 10}), {points: 550, jackpot: 1500, capped: true}, "capped at 550");
   const pool = gamePool({inventory, examples, sets, sat: new Set()});
   let bonuses = 0, n = 0; const r = seeded(21);
   for (let i = 0; i < 60; i++) { const {round} = nextRound({pool, state: {}, random: r}); n += round.length; bonuses += round.filter(x => x.bonus).length; }
@@ -385,10 +387,10 @@ test("audit P0: blind guessing never beats I don't know, in any exposed state", 
   for (const difficulty of Object.keys(DIFFICULTY)) for (let streak = 0; streak <= 12; streak++) for (const bonus of [false, true]) {
     const base = scoreAnswer({outcome: "right", ms: 0, seconds: 3, streak});
     const paid = bonusPoints({points: base.points, bonus, streak: base.streak, factor: DIFFICULTY[difficulty].points, choices: 4});
-    const ev = paid.points / 4 + (3 / 4) * scoreAnswer({outcome: "wrong"}).points;
+    const ev = paid.points / 4 + (3 / 4) * scoreAnswer({outcome: "wrong", streak}).points;
     assert.ok(ev <= 0, `${difficulty} streak ${streak} bonus ${bonus}: EV ${ev}`);
   }
-  assert.equal(payoutCap(4), 600);
+  assert.equal(payoutCap(4), 550);
 });
 
 test("audit P0: a flag earns nothing, ends the combo, and the round's right count only counts right answers", () => {
@@ -540,4 +542,20 @@ test("re-audit P2: the audit export shows the underline, practice and the filter
   assert.doesNotMatch(src("../audit/quick-round/data/readings.tsv").split("\n").find(l => l.startsWith("的確\t")) || "", /てっかく/);
   assert.match(src("../audit/quick-round/questions/connective.jsonl"), /"practice":true/);
   assert.match(src("../audit/quick-round/questions/grammar.jsonl"), /"underline":/);
+});
+
+test("a guess on a streak: the streak-scaled penalty outweighs keeping the combo alive for the next card", () => {
+  // Two cards: this one unknown (guess or I don't know), the next one known and
+  // answered instantly. Guessing keeps the streak 1 time in 4; the next answer
+  // then pays more. The scaled penalty must outweigh that, at every streak,
+  // difficulty and bonus.
+  for (const difficulty of Object.keys(DIFFICULTY)) for (let streak = 0; streak <= 12; streak++) for (const bonus of [false, true]) {
+    const factor = DIFFICULTY[difficulty].points;
+    const pay = (s, b) => { const r = scoreAnswer({outcome: "right", ms: 0, seconds: 3, streak: s}); return bonusPoints({points: r.points, bonus: b, streak: r.streak, factor, choices: 4}).points; };
+    const lucky = pay(streak, bonus) + pay(streak + 1, false);
+    const unlucky = scoreAnswer({outcome: "wrong", streak}).points + pay(0, false);
+    const skip = 0 + pay(0, false);
+    const guess = lucky / 4 + unlucky * 3 / 4;
+    assert.ok(guess <= skip, `${difficulty} streak ${streak} bonus ${bonus}: guess ${guess} vs skip ${skip}`);
+  }
 });

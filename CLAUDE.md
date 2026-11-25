@@ -326,7 +326,9 @@ Before considering the change complete:
   (`sameSense`), its spelling, or (listening) its sound; accepted readings and
   reviewed exclusions live in `n2-game-review.js`; every card has four
   distinct choices. One answer's positive payout is capped at
-  `payoutCap(choices)` = 200 × (n − 1), jackpots pay nothing, a flag scores
+  `payoutCap(choices)` = 200 × (n − 1) − 50, a wrong answer costs −200 × the
+  streak step it breaks (up to −400), so guessing never pays over one or two
+  cards; jackpots pay nothing, a flag scores
   zero and ends the combo, connectives are practice. The boss halves only the
   written clock (`BOSS_MINUTES`).
   Its markup and styles follow the designer's boards to the letter (the `qr-`

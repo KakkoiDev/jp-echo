@@ -72,8 +72,6 @@ finish (after midnight too), the audit export shows underline, practice and
 the filtered near misses, four authored prompts left out for review.
 
 Still open from the re-audit:
-- **A lucky guess can keep a combo alive** (two-card advantage). The rule is
-  defined per answer today; changing it means taking the combo out of points.
 - **Resume a round after a reload**: needs a design (the boards have no resume state).
 - **Connective excerpts** (@461 ただし fits, @96 しかし fits, @197 starts mid-quote):
   still practice until reviewed.
@@ -81,6 +79,10 @@ Still open from the re-audit:
 - **Legacy ids** (old wins and comebacks under bare ids) are dropped, not migrated.
 
 ## Done since the audit
+
+- The combo-guess advantage is closed (v279): a wrong answer costs −200 × the
+  streak step it breaks, and the per-answer cap is 550, so a guess loses over
+  one card and over two.
 
 - Quick round progress syncs through the gist in the N2 file (`game`, merged
   by `mergeGame` in sync.js) and comes in the N2 export.

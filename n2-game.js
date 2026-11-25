@@ -293,7 +293,7 @@ function interleave(rows) {
 // ---- Points ----
 // Speed is rewarded and mistakes are punished hard (owner, 26 Nov). Right:
 // 50, plus up to 250 for speed, times the combo (×1.1 a step, up to ×2).
-// Wrong: −200. "I don't know" and a timeout: 0. Wrong, I don't know and a
+// Wrong: −200, times the same step for the streak it breaks (up to −400). "I don't know" and a timeout: 0. Wrong, I don't know and a
 // timeout all break the combo, so a blind guess always loses points.
 export const POINTS = Object.freeze({base: 50, speed: 250, wrong: -200, fastShare: .5});
 export function scoreAnswer({outcome, ms = 0, seconds = 10, streak = 0}) {
@@ -302,7 +302,10 @@ export function scoreAnswer({outcome, ms = 0, seconds = 10, streak = 0}) {
     const points = Math.round((POINTS.base + POINTS.speed * share) * (1 + Math.min(streak, 10) / 10));
     return {points, streak: streak + 1, fast: share >= POINTS.fastShare};
   }
-  return {points: outcome === "wrong" ? POINTS.wrong : 0, streak: 0, fast: false};
+  // A wrong answer costs more on a streak (owner, 26 Nov): ×1.1 per answer of
+  // the streak it breaks, like the combo itself, so −200 at no streak and −400
+  // at ten. Gambling a long streak on a guess is the risky move, not the safe one.
+  return {points: outcome === "wrong" ? Math.round(POINTS.wrong * (1 + Math.min(streak, 10) / 10)) : 0, streak: 0, fast: false};
 }
 
 // What a miss saves: a missed recall check of the question's own dimension.
@@ -459,7 +462,9 @@ export const BONUS = Object.freeze({chance: .12, times: 3, jackpots: {5: 500, 10
 // times, so the whole positive payout of any answer (speed, combo, bonus,
 // difficulty) is capped at 200 × (n − 1): 600 for four choices. Jackpots are
 // a celebration (sound and line), not points, so they can't tip the sum.
-export const payoutCap = (choices = 4) => -POINTS.wrong * (choices - 1);
+// The cap keeps a 50-point margin below the break-even 200 × (n − 1), so a
+// lucky guess that keeps a young streak alive still doesn't pay over two cards.
+export const payoutCap = (choices = 4) => -POINTS.wrong * (choices - 1) - 50;
 export function bonusPoints({points, bonus = false, streak = 0, factor = 1, choices = 4}) {
   const jackpot = BONUS.jackpots[streak] || 0;
   if (points <= 0) return {points, jackpot: 0, capped: false};

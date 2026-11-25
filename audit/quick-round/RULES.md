@@ -1,4 +1,4 @@
-# Rules (as built, v275)
+# Rules (as built, v279)
 
 Source: `n2-game.js` (logic) and `game()` in `n2-mock.js` (screen).
 
@@ -81,7 +81,7 @@ here.
 | Normal (adaptive) | 80% right | +0.02 / −0.08 | 0 | ×1 |
 | Hard | 65% right | +0.035 / −0.065 | +0.2 | ×1.25 |
 
-Penalties are not scaled.
+Difficulty doesn't scale penalties (the streak does, see Points).
 
 ## Pacing
 
@@ -133,19 +133,19 @@ Speed is rewarded and mistakes are punished hard (the learner's choice).
 
 - **Right**: 50, plus up to 250 for speed (all 250 if answered at once, none
   at the time limit), times the **combo**: ×1.1 for each right answer in a
-  row before it, up to ×2 at ten. A fast answer with a full combo is 600.
-- **Wrong**: −200.
-- **I don't know** or **time out**: 0.
-- A wrong answer, I don't know and a timeout all reset the combo.
-- **The guessing cap**: the whole positive payout of one answer (speed,
-  combo, bonus ×3, difficulty) is capped at 200 × (choices − 1) = **600**, so
-  a blind guess among four averages at most ¼ × 600 − ¾ × 200 = 0 and never
-  beats "I don't know". A test checks every difficulty, streak and bonus.
-- **Flag**: zero points, no recall evidence, and it ends the combo. The
-  round's right count counts only right answers.
-- **Connective questions are practice**: no points, the combo untouched, until
-  their excerpts are reviewed. The screen still says "Part of the game. Keep going.": the
-  points punish, the words don't.
+  row before it, up to ×2 at ten.
+- **Wrong**: −200, times the same step for the streak it breaks: −200 with no
+  streak, −300 on a streak of 5, −400 on 10 or more. Gambling a long streak
+  on a guess is the risky move.
+- **I don't know** or **time out**: 0. A wrong answer, I don't know, a timeout
+  and a flag all reset the combo.
+- **The cap**: the whole positive payout of one answer (speed, combo, bonus
+  ×3, difficulty) is capped at 200 × (choices − 1) − 50 = **550**.
+- **Guessing never pays**: a blind guess never beats "I don't know" on one
+  answer, and not over two either (a lucky guess that keeps the streak alive
+  for the next card). A test checks every difficulty, streak and bonus.
+- Jackpots (combo 5 and 10) are a sound and a line, no points. Flags score 0.
+  Connective cards are practice and score nothing.
 
 ## The boss and runs
 
@@ -180,7 +180,7 @@ left to recall). **One more round** stays one tap away.
   the next question comes after 0.25 s.
 - Wrong: the picked row is struck through, the right row tinted, a low note,
   "Part of the game. Keep going.", and the next question after 0.8 s.
-- After every answer, right or wrong, the right word or grammar pattern is spoken once in the device's default Japanese voice, with its reading (never a whole sentence). The Sound switch turns it off with the other sounds.
+- The answer is not spoken during play (at blitz pace it ran over the next question); the review speaks each missed word with its reading.
 - Each card carries a reminder to say it out loud.
 - Sounds are generated on the device; a Sound button turns them off.
 
