@@ -196,7 +196,6 @@ n2-set-7#12	3	夜は冷えるので、（　）着を一枚持っていったほ
 n2-set-7#13	4	会議は三時からだと（　）して、一時間も早く来てしまった。	思いやり	言い訳	勘違い	心当たり	3	勘違い is mistakenly believing something, which explains arriving early.
 n2-set-7#14	4	アンケートの（　）が多すぎて、全部答えるのに三十分もかかった。	項目	目次	条件	種目	1	項目 are the items of a questionnaire; 種目 are events in sport.
 n2-set-7#15	4	（　）二時を過ぎても、隣の部屋から大きな音楽が聞こえてきて眠れなかった。	日中	夕方	深夜	正午	3	深夜二時 is 2 a.m., when one is trying to sleep.
-n2-set-7#16	4	夫婦で（　）を分担し、毎朝交代で子どもを保育園に送っている。	育児	成長	発育	教育	1	Taking a child to nursery is part of 育児 (childcare); 成長 and 発育 are the child's growth.
 n2-set-7#17	4	買ってきた本棚を説明書どおりに（　）たら、ねじが一本余ってしまった。	建て直し	組み立て	組み合わせ	積み立て	2	Furniture is assembled: 組み立てる. 積み立てる is saving money.
 n2-set-7#18	4	彼女は何も言わずに、じっと私の顔を（　）。	見かけた	見合わせた	見逃した	見詰めた	4	じっと…見詰める means to gaze steadily; 見かける is to catch sight of.
 n2-set-7#19	4	お客様がいらっしゃったら、二階の（　）室にご案内してください。	接続	応援	応答	応接	4	応接室 is a reception room for visitors.
@@ -226,7 +225,6 @@ n2-set-8#5	2	寒さで【くちびる】が乾いて、ひび割れてしまっ�
 n2-set-8#6	2	暑いので、【ひかげ】で少し休んでから出発しよう。	火陰	日険	日隠	日陰	4	ひかげ (shade) is 日陰. 険 and 隠 look similar to 陰, and 火 is fire, not sun.
 n2-set-8#7	2	料理中は窓を開けて【かんき】をしてください。	換気	喚気	換起	寒気	1	Opening a window is 換気 (ventilation, changing the air). 寒気 is cold air; 喚 and 起 are look-alike or same-sound traps.
 n2-set-8#8	2	非常口へ続く【つうろ】に荷物を置かないでください。	通道	通路	通露	痛路	2	つうろ (passageway) is 通路. 露 is a same-sound look-alike; 痛 and 道 are wrong characters.
-n2-set-8#9	2	調査の結果は、来週市のホームページで【こうひょう】される予定だ。	好評	講評	公表	公評	3	Making results public is 公表. 好評 (good reputation) and 講評 (critique) are real homophones that do not fit.
 n2-set-8#10	3	彼の話には人を動かす説得（　）がある。	心	感	率	力	4	説得力 means persuasiveness, the power to convince. 説得心, 説得感 and 説得率 are not words that fit here.
 n2-set-8#11	3	冬は部屋が乾燥するので、加湿（　）を買った。	器	具	品	材	1	加湿器 is a humidifier; ～器 marks a device. 具, 品 and 材 do not combine with 加湿.
 n2-set-8#12	3	高校野球の応援（　）が、スタンドで声をそろえていた。	団	界	層	群	1	応援団 is a cheering squad; ～団 marks an organised group. ～界 is a field/world and ～層 a social stratum.
@@ -560,9 +558,7 @@ n2-set-17#14	4	暑い日だったので、子どもたちは次々にプール�
 n2-set-17#15	4	父は風船を大きく（　）、子どもに渡した。	張って	伸ばして	膨らまして	広げて	3	風船を膨らます is to blow up a balloon.
 n2-set-17#16	4	ゼリーが冷蔵庫で十分に（　）から、皿に出してください。	固まって	詰まって	縮んで	締まって	1	Jelly sets: 固まる.
 n2-set-17#17	4	彼女はどんな客にも笑顔で（　）ので、店での評判がいい。	交わる	当たる	触れる	接する	4	客に接する is to deal with customers; 客に当たる means to take it out on them.
-n2-set-17#18	4	炊きたてのご飯を茶わんに（　）。	積んだ	詰めた	盛った	注いだ	3	ご飯を盛る is to serve rice into a bowl; 注ぐ is for liquids.
 n2-set-17#19	4	（　）二番線に、東京行きの電車がまいります。	今にも	間もなく	今さら	すでに	2	間もなく is the announcement word for 'shortly'; 今にも needs 〜そうだ.
-n2-set-17#20	5	この美術館は、【平日】はあまり混んでいない。	祝日	月曜日から金曜日	土曜日と日曜日	毎日	2	平日 means weekdays.
 n2-set-17#21	5	故郷を離れてから、長い【月日】が流れた。	景色	季節	時間	距離	3	月日が流れる means time passes.
 n2-set-17#22	5	弟は漢字のテストで【満点】を取った。	クラスで一番になった	半分しかできなかった	合格点ぎりぎりだった	一つも間違えなかった	4	満点 is a perfect score, not necessarily first place.
 n2-set-17#23	5	請求書を見て、思わず【溜息】をついた。	深く息を吐いた	大きな声を出した	せきをした	うそを言った	1	溜息をつく is to sigh; うそをつく is the collocation trap.

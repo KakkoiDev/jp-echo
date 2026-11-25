@@ -14,6 +14,21 @@ export const READING_KEY = Object.freeze({
   湿気: "しっけ",  // the deck sentence teaches しっけ (humidity); the inventory says しっき
 });
 
+// Meanings corrected for the game (re-audit, 26 Nov): keyed "word/reading",
+// "word", or "g:pattern". The inventory keeps its JMdict text.
+export const GLOSS_FIX = Object.freeze({
+  "白髪/しらが": "white or grey hair",
+  "ご苦労様": "thank you for your hard work",
+  "宛名": "addressee's name",
+  "留まる/とどまる": "to stay, to remain",
+  "留まる/とまる": "to perch (on a branch), to stop",
+  "鈍い/にぶい": "dull (e.g., a knife), thickheaded",
+  "鈍い/のろい": "slow, sluggish",
+  "発売": "release (of a product), going on sale",
+  "g:手前": "because of having said or done (and so must keep face); in front of",
+  "g:甲斐がある": "to be worth doing, to pay off",
+});
+
 // Items left out of the scored pool until their source is fixed.
 export const EXCLUDED = Object.freeze({
   // Homophones whose sentence does not pick one spelling or sense.
@@ -43,4 +58,7 @@ export const EXCLUDED = Object.freeze({
   "e:n2-set-14#0": "大相撲: highlight",
   "e:n2-set-14#11": "本世紀: a distractor is defensible",
   "e:n2-set-16#13": "徐々に: the claim about 未だに is unsupported",
+  // Re-audit (v276): authored prompts to review before they score again.
+  "e:n2-set-7#16": "re-audit: prompt to review", "e:n2-set-8#9": "re-audit: prompt to review",
+  "e:n2-set-17#18": "re-audit: prompt to review", "e:n2-set-17#20": "re-audit: prompt to review",
 });

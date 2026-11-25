@@ -23,7 +23,7 @@
 import {recallItems, localDay} from "./n2-study.js";
 import {HELD_OUT} from "./n2-comprehension.js";
 import {connectiveSites, jobOf, glossOf, JOBS, OVERLAP, CHOICE_FOR_JOB} from "./n2-connectives.js";
-import {ACCEPTED_READINGS, READING_KEY, EXCLUDED} from "./n2-game-review.js";
+import {ACCEPTED_READINGS, READING_KEY, EXCLUDED, GLOSS_FIX} from "./n2-game-review.js";
 
 const keyOf = target => JSON.stringify(target);
 export const GAME_KEY = "echo-n2-game";
@@ -101,7 +101,8 @@ export function nearMisses(reading = "") {
 export function gamePool({inventory, examples = new Map(), sets = [], sat = new Set()}) {
   const items = recallItems(inventory), pool = [];
   // Affixes such as ～発 are left out: they are not words to pick or read alone.
-  const words = items.meaning.map(it => ({target: it.target, text: it.target[1], reading: READING_KEY[it.target[1]] || it.reading || it.target[2], answer: it.answer})).filter(w => !/[〜～]/.test(w.text));
+  const words = items.meaning.map(it => { const text = it.target[1], reading = READING_KEY[text] || it.reading || it.target[2];
+    return {target: it.target, text, reading, answer: GLOSS_FIX[text + "/" + reading] || GLOSS_FIX[text] || it.answer}; }).filter(w => !/[〜～]/.test(w.text));
   // Stable ids: a word written the same way twice (紅葉 こうよう / もみじ) carries its reading.
   const spellings = new Map(); for (const w of words) spellings.set(w.text, (spellings.get(w.text) || 0) + 1);
   const idOf = w => spellings.get(w.text) > 1 ? w.text + "/" + w.reading : w.text;
@@ -120,7 +121,7 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
       const accepted = new Set([w.reading, ...(ACCEPTED_READINGS[w.text] || [])]);
       const misses = nearMisses(w.reading).filter(m => !accepted.has(m));
       if (misses.length >= 3) pool.push({id: "r:" + id, kind: "reading", target: w.target, dimension: "reading", prompt: w.text,
-        sentence: ex ? plain(ex.ja) : "", needle: ex ? surfaceNeedle(plain(ex.ja), w.text) || w.text : w.text, answer: w.reading, wrong: misses, seconds: SECONDS.reading,
+        sentence: ex && plain(ex.ja).includes(w.text) ? plain(ex.ja) : "", needle: w.text, answer: w.reading, wrong: misses, seconds: SECONDS.reading,
         solution: {word: w.text, reading: w.reading, meaning: w.answer, ja: ex?.ja || "", en: ex?.en || ""}});
     }
     // Meaning: confusable words share a kanji; the rest come from anywhere.
@@ -129,8 +130,10 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
     const near = [...new Set((kanji || []).flatMap(k => byKanji.get(k) || []))].filter(fair);
     const far = [7, 11, 17, 23, 29, 31].map((m, k) => words[(i * m + [13, 101, 307, 503, 709, 911][k]) % words.length]).filter(fair);
     const wrongMeanings = distinct(own, [...new Set([...near, ...far].map(o => gloss(o.answer)))]);
+    // A word spelled like another (紅葉 こうよう / もみじ) shows its sentence: the cue to its sense.
+    const cue = spellings.get(w.text) > 1 && ex && plain(ex.ja).includes(w.text) ? plain(ex.ja) : "";
     if (own && wrongMeanings.length >= 3) pool.push({id: "m:" + id, kind: "meaning", target: w.target, dimension: "meaning", prompt: w.text,
-      sentence: "", answer: own, wrong: wrongMeanings, near: wrongMeanings.filter(m => near.some(o => gloss(o.answer) === m)), seconds: SECONDS.meaning,
+      sentence: cue, needle: w.text, answer: own, wrong: wrongMeanings, near: wrongMeanings.filter(m => near.some(o => gloss(o.answer) === m)), seconds: SECONDS.meaning,
       solution: {word: w.text, reading: w.reading, meaning: w.answer, ja: ex?.ja || "", en: ex?.en || ""}});
     // Definition: the meaning shown, the word to find; no wrong word may share the meaning.
     const nearWords = [...new Set(near.map(o => o.text))].filter(t => t !== w.text), farWords = [...new Set(far.map(o => o.text))].filter(t => t !== w.text && !nearWords.includes(t));
@@ -149,7 +152,7 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
     if (same.length && ex && plain(ex.ja).includes(w.text)) {
       const shared = [...new Set((kanji || []).flatMap(k => byKanji.get(k) || []))].filter(o => o.text !== w.text && !same.includes(o) && o.reading !== w.reading && !sameSense(gloss(o.answer), own));
       pool.push({id: "h:" + id, kind: "homophone", target: w.target, dimension: "meaning", prompt: w.reading,
-        sentence: plain(ex.ja).replace(w.text, "【" + w.reading + "】"), needle: "【" + w.reading + "】", answer: w.text,
+        sentence: plain(ex.ja).replace(w.text, w.reading), needle: w.reading, answer: w.text,
         wrong: [...new Set([...same.map(o => o.text), ...shared.map(o => o.text)])], seconds: SECONDS.homophone,
         solution: {word: w.text, reading: w.reading, meaning: w.answer, ja: ex.ja, en: ex.en || "", others: same.map(o => o.text + " · " + gloss(o.answer))}});
     }
@@ -158,10 +161,11 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
   for (const [i, g] of grammar.entries()) {
     const ex = sentenceOf(g.target);
     if (!ex) continue;
-    const wrong = distinct(g.answer, [1, 2, 3, 5, 8, 13, 21, 34].map(d => grammar[(i + d * 17) % grammar.length]).filter(o => o !== g).map(o => o.answer));
+    const wrong = distinct(GLOSS_FIX["g:" + g.target[1]] || g.answer, [1, 2, 3, 5, 8, 13, 21, 34].map(d => grammar[(i + d * 17) % grammar.length]).filter(o => o !== g).map(o => o.answer));
+    const gAnswer = GLOSS_FIX["g:" + g.target[1]] || g.answer;
     pool.push({id: "g:" + g.target[1], kind: "grammar", target: g.target, dimension: "grammar", prompt: g.prompt,
-      sentence: plain(ex.ja), needle: surfaceNeedle(plain(ex.ja), g.prompt) || g.prompt.replace(/[〜～]/g, ""), answer: g.answer, wrong: [...new Set(wrong)], seconds: SECONDS.grammar,
-      solution: {word: g.prompt, meaning: g.answer, ja: ex.ja, en: ex.en || ""}});
+      sentence: plain(ex.ja), needle: surfaceNeedle(plain(ex.ja), g.prompt) || g.prompt.replace(/[〜～]/g, ""), answer: gAnswer, wrong: [...new Set(wrong)], seconds: SECONDS.grammar,
+      solution: {word: g.prompt, meaning: gAnswer, ja: ex.ja, en: ex.en || ""}});
   }
   // Connectives (問題9): from reading passages of sets already sat. The
   // excerpt is up to two sentences before the blank and the blank's sentence.
@@ -309,6 +313,9 @@ export const recallsMiss = (q, outcome) => outcome !== "right" && !!q.target;
 // After each answer: the question is seen; a miss waits for the next round.
 export function rememberAnswer(state = {}, {q, outcome, points = 0, fast = false, difficulty = "normal", now = Date.now()}) {
   const seen = {...(state.seen || {}), [q.id]: now};
+  // Practice (connectives until reviewed) is exposure only: it never moves
+  // accuracy, the level, the day or boss counts, the run clock, wins or repeats.
+  if (q.practice) return {...state, seen, practiced: (state.practiced || 0) + 1};
   const wins = {...(state.wins || {})};
   if (fast) wins[q.id] = (wins[q.id] || 0) + 1;
   const comeback = (state.comeback || []).filter(id => id !== q.id);
@@ -320,15 +327,15 @@ export function rememberAnswer(state = {}, {q, outcome, points = 0, fast = false
   days[day] = {...d, answered: d.answered + 1, right: d.right + (outcome === "right" ? 1 : 0), points: d.points + points};
   return {...state, seen, wins, level, runStart, comeback: comeback.slice(-ROUND_SIZE), total, answered: (state.answered || 0) + 1, days};
 }
-export function rememberRound(state = {}, {score, questions = [], misses, now = Date.now()}) {
+export function rememberRound(state = {}, {score, questions = [], misses, scored, now = Date.now()}) {
   const seen = {...(state.seen || {})};
   for (const q of questions) seen[q.id] = now;
   const ids = Object.keys(seen);
   if (ids.length > 20000) ids.sort((a, b) => seen[a] - seen[b]).slice(0, ids.length - 20000).forEach(id => delete seen[id]);
   const day = localDay(new Date(now)), days = {...(state.days || {})}, d = days[day] || {answered: 0, right: 0, points: 0, rounds: 0, best: 0};
   days[day] = {...d, rounds: d.rounds + 1, best: Math.max(d.best, score)};
-  const right = questions.length - (misses ?? 0);
-  const history = [...(state.history || []), {at: new Date(now).toISOString(), score, right, n: questions.length}].slice(-500);
+  const n = scored ?? questions.length, right = Math.max(0, n - (misses ?? 0));
+  const history = [...(state.history || []), {at: new Date(now).toISOString(), score, right, n}].slice(-500);
   return {...state, best: Math.max(state.best || 0, score), rounds: (state.rounds || 0) + 1, seen, last: score, days, history};
 }
 
@@ -377,7 +384,7 @@ export function nextRound({pool, recall = [], state = {}, difficulty = "normal",
   const level = Math.min(1, Math.max(0, levelOf(state) + beat.offset + (DIFFICULTY[difficulty] || DIFFICULTY.normal).offset));
   const round = pickRound({pool, recall, seen: state.seen || {}, wins: state.wins || {}, random, now,
     comeback: slump ? (state.comeback || []).slice(-WARM_UP.comeback) : state.comeback || [], mix: slump ? WARM_UP.mix : flowMix(level)})
-    .map(q => ({...q, seconds: flowSeconds(q.seconds, level), bonus: !q.comeback && random() < BONUS.chance * beat.bonus}));
+    .map(q => ({...q, seconds: flowSeconds(q.seconds, level), bonus: !q.comeback && !q.practice && random() < BONUS.chance * beat.bonus}));
   return {round, warmUp: slump, level, beat};
 }
 
@@ -483,11 +490,11 @@ export function bossProgress(state = {}) {
   const done = Math.max(0, (state.answered || 0) - (state.bossFrom || 0));
   return {done: Math.min(done, BOSS_EVERY), left: Math.max(0, BOSS_EVERY - done), open: done >= BOSS_EVERY};
 }
-export function takeBoss(state = {}, {set, now = Date.now()}) {
+export function takeBoss(state = {}, {set, attemptId = null, now = Date.now()}) {
   const at = new Date(now).toISOString();
   // A run: the 1,000 questions' points, closed when the boss is taken; its
   // exam score joins it once the boss is finished (runTable).
-  const run = {set, at, start: state.runStart || at, gamePoints: (state.total || 0) - (state.runFrom || 0), questions: (state.answered || 0) - (state.bossFrom || 0)};
+  const run = {set, at, attemptId, start: state.runStart || at, gamePoints: (state.total || 0) - (state.runFrom || 0), questions: (state.answered || 0) - (state.bossFrom || 0)};
   return {...state, bossFrom: state.answered || 0, runFrom: state.total || 0, runStart: null, bossTaken: {set, at}, runs: [...(state.runs || []), run].slice(-200)};
 }
 // Runs, ranked by the merged score, each keeping its two parts for the
@@ -516,10 +523,13 @@ export function runClock(start, now = Date.now()) {
   for (const tier of RUN_CLOCK) if (elapsed < tier.hours * 3600_000) return {times: tier.times, leftMs: tier.hours * 3600_000 - elapsed, started: true};
   return {times: 1, leftMs: 0, started: true};
 }
+// Rest is decided by when the boss was finished (today), matched to the exact
+// sitting when the run knows it, so a boss finished after midnight still rests.
 export function resting(state = {}, attempts = [], now = new Date()) {
-  const t = state.bossTaken;
-  if (!t?.at || localDay(new Date(t.at)) !== localDay(now)) return false;
-  return attempts.some(a => a.book === t.set && a.phase === "results" && (a.completedAt || "") >= t.at);
+  const t = state.bossTaken, run = (state.runs || []).at(-1);
+  if (!t?.at) return false;
+  const done = attempts.find(a => a.phase === "results" && a.completedAt && (run?.attemptId ? a.id === run.attemptId : a.book === t.set && a.completedAt >= t.at));
+  return !!done && localDay(new Date(done.completedAt)) === localDay(now);
 }
 
 // ---- The answer, spoken ----

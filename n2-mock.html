@@ -9,7 +9,7 @@
 <link rel="icon" href="./favicon.ico" sizes="32x32"><link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="./apple-touch-icon.png"><link rel="manifest" href="./manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
-<link rel="stylesheet" href="./styles.css?v=205">
+<link rel="stylesheet" href="./styles.css?v=206">
 </head>
 <body class="n2">
 <main id="n2-main">
@@ -141,107 +141,129 @@
 </section>
 
 <!-- Today's checks: yesterday's misses, a day later, in print and by ear -->
-<!-- Quick round (n2-game.js): "Blitz on washi", docs/design/game -->
+<!-- Quick round (n2-game.js): "Blitz on washi", built to the boards in docs/design/game -->
 <section id="game" class="n2-game" data-mode="home" hidden>
-  <div class="drill-head n2-game-head">
-    <a class="icon-button n2-game-backbtn" id="game-back" href="./" aria-label="Back to Echo"><svg class="n2-game-icon-back" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg><svg class="n2-game-icon-end" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></a>
-    <div class="n2-game-pips" id="game-pips" aria-hidden="true"></div>
-    <span class="n2-game-title" id="game-title">Quick round</span>
-    <div class="n2-game-scorebox"><span class="n2-game-score" id="game-score"></span><span class="n2-game-combo-chip" id="game-combo-chip"></span></div>
+  <div class="qr-hd">
+    <a class="qr-ib" id="game-back" href="./" aria-label="Back to Echo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="n2-game-icon-back"><path d="M15 5l-7 7 7 7"/></svg><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="n2-game-icon-end"><path d="M6 6l12 12M18 6 6 18"/></svg></a>
+    <div class="qr-brand"><span class="qr-mark" lang="ja" aria-hidden="true">速</span><span id="game-title">Quick round</span></div>
+    <div class="qr-pips" id="game-pips" aria-hidden="true"></div>
+    <div class="qr-scw"><span class="qr-sc" id="game-score"></span><span class="qr-cb" id="game-combo-chip"></span></div>
+    <button data-ui="button" class="qr-ib qr-q qr-soundbtn" id="game-sound" type="button" aria-label="Sound" aria-pressed="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="qr-spk-on"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M17 9a4 4 0 0 1 0 6"/></svg><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="qr-spk-off"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M17 9l5 5M22 9l-5 5"/></svg></button>
   </div>
-  <p class="overline n2-game-sub" id="game-sub"></p>
-  <div class="n2-game-clock" id="game-clock"><div class="n2-game-bar"><span id="game-bar"></span></div><span class="n2-game-sec" id="game-sec"></span></div>
-  <span class="n2-game-float" id="game-float" aria-hidden="true"></span>
+  <div class="qr-topline"><span id="game-sub"></span><span id="game-sub-right"></span></div>
+  <div class="qr-clk" id="game-clock"><div class="qr-bar"><span id="game-bar"></span></div><span class="qr-sec" id="game-sec"></span></div>
+  <span class="qr-float" id="game-float" aria-hidden="true"></span>
 
-  <div id="game-home" class="n2-game-home" hidden>
-    <div class="n2-game-brand"><span class="n2-game-seal" lang="ja" aria-hidden="true">速</span><strong>Quick round</strong></div>
-    <div class="n2-game-runcard" id="game-runcard">
-      <div class="n2-game-runhead"><span id="game-run-name"></span><span class="n2-game-chip" data-tone="seal" id="game-run-clock"></span></div>
-      <div class="n2-game-runbig" id="game-run-big"></div>
-      <div class="n2-game-meter"><span class="n2-game-meter-glyph" lang="ja" aria-hidden="true">鬼</span><div class="n2-game-meter-bar"><span id="game-run-fill"></span></div></div>
-      <p class="n2-game-runline" id="game-run-line"></p>
+  <div id="game-home" class="qr-panel" hidden>
+    <div class="qr-run" id="game-runcard">
+      <div class="qr-row"><span class="qr-lbl" id="game-run-name"></span><span class="qr-chip" data-tone="seal" id="game-run-clock"></span></div>
+      <div class="qr-runbig"><span class="qr-n" id="game-run-big"></span><span id="game-run-of"></span></div>
+      <div class="qr-row qr-meterrow"><div class="qr-meter"><i id="game-run-fill"></i></div><span class="qr-oni" lang="ja" aria-hidden="true">鬼</span></div>
+      <div class="qr-row qr-small"><span class="qr-n" id="game-run-points"></span><span id="game-run-waits"></span></div>
+      <div class="qr-countdown" id="game-countdown" hidden><div class="qr-row"><span id="game-count-label"></span><b class="qr-n" id="game-count-time"></b></div><div class="qr-tiers"><i id="game-tier-a"></i><i id="game-tier-b"></i><i id="game-tier-c"></i></div><div class="qr-row qr-tiny"><span>×1.5 · 24 h</span><span>×1.2 · 48 h</span><span>×1</span></div></div>
+      <p class="qr-runline" id="game-run-line"></p>
     </div>
-    <div class="n2-game-runcard n2-game-rest" id="game-rest" hidden><span class="n2-game-seal" lang="ja" aria-hidden="true">休</span><strong>Rest.</strong><p id="game-rest-line"></p></div>
-    <div class="n2-game-stats" id="game-runs-wrap" hidden><h3 class="rule-heading">Best runs</h3><ol class="n2-game-rank" id="game-runs"></ol><p class="hint">Questions’ points plus the boss (1,000 a point out of 180), times the run clock.</p></div>
-    <div class="n2-game-stats"><h3 class="rule-heading">Questions a day</h3><div id="game-chart"></div></div>
-    <p class="n2-game-rules"><span>Two rules</span>Say it out loud as you read. Mistakes are part of the game: just keep going.</p>
-    <p class="hint" id="game-home-level"></p>
-    <div class="n2-game-dock">
-      <a class="button primary n2-game-go" id="game-home-boss" href="#" hidden>Face the boss</a>
-      <a class="button primary n2-game-go" id="game-home-radio" href="?view=game&amp;panel=radio" hidden>Night Radio</a>
-      <button data-ui="button" class="primary n2-game-go" id="game-home-play" type="button">Play<span>10 questions · about a minute</span></button>
-      <div class="n2-game-links"><button data-ui="button" class="quiet" id="game-radio-open" type="button">Radio</button><button data-ui="button" class="quiet" id="game-settings-open" type="button">Settings</button><button data-ui="button" class="quiet" id="game-sound" type="button" aria-pressed="true">Sound on</button></div>
+    <div class="qr-run qr-bosscard" id="game-bosscard" hidden>
+      <div class="qr-row"><span class="qr-lbl" id="game-boss-name"></span><span class="qr-chip" data-tone="seal" id="game-boss-clock2"></span></div>
+      <div class="qr-bossrow"><span class="qr-onitile" lang="ja" aria-hidden="true">鬼</span><div><strong id="game-boss-title"></strong><span id="game-boss-mins"></span></div></div>
+      <div class="qr-meter qr-meter-seal"><i style="width:100%"></i></div>
+      <p class="qr-small" id="game-boss-points"></p>
+      <p class="qr-runline">Beat it before the clock runs out and the whole run counts more.</p>
     </div>
-  </div>
-
-  <div id="game-settings" class="n2-game-home n2-game-settings" hidden>
-    <label class="n2-game-field"><span>Difficulty</span><select data-ui="select" id="game-set-difficulty"><option value="easy">Easy — more right, pays ×0.75</option><option value="normal">Normal — adaptive</option><option value="hard">Hard — more misses, pays ×1.25</option></select></label>
-    <label class="n2-game-field"><span>Bedtime</span><input data-ui="input" id="game-set-bedtime" type="time" value="23:30"></label>
-    <p class="hint">From bedtime until 5 am, a round’s end leads to Evening recall and the Night Radio.</p>
-    <label class="switch"><span class="switch-copy"><span>Sound</span><span class="hint">Effects, the spoken answer and vibration. Off also leaves out listening cards.</span></span><input id="game-set-sound" type="checkbox"></label>
-    <label class="switch"><span class="switch-copy"><span>Open Echo on Quick round</span><span class="hint">Opening Echo comes straight here.</span></span><input id="game-set-start" type="checkbox"></label>
-    <p class="n2-game-saved hint" id="game-set-status" role="status"></p>
-    <div class="n2-game-dock"><a class="button quiet" href="./settings">All Echo settings</a></div>
-  </div>
-
-  <div id="game-radio" class="n2-game-home n2-game-radio" hidden>
-    <a class="library-tool two-line" href="?view=radio&amp;from=game"><span class="library-tool-glyph" lang="ja" aria-hidden="true">昼</span><span class="library-tool-label"><strong>Day Radio</strong><span>Listen or recall while you walk. Plays become tomorrow’s checks.</span></span><svg width="8" height="13" viewBox="0 0 8 13" fill="none" aria-hidden="true"><path d="m1.5 1.5 5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-    <div class="n2-game-runcard">
-      <div class="n2-game-runhead"><span>Night Radio</span><span class="n2-game-chip" data-tone="seal" id="game-night-count"></span></div>
-      <p class="n2-game-runline" id="game-night-line"></p>
-      <a class="library-tool two-line" href="?view=evening&amp;from=game"><span class="library-tool-glyph" lang="ja" aria-hidden="true">夕</span><span class="library-tool-label"><strong>Evening recall first</strong><span>Recall tonight’s items once · about 10 minutes</span></span><svg width="8" height="13" viewBox="0 0 8 13" fill="none" aria-hidden="true"><path d="m1.5 1.5 5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-      <label class="n2-game-field"><span>Stop after</span><select data-ui="select" id="game-night-hours"><option value="6">6 hours</option><option value="7">7 hours</option><option value="8">8 hours</option><option value="9">9 hours</option></select></label>
-      <label class="switch"><span class="switch-copy"><span>Soft noise underneath</span></span><input id="game-night-noise" type="checkbox"></label>
-      <label class="switch"><span class="switch-copy"><span>Cue half, to compare tomorrow</span></span><input id="game-night-compare" type="checkbox"></label>
-    </div>
-    <p class="hint">Plug the phone in and leave this open: the screen stays on, dark. Keep the volume low enough not to wake you.</p>
-    <div class="n2-game-dock"><button data-ui="button" class="primary n2-game-go" id="game-night-start" type="button">Start the Night Radio</button></div>
-  </div>
-
-  <div id="game-play" class="n2-game-play" hidden>
-    <div id="game-ribbon" class="n2-game-ribbon" hidden></div>
-    <div id="game-card" class="n2-game-card">
-      <div class="n2-game-kind"><span id="game-kind"></span><span class="n2-game-chip" id="game-tag" hidden></span></div>
-      <p class="n2-game-prompt" id="game-prompt" lang="ja"></p>
-      <p class="n2-game-sentence" id="game-sentence" lang="ja" hidden></p>
-      <button data-ui="button" class="quiet n2-game-say" id="game-say" type="button" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9a4 4 0 0 1 0 6"/></svg><span>Play again</span></button>
-      <p class="n2-game-aloud" id="game-aloud"><b lang="ja" aria-hidden="true">声</b><span></span></p>
-      <span class="n2-game-stamp" id="game-stamp" lang="ja" aria-hidden="true" hidden>十</span>
-    </div>
-    <p class="n2-game-line" id="game-combo" aria-live="polite"></p>
-    <div class="n2-game-choices" id="game-choices" role="group" aria-label="Choices"></div>
-    <div class="n2-game-foot"><button data-ui="button" class="n2-game-idk" id="game-skip" type="button">I don’t know <span>· 0</span></button><button data-ui="button" class="icon-button n2-game-flagbtn" id="game-flag" type="button" aria-label="Flag this question"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 21V4h11l-2 4 2 4H6"/></svg></button></div>
-    <div class="n2-game-toast" id="game-toast" role="status" hidden></div>
-  </div>
-
-  <div id="game-review" class="n2-game-play" hidden>
-    <div class="n2-game-card n2-game-reviewcard">
-      <div class="n2-game-kind"><span id="game-review-kind"></span></div>
-      <p class="n2-game-prompt" id="game-review-word" lang="ja"></p>
-      <p class="n2-game-reading" id="game-review-reading" lang="ja"></p>
-      <p class="n2-game-meaning" id="game-review-meaning"></p>
-      <p class="n2-game-picked" id="game-review-picked"></p>
-      <div class="n2-game-example" id="game-review-sentence" hidden><p lang="ja" id="game-review-ja"></p><p class="hint" id="game-review-en"></p></div>
-      <p class="n2-why" id="game-review-why" hidden></p>
-    </div>
-    <div class="n2-game-reviewbar"><button data-ui="button" class="icon-button" id="game-review-flag" type="button" aria-label="Flag this answer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 21V4h11l-2 4 2 4H6"/></svg></button><button data-ui="button" class="icon-button" id="game-hold" type="button" aria-pressed="false" aria-label="Hold"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 5v14M15 5v14"/></svg></button><button data-ui="button" class="primary n2-game-next" id="game-next" type="button">Next</button></div>
-  </div>
-
-  <div id="game-done" class="n2-game-done" hidden>
-    <p class="overline" id="game-done-kicker"></p>
-    <strong class="n2-game-big" id="game-done-title"></strong>
-    <div class="n2-game-pips n2-game-pips-end" id="game-done-pips" aria-hidden="true"></div>
-    <p class="n2-game-donefacts" id="game-done-line"></p>
-    <div class="n2-game-strip" id="game-boss-strip"><span lang="ja" aria-hidden="true">鬼</span><span id="game-boss-progress"></span><span class="n2-game-chip" data-tone="seal" id="game-boss-clock"></span></div>
-    <a class="n2-game-strip n2-game-bossopen" id="game-boss" href="#" hidden><span lang="ja" aria-hidden="true">鬼</span><span id="game-boss-line"></span></a>
-    <div class="n2-game-strip" id="game-bedtime" hidden><span lang="ja" aria-hidden="true">夜</span><span>The night keeps today’s work. Recall it once, then let the Night Radio play.</span></div>
-    <div class="n2-game-dock">
-      <a class="button primary n2-game-go" id="game-sleep" href="?view=evening" hidden>Evening recall, then sleep</a>
-      <button data-ui="button" class="primary n2-game-go" id="game-again" type="button">Next round</button>
-      <div class="n2-game-links"><button data-ui="button" class="quiet" id="game-home-btn" type="button">Home</button></div>
+    <div class="qr-rest" id="game-rest" hidden><span class="qr-restglyph" lang="ja" aria-hidden="true">休</span><strong>Rest.</strong><p id="game-rest-line"></p></div>
+    <div class="qr-sect" id="game-runs-wrap" hidden><div class="qr-row"><span class="qr-lbl">Best runs</span><span class="qr-tiny">questions + boss, × run clock</span></div><div id="game-runs"></div></div>
+    <div class="qr-sect"><div class="qr-row qr-tiny"><span>Last 14 days · questions</span><span class="qr-n" id="game-today"></span></div><div class="qr-days" id="game-days"></div></div>
+    <p class="qr-tiny qr-level" id="game-home-level"></p>
+    <div class="qr-dock">
+      <a class="qr-play" id="game-home-boss" href="#" hidden><b><span lang="ja">鬼</span>Face the boss</b><span>Pause is honest: it shows on the result</span></a>
+      <button data-ui="button" class="qr-play" id="game-home-radio" type="button" hidden><b><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>Start the Night Radio</b></button>
+      <button data-ui="button" class="qr-play" id="game-home-play" type="button"><b><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>Play</b><span id="game-play-sub">10 questions · about a minute</span></button>
+      <button data-ui="button" class="qr-btn2" id="game-home-play2" type="button" hidden>Play a round first</button>
+      <div class="qr-pair"><button data-ui="button" class="qr-btn2" id="game-radio-open" type="button"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>Radio</button><button data-ui="button" class="qr-btn2" id="game-settings-open" type="button"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>Settings</button></div>
     </div>
   </div>
-  <div id="game-night" class="radio-night" hidden role="dialog" aria-modal="true" aria-labelledby="game-night-phase"><p id="game-night-phase" class="radio-phase"></p><p id="game-night-text" class="radio-line"></p><p id="game-night-until" class="radio-until"></p><button data-ui="button" id="game-night-stop" class="outline" type="button">Stop</button></div>
+
+  <div id="game-settings" class="qr-panel" hidden>
+    <div class="qr-grp"><div class="qr-it"><div class="qr-tx">Sound<small>Effects, the review voice, vibration</small></div><button data-ui="button" class="qr-sw" id="game-set-sound" type="button" role="switch" aria-label="Sound" aria-pressed="false"><i></i></button></div></div>
+    <div class="qr-gl qr-lbl">Difficulty</div>
+    <div class="qr-segwrap"><div class="qr-seg" id="game-set-difficulty" role="radiogroup" aria-label="Difficulty"><button data-ui="button" type="button" role="radio" data-value="easy">Easy<small>×0.75</small></button><button data-ui="button" type="button" role="radio" data-value="normal">Normal<small>adaptive</small></button><button data-ui="button" type="button" role="radio" data-value="hard">Hard<small>×1.25</small></button></div><p class="qr-tiny qr-seghint">Normal keeps you about 80% right. Takes effect from the next round.</p></div>
+    <div class="qr-gl qr-lbl">Night</div>
+    <div class="qr-grp qr-grp-tight"><label class="qr-it"><span class="qr-tx">Bedtime<small>Round ends lead to Evening recall from then until 5:00</small></span><input class="qr-time qr-n" id="game-set-bedtime" type="time" value="23:30"></label></div>
+    <div class="qr-gl qr-lbl">Echo</div>
+    <div class="qr-grp qr-grp-tight">
+      <div class="qr-it"><div class="qr-tx">Open Echo on Quick round<small>Opening Echo goes straight to the game</small></div><button data-ui="button" class="qr-sw" id="game-set-start" type="button" role="switch" aria-label="Open Echo on Quick round" aria-pressed="false"><i></i></button></div>
+      <a class="qr-it" href="./settings"><span class="qr-tx">All Echo settings</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></a>
+      <button data-ui="button" class="qr-it" id="game-set-report" type="button"><span class="qr-tx">Report a problem<small>Timer, sound, layout: anything that isn’t one card</small></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+    </div>
+    <p class="qr-tiny" id="game-set-status" role="status"></p>
+  </div>
+
+  <div id="game-radio" class="qr-panel" hidden>
+    <div class="qr-grp qr-grp-pad">
+      <div class="qr-radiohead"><span class="qr-glyph qr-glyph-day" lang="ja" aria-hidden="true">昼</span><div><strong>Day Radio</strong><span>For walking: today’s items, out loud</span></div></div>
+      <div class="qr-pair qr-mt"><a class="qr-btn2" href="?view=radio&amp;mode=listen&amp;from=game">Listen</a><a class="qr-btn2" href="?view=radio&amp;mode=recall&amp;from=game">Recall</a></div>
+    </div>
+    <div class="qr-grp qr-grp-pad qr-mt12">
+      <div class="qr-radiohead"><span class="qr-glyph qr-glyph-night" lang="ja" aria-hidden="true">夜</span><div><strong>Night Radio</strong><span class="qr-n" id="game-night-count"></span></div></div>
+      <a class="qr-evening" id="game-night-evening" href="?view=evening&amp;from=game"><span id="game-night-evening-label">Evening recall first</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></a>
+      <div class="qr-lbl qr-stoplbl">Stop after</div>
+      <div class="qr-seg" id="game-night-hours" role="radiogroup" aria-label="Stop after"><button data-ui="button" type="button" role="radio" data-value="6">6 h</button><button data-ui="button" type="button" role="radio" data-value="7">7 h</button><button data-ui="button" type="button" role="radio" data-value="8">8 h</button><button data-ui="button" type="button" role="radio" data-value="9">9 h</button></div>
+      <div class="qr-it qr-it-flat"><div class="qr-tx">Soft noise</div><button data-ui="button" class="qr-sw" id="game-night-noise" type="button" role="switch" aria-label="Soft noise" aria-pressed="false"><i></i></button></div>
+      <div class="qr-it qr-it-flat"><div class="qr-tx">Cue half, to compare tomorrow</div><button data-ui="button" class="qr-sw" id="game-night-compare" type="button" role="switch" aria-label="Cue half" aria-pressed="false"><i></i></button></div>
+    </div>
+    <div class="qr-dock"><button data-ui="button" class="qr-btn qr-btn60" id="game-night-start" type="button"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><span>Start the Night Radio</span></button><p class="qr-tiny qr-center qr-n" id="game-night-until"></p></div>
+  </div>
+
+  <div id="game-play" class="qr-panel" hidden>
+    <div id="game-ribbon" class="qr-ribbon" hidden></div>
+    <div id="game-card" class="qr-card">
+      <div class="qr-kd"><span id="game-kind"></span><span class="qr-chip" id="game-tag" hidden></span></div>
+      <p class="qr-big" id="game-prompt" lang="ja"></p>
+      <p class="qr-sent" id="game-sentence" lang="ja" hidden></p>
+      <button data-ui="button" class="qr-listen" id="game-say" type="button" aria-label="Hear it again" hidden><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9a4 4 0 0 1 0 6M19.5 6.5a7.5 7.5 0 0 1 0 11"/></svg></button>
+      <p class="qr-hint" id="game-say-hint" hidden>Tap to hear it again</p>
+      <p class="qr-say" id="game-aloud"><b lang="ja" aria-hidden="true">声</b><span></span></p>
+      <span class="qr-stamp" id="game-stamp" lang="ja" aria-hidden="true" hidden>十</span>
+    </div>
+    <p class="qr-line" id="game-combo" aria-live="polite"></p>
+    <div class="qr-chs" id="game-choices" role="group" aria-label="Choices"></div>
+    <div class="qr-ft"><button data-ui="button" class="qr-idk" id="game-skip" type="button">I don’t know <span>· 0</span></button><button data-ui="button" class="qr-ib qr-q" id="game-flag" type="button" aria-label="Flag this question"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 21V4h11l-2 4 2 4H6"/></svg></button></div>
+    <div class="qr-toast" id="game-toast" role="status" hidden></div>
+  </div>
+
+  <div id="game-review" class="qr-panel" hidden>
+    <div class="qr-hero">
+      <p class="qr-word" id="game-review-word" lang="ja"></p>
+      <p class="qr-rd" id="game-review-reading" lang="ja"></p>
+      <p class="qr-mean" id="game-review-meaning"></p>
+      <p class="qr-pick" id="game-review-picked"></p>
+      <p class="qr-tiny" id="game-review-kind" hidden></p>
+    </div>
+    <div class="qr-ex" id="game-review-sentence" hidden><p class="qr-exs" lang="ja" id="game-review-ja"></p><p class="qr-exe" id="game-review-en"></p></div>
+    <p class="n2-why qr-why" id="game-review-why" hidden></p>
+    <p class="qr-tiny qr-center qr-reviewsay"><b lang="ja" aria-hidden="true">声</b> Say it with the voice · back next round</p>
+    <div class="qr-acts"><button data-ui="button" class="qr-ib qr-q qr-ib52" id="game-review-flag" type="button" aria-label="Flag this answer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 21V4h11l-2 4 2 4H6"/></svg></button><button data-ui="button" class="qr-ib qr-ib52" id="game-hold" type="button" aria-pressed="false" aria-label="Hold"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5v14M15 5v14"/></svg></button><button data-ui="button" class="qr-next" id="game-next" type="button">Next</button></div>
+  </div>
+
+  <div id="game-done" class="qr-panel" hidden>
+    <div class="qr-donetop">
+      <p class="qr-n qr-score" id="game-done-title"></p>
+      <div class="qr-pips qr-pips-end" id="game-done-pips" aria-hidden="true"></div>
+      <p class="qr-facts" id="game-done-line"></p>
+    </div>
+    <div class="qr-mood" id="game-bedtime" hidden><span lang="ja" aria-hidden="true">夜</span><strong>The night keeps today’s work.</strong><p id="game-bedtime-line">Recall it once, then the Night Radio plays it while you sleep.</p></div>
+    <div class="qr-mood" id="game-warm" hidden><span lang="ja" aria-hidden="true">温</span><p id="game-warm-line"></p></div>
+    <div class="qr-strips">
+      <a class="qr-strip qr-bossopen" id="game-boss" href="#" hidden><span class="qr-oni" lang="ja" aria-hidden="true">鬼</span><span id="game-boss-line"></span></a>
+      <div class="qr-strip" id="game-boss-strip"><span class="qr-oni" lang="ja" aria-hidden="true">鬼</span><div class="qr-meter qr-meter-thin"><i id="game-boss-fill"></i></div><span class="qr-n" id="game-boss-progress"></span><span class="qr-chip" data-tone="seal" id="game-boss-clock"></span></div>
+    </div>
+    <div class="qr-donedock">
+      <a class="qr-btn qr-btn-night" id="game-sleep" href="?view=evening&amp;from=game" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><span>Evening recall, then sleep</span></a>
+      <button data-ui="button" class="qr-btn" id="game-again" type="button"><span id="game-again-label">Next round</span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      <button data-ui="button" class="qr-lnk" id="game-home-btn" type="button">Home</button>
+    </div>
+  </div>
+<div id="game-night" class="qr-night" hidden role="dialog" aria-modal="true" aria-labelledby="game-night-phase"><div class="qr-nighttop"><span id="game-night-phase"></span><span class="qr-n" id="game-night-clock"></span></div><div class="qr-nightmid"><p lang="ja" id="game-night-text"></p><p class="qr-n" id="game-night-cue"></p></div><button data-ui="button" id="game-night-stop" type="button">Stop</button></div>
 </section>
 
 <section id="check" hidden>

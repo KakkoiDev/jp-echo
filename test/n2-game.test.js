@@ -124,9 +124,10 @@ test("a flag stops the clock, names the question as shown, and in the review nam
   assert.match(mock, /if \(!\$\("game-review"\)\.hidden && misses\[reviewAt\]\) return cardOf\(misses\[reviewAt\]\.q, misses\[reviewAt\]\.picked\);/);
 });
 
-test("the two rules are on the round's end, and a miss says keep going", () => {
-  assert.match(src("../n2-mock.html"), /<span>Two rules<\/span>Say it out loud as you read\. Mistakes are part of the game: just keep going\./);
-  assert.match(src("../n2-mock.js"), /"Part of the game\. Keep going\."/);
+test("a miss says keep going (the boards' line), and each card carries its say-it-out-loud reminder", () => {
+  const mock = src("../n2-mock.js"), html = src("../n2-mock.html");
+  assert.match(mock, /"Part of the game\. Keep going\."/);
+  assert.match(html, /<p class="qr-say" id="game-aloud"><b lang="ja" aria-hidden="true">声<\/b>/);
 });
 
 test("the game's flag is one tap: it saves the question as shown and moves on, with no sheet", () => {
@@ -222,10 +223,10 @@ test("bedtime: from the learner's hour until 5 am the round's end points to slee
   assert.equal(atBedtime(at(22, 15), "22:00"), true, "the learner's own hour");
   assert.equal(atBedtime(at(22, 15), "nonsense"), false, "a bad value falls back to 23:30");
   const mock = src("../n2-mock.js"), html = src("../n2-mock.html"), index = src("../index.html");
-  assert.match(mock, /const late = atBedtime\(new Date\(\), settings\.gameBedtime\);/);
-  assert.match(mock, /\$\("game-again"\)\.textContent = late \? "One more round" : inSlumpNext\(\) \? "Warm-up round" : "Next round";/);
+  assert.match(mock, /const late = atBedtime\(new Date\(\), settings\.gameBedtime\), warm = inSlumpNext\(\);/);
+  assert.match(mock, /\$\("game-again-label"\)\.textContent = late \? "One more round" : warm \? "Warm-up round" : "Next round";/);
   assert.match(mock, /\$\("game-sleep"\)\.href = left \? "\?view=evening&from=game" : "\?view=game&panel=radio";/);
-  assert.match(html, /id="game-sleep" href="\?view=evening" hidden>Evening recall, then sleep<\/a>/);
+  assert.match(html, /id="game-sleep" href="\?view=evening&amp;from=game" hidden>[\s\S]*?Evening recall, then sleep<\/span><\/a>/);
   assert.match(index, /id="settings-game-bedtime" type="time" value="23:30"/);
 });
 
@@ -237,7 +238,7 @@ test("the boss comes every 1,000 questions, closes a run, and after it the game 
   const now = new Date("2026-11-27T20:00:00");
   st = takeBoss(st, {set: "n2-set-6", now: now.getTime()});
   assert.deepEqual(bossProgress(st), {done: 0, left: 1000, open: false}, "the count starts again");
-  assert.deepEqual(st.runs.at(-1), {set: "n2-set-6", at: now.toISOString(), start: now.toISOString(), gamePoints: 250000, questions: 1000});
+  assert.deepEqual(st.runs.at(-1), {set: "n2-set-6", at: now.toISOString(), attemptId: null, start: now.toISOString(), gamePoints: 250000, questions: 1000});
   const finished = [{book: "n2-set-6", boss: true, phase: "results", startedAt: now.toISOString(), completedAt: new Date(now.getTime() + 5400000).toISOString()}];
   assert.equal(resting(st, finished, new Date("2026-11-27T22:00:00")), true);
   assert.equal(resting(st, [], new Date("2026-11-27T22:00:00")), false, "not before the boss is finished");
@@ -395,8 +396,8 @@ test("audit P0: a flag earns nothing, ends the combo, and the round's right coun
   const flag = mock.slice(mock.indexOf('$("game-flag").onclick'), mock.indexOf('$("game-review-flag").onclick'));
   assert.match(flag, /flagged\+\+; streak = 0; marks\[index\] = "fl"; head\(\);/);
   assert.doesNotMatch(flag, /recallRecord|rights\+\+|score \+=/);
-  assert.match(mock, /misses: round\.length - rights\}/);
-  assert.match(mock, /\$\("game-done-line"\)\.textContent = rights \+ " of " \+ round\.length/);
+  assert.match(mock, /misses: scoredN - rights, scored: scoredN\}/, "flags and practice are out of the accuracy");
+  assert.match(mock, /\$\("game-done-line"\)\.textContent = late \? rights \+ " of " \+ round\.length/);
   assert.match(mock, /choicesFor\(q, Math\.random, roundLevel\)/, "the round's level picks the choices");
 });
 
@@ -406,37 +407,26 @@ test("audit P2: connective questions are practice: no points, combo untouched", 
   assert.match(src("../n2-mock.js"), /const paid = q\.practice \? \{points: 0, jackpot: 0\}/);
 });
 
-test("design fixes (Blitz on washi): tokens, clock, one-line head, thumb-zone choices, quiet flag, underline, states, one-tap round end, 5 s review, home", async () => {
+test("the game follows the boards (Blitz on washi): tokens, clock, head, cards, choices, flag, review, round end, home", async () => {
   const css = src("../styles.css"), html = src("../n2-mock.html"), mock = src("../n2-mock.js");
   const {surfaceNeedle} = await import("../n2-game.js");
-  // 1 · tokens: gold in light, dark and system; right is Echo's learning indigo.
-  assert.equal((css.match(/--gold:#/g) || []).length, 3);
+  assert.equal((css.match(/--gold:#/g) || []).length, 3, "gold in light, dark and system");
   assert.match(css, /\.n2-game\{--right:var\(--chip-learn-fg\);--right-tint:var\(--chip-learn-bg\);--track:var\(--rule\)/);
-  // 2 · the clock: a 14 px bar, tenths beside it, seal in the last second, gold on a bonus.
-  assert.match(css, /\.n2-game-bar\{flex:1;height:14px/);
-  assert.match(mock, /if \(!review && left <= 1 && !gold\) clock\.dataset\.state = "hot";/);
-  // 3 · one-line head: back, ten pips, the score with its combo.
-  assert.match(html, /id="game-pips"/); assert.match(html, /id="game-combo-chip"/);
-  // 4 · choices in the sans, 56 px rows, two-line clamp, low in the thumb zone.
-  assert.match(css, /\.n2-game-choice\{display:flex;align-items:center;gap:12px;min-height:56px/);
-  assert.match(css, /-webkit-line-clamp:2/); assert.match(css, /\.n2-game-choices\{[^}]*margin-top:auto/);
-  // 5 · a quiet 44 px flag icon with a toast.
-  assert.match(html, /class="icon-button n2-game-flagbtn" id="game-flag"/); assert.match(mock, /toast\("Flagged, saved as shown · no points"\)/);
-  // 6 · the underline follows the sentence.
+  assert.match(css, /body\[data-view=game\]\{background-image:none;/, "no paper texture in the game");
+  assert.match(css, /\.qr-bar\{flex:1;height:14px;border-radius:7px/, "board 2: the 14 px clock");
+  assert.match(css, /\.qr-ch\{display:flex;align-items:center;gap:12px;min-height:56px;width:100%;padding:8px 14px;border-radius:14px;border:1\.5px solid var\(--hairline\)/);
+  assert.match(css, /\.qr-ch \.t:lang\(ja\)\{font-family:var\(--ui\);font-size:20px;font-weight:700\}/, "Japanese choices in the sans");
+  assert.match(css, /\.qr-play\{[^}]*height:96px;border-radius:24px/, "board 1: Play, 96 px");
+  assert.match(css, /\.qr-btn\{[^}]*height:72px;border-radius:22px/, "board 6: Next round, 72 px");
+  assert.match(css, /\.qr-next\{flex:1;height:52px;border-radius:14px;border:0;background:var\(--sumi\)/, "board 5: Next, ink");
+  assert.match(css, /\.qr-listen\{[^}]*width:96px;height:96px;border-radius:50%/, "board 3a: the listen button");
+  assert.match(html, /class="qr-ib qr-q" id="game-flag"/); assert.match(mock, /toast\("Flagged, saved as shown · no points"\)/);
+  assert.match(mock, /prompt\.hidden = listen \|\| sentenceKind;/, "sentence kinds show the sentence alone");
+  assert.match(html, /id="game-days"/); assert.match(html, /id="game-countdown"/); assert.match(html, /id="game-bosscard"/);
   assert.equal(surfaceNeedle("この方法なら、問題は解決し得る。", "得る（える・うる）"), "得る");
-  assert.equal(surfaceNeedle("問題が生じた。", "生ずる"), "生");
-  // 7 · answer states: ✓ on right, ✕ and strike on a wrong pick, the rest fade, a timeout state.
-  assert.match(mock, /rows\[q\.key\]\.querySelector\("\.k"\)\.textContent = "✓"/); assert.match(css, /\.n2-game-card\[data-state=timeout\]/);
-  // 8 · round end: the number, the pips, one line and one big button.
-  assert.match(html, /id="game-done-pips"/); assert.match(css, /\.n2-game-done \.n2-game-go\{min-height:72px\}/);
-  // 9 · review: word, reading, meaning, struck pick, then the sentence; one row of actions.
-  assert.match(html, /class="n2-game-reviewbar"/); assert.match(mock, /\["You picked ", el\("s", \{text: picked\}\)\]/);
-  // 10, 11 · juice and sound that never block; reduced motion honoured; vibration.
   assert.match(css, /@media\(prefers-reduced-motion:reduce\)\{\.n2-game \*\{animation:none !important/);
   assert.match(mock, /navigator\.vibrate/);
-  assert.match(mock, /const playable = sound\(\) \? pool : pool\.filter\(q => q\.kind !== "listen"\);/, "sound off takes listen cards out");
-  // 12 · home: the run card, best runs, 14 days, Play in the thumb zone.
-  assert.match(html, /id="game-runcard"/); assert.match(html, /id="game-home-play" type="button">Play<span>10 questions · about a minute<\/span>/);
+  assert.match(mock, /const playable = sound\(\) \? pool : pool\.filter\(q => q\.kind !== "listen"\);/);
 });
 
 test("Quick round progress travels in the N2 gist file: rounds and runs union, maxima kept, the newer save decides the rest", async () => {
@@ -465,28 +455,89 @@ test("Quick round progress travels in the N2 gist file: rounds and runs union, m
 test("the game has its own settings, and switching Open Echo on Quick round on goes there at once", () => {
   const html = src("../n2-mock.html"), mock = src("../n2-mock.js"), app = src("../app.js");
   for (const id of ["game-set-difficulty", "game-set-bedtime", "game-set-sound", "game-set-start"]) assert.match(html, new RegExp('id="' + id + '"'), id);
-  assert.match(html, /id="game-settings-open" type="button">Settings<\/button>/, "Settings opens in the game, not in Echo");
-  assert.match(mock, /\$\("game-set-start"\)\.onchange = e => savePreference\("startGame", e\.target\.checked\);/);
+  assert.match(html, /id="game-settings-open" type="button">[\s\S]*?Settings<\/button>/, "Settings opens in the game, not in Echo");
+  assert.match(mock, /switchClick\("game-set-start", on => savePreference\("startGame", on\)\);/);
   assert.match(app, /\$\("#settings-start-game"\)\.addEventListener\("change",e=>\{if\(e\.target\.checked&&settings\.startGame\)setTimeout\(\(\)=>location\.assign\("\.\/n2-mock\.html\?view=game"\),250\)\}\);/);
 });
 
-test("a round can be ended at any time: the top-left button becomes End round", () => {
-  const mock = src("../n2-mock.js"), html = src("../n2-mock.html");
-  assert.match(mock, /\$\("game-back"\)\.setAttribute\("aria-label", "End round"\); \$\("game-back"\)\.dataset\.end = "true";/);
-  assert.match(html, /class="n2-game-icon-end"/);
+test("a round can be left at any time: the chevron goes back to Home (board 2)", () => {
+  const mock = src("../n2-mock.js");
+  assert.match(mock, /\$\("game-back"\)\.setAttribute\("aria-label", "Back to home"\);/);
+  assert.match(mock, /\$\("game-back"\)\.onclick = e => \{ e\.preventDefault\(\); window\.speechSynthesis\?\.cancel\(\); home\(\); \};/);
 });
 
 test("Radio stays inside the game: Day Radio and Evening recall come back, the Night Radio runs here", () => {
   const html = src("../n2-mock.html"), mock = src("../n2-mock.js");
   const game = html.slice(html.indexOf('<section id="game"'), html.indexOf('<section id="check"'));
   assert.doesNotMatch(game, /href="\.\/radio"/, "no link out to Echo's Radio from the game");
-  assert.match(game, /id="game-radio-open" type="button">Radio<\/button>/);
-  assert.match(game, /href="\?view=radio&amp;from=game"/); assert.match(game, /href="\?view=evening&amp;from=game"/);
-  assert.match(game, /id="game-night" class="radio-night"/);
+  assert.match(game, /id="game-radio-open" type="button">[\s\S]*?Radio<\/button>/);
+  assert.match(game, /href="\?view=radio&amp;mode=listen&amp;from=game"/); assert.match(game, /href="\?view=radio&amp;mode=recall&amp;from=game"/); assert.match(game, /href="\?view=evening&amp;from=game"/);
+  assert.match(game, /id="game-night" class="qr-night"/);
   assert.match(mock, /nightPlayer\.start\(tonight\.cued, \{steps: radioSteps/, "the cued half, the same plan as Echo's");
   assert.match(mock, /keepNight\(readNights\(\), nightRecord\(tonight\)\)/, "the night is recorded for the comparison");
   assert.match(mock, /if \(params\.get\("from"\) === "game"\) \$\("day-back"\)\.href = "\?view=game&panel=radio";/);
   assert.match(mock, /\$\("check-done-go"\)\.href = evening \? \(fromGame \? "\?view=game&panel=radio" : "\.\/radio"\)/);
   assert.match(mock, /if \(params\.get\("panel"\) === "radio"\) radioPanel\(\); else home\(\);/);
   assert.match(mock, /\["game-radio", "radio"\]/, "the screen switcher shows it");
+});
+
+// ---- Re-audit of v276 (26 Nov 2026) ----
+test("re-audit P0: a homophone card keeps its kana visible (no 【】 for the furigana parser to eat)", async () => {
+  const {rubySegments} = await import("../core.js");
+  const pool = gamePool({inventory, examples, sets, sat: new Set()});
+  for (const q of pool.filter(x => x.kind === "homophone")) {
+    assert.ok(!q.sentence.includes("【"), q.id);
+    assert.ok(rubySegments(q.sentence).map(x => x.text).join("").includes(q.prompt), q.id + ": the reading is still on screen");
+    assert.equal(q.needle, q.prompt);
+  }
+});
+
+test("re-audit P0: sense cues and corrected glosses", () => {
+  const pool = gamePool({inventory, examples, sets, sat: new Set()});
+  const get = id => pool.find(q => q.id === id);
+  for (const id of ["m:紅葉/こうよう", "m:紅葉/もみじ"]) { const q = get(id); if (q) assert.ok(q.sentence.includes("紅葉"), id + " shows its sentence as the cue"); }
+  assert.match(get("m:鈍い/のろい")?.answer || "slow", /slow/);
+  assert.match(get("m:留まる/とまる")?.answer || "perch", /perch/);
+  assert.match(get("m:宛名")?.answer || "addressee", /addressee/);
+  assert.match(get("d:発売")?.prompt || "release", /release/);
+  assert.ok(!/trendy/.test(get("m:白髪/しらが")?.answer || get("m:白髪")?.answer || ""));
+});
+
+test("re-audit P0: the listen clock starts after playback, a failed playback is unscored, stale speech is dropped", () => {
+  const mock = src("../n2-mock.js");
+  assert.match(mock, /speakAndWait\(spokenWord\(q\.prompt, q\.say\), \{voice: voice\(\), rate: Number\(settings\.rate\) \|\| 1\}\)\.then\(ok => \{\n      if \(token !== askToken \|\| current !== q \|\| locked\) return;\n      if \(ok\) \{ startClock\(\); return; \}/);
+  assert.match(mock, /"The audio didn’t play: this one doesn’t count\."/);
+  assert.match(mock, /if \(reviewToken === askToken && !\$\("game-review"\)\.hidden\) say\(/, "a review word isn't spoken after leaving it");
+  assert.match(mock, /window\.speechSynthesis\?\.cancel\(\); askToken\+\+;/, "Home cancels pending speech and callbacks");
+});
+
+test("re-audit P1: practice is exposure only: no accuracy, level, day, boss, run clock, wins, repeats or bonus", () => {
+  const before = {answered: 5, level: .5, total: 100, comeback: [], days: {}, wins: {}};
+  const after = rememberAnswer(before, {q: {id: "c:x", practice: true}, outcome: "wrong", points: 0, now: Date.now()});
+  assert.equal(after.answered, 5); assert.equal(after.level, .5); assert.deepEqual(after.comeback, []); assert.equal(after.runStart, undefined);
+  assert.deepEqual(after.days, {}); assert.equal(after.practiced, 1); assert.ok(after.seen["c:x"]);
+  const pool = gamePool({inventory, examples, sets, sat: new Set(ids.filter(id => !HELD_OUT.includes(id)))});
+  for (let i = 0; i < 30; i++) for (const q of nextRound({pool, state: {}, random: seeded(i + 1)}).round) assert.ok(!(q.practice && q.bonus), "no bonus on practice");
+  const r = rememberRound({}, {score: 0, questions: Array(10).fill({}), misses: 1, scored: 7});
+  assert.deepEqual([r.history[0].right, r.history[0].n], [6, 7], "flags and practice are out of the round's accuracy");
+});
+
+test("re-audit P1: a hidden tab pauses the card or review; P2: the boss closes its run when the sitting starts, and rest follows its finish", () => {
+  const mock = src("../n2-mock.js");
+  assert.match(mock, /if \(document\.visibilityState === "hidden"\) hiddenResume = reportPause\?\.\(\) \|\| null;/);
+  assert.match(mock, /if \(state\.boss && !state\.bossTaken\) \{ try \{ writeGame\(takeBoss\(readGame\(\), \{set: year, attemptId: state\.id\}\)\); \} catch \{\} state\.bossTaken = true; \}/);
+  assert.doesNotMatch(mock.slice(mock.indexOf("const fightBoss"), mock.indexOf("const fightBoss") + 200), /takeBoss/, "tapping Face the boss closes nothing");
+  const st = takeBoss({answered: 1000, total: 9}, {set: "n2-set-9", attemptId: "att-1", now: Date.parse("2026-11-27T23:00:00")});
+  assert.equal(st.runs.at(-1).attemptId, "att-1");
+  const finishedAfterMidnight = [{id: "att-1", book: "n2-set-9", phase: "results", completedAt: new Date("2026-11-28T00:40:00").toISOString()}];
+  assert.equal(resting(st, finishedAfterMidnight, new Date("2026-11-28T01:00:00")), true, "rest follows the finish, after midnight too");
+  assert.equal(resting(st, [{...finishedAfterMidnight[0], id: "other"}], new Date("2026-11-28T01:00:00")), false, "only that sitting");
+});
+
+test("re-audit P2: the audit export shows the underline, practice and the filtered near misses", () => {
+  const reading = src("../audit/quick-round/questions/reading.jsonl").split("\n").find(l => l.includes('"r:的確"'));
+  if (reading) assert.ok(!JSON.parse(reading).wrongCandidates.includes("てっかく"));
+  assert.doesNotMatch(src("../audit/quick-round/data/readings.tsv").split("\n").find(l => l.startsWith("的確\t")) || "", /てっかく/);
+  assert.match(src("../audit/quick-round/questions/connective.jsonl"), /"practice":true/);
+  assert.match(src("../audit/quick-round/questions/grammar.jsonl"), /"underline":/);
 });

@@ -329,6 +329,10 @@ Before considering the change complete:
   `payoutCap(choices)` = 200 × (n − 1), jackpots pay nothing, a flag scores
   zero and ends the combo, connectives are practice. The boss halves only the
   written clock (`BOSS_MINUTES`).
+  Its markup and styles follow the designer's boards to the letter (the `qr-`
+  block in styles.css, boards 1–11; anything not on a board is asked of the
+  designer first). Echo's base element styles are reset inside `.n2-game`
+  (`:where()` reset), and the game has no paper texture.
   Its look is "Blitz on washi" (designer canvas, 26 Nov; fixes 1–12 built):
   Echo's paper, ink and seal, plain surfaces in the loop, a 14 px clock bar
   with tenths, a one-line head (back, ten pips, score and combo), choices in

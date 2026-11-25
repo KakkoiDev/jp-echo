@@ -58,6 +58,28 @@ After 6 December:
 that level's boss, reach N0 once N1 is easy; lower levels keep coming back as
 review. The promotion and N0 bars are still to be set.
 
+## Re-audit of v276 (26 Nov 2026): status
+
+Fixed in v278: homophone kana (the reading stays on screen), sense cues for
+words spelled alike (紅葉), glosses (留まる, 鈍い, 発売, 宛名, 白髪, ご苦労様,
+手前, 甲斐がある), reading cards drop a sentence whose form differs (生ずる),
+the listen clock starts after playback and a failed playback is unscored,
+stale speech and callbacks are dropped, practice is exposure only (no
+accuracy, level, day, boss, run clock, wins, repeats or bonus), flags and
+practice leave the round's accuracy, a hidden tab pauses the card, the boss
+closes its run when the sitting starts (exact attempt id), rest follows the
+finish (after midnight too), the audit export shows underline, practice and
+the filtered near misses, four authored prompts left out for review.
+
+Still open from the re-audit:
+- **A lucky guess can keep a combo alive** (two-card advantage). The rule is
+  defined per answer today; changing it means taking the combo out of points.
+- **Resume a round after a reload**: needs a design (the boards have no resume state).
+- **Connective excerpts** (@461 ただし fits, @96 しかし fits, @197 starts mid-quote):
+  still practice until reviewed.
+- **10 grammar highlights** that the stem match still misses.
+- **Legacy ids** (old wins and comebacks under bare ids) are dropped, not migrated.
+
 ## Done since the audit
 
 - Quick round progress syncs through the gist in the N2 file (`game`, merged

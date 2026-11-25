@@ -1096,6 +1096,8 @@ const sfx = (() => {
   };
 })();
 const buzz = pattern => { try { navigator.vibrate?.(pattern); } catch {} };
+const PAUSE_SVG = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 5v14M15 5v14"/></svg>';
+const PLAY_SVG = '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>';
 function readGame() { try { return JSON.parse(localStorage.getItem(GAME_KEY) || "{}"); } catch { return {}; } }
 // Every save is stamped and marked for the gist sync (the N2 file carries it).
 function writeGame(state) { try { localStorage.setItem(GAME_KEY, JSON.stringify({...state, updatedAt: new Date().toISOString()})); markDirty("n2"); } catch {} }
@@ -1107,7 +1109,7 @@ async function game() {
   const sat = new Set(data.attempts.map(a => a.book).filter(id => /^n2-set-\d+$/.test(id || "")));
   const sets = (await Promise.all([...sat].filter(id => themes[id]).map(id => json(setFile(id)).catch(() => null)))).filter(Boolean);
   const pool = gamePool({inventory, examples: await deckExamples(), sets, sat});
-  let roundLevel = .5, rights = 0, flagged = 0, warmUp = false, beat = null, state = readGame(), round = [], index = 0, score = 0, streak = 0, bestCombo = 0, timer = null, ticker = null, shownAt = 0, current = null, locked = false, misses = [], marks = [];
+  let askToken = 0, practiced = 0, roundLevel = .5, rights = 0, flagged = 0, warmUp = false, beat = null, state = readGame(), round = [], index = 0, score = 0, streak = 0, bestCombo = 0, timer = null, ticker = null, shownAt = 0, current = null, locked = false, misses = [], marks = [];
   const bar = $("game-bar"), root = $("game");
   const sound = () => readGame().sound !== false;
   const difficulty = () => difficultyOf(settings.gameDifficulty);
@@ -1115,112 +1117,157 @@ async function game() {
   // The game's own settings, inside the game (owner, 26 Nov): leaving for
   // Echo's Settings pulled the player out of the app. They write the same
   // keys Echo's Settings does (jp-echo-settings), each on change.
+  // Board 11 · B: Settings, pushed from Home. Switches and segments save on change.
+  const setSwitch = (id, on) => $(id).setAttribute("aria-pressed", String(!!on));
+  const setSeg = (id, value) => { for (const b of $(id).querySelectorAll("button")) b.setAttribute("aria-checked", String(b.dataset.value === String(value))); };
   function gameSettings() {
     mode("settings"); $("game-title").textContent = "Settings";
-    $("game-back").href = "?view=game"; $("game-back").onclick = e => { e.preventDefault(); $("game-title").textContent = "Quick round"; home(); };
-    $("game-set-difficulty").value = difficulty(); $("game-set-bedtime").value = settings.gameBedtime || "23:30";
-    $("game-set-sound").checked = sound(); $("game-set-start").checked = !!settings.startGame; $("game-set-status").textContent = "";
+    $("game-back").href = "?view=game"; $("game-back").setAttribute("aria-label", "Back to Quick round home"); $("game-back").onclick = e => { e.preventDefault(); home(); };
+    setSeg("game-set-difficulty", difficulty()); $("game-set-bedtime").value = settings.gameBedtime || "23:30";
+    setSwitch("game-set-sound", sound()); setSwitch("game-set-start", !!settings.startGame); $("game-set-status").textContent = "";
   }
   const savePreference = (key, value) => {
     settings[key] = value;
-    try { const stored = JSON.parse(localStorage.getItem("jp-echo-settings") || "{}"); stored[key] = value; localStorage.setItem("jp-echo-settings", JSON.stringify(stored)); $("game-set-status").textContent = "Saved."; }
+    try { const stored = JSON.parse(localStorage.getItem("jp-echo-settings") || "{}"); stored[key] = value; localStorage.setItem("jp-echo-settings", JSON.stringify(stored)); $("game-set-status").textContent = ""; }
     catch { $("game-set-status").textContent = "Not saved: this browser blocked storage."; }
   };
+  const setSound = on => { const st = readGame(); st.sound = !!on; writeGame(st); soundButton(); setSwitch("game-set-sound", on); };
   $("game-settings-open").onclick = gameSettings;
-  // Radio inside the game (owner, 26 Nov): Day Radio and Evening recall open
-  // on this page and come back here (?from=game); the Night Radio runs here,
-  // the same plan as Echo's Radio screen (n2-night.js, radio.js).
+  // Board 11 · C: Radio, pushed from Home; D: the night screen, black in both themes.
+  let nightCue = 0, nightEnd = 0;
   const nightPlayer = new RadioPlayer({onState: (at, item) => {
     const copy = RADIO_PHASE_COPY[at.phase] || {title: "", line: ""};
-    $("game-night-phase").textContent = copy.title;
-    $("game-night-text").textContent = item && at.phase === "wind-down" ? String(item.target).replace(/【[^】]*】/g, "") : copy.line;
-    $("game-night-until").textContent = at.phase === "done" ? "" : "Until " + clockAt(Date.now() + at.left);
+    $("game-night-phase").textContent = copy.title + (at.phase === "cues" ? " · cues" : "");
+    $("game-night-text").textContent = item ? String(item.target).replace(/【[^】]*】/g, "") : copy.line;
+    if (item && at.phase === "cues") nightCue++;
+    $("game-night-cue").textContent = item && at.phase === "cues" ? "cue " + nightCue : "";
+    $("game-night-clock").textContent = at.phase === "done" ? "" : "Until " + clockAt(nightEnd);
   }, onDone: () => stopNight()});
   const nightNoise = new NoiseBed();
   let nightWake = null, tonight = null;
   async function radioPanel() {
     mode("radio"); $("game-title").textContent = "Radio";
-    $("game-back").href = "?view=game"; $("game-back").dataset.end = "false"; $("game-back").onclick = e => { e.preventDefault(); $("game-title").textContent = "Quick round"; home(); };
-    $("game-night-hours").value = String(Number(settings.radioHours) || RADIO_DEFAULTS.hours);
-    $("game-night-noise").checked = settings.radioNoise !== false; $("game-night-compare").checked = settings.radioCompare !== false;
-    tonight = nightPlan({inventory, recall: data.recall, evidence: scored(data), events: data.events, examples: await deckExamples(), compare: settings.radioCompare !== false});
-    $("game-night-count").textContent = tonight.cued.length ? tonight.cued.length + " tonight" : "nothing yet";
-    $("game-night-line").textContent = tonight.cued.length ? "Today’s misses, slow answers and guesses, as the sentences you studied" + (tonight.compare ? "; " + tonight.held.length + " held back for tomorrow’s comparison." : ".") : "Nothing from today yet: play a few rounds first. The night strengthens what you studied awake.";
+    $("game-back").href = "?view=game"; $("game-back").setAttribute("aria-label", "Back to Quick round home"); $("game-back").dataset.end = "false"; $("game-back").onclick = e => { e.preventDefault(); home(); };
+    const hours = Number(settings.radioHours) || RADIO_DEFAULTS.hours;
+    setSeg("game-night-hours", hours); setSwitch("game-night-noise", settings.radioNoise !== false); setSwitch("game-night-compare", settings.radioCompare !== false);
+    const examples = await deckExamples();
+    tonight = nightPlan({inventory, recall: data.recall, evidence: scored(data), events: data.events, examples, compare: settings.radioCompare !== false});
+    $("game-night-count").textContent = tonight.cued.length ? tonight.cued.length + " tonight" + (tonight.compare ? " · " + tonight.held.length + " held back for tomorrow’s comparison" : "") : "Nothing from today yet: play a few rounds first.";
+    const left = eveningRecall({inventory, recall: data.recall, evidence: scored(data), events: data.events, examples}).length;
+    $("game-night-evening").hidden = !left; $("game-night-evening-label").textContent = "Evening recall first · " + left + " item" + (left === 1 ? "" : "s");
     $("game-night-start").disabled = !tonight.cued.length;
+    $("game-night-until").textContent = "Until " + clockAt(Date.now() + hours * 3600_000) + " · keep the phone on its charger, screen on";
   }
   function startNight() {
     if (!tonight?.cued.length) return;
-    const hours = Number($("game-night-hours").value) || RADIO_DEFAULTS.hours, plan = radioPlan({hours});
+    const hours = Number(settings.radioHours) || RADIO_DEFAULTS.hours, plan = radioPlan({hours});
     if (settings.radioNoise !== false) nightNoise.start();
-    $("game-night").hidden = false;
+    nightCue = 0; nightEnd = Date.now() + hours * 3600_000; $("game-night").hidden = false;
     nightPlayer.start(tonight.cued, {steps: radioSteps, phaseAt: elapsed => radioPhase(elapsed, plan), voiceFor: lang => lang === "ja" ? voice() : null, rate: Math.min(1, Number(settings.rate) || 1)});
     try { localStorage.setItem(NIGHT_KEY, JSON.stringify(keepNight(readNights(), nightRecord(tonight)))); markDirty("n2"); } catch {}
     navigator.wakeLock?.request("screen").then(w => { nightWake = w; }).catch(() => {});
   }
   function stopNight() { nightPlayer.stop(); nightNoise.stop(); try { nightWake?.release(); } catch {} nightWake = null; $("game-night").hidden = true; }
   $("game-radio-open").onclick = radioPanel;
-  $("game-home-radio").onclick = e => { e.preventDefault(); radioPanel(); };
+  $("game-home-radio").onclick = () => radioPanel();
   $("game-night-start").onclick = startNight;
   $("game-night-stop").onclick = stopNight;
-  $("game-night-hours").onchange = e => savePreference("radioHours", Number(e.target.value) || RADIO_DEFAULTS.hours);
-  $("game-night-noise").onchange = e => savePreference("radioNoise", e.target.checked);
-  $("game-night-compare").onchange = e => { savePreference("radioCompare", e.target.checked); radioPanel(); };
+  const segClick = (id, fn) => { for (const b of $(id).querySelectorAll("button")) b.onclick = () => { setSeg(id, b.dataset.value); fn(b.dataset.value); }; };
+  const switchClick = (id, fn) => { $(id).onclick = () => { const on = $(id).getAttribute("aria-pressed") !== "true"; setSwitch(id, on); fn(on); }; };
+  segClick("game-night-hours", v => { savePreference("radioHours", Number(v)); $("game-night-until").textContent = "Until " + clockAt(Date.now() + Number(v) * 3600_000) + " · keep the phone on its charger, screen on"; });
+  switchClick("game-night-noise", on => savePreference("radioNoise", on));
+  switchClick("game-night-compare", on => { savePreference("radioCompare", on); radioPanel(); });
   document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && nightPlayer.running) navigator.wakeLock?.request("screen").then(w => { nightWake = w; }).catch(() => {}); });
-  $("game-set-difficulty").onchange = e => savePreference("gameDifficulty", difficultyOf(e.target.value));
+  segClick("game-set-difficulty", v => savePreference("gameDifficulty", difficultyOf(v)));
   $("game-set-bedtime").onchange = e => savePreference("gameBedtime", e.target.value || "23:30");
-  $("game-set-start").onchange = e => savePreference("startGame", e.target.checked);
-  $("game-set-sound").onchange = e => { const st = readGame(); st.sound = e.target.checked; writeGame(st); soundButton(); $("game-set-status").textContent = "Saved."; };
-  const pips = (host, n = round.length) => host.replaceChildren(...Array.from({length: n || 10}, (_, i) => el("i", {class: marks[i] || (host.id === "game-pips" && i === index ? "now" : "")})));
+  switchClick("game-set-start", on => savePreference("startGame", on));
+  switchClick("game-set-sound", on => setSound(on));
+  // Board 11: Report a problem opens Echo's report sheet (bugs that aren't one card).
+  $("game-set-report").onclick = () => openReport();
+  const pips = (host, n = round.length) => host.replaceChildren(...Array.from({length: n || 10}, (_, i) => el("i", {class: marks[i] || (host.id === "game-pips" && i === index ? (round[i]?.practice ? "pr" : "now") : "")})));
   const head = () => {
     $("game-score").textContent = score.toLocaleString();
     const chip = $("game-combo-chip"), text = streak >= 2 ? "×" + (1 + Math.min(streak, 10) / 10).toFixed(1) + " combo" : "";
     if (text !== chip.textContent) { chip.textContent = text; chip.classList.remove("bump"); void chip.offsetWidth; if (text) chip.classList.add("bump"); }
     pips($("game-pips"));
   };
-  const floatPoints = (points, kind) => { const f = $("game-float"); f.textContent = points > 0 ? "+" + points : points < 0 ? "−" + Math.abs(points) : "±0"; f.className = "n2-game-float " + kind; void f.offsetWidth; f.classList.add("go"); };
+  const floatPoints = (points, kind) => { const f = $("game-float"); f.textContent = points > 0 ? "+" + points : points < 0 ? "−" + Math.abs(points) : "±0"; f.className = "qr-float " + kind; void f.offsetWidth; f.classList.add("go"); };
   const toast = text => { const t = $("game-toast"); t.textContent = text; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => { t.hidden = true; }, 1400); };
   // The boss: every 1,000 questions, a full mock on a set not sat yet.
   const bossNow = () => bossSet({sets: bookIds.filter(id => realistic(id)), attempts: data.attempts});
-  const fightBoss = (e, boss) => { e.preventDefault(); writeGame(takeBoss(readGame(), {set: boss.id})); location.href = "?book=" + boss.id + "&boss=1"; };
+  // The run closes when the boss sitting actually starts (exam(), with its attempt id), not on this tap.
+  const fightBoss = (e, boss) => { e.preventDefault(); location.href = "?book=" + boss.id + "&boss=1"; };
   const clockText = st => { const c = runClock(st.runStart), h = Math.floor(c.leftMs / 3600_000), m = Math.floor(c.leftMs % 3600_000 / 60_000); return !c.started ? "×" + c.times + " · 24 h once you start" : c.times > 1 ? "×" + c.times + " · " + h + " h " + m + " m left" : "×1 · run bonus over"; };
   // Home (fix 12): the run card, best runs, 14 days, then Play in the thumb zone.
   function home() {
-    clearTimeout(timer); clearInterval(ticker); window.speechSynthesis?.cancel();
-    mode("home"); $("game-sub").textContent = ""; $("game-score").textContent = ""; $("game-combo-chip").textContent = "";
-    $("game-back").href = "./"; $("game-back").onclick = null; $("game-back").setAttribute("aria-label", "Back to Echo"); $("game-back").dataset.end = "false"; $("game-title").textContent = "Quick round";
+    clearTimeout(timer); clearInterval(ticker); window.speechSynthesis?.cancel(); askToken++;
+    mode("home"); $("game-sub").textContent = ""; $("game-sub-right").textContent = ""; $("game-score").textContent = ""; $("game-combo-chip").textContent = "";
+    // Board 11 · A: back to Echo's last screen, or Echo's start when Echo opened straight here.
+    $("game-back").href = "./"; $("game-back").setAttribute("aria-label", "Back to Echo"); $("game-back").dataset.end = "false"; $("game-title").textContent = "Quick round";
+    $("game-back").onclick = e => { e.preventDefault(); if (history.length > 1 && document.referrer && new URL(document.referrer).origin === location.origin && !/n2-mock\.html\?view=game/.test(document.referrer)) history.back(); else location.href = "./"; };
     const st = readGame(), b = bossProgress(st), boss = bossNow(), rest = resting(st, data.attempts), open = b.open && !!boss;
-    $("game-runcard").hidden = rest; $("game-rest").hidden = !rest;
-    const runNo = (st.runs || []).length + 1;
-    $("game-run-name").textContent = "Run " + runNo + (open ? " · boss open" : "");
-    $("game-run-clock").textContent = clockText(st);
-    $("game-run-big").replaceChildren(String(b.done), el("small", {text: open ? "of " + BOSS_EVERY.toLocaleString() + " · the boss is open" : "of " + BOSS_EVERY.toLocaleString() + " to the boss"}));
+    const runNo = (st.runs || []).length + 1, clock = runClock(st.runStart);
+    // Run card (board 1 · Home A/D), the boss card (B) or the rest (C).
+    $("game-runcard").hidden = open; $("game-bosscard").hidden = !open; $("game-rest").hidden = !rest;
+    const stretch = b.done >= 950 && !open;
+    $("game-run-name").textContent = rest ? "Run " + runNo : "Run " + runNo + (stretch ? " · final stretch" : "");
+    $("game-run-clock").textContent = rest || !clock.started ? "clock starts on your next answer" : stretch ? (BOSS_EVERY - b.done) + " to the boss" : clockText(st);
+    $("game-run-clock").dataset.tone = rest || !clock.started ? "" : "seal";
+    $("game-run-big").textContent = b.done.toLocaleString();
+    $("game-run-of").textContent = stretch ? "of " + BOSS_EVERY.toLocaleString() : "of " + BOSS_EVERY.toLocaleString() + " to the boss";
     $("game-run-fill").style.width = Math.round(b.done / BOSS_EVERY * 100) + "%";
-    $("game-run-line").textContent = boss ? (open ? "Mock " + titleOf(boss.id) + ": " + BOSS_MINUTES.written + " min written + " + BOSS_MINUTES.listening + " min listening. Beat it before the run clock ends." : ((st.total || 0) - (st.runFrom || 0)).toLocaleString() + " points so far · Mock " + titleOf(boss.id) + " waits") : "";
-    $("game-rest-line").textContent = "The boss is down. The night keeps today’s work.";
-    // Runs: the merged score ranks them; each row keeps both parts.
+    $("game-run-fill").parentElement.classList.toggle("qr-meter-seal", stretch);
+    $("game-run-points").textContent = rest ? "" : ((st.total || 0) - (st.runFrom || 0)).toLocaleString() + " points so far";
+    $("game-run-waits").textContent = boss && !rest ? "Mock " + String(bookIds.indexOf(boss.id) + 1).padStart(2, "0") + " waits" : "";
+    // The run clock, live, in the last hours of a bonus (board 1 · D).
+    const showCount = clock.started && clock.times > 1 && clock.leftMs < 6 * 3600_000 && !rest;
+    $("game-countdown").hidden = !showCount;
+    if (showCount) {
+      const t = Math.floor(clock.leftMs / 1000);
+      $("game-count-label").textContent = "×" + clock.times + " ends in";
+      $("game-count-time").textContent = Math.floor(t / 3600) + ":" + String(Math.floor(t % 3600 / 60)).padStart(2, "0") + ":" + String(t % 60).padStart(2, "0");
+      $("game-tier-a").className = clock.times === 1.5 ? "on" : ""; $("game-tier-b").className = clock.times === 1.2 ? "on" : ""; $("game-tier-c").className = "";
+    }
+    $("game-run-line").textContent = stretch ? "About " + Math.ceil((BOSS_EVERY - b.done) / 10) + " rounds, then a " + (BOSS_MINUTES.written + BOSS_MINUTES.listening) + "-minute boss." : "";
+    if (open) {
+      $("game-boss-name").textContent = "Run " + runNo + " · boss open";
+      $("game-boss-clock2").textContent = clockText(st);
+      $("game-boss-title").textContent = "Mock " + String(bookIds.indexOf(boss.id) + 1).padStart(2, "0") + " at half time";
+      $("game-boss-mins").textContent = BOSS_MINUTES.written + " min written · " + BOSS_MINUTES.listening + " min listening";
+      $("game-boss-points").textContent = BOSS_EVERY.toLocaleString() + " / " + BOSS_EVERY.toLocaleString() + " · " + ((st.total || 0) - (st.runFrom || 0)).toLocaleString() + " points";
+    }
+    $("game-rest-line").textContent = "The boss is down. The night keeps today’s work. Run " + runNo + " starts whenever you play again.";
+    // Best runs: the merged score ranks them; each keeps both parts.
     const papersById = new Map(data.papers.map(p => [p.id, p]));
     const examOf = run => {
-      const a = data.attempts.filter(x => x.book === run.set && x.boss && x.phase === "results" && (x.startedAt || "") >= run.at).sort((x, y) => (x.startedAt || "").localeCompare(y.startedAt || ""))[0];
+      const a = (run.attemptId && data.attempts.find(x => x.id === run.attemptId && x.phase === "results"))
+        || data.attempts.filter(x => x.book === run.set && x.boss && x.phase === "results" && (x.startedAt || "") >= run.at).sort((x, y) => (x.startedAt || "").localeCompare(y.startedAt || ""))[0];
       const paper = a && papersById.get(a.paper || a.book);
       return paper ? {...estimate(paper, a), completedAt: a.completedAt} : null;
     };
-    const runs = runTable(st, examOf);
+    const runs = runTable(st, examOf), all = st.runs || [];
     $("game-runs-wrap").hidden = !runs.length;
-    $("game-runs").replaceChildren(...runs.slice(0, 3).map((r, i) => el("li", {},
-      el("span", {text: String(i + 1)}), el("strong", {text: "Run " + ((st.runs || []).indexOf((st.runs || []).find(x => x.at === r.at)) + 1)}), el("strong", {text: r.total.toLocaleString()}),
-      el("span", {class: "hint", text: r.gamePoints.toLocaleString() + " from questions · " + (r.exam ? "boss " + r.exam.total + "/180 (" + r.exam.sections.map(x => x.scaled ?? "–").join("·") + ")" + (r.times > 1 ? " · ×" + r.times : "") : "boss not finished")}))));
-    const days = lastDays(st, 14);
-    $("game-chart").replaceChildren(scoreChart({points: days.map(d => ({value: d.answered, ok: d.answered >= DAILY_GOAL, label: shortDate(new Date(d.day + "T12:00:00"))})),
-      max: Math.max(DAILY_GOAL * 1.2, ...days.map(d => d.answered)), line: DAILY_GOAL, label: "Questions a day", caption: "Today " + (days.at(-1)?.answered || 0).toLocaleString() + " · the line is " + DAILY_GOAL.toLocaleString() + " a day."}));
-    $("game-home-level").textContent = DIFFICULTY[difficulty()].label + (difficulty() === "normal" ? " · adaptive" : "") + " · change in Settings";
-    $("game-home-boss").hidden = !open; $("game-home-radio").hidden = !rest;
+    $("game-runs").replaceChildren(...runs.slice(0, open || rest ? 2 : 3).map((r, i) => el("div", {class: "qr-rk"},
+      el("span", {class: "p", text: String(i + 1)}), el("span", {text: "Run " + (all.findIndex(x => x.at === r.at) + 1)}),
+      ...(r.exam ? [el("span", {class: "qr-chip", "data-tone": r.times > 1 ? "seal" : "", text: "×" + r.times})] : [el("span", {class: "qr-tiny", text: "boss not finished"})]),
+      el("span", {class: "v", text: r.total.toLocaleString()}))));
+    // The last 14 days, as bars against the 1,000 line.
+    const days = lastDays(st, 14), top = Math.max(DAILY_GOAL * 1.2, ...days.map(d => d.answered));
+    $("game-today").textContent = "today " + (days.at(-1)?.answered || 0).toLocaleString();
+    $("game-days").replaceChildren(el("u", {style: "bottom:" + Math.round(DAILY_GOAL / top * 36) + "px"}),
+      ...days.map(d => el("i", {class: d.answered >= DAILY_GOAL ? "full" : "", style: "height:" + Math.max(2, Math.round(d.answered / top * 36)) + "px", title: d.day + ": " + d.answered})));
+    $("game-home-level").textContent = difficulty() === "normal" ? "" : DIFFICULTY[difficulty()].label + " · change in Settings";
+    // The dock: one big button, then the pair (boards 1 · A–D).
+    $("game-home-boss").hidden = !open; $("game-home-radio").hidden = !rest || open; $("game-home-play").hidden = open || rest;
+    $("game-home-play2").hidden = !open && !rest; $("game-home-play2").textContent = open ? "Play a round first" : "Play anyway";
+    $("game-play-sub").textContent = stretch ? "Final stretch · bonuses doubled" : "10 questions · about a minute";
     if (open) $("game-home-boss").onclick = e => fightBoss(e, boss);
-    const play = $("game-home-play");
-    play.className = (open || rest ? "outline" : "primary") + " n2-game-go";
-    play.replaceChildren(open ? "Play a round first" : rest ? "Play anyway" : "Play", el("span", {text: "10 questions · about a minute"}));
+    $("game-radio-open").hidden = rest;
     soundButton();
   }
-  const soundButton = () => { $("game-sound").setAttribute("aria-pressed", String(sound())); $("game-sound").textContent = sound() ? "Sound on" : "Sound off"; };
+  // Board 11 · A: the one Sound switch, a quiet icon in Home's head; seal when off.
+  const soundButton = () => { const on = sound(); $("game-sound").setAttribute("aria-pressed", String(on)); $("game-sound").setAttribute("aria-label", on ? "Sound on" : "Sound off"); };
+  $("game-sound").onclick = () => setSound(!sound());
   // The clock (fix 2): a 14 px bar with tenths beside it; seal in the last
   // second, gold on a bonus.
   const runBar = (seconds, {gold = false, review = false} = {}) => {
@@ -1239,14 +1286,14 @@ async function game() {
   const stopBar = state => { clearInterval(ticker); const w = getComputedStyle(bar).width; bar.style.transition = "none"; bar.style.width = w; if (state) $("game-clock").dataset.state = state; };
   function start() {
     sfx.unlock();
-    // During a round the top-left button ends it (✕ "End round"), plainly.
-    $("game-back").href = "?view=game"; $("game-back").setAttribute("aria-label", "End round"); $("game-back").dataset.end = "true";
+    // During a round the top-left chevron goes back to Home (board 2 · "Back to home").
+    $("game-back").href = "?view=game"; $("game-back").setAttribute("aria-label", "Back to home"); $("game-back").dataset.end = "false";
     $("game-back").onclick = e => { e.preventDefault(); window.speechSynthesis?.cancel(); home(); };
     state = readGame();
     // With the sound off, listen cards leave the mix: nothing becomes unanswerable.
     const playable = sound() ? pool : pool.filter(q => q.kind !== "listen");
     const next = nextRound({pool: playable, recall: data.recall, state, difficulty: difficulty()});
-    round = next.round; roundLevel = next.level; warmUp = next.warmUp; beat = next.beat || null; rights = 0; flagged = 0; bestCombo = 0;
+    round = next.round; roundLevel = next.level; warmUp = next.warmUp; beat = next.beat || null; rights = 0; flagged = 0; practiced = 0; bestCombo = 0;
     index = 0; score = 0; streak = 0; misses = []; marks = [];
     mode("play");
     ask();
@@ -1261,30 +1308,48 @@ async function game() {
     const card = $("game-card");
     card.dataset.bonus = String(!!q.bonus); card.dataset.state = ""; card.style.animation = "none"; void card.offsetWidth; card.style.animation = "";
     $("game-kind").textContent = KIND_LABEL[q.kind] + (q.kind === "exam" ? " · 問題" + q.mondai : "");
-    const tag = q.bonus ? ["Bonus ×3", "gold"] : q.practice ? ["Practice · not scored", ""] : q.comeback ? ["Again", "seal"] : null;
+    const tag = q.bonus ? ["Bonus ×3", "gold"] : q.practice ? ["Practice · not scored", "practice"] : q.comeback ? ["Again", "seal"] : q.kind === "exam" ? ["Mock " + String(bookIds.indexOf(String(q.solution?.source || "").split("#")[0]) + 1).padStart(2, "0"), ""] : null;
     $("game-tag").hidden = !tag; if (tag) { $("game-tag").textContent = tag[0]; $("game-tag").dataset.tone = tag[1]; }
     // A beat ribbon on question 1 (pace), or the warm-up; it leaves on the first answer.
     const ribbon = index === 0 ? (warmUp ? "Warm-up round: things you know." : beat?.line || "") : "";
-    $("game-ribbon").hidden = !ribbon; $("game-ribbon").textContent = ribbon; $("game-ribbon").className = "n2-game-ribbon beat";
+    $("game-ribbon").hidden = !ribbon; $("game-ribbon").textContent = ribbon; $("game-ribbon").className = "qr-ribbon";
     $("game-stamp").hidden = true;
-    const listen = q.kind === "listen";
-    $("game-prompt").textContent = listen ? "…" : q.prompt;
-    $("game-prompt").lang = q.kind === "definition" ? "en" : "ja";
-    $("game-prompt").classList.toggle("long", !listen && q.prompt.length > 16);
-    $("game-prompt").classList.toggle("mid", !listen && q.prompt.length > 6 && q.prompt.length <= 16);
-    $("game-sentence").hidden = !q.sentence;
-    if (q.sentence) $("game-sentence").replaceChildren(...exampleNodes(q.sentence, [q.needle]));
-    $("game-say").hidden = !listen;
+    // Card layout per kind (board 3a): sentence kinds show the sentence alone;
+    // word kinds the big word; listen a round play button; exam its question.
+    const listen = q.kind === "listen", sentenceKind = !!q.sentence && ["reading", "homophone", "grammar", "connective", "meaning"].includes(q.kind);
+    const prompt = $("game-prompt");
+    prompt.hidden = listen || sentenceKind;
+    prompt.textContent = q.prompt;
+    prompt.lang = q.kind === "definition" ? "en" : "ja";
+    prompt.className = "qr-big" + (q.kind === "exam" ? " exam" : q.prompt.length > 6 && q.kind !== "definition" ? " mid" : "");
+    $("game-sentence").hidden = !sentenceKind;
+    $("game-sentence").classList.toggle("passage", q.kind === "connective");
+    if (q.kind === "connective") { const [a, b] = q.sentence.split("（　）"); $("game-sentence").replaceChildren(a, el("span", {class: "qr-blank", id: "game-blank"}), b || ""); }
+    else if (sentenceKind) $("game-sentence").replaceChildren(...exampleNodes(q.sentence, [q.needle]));
+    // Board 11 · E: a practice card reads as practice: dashed card, dim clock, ring pip.
+    card.dataset.practice = String(!!q.practice); root.dataset.practice = String(!!q.practice);
+    $("game-say").hidden = !listen; $("game-say-hint").hidden = !listen;
+    card.dataset.centered = String(!sentenceKind && q.kind !== "exam");
     $("game-aloud").lastChild.textContent = ALOUD[q.kind] || "";
-    $("game-combo").textContent = ""; $("game-combo").className = "n2-game-line";
+    $("game-combo").textContent = ""; $("game-combo").className = "qr-line";
     $("game-flag").dataset.on = "false";
-    $("game-choices").replaceChildren(...choices.map((c, i) => el("button", {type: "button", class: "n2-game-choice", "data-ui": "button", onclick: () => answer(i)},
+    $("game-choices").replaceChildren(...choices.map((c, i) => el("button", {type: "button", class: "qr-ch", "data-ui": "button", onclick: () => answer(i)},
       el("span", {class: "k", text: String(i + 1)}), el("span", {class: "t", lang: /[ぁ-んァ-ン一-龯]/.test(c) ? "ja" : "en", text: c}))));
     head();
     if (q.bonus && sound()) sfx.bonus();
-    if (listen) say(spokenWord(q.prompt, q.say));
-    shownAt = performance.now(); runBar(q.seconds, {gold: !!q.bonus});
-    timer = setTimeout(() => answer(-1, "timeout"), q.seconds * 1000);
+    const token = ++askToken;
+    const startClock = () => { shownAt = performance.now(); runBar(q.seconds, {gold: !!q.bonus}); timer = setTimeout(() => answer(-1, "timeout"), q.seconds * 1000); };
+    if (!listen) { startClock(); return; }
+    // Listen (re-audit): the clock starts once the word has played; if it can't
+    // play, the card doesn't count and the game moves on.
+    shownAt = performance.now(); stopBar("idle"); $("game-sec").textContent = q.seconds.toFixed(1);
+    speakAndWait(spokenWord(q.prompt, q.say), {voice: voice(), rate: Number(settings.rate) || 1}).then(ok => {
+      if (token !== askToken || current !== q || locked) return;
+      if (ok) { startClock(); return; }
+      locked = true; marks[index] = "pr"; practiced++; head();
+      $("game-combo").textContent = "The audio didn’t play: this one doesn’t count.";
+      timer = setTimeout(() => { index++; ask(); }, PAUSE.miss);
+    });
   }
   async function answer(i, why) {
     if (locked || !current) return;
@@ -1299,12 +1364,17 @@ async function game() {
     // leave the combo alone.
     const paid = q.practice ? {points: 0, jackpot: 0} : bonusPoints({points: result.points, bonus: q.bonus, streak: result.streak, factor: DIFFICULTY[difficulty()].points, choices: q.choices.length});
     if (q.practice) result.streak = streak;
-    if (outcome === "right") rights++;
+    if (outcome === "right" && !q.practice) rights++;
+    if (q.practice) practiced++;
     score += paid.points; streak = result.streak; bestCombo = Math.max(bestCombo, streak);
-    marks[index] = outcome === "right" ? "ok" : outcome === "timeout" ? "to" : "no";
+    marks[index] = q.practice ? "pr" : outcome === "right" ? "ok" : outcome === "timeout" ? "to" : "no";
     head();
     $("game-score").dataset.flash = outcome === "right" ? "right" : outcome === "wrong" ? "wrong" : ""; setTimeout(() => { $("game-score").dataset.flash = ""; }, 400);
-    floatPoints(paid.points, paid.points > 0 ? (q.bonus ? "gold" : "right") : paid.points < 0 ? "wrong" : "zero");
+    if (q.practice) { const f = $("game-float"); f.textContent = "practice"; f.className = "qr-float practice"; void f.offsetWidth; f.classList.add("go"); }
+    else floatPoints(paid.points, paid.points > 0 ? (q.bonus ? "gold" : "right") : paid.points < 0 ? "wrong" : "zero");
+    if (q.practice && streak >= 2) $("game-combo-chip").textContent += " · kept";
+    // Board 11 · F: the blank fills with the answer, and its job shows under the card.
+    if (q.kind === "connective" && $("game-blank")) { $("game-blank").textContent = q.answer; $("game-blank").classList.add("filled"); }
     $("game-ribbon").hidden = true;
     // Answer states (fix 7): right tinted with ✓, a wrong pick struck, the rest fade.
     const card = $("game-card"); card.dataset.state = outcome === "right" ? "right" : outcome === "wrong" ? "wrong" : outcome === "timeout" ? "timeout" : "";
@@ -1323,11 +1393,12 @@ async function game() {
     }
     const line = $("game-combo");
     if (paid.jackpot && outcome === "right") {
-      $("game-ribbon").hidden = false; $("game-ribbon").className = "n2-game-ribbon"; $("game-ribbon").textContent = "Jackpot · combo " + streak;
+      $("game-ribbon").hidden = false; $("game-ribbon").className = "qr-ribbon gold"; $("game-ribbon").textContent = "Jackpot · combo " + streak;
       if (streak >= 10) $("game-stamp").hidden = false;
-    } else if (q.bonus && outcome === "right") { line.textContent = "Bonus +" + paid.points; line.className = "n2-game-line gold"; }
+    } else if (q.bonus && outcome === "right") { line.textContent = "Bonus +" + paid.points; line.className = "qr-line gold"; }
     // Rule two: a mistake is part of the game. Say so, then keep going.
-    if (outcome === "wrong") line.textContent = "Part of the game. Keep going.";
+    if (q.kind === "connective") line.textContent = String(q.solution?.meaning || "").split(" · ").slice(1).join(" · ");
+    else if (outcome === "wrong") line.textContent = "Part of the game. Keep going.";
     else if (outcome === "timeout") line.textContent = "Too slow this time. It comes back next round.";
     else if (outcome === "dontknow") line.textContent = "Fine. Keep going.";
     if (outcome !== "right") misses.push({q, picked: i >= 0 ? q.choices[i] : outcome === "timeout" ? "Time ran out" : "I don’t know"});
@@ -1351,20 +1422,22 @@ async function game() {
     if (!misses[n]) { done(); return; }
     const {q, picked} = misses[n], sol = q.solution || {};
     mode("review");
-    $("game-sub").textContent = "Review · " + (n + 1) + " of " + misses.length;
+    $("game-sub").textContent = "Review · " + (n + 1) + " of " + misses.length; $("game-sub-right").textContent = "";
     $("game-review-kind").textContent = KIND_LABEL[q.kind];
     const word = sol.word || q.answer;
     $("game-review-word").textContent = word;
-    $("game-review-word").classList.toggle("long", word.length > 12);
+    $("game-review-word").classList.toggle("long", word.length > 6);
     $("game-review-reading").textContent = sol.reading && sol.reading !== sol.word ? sol.reading : "";
     $("game-review-meaning").textContent = sol.meaning || (q.kind === "exam" ? "Answer: " + q.answer : "");
     $("game-review-picked").replaceChildren(...(picked && !/^(Time ran out|I don’t know)$/.test(picked) ? ["You picked ", el("s", {text: picked})] : [picked || ""]));
     $("game-review-sentence").hidden = !sol.ja;
-    if (sol.ja) { $("game-review-ja").replaceChildren(...exampleNodes(sol.ja, [q.needle && q.needle !== "（　）" && !q.needle.startsWith("【") ? q.needle : word.replace(/[〜～]/g, "").replace(/（[^）]*）/g, "")])); $("game-review-en").textContent = sol.en || ""; }
+    if (sol.ja) { $("game-review-ja").replaceChildren(...exampleNodes(sol.ja, [q.kind === "homophone" || q.kind === "connective" ? word : q.needle || "", word.replace(/[〜～]/g, "").replace(/（[^）]*）/g, "")].filter(Boolean))); $("game-review-en").textContent = sol.en || ""; }
     $("game-review-why").hidden = !(sol.why || sol.others);
     $("game-review-why").textContent = sol.why || (sol.others ? "Same sound: " + sol.others.join(" · ") : "");
-    if (sound() && sol.word && sol.reading) setTimeout(() => say(spokenWord(sol.word, sol.reading)), 150);
+    const reviewToken = ++askToken;
+    if (sound() && sol.word && sol.reading) setTimeout(() => { if (reviewToken === askToken && !$("game-review").hidden) say(spokenWord(sol.word, sol.reading)); }, 150);
     held = false; $("game-hold").setAttribute("aria-pressed", "false"); $("game-hold").setAttribute("aria-label", "Hold");
+    $("game-hold").innerHTML = PAUSE_SVG;
     runBar(REVIEW_SECONDS, {review: true});
     timer = setTimeout(() => review(n + 1), REVIEW_SECONDS * 1000);
   }
@@ -1373,35 +1446,43 @@ async function game() {
     clearTimeout(timer); clearInterval(ticker);
     // Right counts only answers that were right: a flag or a skip is never a win.
     const before = readGame().best || 0;
-    state = rememberRound(readGame(), {score, questions: round, misses: round.length - rights}); writeGame(state);
+    // Accuracy over scored answers only: flags and practice are not evidence.
+    const scoredN = round.length - flagged - practiced;
+    state = rememberRound(readGame(), {score, questions: round, misses: scoredN - rights, scored: scoredN}); writeGame(state);
     const best = score > before && score > 0;
     if (sound()) { best ? sfx.best() : sfx.round(); buzz(best ? [30, 50, 30] : 20); }
     mode("done");
     $("game-sub").textContent = "";
-    $("game-done-kicker").textContent = "Round " + state.rounds + (beat?.name && beat.name !== "hook" ? " · " + beat.name : "") + " · best " + state.best.toLocaleString();
+    $("game-sub").textContent = "Round " + state.rounds + (beat?.name && beat.name !== "hook" ? " · " + beat.name : "");
+    const late = atBedtime(new Date(), settings.gameBedtime), warm = inSlumpNext();
+    $("game-sub-right").textContent = late ? "today " + (gameToday(state).answered || 0).toLocaleString() : "best " + state.best.toLocaleString();
     $("game-done-title").textContent = score.toLocaleString(); $("game-done-title").dataset.best = String(best);
+    $("game-done-title").dataset.late = String(late); root.dataset.late = String(late);
     pips($("game-done-pips"));
-    const back = Math.max(0, round.length - rights - flagged);
-    $("game-done-line").textContent = rights + " of " + round.length + (flagged ? " · " + flagged + " flagged" : "") + (bestCombo > 1 ? " · best combo " + bestCombo : "") + (back ? " · " + back + " come back next" : "") + (inSlumpNext() ? " · next: a warm-up" : "");
+    const back = Math.max(0, round.length - rights - flagged - practiced);
+    $("game-done-line").textContent = late ? rights + " of " + round.length + (back ? " · " + back + " saved for tonight" : "")
+      : rights + " of " + round.length + (warm ? " · part of the game" : (bestCombo > 1 ? " · best combo " + bestCombo : "") + (back ? " · " + back + " come back next" : "")) + (flagged ? " · " + flagged + " flagged" : "");
     const b = bossProgress(state), boss = bossNow();
-    $("game-boss-strip").hidden = !boss || b.open; $("game-boss").hidden = !(boss && b.open);
+    $("game-boss-strip").hidden = !boss || b.open || late; $("game-boss").hidden = !(boss && b.open);
+    $("game-boss-fill").style.width = Math.round(b.done / BOSS_EVERY * 100) + "%";
     $("game-boss-progress").textContent = b.done.toLocaleString() + " / " + BOSS_EVERY.toLocaleString();
-    $("game-boss-clock").textContent = clockText(state);
-    if (boss && b.open) { $("game-boss").href = "?book=" + boss.id + "&boss=1"; $("game-boss-line").textContent = "The boss is open: Mock " + titleOf(boss.id) + ", " + BOSS_MINUTES.written + " + " + BOSS_MINUTES.listening + " min"; $("game-boss").onclick = e => fightBoss(e, boss); }
-    // Bedtime: the round's end points to Evening recall (or straight to the
-    // Night Radio when nothing is left to recall); one more round stays a tap away.
-    const late = atBedtime(new Date(), settings.gameBedtime);
-    $("game-bedtime").hidden = !late; $("game-sleep").hidden = !late;
-    $("game-again").className = (late ? "outline" : "primary") + " n2-game-go";
-    $("game-again").textContent = late ? "One more round" : inSlumpNext() ? "Warm-up round" : "Next round";
+    const c = runClock(state.runStart); $("game-boss-clock").textContent = c.started && c.times > 1 ? "×" + c.times : ""; $("game-boss-clock").hidden = !(c.started && c.times > 1);
+    if (boss && b.open) { $("game-boss").href = "?book=" + boss.id + "&boss=1"; $("game-boss-line").textContent = "The boss is open: Mock " + String(bookIds.indexOf(boss.id) + 1).padStart(2, "0") + ", " + BOSS_MINUTES.written + " + " + BOSS_MINUTES.listening + " min"; $("game-boss").onclick = e => fightBoss(e, boss); }
+    // Bedtime (board 6 · B) and the warm-up after a bad round (C).
+    $("game-bedtime").hidden = !late; $("game-sleep").hidden = !late; $("game-warm").hidden = late || !warm;
+    $("game-warm-line").textContent = "Next: a warm-up of things you know, with " + Math.min(2, back) + " of these " + back + " back.";
+    $("game-again").className = late ? "qr-lnk" : "qr-btn";
+    $("game-again-label").textContent = late ? "One more round" : warm ? "Warm-up round" : "Next round";
+    $("game-again").querySelector("svg").style.display = late ? "none" : "";
+    $("game-home-btn").hidden = late;
     if (late) deckExamples().then(examples => {
       const left = eveningRecall({inventory, recall: data.recall, evidence: scored(data), events: data.events, examples}).length;
       $("game-sleep").href = left ? "?view=evening&from=game" : "?view=game&panel=radio";
-      $("game-sleep").textContent = left ? "Evening recall, then sleep" : "Start the Night Radio";
+      $("game-sleep").querySelector("span").textContent = left ? "Evening recall, then sleep" : "Start the Night Radio";
+      $("game-bedtime-line").textContent = left ? left + " items to recall, then the Night Radio plays them while you sleep." : "Nothing left to recall: the Night Radio plays today’s work while you sleep.";
     }).catch(() => {});
   }
   const inSlumpNext = () => { const h = (readGame().history || []).at(-1); return !!h && (h.right / Math.max(1, h.n) < .5 || h.score < 0); };
-  $("game-sound").onclick = () => { const st = readGame(); st.sound = st.sound === false; writeGame(st); soundButton(); };
   $("game-skip").onclick = () => answer(-1);
   // One tap, no questions (owner, 26 Nov): the flag saves the question exactly
   // as shown and the game moves on. Working out why is the audit's job.
@@ -1437,14 +1518,23 @@ async function game() {
     if (!$("game-review").hidden && !held) { clearTimeout(timer); stopBar(); return () => { if (!$("game-review").hidden && !held) review(reviewAt); }; }
     return null;
   };
-  $("game-say").onclick = () => current && say(spokenWord(current.prompt, current.say));
+  $("game-say").onclick = () => current && !locked && say(spokenWord(current.prompt, current.say));
+  // A hidden tab pauses the card or the review (re-audit P1); coming back resumes it.
+  let hiddenResume = null;
+  document.addEventListener("visibilitychange", () => {
+    if ($("game").hidden) return;
+    if (document.visibilityState === "hidden") hiddenResume = reportPause?.() || null;
+    else { hiddenResume?.(); hiddenResume = null; }
+  });
   $("game-next").onclick = () => review(reviewAt + 1);
   $("game-hold").onclick = () => {
     held = !held; $("game-hold").setAttribute("aria-pressed", String(held)); $("game-hold").setAttribute("aria-label", held ? "Continue" : "Hold");
+    $("game-hold").innerHTML = held ? PLAY_SVG : PAUSE_SVG; // board 5: held, Hold becomes Play
     if (held) { clearTimeout(timer); stopBar(); } else review(reviewAt);
   };
   $("game-again").onclick = start;
   $("game-home-play").onclick = start;
+  $("game-home-play2").onclick = start;
   $("game-home-btn").onclick = home;
   document.addEventListener("keydown", e => {
     if ($("game").hidden || e.target.closest("input,textarea,select") || e.metaKey || e.ctrlKey) return;
@@ -1857,6 +1947,8 @@ async function exam() {
   function start(phase) {
     if (!state.startedAt) state.startedAt = new Date().toISOString();
     if (!state.id) state.id = crypto.randomUUID();
+    // Quick round: the boss sitting starting is what closes the run (re-audit P2).
+    if (state.boss && !state.bossTaken) { try { writeGame(takeBoss(readGame(), {set: year, attemptId: state.id})); } catch {} state.bossTaken = true; }
     state.phase = phase;
     state.index = phase === "written" ? 0 : written;
     entered = Date.now();

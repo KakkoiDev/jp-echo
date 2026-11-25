@@ -37,7 +37,7 @@ const pool = gamePool({inventory, examples, sets, sat: playable});
 const byKind = new Map();
 for (const q of pool) byKind.set(q.kind, [...(byKind.get(q.kind) || []), q]);
 for (const [kind, list] of byKind) write("questions/" + kind + ".jsonl", list.map(q => JSON.stringify({
-  id: q.id, kind, seconds: q.seconds, prompt: q.prompt, sentence: q.sentence || undefined, spoken: q.say || undefined,
+  id: q.id, kind, seconds: q.seconds, prompt: q.prompt, sentence: q.sentence || undefined, underline: q.needle || undefined, practice: q.practice || undefined, spoken: q.say || undefined,
   answer: q.answer, wrongCandidates: q.wrong, confusable: q.near?.length ? q.near : undefined, authoredChoices: q.fixed || undefined,
   saves: {dimension: q.dimension, target: q.target}, solution: q.solution,
 })).join("\n") + "\n");
@@ -49,8 +49,8 @@ write("data/vocabulary.tsv", tsv(["#", "word", "reading", "meaning (inventory)",
   items.meaning.map((it, i) => { const ex = (examples.get(K(it.target)) || [])[0]; return [i, it.target[1], it.reading || it.target[2], it.answer, gloss(it.answer), ex?.ja, ex?.en, (kindsOf.get(K(it.target)) || []).join(" ")]; })));
 
 // ---- Readings: every reading question's answer and all its near misses ----
-write("data/readings.tsv", tsv(["word", "reading", "near misses the game may offer (3 picked at random)"],
-  (byKind.get("reading") || []).map(q => [q.prompt, q.answer, nearMisses(q.answer).join(" · ")])));
+write("data/readings.tsv", tsv(["word", "reading", "near misses the game may offer (accepted readings already removed; 3 picked at random)"],
+  (byKind.get("reading") || []).map(q => [q.prompt, q.answer, q.wrong.join(" · ")])));
 
 // ---- Grammar ----
 write("data/grammar.tsv", tsv(["#", "pattern", "meaning", "sentence (with readings)", "translation"],
