@@ -336,6 +336,11 @@ Before considering the change complete:
   right in `--chip-learn-*` (indigo), bonus in the one new token `--gold`.
   The Sound switch also silences the voice and vibration and takes listen
   cards out. Board specs: docs/design/game/DESIGNER-HANDOFF.md (canvas link).
+  Its progress (`echo-n2-game`) travels in the N2 gist file as `game`
+  (`mergeGame`, sync.js) and the N2 export; every save is stamped and marks N2
+  dirty. The game has its own Radio screen (Day Radio and Evening recall
+  return with `?from=game`; the Night Radio runs in the game) and its own Settings screen writing the same
+  `jp-echo-settings` keys. What is set aside: docs/QUICK-ROUND-BACKLOG.md.
   After a bad round (`inSlump`) the next is a warm-up of questions already won
   (`wins`, `WARM_UP`) with only two misses back, to keep the player going.
   Its flag is one tap with no sheet (owner, 26 Nov: "I don't think, you

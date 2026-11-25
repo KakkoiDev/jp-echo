@@ -92,8 +92,8 @@ test("the Radio screen plays the cued half only and the nights travel with the N
   assert.match(mock, /comparisonLine\(nightComparison\(/);
   assert.doesNotMatch(night, /access\(|indexedDB/, "a night is a record of what played, never recall evidence");
   const progress = src("../n2-progress.js");
-  assert.match(progress, /recall,events,nights:readNights\(\)\}/, "the N2 export carries the nights");
-  assert.match(progress, /recall,events,nights:readNights\(\),goal:readGoal\(\)/, "the gist N2 file carries the nights");
+  assert.match(progress, /recall,events,nights:readNights\(\),game:readGameStore\(\)\}/, "the N2 export carries the nights");
+  assert.match(progress, /recall,events,nights:readNights\(\),game:readGameStore\(\),goal:readGoal\(\)/, "the gist N2 file carries the nights");
   assert.match(progress, /localStorage\.setItem\(NIGHT_KEY,JSON\.stringify\(merged\.nights\)\)/);
 });
 
@@ -135,7 +135,7 @@ test("evening recall is the checks session in its own mode, linked from the hub 
   assert.match(mock, /const sourceOf = evening \? EVENING_SOURCE : CHECK_SOURCE;/);
   assert.match(mock, /source: sourceOf\};/, "print grades carry the evening source");
   assert.match(mock, /source: sourceOf, mode, exampleId/, "audio grades too");
-  assert.match(mock, /\$\("check-done-go"\)\.href = evening \? "\.\/radio" : "\.\/n2-mock\.html";/);
+  assert.match(mock, /\$\("check-done-go"\)\.href = evening \? \(fromGame \? "\?view=game&panel=radio" : "\.\/radio"\) : "\.\/n2-mock\.html";/);
   assert.match(html, /href="\?view=evening"><span class="library-tool-glyph" lang="ja" aria-hidden="true">夕<\/span>/);
   assert.match(index, /id="radio-evening" href="\.\/n2-mock\.html\?view=evening"/);
 });

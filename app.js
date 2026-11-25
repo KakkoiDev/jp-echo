@@ -2539,6 +2539,8 @@ $("#tabs").addEventListener("click",event=>{const tab=event.target.closest(".tab
 // old Save also did — notices, reminder schedule — follows the write.
 function commitPreferences(){if(saveSettings()){renderPracticeNotices();writeReminderPrefs();syncReminderSchedule()}else flashSaved("Not saved — this browser blocked storage")}
 for(const id of ["theme","motion","voice","discussion-voice-ai","discussion-voice-user","rate","autotag","settings-start-game","settings-game-bedtime","settings-game-difficulty","remind-time","gist-auto","gist-url"])$("#"+id).addEventListener("change",commitPreferences);
+// Switching "Open Echo on Quick round" on goes there now, not at the next launch.
+$("#settings-start-game").addEventListener("change",e=>{if(e.target.checked&&settings.startGame)setTimeout(()=>location.assign("./n2-mock.html?view=game"),250)});
 $("#remind").onchange=async()=>{const wanted=$("#remind").checked;
   if(wanted&&!await enableReminders()){$("#remind").checked=false;$("#remind-hint").textContent="Notifications are blocked for Echo. Allow them in your browser settings, then turn this on again.";$("#remind-hint").hidden=false;$("#remind-hint").classList.add("error");$("#remind-reach").textContent="";return}
   $("#remind-hint").textContent="";$("#remind-hint").hidden=true;$("#remind-hint").classList.remove("error");

@@ -9,7 +9,7 @@
 <link rel="icon" href="./favicon.ico" sizes="32x32"><link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="./apple-touch-icon.png"><link rel="manifest" href="./manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
-<link rel="stylesheet" href="./styles.css?v=204">
+<link rel="stylesheet" href="./styles.css?v=205">
 </head>
 <body class="n2">
 <main id="n2-main">
@@ -144,7 +144,7 @@
 <!-- Quick round (n2-game.js): "Blitz on washi", docs/design/game -->
 <section id="game" class="n2-game" data-mode="home" hidden>
   <div class="drill-head n2-game-head">
-    <a class="icon-button" id="game-back" href="./" aria-label="Back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>
+    <a class="icon-button n2-game-backbtn" id="game-back" href="./" aria-label="Back to Echo"><svg class="n2-game-icon-back" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg><svg class="n2-game-icon-end" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></a>
     <div class="n2-game-pips" id="game-pips" aria-hidden="true"></div>
     <span class="n2-game-title" id="game-title">Quick round</span>
     <div class="n2-game-scorebox"><span class="n2-game-score" id="game-score"></span><span class="n2-game-combo-chip" id="game-combo-chip"></span></div>
@@ -168,10 +168,34 @@
     <p class="hint" id="game-home-level"></p>
     <div class="n2-game-dock">
       <a class="button primary n2-game-go" id="game-home-boss" href="#" hidden>Face the boss</a>
-      <a class="button primary n2-game-go" id="game-home-radio" href="./radio" hidden>Start the Night Radio</a>
+      <a class="button primary n2-game-go" id="game-home-radio" href="?view=game&amp;panel=radio" hidden>Night Radio</a>
       <button data-ui="button" class="primary n2-game-go" id="game-home-play" type="button">Play<span>10 questions · about a minute</span></button>
-      <div class="n2-game-links"><a class="button quiet" href="./radio">Radio</a><a class="button quiet" href="./settings">Settings</a><button data-ui="button" class="quiet" id="game-sound" type="button" aria-pressed="true">Sound on</button></div>
+      <div class="n2-game-links"><button data-ui="button" class="quiet" id="game-radio-open" type="button">Radio</button><button data-ui="button" class="quiet" id="game-settings-open" type="button">Settings</button><button data-ui="button" class="quiet" id="game-sound" type="button" aria-pressed="true">Sound on</button></div>
     </div>
+  </div>
+
+  <div id="game-settings" class="n2-game-home n2-game-settings" hidden>
+    <label class="n2-game-field"><span>Difficulty</span><select data-ui="select" id="game-set-difficulty"><option value="easy">Easy — more right, pays ×0.75</option><option value="normal">Normal — adaptive</option><option value="hard">Hard — more misses, pays ×1.25</option></select></label>
+    <label class="n2-game-field"><span>Bedtime</span><input data-ui="input" id="game-set-bedtime" type="time" value="23:30"></label>
+    <p class="hint">From bedtime until 5 am, a round’s end leads to Evening recall and the Night Radio.</p>
+    <label class="switch"><span class="switch-copy"><span>Sound</span><span class="hint">Effects, the spoken answer and vibration. Off also leaves out listening cards.</span></span><input id="game-set-sound" type="checkbox"></label>
+    <label class="switch"><span class="switch-copy"><span>Open Echo on Quick round</span><span class="hint">Opening Echo comes straight here.</span></span><input id="game-set-start" type="checkbox"></label>
+    <p class="n2-game-saved hint" id="game-set-status" role="status"></p>
+    <div class="n2-game-dock"><a class="button quiet" href="./settings">All Echo settings</a></div>
+  </div>
+
+  <div id="game-radio" class="n2-game-home n2-game-radio" hidden>
+    <a class="library-tool two-line" href="?view=radio&amp;from=game"><span class="library-tool-glyph" lang="ja" aria-hidden="true">昼</span><span class="library-tool-label"><strong>Day Radio</strong><span>Listen or recall while you walk. Plays become tomorrow’s checks.</span></span><svg width="8" height="13" viewBox="0 0 8 13" fill="none" aria-hidden="true"><path d="m1.5 1.5 5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    <div class="n2-game-runcard">
+      <div class="n2-game-runhead"><span>Night Radio</span><span class="n2-game-chip" data-tone="seal" id="game-night-count"></span></div>
+      <p class="n2-game-runline" id="game-night-line"></p>
+      <a class="library-tool two-line" href="?view=evening&amp;from=game"><span class="library-tool-glyph" lang="ja" aria-hidden="true">夕</span><span class="library-tool-label"><strong>Evening recall first</strong><span>Recall tonight’s items once · about 10 minutes</span></span><svg width="8" height="13" viewBox="0 0 8 13" fill="none" aria-hidden="true"><path d="m1.5 1.5 5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      <label class="n2-game-field"><span>Stop after</span><select data-ui="select" id="game-night-hours"><option value="6">6 hours</option><option value="7">7 hours</option><option value="8">8 hours</option><option value="9">9 hours</option></select></label>
+      <label class="switch"><span class="switch-copy"><span>Soft noise underneath</span></span><input id="game-night-noise" type="checkbox"></label>
+      <label class="switch"><span class="switch-copy"><span>Cue half, to compare tomorrow</span></span><input id="game-night-compare" type="checkbox"></label>
+    </div>
+    <p class="hint">Plug the phone in and leave this open: the screen stays on, dark. Keep the volume low enough not to wake you.</p>
+    <div class="n2-game-dock"><button data-ui="button" class="primary n2-game-go" id="game-night-start" type="button">Start the Night Radio</button></div>
   </div>
 
   <div id="game-play" class="n2-game-play" hidden>
@@ -217,10 +241,11 @@
       <div class="n2-game-links"><button data-ui="button" class="quiet" id="game-home-btn" type="button">Home</button></div>
     </div>
   </div>
+  <div id="game-night" class="radio-night" hidden role="dialog" aria-modal="true" aria-labelledby="game-night-phase"><p id="game-night-phase" class="radio-phase"></p><p id="game-night-text" class="radio-line"></p><p id="game-night-until" class="radio-until"></p><button data-ui="button" id="game-night-stop" class="outline" type="button">Stop</button></div>
 </section>
 
 <section id="check" hidden>
-  <div class="drill-head"><a class="icon-button" href="./n2-mock.html" aria-label="Back to N2"><svg width="18" height="16" viewBox="0 0 18 16" fill="none" aria-hidden="true"><path d="M8 1 1 8l7 7M1 8h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a><span class="tool-titles"><span class="drill-title" id="check-title">Today's checks</span><span class="overline" id="check-sub"></span></span><span class="drill-progress" id="check-progress"></span></div>
+  <div class="drill-head"><a class="icon-button" id="check-back" href="./n2-mock.html" aria-label="Back to N2"><svg width="18" height="16" viewBox="0 0 18 16" fill="none" aria-hidden="true"><path d="M8 1 1 8l7 7M1 8h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a><span class="tool-titles"><span class="drill-title" id="check-title">Today's checks</span><span class="overline" id="check-sub"></span></span><span class="drill-progress" id="check-progress"></span></div>
   <div class="drill-bar"><span id="check-bar"></span></div>
   <div id="check-card" class="n2-card n2-panel-card">
     <p class="overline" id="check-ask"></p>
@@ -244,7 +269,7 @@
 
 <!-- Day Radio -->
 <section id="day" hidden>
-  <div class="drill-head"><a class="icon-button" href="./n2-mock.html" aria-label="Back to N2"><svg width="18" height="16" viewBox="0 0 18 16" fill="none" aria-hidden="true"><path d="M8 1 1 8l7 7M1 8h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a><span class="tool-titles"><span class="drill-title">Day Radio</span><span class="overline" id="day-sub"></span></span><span class="drill-progress" id="day-progress"></span></div>
+  <div class="drill-head"><a class="icon-button" id="day-back" href="./n2-mock.html" aria-label="Back to N2"><svg width="18" height="16" viewBox="0 0 18 16" fill="none" aria-hidden="true"><path d="M8 1 1 8l7 7M1 8h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a><span class="tool-titles"><span class="drill-title">Day Radio</span><span class="overline" id="day-sub"></span></span><span class="drill-progress" id="day-progress"></span></div>
   <div class="drill-bar"><span id="day-bar"></span></div>
   <div class="segmented" role="tablist" aria-label="Day Radio mode">
     <button data-ui="button" role="tab" data-mode="listen" type="button">聞 Listen</button><button data-ui="button" role="tab" data-mode="recall" type="button">憶 Recall</button>

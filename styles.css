@@ -2172,12 +2172,15 @@ html.motion-off .n2-breath span{transition:none}
    Right uses Echo's learning indigo, the clock track its rule, bonus the gold. */
 .n2-game{--right:var(--chip-learn-fg);--right-tint:var(--chip-learn-bg);--track:var(--rule);display:flex;flex-direction:column;min-height:100dvh;position:relative}
 .n2-game .drill-head.n2-game-head{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:0}
+.n2-game-backbtn .n2-game-icon-end{display:none}.n2-game-backbtn[data-end=true] .n2-game-icon-end{display:block}.n2-game-backbtn[data-end=true] .n2-game-icon-back{display:none}
 .n2-game-pips{display:flex;gap:4px;flex:1;min-width:0}
 .n2-game-pips i{flex:1;height:6px;border-radius:3px;background:var(--track)}
 .n2-game-pips i.ok{background:var(--right)}.n2-game-pips i.no{background:var(--seal)}.n2-game-pips i.to{background:var(--ink-muted)}.n2-game-pips i.now{background:var(--sumi)}.n2-game-pips i.fl{background:var(--quiet-edge)}
 .n2-game-title{flex:1;font-family:var(--display);font-size:20px;font-weight:600}
 .n2-game[data-mode=play] .n2-game-title,.n2-game[data-mode=review] .n2-game-title{display:none}
 .n2-game[data-mode=home] .n2-game-title{visibility:hidden}
+.n2-game[data-mode=settings] .n2-game-clock,.n2-game[data-mode=radio] .n2-game-clock{display:none}
+.n2-game-radio .n2-game-runcard .library-tool{margin:0}
 .n2-game:not([data-mode=play]):not([data-mode=review]) #game-pips{display:none}
 .n2-game-scorebox{min-width:72px;display:flex;flex-direction:column;align-items:flex-end;gap:2px}
 .n2-game-score{font-size:20px;font-weight:900;font-variant-numeric:tabular-nums;line-height:1}
@@ -2248,6 +2251,8 @@ html.motion-off .n2-breath span{transition:none}
 .n2-game-reviewbar .icon-button[aria-pressed=true]{color:var(--seal)}
 .n2-game-next{flex:1;height:56px}
 .n2-game-reading:empty,.n2-game-meaning:empty,.n2-game-picked:empty{display:none}
+.n2-game-field{display:flex;flex-direction:column;gap:6px;font-weight:700}.n2-game-field select,.n2-game-field input{min-height:44px}
+.n2-game-settings .switch{margin:0}
 .n2-game-home,.n2-game-done{display:flex;flex-direction:column;flex:1;gap:14px;padding:6px 0 calc(14px + env(safe-area-inset-bottom))}
 .n2-game-brand{display:flex;align-items:center;gap:12px}
 .n2-game-brand strong{font-family:var(--display);font-size:26px}

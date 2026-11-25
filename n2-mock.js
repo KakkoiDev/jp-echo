@@ -6,8 +6,9 @@ import {SKILLS,SKILL_JA,SECTIONS,PASS_TOTAL,SECTION_MIN,SECTION_MAX,estimate,spr
 import {collapseRow,collapseChevronSvg,scoreChart,flagSvg,chevronLeftSvg,chevronRightSvg,replaySvg,planSteps,loadMeter,evidenceRow,pauseRing,openReportSheet,mountReportButtons} from "./components.js";
 import {REPORT_REASONS,createReport,fileReport,reportSyncLine,reportsAdapter,reportHistory,screenOf,appVersion,deviceInfo} from "./reports.js";
 import {recognitionFactory} from "./speech.js";
-import {speakOnce,speakAndWait,japaneseVoices} from "./speech.js";
-import {readNights, nightComparison, comparisonLine, eveningRecall, EVENING_SOURCE} from "./n2-night.js";
+import {speakOnce,speakAndWait,japaneseVoices,RadioPlayer,NoiseBed} from "./speech.js";
+import {RADIO_DEFAULTS,RADIO_PHASE_COPY,clockAt,radioPhase,radioPlan,radioSteps} from "./radio.js";
+import {readNights, nightComparison, comparisonLine, eveningRecall, EVENING_SOURCE, nightPlan, nightRecord, keepNight, NIGHT_KEY} from "./n2-night.js";
 import {gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
 import {spokenWord,radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
 import {TAG,TAGS,HELD_OUT,CAUSES,comprehensionStats,weakestTag,tagDrill,drillExposure,attemptTags,tagsOf,sourceOf} from "./n2-comprehension.js";
@@ -1096,7 +1097,8 @@ const sfx = (() => {
 })();
 const buzz = pattern => { try { navigator.vibrate?.(pattern); } catch {} };
 function readGame() { try { return JSON.parse(localStorage.getItem(GAME_KEY) || "{}"); } catch { return {}; } }
-function writeGame(state) { try { localStorage.setItem(GAME_KEY, JSON.stringify(state)); } catch {} }
+// Every save is stamped and marked for the gist sync (the N2 file carries it).
+function writeGame(state) { try { localStorage.setItem(GAME_KEY, JSON.stringify({...state, updatedAt: new Date().toISOString()})); markDirty("n2"); } catch {} }
 async function game() {
   show("game");
   if (params.get("view") !== "game") history.replaceState(history.state, "", "?view=game");
@@ -1109,7 +1111,65 @@ async function game() {
   const bar = $("game-bar"), root = $("game");
   const sound = () => readGame().sound !== false;
   const difficulty = () => difficultyOf(settings.gameDifficulty);
-  const mode = m => { root.dataset.mode = m; for (const [id, on] of [["game-home", "home"], ["game-play", "play"], ["game-review", "review"], ["game-done", "done"]]) $(id).hidden = m !== on; };
+  const mode = m => { root.dataset.mode = m; for (const [id, on] of [["game-home", "home"], ["game-settings", "settings"], ["game-radio", "radio"], ["game-play", "play"], ["game-review", "review"], ["game-done", "done"]]) $(id).hidden = m !== on; };
+  // The game's own settings, inside the game (owner, 26 Nov): leaving for
+  // Echo's Settings pulled the player out of the app. They write the same
+  // keys Echo's Settings does (jp-echo-settings), each on change.
+  function gameSettings() {
+    mode("settings"); $("game-title").textContent = "Settings";
+    $("game-back").href = "?view=game"; $("game-back").onclick = e => { e.preventDefault(); $("game-title").textContent = "Quick round"; home(); };
+    $("game-set-difficulty").value = difficulty(); $("game-set-bedtime").value = settings.gameBedtime || "23:30";
+    $("game-set-sound").checked = sound(); $("game-set-start").checked = !!settings.startGame; $("game-set-status").textContent = "";
+  }
+  const savePreference = (key, value) => {
+    settings[key] = value;
+    try { const stored = JSON.parse(localStorage.getItem("jp-echo-settings") || "{}"); stored[key] = value; localStorage.setItem("jp-echo-settings", JSON.stringify(stored)); $("game-set-status").textContent = "Saved."; }
+    catch { $("game-set-status").textContent = "Not saved: this browser blocked storage."; }
+  };
+  $("game-settings-open").onclick = gameSettings;
+  // Radio inside the game (owner, 26 Nov): Day Radio and Evening recall open
+  // on this page and come back here (?from=game); the Night Radio runs here,
+  // the same plan as Echo's Radio screen (n2-night.js, radio.js).
+  const nightPlayer = new RadioPlayer({onState: (at, item) => {
+    const copy = RADIO_PHASE_COPY[at.phase] || {title: "", line: ""};
+    $("game-night-phase").textContent = copy.title;
+    $("game-night-text").textContent = item && at.phase === "wind-down" ? String(item.target).replace(/【[^】]*】/g, "") : copy.line;
+    $("game-night-until").textContent = at.phase === "done" ? "" : "Until " + clockAt(Date.now() + at.left);
+  }, onDone: () => stopNight()});
+  const nightNoise = new NoiseBed();
+  let nightWake = null, tonight = null;
+  async function radioPanel() {
+    mode("radio"); $("game-title").textContent = "Radio";
+    $("game-back").href = "?view=game"; $("game-back").dataset.end = "false"; $("game-back").onclick = e => { e.preventDefault(); $("game-title").textContent = "Quick round"; home(); };
+    $("game-night-hours").value = String(Number(settings.radioHours) || RADIO_DEFAULTS.hours);
+    $("game-night-noise").checked = settings.radioNoise !== false; $("game-night-compare").checked = settings.radioCompare !== false;
+    tonight = nightPlan({inventory, recall: data.recall, evidence: scored(data), events: data.events, examples: await deckExamples(), compare: settings.radioCompare !== false});
+    $("game-night-count").textContent = tonight.cued.length ? tonight.cued.length + " tonight" : "nothing yet";
+    $("game-night-line").textContent = tonight.cued.length ? "Today’s misses, slow answers and guesses, as the sentences you studied" + (tonight.compare ? "; " + tonight.held.length + " held back for tomorrow’s comparison." : ".") : "Nothing from today yet: play a few rounds first. The night strengthens what you studied awake.";
+    $("game-night-start").disabled = !tonight.cued.length;
+  }
+  function startNight() {
+    if (!tonight?.cued.length) return;
+    const hours = Number($("game-night-hours").value) || RADIO_DEFAULTS.hours, plan = radioPlan({hours});
+    if (settings.radioNoise !== false) nightNoise.start();
+    $("game-night").hidden = false;
+    nightPlayer.start(tonight.cued, {steps: radioSteps, phaseAt: elapsed => radioPhase(elapsed, plan), voiceFor: lang => lang === "ja" ? voice() : null, rate: Math.min(1, Number(settings.rate) || 1)});
+    try { localStorage.setItem(NIGHT_KEY, JSON.stringify(keepNight(readNights(), nightRecord(tonight)))); markDirty("n2"); } catch {}
+    navigator.wakeLock?.request("screen").then(w => { nightWake = w; }).catch(() => {});
+  }
+  function stopNight() { nightPlayer.stop(); nightNoise.stop(); try { nightWake?.release(); } catch {} nightWake = null; $("game-night").hidden = true; }
+  $("game-radio-open").onclick = radioPanel;
+  $("game-home-radio").onclick = e => { e.preventDefault(); radioPanel(); };
+  $("game-night-start").onclick = startNight;
+  $("game-night-stop").onclick = stopNight;
+  $("game-night-hours").onchange = e => savePreference("radioHours", Number(e.target.value) || RADIO_DEFAULTS.hours);
+  $("game-night-noise").onchange = e => savePreference("radioNoise", e.target.checked);
+  $("game-night-compare").onchange = e => { savePreference("radioCompare", e.target.checked); radioPanel(); };
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && nightPlayer.running) navigator.wakeLock?.request("screen").then(w => { nightWake = w; }).catch(() => {}); });
+  $("game-set-difficulty").onchange = e => savePreference("gameDifficulty", difficultyOf(e.target.value));
+  $("game-set-bedtime").onchange = e => savePreference("gameBedtime", e.target.value || "23:30");
+  $("game-set-start").onchange = e => savePreference("startGame", e.target.checked);
+  $("game-set-sound").onchange = e => { const st = readGame(); st.sound = e.target.checked; writeGame(st); soundButton(); $("game-set-status").textContent = "Saved."; };
   const pips = (host, n = round.length) => host.replaceChildren(...Array.from({length: n || 10}, (_, i) => el("i", {class: marks[i] || (host.id === "game-pips" && i === index ? "now" : "")})));
   const head = () => {
     $("game-score").textContent = score.toLocaleString();
@@ -1127,7 +1187,7 @@ async function game() {
   function home() {
     clearTimeout(timer); clearInterval(ticker); window.speechSynthesis?.cancel();
     mode("home"); $("game-sub").textContent = ""; $("game-score").textContent = ""; $("game-combo-chip").textContent = "";
-    $("game-back").href = "./"; $("game-back").onclick = null;
+    $("game-back").href = "./"; $("game-back").onclick = null; $("game-back").setAttribute("aria-label", "Back to Echo"); $("game-back").dataset.end = "false"; $("game-title").textContent = "Quick round";
     const st = readGame(), b = bossProgress(st), boss = bossNow(), rest = resting(st, data.attempts), open = b.open && !!boss;
     $("game-runcard").hidden = rest; $("game-rest").hidden = !rest;
     const runNo = (st.runs || []).length + 1;
@@ -1179,7 +1239,9 @@ async function game() {
   const stopBar = state => { clearInterval(ticker); const w = getComputedStyle(bar).width; bar.style.transition = "none"; bar.style.width = w; if (state) $("game-clock").dataset.state = state; };
   function start() {
     sfx.unlock();
-    $("game-back").href = "?view=game"; $("game-back").onclick = e => { e.preventDefault(); home(); };
+    // During a round the top-left button ends it (✕ "End round"), plainly.
+    $("game-back").href = "?view=game"; $("game-back").setAttribute("aria-label", "End round"); $("game-back").dataset.end = "true";
+    $("game-back").onclick = e => { e.preventDefault(); window.speechSynthesis?.cancel(); home(); };
     state = readGame();
     // With the sound off, listen cards leave the mix: nothing becomes unanswerable.
     const playable = sound() ? pool : pool.filter(q => q.kind !== "listen");
@@ -1256,9 +1318,8 @@ async function game() {
       if (outcome === "right") paid.jackpot ? (streak >= 10 ? sfx.jackpot10() : sfx.jackpot5()) : sfx.right(streak);
       else if (outcome === "wrong") sfx.wrong(); else if (outcome === "timeout") sfx.timeout(); else sfx.idk();
       buzz(outcome === "right" ? (paid.jackpot ? (streak >= 10 ? [30, 40, 30, 40, 60] : [20, 30, 20]) : 12) : outcome === "wrong" ? [40, 40, 40] : outcome === "timeout" ? 60 : 10);
-      // Then the right answer, spoken once in the default Japanese voice.
-      const spoken = answerSpeech(q);
-      if (spoken) setTimeout(() => speakOnce(spoken, {voice: null, rate: Number(settings.rate) || 1, lang: "ja"}), 180);
+      // No spoken answer here (owner, 26 Nov): at blitz pace it was still
+      // speaking over the next question. The review speaks each miss.
     }
     const line = $("game-combo");
     if (paid.jackpot && outcome === "right") {
@@ -1335,7 +1396,7 @@ async function game() {
     $("game-again").textContent = late ? "One more round" : inSlumpNext() ? "Warm-up round" : "Next round";
     if (late) deckExamples().then(examples => {
       const left = eveningRecall({inventory, recall: data.recall, evidence: scored(data), events: data.events, examples}).length;
-      $("game-sleep").href = left ? "?view=evening" : "./radio";
+      $("game-sleep").href = left ? "?view=evening&from=game" : "?view=game&panel=radio";
       $("game-sleep").textContent = left ? "Evening recall, then sleep" : "Start the Night Radio";
     }).catch(() => {});
   }
@@ -1402,7 +1463,7 @@ async function game() {
     if (!$("game-review").hidden && misses[reviewAt]) return cardOf(misses[reviewAt].q, misses[reviewAt].picked);
     return current && !$("game-play").hidden ? cardOf(current) : null;
   };
-  home();
+  if (params.get("panel") === "radio") radioPanel(); else home();
 }
 
 // Yesterday's misses and uncertain answers, one session, print and audio. A
@@ -1424,7 +1485,9 @@ async function checks(mode = "check") {
   $("check-title").textContent = evening ? "Evening recall" : "Today's checks";
   $("check-seal").textContent = evening ? "夕" : "確";
   $("check-done-go").textContent = evening ? "Start the Night Radio" : "Back to today's plan";
-  $("check-done-go").href = evening ? "./radio" : "./n2-mock.html";
+  const fromGame = params.get("from") === "game";
+  $("check-done-go").href = evening ? (fromGame ? "?view=game&panel=radio" : "./radio") : "./n2-mock.html";
+  if (fromGame) $("check-back").href = "?view=game";
   let index = 0, revealed = false, clock = null, responseMs = 0, plays = 0;
   const tally = {instant: 0, slow: 0, missed: 0}, missed = [];
   const grades = [...document.querySelectorAll("#check-actions [data-check-grade]")];
@@ -1551,6 +1614,7 @@ function readDay() { try { return JSON.parse(localStorage.getItem(DAY_KEY) || "{
 function writeDay(patch) { try { localStorage.setItem(DAY_KEY, JSON.stringify({...readDay(), ...patch})); } catch {} }
 async function dayRadio() {
   show("day");
+  if (params.get("from") === "game") $("day-back").href = "?view=game&panel=radio";
   await materials();
   const [data, examples] = await Promise.all([report(), deckExamples()]);
   const evidence = scored(data), items = radioItems(inventory);

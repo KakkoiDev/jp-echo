@@ -224,7 +224,7 @@ test("bedtime: from the learner's hour until 5 am the round's end points to slee
   const mock = src("../n2-mock.js"), html = src("../n2-mock.html"), index = src("../index.html");
   assert.match(mock, /const late = atBedtime\(new Date\(\), settings\.gameBedtime\);/);
   assert.match(mock, /\$\("game-again"\)\.textContent = late \? "One more round" : inSlumpNext\(\) \? "Warm-up round" : "Next round";/);
-  assert.match(mock, /\$\("game-sleep"\)\.href = left \? "\?view=evening" : "\.\/radio";/);
+  assert.match(mock, /\$\("game-sleep"\)\.href = left \? "\?view=evening&from=game" : "\?view=game&panel=radio";/);
   assert.match(html, /id="game-sleep" href="\?view=evening" hidden>Evening recall, then sleep<\/a>/);
   assert.match(index, /id="settings-game-bedtime" type="time" value="23:30"/);
 });
@@ -331,8 +331,8 @@ test("after each answer the right word or pattern is spoken, with its reading, n
   assert.equal(answerSpeech({kind: "exam", target: ["word", "先祖", "せんぞ"]}), "先祖【せんぞ】");
   assert.equal(answerSpeech({kind: "exam", target: null, prompt: "a long authored sentence"}), null, "no target, nothing spoken");
   const mock = src("../n2-mock.js");
-  assert.match(mock, /if \(sound\(\)\) \{\n      if \(outcome === "right"\)[\s\S]*?const spoken = answerSpeech\(q\);/, "the Sound switch silences it too");
-  assert.match(mock, /speakOnce\(spoken, \{voice: null,/, "the default voice");
+  // In play the answer is no longer spoken: at blitz pace it ran over the next question.
+  assert.doesNotMatch(mock.slice(mock.indexOf("async function answer("), mock.indexOf("function review(")), /speakOnce|answerSpeech/);
 });
 
 // ---- Audit of 26 Nov 2026 (P0): the scored pool must be trustworthy ----
@@ -437,4 +437,56 @@ test("design fixes (Blitz on washi): tokens, clock, one-line head, thumb-zone ch
   assert.match(mock, /const playable = sound\(\) \? pool : pool\.filter\(q => q\.kind !== "listen"\);/, "sound off takes listen cards out");
   // 12 · home: the run card, best runs, 14 days, Play in the thumb zone.
   assert.match(html, /id="game-runcard"/); assert.match(html, /id="game-home-play" type="button">Play<span>10 questions · about a minute<\/span>/);
+});
+
+test("Quick round progress travels in the N2 gist file: rounds and runs union, maxima kept, the newer save decides the rest", async () => {
+  const {mergeGame, mergeN2, signatures} = await import("../sync.js");
+  const phone = {updatedAt: "2026-11-27T10:00:00Z", answered: 300, total: 50000, best: 900, rounds: 30, bossFrom: 0, runStart: "2026-11-27T08:00:00Z",
+    seen: {"m:a": 5, "m:b": 9}, wins: {"m:a": 2}, days: {"2026-11-27": {answered: 300, right: 240, points: 50000, rounds: 30, best: 900}},
+    history: [{at: "2026-11-27T09:00:00Z", score: 900, right: 9, n: 10}], runs: []};
+  const laptop = {updatedAt: "2026-11-26T22:00:00Z", answered: 120, total: 20000, best: 1200, rounds: 12, bossFrom: 0,
+    seen: {"m:b": 3, "m:c": 7}, wins: {"m:a": 5}, days: {"2026-11-26": {answered: 120, right: 90, points: 20000, rounds: 12, best: 1200}},
+    history: [{at: "2026-11-26T21:00:00Z", score: 1200, right: 10, n: 10}], runs: [{at: "2026-11-20T10:00:00Z", set: "n2-set-4", gamePoints: 1, questions: 1000}]};
+  const m = mergeGame(phone, laptop);
+  assert.equal(m.best, 1200); assert.equal(m.history.length, 2); assert.equal(m.runs.length, 1);
+  assert.deepEqual(m.seen, {"m:a": 5, "m:b": 9, "m:c": 7}); assert.equal(m.wins["m:a"], 5);
+  assert.equal(m.days["2026-11-26"].answered, 120); assert.equal(m.days["2026-11-27"].answered, 300);
+  assert.equal(m.runStart, phone.runStart, "the newer save's run clock");
+  assert.deepEqual(mergeGame(laptop, phone), m, "the same in either order");
+  assert.equal(mergeGame(null, phone), phone);
+  assert.equal(mergeN2({game: phone}, {game: laptop}).game.best, 1200);
+  assert.notEqual(signatures.n2({game: phone}), signatures.n2({game: m}), "a merged change is pushed");
+  const progress = src("../n2-progress.js"), mock = src("../n2-mock.js");
+  assert.match(progress, /nights:readNights\(\),game:readGameStore\(\),goal:readGoal\(\)/, "in the gist file");
+  assert.match(progress, /nights:readNights\(\),game:readGameStore\(\)\};/, "and the N2 export");
+  assert.match(mock, /JSON\.stringify\(\{\.\.\.state, updatedAt: new Date\(\)\.toISOString\(\)\}\)\); markDirty\("n2"\);/);
+});
+
+test("the game has its own settings, and switching Open Echo on Quick round on goes there at once", () => {
+  const html = src("../n2-mock.html"), mock = src("../n2-mock.js"), app = src("../app.js");
+  for (const id of ["game-set-difficulty", "game-set-bedtime", "game-set-sound", "game-set-start"]) assert.match(html, new RegExp('id="' + id + '"'), id);
+  assert.match(html, /id="game-settings-open" type="button">Settings<\/button>/, "Settings opens in the game, not in Echo");
+  assert.match(mock, /\$\("game-set-start"\)\.onchange = e => savePreference\("startGame", e\.target\.checked\);/);
+  assert.match(app, /\$\("#settings-start-game"\)\.addEventListener\("change",e=>\{if\(e\.target\.checked&&settings\.startGame\)setTimeout\(\(\)=>location\.assign\("\.\/n2-mock\.html\?view=game"\),250\)\}\);/);
+});
+
+test("a round can be ended at any time: the top-left button becomes End round", () => {
+  const mock = src("../n2-mock.js"), html = src("../n2-mock.html");
+  assert.match(mock, /\$\("game-back"\)\.setAttribute\("aria-label", "End round"\); \$\("game-back"\)\.dataset\.end = "true";/);
+  assert.match(html, /class="n2-game-icon-end"/);
+});
+
+test("Radio stays inside the game: Day Radio and Evening recall come back, the Night Radio runs here", () => {
+  const html = src("../n2-mock.html"), mock = src("../n2-mock.js");
+  const game = html.slice(html.indexOf('<section id="game"'), html.indexOf('<section id="check"'));
+  assert.doesNotMatch(game, /href="\.\/radio"/, "no link out to Echo's Radio from the game");
+  assert.match(game, /id="game-radio-open" type="button">Radio<\/button>/);
+  assert.match(game, /href="\?view=radio&amp;from=game"/); assert.match(game, /href="\?view=evening&amp;from=game"/);
+  assert.match(game, /id="game-night" class="radio-night"/);
+  assert.match(mock, /nightPlayer\.start\(tonight\.cued, \{steps: radioSteps/, "the cued half, the same plan as Echo's");
+  assert.match(mock, /keepNight\(readNights\(\), nightRecord\(tonight\)\)/, "the night is recorded for the comparison");
+  assert.match(mock, /if \(params\.get\("from"\) === "game"\) \$\("day-back"\)\.href = "\?view=game&panel=radio";/);
+  assert.match(mock, /\$\("check-done-go"\)\.href = evening \? \(fromGame \? "\?view=game&panel=radio" : "\.\/radio"\)/);
+  assert.match(mock, /if \(params\.get\("panel"\) === "radio"\) radioPanel\(\); else home\(\);/);
+  assert.match(mock, /\["game-radio", "radio"\]/, "the screen switcher shows it");
 });

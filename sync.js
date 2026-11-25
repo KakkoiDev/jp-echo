@@ -98,6 +98,25 @@ export function betterAttempt(a, b) {
   return {...lead, causes, ...(Object.keys(causesAt).length ? {causesAt} : {})};
 }
 const byId = (list, pick) => { const out = new Map(); for (const x of list || []) if (x?.id) out.set(x.id, out.has(x.id) ? pick(out.get(x.id), x) : x); return out; };
+// Quick round progress from two devices. Rounds and runs are unions (by
+// time); per-question last-seen and wins keep the larger; the best score
+// keeps the larger; day totals keep each field's larger (one device per day
+// is the usual case, so two devices on one day undercount rather than double).
+// Everything else (the boss counter, the run clock, the level, the misses
+// waiting for the next round, the sound switch) comes from the newer save.
+export function mergeGame(a, b) {
+  if (!a || typeof a !== "object") return b && typeof b === "object" ? b : null;
+  if (!b || typeof b !== "object") return a;
+  const newer = time(b.updatedAt) > time(a.updatedAt) ? b : a, older = newer === a ? b : a;
+  const maxMap = (x = {}, y = {}) => { const out = {...x}; for (const [k, v] of Object.entries(y || {})) if (!(k in out) || v > out[k]) out[k] = v; return out; };
+  const unionBy = (x = [], y = [], key) => [...new Map([...(x || []), ...(y || [])].map(r => [key(r), r])).values()].sort((p, q) => String(key(p)).localeCompare(String(key(q))));
+  const days = {...(older.days || {})};
+  for (const [day, d] of Object.entries(newer.days || {})) { const o = days[day] || {}; days[day] = Object.fromEntries([...new Set([...Object.keys(o), ...Object.keys(d)])].map(k => [k, Math.max(o[k] || 0, d[k] || 0)])); }
+  const history = unionBy(a.history, b.history, r => r.at).slice(-500);
+  return {...newer, seen: maxMap(a.seen, b.seen), wins: maxMap(a.wins, b.wins), days, history,
+    runs: unionBy(a.runs, b.runs, r => r.at).slice(-200), best: Math.max(a.best || 0, b.best || 0),
+    rounds: Math.max(a.rounds || 0, b.rounds || 0, history.length), answered: Math.max(a.answered || 0, b.answered || 0), total: Math.max(a.total || 0, b.total || 0)};
+}
 export function mergeN2(local = {}, remote = {}) {
   const pick = (map, list, choose) => { for (const x of list || []) if (x?.id) map.set(x.id, map.has(x.id) ? choose(map.get(x.id), x) : x); return [...map.values()]; };
   const localAt = time(local.goalAt), remoteAt = time(remote.goalAt);
@@ -112,6 +131,8 @@ export function mergeN2(local = {}, remote = {}) {
     events: pick(byId(local.events, a => a), remote.events, a => a),
     // Night Radio nights (n2-night.js): one per day, the later save wins.
     nights: pick(byId(local.nights, a => a), remote.nights, (a, b) => time(b.at) > time(a.at) ? b : a).sort((a, b) => String(a.day).localeCompare(String(b.day))),
+    // Quick round progress (n2-game.js, localStorage echo-n2-game).
+    game: mergeGame(local.game, remote.game),
     goal: goalSource.goal ?? null,
     goalAt: goalSource.goalAt || "",
   };
@@ -138,6 +159,7 @@ export const signatures = {
     rows(doc?.recall, r => [r.id, (r.events || []).length, time(r.updatedAt)].join("|")),
     rows(doc?.events, e => e.id),
     rows(doc?.nights, n => [n.id, time(n.at)].join("|")),
+    [time(doc?.game?.updatedAt), (doc?.game?.history || []).length, (doc?.game?.runs || []).length].join("|"),
     JSON.stringify(doc?.goal || null), time(doc?.goalAt),
   ].join("\n#\n")),
   reports: doc => hash(rows(doc?.reports, r => [r.id, time(r.updatedAt), r.status].join("|"))),
