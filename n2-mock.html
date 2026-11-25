@@ -9,7 +9,7 @@
 <link rel="icon" href="./favicon.ico" sizes="32x32"><link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="./apple-touch-icon.png"><link rel="manifest" href="./manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
-<link rel="stylesheet" href="./styles.css?v=198">
+<link rel="stylesheet" href="./styles.css?v=199">
 </head>
 <body class="n2">
 <main id="n2-main">
@@ -202,11 +202,14 @@
 </section>
 
 <section id="exam" hidden>
-  <div class="drill-head n2-exam-head"><a class="icon-button" href="./n2-mock.html#exams" aria-label="Leave. Your answers are saved"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="m2 2 10 10M12 2 2 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></a><span class="tool-titles"><span class="drill-title" id="material"></span><span class="overline" id="count"></span></span><strong class="n2-clock" id="clock" role="timer"></strong><button data-ui="button" class="icon-button" id="exam-pause" type="button" aria-label="Pause the timer"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M4.5 2.5v9M9.5 2.5v9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div>
-  <div class="n2-paused" id="exam-paused" hidden><p class="overline" lang="ja">一時停止</p><h2 class="drill-title">Paused</h2><p class="hint">The timer has stopped and the question is hidden. Your answers are saved; resume when you are back. The real exam has no pause, so the results note the time paused.</p><button data-ui="button" class="primary" id="exam-resume" type="button">Resume</button></div>
+  <div class="n2-exam-top">
+  <div class="drill-head n2-exam-head"><a class="icon-button" href="./n2-mock.html#exams" aria-label="Leave. Your answers are saved"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="m2 2 10 10M12 2 2 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></a><strong class="n2-clock" id="clock" role="timer"></strong><button data-ui="button" class="icon-button" id="exam-pause" type="button" aria-label="Pause the timer"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M4.5 2.5v9M9.5 2.5v9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div>
+  <div class="n2-exam-line"><span class="drill-title n2-exam-section" id="material" lang="ja"></span><span class="overline" id="count"></span></div>
   <div class="drill-bar"><span id="progress"></span></div>
+  </div>
+  <div class="n2-paused" id="exam-paused" hidden><p class="overline" lang="ja">一時停止</p><h2 class="drill-title">Paused</h2><p class="hint">The timer has stopped and the question is hidden. Your answers are saved; resume when you are back. The real exam has no pause, so the results note the time paused.</p><button data-ui="button" class="primary" id="exam-resume" type="button">Resume</button></div>
   <article class="n2-question">
-    <p class="overline" id="prompt"></p>
+    <p class="overline n2-mondai-label"><span id="prompt" lang="ja"></span><span class="status-chip below" id="unsure-chip" hidden>Unsure</span></p>
     <p class="hint n2-instruction" id="instruction" lang="ja"></p>
     <div class="n2-passage" id="passage" lang="ja"></div>
     <div class="n2-listen" id="listen-box" hidden><button data-ui="button" class="drill-sound" id="speak" type="button" aria-label="Play the Japanese audio"><svg width="34" height="30" viewBox="0 0 18 16" fill="none" aria-hidden="true"><path d="M2 5.5h3l4-3.5v12l-4-3.5H2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M12 5a4 4 0 0 1 0 6M14.5 2.5a7.5 7.5 0 0 1 0 11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button><span class="hint" id="plays"></span></div>
@@ -221,17 +224,19 @@
     <button data-ui="button" class="outline bar-icon-button" id="next" type="button" aria-label="Next question" data-icon="next"></button>
   </div>
   <dialog id="grid-dialog" class="sheet-dialog" aria-labelledby="grid-title">
-    <p class="overline" id="grid-title">Questions</p>
+    <h2 class="n2-grid-title" id="grid-title">Questions</h2>
     <p class="hint" id="grid-summary"></p>
-    <div class="n2-grid" id="jump"></div>
+    <ul class="n2-grid-legend" aria-label="What the squares show"><li data-key="answered">Answered</li><li data-key="current">Current</li><li data-key="blank">Blank</li><li data-key="unsure">Unsure</li></ul>
+    <div class="n2-grid-groups" id="jump"></div>
     <div class="dialog-actions"><button data-ui="button" class="quiet" id="grid-close" type="button">Keep going</button><button data-ui="button" class="primary" id="submit" type="button">Finish section</button></div>
   </dialog>
 </section>
 
 <section id="rest" hidden>
-  <div class="mode-intro"><span class="glyph" lang="ja" aria-hidden="true">休</span><strong class="mode-intro-title">Written section done</strong><p class="mode-hint">Take your break. Have headphones ready: the listening timer starts when you tap.</p></div>
-  <div id="rest-score"></div>
-  <div class="drill-done-actions"><button data-ui="button" id="listen" class="primary" type="button">Start listening · 50 min</button><a class="button outline" href="./n2-mock.html">Later — back to N2</a></div>
+  <div class="tool-head n2-break-head"><span class="tool-titles"><span class="tool-title">Break</span><span class="overline" id="rest-sub"></span></span></div>
+  <div class="mode-intro n2-break"><span class="glyph" lang="ja" aria-hidden="true">休</span><strong class="mode-intro-title">Written section done</strong><p class="mode-hint">Take your break. Have headphones ready: the listening timer starts when you tap.</p></div>
+  <div class="n2-break-scores" id="rest-score"></div>
+  <div class="review-actions n2-break-actions"><button data-ui="button" id="listen" class="primary" type="button">Start listening · 50 min</button><a class="button quiet" href="./n2-mock.html">Later — back to N2</a></div>
 </section>
 
 <section id="results" hidden>

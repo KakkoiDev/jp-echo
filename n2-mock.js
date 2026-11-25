@@ -1444,7 +1444,8 @@ async function exam() {
     const q = questions[state.index];
     const [first, end] = range();
     const answered = state.answers.slice(first, end).filter(Boolean).length;
-    $("material").textContent = SKILL_JA[q.skill] + " · " + SKILLS[q.skill];
+    $("material").textContent = SKILL_JA[q.skill];
+    $("material").title = SKILLS[q.skill];
     $("count").textContent = (state.index - first + 1) + " of " + (end - first) + " · " + answered + " answered";
     $("progress").style.width = answered / (end - first) * 100 + "%";
     $("prompt").textContent = q.label;
@@ -1477,6 +1478,7 @@ async function exam() {
         el("span", {class: "n2-choice-n", text: n}), textual ? el("span", {class: "n2-choice-text", lang: "ja", text: q.choices[i]}) : null);
     }));
     $("guess").setAttribute("aria-pressed", String(!!state.guesses[state.index]));
+    $("unsure-chip").hidden = !state.guesses[state.index];
     $("prev").disabled = state.index === first;
     const finishing = state.index === end - 1;
     if ($("next").dataset.finishing !== String(finishing)) { $("next").dataset.finishing = String(finishing); $("next").innerHTML = finishing ? "Finish" : chevronRightSvg; $("next").classList.toggle("bar-icon-button", !finishing); }
@@ -1491,14 +1493,25 @@ async function exam() {
   function openGrid() {
     const [first, end] = range();
     const answers = state.answers.slice(first, end), unsure = state.guesses.slice(first, end).filter(Boolean).length, blanks = answers.filter(a => !a).length;
-    $("grid-title").textContent = SKILLS[questions[first].skill] + (state.phase === "written" ? " · grammar · reading" : "") + " — questions";
+    $("grid-title").textContent = (state.phase === "listening" ? "聴解" : questions[first].skill === 3 ? "聴解" : "言語知識・読解") + " · " + (end - first) + " questions";
     $("grid-summary").textContent = (end - first - blanks) + " answered · " + unsure + " unsure · " + blanks + " blank";
-    $("jump").replaceChildren(...questions.slice(first, end).map(q => el("button", {type: "button", class: "n2-cell", "data-ui": "button",
+    // Grouped by 問題 with its range, so what is left has a name.
+    const groups = [];
+    for (const q of questions.slice(first, end)) {
+      const key = q.mondai ? q.label : "", last = groups.at(-1);
+      if (last && last.key === key) last.items.push(q); else groups.push({key, items: [q]});
+    }
+    const cell = q => el("button", {type: "button", class: "n2-cell", "data-ui": "button",
       "data-answered": String(!!state.answers[q.index]), "data-unsure": String(!!state.guesses[q.index]), "aria-current": q.index === state.index ? "true" : null,
-      "aria-label": q.label + (state.answers[q.index] ? ", answered" : ", blank") + (state.guesses[q.index] ? ", unsure" : ""),
-      onclick: () => { $("grid-dialog").close(); move(q.index); }}, String(q.index - first + 1))));
-    $("submit").textContent = blanks ? "Finish with " + blanks + " blank" : "Finish section";
+      "aria-label": q.label + ", question " + (q.index - first + 1) + (state.answers[q.index] ? ", answered" : ", blank") + (state.guesses[q.index] ? ", unsure" : ""),
+      onclick: () => { $("grid-dialog").close(); move(q.index); }}, String(q.index - first + 1));
+    $("jump").replaceChildren(...groups.map(g => el("div", {class: "n2-grid-group"},
+      g.key ? el("p", {class: "n2-grid-head"}, el("span", {lang: "ja", text: g.key.replace(" · ", " ")}), el("span", {text: (g.items[0].index - first + 1) + (g.items.length > 1 ? "–" + (g.items.at(-1).index - first + 1) : "")})) : null,
+      el("div", {class: "n2-grid"}, ...g.items.map(cell)))));
+    for (const c of $("jump").querySelectorAll('[data-unsure="true"]')) c.insertAdjacentHTML("beforeend", flagSvg);
+    $("submit").textContent = blanks ? "Finish · " + blanks + " blank" : "Finish section";
     $("grid-dialog").showModal();
+    $("jump").querySelector('[aria-current="true"]')?.focus({preventScroll: false});
   }
   function renderResults() {
     $("results-title").textContent = paper.title;
@@ -1635,7 +1648,14 @@ async function exam() {
     if (state.phase === "ready") renderIntro();
     if (active()) renderExam();
     drawPause();
-    if (state.phase === "rest") $("rest-score").replaceChildren(scoreCard(paper, state));
+    if (state.phase === "rest") {
+      // The break: estimated written scores only; listening scores come after.
+      const e = estimate(paper, state);
+      $("rest-sub").textContent = (bookIds.includes(paper.book) ? "Mock " + String(bookIds.indexOf(paper.book) + 1).padStart(2, "0") + " · " : "") + "written section done";
+      $("rest-score").replaceChildren(el("ul", {class: "n2-break-list"}, ...e.sections.filter(s => s.key !== "listening" && s.total).map(s =>
+        el("li", {}, el("span", {}, el("span", {lang: "ja", text: s.ja}), " estimated"), el("strong", {text: s.scaled + " of " + SECTION_MAX})))),
+        el("p", {class: "hint", text: "A direction, not a prediction. Listening scores after the next section."}));
+    }
     if (state.phase === "results") renderResults();
   }
   function renderIntro() {
