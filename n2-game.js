@@ -120,7 +120,7 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
       const accepted = new Set([w.reading, ...(ACCEPTED_READINGS[w.text] || [])]);
       const misses = nearMisses(w.reading).filter(m => !accepted.has(m));
       if (misses.length >= 3) pool.push({id: "r:" + id, kind: "reading", target: w.target, dimension: "reading", prompt: w.text,
-        sentence: ex ? plain(ex.ja) : "", needle: w.text, answer: w.reading, wrong: misses, seconds: SECONDS.reading,
+        sentence: ex ? plain(ex.ja) : "", needle: ex ? surfaceNeedle(plain(ex.ja), w.text) || w.text : w.text, answer: w.reading, wrong: misses, seconds: SECONDS.reading,
         solution: {word: w.text, reading: w.reading, meaning: w.answer, ja: ex?.ja || "", en: ex?.en || ""}});
     }
     // Meaning: confusable words share a kanji; the rest come from anywhere.
@@ -160,7 +160,7 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
     if (!ex) continue;
     const wrong = distinct(g.answer, [1, 2, 3, 5, 8, 13, 21, 34].map(d => grammar[(i + d * 17) % grammar.length]).filter(o => o !== g).map(o => o.answer));
     pool.push({id: "g:" + g.target[1], kind: "grammar", target: g.target, dimension: "grammar", prompt: g.prompt,
-      sentence: plain(ex.ja), needle: g.prompt.replace(/[〜～]/g, ""), answer: g.answer, wrong: [...new Set(wrong)], seconds: SECONDS.grammar,
+      sentence: plain(ex.ja), needle: surfaceNeedle(plain(ex.ja), g.prompt) || g.prompt.replace(/[〜～]/g, ""), answer: g.answer, wrong: [...new Set(wrong)], seconds: SECONDS.grammar,
       solution: {word: g.prompt, meaning: g.answer, ja: ex.ja, en: ex.en || ""}});
   }
   // Connectives (問題9): from reading passages of sets already sat. The
@@ -205,6 +205,20 @@ function connectiveQuestion(source, text, site) {
   return [{id: "c:" + source + "@" + site.at, kind: "connective", practice: true, target: null, dimension: null, prompt: "（　）に入るのは？",
     sentence: prev + "（　）" + rest, needle: "（　）", answer: site.word, wrong, seconds: SECONDS.connective,
     solution: {word: site.word, meaning: glossOf(site.word) + " · " + JOBS[job], ja: prev + site.word + rest, source, job}}];
+}
+
+// The form to underline, as it appears in the sentence (design fix 6): a
+// grammar name like 得る（える・うる） or ～ないことには, and a word in a conjugated
+// form (生ずる written 生じた), are found by their stem. "" when not found.
+export function surfaceNeedle(sentence = "", name = "") {
+  const forms = String(name).replace(/[〜～]/g, "").replace(/（[^）]*）|\([^)]*\)/g, "").split(/[・／\s]+/).map(x => x.trim()).filter(Boolean);
+  for (const f of forms) if (sentence.includes(f)) return f;
+  for (const f of forms) for (let cut = 1; cut <= 3 && f.length - cut >= 1; cut++) {
+    const stem = f.slice(0, f.length - cut);
+    if (/^[ぁ-ん]$/.test(stem) || !stem) break;
+    if (sentence.includes(stem)) return stem;
+  }
+  return "";
 }
 
 // The four choices, in a fixed order per question for exam items (as

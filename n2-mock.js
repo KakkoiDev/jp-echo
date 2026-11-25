@@ -1060,27 +1060,41 @@ async function openEvidence(item, why = "") {
 // question, and every answer is saved as it is given.
 const ALOUD = {reading: "Say the word out loud as you read it.", meaning: "Say the word out loud, then pick.", definition: "Say your pick out loud.",
   listen: "Say what you heard out loud.", homophone: "Read the sentence out loud.", grammar: "Read the sentence out loud.", exam: "Read it out loud as you answer."};
-// Game sounds, made on the device (no files, offline): a rising note for a
-// right answer that climbs with the combo, a low one for a miss, a short
-// run at the end of a round. Off with the Sound button.
+// Game sounds and haptics (docs/design/game, Motion board), made on the
+// device: WebAudio, no files, offline. One Sound switch silences them, the
+// spoken answer and the vibration.
 const sfx = (() => {
   let ctx = null;
-  const tone = (freq, at, dur, type = "sine", vol = .07) => {
+  const audio = () => (ctx ||= new (window.AudioContext || window.webkitAudioContext)());
+  const tone = (freq, at, dur, type = "sine", vol = .07, slideTo = 0) => {
     try {
-      ctx ||= new (window.AudioContext || window.webkitAudioContext)();
-      const t = ctx.currentTime + at, o = ctx.createOscillator(), g = ctx.createGain();
-      o.type = type; o.frequency.value = freq; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + .01); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
-      o.connect(g).connect(ctx.destination); o.start(t); o.stop(t + dur + .02);
+      const c = audio(), t = c.currentTime + at, o = c.createOscillator(), g = c.createGain();
+      o.type = type; o.frequency.setValueAtTime(freq, t); if (slideTo) o.frequency.linearRampToValueAtTime(slideTo, t + dur);
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + .01); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+      o.connect(g).connect(c.destination); o.start(t); o.stop(t + dur + .02);
     } catch {}
   };
+  const noise = (dur = .02, vol = .05) => {
+    try { const c = audio(), b = c.createBuffer(1, Math.ceil(c.sampleRate * dur), c.sampleRate), d = b.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / d.length);
+      const s = c.createBufferSource(), g = c.createGain(); g.gain.value = vol; s.buffer = b; s.connect(g).connect(c.destination); s.start(); } catch {}
+  };
+  const C = [523, 587, 659, 698, 784, 880, 988, 1047, 1175, 1319, 1397, 1568, 1760];
   return {
-    right: streak => { const f = 523 * 2 ** (Math.min(streak, 12) / 12); tone(f, 0, .12); tone(f * 1.5, .07, .16); },
-    wrong: () => { tone(196, 0, .22, "triangle", .08); tone(147, .1, .26, "triangle", .06); },
-    round: () => [523, 659, 784, 1047].forEach((f, i) => tone(f, i * .09, .2)),
-    bonus: () => [784, 988, 1175].forEach((f, i) => tone(f, i * .05, .14, "square", .04)),
-    jackpot: () => [523, 659, 784, 1047, 1319, 1568].forEach((f, i) => tone(f, i * .06, .18, "square", .045)),
+    unlock: () => { try { audio().resume?.(); } catch {} },
+    right: streak => tone(523 * 2 ** (Math.min(streak, 12) / 12), 0, .09),
+    wrong: () => tone(147, 0, .18, "triangle", .08, 110),
+    timeout: () => { tone(196, 0, .06, "triangle", .07); tone(196, .1, .06, "triangle", .07); },
+    idk: () => tone(330, 0, .04, "sine", .05),
+    flag: () => noise(.02),
+    tick: () => tone(880, 0, .02, "sine", .035),
+    bonus: () => { tone(1047, 0, .05); tone(1319, .06, .05); },
+    jackpot5: () => [523, 659, 784].forEach((f, i) => tone(f, i * .06, .14, "square", .045)),
+    jackpot10: () => { [523, 659, 784, 1047].forEach((f, i) => tone(f, i * .06, .16, "square", .045)); noise(.3, .02); },
+    round: () => C.slice(0, 5).forEach((f, i) => tone(f, i * .07, .14)),
+    best: () => { C.slice(0, 5).forEach((f, i) => tone(f, i * .07, .14)); tone(1047, .35, .4); },
   };
 })();
+const buzz = pattern => { try { navigator.vibrate?.(pattern); } catch {} };
 function readGame() { try { return JSON.parse(localStorage.getItem(GAME_KEY) || "{}"); } catch { return {}; } }
 function writeGame(state) { try { localStorage.setItem(GAME_KEY, JSON.stringify(state)); } catch {} }
 async function game() {
@@ -1091,37 +1105,38 @@ async function game() {
   const sat = new Set(data.attempts.map(a => a.book).filter(id => /^n2-set-\d+$/.test(id || "")));
   const sets = (await Promise.all([...sat].filter(id => themes[id]).map(id => json(setFile(id)).catch(() => null)))).filter(Boolean);
   const pool = gamePool({inventory, examples: await deckExamples(), sets, sat});
-  let roundLevel = .5, rights = 0, flagged = 0, warmUp = false, beatLine = "", state = readGame(), round = [], index = 0, score = 0, streak = 0, timer = null, shownAt = 0, current = null, locked = false, misses = [];
-  const bar = $("game-bar");
+  let roundLevel = .5, rights = 0, flagged = 0, warmUp = false, beat = null, state = readGame(), round = [], index = 0, score = 0, streak = 0, bestCombo = 0, timer = null, ticker = null, shownAt = 0, current = null, locked = false, misses = [], marks = [];
+  const bar = $("game-bar"), root = $("game");
   const sound = () => readGame().sound !== false;
   const difficulty = () => difficultyOf(settings.gameDifficulty);
+  const mode = m => { root.dataset.mode = m; for (const [id, on] of [["game-home", "home"], ["game-play", "play"], ["game-review", "review"], ["game-done", "done"]]) $(id).hidden = m !== on; };
+  const pips = (host, n = round.length) => host.replaceChildren(...Array.from({length: n || 10}, (_, i) => el("i", {class: marks[i] || (host.id === "game-pips" && i === index ? "now" : "")})));
   const head = () => {
-    $("game-score").textContent = String(score);
-    $("game-combo").textContent = streak >= 3 ? "Combo " + streak + " · ×" + (1 + Math.min(streak, 10) / 10).toFixed(1) : warmUp && index === 0 ? "Warm-up round: things you know." : index === 0 ? beatLine : "";
+    $("game-score").textContent = score.toLocaleString();
+    const chip = $("game-combo-chip"), text = streak >= 2 ? "×" + (1 + Math.min(streak, 10) / 10).toFixed(1) + " combo" : "";
+    if (text !== chip.textContent) { chip.textContent = text; chip.classList.remove("bump"); void chip.offsetWidth; if (text) chip.classList.add("bump"); }
+    pips($("game-pips"));
   };
-  const todayLine = () => { const b = bossProgress(readGame()); return b.open ? "boss open" : b.done.toLocaleString() + " / " + BOSS_EVERY.toLocaleString(); };
+  const floatPoints = (points, kind) => { const f = $("game-float"); f.textContent = points > 0 ? "+" + points : points < 0 ? "−" + Math.abs(points) : "±0"; f.className = "n2-game-float " + kind; void f.offsetWidth; f.classList.add("go"); };
+  const toast = text => { const t = $("game-toast"); t.textContent = text; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => { t.hidden = true; }, 1400); };
   // The boss: every 1,000 questions, a full mock on a set not sat yet.
   const bossNow = () => bossSet({sets: bookIds.filter(id => realistic(id)), attempts: data.attempts});
   const fightBoss = (e, boss) => { e.preventDefault(); writeGame(takeBoss(readGame(), {set: boss.id})); location.href = "?book=" + boss.id + "&boss=1"; };
-  // Home: Play, Radio, Settings. The way in and the place a round's Back returns to.
+  const clockText = st => { const c = runClock(st.runStart), h = Math.floor(c.leftMs / 3600_000), m = Math.floor(c.leftMs % 3600_000 / 60_000); return !c.started ? "×" + c.times + " · 24 h once you start" : c.times > 1 ? "×" + c.times + " · " + h + " h " + m + " m left" : "×1 · run bonus over"; };
+  // Home (fix 12): the run card, best runs, 14 days, then Play in the thumb zone.
   function home() {
-    clearTimeout(timer); window.speechSynthesis?.cancel();
-    for (const id of ["game-play", "game-review", "game-done"]) $(id).hidden = true;
-    $("game-home").hidden = false; $("game-sub").textContent = ""; $("game-score").textContent = "";
-    bar.style.transition = "none"; bar.style.width = "0%";
+    clearTimeout(timer); clearInterval(ticker); window.speechSynthesis?.cancel();
+    mode("home"); $("game-sub").textContent = ""; $("game-score").textContent = ""; $("game-combo-chip").textContent = "";
     $("game-back").href = "./"; $("game-back").onclick = null;
-    const st = readGame(), b = bossProgress(st), boss = bossNow(), rest = resting(st, data.attempts);
-    $("game-home-line").textContent = rest ? "Boss down. Rest now: the Night Radio keeps today’s work."
-      : b.open && boss ? "The boss is open: Mock " + titleOf(boss.id) + ", " + BOSS_MINUTES.written + " min written + " + BOSS_MINUTES.listening + " min listening, plus the break."
-      : "Ten fast questions a round. Every " + BOSS_EVERY.toLocaleString() + ", the boss: a full mock.";
-    // The run clock: beat the boss soon and the whole run counts more.
-    const clock = runClock(st.runStart), hours = Math.floor(clock.leftMs / 3600_000), mins = Math.floor(clock.leftMs % 3600_000 / 60_000);
-    $("game-home-clock").textContent = rest ? "" : !clock.started ? "Run bonus ×" + clock.times + ": beat the boss within 24 h of your first answer."
-      : clock.times > 1 ? "Run bonus ×" + clock.times + " · " + hours + " h " + mins + " min left to beat the boss" : "Run bonus over: the boss still closes the run.";
-    $("game-home-level").textContent = DIFFICULTY[difficulty()].label + (difficulty() === "normal" ? " · adaptive" : "") + " · change in Settings";
-    $("game-home-meter").replaceChildren(loadMeter({fits: b.done, needs: BOSS_EVERY, caption: b.open ? "The boss is open" : b.done.toLocaleString() + " of " + BOSS_EVERY.toLocaleString() + " to the boss"}));
-    $("game-home-boss").hidden = !(b.open && boss);
-    if (b.open && boss) { $("game-home-boss").textContent = "Fight the boss"; $("game-home-boss").onclick = e => fightBoss(e, boss); }
+    const st = readGame(), b = bossProgress(st), boss = bossNow(), rest = resting(st, data.attempts), open = b.open && !!boss;
+    $("game-runcard").hidden = rest; $("game-rest").hidden = !rest;
+    const runNo = (st.runs || []).length + 1;
+    $("game-run-name").textContent = "Run " + runNo + (open ? " · boss open" : "");
+    $("game-run-clock").textContent = clockText(st);
+    $("game-run-big").replaceChildren(String(b.done), el("small", {text: open ? "of " + BOSS_EVERY.toLocaleString() + " · the boss is open" : "of " + BOSS_EVERY.toLocaleString() + " to the boss"}));
+    $("game-run-fill").style.width = Math.round(b.done / BOSS_EVERY * 100) + "%";
+    $("game-run-line").textContent = boss ? (open ? "Mock " + titleOf(boss.id) + ": " + BOSS_MINUTES.written + " min written + " + BOSS_MINUTES.listening + " min listening. Beat it before the run clock ends." : ((st.total || 0) - (st.runFrom || 0)).toLocaleString() + " points so far · Mock " + titleOf(boss.id) + " waits") : "";
+    $("game-rest-line").textContent = "The boss is down. The night keeps today’s work.";
     // Runs: the merged score ranks them; each row keeps both parts.
     const papersById = new Map(data.papers.map(p => [p.id, p]));
     const examOf = run => {
@@ -1131,22 +1146,47 @@ async function game() {
     };
     const runs = runTable(st, examOf);
     $("game-runs-wrap").hidden = !runs.length;
-    $("game-runs").replaceChildren(...runs.slice(0, 5).map((r, i) => el("li", {},
-      el("span", {text: (i + 1) + ". " + r.total.toLocaleString()}),
-      el("span", {class: "hint", text: r.gamePoints.toLocaleString() + " from " + r.questions.toLocaleString() + " questions · " + (r.exam ? "boss " + r.exam.total + "/180 (" + r.exam.sections.map(x => x.scaled ?? "–").join("·") + ")" + (r.times > 1 ? " · ×" + r.times + " for speed" : "") : "boss not finished") + " · " + shortDate(new Date(r.at))}))));
-    $("game-home-play").className = b.open && boss ? "outline" : "primary";
-    $("game-home-play").textContent = b.open && boss ? "Play a round" : rest ? "Play anyway" : "Play";
+    $("game-runs").replaceChildren(...runs.slice(0, 3).map((r, i) => el("li", {},
+      el("span", {text: String(i + 1)}), el("strong", {text: "Run " + ((st.runs || []).indexOf((st.runs || []).find(x => x.at === r.at)) + 1)}), el("strong", {text: r.total.toLocaleString()}),
+      el("span", {class: "hint", text: r.gamePoints.toLocaleString() + " from questions · " + (r.exam ? "boss " + r.exam.total + "/180 (" + r.exam.sections.map(x => x.scaled ?? "–").join("·") + ")" + (r.times > 1 ? " · ×" + r.times : "") : "boss not finished")}))));
+    const days = lastDays(st, 14);
+    $("game-chart").replaceChildren(scoreChart({points: days.map(d => ({value: d.answered, ok: d.answered >= DAILY_GOAL, label: shortDate(new Date(d.day + "T12:00:00"))})),
+      max: Math.max(DAILY_GOAL * 1.2, ...days.map(d => d.answered)), line: DAILY_GOAL, label: "Questions a day", caption: "Today " + (days.at(-1)?.answered || 0).toLocaleString() + " · the line is " + DAILY_GOAL.toLocaleString() + " a day."}));
+    $("game-home-level").textContent = DIFFICULTY[difficulty()].label + (difficulty() === "normal" ? " · adaptive" : "") + " · change in Settings";
+    $("game-home-boss").hidden = !open; $("game-home-radio").hidden = !rest;
+    if (open) $("game-home-boss").onclick = e => fightBoss(e, boss);
+    const play = $("game-home-play");
+    play.className = (open || rest ? "outline" : "primary") + " n2-game-go";
+    play.replaceChildren(open ? "Play a round first" : rest ? "Play anyway" : "Play", el("span", {text: "10 questions · about a minute"}));
+    soundButton();
   }
-  const runBar = seconds => { bar.style.transition = "none"; bar.style.width = "100%"; void bar.offsetWidth; bar.style.transition = "width " + seconds + "s linear"; bar.style.width = "0%"; };
-  const stopBar = () => { const w = getComputedStyle(bar).width; bar.style.transition = "none"; bar.style.width = w; };
+  const soundButton = () => { $("game-sound").setAttribute("aria-pressed", String(sound())); $("game-sound").textContent = sound() ? "Sound on" : "Sound off"; };
+  // The clock (fix 2): a 14 px bar with tenths beside it; seal in the last
+  // second, gold on a bonus.
+  const runBar = (seconds, {gold = false, review = false} = {}) => {
+    bar.style.transition = "none"; bar.style.width = "100%"; void bar.offsetWidth; bar.style.transition = "width " + seconds + "s linear"; bar.style.width = "0%";
+    const clock = $("game-clock"), end = performance.now() + seconds * 1000; let ticked = new Set();
+    clock.dataset.state = gold ? "gold" : "";
+    clearInterval(ticker);
+    ticker = setInterval(() => {
+      const left = Math.max(0, end - performance.now()) / 1000;
+      $("game-sec").textContent = left.toFixed(1);
+      if (!review && left <= 1 && !gold) clock.dataset.state = "hot";
+      for (const mark of [1, .5]) if (!review && left <= mark && !ticked.has(mark) && sound()) { ticked.add(mark); sfx.tick(); }
+      if (left <= 0) clearInterval(ticker);
+    }, 100);
+  };
+  const stopBar = state => { clearInterval(ticker); const w = getComputedStyle(bar).width; bar.style.transition = "none"; bar.style.width = w; if (state) $("game-clock").dataset.state = state; };
   function start() {
-    $("game-home").hidden = true;
+    sfx.unlock();
     $("game-back").href = "?view=game"; $("game-back").onclick = e => { e.preventDefault(); home(); };
     state = readGame();
-    const next = nextRound({pool, recall: data.recall, state, difficulty: difficulty()});
-    round = next.round; roundLevel = next.level; warmUp = next.warmUp; rights = 0; flagged = 0; beatLine = next.beat?.line || "";
-    index = 0; score = 0; streak = 0; misses = [];
-    $("game-done").hidden = true; $("game-review").hidden = true; $("game-play").hidden = false;
+    // With the sound off, listen cards leave the mix: nothing becomes unanswerable.
+    const playable = sound() ? pool : pool.filter(q => q.kind !== "listen");
+    const next = nextRound({pool: playable, recall: data.recall, state, difficulty: difficulty()});
+    round = next.round; roundLevel = next.level; warmUp = next.warmUp; beat = next.beat || null; rights = 0; flagged = 0; bestCombo = 0;
+    index = 0; score = 0; streak = 0; misses = []; marks = [];
+    mode("play");
     ask();
   }
   function ask() {
@@ -1156,30 +1196,41 @@ async function game() {
     // The same level that set this round's mix and clock picks its choices.
     const q = current, {choices, key} = choicesFor(q, Math.random, roundLevel);
     q.choices = choices; q.key = key;
-    $("game-sub").textContent = (index + 1) + " / " + round.length + (warmUp ? " · warm-up" : q.comeback ? " · again" : "") + " · " + todayLine();
-    $("game-kind").textContent = (q.bonus ? "Bonus ×3 · " : "") + KIND_LABEL[q.kind] + (q.kind === "exam" ? " · 問題" + q.mondai : "");
-    $("game-card").dataset.bonus = String(!!q.bonus);
+    const card = $("game-card");
+    card.dataset.bonus = String(!!q.bonus); card.dataset.state = ""; card.style.animation = "none"; void card.offsetWidth; card.style.animation = "";
+    $("game-kind").textContent = KIND_LABEL[q.kind] + (q.kind === "exam" ? " · 問題" + q.mondai : "");
+    const tag = q.bonus ? ["Bonus ×3", "gold"] : q.practice ? ["Practice · not scored", ""] : q.comeback ? ["Again", "seal"] : null;
+    $("game-tag").hidden = !tag; if (tag) { $("game-tag").textContent = tag[0]; $("game-tag").dataset.tone = tag[1]; }
+    // A beat ribbon on question 1 (pace), or the warm-up; it leaves on the first answer.
+    const ribbon = index === 0 ? (warmUp ? "Warm-up round: things you know." : beat?.line || "") : "";
+    $("game-ribbon").hidden = !ribbon; $("game-ribbon").textContent = ribbon; $("game-ribbon").className = "n2-game-ribbon beat";
+    $("game-stamp").hidden = true;
     const listen = q.kind === "listen";
     $("game-prompt").textContent = listen ? "…" : q.prompt;
     $("game-prompt").lang = q.kind === "definition" ? "en" : "ja";
     $("game-prompt").classList.toggle("long", !listen && q.prompt.length > 16);
     $("game-prompt").classList.toggle("mid", !listen && q.prompt.length > 6 && q.prompt.length <= 16);
     $("game-sentence").hidden = !q.sentence;
-    if (q.sentence) $("game-sentence-ja").replaceChildren(...exampleNodes(q.sentence, [q.needle]));
+    if (q.sentence) $("game-sentence").replaceChildren(...exampleNodes(q.sentence, [q.needle]));
     $("game-say").hidden = !listen;
-    $("game-aloud").textContent = ALOUD[q.kind] || "";
-    $("game-choices").replaceChildren(...choices.map((c, i) => el("button", {type: "button", class: "n2-choice", "data-ui": "button", onclick: () => answer(i)},
-      el("span", {class: "n2-choice-n", text: String(i + 1)}), el("span", {class: "n2-choice-text", lang: /[ぁ-んァ-ン一-龯]/.test(c) ? "ja" : "en", text: c}))));
+    $("game-aloud").lastChild.textContent = ALOUD[q.kind] || "";
+    $("game-combo").textContent = ""; $("game-combo").className = "n2-game-line";
+    $("game-flag").dataset.on = "false";
+    $("game-choices").replaceChildren(...choices.map((c, i) => el("button", {type: "button", class: "n2-game-choice", "data-ui": "button", onclick: () => answer(i)},
+      el("span", {class: "k", text: String(i + 1)}), el("span", {class: "t", lang: /[ぁ-んァ-ン一-龯]/.test(c) ? "ja" : "en", text: c}))));
     head();
+    if (q.bonus && sound()) sfx.bonus();
     if (listen) say(spokenWord(q.prompt, q.say));
-    shownAt = performance.now(); runBar(q.seconds);
+    shownAt = performance.now(); runBar(q.seconds, {gold: !!q.bonus});
     timer = setTimeout(() => answer(-1, "timeout"), q.seconds * 1000);
   }
   async function answer(i, why) {
     if (locked || !current) return;
-    locked = true; clearTimeout(timer); stopBar();
+    locked = true; clearTimeout(timer);
     const q = current, ms = performance.now() - shownAt;
     const outcome = why === "timeout" ? "timeout" : i < 0 ? "dontknow" : i === q.key ? "right" : "wrong";
+    stopBar(outcome === "right" ? "right" : outcome === "timeout" ? "dead" : "idle");
+    if (outcome === "right") $("game-sec").textContent = (ms / 1000).toFixed(1);
     const result = scoreAnswer({outcome, ms, seconds: q.seconds, streak});
     // Easy pays less, Hard more, bonus ×3 — all inside the guessing cap.
     // Practice questions (connectives, until reviewed) score nothing and
@@ -1187,18 +1238,37 @@ async function game() {
     const paid = q.practice ? {points: 0, jackpot: 0} : bonusPoints({points: result.points, bonus: q.bonus, streak: result.streak, factor: DIFFICULTY[difficulty()].points, choices: q.choices.length});
     if (q.practice) result.streak = streak;
     if (outcome === "right") rights++;
-    score += paid.points; streak = result.streak; head();
-    if (sound()) outcome !== "right" ? sfx.wrong() : paid.jackpot ? sfx.jackpot() : q.bonus ? sfx.bonus() : sfx.right(streak);
-    // Then the right answer, spoken once in the default Japanese voice.
-    const spoken = sound() && answerSpeech(q);
-    if (spoken) setTimeout(() => speakOnce(spoken, {voice: null, rate: Number(settings.rate) || 1, lang: "ja"}), 180);
-    if (paid.jackpot) $("game-combo").textContent = "Jackpot! Combo " + streak;
-    else if (q.bonus && outcome === "right") $("game-combo").textContent = "Bonus +" + paid.points;
-    // Rule two: a mistake is part of the game. Say so, then keep going.
-    if (outcome !== "right") $("game-combo").textContent = outcome === "wrong" ? "Part of the game. Keep going." : "Fine. Keep going.";
+    score += paid.points; streak = result.streak; bestCombo = Math.max(bestCombo, streak);
+    marks[index] = outcome === "right" ? "ok" : outcome === "timeout" ? "to" : "no";
+    head();
+    $("game-score").dataset.flash = outcome === "right" ? "right" : outcome === "wrong" ? "wrong" : ""; setTimeout(() => { $("game-score").dataset.flash = ""; }, 400);
+    floatPoints(paid.points, paid.points > 0 ? (q.bonus ? "gold" : "right") : paid.points < 0 ? "wrong" : "zero");
+    $("game-ribbon").hidden = true;
+    // Answer states (fix 7): right tinted with ✓, a wrong pick struck, the rest fade.
+    const card = $("game-card"); card.dataset.state = outcome === "right" ? "right" : outcome === "wrong" ? "wrong" : outcome === "timeout" ? "timeout" : "";
+    if (outcome === "timeout") $("game-kind").textContent = "⏱ Time";
     const rows = [...$("game-choices").children];
-    if (rows[q.key]) rows[q.key].dataset.state = "right";
-    if (outcome === "wrong" && rows[i]) rows[i].dataset.state = "wrong";
+    rows.forEach((row, n) => { row.dataset.state = n === q.key ? "right" : n === i && outcome === "wrong" ? "wrong" : "dim"; });
+    if (rows[q.key]) rows[q.key].querySelector(".k").textContent = "✓";
+    if (outcome === "wrong" && rows[i]) rows[i].querySelector(".k").textContent = "✕";
+    // Juice (fix 10) and sound (fix 11): never blocks the next question.
+    if (sound()) {
+      if (outcome === "right") paid.jackpot ? (streak >= 10 ? sfx.jackpot10() : sfx.jackpot5()) : sfx.right(streak);
+      else if (outcome === "wrong") sfx.wrong(); else if (outcome === "timeout") sfx.timeout(); else sfx.idk();
+      buzz(outcome === "right" ? (paid.jackpot ? (streak >= 10 ? [30, 40, 30, 40, 60] : [20, 30, 20]) : 12) : outcome === "wrong" ? [40, 40, 40] : outcome === "timeout" ? 60 : 10);
+      // Then the right answer, spoken once in the default Japanese voice.
+      const spoken = answerSpeech(q);
+      if (spoken) setTimeout(() => speakOnce(spoken, {voice: null, rate: Number(settings.rate) || 1, lang: "ja"}), 180);
+    }
+    const line = $("game-combo");
+    if (paid.jackpot && outcome === "right") {
+      $("game-ribbon").hidden = false; $("game-ribbon").className = "n2-game-ribbon"; $("game-ribbon").textContent = "Jackpot · combo " + streak;
+      if (streak >= 10) $("game-stamp").hidden = false;
+    } else if (q.bonus && outcome === "right") { line.textContent = "Bonus +" + paid.points; line.className = "n2-game-line gold"; }
+    // Rule two: a mistake is part of the game. Say so, then keep going.
+    if (outcome === "wrong") line.textContent = "Part of the game. Keep going.";
+    else if (outcome === "timeout") line.textContent = "Too slow this time. It comes back next round.";
+    else if (outcome === "dontknow") line.textContent = "Fine. Keep going.";
     if (outcome !== "right") misses.push({q, picked: i >= 0 ? q.choices[i] : outcome === "timeout" ? "Time ran out" : "I don’t know"});
     state = rememberAnswer(readGame(), {q, outcome, points: paid.points, fast: result.fast, difficulty: difficulty()}); writeGame(state);
     if (recallsMiss(q, outcome)) {
@@ -1210,79 +1280,68 @@ async function game() {
         data.recall = data.recall.filter(r => r.id !== id).concat(record);
       } catch {}
     }
-    timer = setTimeout(() => { index++; ask(); }, outcome === "right" ? PAUSE.right : PAUSE.miss);
+    timer = setTimeout(() => { index++; ask(); }, outcome === "right" ? (paid.jackpot && streak >= 10 ? 700 : PAUSE.right) : outcome === "dontknow" ? 600 : PAUSE.miss);
   }
-  // A timed look at each miss: the answer, the sentence with furigana, why.
+  // The review (fix 9): 5 seconds a miss, read top to bottom in one glance.
   let reviewAt = 0, held = false;
   function review(n) {
     clearTimeout(timer);
     reviewAt = n;
     if (!misses[n]) { done(); return; }
     const {q, picked} = misses[n], sol = q.solution || {};
-    $("game-play").hidden = true; $("game-review").hidden = false;
-    $("game-sub").textContent = "Your misses · " + (n + 1) + " / " + misses.length;
+    mode("review");
+    $("game-sub").textContent = "Review · " + (n + 1) + " of " + misses.length;
     $("game-review-kind").textContent = KIND_LABEL[q.kind];
-    $("game-review-word").textContent = sol.word || q.answer;
-    $("game-review-word").classList.toggle("long", (sol.word || q.answer).length > 12);
+    const word = sol.word || q.answer;
+    $("game-review-word").textContent = word;
+    $("game-review-word").classList.toggle("long", word.length > 12);
     $("game-review-reading").textContent = sol.reading && sol.reading !== sol.word ? sol.reading : "";
     $("game-review-meaning").textContent = sol.meaning || (q.kind === "exam" ? "Answer: " + q.answer : "");
+    $("game-review-picked").replaceChildren(...(picked && !/^(Time ran out|I don’t know)$/.test(picked) ? ["You picked ", el("s", {text: picked})] : [picked || ""]));
     $("game-review-sentence").hidden = !sol.ja;
-    if (sol.ja) { $("game-review-ja").replaceChildren(...exampleNodes(sol.ja, [sol.word ? sol.word.replace(/[〜～]/g, "") : q.needle])); $("game-review-en").textContent = sol.en || ""; }
+    if (sol.ja) { $("game-review-ja").replaceChildren(...exampleNodes(sol.ja, [q.needle && q.needle !== "（　）" && !q.needle.startsWith("【") ? q.needle : word.replace(/[〜～]/g, "").replace(/（[^）]*）/g, "")])); $("game-review-en").textContent = sol.en || ""; }
     $("game-review-why").hidden = !(sol.why || sol.others);
     $("game-review-why").textContent = sol.why || (sol.others ? "Same sound: " + sol.others.join(" · ") : "");
-    $("game-review-picked").textContent = "You: " + picked + (q.kind === "exam" ? "" : " · Read the sentence out loud once.");
-    if (sol.word && sol.reading) say(spokenWord(sol.word, sol.reading));
-    held = false; $("game-hold").setAttribute("aria-pressed", "false"); $("game-hold").textContent = "Hold";
-    runBar(REVIEW_SECONDS);
+    if (sound() && sol.word && sol.reading) setTimeout(() => say(spokenWord(sol.word, sol.reading)), 150);
+    held = false; $("game-hold").setAttribute("aria-pressed", "false"); $("game-hold").setAttribute("aria-label", "Hold");
+    runBar(REVIEW_SECONDS, {review: true});
     timer = setTimeout(() => review(n + 1), REVIEW_SECONDS * 1000);
   }
+  // Round end (fix 8): the number, the pips, one line, one big button.
   function done() {
-    clearTimeout(timer);
+    clearTimeout(timer); clearInterval(ticker);
     // Right counts only answers that were right: a flag or a skip is never a win.
+    const before = readGame().best || 0;
     state = rememberRound(readGame(), {score, questions: round, misses: round.length - rights}); writeGame(state);
-    if (sound()) sfx.round();
-    $("game-play").hidden = true; $("game-review").hidden = true; $("game-done").hidden = false;
-    $("game-sub").textContent = "Round " + state.rounds;
-    bar.style.transition = "none"; bar.style.width = "100%";
-    const right = rights;
-    $("game-done-title").textContent = score + " points" + (score >= state.best && score > 0 ? " · your best" : "");
-    $("game-done-line").textContent = right + " of " + round.length + " right" + (flagged ? " · " + flagged + " flagged" : "") + " · best " + state.best + (misses.length ? " · your " + misses.length + " miss" + (misses.length === 1 ? "" : "es") + " open the next round" : "");
-    const t = gameToday(state);
-    $("game-today").replaceChildren(loadMeter({fits: Math.min(t.answered, DAILY_GOAL), needs: DAILY_GOAL, caption: t.answered.toLocaleString() + " of " + DAILY_GOAL.toLocaleString() + " questions today"}));
-    // The boss: every 1,000 questions since the last one.
+    const best = score > before && score > 0;
+    if (sound()) { best ? sfx.best() : sfx.round(); buzz(best ? [30, 50, 30] : 20); }
+    mode("done");
+    $("game-sub").textContent = "";
+    $("game-done-kicker").textContent = "Round " + state.rounds + (beat?.name && beat.name !== "hook" ? " · " + beat.name : "") + " · best " + state.best.toLocaleString();
+    $("game-done-title").textContent = score.toLocaleString(); $("game-done-title").dataset.best = String(best);
+    pips($("game-done-pips"));
+    const back = Math.max(0, round.length - rights - flagged);
+    $("game-done-line").textContent = rights + " of " + round.length + (flagged ? " · " + flagged + " flagged" : "") + (bestCombo > 1 ? " · best combo " + bestCombo : "") + (back ? " · " + back + " come back next" : "") + (inSlumpNext() ? " · next: a warm-up" : "");
     const b = bossProgress(state), boss = bossNow();
-    $("game-boss").hidden = !boss;
-    if (boss) {
-      $("game-boss").href = b.open ? "?book=" + boss.id + "&boss=1" : "#";
-      $("game-boss").setAttribute("aria-disabled", String(!b.open));
-      $("game-boss-title").textContent = b.open ? "The boss · open" : "The boss · locked";
-      $("game-boss-line").textContent = (b.open ? "" : b.left.toLocaleString() + " questions to go. ") + "Mock " + titleOf(boss.id) + " · " + BOSS_MINUTES.written + " min written + " + BOSS_MINUTES.listening + " min listening, plus the break";
-      $("game-boss").onclick = e => { if (!b.open) e.preventDefault(); else fightBoss(e, boss); };
-    }
-    const rank = ranking(state);
-    $("game-rank").replaceChildren(...rank.top.map((r, i) => { const li = el("li", {"aria-current": String(r.i === state.history.length - 1)}, el("span", {text: (i + 1) + ". " + r.score + " points"}), el("span", {class: "hint", text: r.right + "/" + r.n + " · " + shortDate(new Date(r.at))})); return li; }),
-      ...(rank.place > rank.top.length ? [el("li", {"aria-current": "true"}, el("span", {text: rank.place + ". " + score + " points · this round"}), el("span", {class: "hint", text: "of " + rank.of}))] : []));
-    const days = lastDays(state, 14);
-    $("game-chart").replaceChildren(scoreChart({points: days.map(d => ({value: d.answered, ok: d.answered >= DAILY_GOAL, label: shortDate(new Date(d.day + "T12:00:00"))})),
-      max: Math.max(DAILY_GOAL * 1.2, ...days.map(d => d.answered)), line: DAILY_GOAL, label: "Questions a day", caption: "The last 14 days; the line is " + DAILY_GOAL.toLocaleString() + " a day."}));
-    $("game-sound").setAttribute("aria-pressed", String(sound())); $("game-sound").textContent = sound() ? "Sound on" : "Sound off";
+    $("game-boss-strip").hidden = !boss || b.open; $("game-boss").hidden = !(boss && b.open);
+    $("game-boss-progress").textContent = b.done.toLocaleString() + " / " + BOSS_EVERY.toLocaleString();
+    $("game-boss-clock").textContent = clockText(state);
+    if (boss && b.open) { $("game-boss").href = "?book=" + boss.id + "&boss=1"; $("game-boss-line").textContent = "The boss is open: Mock " + titleOf(boss.id) + ", " + BOSS_MINUTES.written + " + " + BOSS_MINUTES.listening + " min"; $("game-boss").onclick = e => fightBoss(e, boss); }
     // Bedtime: the round's end points to Evening recall (or straight to the
     // Night Radio when nothing is left to recall); one more round stays a tap away.
     const late = atBedtime(new Date(), settings.gameBedtime);
     $("game-bedtime").hidden = !late; $("game-sleep").hidden = !late;
-    $("game-again").className = late ? "quiet" : "primary";
-    $("game-again").textContent = late ? "One more round" : "Next round";
+    $("game-again").className = (late ? "outline" : "primary") + " n2-game-go";
+    $("game-again").textContent = late ? "One more round" : inSlumpNext() ? "Warm-up round" : "Next round";
     if (late) deckExamples().then(examples => {
       const left = eveningRecall({inventory, recall: data.recall, evidence: scored(data), events: data.events, examples}).length;
       $("game-sleep").href = left ? "?view=evening" : "./radio";
       $("game-sleep").textContent = left ? "Evening recall, then sleep" : "Start the Night Radio";
     }).catch(() => {});
   }
-  $("game-sound").onclick = () => { const st = readGame(); st.sound = st.sound === false; writeGame(st); $("game-sound").setAttribute("aria-pressed", String(st.sound)); $("game-sound").textContent = st.sound ? "Sound on" : "Sound off"; };
+  const inSlumpNext = () => { const h = (readGame().history || []).at(-1); return !!h && (h.right / Math.max(1, h.n) < .5 || h.score < 0); };
+  $("game-sound").onclick = () => { const st = readGame(); st.sound = st.sound === false; writeGame(st); soundButton(); };
   $("game-skip").onclick = () => answer(-1);
-  // Flag: the report sheet with this question, the clock stopped while it is open.
-  $("game-flag").replaceChildren(document.createRange().createContextualFragment(flagSvg), "Flag");
-  $("game-review-flag").replaceChildren(document.createRange().createContextualFragment(flagSvg), "Flag");
   // One tap, no questions (owner, 26 Nov): the flag saves the question exactly
   // as shown and the game moves on. Working out why is the audit's job.
   const quickFlag = async card => {
@@ -1290,18 +1349,20 @@ async function game() {
   };
   $("game-flag").onclick = () => {
     if (locked || !current || $("game-play").hidden) return;
-    locked = true; clearTimeout(timer); stopBar();
+    locked = true; clearTimeout(timer); stopBar("idle");
     const q = current, st = readGame(); st.seen = {...(st.seen || {}), [q.id]: Date.now()}; writeGame(st);
     quickFlag(cardOf(q));
     // A flag earns nothing, saves no recall evidence and ends the combo: it is
     // not an answer, so it can't carry a streak across a card.
-    flagged++; streak = 0; head();
-    $("game-combo").textContent = "Flagged. Keep going.";
+    flagged++; streak = 0; marks[index] = "fl"; head();
+    $("game-flag").dataset.on = "true";
+    if (sound()) { sfx.flag(); buzz(10); }
+    toast("Flagged, saved as shown · no points");
     timer = setTimeout(() => { index++; ask(); }, PAUSE.right);
   };
   $("game-review-flag").onclick = () => {
     const m = misses[reviewAt]; if (!m) return;
-    quickFlag(cardOf(m.q, m.picked));
+    quickFlag(cardOf(m.q, m.picked)); toast("Flagged, saved as shown");
     review(reviewAt + 1);
   };
   reportPause = () => {
@@ -1310,7 +1371,7 @@ async function game() {
       const left = Math.max(1000, current.seconds * 1000 - (performance.now() - shownAt));
       clearTimeout(timer); stopBar();
       return () => { if (locked || !current) return; shownAt = performance.now() - (current.seconds * 1000 - left);
-        bar.style.transition = "width " + left / 1000 + "s linear"; bar.style.width = "0%"; timer = setTimeout(() => answer(-1, "timeout"), left); };
+        runBar(left / 1000, {gold: !!current.bonus}); timer = setTimeout(() => answer(-1, "timeout"), left); };
     }
     if (!$("game-review").hidden && !held) { clearTimeout(timer); stopBar(); return () => { if (!$("game-review").hidden && !held) review(reviewAt); }; }
     return null;
@@ -1318,11 +1379,12 @@ async function game() {
   $("game-say").onclick = () => current && say(spokenWord(current.prompt, current.say));
   $("game-next").onclick = () => review(reviewAt + 1);
   $("game-hold").onclick = () => {
-    held = !held; $("game-hold").setAttribute("aria-pressed", String(held)); $("game-hold").textContent = held ? "Continue" : "Hold";
+    held = !held; $("game-hold").setAttribute("aria-pressed", String(held)); $("game-hold").setAttribute("aria-label", held ? "Continue" : "Hold");
     if (held) { clearTimeout(timer); stopBar(); } else review(reviewAt);
   };
   $("game-again").onclick = start;
   $("game-home-play").onclick = start;
+  $("game-home-btn").onclick = home;
   document.addEventListener("keydown", e => {
     if ($("game").hidden || e.target.closest("input,textarea,select") || e.metaKey || e.ctrlKey) return;
     if (!$("game-play").hidden && ["1", "2", "3", "4"].includes(e.key)) answer(Number(e.key) - 1);

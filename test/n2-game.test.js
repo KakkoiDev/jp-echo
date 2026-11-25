@@ -100,7 +100,7 @@ test("the game is a view of the N2 page, saved per answer, linked from the hub a
   assert.match(mock, /state = rememberAnswer\(readGame\(\), \{q, outcome, points: paid\.points, fast: result\.fast, difficulty: difficulty\(\)\}\); writeGame\(state\);/);
   assert.match(mock, /"missed", new Date\(\), \{source: GAME_SOURCE/);
   assert.match(html, /href="\?view=game"><span class="library-tool-glyph" lang="ja" aria-hidden="true">速<\/span>/);
-  assert.match(html, /id="game-skip" type="button">I don’t know<\/button>/);
+  assert.match(html, /id="game-skip" type="button">I don’t know <span>· 0<\/span><\/button>/, "I don’t know · 0, a real move");
   assert.ok(manifest.shortcuts.some(s => s.url === "./n2-mock.html?view=game"));
   assert.match(sw, /"\.\/n2-game\.js"/);
   assert.doesNotMatch(src("../n2-game.js"), /localStorage|document\.|indexedDB/, "pure");
@@ -223,7 +223,7 @@ test("bedtime: from the learner's hour until 5 am the round's end points to slee
   assert.equal(atBedtime(at(22, 15), "nonsense"), false, "a bad value falls back to 23:30");
   const mock = src("../n2-mock.js"), html = src("../n2-mock.html"), index = src("../index.html");
   assert.match(mock, /const late = atBedtime\(new Date\(\), settings\.gameBedtime\);/);
-  assert.match(mock, /\$\("game-again"\)\.textContent = late \? "One more round" : "Next round";/);
+  assert.match(mock, /\$\("game-again"\)\.textContent = late \? "One more round" : inSlumpNext\(\) \? "Warm-up round" : "Next round";/);
   assert.match(mock, /\$\("game-sleep"\)\.href = left \? "\?view=evening" : "\.\/radio";/);
   assert.match(html, /id="game-sleep" href="\?view=evening" hidden>Evening recall, then sleep<\/a>/);
   assert.match(index, /id="settings-game-bedtime" type="time" value="23:30"/);
@@ -331,7 +331,7 @@ test("after each answer the right word or pattern is spoken, with its reading, n
   assert.equal(answerSpeech({kind: "exam", target: ["word", "先祖", "せんぞ"]}), "先祖【せんぞ】");
   assert.equal(answerSpeech({kind: "exam", target: null, prompt: "a long authored sentence"}), null, "no target, nothing spoken");
   const mock = src("../n2-mock.js");
-  assert.match(mock, /const spoken = sound\(\) && answerSpeech\(q\);/, "the Sound switch silences it too");
+  assert.match(mock, /if \(sound\(\)\) \{\n      if \(outcome === "right"\)[\s\S]*?const spoken = answerSpeech\(q\);/, "the Sound switch silences it too");
   assert.match(mock, /speakOnce\(spoken, \{voice: null,/, "the default voice");
 });
 
@@ -393,10 +393,10 @@ test("audit P0: blind guessing never beats I don't know, in any exposed state", 
 test("audit P0: a flag earns nothing, ends the combo, and the round's right count only counts right answers", () => {
   const mock = src("../n2-mock.js");
   const flag = mock.slice(mock.indexOf('$("game-flag").onclick'), mock.indexOf('$("game-review-flag").onclick'));
-  assert.match(flag, /flagged\+\+; streak = 0; head\(\);/);
+  assert.match(flag, /flagged\+\+; streak = 0; marks\[index\] = "fl"; head\(\);/);
   assert.doesNotMatch(flag, /recallRecord|rights\+\+|score \+=/);
   assert.match(mock, /misses: round\.length - rights\}/);
-  assert.match(mock, /const right = rights;/);
+  assert.match(mock, /\$\("game-done-line"\)\.textContent = rights \+ " of " \+ round\.length/);
   assert.match(mock, /choicesFor\(q, Math\.random, roundLevel\)/, "the round's level picks the choices");
 });
 
@@ -404,4 +404,37 @@ test("audit P2: connective questions are practice: no points, combo untouched", 
   const pool = allSat();
   assert.ok(pool.filter(q => q.kind === "connective").every(q => q.practice === true));
   assert.match(src("../n2-mock.js"), /const paid = q\.practice \? \{points: 0, jackpot: 0\}/);
+});
+
+test("design fixes (Blitz on washi): tokens, clock, one-line head, thumb-zone choices, quiet flag, underline, states, one-tap round end, 5 s review, home", async () => {
+  const css = src("../styles.css"), html = src("../n2-mock.html"), mock = src("../n2-mock.js");
+  const {surfaceNeedle} = await import("../n2-game.js");
+  // 1 · tokens: gold in light, dark and system; right is Echo's learning indigo.
+  assert.equal((css.match(/--gold:#/g) || []).length, 3);
+  assert.match(css, /\.n2-game\{--right:var\(--chip-learn-fg\);--right-tint:var\(--chip-learn-bg\);--track:var\(--rule\)/);
+  // 2 · the clock: a 14 px bar, tenths beside it, seal in the last second, gold on a bonus.
+  assert.match(css, /\.n2-game-bar\{flex:1;height:14px/);
+  assert.match(mock, /if \(!review && left <= 1 && !gold\) clock\.dataset\.state = "hot";/);
+  // 3 · one-line head: back, ten pips, the score with its combo.
+  assert.match(html, /id="game-pips"/); assert.match(html, /id="game-combo-chip"/);
+  // 4 · choices in the sans, 56 px rows, two-line clamp, low in the thumb zone.
+  assert.match(css, /\.n2-game-choice\{display:flex;align-items:center;gap:12px;min-height:56px/);
+  assert.match(css, /-webkit-line-clamp:2/); assert.match(css, /\.n2-game-choices\{[^}]*margin-top:auto/);
+  // 5 · a quiet 44 px flag icon with a toast.
+  assert.match(html, /class="icon-button n2-game-flagbtn" id="game-flag"/); assert.match(mock, /toast\("Flagged, saved as shown · no points"\)/);
+  // 6 · the underline follows the sentence.
+  assert.equal(surfaceNeedle("この方法なら、問題は解決し得る。", "得る（える・うる）"), "得る");
+  assert.equal(surfaceNeedle("問題が生じた。", "生ずる"), "生");
+  // 7 · answer states: ✓ on right, ✕ and strike on a wrong pick, the rest fade, a timeout state.
+  assert.match(mock, /rows\[q\.key\]\.querySelector\("\.k"\)\.textContent = "✓"/); assert.match(css, /\.n2-game-card\[data-state=timeout\]/);
+  // 8 · round end: the number, the pips, one line and one big button.
+  assert.match(html, /id="game-done-pips"/); assert.match(css, /\.n2-game-done \.n2-game-go\{min-height:72px\}/);
+  // 9 · review: word, reading, meaning, struck pick, then the sentence; one row of actions.
+  assert.match(html, /class="n2-game-reviewbar"/); assert.match(mock, /\["You picked ", el\("s", \{text: picked\}\)\]/);
+  // 10, 11 · juice and sound that never block; reduced motion honoured; vibration.
+  assert.match(css, /@media\(prefers-reduced-motion:reduce\)\{\.n2-game \*\{animation:none !important/);
+  assert.match(mock, /navigator\.vibrate/);
+  assert.match(mock, /const playable = sound\(\) \? pool : pool\.filter\(q => q\.kind !== "listen"\);/, "sound off takes listen cards out");
+  // 12 · home: the run card, best runs, 14 days, Play in the thumb zone.
+  assert.match(html, /id="game-runcard"/); assert.match(html, /id="game-home-play" type="button">Play<span>10 questions · about a minute<\/span>/);
 });

@@ -329,6 +329,13 @@ Before considering the change complete:
   `payoutCap(choices)` = 200 × (n − 1), jackpots pay nothing, a flag scores
   zero and ends the combo, connectives are practice. The boss halves only the
   written clock (`BOSS_MINUTES`).
+  Its look is "Blitz on washi" (designer canvas, 26 Nov; fixes 1–12 built):
+  Echo's paper, ink and seal, plain surfaces in the loop, a 14 px clock bar
+  with tenths, a one-line head (back, ten pips, score and combo), choices in
+  the UI sans in the thumb zone, "I don't know · 0" and a quiet flag icon,
+  right in `--chip-learn-*` (indigo), bonus in the one new token `--gold`.
+  The Sound switch also silences the voice and vibration and takes listen
+  cards out. Board specs: docs/design/game/DESIGNER-HANDOFF.md (canvas link).
   After a bad round (`inSlump`) the next is a warm-up of questions already won
   (`wins`, `WARM_UP`) with only two misses back, to keep the player going.
   Its flag is one tap with no sheet (owner, 26 Nov: "I don't think, you

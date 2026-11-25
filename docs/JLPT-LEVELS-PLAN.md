@@ -85,6 +85,29 @@ not assume three sections of 60.
   question, two held-out sets for unseen-passage mocks.
 - A native-review sample per level before its scores count as readiness.
 
+### Phase 4: the Quick round rank becomes the level (owner, 26 Nov 2026)
+
+The game and the player's rank should matter. In the owner's words: "0
+points = N5 vocab and questions and tests ... little by little pass the
+levels. And when even the N1 test would be a walk in the park, the player
+gets the grade of N0."
+
+- **The rank is the level.** A new player starts at N5: N5 words, grammar,
+  readings and exam questions. Promotion moves the pool to N4, then N3, N2
+  and N1, as each level's inventory and decks exist (phases 2 and 3).
+- **Promotion is earned on the level's boss**, not on points alone: a
+  standard-time mock of that level, passed with margin on an unseen paper
+  (points can open the boss; the boss decides). Points stay the in-level
+  score and ranking.
+- **N0** is granted when N1 is "a walk in the park": for example, two unseen
+  N1 mocks on different days at a high total with every section well above
+  the floor, and the N1 pool answered fast and right. The bar is to be set
+  with the owner.
+- **Lower levels keep coming back** as review (a small share of each round),
+  so promotion never drops what was learned.
+- To decide: the promotion and N0 bars, whether a player can test out of a
+  level at once, and whether the rank can fall.
+
 ## Not changing
 
 - Pass probability is never shown; every score names its denominator.

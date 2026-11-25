@@ -115,6 +115,15 @@ know" saves a missed recall check, so it also comes back in Echo's Evening
 recall, the Night Radio and the next day's checks. Game stats (day totals,
 round history, best, last seen per question) stay on the device.
 
+## The designer's canvas (26 Nov 2026)
+
+"Blitz on washi": https://claude.ai/code/artifact/f130fa64-fbf6-42e7-95d8-37a04867160e
+Fixes 1–12 (tokens, clock, head, choices, I don't know vs flag, underline,
+answer states, round end, review, juice, sound and haptics, Home) are built
+in v276. Next after 6 December: 13 boss arrival screens, 14 run ranking in
+depth, 15 item strength Lv 0–5, 16 desktop rails, 18 kanji and grammar from
+parts.
+
 ## Since the shots (v272)
 
 The owner's shape for the app, in their words: "the app home screen has 3
