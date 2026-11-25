@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#F3F0E7"><meta name="theme-color" media="(prefers-color-scheme: dark)" content="#191712">
 <title>JLPT N2 · Echo</title>
-<script>try{const s=JSON.parse(localStorage.getItem("jp-echo-settings")||"{}");document.documentElement.dataset.theme=s.theme||"system";const m=s.motion||"system";if(m!=="system")document.documentElement.classList.add("motion-"+m)}catch{}</script>
+<script>try{const s=JSON.parse(localStorage.getItem("jp-echo-settings")||"{}");try{sessionStorage.setItem("echo-launched","1");}catch{}document.documentElement.dataset.theme=s.theme||"system";const m=s.motion||"system";if(m!=="system")document.documentElement.classList.add("motion-"+m)}catch{}</script>
 <link rel="icon" href="./favicon.ico" sizes="32x32"><link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="./apple-touch-icon.png"><link rel="manifest" href="./manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
-<link rel="stylesheet" href="./styles.css?v=200">
+<link rel="stylesheet" href="./styles.css?v=201">
 </head>
 <body class="n2">
 <main id="n2-main">
@@ -68,6 +68,7 @@
     <p class="hint" id="rest-summary"></p>
     <div class="n2-rows">
       <button data-ui="button" class="library-tool two-line" id="breathe-open" type="button"><span class="library-tool-glyph" lang="ja" aria-hidden="true">息</span><span class="library-tool-label"><strong>Breathe for one minute</strong><span>In 4 · hold 4 · out 6. Before a mock, after a bad section, at night.</span></span></button>
+      <a class="library-tool two-line" href="?view=game"><span class="library-tool-glyph" lang="ja" aria-hidden="true">速</span><span class="library-tool-label"><strong>Quick round</strong><span>Ten fast questions, everything mixed · any spare minute</span></span></a>
       <a class="library-tool two-line" href="?view=evening"><span class="library-tool-glyph" lang="ja" aria-hidden="true">夕</span><span class="library-tool-label"><strong>Evening recall</strong><span>Today's misses once more, just before bed · about 10 minutes</span></span></a>
       <a class="library-tool two-line" href="./radio"><span class="library-tool-glyph" lang="ja" aria-hidden="true">夜</span><span class="library-tool-label"><strong>Night Radio</strong><span>Today's N2 work, softly, as you fall asleep</span></span></a>
       <a class="library-tool two-line" href="./settings/import?deck=/decks/n2-grammar.json"><span class="library-tool-glyph" lang="ja" aria-hidden="true">文</span><span class="library-tool-label"><strong>Add N2 grammar to Review</strong><span>221 example sentences, one per grammar point · opens Import, you tap Import</span></span></a>
@@ -140,6 +141,42 @@
 </section>
 
 <!-- Today's checks: yesterday's misses, a day later, in print and by ear -->
+<!-- Quick round (n2-game.js) -->
+<section id="game" hidden>
+  <div class="drill-head"><a class="icon-button" href="./n2-mock.html" aria-label="Back to N2"><svg width="18" height="16" viewBox="0 0 18 16" fill="none" aria-hidden="true"><path d="M8 1 1 8l7 7M1 8h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a><span class="tool-titles"><span class="drill-title">Quick round</span><span class="overline" id="game-sub"></span></span><span class="drill-progress" id="game-score"></span></div>
+  <div class="drill-bar n2-game-bar"><span id="game-bar"></span></div>
+  <div id="game-play">
+    <div id="game-card" class="n2-card n2-panel-card n2-game-card">
+      <p class="overline" id="game-kind"></p>
+      <p class="n2-prompt" id="game-prompt" lang="ja"></p>
+      <div class="n2-day-example" id="game-sentence" hidden><p lang="ja" id="game-sentence-ja"></p></div>
+      <button data-ui="button" class="plain n2-say" id="game-say" type="button" hidden><svg width="18" height="16" viewBox="0 0 18 16" fill="none" aria-hidden="true"><path d="M2 5.5h3l4-3.5v12l-4-3.5H2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M12 5a4 4 0 0 1 0 6M14.5 2.5a7.5 7.5 0 0 1 0 11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span>Play again</span></button>
+    </div>
+    <p class="n2-game-combo" id="game-combo" aria-live="polite"></p>
+    <div class="n2-choices n2-game-choices" id="game-choices" role="group" aria-label="Choices"></div>
+    <p class="hint n2-game-aloud" id="game-aloud"></p>
+    <div class="n2-game-foot"><button data-ui="button" class="quiet n2-game-skip" id="game-skip" type="button">I don’t know</button><button data-ui="button" class="quiet n2-game-flag" id="game-flag" type="button" aria-label="Flag this question">Flag</button></div>
+  </div>
+  <div id="game-review" hidden>
+    <div class="n2-card n2-panel-card n2-game-card">
+      <p class="overline" id="game-review-kind"></p>
+      <p class="n2-prompt" id="game-review-word" lang="ja"></p>
+      <p class="n2-reading" id="game-review-reading" lang="ja"></p>
+      <p class="n2-meaning" id="game-review-meaning"></p>
+      <div class="n2-day-example" id="game-review-sentence" hidden><p lang="ja" id="game-review-ja"></p><p class="hint" id="game-review-en"></p></div>
+      <p class="n2-why" id="game-review-why" hidden></p>
+      <p class="hint" id="game-review-picked"></p>
+    </div>
+    <div class="drill-done-actions n2-game-review-actions"><button data-ui="button" class="quiet" id="game-review-flag" type="button" aria-label="Flag this answer">Flag</button><button data-ui="button" class="outline" id="game-hold" type="button" aria-pressed="false">Hold</button><button data-ui="button" class="primary" id="game-next" type="button">Next</button></div>
+  </div>
+  <div class="drill-done" id="game-done" hidden><span class="drill-done-seal" lang="ja" aria-hidden="true">速</span><strong id="game-done-title"></strong><p class="hint" id="game-done-line"></p><p class="n2-game-rules"><span>Two rules</span>Say it out loud as you read. Mistakes are part of the game: just keep going.</p><div class="drill-done-actions"><button data-ui="button" class="primary" id="game-again" type="button">Next round</button><button data-ui="button" class="outline" id="game-sound" type="button" aria-pressed="true">Sound on</button></div>
+    <div class="n2-game-stats"><div id="game-today"></div>
+    <a class="library-tool two-line" id="game-boss" hidden><span class="library-tool-glyph" lang="ja" aria-hidden="true">鬼</span><span class="library-tool-label"><strong id="game-boss-title">Today’s boss</strong><span id="game-boss-line"></span></span></a>
+    <h3 class="rule-heading">Your best rounds</h3><ol class="n2-plan n2-game-rank" id="game-rank"></ol>
+    <h3 class="rule-heading">Questions a day</h3><div id="game-chart"></div>
+    <a class="button quiet" href="./n2-mock.html">Back to today’s plan</a></div><p class="hint">Right answers save nothing: picking is easier than recalling. Misses go to Evening recall, the Night Radio and tomorrow’s checks.</p></div>
+</section>
+
 <section id="check" hidden>
   <div class="drill-head"><a class="icon-button" href="./n2-mock.html" aria-label="Back to N2"><svg width="18" height="16" viewBox="0 0 18 16" fill="none" aria-hidden="true"><path d="M8 1 1 8l7 7M1 8h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a><span class="tool-titles"><span class="drill-title" id="check-title">Today's checks</span><span class="overline" id="check-sub"></span></span><span class="drill-progress" id="check-progress"></span></div>
   <div class="drill-bar"><span id="check-bar"></span></div>

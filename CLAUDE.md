@@ -287,6 +287,17 @@ Before considering the change complete:
   an export or a deck. The screen path drops the #fragment. A maintainer reads
   the open reports with `gh api gists/<id>` (docs/REPORTS.md) and marks a fix
   by setting `status: "fixed"`, `fix`, and a newer `updatedAt` in that file.
+- **Quick round is the N2 game** (`?view=game`, logic in `n2-game.js`, tested
+  in `test/n2-game.test.js`). Rounds of 10 mixed multiple-choice questions
+  (reading near-misses, meaning, definition, listen, homophone, grammar, and
+  short exam questions only from sets already sat, never `HELD_OUT`), a timed
+  review of the misses, and the next round opens with them. A right answer
+  saves nothing (picking is not recalling); a miss, timeout or "I don't know"
+  saves a missed recall check with source `game`. Scoring never rewards a blind
+  guess over "I don't know". Day totals (goal 1,000), round history, ranking
+  and the boss (a full mock on an unsat set once the 1,000 are done) live in
+  localStorage `echo-n2-game`. Settings → "Open Echo on Quick round" sends a
+  fresh launch there once per session (`echo-launched`), so Back reaches Echo.
 - **The voice gets the reading.** Any word or sentence handed to a device
   voice carries its 【reading】 (`spokenWord` / `withReading`, day-radio.js;
   `speechText` speaks it) — a bare kanji word is guessed (重役 → おもやく).

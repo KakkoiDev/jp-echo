@@ -2163,6 +2163,28 @@ html.motion-off .n2-breath span{transition:none}
 .n2-ai-hint{margin-top:10px}
 .n2-plan li .n2-meter-ja{flex-shrink:0;white-space:nowrap}
 .n2-plan li .n2-meter-n{flex-shrink:0;white-space:nowrap}
+/* Quick round (?view=game): the recall card and exam choice rows, with the
+   answer's state shown on the row and the drill bar as the clock. */
+.n2-game-card{min-height:0}
+.n2-game-card .n2-prompt.long{font-size:22px;line-height:1.6}
+.n2-game-card .n2-prompt.mid{font-size:30px}
+.n2-game-choices{margin-top:14px}
+.n2-game-choices .n2-choice-text{font-size:16px;line-height:1.45}
+.n2-choice[data-state=right]{border-color:var(--seal-edge);background:var(--seal-tint);color:var(--seal-deep)}
+.n2-choice[data-state=wrong] .n2-choice-text{text-decoration:line-through;text-decoration-color:var(--seal);color:var(--ink-muted)}
+.n2-game-combo{min-height:22px;margin:10px 0 0;text-align:center;font-family:var(--display);font-size:15px;color:var(--seal-deep)}
+.n2-game-stats{width:100%;margin-top:22px;text-align:left}
+.n2-game-stats .rule-heading{margin-top:22px}
+.n2-game-rank li{justify-content:space-between}
+.n2-game-rank li[aria-current=true]{color:var(--seal-deep)}
+.n2-game-rules{margin:12px 0 0;font-size:14px;line-height:1.6;color:var(--ink-soft)}
+.n2-game-rules span{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--seal-deep)}
+.n2-game-aloud{margin:10px 0 0;text-align:center}
+.n2-game-foot{display:flex;justify-content:center;gap:8px;margin-top:10px}
+.n2-game-skip,.n2-game-flag{min-height:44px}
+.n2-game-flag .flag-glyph,#game-review-flag .flag-glyph{margin-right:6px;color:var(--seal)}
+.n2-game-review-actions{justify-content:center;margin-top:16px}
+#game-review .n2-reading:empty,#game-review .n2-meaning:empty{display:none}
 /* Day Radio */
 .n2-day-lede{margin-top:12px}
 .n2-day-card{min-height:40dvh;cursor:default}
