@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
-import {answerSpeech, runClock, RUN_CLOCK, DIFFICULTY, difficultyOf, pace, WAVE, HOOK, STRETCH, bossProgress, takeBoss, resting, runTable, BOSS_EVERY, EXAM_POINT, atBedtime, BEDTIME, FLOW, BONUS, flowStep, flowMix, flowSeconds, levelOf, bonusPoints, SECONDS, PAUSE, REVIEW_SECONDS, inSlump, nextRound, WARM_UP, gamePool, choicesFor, pickRound, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, nearMisses, gloss, today, lastDays, ranking, bossSet,
+import {payoutCap, sameSense, answerSpeech, runClock, RUN_CLOCK, DIFFICULTY, difficultyOf, pace, WAVE, HOOK, STRETCH, bossProgress, takeBoss, resting, runTable, BOSS_EVERY, EXAM_POINT, atBedtime, BEDTIME, FLOW, BONUS, flowStep, flowMix, flowSeconds, levelOf, bonusPoints, SECONDS, PAUSE, REVIEW_SECONDS, inSlump, nextRound, WARM_UP, gamePool, choicesFor, pickRound, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, nearMisses, gloss, today, lastDays, ranking, bossSet,
   ROUND_SIZE, DAILY_GOAL} from "../n2-game.js";
 import {examplesFromDecks} from "../day-radio.js";
 import {HELD_OUT} from "../n2-comprehension.js";
@@ -197,17 +197,17 @@ test("the level changes the mix, the clock and how close the wrong choices are",
   assert.equal(flowSeconds(3, 0), 4, "easy: more time"); assert.equal(flowSeconds(3, 1), 2.5, "hard: less");
   assert.equal(flowSeconds(2, 1), 2, "never under 2 s");
   const pool = gamePool({inventory, examples, sets, sat: new Set()});
-  const q = pool.find(x => x.kind === "meaning" && x.nearCount === 3);
-  const near = new Set(q.wrong.slice(0, 3));
+  const q = pool.find(x => x.kind === "meaning" && x.near.length >= 3 && x.wrong.length - x.near.length >= 3);
+  const near = new Set(q.near);
   const nearIn = level => choicesFor(q, seeded(4), level).choices.filter(c => near.has(c)).length;
   assert.equal(nearIn(0), 0, "easy: no confusable choices forced in"); assert.equal(nearIn(1), 3, "hard: all three");
 });
 
 test("surprise: bonus questions pay three times, never cost more, and combos of 5 and 10 pay a jackpot", () => {
-  assert.deepEqual(bonusPoints({points: 200, bonus: true, streak: 2}), {points: 600, jackpot: 0});
-  assert.deepEqual(bonusPoints({points: -200, bonus: true, streak: 0}), {points: -200, jackpot: 0}, "no extra penalty");
-  assert.deepEqual(bonusPoints({points: 200, streak: 5}), {points: 700, jackpot: 500});
-  assert.deepEqual(bonusPoints({points: 200, streak: 10}), {points: 1700, jackpot: 1500});
+  assert.deepEqual(bonusPoints({points: 200, bonus: true, streak: 2}), {points: 600, jackpot: 0, capped: false});
+  assert.deepEqual(bonusPoints({points: -200, bonus: true, streak: 0}), {points: -200, jackpot: 0, capped: false}, "no extra penalty");
+  assert.deepEqual(bonusPoints({points: 200, streak: 5}), {points: 200, jackpot: 500, capped: false}, "a jackpot is celebrated, not paid");
+  assert.deepEqual(bonusPoints({points: 300, bonus: true, streak: 10}), {points: 600, jackpot: 1500, capped: true}, "capped at 600");
   const pool = gamePool({inventory, examples, sets, sat: new Set()});
   let bonuses = 0, n = 0; const r = seeded(21);
   for (let i = 0; i < 60; i++) { const {round} = nextRound({pool, state: {}, random: r}); n += round.length; bonuses += round.filter(x => x.bonus).length; }
@@ -252,7 +252,7 @@ test("the boss comes every 1,000 questions, closes a run, and after it the game 
 test("the boss is the real paper at half the time and never counts as a standard sitting", () => {
   const mock = src("../n2-mock.js"), study = src("../n2-study.js");
   assert.match(mock, /if \(state\.phase === "ready" && params\.get\("boss"\) === "1" && realistic\(year\)\) state\.boss = true;/);
-  assert.match(mock, /const half = m => state\.boss \? Math\.ceil\(m \/ 2\) : m;/);
+  assert.match(mock, /const half = \(m, phase\) => state\.boss && phase === "written" \? Math\.ceil\(m \/ 2\) : m;/, "only the written clock halves; audio can't");
   assert.match(mock, /const minutes = phase => half\(/);
   assert.match(mock, /location\.href = "\?book=" \+ boss\.id \+ "&boss=1";/);
   assert.match(study, /eligibleBooks\.includes\(a\.book\) && !a\.boss && !first\.has\(a\.book\)/, "not checkpoint evidence");
@@ -300,7 +300,7 @@ test("difficulty: Normal is the 80% zone, Easy aims higher and pays less, Hard a
   assert.equal(flowStep(.5, true, "hard"), .535); assert.equal(flowStep(.5, false, "easy"), .41);
   const index = src("../index.html"), mock = src("../n2-mock.js");
   assert.match(index, /id="settings-game-difficulty"><option value="easy">/);
-  assert.match(mock, /if \(paid\.points > 0\) paid\.points = Math\.round\(paid\.points \* DIFFICULTY\[difficulty\(\)\]\.points\);/);
+  assert.match(mock, /factor: DIFFICULTY\[difficulty\(\)\]\.points, choices: q\.choices\.length/);
 });
 
 test("connectives are 問題9 文章の文法: a passage excerpt, one blank, four connectives, wrong ones from jobs that cannot stand in", async () => {
@@ -333,4 +333,75 @@ test("after each answer the right word or pattern is spoken, with its reading, n
   const mock = src("../n2-mock.js");
   assert.match(mock, /const spoken = sound\(\) && answerSpeech\(q\);/, "the Sound switch silences it too");
   assert.match(mock, /speakOnce\(spoken, \{voice: null,/, "the default voice");
+});
+
+// ---- Audit of 26 Nov 2026 (P0): the scored pool must be trustworthy ----
+const allSat = () => gamePool({inventory, examples, sets, sat: new Set(ids.filter(id => !HELD_OUT.includes(id)))});
+
+test("audit P0: no listening item without its audio enters the exam pool", () => {
+  const exams = allSat().filter(q => q.kind === "exam");
+  const skillOf = id => { const [set, i] = id.slice(2).split("#"); return sets.find(s => s.id === set).questions[+i].skill; };
+  assert.equal(exams.filter(q => skillOf(q.id) === "Listening").length, 0);
+  assert.ok(exams.every(q => ["Vocabulary", "Grammar"].includes(skillOf(q.id))));
+});
+
+test("audit P0: unique ids, four distinct choices, excluded items out", async () => {
+  const {EXCLUDED} = await import("../n2-game-review.js");
+  const pool = allSat(), seenIds = new Set();
+  for (const q of pool) {
+    assert.ok(!seenIds.has(q.id), "duplicate id " + q.id); seenIds.add(q.id);
+    assert.ok(!EXCLUDED[q.id], "excluded item in pool " + q.id);
+    const {choices} = choicesFor(q, seeded(13), .5);
+    assert.equal(new Set(choices).size, 4, q.id);
+  }
+  for (const id of ["m:紅葉/こうよう", "m:紅葉/もみじ", "m:留まる/とどまる", "m:鈍い/にぶい"]) assert.ok(seenIds.has(id) || [...seenIds].some(x => x.startsWith(id.split("/")[0] + "/")), id);
+});
+
+test("audit P0: accepted readings are never wrong choices, and the key follows what Echo teaches", async () => {
+  const {ACCEPTED_READINGS, READING_KEY} = await import("../n2-game-review.js");
+  const pool = allSat();
+  for (const [word, readings] of Object.entries(ACCEPTED_READINGS)) {
+    const q = pool.find(x => x.id === "r:" + word); if (!q) continue;
+    for (const r of readings) assert.ok(!q.wrong.includes(r), word + " offers " + r);
+  }
+  assert.equal(pool.find(x => x.id === "r:湿気").answer, READING_KEY.湿気);
+  assert.equal(pool.find(x => x.id === "l:湿気").say, "しっけ", "and the voice says it");
+});
+
+test("audit P0: no wrong choice shares the answer's meaning, and listening never offers a same-sound meaning", () => {
+  const pool = allSat();
+  for (const q of pool.filter(x => ["meaning", "listen", "grammar"].includes(x.kind))) for (const w of q.wrong) assert.ok(!sameSense(w, q.answer), q.id + ": " + w);
+  const byText = new Map(inventory.words.map(w => [w[0], w]));
+  for (const q of pool.filter(x => x.kind === "listen")) {
+    const sameSound = inventory.words.filter(w => w[1] === q.say && w[0] !== q.prompt).map(w => gloss(w[2]));
+    for (const g of sameSound) assert.ok(!q.wrong.includes(g), q.id + " offers the meaning of a word that sounds the same: " + g);
+  }
+  assert.equal(gloss("work (e.g., film, book), production"), "work (e.g., film, book), production", "no split inside parentheses");
+  assert.ok(byText.size > 0);
+});
+
+test("audit P0: blind guessing never beats I don't know, in any exposed state", () => {
+  for (const difficulty of Object.keys(DIFFICULTY)) for (let streak = 0; streak <= 12; streak++) for (const bonus of [false, true]) {
+    const base = scoreAnswer({outcome: "right", ms: 0, seconds: 3, streak});
+    const paid = bonusPoints({points: base.points, bonus, streak: base.streak, factor: DIFFICULTY[difficulty].points, choices: 4});
+    const ev = paid.points / 4 + (3 / 4) * scoreAnswer({outcome: "wrong"}).points;
+    assert.ok(ev <= 0, `${difficulty} streak ${streak} bonus ${bonus}: EV ${ev}`);
+  }
+  assert.equal(payoutCap(4), 600);
+});
+
+test("audit P0: a flag earns nothing, ends the combo, and the round's right count only counts right answers", () => {
+  const mock = src("../n2-mock.js");
+  const flag = mock.slice(mock.indexOf('$("game-flag").onclick'), mock.indexOf('$("game-review-flag").onclick'));
+  assert.match(flag, /flagged\+\+; streak = 0; head\(\);/);
+  assert.doesNotMatch(flag, /recallRecord|rights\+\+|score \+=/);
+  assert.match(mock, /misses: round\.length - rights\}/);
+  assert.match(mock, /const right = rights;/);
+  assert.match(mock, /choicesFor\(q, Math\.random, roundLevel\)/, "the round's level picks the choices");
+});
+
+test("audit P2: connective questions are practice: no points, combo untouched", () => {
+  const pool = allSat();
+  assert.ok(pool.filter(q => q.kind === "connective").every(q => q.practice === true));
+  assert.match(src("../n2-mock.js"), /const paid = q\.practice \? \{points: 0, jackpot: 0\}/);
 });

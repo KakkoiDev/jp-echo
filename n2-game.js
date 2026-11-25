@@ -23,6 +23,7 @@
 import {recallItems, localDay} from "./n2-study.js";
 import {HELD_OUT} from "./n2-comprehension.js";
 import {connectiveSites, jobOf, glossOf, JOBS, OVERLAP, CHOICE_FOR_JOB} from "./n2-connectives.js";
+import {ACCEPTED_READINGS, READING_KEY, EXCLUDED} from "./n2-game-review.js";
 
 const keyOf = target => JSON.stringify(target);
 export const GAME_KEY = "echo-n2-game";
@@ -35,14 +36,30 @@ export const SECONDS = Object.freeze({reading: 3, meaning: 3, definition: 4, lis
 // The pause after an answer before the next question, in milliseconds.
 export const PAUSE = Object.freeze({right: 250, miss: 800});
 export const KIND_LABEL = Object.freeze({reading: "Reading", meaning: "Meaning", definition: "Which word", listen: "Listen", connective: "Connective · 問題9", homophone: "Which kanji", grammar: "Grammar", exam: "Exam question"});
-const EXAM_MONDAI = new Set([1, 2, 3, 4, 5, 7]);
+const EXAM_MONDAI = new Set([1, 2, 3, 4, 5, 7]), WRITTEN = new Set(["Vocabulary", "Grammar"]);
 const KANJI = /[一-鿿々]/g;
 const plain = s => String(s || "").replace(/【[^】]*】/g, "");
 // A short English gloss with no Japanese in it: JMdict's "(same as 親戚 (しんせき))"
 // would give the answer away.
 const JP = /[ぁ-んァ-ヶ一-龯々]/;
-export const gloss = s => String(s || "").replace(/\((?:[^()]|\([^()]*\))*\)/g, m => JP.test(m) ? "" : m).split(/[,;]/)
-  .map(x => x.replace(/\s+/g, " ").trim()).filter(x => x && !JP.test(x)).slice(0, 2).join(", ");
+export const gloss = s => {
+  const text = String(s || "").replace(/\((?:[^()]|\([^()]*\))*\)/g, m => JP.test(m) ? "" : m);
+  const parts = []; let depth = 0, cur = "";
+  for (const ch of text) { if (ch === "(") depth++; if (ch === ")") depth = Math.max(0, depth - 1); if ((ch === "," || ch === ";") && !depth) { parts.push(cur); cur = ""; } else cur += ch; }
+  parts.push(cur);
+  return parts.map(x => x.replace(/\s+/g, " ").trim()).filter(x => x && !JP.test(x)).slice(0, 2).join(", ");
+};
+// Two English meanings compete when they share a content word ("steam" and
+// "water vapor, steam"): then one can't be the wrong choice for the other.
+const STOP = new Set("to the a an of in on at by for with and or one's oneself someone something etc e.g. be is as from up out into over not no it its that this who which what".split(" "));
+const senseWords = text => new Set(String(text || "").toLowerCase().replace(/\([^)]*\)/g, " ").split(/[^a-z]+/).filter(t => t.length > 2 && !STOP.has(t)).map(t => t.replace(/(ing|ed|es|s)$/, "")));
+export function sameSense(a, b) {
+  if (!a || !b) return false;
+  if (a === b) return true;
+  const x = senseWords(a), y = senseWords(b);
+  for (const t of x) if (y.has(t)) return true;
+  return false;
+}
 
 // A seeded shuffle, so tests can fix the order.
 export function shuffle(list, random = Math.random) {
@@ -84,45 +101,56 @@ export function nearMisses(reading = "") {
 export function gamePool({inventory, examples = new Map(), sets = [], sat = new Set()}) {
   const items = recallItems(inventory), pool = [];
   // Affixes such as ～発 are left out: they are not words to pick or read alone.
-  const words = items.meaning.map(it => ({target: it.target, text: it.target[1], reading: it.reading || it.target[2], answer: it.answer})).filter(w => !/[〜～]/.test(w.text));
+  const words = items.meaning.map(it => ({target: it.target, text: it.target[1], reading: READING_KEY[it.target[1]] || it.reading || it.target[2], answer: it.answer})).filter(w => !/[〜～]/.test(w.text));
+  // Stable ids: a word written the same way twice (紅葉 こうよう / もみじ) carries its reading.
+  const spellings = new Map(); for (const w of words) spellings.set(w.text, (spellings.get(w.text) || 0) + 1);
+  const idOf = w => spellings.get(w.text) > 1 ? w.text + "/" + w.reading : w.text;
   const byKanji = new Map();
   for (const w of words) for (const k of new Set(w.text.match(KANJI) || [])) byKanji.set(k, [...(byKanji.get(k) || []), w]);
   const byReading = new Map();
   for (const w of words) byReading.set(w.reading, [...(byReading.get(w.reading) || []), w]);
   const sentenceOf = target => (examples.get(keyOf(target)) || [])[0] || null;
+  // A wrong choice must be wrong: no shared meaning with the answer, and for
+  // listening, no word that sounds the same (the ear cannot tell them apart).
+  const distinct = (answer, others) => others.filter(o => o && !sameSense(o, answer));
 
   for (const [i, w] of words.entries()) {
-    const ex = sentenceOf(w.target), kanji = w.text.match(KANJI);
+    const ex = sentenceOf(w.target), kanji = w.text.match(KANJI), own = gloss(w.answer), id = idOf(w);
     if (kanji && w.reading && w.reading !== w.text) {
-      const misses = nearMisses(w.reading);
-      if (misses.length >= 3) pool.push({id: "r:" + w.text, kind: "reading", target: w.target, dimension: "reading", prompt: w.text,
+      const accepted = new Set([w.reading, ...(ACCEPTED_READINGS[w.text] || [])]);
+      const misses = nearMisses(w.reading).filter(m => !accepted.has(m));
+      if (misses.length >= 3) pool.push({id: "r:" + id, kind: "reading", target: w.target, dimension: "reading", prompt: w.text,
         sentence: ex ? plain(ex.ja) : "", needle: w.text, answer: w.reading, wrong: misses, seconds: SECONDS.reading,
         solution: {word: w.text, reading: w.reading, meaning: w.answer, ja: ex?.ja || "", en: ex?.en || ""}});
     }
     // Meaning: confusable words share a kanji; the rest come from anywhere.
-    const near = [...new Set((kanji || []).flatMap(k => byKanji.get(k) || []))].filter(o => o !== w && gloss(o.answer) !== gloss(w.answer));
-    const far = [words[(i * 7 + 13) % words.length], words[(i * 11 + 101) % words.length], words[(i * 17 + 307) % words.length], words[(i * 23 + 503) % words.length]].filter(o => o !== w);
-    const wrongMeanings = [...new Set([...near, ...far].map(o => gloss(o.answer)).filter(g => g && g !== gloss(w.answer)))];
-    const own = gloss(w.answer);
-    if (own && wrongMeanings.length >= 3) pool.push({id: "m:" + w.text, kind: "meaning", target: w.target, dimension: "meaning", prompt: w.text,
-      sentence: "", answer: gloss(w.answer), wrong: wrongMeanings, nearCount: Math.min(3, near.length), seconds: SECONDS.meaning,
+    // Never a word written the same way (紅葉: autumn leaves / maple) or sharing the meaning.
+    const fair = o => o !== w && o.text !== w.text && !sameSense(gloss(o.answer), own);
+    const near = [...new Set((kanji || []).flatMap(k => byKanji.get(k) || []))].filter(fair);
+    const far = [7, 11, 17, 23, 29, 31].map((m, k) => words[(i * m + [13, 101, 307, 503, 709, 911][k]) % words.length]).filter(fair);
+    const wrongMeanings = distinct(own, [...new Set([...near, ...far].map(o => gloss(o.answer)))]);
+    if (own && wrongMeanings.length >= 3) pool.push({id: "m:" + id, kind: "meaning", target: w.target, dimension: "meaning", prompt: w.text,
+      sentence: "", answer: own, wrong: wrongMeanings, near: wrongMeanings.filter(m => near.some(o => gloss(o.answer) === m)), seconds: SECONDS.meaning,
       solution: {word: w.text, reading: w.reading, meaning: w.answer, ja: ex?.ja || "", en: ex?.en || ""}});
-    // Definition: the meaning shown, the word to find among words sharing a kanji.
-    const nearWords = near.map(o => o.text), farWords = far.map(o => o.text).filter(t => !nearWords.includes(t));
-    if (own && kanji && nearWords.length + farWords.length >= 3) pool.push({id: "d:" + w.text, kind: "definition", target: w.target, dimension: "meaning", prompt: gloss(w.answer),
-      sentence: "", answer: w.text, wrong: [...nearWords, ...farWords], nearCount: Math.min(3, nearWords.length), seconds: SECONDS.definition,
+    // Definition: the meaning shown, the word to find; no wrong word may share the meaning.
+    const nearWords = [...new Set(near.map(o => o.text))].filter(t => t !== w.text), farWords = [...new Set(far.map(o => o.text))].filter(t => t !== w.text && !nearWords.includes(t));
+    if (own && kanji && nearWords.length + farWords.length >= 3) pool.push({id: "d:" + id, kind: "definition", target: w.target, dimension: "meaning", prompt: own,
+      sentence: "", answer: w.text, wrong: [...nearWords, ...farWords], near: nearWords, seconds: SECONDS.definition,
       solution: {word: w.text, reading: w.reading, meaning: w.answer, ja: ex?.ja || "", en: ex?.en || ""}});
-    // Listen: the word heard, its meaning to pick (the same confusable set).
-    if (own && wrongMeanings.length >= 3) pool.push({id: "l:" + w.text, kind: "listen", target: w.target, dimension: "meaning", prompt: w.text, say: w.reading,
-      sentence: "", answer: gloss(w.answer), wrong: wrongMeanings, nearCount: Math.min(3, near.length), seconds: SECONDS.listen,
+    // Listen: the word heard, its meaning to pick; never the meaning of a word that sounds the same.
+    const soundAlike = new Set((byReading.get(w.reading) || []).filter(o => o !== w).map(o => gloss(o.answer)));
+    const heardWrong = wrongMeanings.filter(m => !soundAlike.has(m) && ![...soundAlike].some(a => sameSense(a, m)));
+    if (own && heardWrong.length >= 3) pool.push({id: "l:" + id, kind: "listen", target: w.target, dimension: "meaning", prompt: w.text, say: w.reading,
+      sentence: "", answer: own, wrong: heardWrong, near: heardWrong.filter(m => near.some(o => gloss(o.answer) === m)), seconds: SECONDS.listen,
       solution: {word: w.text, reading: w.reading, meaning: w.answer, ja: ex?.ja || "", en: ex?.en || ""}});
-    // Homophones: the same reading, different words (問題2 表記).
-    const same = (byReading.get(w.reading) || []).filter(o => o.text !== w.text);
+    // Homophones: the same reading, different words (問題2 表記). Spellings
+    // that share the meaning are not wrong choices.
+    const same = (byReading.get(w.reading) || []).filter(o => o.text !== w.text && !sameSense(gloss(o.answer), own));
     if (same.length && ex && plain(ex.ja).includes(w.text)) {
-      const shared = [...new Set((kanji || []).flatMap(k => byKanji.get(k) || []))].filter(o => o.text !== w.text && !same.includes(o));
-      pool.push({id: "h:" + w.text, kind: "homophone", target: w.target, dimension: "meaning", prompt: w.reading,
+      const shared = [...new Set((kanji || []).flatMap(k => byKanji.get(k) || []))].filter(o => o.text !== w.text && !same.includes(o) && o.reading !== w.reading && !sameSense(gloss(o.answer), own));
+      pool.push({id: "h:" + id, kind: "homophone", target: w.target, dimension: "meaning", prompt: w.reading,
         sentence: plain(ex.ja).replace(w.text, "【" + w.reading + "】"), needle: "【" + w.reading + "】", answer: w.text,
-        wrong: [...same.map(o => o.text), ...shared.map(o => o.text)], seconds: SECONDS.homophone,
+        wrong: [...new Set([...same.map(o => o.text), ...shared.map(o => o.text)])], seconds: SECONDS.homophone,
         solution: {word: w.text, reading: w.reading, meaning: w.answer, ja: ex.ja, en: ex.en || "", others: same.map(o => o.text + " · " + gloss(o.answer))}});
     }
   }
@@ -130,13 +158,14 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
   for (const [i, g] of grammar.entries()) {
     const ex = sentenceOf(g.target);
     if (!ex) continue;
-    const wrong = [1, 2, 3, 5, 8, 13].map(d => grammar[(i + d * 17) % grammar.length]).filter(o => o !== g).map(o => o.answer).filter(a => a && a !== g.answer);
+    const wrong = distinct(g.answer, [1, 2, 3, 5, 8, 13, 21, 34].map(d => grammar[(i + d * 17) % grammar.length]).filter(o => o !== g).map(o => o.answer));
     pool.push({id: "g:" + g.target[1], kind: "grammar", target: g.target, dimension: "grammar", prompt: g.prompt,
       sentence: plain(ex.ja), needle: g.prompt.replace(/[〜～]/g, ""), answer: g.answer, wrong: [...new Set(wrong)], seconds: SECONDS.grammar,
       solution: {word: g.prompt, meaning: g.answer, ja: ex.ja, en: ex.en || ""}});
   }
   // Connectives (問題9): from reading passages of sets already sat. The
   // excerpt is up to two sentences before the blank and the blank's sentence.
+  // Practice only, not scored, until the excerpts are reviewed (audit P2).
   for (const set of sets) {
     if (!set?.id || HELD_OUT.includes(set.id) || !sat.has(set.id)) continue;
     const seen = new Set();
@@ -147,10 +176,12 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
       for (const site of connectiveSites(text)) pool.push(...connectiveQuestion(set.id + "#" + i, text, site));
     }
   }
+  // Authored exam questions: written sections only (言語知識), never a
+  // listening item whose audio the game cannot give.
   for (const set of sets) {
     if (!set?.id || HELD_OUT.includes(set.id) || !sat.has(set.id)) continue;
     for (const [i, q] of (set.questions || []).entries()) {
-      if (!EXAM_MONDAI.has(q.mondai) || !Array.isArray(q.choices) || q.choices.length !== 4 || !q.key) continue;
+      if (!WRITTEN.has(q.skill) || !EXAM_MONDAI.has(q.mondai) || !Array.isArray(q.choices) || q.choices.length !== 4 || !q.key) continue;
       const answer = q.choices[q.key - 1];
       pool.push({id: "e:" + set.id + "#" + i, kind: "exam", mondai: q.mondai, target: q.target || null,
         dimension: q.target?.[0] === "grammar" ? "grammar" : q.dimension || "meaning", prompt: q.prompt, sentence: "",
@@ -158,7 +189,8 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
         solution: {why: q.why || "", source: set.id + "#" + i}});
     }
   }
-  return pool;
+  // The bar for every item: not excluded, and four distinct choices.
+  return pool.filter(q => !EXCLUDED[q.id] && (q.fixed ? new Set(q.fixed).size === 4 : new Set(q.wrong.filter(w => w !== q.answer)).size >= 3));
 }
 
 function connectiveQuestion(source, text, site) {
@@ -170,7 +202,7 @@ function connectiveQuestion(source, text, site) {
   if (!prev || rest.length < 6) return [];
   const blocked = new Set(OVERLAP[job] || [job]);
   const wrong = Object.entries(CHOICE_FOR_JOB).filter(([j]) => !blocked.has(j)).map(([, w]) => w);
-  return [{id: "c:" + source + "@" + site.at, kind: "connective", target: null, dimension: null, prompt: "（　）に入るのは？",
+  return [{id: "c:" + source + "@" + site.at, kind: "connective", practice: true, target: null, dimension: null, prompt: "（　）に入るのは？",
     sentence: prev + "（　）" + rest, needle: "（　）", answer: site.word, wrong, seconds: SECONDS.connective,
     solution: {word: site.word, meaning: glossOf(site.word) + " · " + JOBS[job], ja: prev + site.word + rest, source, job}}];
 }
@@ -181,9 +213,12 @@ function connectiveQuestion(source, text, site) {
 // wrong choices (sharing a kanji) are used: none when easy, all three when hard.
 export function choicesFor(q, random = Math.random, level = .5) {
   if (q.fixed) return {choices: q.fixed, key: q.fixed.indexOf(q.answer)};
-  const near = q.nearCount ? q.wrong.slice(0, Math.min(q.nearCount, Math.round(level * 3))) : [];
-  const rest = shuffle(q.wrong.filter(w => !near.includes(w)), random);
-  const picked = [...new Set([...near, ...rest])].filter(w => w !== q.answer).slice(0, 3);
+  // q.near: the confusable wrong choices (sharing a kanji). Easy forces none
+  // in and takes the others first; hard forces up to three.
+  const near = (q.near || []).filter(w => w !== q.answer), far = q.wrong.filter(w => w !== q.answer && !near.includes(w));
+  const forced = shuffle(near, random).slice(0, Math.round(level * 3));
+  const rest = level < .5 ? [...shuffle(far, random), ...shuffle(near.filter(w => !forced.includes(w)), random)] : shuffle([...far, ...near.filter(w => !forced.includes(w))], random);
+  const picked = [...new Set([...forced, ...rest])].slice(0, 3);
   const choices = shuffle([q.answer, ...picked], random);
   return {choices, key: choices.indexOf(q.answer)};
 }
@@ -397,11 +432,18 @@ export function flowSeconds(seconds, level = FLOW.start) {
 // ---- Surprise ----
 // About one question in eight is a bonus worth three times the points, never
 // more of a penalty. A combo of 5 and of 10 pays a jackpot on top.
-export const BONUS = Object.freeze({chance: .12, times: 3, jackpots: {5: 500, 10: 1500}});
-export function bonusPoints({points, bonus = false, streak = 0}) {
-  if (points <= 0) return {points, jackpot: 0};
+export const BONUS = Object.freeze({chance: .12, times: 3, jackpots: {5: 500, 10: 1500}}); // jackpots: celebrated, not paid
+// Blind guessing must never beat "I don't know" in expected points (audit P0).
+// With n choices a guess is right 1 time in n and costs 200 the other n − 1
+// times, so the whole positive payout of any answer (speed, combo, bonus,
+// difficulty) is capped at 200 × (n − 1): 600 for four choices. Jackpots are
+// a celebration (sound and line), not points, so they can't tip the sum.
+export const payoutCap = (choices = 4) => -POINTS.wrong * (choices - 1);
+export function bonusPoints({points, bonus = false, streak = 0, factor = 1, choices = 4}) {
   const jackpot = BONUS.jackpots[streak] || 0;
-  return {points: (bonus ? points * BONUS.times : points) + jackpot, jackpot};
+  if (points <= 0) return {points, jackpot: 0, capped: false};
+  const raw = Math.round(points * (bonus ? BONUS.times : 1) * factor), cap = payoutCap(choices);
+  return {points: Math.min(raw, cap), jackpot, capped: raw > cap};
 }
 
 // ---- Bedtime ----
@@ -420,6 +462,9 @@ export function atBedtime(now = new Date(), bedtime = BEDTIME) {
 // mock (bossSet). Taking it restarts the count; once it is finished, the game
 // says rest for the rest of that day (Play stays one tap away).
 export const BOSS_EVERY = 1000;
+// The boss sitting: the written section at half time (105 → 53 min), the
+// listening at its own length, since its audio cannot be shortened.
+export const BOSS_MINUTES = Object.freeze({written: 53, listening: 50});
 export function bossProgress(state = {}) {
   const done = Math.max(0, (state.answered || 0) - (state.bossFrom || 0));
   return {done: Math.min(done, BOSS_EVERY), left: Math.max(0, BOSS_EVERY - done), open: done >= BOSS_EVERY};

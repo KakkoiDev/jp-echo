@@ -321,6 +321,14 @@ Before considering the change complete:
   adaptive 80%, Hard 65% ×1.25.
   After each answer the right word or pattern is spoken once (`answerSpeech`,
   default voice, with its reading; never a whole sentence).
+  The scored pool must be trustworthy (audit, 26 Nov): exam items are written
+  sections only (`WRITTEN`); no wrong choice shares the answer's meaning
+  (`sameSense`), its spelling, or (listening) its sound; accepted readings and
+  reviewed exclusions live in `n2-game-review.js`; every card has four
+  distinct choices. One answer's positive payout is capped at
+  `payoutCap(choices)` = 200 × (n − 1), jackpots pay nothing, a flag scores
+  zero and ends the combo, connectives are practice. The boss halves only the
+  written clock (`BOSS_MINUTES`).
   After a bad round (`inSlump`) the next is a warm-up of questions already won
   (`wins`, `WARM_UP`) with only two misses back, to keep the player going.
   Its flag is one tap with no sheet (owner, 26 Nov: "I don't think, you

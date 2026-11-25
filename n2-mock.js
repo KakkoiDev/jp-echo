@@ -8,7 +8,7 @@ import {REPORT_REASONS,createReport,fileReport,reportSyncLine,reportsAdapter,rep
 import {recognitionFactory} from "./speech.js";
 import {speakOnce,speakAndWait,japaneseVoices} from "./speech.js";
 import {readNights, nightComparison, comparisonLine, eveningRecall, EVENING_SOURCE} from "./n2-night.js";
-import {gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
+import {gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
 import {spokenWord,radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
 import {TAG,TAGS,HELD_OUT,CAUSES,comprehensionStats,weakestTag,tagDrill,drillExposure,attemptTags,tagsOf,sourceOf} from "./n2-comprehension.js";
 import {exampleSegments,patternNeedles,delayedChecks,checkItems,checkAsk,contextNote,sentenceParts,checkDetail,audioGrade,delayedAccuracy,CHECK_SOURCE,WHY_LINE,evidenceFor,evidenceLine} from "./n2-delayed.js";
@@ -1091,7 +1091,7 @@ async function game() {
   const sat = new Set(data.attempts.map(a => a.book).filter(id => /^n2-set-\d+$/.test(id || "")));
   const sets = (await Promise.all([...sat].filter(id => themes[id]).map(id => json(setFile(id)).catch(() => null)))).filter(Boolean);
   const pool = gamePool({inventory, examples: await deckExamples(), sets, sat});
-  let warmUp = false, beatLine = "", state = readGame(), round = [], index = 0, score = 0, streak = 0, timer = null, shownAt = 0, current = null, locked = false, misses = [];
+  let roundLevel = .5, rights = 0, flagged = 0, warmUp = false, beatLine = "", state = readGame(), round = [], index = 0, score = 0, streak = 0, timer = null, shownAt = 0, current = null, locked = false, misses = [];
   const bar = $("game-bar");
   const sound = () => readGame().sound !== false;
   const difficulty = () => difficultyOf(settings.gameDifficulty);
@@ -1112,7 +1112,7 @@ async function game() {
     $("game-back").href = "./"; $("game-back").onclick = null;
     const st = readGame(), b = bossProgress(st), boss = bossNow(), rest = resting(st, data.attempts);
     $("game-home-line").textContent = rest ? "Boss down. Rest now: the Night Radio keeps today’s work."
-      : b.open && boss ? "The boss is open: a full mock, Mock " + titleOf(boss.id) + ", about 2 h 50 min."
+      : b.open && boss ? "The boss is open: Mock " + titleOf(boss.id) + ", " + BOSS_MINUTES.written + " min written + " + BOSS_MINUTES.listening + " min listening, plus the break."
       : "Ten fast questions a round. Every " + BOSS_EVERY.toLocaleString() + ", the boss: a full mock.";
     // The run clock: beat the boss soon and the whole run counts more.
     const clock = runClock(st.runStart), hours = Math.floor(clock.leftMs / 3600_000), mins = Math.floor(clock.leftMs % 3600_000 / 60_000);
@@ -1144,7 +1144,7 @@ async function game() {
     $("game-back").href = "?view=game"; $("game-back").onclick = e => { e.preventDefault(); home(); };
     state = readGame();
     const next = nextRound({pool, recall: data.recall, state, difficulty: difficulty()});
-    round = next.round; warmUp = next.warmUp; beatLine = next.beat?.line || "";
+    round = next.round; roundLevel = next.level; warmUp = next.warmUp; rights = 0; flagged = 0; beatLine = next.beat?.line || "";
     index = 0; score = 0; streak = 0; misses = [];
     $("game-done").hidden = true; $("game-review").hidden = true; $("game-play").hidden = false;
     ask();
@@ -1153,7 +1153,8 @@ async function game() {
     clearTimeout(timer); locked = false;
     current = round[index];
     if (!current) { review(0); return; }
-    const q = current, {choices, key} = choicesFor(q, Math.random, levelOf(readGame()));
+    // The same level that set this round's mix and clock picks its choices.
+    const q = current, {choices, key} = choicesFor(q, Math.random, roundLevel);
     q.choices = choices; q.key = key;
     $("game-sub").textContent = (index + 1) + " / " + round.length + (warmUp ? " · warm-up" : q.comeback ? " · again" : "") + " · " + todayLine();
     $("game-kind").textContent = (q.bonus ? "Bonus ×3 · " : "") + KIND_LABEL[q.kind] + (q.kind === "exam" ? " · 問題" + q.mondai : "");
@@ -1180,15 +1181,18 @@ async function game() {
     const q = current, ms = performance.now() - shownAt;
     const outcome = why === "timeout" ? "timeout" : i < 0 ? "dontknow" : i === q.key ? "right" : "wrong";
     const result = scoreAnswer({outcome, ms, seconds: q.seconds, streak});
-    const paid = bonusPoints({points: result.points, bonus: q.bonus, streak: result.streak});
-    // Easy pays less, Hard more; a penalty stays a penalty.
-    if (paid.points > 0) paid.points = Math.round(paid.points * DIFFICULTY[difficulty()].points);
+    // Easy pays less, Hard more, bonus ×3 — all inside the guessing cap.
+    // Practice questions (connectives, until reviewed) score nothing and
+    // leave the combo alone.
+    const paid = q.practice ? {points: 0, jackpot: 0} : bonusPoints({points: result.points, bonus: q.bonus, streak: result.streak, factor: DIFFICULTY[difficulty()].points, choices: q.choices.length});
+    if (q.practice) result.streak = streak;
+    if (outcome === "right") rights++;
     score += paid.points; streak = result.streak; head();
     if (sound()) outcome !== "right" ? sfx.wrong() : paid.jackpot ? sfx.jackpot() : q.bonus ? sfx.bonus() : sfx.right(streak);
     // Then the right answer, spoken once in the default Japanese voice.
     const spoken = sound() && answerSpeech(q);
     if (spoken) setTimeout(() => speakOnce(spoken, {voice: null, rate: Number(settings.rate) || 1, lang: "ja"}), 180);
-    if (paid.jackpot) $("game-combo").textContent = "Jackpot +" + paid.jackpot + " · combo " + streak;
+    if (paid.jackpot) $("game-combo").textContent = "Jackpot! Combo " + streak;
     else if (q.bonus && outcome === "right") $("game-combo").textContent = "Bonus +" + paid.points;
     // Rule two: a mistake is part of the game. Say so, then keep going.
     if (outcome !== "right") $("game-combo").textContent = outcome === "wrong" ? "Part of the game. Keep going." : "Fine. Keep going.";
@@ -1234,14 +1238,15 @@ async function game() {
   }
   function done() {
     clearTimeout(timer);
-    state = rememberRound(readGame(), {score, questions: round, misses: misses.length}); writeGame(state);
+    // Right counts only answers that were right: a flag or a skip is never a win.
+    state = rememberRound(readGame(), {score, questions: round, misses: round.length - rights}); writeGame(state);
     if (sound()) sfx.round();
     $("game-play").hidden = true; $("game-review").hidden = true; $("game-done").hidden = false;
     $("game-sub").textContent = "Round " + state.rounds;
     bar.style.transition = "none"; bar.style.width = "100%";
-    const right = round.length - misses.length;
+    const right = rights;
     $("game-done-title").textContent = score + " points" + (score >= state.best && score > 0 ? " · your best" : "");
-    $("game-done-line").textContent = right + " of " + round.length + " right · best " + state.best + (misses.length ? " · your " + misses.length + " miss" + (misses.length === 1 ? "" : "es") + " open the next round" : "");
+    $("game-done-line").textContent = right + " of " + round.length + " right" + (flagged ? " · " + flagged + " flagged" : "") + " · best " + state.best + (misses.length ? " · your " + misses.length + " miss" + (misses.length === 1 ? "" : "es") + " open the next round" : "");
     const t = gameToday(state);
     $("game-today").replaceChildren(loadMeter({fits: Math.min(t.answered, DAILY_GOAL), needs: DAILY_GOAL, caption: t.answered.toLocaleString() + " of " + DAILY_GOAL.toLocaleString() + " questions today"}));
     // The boss: every 1,000 questions since the last one.
@@ -1251,7 +1256,7 @@ async function game() {
       $("game-boss").href = b.open ? "?book=" + boss.id + "&boss=1" : "#";
       $("game-boss").setAttribute("aria-disabled", String(!b.open));
       $("game-boss-title").textContent = b.open ? "The boss · open" : "The boss · locked";
-      $("game-boss-line").textContent = (b.open ? "" : b.left.toLocaleString() + " questions to go. ") + "A full mock, Mock " + titleOf(boss.id) + " · about 2 h 50 min with the break";
+      $("game-boss-line").textContent = (b.open ? "" : b.left.toLocaleString() + " questions to go. ") + "Mock " + titleOf(boss.id) + " · " + BOSS_MINUTES.written + " min written + " + BOSS_MINUTES.listening + " min listening, plus the break";
       $("game-boss").onclick = e => { if (!b.open) e.preventDefault(); else fightBoss(e, boss); };
     }
     const rank = ranking(state);
@@ -1288,6 +1293,9 @@ async function game() {
     locked = true; clearTimeout(timer); stopBar();
     const q = current, st = readGame(); st.seen = {...(st.seen || {}), [q.id]: Date.now()}; writeGame(st);
     quickFlag(cardOf(q));
+    // A flag earns nothing, saves no recall evidence and ends the combo: it is
+    // not an answer, so it can't carry a streak across a card.
+    flagged++; streak = 0; head();
     $("game-combo").textContent = "Flagged. Keep going.";
     timer = setTimeout(() => { index++; ask(); }, PAUSE.right);
   };
@@ -1657,9 +1665,10 @@ async function exam() {
   // The boss (Quick round): the real paper at half the time. It stays a boss
   // once started, and never counts as a standard sitting (checkpoint, chart).
   if (state.phase === "ready" && params.get("boss") === "1" && realistic(year)) state.boss = true;
-  const half = m => state.boss ? Math.ceil(m / 2) : m;
+  // Only the written clock halves: listening audio can't play faster.
+  const half = (m, phase) => state.boss && phase === "written" ? Math.ceil(m / 2) : m;
 
-  const minutes = phase => half(paper.minutes ? (typeof paper.minutes === "object" ? paper.minutes[phase] || 5 : paper.minutes) : adaptive ? Math.ceil((phase === "written" ? written : questions.length - written) * 1.5) : (phase === "written" ? 105 : 50));
+  const minutes = phase => half(paper.minutes ? (typeof paper.minutes === "object" ? paper.minutes[phase] || 5 : paper.minutes) : adaptive ? Math.ceil((phase === "written" ? written : questions.length - written) * 1.5) : (phase === "written" ? 105 : 50), phase);
   function persist() {
     if (archivedView || state.phase === "ready") return;
     try {
@@ -2003,8 +2012,8 @@ async function exam() {
       : paper.drill ? (paper.drill.section === "listening" ? "One section, timed. Play each script once, as the hall does. Mark a question unsure with the flag; read why each answer is right at the end." : "One section, timed: about the pace the real paper leaves for reading. Mark a question unsure with the flag; read why each answer is right at the end.")
       : adaptive ? "Questions written for your weak points. Topics come from your saved evidence." : native ? "One sitting, timed like the real paper, with a break before listening. Mark a question unsure with the flag." : "The publisher's booklet opens beside the answer sheet. Its audio needs internet.";
     $("start").textContent = "Start · " + minutes(firstPhase) + " min";
-    if (state.boss) { $("intro-title").textContent = "The boss · half time"; }
-    $("intro-note").textContent = (state.boss ? "The real paper at half the time: " + minutes("written") + " min written, " + minutes("listening") + " min listening. It counts for your run, not for the checkpoint. " : "") + "Leaving keeps your answers. The timer keeps running, as it would in the hall, unless you pause it.";
+    if (state.boss) { $("intro-title").textContent = "The boss · half-time written"; }
+    $("intro-note").textContent = (state.boss ? "The real paper with the written section at half time: " + minutes("written") + " min written, then listening at its own length (" + minutes("listening") + " min). It counts for your run, not for the checkpoint. " : "") + "Leaving keeps your answers. The timer keeps running, as it would in the hall, unless you pause it.";
   }
 
   $("start").onclick = () => start(firstPhase);

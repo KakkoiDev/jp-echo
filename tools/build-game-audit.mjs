@@ -9,6 +9,7 @@ import {recallItems} from "../n2-study.js";
 import {HELD_OUT} from "../n2-comprehension.js";
 import {READINGS} from "../kanji-readings.js";
 import {CONNECTIVES, JOBS, connectiveSites} from "../n2-connectives.js";
+import {EXCLUDED, ACCEPTED_READINGS, READING_KEY} from "../n2-game-review.js";
 
 const repo = new URL("../", import.meta.url);
 const read = p => JSON.parse(readFileSync(new URL(p, repo), "utf8"));
@@ -37,7 +38,7 @@ const byKind = new Map();
 for (const q of pool) byKind.set(q.kind, [...(byKind.get(q.kind) || []), q]);
 for (const [kind, list] of byKind) write("questions/" + kind + ".jsonl", list.map(q => JSON.stringify({
   id: q.id, kind, seconds: q.seconds, prompt: q.prompt, sentence: q.sentence || undefined, spoken: q.say || undefined,
-  answer: q.answer, wrongCandidates: q.wrong, nearFirst: q.nearCount || undefined, authoredChoices: q.fixed || undefined,
+  answer: q.answer, wrongCandidates: q.wrong, confusable: q.near?.length ? q.near : undefined, authoredChoices: q.fixed || undefined,
   saves: {dimension: q.dimension, target: q.target}, solution: q.solution,
 })).join("\n") + "\n");
 
@@ -62,25 +63,16 @@ for (const it of items.meaning) for (const k of new Set(it.target[1].match(/[一
 write("data/kanji.tsv", tsv(["kanji", "on", "kun", "meanings", "JLPT", "newspaper rank", "N2 words using it", "count"],
   [...kanjiWords].sort((a, b) => b[1].length - a[1].length).map(([k, words]) => { const r = READINGS[k] || {}; return [k, (r.on || []).join("・"), (r.kun || []).join("・"), (r.en || []).join(", "), r.jlpt, r.freq, words.join(" "), words.length]; })));
 
-// ---- Connectives and the passages they occur in (sets 02–18 only) ----
-const sites = [];
-for (const set of sets) {
-  if (!playable.has(set.id)) continue;
-  const seen = new Set();
-  set.questions.forEach((q, i) => {
-    const text = q.context || "";
-    if (!text || seen.has(text) || !["Reading", "Grammar"].includes(q.skill)) return;
-    seen.add(text);
-    for (const s of connectiveSites(text)) {
-      const before = text.slice(0, s.at), after = text.slice(s.at + s.word.length);
-      const prev = (before.match(/[^。\n]*[。」]\s*$/) || [""])[0].trim(), next = (after.match(/^、[^。\n]*[。」]?/) || [""])[0];
-      sites.push([set.id + "#" + i, s.word, CONNECTIVES.find(c => c[0] === s.word)[1], prev, "（　）" + next]);
-    }
-  });
-}
-const counts = new Map(); for (const s of sites) counts.set(s[1], (counts.get(s[1]) || 0) + 1);
-write("data/connectives.tsv", tsv(["connective", "job", "gloss", "job explained", "times in sets 02–18"], CONNECTIVES.map(([w, job, g]) => [w, job, g, JOBS[job], counts.get(w) || 0])));
-write("data/connective-passages.tsv", tsv(["source", "connective", "job", "sentence before", "sentence with the blank"], sites));
+// ---- Connectives: exactly the excerpts the game asks (practice, not scored) ----
+const conn = byKind.get("connective") || [];
+const counts = new Map(); for (const q of conn) counts.set(q.answer, (counts.get(q.answer) || 0) + 1);
+write("data/connectives.tsv", tsv(["connective", "job", "gloss", "job explained", "questions in the game"], CONNECTIVES.map(([w, job, g]) => [w, job, g, JOBS[job], counts.get(w) || 0])));
+write("data/connective-passages.tsv", tsv(["id", "answer", "job", "excerpt with the blank", "wrong choices the game may offer"], conn.map(q => [q.id, q.answer, q.solution.job, q.sentence, q.wrong.join(" · ")])));
+const sites = conn;
+
+// ---- Reviewed exceptions: items left out, readings accepted, keys changed ----
+write("data/excluded.tsv", tsv(["id", "why it is left out of the game"], Object.entries(EXCLUDED)));
+write("data/accepted-readings.tsv", tsv(["word", "readings never offered as wrong", "key used"], Object.keys({...ACCEPTED_READINGS, ...READING_KEY}).map(w => [w, (ACCEPTED_READINGS[w] || []).join("・"), READING_KEY[w] || ""])));
 
 // ---- Authored exam questions the game can use (問題1–5 and 7, sets 02–18) ----
 const exam = byKind.get("exam") || [];
@@ -95,14 +87,16 @@ const lines = [
   "| Kind | Label in the game | Seconds | Questions | File |", "| --- | --- | --- | --- | --- |",
   ...[...byKind].map(([k, l]) => `| ${k} | ${KIND_LABEL[k]} | ${k === "exam" ? "4–8" : SECONDS[k]} | ${l.length.toLocaleString("en")} | questions/${k}.jsonl |`),
   `| **all** | | | **${pool.length.toLocaleString("en")}** | |`, "",
-  "Exam questions count every set from 02 to 18 as sat. In the game, only sets the learner has sat are used; sets 19 and 20 are never used.", "",
+  "Exam and connective questions count every set from 02 to 18 as sat. In the game, only sets the learner has sat are used; sets 19 and 20 are never used. Exam questions are written sections only (言語知識 問題1–5, 7); connective questions are practice and score nothing.", "",
   "## Source lists", "",
   `- data/vocabulary.tsv: ${items.meaning.length} N2 words with their deck sentence and the question kinds each feeds`,
   `- data/readings.tsv: ${(byKind.get("reading") || []).length} reading questions with every near miss`,
   `- data/grammar.tsv: ${items.grammar.length} N2 grammar patterns with their deck sentence`,
   `- data/kanji.tsv: ${kanjiWords.size} kanji used in the N2 words, with readings and the words using each`,
   `- data/connectives.tsv: ${CONNECTIVES.length} connectives with their job (planned connective cards)`,
-  `- data/connective-passages.tsv: ${sites.length} places in the sets 02–18 passages where a connective starts a sentence`,
+  `- data/connective-passages.tsv: ${sites.length} connective questions exactly as the game asks them (practice, not scored)`,
+  `- data/excluded.tsv: ${Object.keys(EXCLUDED).length} items left out of the game until fixed, with reasons`,
+  `- data/accepted-readings.tsv: readings never offered as wrong, and keys changed to match what Echo teaches`,
   `- data/exam-questions.tsv: ${exam.length} authored short exam questions`, "",
 ];
 write("SUMMARY.md", lines.join("\n"));

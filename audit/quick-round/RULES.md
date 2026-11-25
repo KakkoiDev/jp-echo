@@ -1,4 +1,4 @@
-# Rules (as built, v274)
+# Rules (as built, v275)
 
 Source: `n2-game.js` (logic) and `game()` in `n2-mock.js` (screen).
 
@@ -25,14 +25,23 @@ questions. Speed is the skill being trained.
 | listen | the word, spoken with its reading by the device voice | its meaning | as meaning | 5 |
 | homophone | a sentence with one word written as its reading | the word in kanji | words with the same reading, then words sharing a kanji | 5 |
 | grammar | a pattern underlined in its sentence | its meaning | meanings of other N2 patterns | 6 |
-| connective | 問題9 文章の文法: up to two sentences of a reading passage, then the next sentence with its connective blanked, "（　）に入るのは？" | the connective | one common connective per job, leaving out every job that could stand in for the answer's (n2-connectives.js `OVERLAP`) | 7 |
+| connective (practice) | 問題9 文章の文法: up to two sentences of a reading passage, then the next sentence with its connective blanked, "（　）に入るのは？" | the connective | one common connective per job, leaving out every job that could stand in for the answer's (n2-connectives.js `OVERLAP`) | 7 |
 | exam | an authored question (問題1–5 or 7) | as authored | as authored | 4 (問題1), 5 (2, 3), 7 (4), 6 (5), 8 (7) |
 
 - Meanings are the first two senses of the dictionary entry, with any
   Japanese removed so a definition can't give its answer away.
 - Words written with ～ (affixes such as ～発) are left out.
+- **Every wrong choice is wrong**: a choice that shares a content word with
+  the answer's meaning is never offered (`sameSense`); a word spelled the same
+  way (紅葉 こうよう / もみじ) never supplies a wrong meaning; a listening card
+  never offers the meaning of a word that sounds the same; readings accepted
+  for the tested sense are never near misses (`ACCEPTED_READINGS`); and every
+  card shows four distinct choices or is left out.
+- **Left out until fixed**: items listed in `n2-game-review.js` `EXCLUDED`
+  (data/excluded.tsv) with the reason for each.
+- A word written the same way twice has its reading in its id (`m:紅葉/もみじ`).
 - Connective questions come from reading passages (問題10–14 texts) of sets already sat, never sets 19–20. A miss saves no recall record (a connective is not an inventory item) but comes back next round.
-- Exam questions come only from sets the learner has already sat, so a set not
+- Exam questions are **written sections only** (文字・語彙 and 文法, 問題1–5 and 7): listening items, whose audio the game cannot give, never enter. They come only from sets the learner has already sat, so a set not
   yet sat stays unseen for a full mock. Sets 19 and 20 are never used.
 
 ## Which questions come up
@@ -55,7 +64,8 @@ else is left. A miss missed again comes back again.
 below zero points), the next round is a warm-up: 8 questions the player has
 already won (answered right and fast before, or recalled instantly), 1 weak,
 1 fresh, and only 2 of the misses. It says "Warm-up round: things you know."
-One round with seven or more right ends it.
+The slump is judged on the last round only: the next round with at least half
+right and points of zero or more ends it.
 
 ## Home
 
@@ -114,8 +124,8 @@ The warm-up after a slump (below) overrides the mix for one round.
 - About **one question in eight is a bonus**: "Bonus ×3", tinted, worth three
   times the points if right, no extra penalty if wrong. Never on a question
   that came back from last round.
-- **Jackpots**: reaching a combo of 5 pays +500, a combo of 10 pays +1,500,
-  with their own sound.
+- **Jackpots**: reaching a combo of 5 or 10 is celebrated with its own sound
+  and line. It pays no points, so it can't make guessing pay.
 
 ## Points
 
@@ -127,16 +137,22 @@ Speed is rewarded and mistakes are punished hard (the learner's choice).
 - **Wrong**: −200.
 - **I don't know** or **time out**: 0.
 - A wrong answer, I don't know and a timeout all reset the combo.
-- A blind guess among four, even an instant one, averages
-  ¼ × 300 − ¾ × 200 = −75 points, so guessing always loses to an honest
-  "I don't know". The screen still says "Part of the game. Keep going.": the
+- **The guessing cap**: the whole positive payout of one answer (speed,
+  combo, bonus ×3, difficulty) is capped at 200 × (choices − 1) = **600**, so
+  a blind guess among four averages at most ¼ × 600 − ¾ × 200 = 0 and never
+  beats "I don't know". A test checks every difficulty, streak and bonus.
+- **Flag**: zero points, no recall evidence, and it ends the combo. The
+  round's right count counts only right answers.
+- **Connective questions are practice**: no points, the combo untouched, until
+  their excerpts are reviewed. The screen still says "Part of the game. Keep going.": the
   points punish, the words don't.
 
 ## The boss and runs
 
 - **Every 1,000 questions** answered since the last boss, the boss opens: the
-  real full mock of the first set not sat yet (sets 19 and 20 last) at **half
-  the time** (53 minutes written, 25 listening).
+  real full mock of the first set not sat yet (sets 19 and 20 last) with the
+  **written section at half time** (53 minutes) and listening at its own
+  length (50 minutes), since its audio cannot be shortened.
 - Taking it closes a **run**: the 1,000 questions' points. When the boss is
   finished, its estimated score (0–180) joins the run at 1,000 points per
   exam point. Runs are **ranked by the merged score**; each keeps both parts
