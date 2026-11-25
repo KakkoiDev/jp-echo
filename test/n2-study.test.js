@@ -232,3 +232,24 @@ test("exposure lists only the sources of questions that were shown", async () =>
   assert.match(n2, /function renderExam\(\) \{\n    markShown\(\);/, "every question records its first display");
   assert.equal((n2.match(/shownTracked: true,/g) || []).length, 3, "every drill paper is made shown-tracked");
 });
+
+test("the hub head names the standard exam date when no goal is saved, never 'no date'",async()=>{
+  const {examHeadLine}=await import("../n2-study.js");
+  const format=d=>d.toISOString().slice(0,10);
+  const exam=new Date("2026-12-06T00:00:00Z"),firstPass=new Date("2026-12-02T00:00:00Z");
+  assert.equal(examHeadLine({saved:false,exam,firstPass,format}),"Exam 2026-12-06");
+  assert.equal(examHeadLine({saved:true,exam,firstPass,format}),"Exam 2026-12-06 · first pass 2026-12-02");
+  const hub=readFileSync(new URL("../n2-mock.js",import.meta.url),"utf8");
+  assert.doesNotMatch(hub,/No date set yet/);
+});
+
+test("Day Radio's five bar buttons fit a 375px phone with 44px targets",()=>{
+  const css=readFileSync(new URL("../styles.css",import.meta.url),"utf8");
+  const rule=css.match(/\.n2-day-bar\{grid-template-columns:([^;]+);gap:(\d+)px/);
+  assert.ok(rule,"the Day Radio bar sets its columns and gap");
+  const mins=[...rule[1].matchAll(/minmax\((\d+)px/g)].map(m=>+m[1]);
+  assert.equal(rule[1].match(/minmax/g).length,5);
+  for(const m of mins) if(m) assert.ok(m>=44);
+  const used=mins.reduce((a,b)=>a+b,0)+4*Number(rule[2]);
+  assert.ok(used+44<=375-44,"leaves room for Play inside the 22px gutters");
+});

@@ -43,7 +43,10 @@ test("there is one goal editor: dates under each field, a no-AI note, works befo
 test("Today is PlanSteps with one Start button; over budget, a shortened day and after the exam are states of it", () => {
   assert.match(mock, /planSteps\(plan\.steps\.map/);
   assert.match(page, /id="plan-start"/);
-  assert.match(mock, /drawPlan\(base, ctx, \{title: "What stays today", primary: false\}\)/, "the overload panel holds the one filled button (J1Overload)");
+  assert.match(mock, /drawPlan\(base, ctx, \{title: "What stays today"\}\)/, "over budget, the Next card's Start stays the one filled button (N2Hub, 25 Nov)");
+  assert.match(mock, /class: "n2-budget"/, "over budget is one quiet line under the Next card");
+  assert.match(mock, /text: "Choose", onclick/, "Choose opens what moves and the two ways out");
+  assert.doesNotMatch(mock.slice(mock.indexOf("const choices = el("), mock.indexOf("const choose = el(")), /button primary/, "nothing in the budget choices is filled");
   assert.match(mock, /"Keep " \+ dates\.firstPass\.getDate\(\)/);
   assert.match(mock, /Choose a later first-pass date/);
   assert.match(mock, /Moving work never deletes it\./);

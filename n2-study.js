@@ -18,6 +18,37 @@ export const PASS_TOTAL = 90, SECTION_MIN = 19, SECTION_MAX = 60;
 
 export const localDay = (date = new Date()) => date.toLocaleDateString("en-CA");
 
+// The hub's head line. With no saved goal the countdown still runs to the next
+// standard exam date, so the head names that date rather than "no date".
+export function examHeadLine({saved, exam, firstPass, format}) {
+  return "Exam " + format(exam) + (saved ? " · first pass " + format(firstPass) : "");
+}
+
+// The Next card's overline: "Next · step 2 of 6 · 20 min".
+export function nextKicker(index, count, minutes) {
+  return "Next · step " + (index + 1) + " of " + count + (minutes ? " · " + formatMinutes(minutes) : "");
+}
+
+// "0 of 2 so far": runs in the window that meet the bar, at most two.
+export function checkpointLine(checkpoint) {
+  if (checkpoint.met) return "Both done.";
+  return Math.min(2, checkpoint.recent.filter(r => r.meets).length) + " of 2 so far.";
+}
+
+// A mock tile's state: in progress, over or below the pass line on its best
+// run, held back for unseen-passage mocks, or not taken.
+export function mockTileState({live = false, best = null, held = false} = {}) {
+  if (live) return "live";
+  if (best) return best.pass ? "over" : "below";
+  return held ? "held" : "new";
+}
+
+// History kinds: a whole mock, a timed section, or a drill.
+export function historyKind(book, paper) {
+  if (!String(book || "").startsWith("adaptive-")) return "exam";
+  return paper?.drill && !paper.drill.tag ? "section" : "drill";
+}
+
 // The JLPT in Japan sits on the first Sunday of July and of December.
 function firstSunday(year, month) {
   const day = new Date(year, month, 1);

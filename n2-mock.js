@@ -2,7 +2,7 @@ import {dateKey, parseGoalDate, firstPassEnd, goalKey, readGoal, writeGoal, shor
 import {bookIds,bookName,EDITION,SETS_EDITION,form,realisticRows,realisticPaperId,setFile,instructionFor,solutionOf,whyReadings} from "./n2-forms.js";
 import {access,currentAttempts,download,prefix,report,scored,n2Adapter} from "./n2-progress.js";
 import {startAutoSync,markDirty,gistSettings} from "./sync.js";
-import {SKILLS,SKILL_JA,SECTIONS,PASS_TOTAL,SECTION_MIN,SECTION_MAX,estimate,sprintCheckpoint,nextExamDate,daysUntil,recallQueue,recallRecord,recallId,dailyGoal,coverage,localDay,todayPlan,measuredPace,capMinutes,DAY_MINUTES,EXAM_CHECKLIST,goalDates,formatMinutes,shortenPlan,maintenancePlan,resultsMonth,doneToday,markDone,scoreSeries,scoreCaption} from "./n2-study.js";
+import {SKILLS,SKILL_JA,SECTIONS,PASS_TOTAL,SECTION_MIN,SECTION_MAX,estimate,sprintCheckpoint,nextExamDate,daysUntil,recallQueue,recallRecord,recallId,dailyGoal,coverage,localDay,todayPlan,measuredPace,capMinutes,DAY_MINUTES,EXAM_CHECKLIST,goalDates,formatMinutes,shortenPlan,maintenancePlan,resultsMonth,doneToday,markDone,scoreSeries,scoreCaption,examHeadLine,nextKicker,checkpointLine,mockTileState,historyKind} from "./n2-study.js";
 import {scoreChart,flagSvg,planSteps,loadMeter,evidenceRow,pauseRing,openReportSheet,mountReportButtons} from "./components.js";
 import {REPORT_REASONS,createReport,fileReport,reportSyncLine,reportsAdapter,reportHistory,screenOf,appVersion,deviceInfo} from "./reports.js";
 import {recognitionFactory} from "./speech.js";
@@ -39,8 +39,8 @@ function el(tag, props = {}, ...children) {
   return node;
 }
 // The one row shape on this page: Library's two-line tool row.
-function row({glyph, title, line, href, onclick, chip}) {
-  const node = el(href ? "a" : "button", {class: "library-tool two-line", href, type: href ? undefined : "button", onclick});
+function row({glyph, title, line, href, onclick, chip, cls = ""}) {
+  const node = el(href ? "a" : "button", {class: ("library-tool two-line " + cls).trim(), href, type: href ? undefined : "button", onclick});
   node.append(el("span", {class: "library-tool-glyph", lang: "ja", "aria-hidden": "true", text: glyph}),
     el("span", {class: "library-tool-label"}, el("strong", {text: title}), line ? el("span", {text: line}) : ""),
     ...(chip ? [el("span", {class: "status-chip " + (chip.kind || ""), text: chip.text})] : []));
@@ -184,6 +184,8 @@ function activeClock() {
 // Sets 02–20 have a realistic edition when its file is there; set 01 keeps its paper.
 const realistic = id => bookIds.includes(id) && id !== bookIds[0] && !!themes[id];
 const titleOf = id => realistic(id) ? String(bookIds.indexOf(id) + 1).padStart(2, "0") + " · " + themes[id] : bookName(id);
+// A title for an attempt whose paper may be gone: never "undefined".
+const knownTitle = id => bookIds.includes(id) ? "Mock " + titleOf(id) : String(id || "").startsWith("adaptive-") ? "Practice paper" : Object.hasOwn(keys, id || "") ? bookName(id) : "Earlier attempt";
 function voice() {
   const voices = japaneseVoices("ja"), pick = settings.voice;
   if (pick === "random") return voices[Math.floor(Math.random() * voices.length)] || null;
@@ -308,11 +310,12 @@ async function hub() {
   const papers = new Map(data.papers.map(p => [p.id, p]));
   const planGoal = readGoal(), exam = planGoal ? parseGoalDate(planGoal.exam) : nextExamDate(), days = daysUntil(exam);
   const today = dateKey(new Date());
-  $("hub-exam-line").textContent = planGoal ? "Exam " + shortDate(exam) + " · first pass by " + shortDate(goalDates(planGoal).firstPass) : "No date set yet";
   const dates = goalDates(planGoal);
+  $("hub-exam-line").textContent = examHeadLine({saved: !!planGoal, exam, firstPass: dates.firstPass, format: shortDate});
   $("hub-days").textContent = days;
   $("hub-days-label").textContent = days === 1 ? "day to " + shortDate(exam) : days === 0 ? "Exam day. 頑張って。" : "days to " + shortDate(exam);
-  $("hub-first-pass").textContent = days > 0 ? "first pass by " + shortDate(dates.firstPass) : "";
+  $("goal-change").hidden = days < 0;
+  $("goal-change").onclick = event => { event.preventDefault(); const goal = $("training-goal"); goal.open = true; goal.scrollIntoView({block: "start"}); goal.querySelector("input")?.focus({preventScroll: true}); };
   if (days === 0) $("hub-days").textContent = "今日";
   $("hub-countdown").hidden = days < 0;
 
@@ -346,7 +349,7 @@ async function hub() {
   drawToday({...context, planGoal, exam, dates, coached, attempts});
   drawForecast(base, data, goal);
   if (coached) {
-    $("coach-box").hidden = false; $("coach-reset").hidden = false;
+    $("coach-box").hidden = false; $("coach-reset").hidden = false; $("ai-zone").open = true;
     const stale = coached.basis !== resultsBasis(data);
     $("coach-copy").textContent = (coached.diagnosis || "Today's plan from your coach.") + (stale ? " You have new results since this plan; ask the coach again for one that uses them." : "");
   }
@@ -364,18 +367,21 @@ async function hub() {
   // Readiness: the latest scored attempt.
   const latest = [...attempts].filter(a => a.phase === "results" && !String(a.book || "").startsWith("adaptive-") && papers.get(a.paper || a.book)).sort((a, b) => (b.completedAt || "").localeCompare(a.completedAt || ""))[0];
   $("readiness").replaceChildren(latest ? scoreCard(papers.get(latest.paper || latest.book), latest, true)
-    : el("div", {class: "empty-panel"}, el("strong", {text: "No score yet"}), el("span", {text: "Finish a whole mock to see an estimated score for each JLPT section."})));
-  const box = $("readiness");
-  box.append(el("h3", {text: checkpoint.met ? "Sprint benchmark met" : "Sprint checkpoint"}),
-    el("p", {text:"Aim for two fresh Echo mocks on separate days within seven days. On each, aim for a 70% section average and 60% in every section. Flagged guesses earn no credit here. These are practice targets."}));
-  for (const r of checkpoint.recent) box.append(el("p",{text: titleOf(r.attempt.book) + " · " + r.day + " · " +
-    r.sections.map(s => s.name + " " + s.correct + "/" + s.count).join(" · ")}));
+    : el("div", {class: "empty-panel"}, el("strong", {text: "No score yet"}), el("span", {text: "Finish one whole mock to see an estimated score per section — a direction, not a prediction."})));
+  // Sprint checkpoint: the rule in one sentence, then how far along.
+  $("checkpoint-title").textContent = checkpoint.met ? "Sprint benchmark met" : "Sprint checkpoint";
+  const box = $("checkpoint");
+  box.replaceChildren(el("p", {}, "Two fresh mocks on different days within seven days: 70% average, 60% in each section. ", el("strong", {text: checkpointLine(checkpoint)})));
   if (latestRun && !latestRun.meets) box.append(el("a", {href:"?book=" + latestRun.attempt.book + "&attempt=" + encodeURIComponent(latestRun.attempt.id),
     text:"Review " + weakest.name + " first · " + weakest.correct + "/" + weakest.count + " confident answers"}));
   else if (!checkpoint.met && days > 1 && next) box.append(el("a",{href:"?book="+next,text:latestRun ? "Next checkpoint · take a fresh mock on another day" : "Establish your baseline · take a fresh mock"}));
   if (comprehension) box.append(el("p", {class: "hint", text: "Comprehension to repair: " + comprehension.ja + " " + comprehension.en.toLowerCase() + " · " + comprehension.wrong + " of " + comprehension.n + " missed or guessed in the last two weeks."}));
   const cov = coverage(inventory, data.recall, evidence);
-  $("coverage").replaceChildren(...[["meaning", "語彙", "Word meanings"], ["reading", "読み", "Kanji readings"], ["grammar", "文法", "Grammar"]].map(([type, ja, en]) => {
+  const kinds = [["meaning", "語彙", "Word meanings"], ["reading", "読み", "Kanji readings"], ["grammar", "文法", "Grammar"]];
+  const n = x => x.toLocaleString("en");
+  $("coverage-title").textContent = "Coverage · " + n(kinds.reduce((t, [k]) => t + cov[k].checked, 0)) + " of " + n(kinds.reduce((t, [k]) => t + cov[k].total, 0)) + " checked once";
+  $("coverage-meta").textContent = kinds.map(([k, ja]) => ja + " " + n(cov[k].checked) + " of " + n(cov[k].total)).join(" · ");
+  $("coverage").replaceChildren(...kinds.map(([type, ja, en]) => {
     const c = cov[type];
     return el("a", {class: "n2-meter", href: "?view=recall&type=" + type},
       el("span", {class: "n2-meter-head"}, el("span", {lang: "ja", class: "n2-meter-ja", text: ja}), el("span", {text: en}), el("span", {class: "n2-meter-n", text: c.checked + " / " + c.total})),
@@ -383,37 +389,61 @@ async function hub() {
       el("span", {class: "hint", text: c.automatic + " instant on two days · " + c.weak + " weak"}));
   }));
 
-  // Exams
-  const status = id => {
-    const mine = attempts.filter(a => a.book === id);
-    const live = mine.find(a => a.phase !== "results");
-    if (live) return {line: "In progress · " + live.answers.filter(Boolean).length + " / " + live.answers.length + " answered", chip: {text: "Resume", kind: "due"}};
-    const scoredRuns = mine.filter(a => a.phase === "results" && papers.get(a.paper || a.book)).map(a => ({a, e: estimate(papers.get(a.paper || a.book), a)}));
-    if (!scoredRuns.length) return {line: null};
-    const best = scoredRuns.reduce((x, y) => y.e.total > x.e.total ? y : x);
-    return {line: "Best " + best.e.total + " / 180 · " + dateLabel(best.a.completedAt), chip: best.e.pass ? {text: "Pass line", kind: ""} : {text: "Below", kind: "learning"}};
+  // Exams: a Resume row for the paper in progress, then one tile per set.
+  const runsOf = id => attempts.filter(a => a.book === id);
+  const bestOf = id => {
+    const scoredRuns = runsOf(id).filter(a => a.phase === "results" && papers.get(a.paper || a.book)).map(a => ({a, e: estimate(papers.get(a.paper || a.book), a)}));
+    return scoredRuns.length ? scoredRuns.reduce((x, y) => y.e.total > x.e.total ? y : x) : null;
   };
+  const answered = a => a.answers.filter(Boolean).length + " of " + a.answers.length + " answered";
+  const status = id => {
+    const live = runsOf(id).find(a => a.phase !== "results");
+    if (live) return {line: "In progress · " + answered(live), chip: {text: "Resume", kind: "due"}};
+    const best = bestOf(id);
+    if (!best) return {line: null};
+    return {line: "Best " + best.e.total + " / 180 estimated · " + dateLabel(best.a.completedAt), chip: best.e.pass ? {text: "Over", kind: "over"} : {text: "Below", kind: "below"}};
+  };
+  const liveMock = attempts.find(a => bookIds.includes(a.book) && a.phase !== "results");
+  $("exam-resume").replaceChildren(...(liveMock ? [row({glyph: String(bookIds.indexOf(liveMock.book) + 1).padStart(2, "0"), title: titleOf(liveMock.book).split(" · ").slice(1).join(" · ") || titleOf(liveMock.book),
+    line: "In progress · " + answered(liveMock) + (liveMock.phase === "rest" ? " · listening next" : ""), href: "?book=" + liveMock.book, chip: {text: "Resume", kind: "due"}, cls: "n2-resume"})] : []));
   $("exam-list").replaceChildren(...bookIds.map((id, i) => {
-    const s = status(id);
-    const [, title] = titleOf(id).split(" · ");
-    return row({glyph: String(i + 1).padStart(2, "0"), title, line: s.line || (i === 0 ? "Original November mock · 101 questions" : realistic(id) ? "Full JLPT layout · 問題1–14 and listening 1–5 · 105 questions" : "Practice form · 101 questions"), href: "?book=" + id, chip: s.chip});
+    const best = bestOf(id), state = mockTileState({live: runsOf(id).some(a => a.phase !== "results"), best: best && best.e, held: HELD_OUT.includes(id)});
+    const label = titleOf(id) + " · " + ({live: "in progress", over: "best " + best?.e.total + " of 180, over the line", below: "best " + best?.e.total + " of 180, below the line", held: "held for unseen passages, not taken", new: "not taken"})[state];
+    return el("a", {class: "n2-tile", href: "?book=" + id, "data-state": state, "aria-label": label, title: label, text: String(i + 1).padStart(2, "0")});
   }));
   $("workbook-list").replaceChildren(...Object.keys(keys).map(id => {
     const s = status(id);
     return row({glyph: "公", title: "Official sample · " + id, line: s.line || "Publisher booklet and audio · needs internet", href: "?book=" + id, chip: s.chip});
   }));
 
-  // Coach and history
-  $("adaptive-list").replaceChildren(...data.papers.filter(p => p.id.startsWith("adaptive-")).map(p =>
-    row({glyph: p.drill?.tag ? "解" : p.drill ? (p.drill.section === "listening" ? "聴" : "読") : "狙", title: p.title,
-      line: p.drill?.tag ? p.questions.length + " questions · comprehension drill" : p.drill ? p.questions.length + " questions · timed section" : p.questions.length + (p.request?.count > p.questions.length ? " of " + p.request.count : "") + " targeted questions", href: "?book=" + p.id, chip: status(p.id).chip})));
+  // History: finished attempts and made drills, one kind glyph each, newest first.
   const series = scoreSeries(attempts, papers);
   $("score-chart").replaceChildren(...(series.length ? [el("p", {class: "overline", text: "Exam scores · estimated, against the pass line"}), scoreChart({points: series.map(p => ({...p, label: dateLabel(p.at)})), max: 180, line: PASS_TOTAL, label: "Exam scores", caption: scoreCaption(series)})] : []));
   $("score-chart").hidden = !series.length;
-  $("history-list").replaceChildren(...attempts.filter(a => a.phase === "results").map(a => {
-    const p = papers.get(a.paper || a.book), e = p && estimate(p, a);
-    return row({glyph: "歴", title: p?.title || titleOf(a.book), line: dateLabel(a.completedAt || a.startedAt) + (e ? " · " + e.total + " / 180" : ""), href: "?book=" + a.book + "&attempt=" + encodeURIComponent(a.id)});
-  }));
+  const GLYPH = {exam: "試", section: "節", drill: "練"};
+  const historyRows = [
+    ...attempts.filter(a => a.phase === "results").map(a => {
+      const p = papers.get(a.paper || a.book), kind = historyKind(a.book, p), when = dateLabel(a.completedAt || a.startedAt);
+      if (!p) return {kind, at: a.completedAt || a.startedAt || "", node: row({glyph: GLYPH[kind], title: knownTitle(a.book) + " · can't be opened", line: when + " · its paper edition is missing on this device", chip: {text: "Can't open", kind: "muted"}, onclick: () => warn("This attempt's paper is missing on this device, so it can't be opened.")})};
+      const e = kind === "exam" ? estimate(p, a) : null;
+      const right = p.questions.filter(q => a.answers[q.index] === q.key).length;
+      return {kind, at: a.completedAt || "", node: row({glyph: GLYPH[kind], title: kind === "exam" && p.title ? "Mock " + p.title : p.title || knownTitle(a.book), line: when + " · " + (e ? e.total + " of 180 estimated" : right + " of " + p.questions.length),
+        href: "?book=" + a.book + "&attempt=" + encodeURIComponent(a.id), chip: e ? (e.pass ? {text: "Over", kind: "over"} : {text: "Below", kind: "below"}) : null})};
+    }),
+    ...data.papers.filter(p => p.id.startsWith("adaptive-") && !attempts.some(a => a.book === p.id && a.phase === "results")).map(p => {
+      const kind = historyKind(p.id, p), live = attempts.some(a => a.book === p.id && a.phase !== "results");
+      return {kind, at: p.createdAt || "", node: row({glyph: GLYPH[kind], title: p.title, line: p.questions.length + " questions · " + (live ? "in progress" : "not taken yet"), href: "?book=" + p.id, chip: live ? {text: "Resume", kind: "due"} : null})};
+    })].sort((x, y) => String(y.at).localeCompare(String(x.at)));
+  let historyKindShown = "all";
+  const drawHistory = () => {
+    const shown = historyRows.filter(r => historyKindShown === "all" || r.kind === historyKindShown);
+    $("history-list").replaceChildren(...shown.map(r => r.node));
+    $("history-empty").hidden = shown.length > 0;
+    $("history-empty").textContent = historyRows.length ? "Nothing of this kind yet." : "Nothing finished yet. Mocks, timed sections and drills you finish appear here, newest first.";
+    for (const tab of document.querySelectorAll(".n2-history-filter [data-kind]")) tab.setAttribute("aria-selected", String(tab.dataset.kind === historyKindShown));
+  };
+  for (const tab of document.querySelectorAll(".n2-history-filter [data-kind]")) tab.onclick = () => { historyKindShown = tab.dataset.kind; drawHistory(); };
+  drawHistory();
   $("export-report").onclick = async () => { try { download(await report()); } catch (e) { warn(e.message); } };
   if (location.hash) document.getElementById(location.hash.slice(1))?.scrollIntoView();
 }
@@ -434,9 +464,8 @@ function drawToday(ctx) {
   const state = readDayState();
   statePanel();
   $("plan-moved").hidden = true;
-  $("plan-links").hidden = days < 0;
-  document.querySelector(".n2-coach-actions").hidden = days < 0;
-  if (days < 0) $("ai-hint").hidden = true;
+  $("plan-links").hidden = days < 0 || days > 3;
+  $("ai-zone").hidden = days < 0;
   // After the exam (J3After): the plan stops; maintenance only when chosen.
   if (days < 0) {
     const results = ctx.attempts.filter(a => a.phase === "results");
@@ -471,19 +500,23 @@ function drawToday(ctx) {
     $("plan-moved").hidden = false;
     return;
   }
-  // Over budget (J1Overload): what moves to tomorrow, keep the goal or pick a later date.
+  // Over budget (J1Overload): one quiet line under the Next card; "Choose"
+  // opens what moves to tomorrow and the two ways out.
   const over = !coached && base.overflow && !state.kept ? base.overflow : null;
   if (over) {
     const later = base.forecast?.finish;
-    statePanel(el("strong", {class: "n2-state-title", text: "Today needs " + formatMinutes(over.needs)}),
+    const choices = el("div", {class: "n2-budget-choices", hidden: true},
       loadMeter({fits: over.fits, needs: over.needs, caption: formatMinutes(over.fits) + " of " + formatMinutes(over.needs) + " fits today"}),
       para("Your day holds 6 h, breaks included. To keep first pass by " + shortDate(dates.firstPass) + ", these move to tomorrow:"),
       el("ul", {}, el("li", {text: over.checks + " word and grammar first checks (" + formatMinutes(over.minutes) + ")"})),
       el("div", {class: "n2-state-actions"},
-        el("a", {class: "button primary", href: "#", text: "Keep " + dates.firstPass.getDate() + " " + shortDate(dates.firstPass).slice(-3) + " — move " + formatMinutes(over.minutes) + " to tomorrow", onclick: event => { event.preventDefault(); writeDayState({kept: true}); drawToday(ctx); }}),
-        el("a", {class: "button outline", href: "#training-goal", text: "Choose a later first-pass date", onclick: () => { $("training-goal").open = true; }})),
+        el("a", {class: "button outline", href: "#", text: "Keep " + dates.firstPass.getDate() + " " + shortDate(dates.firstPass).slice(-3) + " — move " + formatMinutes(over.minutes) + " to tomorrow", onclick: event => { event.preventDefault(); writeDayState({kept: true}); drawToday(ctx); }}),
+        el("a", {class: "button quiet", href: "#training-goal", text: "Choose a later first-pass date", onclick: event => { event.preventDefault(); $("training-goal").open = true; $("training-goal").scrollIntoView({block: "start"}); }})),
       para("Moving work never deletes it." + (later ? " If tomorrow also overflows, the first pass would finish on " + shortDate(later) + " instead." : ""), "hint"));
-    drawPlan(base, ctx, {title: "What stays today", primary: false});
+    const choose = el("button", {type: "button", class: "link-button", "aria-expanded": "false", text: "Choose", onclick: () => { choices.hidden = !choices.hidden; choose.setAttribute("aria-expanded", String(!choices.hidden)); }});
+    statePanel(el("p", {class: "n2-budget"}, el("span", {class: "n2-budget-mark", "aria-hidden": "true"}),
+      el("span", {}, "Today needs " + formatMinutes(over.needs) + " of your 6 h. " + formatMinutes(over.minutes) + " of first checks moves to tomorrow. ", choose)), choices);
+    drawPlan(base, ctx, {title: "What stays today"});
     return;
   }
   drawPlan(coached?.plan ? {...coached.plan, coach: true} : base, ctx);
@@ -610,8 +643,9 @@ function progressOf(step, ctx) {
 }
 function drawPlan(plan, ctx, {title, primary = true} = {}) {
   plan = markDone(plan, ctx.done);
-  const total = plan.steps.reduce((n, s) => n + (s.minutes || 0), 0);
-  $("plan-title").textContent = title || "Today · " + (plan.coach ? "your coach's plan" : "standard plan") + (total ? " · " + formatMinutes(total) : "");
+  const left = plan.steps.filter(s => !s.done).reduce((n, s) => n + (s.minutes || 0), 0);
+  $("plan-title").textContent = (title || (plan.coach ? "Your coach's plan" : "Today's plan")) + " · " + plan.steps.length + (plan.steps.length === 1 ? " step" : " steps");
+  $("plan-meta").textContent = (left ? formatMinutes(left) + " left" : "Done for today") + " · " + (plan.coach ? "from your coach" : "standard plan");
   const phaseNote = plan.phase && plan.phase !== "build" ? plan.headline || "" : "";
   $("plan-headline").textContent = phaseNote; $("plan-headline").hidden = !phaseNote;
   const actions = plan.steps.map(step => stepAction(step, ctx));
@@ -619,10 +653,14 @@ function drawPlan(plan, ctx, {title, primary = true} = {}) {
   $("plan-steps").replaceChildren(planSteps(plan.steps.map((step, i) => ({
     title: step.title, line: step.line, minutes: step.minutes, disabled: step.disabled, progress: progressOf(step, ctx),
     state: step.done ? "done" : i === next ? "next" : "", ...actions[i]}))));
+  // The Next card: the one filled Start on the screen, above the open plan.
   const start = $("plan-start"), step = plan.steps[next];
   $("plan-start-wrap").hidden = !step;
   if (step) {
-    start.textContent = "Start: " + step.title.charAt(0).toLowerCase() + step.title.slice(1) + (step.minutes ? " · " + step.minutes + " min" : "");
+    $("plan-next-kicker").textContent = nextKicker(next, plan.steps.length, step.minutes);
+    $("plan-next-title").textContent = step.title;
+    $("plan-next-line").textContent = step.line || ""; $("plan-next-line").hidden = !step.line;
+    start.textContent = "Start" + (step.minutes ? " · " + formatMinutes(step.minutes) : "");
     start.className = "button " + (primary ? "primary" : "outline");
     start.href = actions[next].href || "#";
     start.onclick = actions[next].href ? null : event => { event.preventDefault(); actions[next].onOpen?.(); };
