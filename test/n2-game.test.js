@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
-import {gamePool, choicesFor, pickRound, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, nearMisses, gloss, today, lastDays, ranking, bossSet,
+import {SECONDS, PAUSE, REVIEW_SECONDS, gamePool, choicesFor, pickRound, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, nearMisses, gloss, today, lastDays, ranking, bossSet,
   ROUND_SIZE, DAILY_GOAL} from "../n2-game.js";
 import {examplesFromDecks} from "../day-radio.js";
 import {HELD_OUT} from "../n2-comprehension.js";
@@ -60,14 +60,14 @@ test("a round is ten, mixes the kinds, opens with last round's misses and skips 
   assert.ok(next.slice(3).every(q => !round.some(r => r.id === q.id)), "the rest is new");
 });
 
-test("points reward right and fast, and guessing never beats an honest I don't know", () => {
-  const fast = scoreAnswer({outcome: "right", ms: 0, seconds: 10, streak: 0});
-  assert.deepEqual(fast, {points: 200, streak: 1, fast: true});
-  assert.equal(scoreAnswer({outcome: "right", ms: 10000, seconds: 10, streak: 10}).points, 200, "slow but a ×2 combo");
-  assert.equal(scoreAnswer({outcome: "wrong", streak: 5}).points, -50);
+test("points reward speed hard, punish mistakes hard, and a blind guess always loses", () => {
+  assert.deepEqual(scoreAnswer({outcome: "right", ms: 0, seconds: 10, streak: 0}), {points: 300, streak: 1, fast: true});
+  assert.equal(scoreAnswer({outcome: "right", ms: 10000, seconds: 10, streak: 0}).points, 50, "right but at the buzzer");
+  assert.equal(scoreAnswer({outcome: "right", ms: 0, seconds: 10, streak: 10}).points, 600, "fast with a full combo");
+  assert.equal(scoreAnswer({outcome: "wrong", streak: 5}).points, -200);
   assert.deepEqual(scoreAnswer({outcome: "dontknow", streak: 5}), {points: 0, streak: 0, fast: false});
-  // A blind guess among four: one in four right at about 150, three in four at −50.
-  assert.ok(.25 * 150 + .75 * -50 <= 0);
+  // A blind guess among four, even instant: ¼ × 300 − ¾ × 200 < 0.
+  assert.ok(.25 * 300 + .75 * -200 < 0);
   assert.equal(recallsMiss({target: ["word", "a", "b"]}, "right"), false, "picking right is not recalling");
   assert.equal(recallsMiss({target: ["word", "a", "b"]}, "timeout"), true);
 });
@@ -127,4 +127,32 @@ test("a flag stops the clock, names the question as shown, and in the review nam
 test("the two rules are on the round's end, and a miss says keep going", () => {
   assert.match(src("../n2-mock.html"), /<span>Two rules<\/span>Say it out loud as you read\. Mistakes are part of the game: just keep going\./);
   assert.match(src("../n2-mock.js"), /"Part of the game\. Keep going\."/);
+});
+
+test("the game's flag is one tap: it saves the question as shown and moves on, with no sheet", () => {
+  const mock = src("../n2-mock.js");
+  const flag = mock.slice(mock.indexOf('$("game-flag").onclick'), mock.indexOf('$("game-review-flag").onclick'));
+  assert.doesNotMatch(flag, /openReport/, "no questions asked");
+  assert.match(flag, /quickFlag\(cardOf\(q\)\);/);
+  assert.match(flag, /timer = setTimeout\(\(\) => \{ index\+\+; ask\(\); \}, PAUSE\.right\);/, "and the next question comes at once");
+  assert.match(mock, /kind: "card", reasons: \[\], note: "Flagged in Quick round with one tap; the reason is for the audit to find\."/);
+});
+
+test("the audit pack is in step with the game: rebuild it with node tools/build-game-audit.mjs", () => {
+  const playable = new Set(ids.filter(id => !HELD_OUT.includes(id)));
+  const pool = gamePool({inventory, examples, sets, sat: playable});
+  const summary = src("../audit/quick-round/SUMMARY.md");
+  assert.match(summary, new RegExp("\\*\\*" + pool.length.toLocaleString("en") + "\\*\\*"), "SUMMARY.md counts what the game builds");
+  for (const kind of new Set(pool.map(q => q.kind))) {
+    const lines = src("../audit/quick-round/questions/" + kind + ".jsonl").trim().split("\n").length;
+    assert.equal(lines, pool.filter(q => q.kind === kind).length, kind);
+  }
+  for (const f of ["README.md", "CONCEPT.md", "RULES.md"]) assert.ok(src("../audit/quick-round/" + f).length > 500, f);
+  assert.match(src("../audit/quick-round/RULES.md"), /\*\*Wrong\*\*: −200\./, "the rules say what POINTS says");
+});
+
+test("blitz, not shogi: a few seconds a question and almost no pause between them", () => {
+  for (const [kind, sec] of Object.entries(SECONDS)) for (const v of typeof sec === "object" ? Object.values(sec) : [sec]) assert.ok(v <= 8, kind);
+  assert.ok(SECONDS.reading <= 3 && SECONDS.meaning <= 3);
+  assert.ok(PAUSE.right <= 300 && PAUSE.miss <= 1000 && REVIEW_SECONDS <= 5);
 });

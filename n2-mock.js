@@ -8,7 +8,7 @@ import {REPORT_REASONS,createReport,fileReport,reportSyncLine,reportsAdapter,rep
 import {recognitionFactory} from "./speech.js";
 import {speakOnce,speakAndWait,japaneseVoices} from "./speech.js";
 import {readNights, nightComparison, comparisonLine, eveningRecall, EVENING_SOURCE} from "./n2-night.js";
-import {gamePool, choicesFor, pickRound, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL} from "./n2-game.js";
+import {gamePool, choicesFor, pickRound, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
 import {spokenWord,radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
 import {TAG,TAGS,HELD_OUT,CAUSES,comprehensionStats,weakestTag,tagDrill,drillExposure,attemptTags,tagsOf,sourceOf} from "./n2-comprehension.js";
 import {exampleSegments,patternNeedles,delayedChecks,checkItems,checkAsk,contextNote,sentenceParts,checkDetail,audioGrade,delayedAccuracy,CHECK_SOURCE,WHY_LINE,evidenceFor,evidenceLine} from "./n2-delayed.js";
@@ -1154,7 +1154,7 @@ async function game() {
         data.recall = data.recall.filter(r => r.id !== id).concat(record);
       } catch {}
     }
-    timer = setTimeout(() => { index++; ask(); }, outcome === "right" ? 450 : 1300);
+    timer = setTimeout(() => { index++; ask(); }, outcome === "right" ? PAUSE.right : PAUSE.miss);
   }
   // A timed look at each miss: the answer, the sentence with furigana, why.
   let reviewAt = 0, held = false;
@@ -1215,8 +1215,24 @@ async function game() {
   // Flag: the report sheet with this question, the clock stopped while it is open.
   $("game-flag").replaceChildren(document.createRange().createContextualFragment(flagSvg), "Flag");
   $("game-review-flag").replaceChildren(document.createRange().createContextualFragment(flagSvg), "Flag");
-  $("game-flag").onclick = () => openReport();
-  $("game-review-flag").onclick = () => openReport();
+  // One tap, no questions (owner, 26 Nov): the flag saves the question exactly
+  // as shown and the game moves on. Working out why is the audit's job.
+  const quickFlag = async card => {
+    try { await fileReport(createReport({kind: "card", reasons: [], note: "Flagged in Quick round with one tap; the reason is for the audit to find.", subject: card, screen: screenOf(location, "Quick round"), version: await appVersion(), device: deviceInfo()})); } catch {}
+  };
+  $("game-flag").onclick = () => {
+    if (locked || !current || $("game-play").hidden) return;
+    locked = true; clearTimeout(timer); stopBar();
+    const q = current, st = readGame(); st.seen = {...(st.seen || {}), [q.id]: Date.now()}; writeGame(st);
+    quickFlag(cardOf(q));
+    $("game-combo").textContent = "Flagged. Keep going.";
+    timer = setTimeout(() => { index++; ask(); }, PAUSE.right);
+  };
+  $("game-review-flag").onclick = () => {
+    const m = misses[reviewAt]; if (!m) return;
+    quickFlag(cardOf(m.q, m.picked));
+    review(reviewAt + 1);
+  };
   reportPause = () => {
     if ($("game").hidden) return null;
     if (!$("game-play").hidden && current && !locked) {

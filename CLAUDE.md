@@ -288,16 +288,22 @@ Before considering the change complete:
   the open reports with `gh api gists/<id>` (docs/REPORTS.md) and marks a fix
   by setting `status: "fixed"`, `fix`, and a newer `updatedAt` in that file.
 - **Quick round is the N2 game** (`?view=game`, logic in `n2-game.js`, tested
-  in `test/n2-game.test.js`). Rounds of 10 mixed multiple-choice questions
+  in `test/n2-game.test.js`). Blitz, not shogi: `SECONDS` and `PAUSE` stay
+  short (3–8 s a question). Rounds of 10 mixed multiple-choice questions
   (reading near-misses, meaning, definition, listen, homophone, grammar, and
   short exam questions only from sets already sat, never `HELD_OUT`), a timed
   review of the misses, and the next round opens with them. A right answer
   saves nothing (picking is not recalling); a miss, timeout or "I don't know"
-  saves a missed recall check with source `game`. Scoring never rewards a blind
-  guess over "I don't know". Day totals (goal 1,000), round history, ranking
+  saves a missed recall check with source `game`. Scoring rewards speed and
+  punishes mistakes hard (`POINTS`: right 50 + up to 250 for speed × combo,
+  wrong −200), so a blind guess always loses to "I don't know". Day totals (goal 1,000), round history, ranking
   and the boss (a full mock on an unsat set once the 1,000 are done) live in
   localStorage `echo-n2-game`. Settings → "Open Echo on Quick round" sends a
   fresh launch there once per session (`echo-launched`), so Back reaches Echo.
+  Its flag is one tap with no sheet (owner, 26 Nov: "I don't think, you
+  think"): it files a card report with the question exactly as shown and the
+  game moves on; the audit (docs/REPORTS.md) works out why. The head report
+  button still opens the full sheet, with the clock paused (`reportPause`).
 - **The voice gets the reading.** Any word or sentence handed to a device
   voice carries its 【reading】 (`spokenWord` / `withReading`, day-radio.js;
   `speechText` speaks it) — a bare kanji word is guessed (重役 → おもやく).

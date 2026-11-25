@@ -25,8 +25,11 @@ export const GAME_KEY = "echo-n2-game";
 export const GAME_SOURCE = "game";
 // Rounds are short so a few spare seconds are enough; every answer is saved
 // as it is given, so closing the page mid-round loses nothing.
-export const ROUND_SIZE = 10, REVIEW_SECONDS = 8, DAILY_GOAL = 1000, RECENT_MS = 4 * 3600_000;
-export const SECONDS = Object.freeze({reading: 7, meaning: 7, definition: 8, listen: 9, homophone: 10, grammar: 12, exam: {1: 8, 2: 10, 3: 10, 4: 14, 5: 12, 7: 16}});
+// Blitz chess, not shogi (owner, 26 Nov): seconds, not minutes, per question.
+export const ROUND_SIZE = 10, REVIEW_SECONDS = 5, DAILY_GOAL = 1000, RECENT_MS = 4 * 3600_000;
+export const SECONDS = Object.freeze({reading: 3, meaning: 3, definition: 4, listen: 5, homophone: 5, grammar: 6, exam: {1: 4, 2: 5, 3: 5, 4: 7, 5: 6, 7: 8}});
+// The pause after an answer before the next question, in milliseconds.
+export const PAUSE = Object.freeze({right: 250, miss: 800});
 export const KIND_LABEL = Object.freeze({reading: "Reading", meaning: "Meaning", definition: "Which word", listen: "Listen", homophone: "Which kanji", grammar: "Grammar", exam: "Exam question"});
 const EXAM_MONDAI = new Set([1, 2, 3, 4, 5, 7]);
 const KANJI = /[一-鿿々]/g;
@@ -201,16 +204,18 @@ function interleave(rows) {
 }
 
 // ---- Points ----
-// Right: 100, plus up to 100 for speed, times the streak (×1.1 a step, up to
-// ×2). Wrong: −50. "I don't know" and a timeout: 0. Both of the last two
-// break the streak, so guessing never beats honesty on average.
+// Speed is rewarded and mistakes are punished hard (owner, 26 Nov). Right:
+// 50, plus up to 250 for speed, times the combo (×1.1 a step, up to ×2).
+// Wrong: −200. "I don't know" and a timeout: 0. Wrong, I don't know and a
+// timeout all break the combo, so a blind guess always loses points.
+export const POINTS = Object.freeze({base: 50, speed: 250, wrong: -200, fastShare: .5});
 export function scoreAnswer({outcome, ms = 0, seconds = 10, streak = 0}) {
   if (outcome === "right") {
-    const speed = Math.round(100 * Math.max(0, 1 - ms / (seconds * 1000)));
-    const points = Math.round((100 + speed) * (1 + Math.min(streak, 10) / 10));
-    return {points, streak: streak + 1, fast: speed >= 50};
+    const share = Math.max(0, 1 - ms / (seconds * 1000));
+    const points = Math.round((POINTS.base + POINTS.speed * share) * (1 + Math.min(streak, 10) / 10));
+    return {points, streak: streak + 1, fast: share >= POINTS.fastShare};
   }
-  return {points: outcome === "wrong" ? -50 : 0, streak: 0, fast: false};
+  return {points: outcome === "wrong" ? POINTS.wrong : 0, streak: 0, fast: false};
 }
 
 // What a miss saves: a missed recall check of the question's own dimension.
