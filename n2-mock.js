@@ -3,7 +3,7 @@ import {bookIds,bookName,EDITION,SETS_EDITION,form,realisticRows,realisticPaperI
 import {access,currentAttempts,download,prefix,report,scored,n2Adapter} from "./n2-progress.js";
 import {startAutoSync,markDirty,gistSettings} from "./sync.js";
 import {SKILLS,SKILL_JA,SECTIONS,PASS_TOTAL,SECTION_MIN,SECTION_MAX,estimate,sprintCheckpoint,nextExamDate,daysUntil,recallQueue,recallRecord,recallId,dailyGoal,coverage,localDay,todayPlan,measuredPace,capMinutes,DAY_MINUTES,EXAM_CHECKLIST,goalDates,formatMinutes,shortenPlan,maintenancePlan,resultsMonth,doneToday,markDone,scoreSeries,scoreCaption,examHeadLine,nextKicker,checkpointLine,mockTileState,historyKind} from "./n2-study.js";
-import {scoreChart,flagSvg,planSteps,loadMeter,evidenceRow,pauseRing,openReportSheet,mountReportButtons} from "./components.js";
+import {collapseRow,scoreChart,flagSvg,chevronLeftSvg,chevronRightSvg,replaySvg,planSteps,loadMeter,evidenceRow,pauseRing,openReportSheet,mountReportButtons} from "./components.js";
 import {REPORT_REASONS,createReport,fileReport,reportSyncLine,reportsAdapter,reportHistory,screenOf,appVersion,deviceInfo} from "./reports.js";
 import {recognitionFactory} from "./speech.js";
 import {speakOnce,speakAndWait,japaneseVoices} from "./speech.js";
@@ -98,6 +98,9 @@ function saveFailed(retry) {
   $("n2-notices").scrollIntoView({block: "nearest"});
 }
 addEventListener("online", offlineNotice); addEventListener("offline", offlineNotice);
+// Bar icons come from components.js, so the page never owns a copy.
+const BAR_ICONS = {prev: chevronLeftSvg, next: chevronRightSvg, replay: replaySvg, flag: flagSvg};
+for (const button of document.querySelectorAll("[data-icon]")) button.insertAdjacentHTML("afterbegin", BAR_ICONS[button.dataset.icon] || "");
 function show(id) { for (const s of ["hub", "recall", "check", "day", "intro", "exam", "rest", "results"]) $(s).hidden = s !== id; document.body.dataset.view = id; }
 
 // Reports (reports.js, ReportSheet): every head has the report button. Each
@@ -793,7 +796,21 @@ function scoreCard(paper, attempt, compact = false) {
 }
 
 /* ───────── Recall ───────── */
-const ASK = {meaning: "Say the meaning, then check", reading: "Read it aloud, then check", grammar: "Say what it means and use it in a sentence"};
+// Day Radio's intro is open on the first visit only, then a closed row.
+function howTo() {
+  const box = $("day-howto");
+  if (box.dataset.ready) return; box.dataset.ready = "1";
+  let seen = false; try { seen = !!localStorage.getItem("echo-n2-day-howto"); localStorage.setItem("echo-n2-day-howto", "1"); } catch {}
+  box.open = !seen;
+}
+const CONTEXT_SHORT = {fresh: "a sentence you haven't seen", same: "the sentence you saw yesterday", heard: "the word itself, by ear", word: "the word alone"};
+$("check-help").onclick = () => { const open = $("check-note").hidden; $("check-note").hidden = !open; $("check-help").setAttribute("aria-expanded", String(open)); };
+const ASK = {meaning: "Say the meaning, then check.", reading: "Read it aloud, then check.", grammar: "Say what it means and use it in a sentence."};
+const TYPE_LABEL = {meaning: "意味 Meaning", reading: "読み Reading", grammar: "文法 Grammar"};
+const QUEUE_LABEL = {daily: "Daily", weak: "Weak", new: "Unchecked"};
+// The card's overline: why it is here, and which meaning when a pattern has two.
+const recallStateLine = (current, type) => [current.weak ? "Weak" : !current.r ? "First check" : current.r.checks + " checks · last " + current.r.last,
+  current.item.senses ? (type === "grammar" ? "meaning " : "sense ") + current.item.sense + " of " + current.item.senses : null].filter(Boolean).join(" · ");
 async function recall() {
   show("recall");
   await materials();
@@ -848,12 +865,12 @@ async function recall() {
     }
     if (!current) { finishRound(); return; }
     clock?.stop(); clock = activeClock();
-    $("recall-ask").textContent = ASK[type];
+    $("recall-ask").textContent = recallStateLine(current, type);
+    $("recall-sub").textContent = TYPE_LABEL[type] + " · " + QUEUE_LABEL[queue];
     $("recall-prompt").textContent = current.item.prompt;
     $("recall-prompt").classList.toggle("long", current.item.prompt.length > 8);
     $("recall-say").hidden = type === "reading";
-    $("recall-state").textContent = (current.item.senses ? "Meaning " + current.item.sense + " of " + current.item.senses + " · the sentence shows which · " : "")
-      + (current.weak ? "Weak · missed or slow last time" : !current.r ? "First check" : current.r.checks + " checks · last " + current.r.last);
+    $("recall-state").textContent = ASK[type] + (current.item.senses ? " The sentence shows which meaning." : "");
     // The sentence: grammar shows it from the start (a pattern is recalled in
     // use); a word shows it with the answer. The English comes with the answer.
     const example = exampleOf(current.item);
@@ -1071,19 +1088,21 @@ async function checks() {
       $("check-prompt").textContent = "Nothing from yesterday.";
       $("check-prompt").classList.add("long");
       $("check-why").textContent = "Misses, guesses and slow answers from recall, mocks and Day Radio come back here the next day, in a sentence you did not see.";
-      $("check-note").textContent = ""; $("check-sentence").hidden = true; $("check-say").hidden = true; $("check-actions").hidden = true;
+      $("check-note").textContent = ""; $("check-provenance").hidden = false; $("check-help").hidden = false; $("check-help").hidden = true; $("check-sentence").hidden = true; $("check-say").hidden = true; $("check-actions").hidden = true;
       return;
     }
     if (!c) { finish(); return; }
     clock?.stop(); clock = activeClock();
-    $("check-ask").textContent = checkAsk(c);
+    $("check-ask").textContent = [audio(c) ? "By ear" : "In print", DIMENSION[c.dimension]].filter(Boolean).join(" · ");
     $("check-prompt").textContent = audio(c) ? "…" : c.prompt;
     $("check-prompt").classList.toggle("long", !audio(c) && c.prompt.length > 8);
     if (audio(c)) $("check-sentence").hidden = true; else sentence(c, false);
     $("check-say").hidden = !audio(c);
     $("check-say-label").textContent = "Play";
-    $("check-why").textContent = [WHY_LINE[c.why], c.recurring ? "missed before too" : "", audio(c) ? "by ear" : "in print", DIMENSION[c.dimension]].filter(Boolean).join(" · ");
-    $("check-note").textContent = contextNote(c);
+    // One quiet line says why it is here; ? opens what to do and the context.
+    $("check-why").textContent = [WHY_LINE[c.why] + (c.recurring ? ", and before" : ""), CONTEXT_SHORT[c.context === "fresh" ? (c.seen.length ? "fresh" : "") : c.context === "same" ? "same" : audio(c) ? "heard" : "word"]].filter(Boolean).join(" · ");
+    $("check-note").textContent = [checkAsk(c) + ".", contextNote(c)].filter(Boolean).join(" ").replace(/\.\./g, ".");
+    $("check-note").hidden = true; $("check-help").setAttribute("aria-expanded", "false"); $("check-provenance").hidden = false; $("check-help").hidden = false;
     if (audio(c) && gesture) speakCurrent();
   }
   function reveal() {
@@ -1124,7 +1143,7 @@ async function checks() {
   }
   function finish() {
     clock?.stop();
-    $("check-card").hidden = true; $("check-actions").hidden = true; $("check-done").hidden = false;
+    $("check-card").hidden = true; $("check-actions").hidden = true; $("check-done").hidden = false; $("check-provenance").hidden = true; $("check-note").hidden = true;
     $("check-bar").style.width = "100%";
     $("check-done-title").textContent = (session.length - skipped) + " checked a day later";
     $("check-done-line").textContent = tally.instant + " instant · " + tally.slow + " slow · " + tally.missed + " missed · " + skipped + " skipped. Today's misses come back tomorrow.";
@@ -1201,6 +1220,7 @@ async function dayRadio() {
     document.querySelectorAll("#day [role=tab]").forEach(b => b.setAttribute("aria-selected", b.dataset.mode === mode));
     $("day-pace").hidden = mode !== "recall";
     $("day-pace").replaceChildren(...RECALL_PAUSES.map(n => el("button", {type: "button", "data-ui": "button", "aria-pressed": String(n === pause), text: n + " s pause", onclick: () => { pause = n; writeDay({pause}); sync(); }})));
+    howTo();
     $("day-lede").textContent = {
       listen: "Each item: the word, its meaning, a natural sentence, the word again. Leave it playing while you walk, cook or tidy. Keep Echo open — a locked phone stops speech.",
       recall: "Echo says a sentence, pauses, then reveals. Say the meaning aloud in the pause. Tap Got it or Not yet if you can — that is a listening check; otherwise it counts as listening only. Tomorrow, Today's checks tests what you heard.",
@@ -1242,7 +1262,7 @@ async function dayRadio() {
     $("day-reading").textContent = item.reading && item.reading !== item.text ? item.reading : "";
     $("day-meaning").textContent = item.meaning;
     $("day-answer").hidden = hide;
-    $("day-example-ja").textContent = example ? example.ja.replace(/【[^】]*】/g, "") : "";
+    $("day-example-ja").replaceChildren(...(example ? exampleNodes(example.ja, patternNeedles(item.text)) : []));
     $("day-example-en").textContent = example?.en || "";
     $("day-example").hidden = hide || !example;
     $("day-rate").hidden = true;
@@ -1458,7 +1478,8 @@ async function exam() {
     }));
     $("guess").setAttribute("aria-pressed", String(!!state.guesses[state.index]));
     $("prev").disabled = state.index === first;
-    $("next").textContent = state.index === end - 1 ? "Finish" : "›";
+    const finishing = state.index === end - 1;
+    if ($("next").dataset.finishing !== String(finishing)) { $("next").dataset.finishing = String(finishing); $("next").innerHTML = finishing ? "Finish" : chevronRightSvg; $("next").classList.toggle("bar-icon-button", !finishing); }
     $("next").setAttribute("aria-label", state.index === end - 1 ? "Review and finish the section" : "Next question");
   }
   reportCard = () => {
@@ -1490,7 +1511,7 @@ async function exam() {
       results.cues = cues;
       const slips = attemptTags({paper, attempt: state, tagMap: map});
       if (!slips.length) { draw(); return; }
-      $("scores").append(el("details", {class: "n2-more", open: true}, el("summary", {text: "Where comprehension slipped"}),
+      $("scores").append(collapseRow({title: "Where comprehension slipped", meta: slips.slice(0, 2).map(t => t.ja).join(" · ") + (slips.length > 2 ? " · " + (slips.length - 2) + " more" : ""), open: true},
         el("ol", {class: "n2-times"}, ...slips.map(t => el("li", {}, el("span", {lang: "ja", text: t.ja}), " " + t.en + " · " + t.wrong + " of " + t.n + " missed or unsure")))));
       results.tags = map; draw();
     });
@@ -1509,7 +1530,8 @@ async function exam() {
     const top = [...questions].sort((a, b) => state.time[b.index] - state.time[a.index]).slice(0, 5).filter(q => state.time[q.index] > 0);
     if (!top.length) return el("span");
     const total = Math.round(state.time.reduce((a, b) => a + b, 0) / 60000);
-    return el("details", {class: "n2-more"}, el("summary", {text: "Time · " + total + " min in all · slowest questions"}),
+    const pausedMin = state.pausedMs ? Math.max(1, Math.round(state.pausedMs / 60000)) : 0;
+    return collapseRow({title: "Time · " + total + " min answering", meta: (pausedMin ? "Paused " + pausedMin + " min, not counted · " : "") + "slowest questions"},
       el("ol", {class: "n2-times"}, ...top.map(q => el("li", {}, SKILLS[q.skill] + " · " + q.label + " · " + Math.round(state.time[q.index] / 1000) + "s"))));
   }
   const results = {tags: null, cues: null};
@@ -1534,7 +1556,8 @@ async function exam() {
     if (!native || !questions.some(q => q.mondai)) return el("span");
     const groups = new Map();
     for (const q of questions) { const k = (q.skill === 3 ? "聴解 " : "") + "問題" + q.mondai; const g = groups.get(k) || {n: 0, got: 0, missed: []}; g.n++; if (right(q)) g.got++; else g.missed.push(g.n); groups.set(k, g); }
-    return el("details", {class: "n2-more"}, el("summary", {text: "By 問題"}),
+    const weakGroup = [...groups].sort((a, b) => a[1].got / a[1].n - b[1].got / b[1].n)[0];
+    return collapseRow({title: "By 問題", meta: groups.size + " parts" + (weakGroup && weakGroup[1].got < weakGroup[1].n ? " · weakest " + weakGroup[0] + ", " + weakGroup[1].got + " of " + weakGroup[1].n : " · all correct")},
       el("ul", {class: "n2-mondai"}, ...[...groups].map(([k, g]) => el("li", {}, el("span", {lang: "ja", text: k}),
         el("span", {text: g.got + " of " + g.n + " correct" + (g.missed.length && g.missed.length <= 2 ? " · question " + g.missed.join(", ") + " missed" : "")})))));
   }
