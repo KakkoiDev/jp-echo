@@ -9,7 +9,7 @@
 <link rel="icon" href="./favicon.ico" sizes="32x32"><link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="./apple-touch-icon.png"><link rel="manifest" href="./manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
-<link rel="stylesheet" href="./styles.css?v=196">
+<link rel="stylesheet" href="./styles.css?v=197">
 </head>
 <body class="n2">
 <main id="n2-main">
@@ -20,9 +20,9 @@
 <section id="hub" hidden>
   <div class="tool-head"><a class="icon-button" href="./" aria-label="Back to Echo"><svg width="18" height="16" viewBox="0 0 18 16" fill="none" aria-hidden="true"><path d="M8 1 1 8l7 7M1 8h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a><span class="tool-titles"><span class="tool-title">JLPT N2</span><span class="overline" id="hub-exam-line"></span></span></div>
   <div class="n2-hub-grid"><div class="n2-hub-main">
-  <div class="n2-countdown" id="hub-countdown"><strong id="hub-days"></strong><span id="hub-days-label"></span><span class="n2-countdown-pass" id="hub-first-pass"></span></div>
+  <div class="n2-countdown" id="hub-countdown"><strong id="hub-days"></strong><span id="hub-days-label"></span><a class="n2-countdown-change" id="goal-change" href="#training-goal">Change</a></div>
 
-  <details id="training-goal" class="n2-goal"><summary>Exam date and training goal</summary>
+  <details id="training-goal" class="n2-goal collapse-row"><summary><span class="collapse-title">Exam date and training goal</span><span class="collapse-meta">Change the date or the first-pass days</span><svg class="collapse-chevron" width="12" height="8" viewBox="0 0 12 8" fill="none" aria-hidden="true"><path d="m1 1.5 5 5 5-5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
     <form id="training-form" class="n2-goal-form">
       <p class="hint" id="training-intro">The N2 papers, word and grammar checks and Day Radio are built in. The plan works before you import any sentence deck.</p>
       <label class="n2-goal-field"><span class="field-label">Exam date</span><input id="training-exam" data-ui="input" type="date" required aria-describedby="training-exam-date"><span class="hint" id="training-exam-date"></span></label>
@@ -36,18 +36,27 @@
       <p class="hint">You can change the date any time from this page or from Review. Past attempts stay as they are.</p>
     </form>
   </details>
+  <div class="n2-next" id="plan-start-wrap" hidden>
+    <p class="overline" id="plan-next-kicker"></p>
+    <strong class="n2-next-title" id="plan-next-title"></strong>
+    <p class="hint" id="plan-next-line"></p>
+    <a class="button primary" id="plan-start" href="#"></a>
+  </div>
   <div class="n2-state" id="plan-state" hidden></div>
-  <h3 class="rule-heading" id="plan-title">Today</h3>
-  <p class="n2-headline" id="plan-headline" hidden></p>
-  <div id="plan-steps"></div>
-  <div class="n2-plan-start" id="plan-start-wrap" hidden><a class="button primary" id="plan-start" href="#"></a></div>
-  <div class="n2-moved" id="plan-moved" hidden></div>
-  <p class="n2-plan-links" id="plan-links"><a href="#checklist-zone" id="plan-checklist-link">Exam checklist</a><a href="#exams">Mock exams</a></p>
-  <p class="hint n2-forecast" id="plan-forecast"></p>
-  <p class="hint n2-forecast" id="plan-delayed"></p>
-  <div class="notice n2-coach" id="coach-box" hidden><div class="notice-body"><span class="notice-title" id="coach-title">Your coach</span><p class="notice-copy n2-analysis" id="coach-copy" role="status"></p><div class="notice-actions"><button data-ui="button" class="outline" id="coach-reset" type="button" hidden>Use the standard plan</button></div></div></div>
-  <div class="n2-coach-actions"><button data-ui="button" class="outlined small" id="coach" type="button">Plan my day with AI</button><button data-ui="button" class="outlined small" id="generate-open" type="button">Make a practice exam</button></div>
-  <p class="hint n2-ai-hint" id="ai-hint" hidden>Works offline. The standard plan needs no AI service; “Plan my day with AI” and “Make a practice exam” use your own key. <a href="./settings/ai">Add one in Settings → AI service</a>.</p>
+  <details class="collapse-row n2-plan-details" id="plan-details" open><summary><span class="collapse-title" id="plan-title">Today's plan</span><span class="collapse-meta" id="plan-meta"></span><svg class="collapse-chevron" width="12" height="8" viewBox="0 0 12 8" fill="none" aria-hidden="true"><path d="m1 1.5 5 5 5-5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+    <p class="n2-headline" id="plan-headline" hidden></p>
+    <div id="plan-steps"></div>
+    <div class="n2-moved" id="plan-moved" hidden></div>
+    <p class="n2-plan-links" id="plan-links"><a href="#checklist-zone" id="plan-checklist-link">Exam checklist</a></p>
+    <p class="hint n2-forecast" id="plan-forecast"></p>
+    <p class="hint n2-forecast" id="plan-delayed"></p>
+  </details>
+  <details class="collapse-row" id="ai-zone"><summary><span class="collapse-title">With your AI key</span><span class="collapse-meta">Plan my day with AI · Make a practice exam</span><svg class="collapse-chevron" width="12" height="8" viewBox="0 0 12 8" fill="none" aria-hidden="true"><path d="m1 1.5 5 5 5-5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+    <div class="notice n2-coach" id="coach-box" hidden><div class="notice-body"><span class="notice-title" id="coach-title">Your coach</span><p class="notice-copy n2-analysis" id="coach-copy" role="status"></p><div class="notice-actions"><button data-ui="button" class="outline" id="coach-reset" type="button" hidden>Use the standard plan</button></div></div></div>
+    <div class="n2-coach-actions"><button data-ui="button" class="outlined small" id="coach" type="button">Plan my day with AI</button><button data-ui="button" class="outlined small" id="generate-open" type="button">Make a practice exam</button></div>
+    <p class="hint n2-ai-hint" id="ai-hint" hidden>Works offline. The standard plan needs no AI service; “Plan my day with AI” and “Make a practice exam” use your own key. <a href="./settings/ai">Add one in Settings → AI service</a>.</p>
+    <p class="hint">The coach and the exam generator send your scores and recent mistakes to the AI provider set in Echo Settings.</p>
+  </details>
 
   <section class="n2-zone" id="checklist-zone" hidden>
     <h3 class="rule-heading">Exam checklist</h3>
@@ -69,13 +78,18 @@
   <aside class="n2-hub-side" aria-labelledby="study">
   <h3 class="rule-heading" id="study">Readiness</h3>
   <div id="readiness"></div>
-  <div class="n2-coverage" id="coverage"></div>
-  </aside></div>
+  <h3 class="rule-heading" id="checkpoint-title">Sprint checkpoint</h3>
+  <div class="n2-checkpoint" id="checkpoint"></div>
+  <details class="collapse-row n2-coverage-details" id="coverage-zone"><summary><span class="collapse-title" id="coverage-title">Coverage</span><span class="collapse-meta" id="coverage-meta" lang="ja"></span><svg class="collapse-chevron" width="12" height="8" viewBox="0 0 12 8" fill="none" aria-hidden="true"><path d="m1 1.5 5 5 5-5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+    <div class="n2-coverage" id="coverage"></div>
+  </details>
 
   <h3 class="rule-heading" id="exams">Mock exams</h3>
-  <p class="hint n2-lede">Each Echo set has vocabulary, grammar and reading (105 min), then listening (50 min). Answers save on this device as you go.</p>
-  <div class="n2-rows" id="exam-list"></div>
-  <details class="n2-more"><summary>Official sample workbooks and other publishers</summary>
+  <div class="n2-rows" id="exam-resume"></div>
+  <div class="n2-tiles" id="exam-list"></div>
+  <ul class="n2-tile-legend" aria-label="What the tiles show"><li data-state="over">Over the line</li><li data-state="below">Below the line</li><li data-state="new">Not taken</li><li data-state="held">Held for unseen passages</li></ul>
+  <p class="hint n2-lede">Sets 02–20: the full JLPT layout, 問題1–14 and listening 1–5, 105 questions. Answers save on this device as you go.</p>
+  <details class="collapse-row" id="workbooks"><summary><span class="collapse-title">Official sample workbooks and other publishers</span><span class="collapse-meta">PassJapanese · Faust Academy · Migii</span><svg class="collapse-chevron" width="12" height="8" viewBox="0 0 12 8" fill="none" aria-hidden="true"><path d="m1 1.5 5 5 5-5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
     <div class="n2-rows" id="workbook-list"></div>
     <ul class="n2-links">
       <li><a href="https://passjapanese.com/ja/jlpt/n2/full-exams/recent-trends-1" rel="noopener" target="_blank">PassJapanese · 2026 trend mock</a> <span class="hint">101 questions, paid</span></li>
@@ -83,15 +97,18 @@
       <li><a href="https://jlpt.migii.net/en/sample-test/jlpt-n2" rel="noopener" target="_blank">Migii · session-labelled mocks</a></li>
     </ul>
   </details>
+  </aside></div>
 
-  <h3 class="rule-heading" id="history">History and data</h3>
+  <h3 class="rule-heading" id="history">History</h3>
   <div id="score-chart" class="n2-score" hidden></div>
+  <div class="segmented n2-history-filter" role="tablist" aria-label="Show in history">
+    <button data-ui="button" role="tab" type="button" data-kind="all" aria-selected="true">All</button><button data-ui="button" role="tab" type="button" data-kind="exam" aria-selected="false">Exams</button><button data-ui="button" role="tab" type="button" data-kind="section" aria-selected="false">Sections</button><button data-ui="button" role="tab" type="button" data-kind="drill" aria-selected="false">Drills</button>
+  </div>
+  <div class="n2-rows" id="history-list"></div>
+  <p class="hint n2-history-empty" id="history-empty" hidden>Nothing finished yet. Mocks, timed sections and drills you finish appear here, newest first.</p>
   <div class="n2-rows">
     <button data-ui="button" class="library-tool two-line" id="export-report" type="button"><span class="library-tool-glyph" lang="ja" aria-hidden="true">出</span><span class="library-tool-label"><strong>Export study JSON</strong><span>Every attempt and check, for another tool</span></span></button>
   </div>
-  <p class="hint">The coach and the exam generator send your scores and recent mistakes to the AI provider set in Echo Settings.</p>
-  <div class="n2-rows" id="adaptive-list"></div>
-  <div class="n2-rows" id="history-list"></div>
 </section>
 
 <!-- Recall -->

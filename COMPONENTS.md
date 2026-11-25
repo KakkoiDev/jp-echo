@@ -328,3 +328,29 @@ class="scan-code">…</div><figcaption class="hint">…</figcaption></figure>`.
 The plate uses `--scan-ground` / `--scan-ink`, which stay dark-on-paper in
 every theme (many scanners do not read inverted codes). A QR carries a link
 only, never an unlock code. Used by Link another device (`#link-qr`).
+
+## N2 polish primitives (25 Nov)
+
+From the "N2 exam prep polish" boards (`docs/design/n2/DESIGNER-HANDOFF.md`).
+
+### CollapseRow (every disclosure)
+
+`<details class="collapse-row"><summary><span class="collapse-title">…</span>
+<span class="collapse-meta">…</span><svg class="collapse-chevron">…</svg></summary>`.
+A 52 px row: the title, one line saying what is inside, and the chevron that
+turns when open, with a hairline below. Never a bare `<details>` or a marker
+glyph. The N2 hub's plan, AI-key section, coverage and workbooks use it.
+
+### Status chips in rows
+
+One `.status-chip` at a row's end says its state; the meta line keeps the
+number. Kinds: `over` (seal fill: over the pass line), `below` (seal outline),
+`due` (Resume), `muted` (Can't open). Never write the state into the line as
+prose.
+
+### N2 Next card and mock tiles
+
+The hub's `.n2-next` holds the screen's one filled Start, above the open plan;
+an over-budget day is one `.n2-budget` line whose Choose opens the choices.
+`.n2-tiles` shows one tile per set with `data-state` over / below / live /
+held / new (`mockTileState`, n2-study.js), with the legend under it.

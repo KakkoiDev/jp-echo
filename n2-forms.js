@@ -76,7 +76,7 @@ export const topics = [
   ["文化センター","字幕制作の講座","話し言葉を読みやすい字幕にする","言葉を省くと発言の意図まで変わることがある","字幕の見本","翻訳者"]
 ];
 export const bookIds = ["echo-2026-11", ...topics.map((_,i) => "n2-set-" + (i+2))];
-export const bookName = id => id === bookIds[0] ? "01 · November mock" : bookIds.includes(id) ? String(bookIds.indexOf(id)+1).padStart(2,"0")+" · "+topics[bookIds.indexOf(id)-1][1] : "Official workbook · "+id;
+export const bookName = id => id === bookIds[0] ? "01 · November mock" : bookIds.includes(id) ? String(bookIds.indexOf(id)+1).padStart(2,"0")+" · "+topics[bookIds.indexOf(id)-1][1] : id && id !== "undefined" ? "Official workbook · "+id : "Unknown paper";
 function shuffled(list, seed) {
   const result = list.slice();
   for (let i=result.length-1; i>0; i--) {
