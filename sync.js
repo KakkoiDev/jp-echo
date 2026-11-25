@@ -113,7 +113,12 @@ export function mergeGame(a, b) {
   const days = {...(older.days || {})};
   for (const [day, d] of Object.entries(newer.days || {})) { const o = days[day] || {}; days[day] = Object.fromEntries([...new Set([...Object.keys(o), ...Object.keys(d)])].map(k => [k, Math.max(o[k] || 0, d[k] || 0)])); }
   const history = unionBy(a.history, b.history, r => r.at).slice(-500);
-  return {...newer, seen: maxMap(a.seen, b.seen), wins: maxMap(a.wins, b.wins), days, history,
+  // One run, one clock: while both saves are in the same run (same boss mark),
+  // the run began at the earlier start either of them knows. A save made on a
+  // device that had not answered yet (a Sound toggle) must not reset the clock.
+  const sameRun = (a.bossFrom || 0) === (b.bossFrom || 0), starts = [a.runStart, b.runStart].filter(Boolean).sort();
+  const runStart = sameRun && starts.length ? starts[0] : newer.runStart;
+  return {...newer, ...(runStart === undefined ? {} : {runStart}), seen: maxMap(a.seen, b.seen), wins: maxMap(a.wins, b.wins), days, history,
     runs: unionBy(a.runs, b.runs, r => r.at).slice(-200), best: Math.max(a.best || 0, b.best || 0),
     rounds: Math.max(a.rounds || 0, b.rounds || 0, history.length), answered: Math.max(a.answered || 0, b.answered || 0), total: Math.max(a.total || 0, b.total || 0)};
 }

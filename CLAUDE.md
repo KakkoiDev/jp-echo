@@ -340,6 +340,12 @@ Before considering the change complete:
   with tenths, a one-line head (back, ten pips, score and combo), choices in
   the UI sans in the thumb zone, "I don't know · 0" and a quiet flag icon,
   right in `--chip-learn-*` (indigo), bonus in the one new token `--gold`.
+  v280 was measured against every board at 375 px (docs/QUICK-ROUND-BACKLOG.md
+  lists what is built and what waits): the points float lives in the combo
+  line's slot, never over the clock; numbers below zero use U+2212 (`num`);
+  beat ribbons sit above the clock; Home's run clock ticks (`paintClock`) and
+  `mergeGame` keeps a run's earliest start; in the game the voice notice is
+  the one-line `#game-notice` on Home, never Echo's panel.
   The Sound switch also silences the voice and vibration and takes listen
   cards out. Board specs: docs/design/game/DESIGNER-HANDOFF.md (canvas link).
   Its progress (`echo-n2-game`) travels in the N2 gist file as `game`

@@ -52,6 +52,35 @@ After 6 December:
 - 17 · Connective cards with job labels on the answer
 - 18 · Kanji from parts · grammar from parts
 
+## Conformance pass (v280, 26 Nov 2026)
+
+Every screen was measured against the boards at 375 px (rects and computed
+styles, light and dark). The canvas now also has board 12 (missing states) and
+the designer's "v278 against the boards" review with a new ranked fix list.
+
+Built in v280: Home A–D to the board (64 px head, 28 px chips, boss card,
+rest above a quiet run card, the countdown tiers, D alone on the screen), the
+live run clock (ticks every second; a sync can't reset it), the score column
+(round N / ×1.x combo / combo 0, chips from three in a row), the float in the
+combo slot, true minus signs and seal below zero, beat ribbons above the
+clock, the final-stretch strip, kanji choices in the Mincho, the English
+prompt, exam blanks, the listen card, wrapped sentences from the left, the
+flag state and toast, the long pick, furigana overhang, same-sound line in
+the example card, round end A–C and the new-best screen, the first-open
+empties (board 12 · D), the game's own one-line voice notice, Settings'
+Bedtime row, Radio's disabled Start.
+
+Still open (need logic, content or a designer answer):
+- Review fix list 1 (listen cards out of the mix without a voice), 3 is built,
+  4 (which-kanji wrong choices), 9 (boss arrival and intro), 10 (voice-failed
+  card as drawn), 11 (loading), 12 (resume), 15–20.
+- The first-ever round is still paced as a hook by `pace()`; only its ribbon
+  says "First round".
+- Jackpot copy: the boards promise +500 / +1,500, the rules pay nothing, so
+  the ribbon and the 十 screen show no number. Designer to reword.
+- `--right-on` (dark #141820) has no Echo token: `--panel` stands in.
+- Home B's "?" projection row, the night screen's "cue N of M", level chips.
+
 ## After the exam: the rank becomes the level
 
 `docs/JLPT-LEVELS-PLAN.md`, phase 4: start at N5, move up a level by passing

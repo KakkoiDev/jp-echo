@@ -225,7 +225,7 @@ test("bedtime: from the learner's hour until 5 am the round's end points to slee
   assert.equal(atBedtime(at(22, 15), "22:00"), true, "the learner's own hour");
   assert.equal(atBedtime(at(22, 15), "nonsense"), false, "a bad value falls back to 23:30");
   const mock = src("../n2-mock.js"), html = src("../n2-mock.html"), index = src("../index.html");
-  assert.match(mock, /const late = atBedtime\(new Date\(\), settings\.gameBedtime\), warm = inSlumpNext\(\);/);
+  assert.match(mock, /const late = atBedtime\(new Date\(\), settings\.gameBedtime\), warm = inSlumpNext\(\), crown = best && !late;/);
   assert.match(mock, /\$\("game-again-label"\)\.textContent = late \? "One more round" : warm \? "Warm-up round" : "Next round";/);
   assert.match(mock, /\$\("game-sleep"\)\.href = left \? "\?view=evening&from=game" : "\?view=game&panel=radio";/);
   assert.match(html, /id="game-sleep" href="\?view=evening&amp;from=game" hidden>[\s\S]*?Evening recall, then sleep<\/span><\/a>/);
@@ -422,7 +422,24 @@ test("the game follows the boards (Blitz on washi): tokens, clock, head, cards, 
   assert.match(css, /\.qr-btn\{[^}]*height:72px;border-radius:22px/, "board 6: Next round, 72 px");
   assert.match(css, /\.qr-next\{flex:1;height:52px;border-radius:14px;border:0;background:var\(--sumi\)/, "board 5: Next, ink");
   assert.match(css, /\.qr-listen\{[^}]*width:96px;height:96px;border-radius:50%/, "board 3a: the listen button");
-  assert.match(html, /class="qr-ib qr-q" id="game-flag"/); assert.match(mock, /toast\("Flagged, saved as shown · no points"\)/);
+  assert.match(html, /class="qr-ib qr-q" id="game-flag"/); assert.match(mock, /toast\("Flagged, saved as shown", "no points"\)/);
+  // Measured against the boards at 375 px (v280): Home's four states, the loop, the review, the round end, board 11.
+  assert.match(css, /\.n2-game\[data-mode=home\] \.qr-hd,[^{]*\{padding-bottom:8px;min-height:64px\}/, "boards 1, 11: a 64 px head outside the loop");
+  assert.match(css, /\.qr-run \.qr-chip,\.qr-rk \.qr-chip\{height:28px;padding:0 12px;border-radius:14px;font-size:12px/, "board 1: Home chips are 28 px");
+  assert.match(css, /\.qr-bosscard\{border:2px solid var\(--seal\)\}/); assert.match(css, /\.qr-onitile\{width:72px;height:72px/, "board 1 · B");
+  assert.match(css, /\.qr-tiers i\{flex:24;height:8px;border-radius:4px;background:var\(--track\)\}\.qr-tiers i:last-child\{flex:12\}/, "board 1 · D: 24 h, 24 h, then ×1");
+  assert.match(css, /\.qr-ch\.m \.t:lang\(ja\)\{font-family:var\(--display\);font-size:24px;font-weight:700\}/, "board 3a: kanji choices in the Mincho");
+  assert.match(css, /\.qr-big:lang\(en\)\{font-family:var\(--ui\);font-weight:700;font-size:24px;line-height:1\.3;margin:18px 0 6px;overflow-wrap:break-word\}/, "board 3a: the English prompt");
+  assert.match(css, /\.qr-ribbon\{[^}]*padding:12px 16px;border-radius:14px[^}]*font-size:15px;font-weight:900/, "board 4: the beat ribbon");
+  assert.match(css, /\.qr-float\{position:absolute;right:0;bottom:0;/, "the points float sits in the combo line's slot, never on the clock");
+  assert.match(html, /<span class="qr-cb" id="game-combo-chip"><\/span><span class="qr-float" id="game-float" aria-hidden="true"><\/span><\/div>/);
+  assert.match(html, /<div id="game-ribbon" class="qr-ribbon" hidden>[\s\S]*?<div class="qr-clk" id="game-clock">/, "the ribbon sits above the clock");
+  assert.match(css, /\.n2-game label>span:first-child\{font-size:inherit;color:inherit\}/, "Echo's label style doesn't leak into Settings");
+  assert.match(mock, /const num = n => \(n < 0 \? "−" : ""\) \+ Math\.abs\(Math\.round\(n\)\)\.toLocaleString\(\);/, "a true minus sign below zero");
+  assert.doesNotMatch(mock, /Jackpot \+|\+1,500/, "jackpots are a celebration: no points are promised");
+  // The run clock is live on Home: it repaints every second and Home redraws on a change of tier.
+  assert.match(mock, /homeTick = setInterval\(\(\) => \{ if \(root\.dataset\.mode !== "home"\) \{ clearInterval\(homeTick\); return; \} if \(paintClock\(\) !== key\) home\(\); \}, 1000\);/);
+  assert.match(mock, /String\(m\)\.padStart\(2, "0"\) \+ " m left"/, "board 1: 5 h 02 m left");
   assert.match(mock, /prompt\.hidden = listen \|\| sentenceKind;/, "sentence kinds show the sentence alone");
   assert.match(html, /id="game-days"/); assert.match(html, /id="game-countdown"/); assert.match(html, /id="game-bosscard"/);
   assert.equal(surfaceNeedle("この方法なら、問題は解決し得る。", "得る（える・うる）"), "得る");
@@ -444,6 +461,11 @@ test("Quick round progress travels in the N2 gist file: rounds and runs union, m
   assert.deepEqual(m.seen, {"m:a": 5, "m:b": 9, "m:c": 7}); assert.equal(m.wins["m:a"], 5);
   assert.equal(m.days["2026-11-26"].answered, 120); assert.equal(m.days["2026-11-27"].answered, 300);
   assert.equal(m.runStart, phone.runStart, "the newer save's run clock");
+  // The run clock survives a newer save that has no start yet (a Sound toggle on another device), and keeps the earlier start of one run.
+  const quiet = {updatedAt: "2026-11-27T11:00:00Z", sound: false, bossFrom: 0};
+  assert.equal(mergeGame(phone, quiet).runStart, phone.runStart, "a save with no start doesn't reset the clock");
+  assert.equal(mergeGame(phone, {...quiet, runStart: "2026-11-27T10:59:00Z"}).runStart, phone.runStart, "the earlier start of the same run");
+  assert.equal(mergeGame(phone, {...quiet, bossFrom: 1000, runStart: null}).runStart, null, "a newer save past the boss closes it");
   assert.deepEqual(mergeGame(laptop, phone), m, "the same in either order");
   assert.equal(mergeGame(null, phone), phone);
   assert.equal(mergeN2({game: phone}, {game: laptop}).game.best, 1200);
