@@ -29,7 +29,7 @@ test("every N2 disclosure is a CollapseRow; results build theirs with collapseRo
   assert.doesNotMatch(mock, /el\("details"[^)]*n2-more/);
   assert.doesNotMatch(css, /\.n2-more/);
   for (const d of page.match(/<details[^>]*>/g)) assert.match(d, /collapse-row/, d);
-  assert.match(mock, /title: "Time · " \+ total \+ " min answering", meta: \(pausedMin \? "Paused " \+ pausedMin \+ " min, not counted · "/, "paused time is said apart, never as answer time");
+  assert.match(mock, /title: "Time · " \+ total \+ " min answering" \+ \(pausedMin \? " · " \+ pausedMin \+ " min paused" : ""\)/, "paused time is said apart, never as answer time");
 });
 
 test("Recall: Previous card in the card with its label, Missed seal-outlined, Instant the filled grade, no ruby gaps (R1–R3)", () => {

@@ -3,7 +3,7 @@ import {bookIds,bookName,EDITION,SETS_EDITION,form,realisticRows,realisticPaperI
 import {access,currentAttempts,download,prefix,report,scored,n2Adapter} from "./n2-progress.js";
 import {startAutoSync,markDirty,gistSettings} from "./sync.js";
 import {SKILLS,SKILL_JA,SECTIONS,PASS_TOTAL,SECTION_MIN,SECTION_MAX,estimate,sprintCheckpoint,nextExamDate,daysUntil,recallQueue,recallRecord,recallId,dailyGoal,coverage,localDay,todayPlan,measuredPace,capMinutes,DAY_MINUTES,EXAM_CHECKLIST,goalDates,formatMinutes,shortenPlan,maintenancePlan,resultsMonth,doneToday,markDone,scoreSeries,scoreCaption,examHeadLine,nextKicker,checkpointLine,mockTileState,historyKind} from "./n2-study.js";
-import {collapseRow,scoreChart,flagSvg,chevronLeftSvg,chevronRightSvg,replaySvg,planSteps,loadMeter,evidenceRow,pauseRing,openReportSheet,mountReportButtons} from "./components.js";
+import {collapseRow,collapseChevronSvg,scoreChart,flagSvg,chevronLeftSvg,chevronRightSvg,replaySvg,planSteps,loadMeter,evidenceRow,pauseRing,openReportSheet,mountReportButtons} from "./components.js";
 import {REPORT_REASONS,createReport,fileReport,reportSyncLine,reportsAdapter,reportHistory,screenOf,appVersion,deviceInfo} from "./reports.js";
 import {recognitionFactory} from "./speech.js";
 import {speakOnce,speakAndWait,japaneseVoices} from "./speech.js";
@@ -229,9 +229,9 @@ async function solutionLine(q) {
 }
 async function whyLine(why) {
   const resolve = await furigana();
-  if (!resolve || !/[㐀-鿿々]/.test(why)) return el("p", {class: "n2-why", text: why});
+  if (!resolve || !/[㐀-鿿々]/.test(why)) return el("p", {class: "n2-why"}, el("span", {class: "n2-why-label", text: "Why: "}), why);
   const {text, overrides} = whyReadings(why);
-  return el("p", {class: "n2-why"}, ...exampleNodes(resolve(text, overrides).text, []));
+  return el("p", {class: "n2-why"}, el("span", {class: "n2-why-label", text: "Why: "}), ...exampleNodes(resolve(text, overrides).text, []));
 }
 // A listening script, one line per turn ("女：…"). Each speaker gets their own
 // voice where the device has more than one; the labels are not read aloud.
@@ -1514,17 +1514,19 @@ async function exam() {
     $("jump").querySelector('[aria-current="true"]')?.focus({preventScroll: false});
   }
   function renderResults() {
-    $("results-title").textContent = paper.title;
+    $("results-title").textContent = "Results";
     const paused = state.pausedMs ? Math.max(1, Math.round(state.pausedMs / 60000)) : 0;
-    $("results-date").textContent = "Finished " + dateLabel(state.completedAt) + (archivedView ? " · earlier attempt" : "") + (paused ? " · paused " + paused + " min" + (state.pauses > 1 ? " in " + state.pauses + " pauses" : "") : "");
+    $("results-date").textContent = [bookIds.includes(paper.book) ? "Mock " + String(bookIds.indexOf(paper.book) + 1).padStart(2, "0") : paper.title, dateLabel(state.completedAt), archivedView ? "earlier attempt" : null].filter(Boolean).join(" · ");
+    $("results-date").title = paper.title + (paused ? " · paused " + paused + " min" + (state.pauses > 1 ? " in " + state.pauses + " pauses" : "") : "");
     const short = adaptive;
-    $("scores").replaceChildren(short ? doneCard() : scoreCard(paper, state), short ? el("span") : byMondai(), slowest());
+    $("scores").replaceChildren(short ? doneCard() : scoreCard(paper, state));
+    $("results-more").replaceChildren(short ? el("span") : byMondai(), slowest());
     resultActions(short);
     Promise.all([tagMap(), cueMap()]).then(([map, cues]) => {
       results.cues = cues;
       const slips = attemptTags({paper, attempt: state, tagMap: map});
       if (!slips.length) { draw(); return; }
-      $("scores").append(collapseRow({title: "Where comprehension slipped", meta: slips.slice(0, 2).map(t => t.ja).join(" · ") + (slips.length > 2 ? " · " + (slips.length - 2) + " more" : ""), open: true},
+      $("results-more").append(collapseRow({title: "Where comprehension slipped", meta: slips.slice(0, 2).map(t => t.ja).join(" · ") + (slips.length > 2 ? " · " + (slips.length - 2) + " more" : ""), open: true},
         el("ol", {class: "n2-times"}, ...slips.map(t => el("li", {}, el("span", {lang: "ja", text: t.ja}), " " + t.en + " · " + t.wrong + " of " + t.n + " missed or unsure")))));
       results.tags = map; draw();
     });
@@ -1532,9 +1534,19 @@ async function exam() {
     $("script").hidden = native; $("script").href = bookUrl + "script.pdf";
     let filter = "wrong";
     var draw = () => {
-      document.querySelectorAll("#results [data-show]").forEach(b => b.setAttribute("aria-pressed", b.dataset.show === filter));
-      const items = questions.filter(q => filter === "all" || state.answers[q.index] !== q.key || state.guesses[q.index]);
-      $("review-items").replaceChildren(...(items.length ? items.map(reviewItem) : [el("div", {class: "empty-panel"}, el("strong", {text: "Clean sheet"}), el("span", {text: "Every answer was correct and confident."}))]));
+      const flagged = q => state.answers[q.index] !== q.key || state.guesses[q.index];
+      const counts = {wrong: questions.filter(flagged).length, all: questions.length};
+      document.querySelectorAll("#results [data-show]").forEach(b => { b.setAttribute("aria-selected", String(b.dataset.show === filter)); b.textContent = (b.dataset.show === "wrong" ? "Missed and unsure" : "All") + " · " + counts[b.dataset.show]; });
+      const items = questions.filter(q => filter === "all" || flagged(q));
+      if (!items.length) { $("review-items").replaceChildren(el("div", {class: "empty-panel"}, el("strong", {text: "Clean sheet"}), el("span", {text: "Every answer was correct and confident."}))); return; }
+      // Grouped by section, each with its missed and unsure counts.
+      const groups = SECTIONS.map(sec => ({sec, rows: items.filter(q => sec.skills.includes(q.skill))})).filter(g => g.rows.length);
+      $("review-items").replaceChildren(...groups.map(({sec, rows}) => {
+        const missed = rows.filter(q => state.answers[q.index] !== q.key).length, unsure = rows.filter(q => state.guesses[q.index]).length;
+        return el("section", {class: "n2-review-group"},
+          el("h4", {class: "n2-review-group-head"}, el("span", {}, el("span", {lang: "ja", text: sec.ja}), " · " + sec.en.toLowerCase()), el("span", {class: "hint", text: missed + " missed · " + unsure + " unsure"})),
+          ...rows.map(q => reviewItem(q, filter)));
+      }), ...(filter === "wrong" ? [el("p", {class: "hint n2-review-note", text: "Every row is a missed or unsure question; a chip only marks the unsure ones."})] : []));
     };
     document.querySelectorAll("#results [data-show]").forEach(b => b.onclick = () => { filter = b.dataset.show; draw(); });
     draw();
@@ -1544,7 +1556,8 @@ async function exam() {
     if (!top.length) return el("span");
     const total = Math.round(state.time.reduce((a, b) => a + b, 0) / 60000);
     const pausedMin = state.pausedMs ? Math.max(1, Math.round(state.pausedMs / 60000)) : 0;
-    return collapseRow({title: "Time · " + total + " min answering", meta: (pausedMin ? "Paused " + pausedMin + " min, not counted · " : "") + "slowest questions"},
+    const secs = ms => { const t = Math.round(ms / 1000); return t >= 60 ? Math.floor(t / 60) + " min " + (t % 60) : t + "s"; };
+    return collapseRow({title: "Time · " + total + " min answering" + (pausedMin ? " · " + pausedMin + " min paused" : ""), meta: "Slowest: " + top[0].label.split(" · ")[0] + " q" + (top[0].index + 1) + " (" + secs(state.time[top[0].index]) + ")"},
       el("ol", {class: "n2-times"}, ...top.map(q => el("li", {}, SKILLS[q.skill] + " · " + q.label + " · " + Math.round(state.time[q.index] / 1000) + "s"))));
   }
   const results = {tags: null, cues: null};
@@ -1569,21 +1582,20 @@ async function exam() {
     if (!native || !questions.some(q => q.mondai)) return el("span");
     const groups = new Map();
     for (const q of questions) { const k = (q.skill === 3 ? "聴解 " : "") + "問題" + q.mondai; const g = groups.get(k) || {n: 0, got: 0, missed: []}; g.n++; if (right(q)) g.got++; else g.missed.push(g.n); groups.set(k, g); }
-    const weakGroup = [...groups].sort((a, b) => a[1].got / a[1].n - b[1].got / b[1].n)[0];
-    return collapseRow({title: "By 問題", meta: groups.size + " parts" + (weakGroup && weakGroup[1].got < weakGroup[1].n ? " · weakest " + weakGroup[0] + ", " + weakGroup[1].got + " of " + weakGroup[1].n : " · all correct")},
+    const weak = [...groups].filter(([, g]) => g.got < g.n).sort((a, b) => a[1].got / a[1].n - b[1].got / b[1].n);
+    return collapseRow({title: "By 問題" + (weak.length ? " · weakest " + weak[0][0] : " · all correct"), meta: weak.length ? weak.slice(0, 2).map(([k, g]) => k + " " + g.got + " of " + g.n).join(" · ") : groups.size + " parts"},
       el("ul", {class: "n2-mondai"}, ...[...groups].map(([k, g]) => el("li", {}, el("span", {lang: "ja", text: k}),
         el("span", {text: g.got + " of " + g.n + " correct" + (g.missed.length && g.missed.length <= 2 ? " · question " + g.missed.join(", ") + " missed" : "")})))));
   }
-  // One filled button: practise the weakest section on a full paper, or go
-  // back to the plan after a short session.
+  // One filled button, Back to the plan; one outlined, the weakest section's
+  // practice ("Practise listening" opens Day Radio recall); retaking is a link.
   function resultActions(short) {
-    const next = $("result-next"), back = $("result-back");
-    if (short || archivedView) { next.textContent = "Back to the plan"; next.href = "./n2-mock.html"; back.hidden = true; return; }
+    const drill = $("result-drill");
+    if (short || archivedView) { drill.hidden = true; return; }
     const e = estimate(paper, state);
     const weakest = [...e.sections].filter(s => s.total).sort((a, b) => a.correct / a.total - b.correct / b.total)[0];
-    const plan = weakest?.key === "listening" ? ["Practise listening", "?view=radio&mode=recall"] : weakest?.key === "reading" ? ["Practise reading", "./n2-mock.html#plan-title"] : ["Drill my weak items", "?view=recall&queue=weak"];
-    next.textContent = plan[0]; next.href = plan[1]; back.hidden = false;
-    $("drill-misses").hidden = plan[1].includes("queue=weak");
+    const plan = weakest?.key === "listening" ? ["Practise listening", "?view=radio&mode=recall"] : ["Drill my weak items", "?view=recall&queue=weak"];
+    drill.textContent = plan[0] + (weakest ? " · " + weakest.ja + " first" : ""); drill.href = plan[1]; drill.hidden = false;
   }
   // The line that decided an answer, marked in its passage or script.
   function decisive(q) {
@@ -1615,20 +1627,27 @@ async function exam() {
     drawChips();
     return el("div", {class: "n2-cause"}, el("p", {class: "hint", text: pick ? "Why it went wrong" : "Why did this one go wrong?"}), group);
   }
-  function reviewItem(q) {
+  // A review row: the question number, its stem in full, a chip only where it
+  // adds something (Unsure; Missed or Blank in All), and the chevron. Open, it
+  // shows your answer struck through, the right one in the ON idiom, the
+  // solution with furigana, then why.
+  function reviewItem(q, filter = "wrong") {
     const answer = state.answers[q.index], right = answer === q.key, unsure = state.guesses[q.index];
-    const chip = right ? (unsure ? {text: "Unsure", kind: "learning"} : {text: "Correct", kind: ""}) : {text: answer ? "Missed" : "Blank", kind: "due"};
-    const item = el("details", {class: "n2-review"},
-      el("summary", {}, el("span", {class: "n2-review-n", text: SKILL_JA[q.skill] + " · " + q.label}),
-        el("span", {class: "n2-review-stem", lang: "ja"}, native ? marked(q.prompt) : "Your answer " + (answer || "—") + " · correct " + q.key),
-        el("span", {class: "status-chip " + chip.kind, text: chip.text})));
+    const chip = unsure ? {text: "Unsure", kind: "below"} : filter === "all" && !right ? {text: answer ? "Missed" : "Blank", kind: "muted"} : null;
+    const summary = el("summary", {}, el("span", {class: "n2-review-n", text: String(q.index + 1)}),
+      el("span", {class: "n2-review-stem", lang: "ja"}, native ? marked(q.prompt) : "Your answer " + (answer || "—") + " · correct " + q.key),
+      chip ? el("span", {class: "status-chip " + chip.kind, text: chip.text}) : el("span"));
+    summary.insertAdjacentHTML("beforeend", collapseChevronSvg);
+    const item = el("details", {class: "n2-review"}, summary);
     if (native) {
-      if (q.context) item.append(el("p", {class: "n2-passage small", lang: "ja", text: (q.skill === 3 ? "Script · " : "") + q.context}));
-      item.append(el("ol", {class: "n2-review-choices"}, ...q.choices.map((c, i) => el("li", {lang: "ja", class: i + 1 === q.key ? "right" : i + 1 === answer ? "picked" : ""}, c))));
-      const tags = results.tags ? tagsOf(results.tags, sourceOf(paper, q)) : [];
-      if (tags.length) item.append(el("p", {class: "hint", text: "Hinges on: " + tags.map(t => TAG[t].ja + " " + TAG[t].en.toLowerCase()).join(" · ")}));
+      const choice = (i, kind, label) => el("div", {class: "n2-review-choice", "data-kind": kind},
+        el("span", {class: "n2-choice-n", text: String(i)}), el("span", {class: "n2-review-choice-text", lang: "ja", text: q.choices[i - 1]}), el("span", {class: "status-chip " + (kind === "right" ? "below" : "muted"), text: label}));
+      item.append(el("div", {class: "n2-review-choices"},
+        answer && !right ? choice(answer, "picked", "Your answer") : null,
+        choice(q.key, "right", right ? "Right · yours" : "Right"),
+        !answer ? el("p", {class: "hint", text: "Left blank."}) : null));
       // Furigana on the solution and the explanation, filled in when opened.
-      const solution = el("div", {class: "n2-solution-wrap"}), why = q.why ? el("p", {class: "n2-why", text: q.why}) : null;
+      const solution = el("div", {class: "n2-solution-wrap"}), why = q.why ? el("p", {class: "n2-why"}, el("span", {class: "n2-why-label", text: "Why: "}), q.why) : null;
       item.append(solution); if (why) item.append(why);
       item.addEventListener("toggle", async () => {
         if (!item.open || item.dataset.readings) return;
@@ -1636,7 +1655,11 @@ async function exam() {
         solution.replaceChildren(...await solutionLine(q));
         if (why) why.replaceWith(await whyLine(q.why));
       });
+      const tags = results.tags ? tagsOf(results.tags, sourceOf(paper, q)) : [];
+      if (tags.length) item.append(el("p", {class: "hint", text: "Hinges on: " + tags.map(t => TAG[t].ja + " " + TAG[t].en.toLowerCase()).join(" · ")}));
       if ((q.skill === 2 || q.skill === 3) && (!right || unsure)) { const line = decisive(q); if (line) item.append(line); item.append(causeRow(q)); }
+      if (q.context) item.append(collapseRow({title: q.skill === 3 ? "Script" : "Passage", meta: q.context.replace(/\s+/g, " ").slice(0, 28) + "…", className: "n2-review-context"},
+        el("p", {class: "n2-passage small", lang: "ja", text: q.context})));
       if (q.skill === 3) item.append(el("button", {class: "link-button", type: "button", text: "Play the script", onclick: () => playScript(listeningLines(q))}));
     }
     return item;
