@@ -2116,16 +2116,21 @@ body.n2-is-paused #exam>:not(.n2-exam-head):not(.n2-paused){display:none}
 /* Results */
 .n2-review-list{margin-top:8px}
 .n2-review{border-bottom:1px solid var(--rule)}
-.n2-review>summary{display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center;min-height:56px;padding:10px 0;cursor:pointer;list-style:none}
+.n2-review>summary{display:grid;grid-template-columns:28px minmax(0,1fr) auto auto;gap:10px;align-items:start;min-height:56px;padding:12px 0;cursor:pointer;list-style:none}
 .n2-review>summary::-webkit-details-marker{display:none}
-.n2-review-n{grid-column:1;font-size:11px;letter-spacing:.08em;color:var(--ink-muted)}
-.n2-review-stem{grid-column:1;font-family:var(--display);font-size:15px;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.n2-review[open] .n2-review-stem{white-space:normal}
-.n2-review .status-chip{grid-column:2;grid-row:1/3;align-self:center}
-.n2-review-choices{margin:12px 0 0;padding-left:22px;font-family:var(--display);font-size:15px;line-height:1.9}
-.n2-review-choices .right{color:var(--seal-deep);font-weight:600}
-.n2-review-choices .right::after{content:" ← correct";font-family:var(--ui);font-size:11px;font-weight:400}
-.n2-review-choices .picked{text-decoration:line-through;text-decoration-color:var(--seal)}
+.n2-review-n{font-size:13px;line-height:1.7;color:var(--ink-muted);font-variant-numeric:tabular-nums}
+.n2-review-stem{font-family:var(--display);font-size:15px;line-height:1.7;overflow-wrap:anywhere}
+.n2-review>summary .status-chip{align-self:start;margin-top:2px}
+.n2-review>summary .collapse-chevron{grid-column:4;grid-row:1;margin-top:8px;color:var(--ink-muted);transition:transform .15s}
+.n2-review[open]>summary .collapse-chevron{transform:rotate(180deg)}
+.n2-review>:not(summary){margin-left:38px}
+.n2-review-choices{display:grid;gap:6px;margin:2px 0 0}
+.n2-review-choice{display:flex;align-items:center;gap:10px;min-height:44px;padding:6px 10px;border:1px solid var(--hairline);border-radius:4px;background:var(--panel)}
+.n2-review-choice .n2-choice-n{width:22px;height:22px;font-size:12px}
+.n2-review-choice-text{flex:1 1 auto;font-family:var(--display);font-size:15px}
+.n2-review-choice .status-chip{align-self:center;flex-shrink:0}
+.n2-review-choice[data-kind=picked] .n2-review-choice-text{text-decoration:line-through;text-decoration-color:var(--seal);color:var(--ink-muted)}
+.n2-review-choice[data-kind=right]{border-color:var(--seal-edge);background:var(--seal-tint);color:var(--seal-deep)}
 .n2-why{margin:10px 0 14px;font-size:13px;line-height:1.6;color:var(--ink-soft)}
 .n2-times{margin:4px 0 0;padding-left:20px;line-height:1.9}
 @media(min-width:760px){.n2-prompt{font-size:64px}.n2-card{min-height:40dvh}}
@@ -2486,3 +2491,15 @@ body .report-sheet .report-note textarea{flex:1 1 auto;flex-basis:auto;height:au
 .n2-break-actions .button{min-height:48px}
 #grid-dialog .n2-grid-title{margin:0;font-family:var(--display);font-weight:600;font-size:19px;line-height:1.3;letter-spacing:.02em}
 #grid-dialog .dialog-actions button{white-space:nowrap;padding-inline:12px;letter-spacing:.02em}
+
+/* Results review (N2 polish): grouped by section, rows read in full. */
+.n2-review-filter{margin-top:12px}
+.n2-review-group{margin-top:14px}
+.n2-review-group-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:0;padding-bottom:6px;border-bottom:1px solid var(--rule);font-family:var(--display);font-weight:600;font-size:16px}
+.n2-review-group-head .hint{margin:0;font-family:var(--ui);font-weight:400;font-size:11px}
+.n2-why-label{color:var(--ink-muted)}
+.n2-review .n2-why{font-size:13px;line-height:1.7;color:var(--ink-soft)}
+.n2-review-context{margin-top:8px}
+.n2-review-note{margin:14px 0 0;font-size:12px}
+.n2-result-actions{align-items:stretch}
+.n2-result-actions .link-button{align-self:flex-start}
