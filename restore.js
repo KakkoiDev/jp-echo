@@ -60,7 +60,7 @@ export function restorePreview(local = {}, incoming = {}) {
   const ln = local[FILES.n2] || {}, inn = incoming[FILES.n2];
   const lr = local[FILES.reports] || {}, ir = incoming[FILES.reports];
   const p = {sentences: 0, recovered: 0, updatedSentences: 0, reviews: 0, notes: 0, updatedNotes: 0, words: 0, updatedWords: 0, dictionary: 0,
-    exams: 0, updatedExams: 0, papers: 0, recallChecks: 0, radio: 0, goal: false, reports: 0, updatedReports: 0};
+    exams: 0, updatedExams: 0, papers: 0, recallChecks: 0, radio: 0, nights: 0, goal: false, reports: 0, updatedReports: 0};
   if (ib) {
     const deleted = lb.deleted?.sentences || {};
     const norm = x => mergeSentences(x, x);
@@ -83,6 +83,7 @@ export function restorePreview(local = {}, incoming = {}) {
     const r = changes(base.recall, after.recall, x => x.id), oldRecall = byKey(base.recall, x => x.id);
     for (const x of [...r.added, ...r.updated]) p.recallChecks += Math.max(0, list(x.events).length - list(oldRecall.get(x.id)?.events).length);
     p.radio = changes(base.events, after.events, x => x.id).added.length;
+    p.nights = changes(list(base.nights), list(after.nights), x => x.id).added.length;
     p.goal = sig(base.goal ?? null) !== sig(after.goal ?? null);
   }
   if (ir) { const c = changes(mergeReports(list(lr.reports)), mergeReports(list(lr.reports), list(ir.reports)), x => x.id); p.reports = c.added.length; p.updatedReports = c.updated.length; }
@@ -98,11 +99,11 @@ export function countsLine(c) {
 // Additions, recoveries and updates are told apart. With nothing to change,
 // the line names what it compared rather than claiming the whole save.
 export function previewLine(p) {
-  if (p.nothing) return "Nothing to bring in: no new or newer sentences, reviews, notes, saved words, exams, recall checks, Day Radio plays, reports or goal.";
+  if (p.nothing) return "Nothing to bring in: no new or newer sentences, reviews, notes, saved words, exams, recall checks, Day Radio plays, Night Radio nights, reports or goal.";
   const join = parts => parts.filter(Boolean).join(", ");
   const added = join([p.sentences && plural(p.sentences, "sentence"), p.reviews && plural(p.reviews, "review"), p.notes && plural(p.notes, "note"),
     p.words && plural(p.words, "saved word"), p.exams && plural(p.exams, "finished exam"), p.papers && plural(p.papers, "practice paper"),
-    p.recallChecks && plural(p.recallChecks, "recall check"), p.radio && plural(p.radio, "Day Radio play"), p.reports && plural(p.reports, "report"),
+    p.recallChecks && plural(p.recallChecks, "recall check"), p.radio && plural(p.radio, "Day Radio play"), p.nights && plural(p.nights, "Night Radio night"), p.reports && plural(p.reports, "report"),
     p.dictionary && plural(p.dictionary, "dictionary entry", "dictionary entries")]);
   const updated = join([p.updatedSentences && plural(p.updatedSentences, "sentence"), p.updatedNotes && plural(p.updatedNotes, "note"),
     p.updatedWords && plural(p.updatedWords, "saved word"), p.updatedExams && plural(p.updatedExams, "exam"), p.updatedReports && plural(p.updatedReports, "report"),

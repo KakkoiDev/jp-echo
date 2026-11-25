@@ -6,6 +6,9 @@ import {delayedChecks, CHECK_SOURCE} from "../n2-delayed.js";
 import {radioEvent, examplesFromDecks} from "../day-radio.js";
 import {recallRecord, recallId} from "../n2-study.js";
 import {radioSteps} from "../radio.js";
+import {mergeN2, signatures} from "../sync.js";
+import {restorePreview, previewLine} from "../restore.js";
+import {FILES} from "../sync.js";
 
 const read = p => JSON.parse(readFileSync(new URL(p, import.meta.url), "utf8"));
 const src = p => readFileSync(new URL(p, import.meta.url), "utf8");
@@ -78,15 +81,34 @@ test("the next day's checks are counted by half; a print miss or a slow ear coun
   assert.equal(comparisonLine(nightComparison({nights: [], recall, events})), "");
 });
 
-test("the Radio screen plays the cued half only and keeps the split on this device, out of every backup", () => {
+test("the Radio screen plays the cued half only and the nights travel with the N2 data", () => {
   const app = src("../app.js"), html = src("../index.html"), sw = src("../sw.js"), mock = src("../n2-mock.js"), night = src("../n2-night.js");
   assert.match(app, /return radioSource\(\)==="n2"\?radioN2\?\.plan\.cued\|\|\[\]:radioSentences/);
   assert.match(app, /radio\.start\(queue,/);
-  assert.match(app, /localStorage\.setItem\(NIGHT_KEY,JSON\.stringify\(keepNight\(readNights\(\),nightRecord\(radioN2\.plan\)\)\)\)/);
+  assert.match(app, /localStorage\.setItem\(NIGHT_KEY,JSON\.stringify\(keepNight\(readNights\(\),nightRecord\(radioN2\.plan\)\)\)\);markDirty\("n2"\)/);
   assert.match(html, /id="radio-source" class="segmented radio-source" role="tablist"/);
   assert.match(html, /id="radio-compare" type="checkbox"> Cue half, to compare tomorrow/);
   assert.match(sw, /"\.\/n2-night\.js"/);
   assert.match(mock, /comparisonLine\(nightComparison\(/);
-  assert.doesNotMatch(night, /access\(|indexedDB|markDirty/, "the split is not learning evidence");
-  assert.doesNotMatch(src("../sync.js") + src("../restore.js"), /echo-n2-night/);
+  assert.doesNotMatch(night, /access\(|indexedDB/, "a night is a record of what played, never recall evidence");
+  const progress = src("../n2-progress.js");
+  assert.match(progress, /recall,events,nights:readNights\(\)\}/, "the N2 export carries the nights");
+  assert.match(progress, /recall,events,nights:readNights\(\),goal:readGoal\(\)/, "the gist N2 file carries the nights");
+  assert.match(progress, /localStorage\.setItem\(NIGHT_KEY,JSON\.stringify\(merged\.nights\)\)/);
+});
+
+test("nights merge by day across devices, the later save winning, and a restore names them", () => {
+  const a = {id: "night-2026-11-24", day: "2026-11-24", at: "2026-11-24T22:00:00Z", compare: true, cued: ["x"], held: ["y"]};
+  const b = {id: "night-2026-11-25", day: "2026-11-25", at: "2026-11-25T22:00:00Z", compare: true, cued: ["p"], held: ["q"]};
+  const later = {...a, at: "2026-11-24T23:00:00Z", cued: ["x", "z"]};
+  const merged = mergeN2({nights: [a]}, {nights: [later, b]});
+  assert.deepEqual(merged.nights.map(n => n.day), ["2026-11-24", "2026-11-25"]);
+  assert.deepEqual(merged.nights[0].cued, ["x", "z"], "the later save of a day wins");
+  assert.deepEqual(mergeN2({nights: [later]}, {nights: [a]}).nights[0].cued, ["x", "z"], "in either order");
+  assert.notEqual(signatures.n2({nights: [a]}), signatures.n2({nights: [later]}), "a changed night is pushed");
+  assert.equal(signatures.n2(mergeN2({nights: [a]}, {nights: [a]})), signatures.n2({nights: [a]}), "an unchanged night is not");
+  const preview = restorePreview({[FILES.n2]: {nights: [a]}}, {[FILES.n2]: {nights: [a, b]}});
+  assert.equal(preview.nights, 1);
+  assert.match(previewLine(preview), /1 Night Radio night/);
+  assert.equal(nightRecord({day: "2026-11-25", compare: false, cued: [], held: []}).id, "night-2026-11-25");
 });

@@ -7,7 +7,7 @@ import {collapseRow,collapseChevronSvg,scoreChart,flagSvg,chevronLeftSvg,chevron
 import {REPORT_REASONS,createReport,fileReport,reportSyncLine,reportsAdapter,reportHistory,screenOf,appVersion,deviceInfo} from "./reports.js";
 import {recognitionFactory} from "./speech.js";
 import {speakOnce,speakAndWait,japaneseVoices} from "./speech.js";
-import {NIGHT_KEY, nightComparison, comparisonLine} from "./n2-night.js";
+import {readNights, nightComparison, comparisonLine} from "./n2-night.js";
 import {spokenWord,radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
 import {TAG,TAGS,HELD_OUT,CAUSES,comprehensionStats,weakestTag,tagDrill,drillExposure,attemptTags,tagsOf,sourceOf} from "./n2-comprehension.js";
 import {exampleSegments,patternNeedles,delayedChecks,checkItems,checkAsk,contextNote,sentenceParts,checkDetail,audioGrade,delayedAccuracy,CHECK_SOURCE,WHY_LINE,evidenceFor,evidenceLine} from "./n2-delayed.js";
@@ -144,8 +144,7 @@ async function materials() {
 }
 // Night Radio's cued-against-held tally (n2-night.js), after the checks it counts.
 async function nightLine() {
-  let nights = [];
-  try { nights = JSON.parse(localStorage.getItem(NIGHT_KEY) || "[]"); } catch {}
+  const nights = readNights();
   if (!nights.some(n => n?.compare)) return "";
   const data = await report();
   return comparisonLine(nightComparison({nights, recall: data.recall, events: data.events}));

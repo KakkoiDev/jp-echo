@@ -16,7 +16,7 @@ import {allDataBundle,isAllDataBundle,bundleCounts,restorePreview,countsLine,pre
 import {startAutoSync,gistSettings,breakTies,markDirty,syncState,mergeDeleted,applyDeleted,readDeleted,saveDeleted,recordDeletion,forgetDeletion} from "./sync.js";
 import {n2Adapter,report as n2Report,scored as n2Scored} from "./n2-progress.js";
 import {examplesFromDecks} from "./day-radio.js";
-import {NIGHT_KEY,nightPlan,nightRecord,keepNight,nightComparison,comparisonLine} from "./n2-night.js";
+import {NIGHT_KEY,nightPlan,nightRecord,keepNight,nightComparison,comparisonLine,readNights} from "./n2-night.js";
 import {READINGS_RULE,correctSentenceReadings,analyzeSentenceGrammar,askModel,rewriteSentence,adjustNote,carries,compose,composeFromIntent,PROVIDER_DEFAULTS,tagGrammar,translate,discuss,generateReading,writeNotes,writeWordNote,transcribeAudio} from "./api.js";
 import {grammarListItems,setImportedGrammar,byLevel as grammarByLevel,cleanTags as grammarTags,coverage as grammarCoverage,hasGrammar,isTagged,learned as grammarLearned,LEVELS as GRAMMAR_LEVELS,point as grammarPoint,POINTS as GRAMMAR_POINTS,summarise as grammarSummarise,untagged as untaggedSentences} from "./grammar.js";
 import {speakOnce,japaneseVoices,recognitionFactory,ShadowLoop,ConversationLoop,RadioPlayer,NoiseBed} from "./speech.js";
@@ -2793,7 +2793,6 @@ function renderRadioResume(){let day={};try{day=JSON.parse(localStorage.getItem(
 // Tonight plays today's N2 work (n2-night.js) or the reviewed Echo sentences.
 // The N2 night may cue half and hold half back; tomorrow's checks compare them.
 let radioN2=null,radioN2Materials=null;
-function readNights(){try{return JSON.parse(localStorage.getItem(NIGHT_KEY)||"[]")}catch{return []}}
 async function n2NightMaterials(){if(!radioN2Materials)radioN2Materials=(async()=>{const get=path=>fetch(path).then(r=>r.ok?r.json():null).catch(()=>null);
   const [inventory,...decks]=await Promise.all(["./n2-inventory.json","./decks/n2-words.json","./decks/n2-grammar.json"].map(get));
   return inventory?{inventory,examples:examplesFromDecks(inventory,decks.filter(Boolean))}:null})();return radioN2Materials}
@@ -2826,7 +2825,7 @@ function startRadio(){const queue=radioQueueNow();if(!queue.length)return;loop.s
   if(settings.radioNoise!==false)radioNoise.start();
   $("#radio-night").hidden=false;
   radio.start(queue,{steps:radioSteps,phaseAt:elapsed=>radioPhase(elapsed,plan),voiceFor,rate:Math.min(1,Number($("#rate").value)||1)});
-  if(radioSource()==="n2"&&radioN2)try{localStorage.setItem(NIGHT_KEY,JSON.stringify(keepNight(readNights(),nightRecord(radioN2.plan))))}catch{}
+  if(radioSource()==="n2"&&radioN2)try{localStorage.setItem(NIGHT_KEY,JSON.stringify(keepNight(readNights(),nightRecord(radioN2.plan))));markDirty("n2")}catch{}
   holdRadioWake()}
 function stopRadio(){if(!radio.running&&$("#radio-night").hidden)return;radio.stop();radioNoise.stop();releaseRadioWake();$("#radio-night").hidden=true}
 function renderRadioState(at,item){const copy=RADIO_PHASE_COPY[at.phase];$("#radio-phase").textContent=copy.title;$("#radio-line").textContent=item&&at.phase==="wind-down"?stripFurigana(item.target):copy.line;

@@ -6,9 +6,11 @@
 //
 // To let the learner see whether it helps them, the night may cue only half
 // of that batch (a fixed split by day and item). Tomorrow's checks test both
-// halves, and nightComparison counts how each half did. The split is kept on
-// this device (localStorage "echo-n2-night"); it is not learning evidence and
-// never reaches the recall records, events, backups or the gist.
+// halves, and nightComparison counts how each half did. Each night is kept in
+// localStorage "echo-n2-night" and travels in the N2 file (`nights`, merged
+// by day in mergeN2) and the N2 export, so it can be shared and studied. It
+// is a record of what was played, not evidence: it never changes recall
+// records or events.
 // Pure (no DOM, no storage): test/n2-night.test.js holds it.
 import {localDay} from "./n2-study.js";
 import {delayedChecks, previousDay, CHECK_SOURCE} from "./n2-delayed.js";
@@ -57,9 +59,12 @@ export function nightPlan({inventory, recall = [], evidence = [], events = [], e
 
 // What the device keeps about a night: the day and the two halves, by key.
 export function nightRecord(plan, now = new Date()) {
-  return {day: plan.day, at: now.toISOString(), compare: plan.compare, cued: plan.cued.map(i => i.key), held: plan.held.map(i => i.key)};
+  return {id: "night-" + plan.day, day: plan.day, at: now.toISOString(), compare: plan.compare, cued: plan.cued.map(i => i.key), held: plan.held.map(i => i.key)};
 }
 // One record per day, newest last, the latest NIGHT_KEEP nights.
+export function readNights(storage = globalThis.localStorage) {
+  try { const list = JSON.parse(storage?.getItem(NIGHT_KEY) || "[]"); return Array.isArray(list) ? list.filter(n => n?.day).map(n => ({id: "night-" + n.day, ...n})) : []; } catch { return []; }
+}
 export function keepNight(nights = [], record) {
   return [...nights.filter(n => n && n.day !== record.day), record].sort((a, b) => a.day.localeCompare(b.day)).slice(-NIGHT_KEEP);
 }

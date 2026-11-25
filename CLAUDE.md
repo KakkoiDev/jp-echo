@@ -196,8 +196,10 @@ Before considering the change complete:
   Today's checks opens tomorrow, each item as its deck sentence. Sleep only
   strengthens what was studied awake, so the night never brings in new items.
   "Cue half" holds a fixed half back and `nightComparison` counts the next
-  day's checks by half; the split lives in localStorage `echo-n2-night`, never
-  in the N2 records, a backup or the gist.
+  day's checks by half. Each night (`nightRecord`, id `night-<day>`) lives in
+  localStorage `echo-n2-night` and travels as `nights` in the N2 file and the
+  N2 export (merged by day in `mergeN2`, the later save winning), so it can be
+  shared and studied; it is a record of what played, never recall evidence.
 - **Mora pictures are the owner's drawn set.** `anchors/` and `anchors-dark/`
   hold one picture per current anchor (MORA_MNEMONICS v5), switched by theme
   through `themedPictureHtml`; `mora-pictures.js` maps kana to file, section and

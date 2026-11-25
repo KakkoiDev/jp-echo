@@ -1,6 +1,7 @@
 import {readGoal,goalKey,goalAtKey} from "./jlpt-goal.js";
 import {betterAttempt,markDirty,mergeN2} from "./sync.js";
 import {bookIds,bookName} from "./n2-forms.js";
+import {NIGHT_KEY,readNights} from "./n2-night.js";
 
 export const prefix="echo-n2-mock-v1-";
 const tables=["papers","history","recall","events"];
@@ -39,7 +40,7 @@ export async function report() {
   const [papers,archived,recall,events]=await Promise.all(tables.map(t=>access(t,"getAll")));
   const attempts=new Map(archived.map(a=>[a.id,a]));
   currentAttempts().forEach(a=>attempts.set(a.id,a));
-  return {schema:"echo.n2.study.v1",exportedAt:new Date().toISOString(),trainingGoal:readGoal(),papers,attempts:[...attempts.values()],recall,events};
+  return {schema:"echo.n2.study.v1",exportedAt:new Date().toISOString(),trainingGoal:readGoal(),papers,attempts:[...attempts.values()],recall,events,nights:readNights()};
 }
 export function scored(data) {
   const papers=new Map(data.papers.map(p=>[p.id,p]));
@@ -74,7 +75,7 @@ export async function n2Document(){
   const [papers,history,recall,events]=await Promise.all(tables.map(t=>access(t,"getAll")));
   const finished=new Map(history.map(a=>[a.id,a]));
   for(const a of currentAttempts())if(a.phase==="results")finished.set(a.id,betterAttempt(a,finished.get(a.id)));
-  return {app:"echo",kind:"n2",schemaVersion:1,papers,history:[...finished.values()],recall,events,goal:readGoal(),goalAt:localStorage.getItem(goalAtKey)||""};
+  return {app:"echo",kind:"n2",schemaVersion:1,papers,history:[...finished.values()],recall,events,nights:readNights(),goal:readGoal(),goalAt:localStorage.getItem(goalAtKey)||""};
 }
 export const n2Adapter=()=>({
   read:n2Document,
@@ -86,6 +87,7 @@ export const n2Adapter=()=>({
       if(merged.goal)localStorage.setItem(goalKey,JSON.stringify(merged.goal));else localStorage.removeItem(goalKey);
       if(merged.goalAt)localStorage.setItem(goalAtKey,merged.goalAt);
     }
+    if(JSON.stringify(merged.nights)!==JSON.stringify(local.nights))try{localStorage.setItem(NIGHT_KEY,JSON.stringify(merged.nights))}catch{}
     return merged;
   },
 });

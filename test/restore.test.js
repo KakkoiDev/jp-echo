@@ -62,7 +62,7 @@ test("the preview counts what Apply changes: additions, recoveries and updates, 
   assert.deepEqual([p.sentences, p.recovered, p.updatedSentences, p.reviews, p.exams, p.recallChecks, p.radio], [1, 1, 1, 3, 2, 1, 1]);
   assert.equal(previewLine(p), "New to this device: 1 sentence, 3 reviews, 2 finished exams, 1 recall check, 1 Day Radio play. Brought back: 1 sentence deleted here. Newer in this save: 1 sentence. Everything else here is kept.");
   assert.ok(restorePreview(applyLike(local, incoming), incoming).nothing, "after Apply the same save has nothing left to bring");
-  assert.equal(previewLine(restorePreview(incoming, incoming)), "Nothing to bring in: no new or newer sentences, reviews, notes, saved words, exams, recall checks, Day Radio plays, reports or goal.");
+  assert.equal(previewLine(restorePreview(incoming, incoming)), "Nothing to bring in: no new or newer sentences, reviews, notes, saved words, exams, recall checks, Day Radio plays, Night Radio nights, reports or goal.");
 });
 
 test("a report-only, saved-word-only, note-only or goal-only save is not called empty (bug handoff #3)", () => {

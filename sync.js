@@ -110,6 +110,8 @@ export function mergeN2(local = {}, remote = {}) {
     history: pick(byId(local.history, betterAttempt), remote.history, betterAttempt),
     recall: pick(byId(local.recall, mergeRecall), remote.recall, mergeRecall),
     events: pick(byId(local.events, a => a), remote.events, a => a),
+    // Night Radio nights (n2-night.js): one per day, the later save wins.
+    nights: pick(byId(local.nights, a => a), remote.nights, (a, b) => time(b.at) > time(a.at) ? b : a).sort((a, b) => String(a.day).localeCompare(String(b.day))),
     goal: goalSource.goal ?? null,
     goalAt: goalSource.goalAt || "",
   };
@@ -135,6 +137,7 @@ export const signatures = {
     rows(doc?.history, a => attemptRank(a).join("|") + "|" + a.id + "|" + JSON.stringify(Object.entries(a.causes || {}).sort())),
     rows(doc?.recall, r => [r.id, (r.events || []).length, time(r.updatedAt)].join("|")),
     rows(doc?.events, e => e.id),
+    rows(doc?.nights, n => [n.id, time(n.at)].join("|")),
     JSON.stringify(doc?.goal || null), time(doc?.goalAt),
   ].join("\n#\n")),
   reports: doc => hash(rows(doc?.reports, r => [r.id, time(r.updatedAt), r.status].join("|"))),
