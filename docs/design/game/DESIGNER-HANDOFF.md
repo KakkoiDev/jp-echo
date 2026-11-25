@@ -115,6 +115,29 @@ know" saves a missed recall check, so it also comes back in Echo's Evening
 recall, the Night Radio and the next day's checks. Game stats (day totals,
 round history, best, last seen per question) stay on the device.
 
+## Since the shots (v272)
+
+The owner's shape for the app, in their words: "the app home screen has 3
+features: Play, Radio, Settings. Play gives me the exam boss every 1,000
+questions, gives me bonuses for speed, keeps me fighting to get to that boss,
+and then lets me rest. Simple and fun."
+
+- **Home**: Play (one big button), Radio, Settings, a meter to the next boss,
+  and the ranking of runs. Back from a round returns here.
+- **The boss**: every 1,000 questions, the real full mock at **half the time**.
+- **Runs**: 1,000 questions plus their boss. Ranked by the two scores added
+  together; each run keeps both for the in-depth view.
+- **Rest**: after the boss, the home says rest for the day.
+- **Zone and pacing**: a hidden level keeps the player about 80% right, and
+  rounds come in waves (hook, breather, easy, steady, hard, peak; a final
+  stretch before the boss). Bonus ×3 questions, doubled at peaks; jackpots at
+  combos of 5 and 10.
+- **Bedtime**: from the learner's bedtime, a round's end leads to Evening
+  recall and the Night Radio.
+
+Design the home, the boss's arrival and its half-time intro, the rest state,
+the run ranking (merged and in depth), and how each pacing beat feels.
+
 ## What is wrong with it today (see the shots)
 
 1. **It looks like a study page, not a game.** Same cards, same rows, same

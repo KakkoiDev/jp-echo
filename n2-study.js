@@ -125,7 +125,7 @@ export function estimate(paper, attempt) {
 // total against the pass line (a score, never a pass probability). Sections
 // and drills never score all three sections, so they are left out.
 export function scoreSeries(attempts = [], papers = new Map()) {
-  return attempts.filter(a => a.phase === "results" && papers.get(a.paper || a.book))
+  return attempts.filter(a => a.phase === "results" && !a.boss && papers.get(a.paper || a.book))
     .map(a => ({a, e: estimate(papers.get(a.paper || a.book), a)}))
     .filter(({e}) => e.complete)
     .sort((x, y) => String(x.a.completedAt || "").localeCompare(String(y.a.completedAt || "")))
@@ -485,7 +485,8 @@ export function sprintCheckpoint(attempts, papers, eligibleBooks, now = new Date
   const {firstUse} = drillExposure(papers.values(), attempts);
   const first = new Map();
   for (const a of [...attempts].sort((x,y) => (x.startedAt || "").localeCompare(y.startedAt || ""))) {
-    if (eligibleBooks.includes(a.book) && !first.has(a.book)) first.set(a.book, a);
+    // A boss sitting (Quick round, half time) is not a standard sitting.
+    if (eligibleBooks.includes(a.book) && !a.boss && !first.has(a.book)) first.set(a.book, a);
   }
   const cutoff = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6);
   const runs = [];

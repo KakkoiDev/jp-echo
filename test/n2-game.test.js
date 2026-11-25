@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
-import {FLOW, BONUS, flowStep, flowMix, flowSeconds, levelOf, bonusPoints, SECONDS, PAUSE, REVIEW_SECONDS, inSlump, nextRound, WARM_UP, gamePool, choicesFor, pickRound, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, nearMisses, gloss, today, lastDays, ranking, bossSet,
+import {pace, WAVE, HOOK, STRETCH, bossProgress, takeBoss, resting, runTable, BOSS_EVERY, EXAM_POINT, atBedtime, BEDTIME, FLOW, BONUS, flowStep, flowMix, flowSeconds, levelOf, bonusPoints, SECONDS, PAUSE, REVIEW_SECONDS, inSlump, nextRound, WARM_UP, gamePool, choicesFor, pickRound, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, nearMisses, gloss, today, lastDays, ranking, bossSet,
   ROUND_SIZE, DAILY_GOAL} from "../n2-game.js";
 import {examplesFromDecks} from "../day-radio.js";
 import {HELD_OUT} from "../n2-comprehension.js";
@@ -212,4 +212,60 @@ test("surprise: bonus questions pay three times, never cost more, and combos of 
   let bonuses = 0, n = 0; const r = seeded(21);
   for (let i = 0; i < 60; i++) { const {round} = nextRound({pool, state: {}, random: r}); n += round.length; bonuses += round.filter(x => x.bonus).length; }
   assert.ok(Math.abs(bonuses / n - BONUS.chance) < .05, "about one in eight");
+});
+
+test("bedtime: from the learner's hour until 5 am the round's end points to sleep, one more round a tap away", () => {
+  const at = (h, m = 0) => new Date(2026, 10, 26, h, m);
+  assert.equal(BEDTIME, "23:30");
+  assert.equal(atBedtime(at(23, 29)), false); assert.equal(atBedtime(at(23, 30)), true);
+  assert.equal(atBedtime(at(2)), true, "after midnight too"); assert.equal(atBedtime(at(5)), false, "morning is play time");
+  assert.equal(atBedtime(at(22, 15), "22:00"), true, "the learner's own hour");
+  assert.equal(atBedtime(at(22, 15), "nonsense"), false, "a bad value falls back to 23:30");
+  const mock = src("../n2-mock.js"), html = src("../n2-mock.html"), index = src("../index.html");
+  assert.match(mock, /const late = atBedtime\(new Date\(\), settings\.gameBedtime\);/);
+  assert.match(mock, /\$\("game-again"\)\.textContent = late \? "One more round" : "Next round";/);
+  assert.match(mock, /\$\("game-sleep"\)\.href = left \? "\?view=evening" : "\.\/radio";/);
+  assert.match(html, /id="game-sleep" href="\?view=evening" hidden>Evening recall, then sleep<\/a>/);
+  assert.match(index, /id="settings-game-bedtime" type="time" value="23:30"/);
+});
+
+test("the boss comes every 1,000 questions, closes a run, and after it the game says rest", () => {
+  let st = {answered: 999, total: 250000};
+  assert.deepEqual(bossProgress(st), {done: 999, left: 1, open: false});
+  st = {...st, answered: 1000};
+  assert.equal(bossProgress(st).open, true);
+  const now = new Date("2026-11-27T20:00:00");
+  st = takeBoss(st, {set: "n2-set-6", now: now.getTime()});
+  assert.deepEqual(bossProgress(st), {done: 0, left: 1000, open: false}, "the count starts again");
+  assert.deepEqual(st.runs.at(-1), {set: "n2-set-6", at: now.toISOString(), gamePoints: 250000, questions: 1000});
+  const finished = [{book: "n2-set-6", boss: true, phase: "results", startedAt: now.toISOString(), completedAt: new Date(now.getTime() + 5400000).toISOString()}];
+  assert.equal(resting(st, finished, new Date("2026-11-27T22:00:00")), true);
+  assert.equal(resting(st, [], new Date("2026-11-27T22:00:00")), false, "not before the boss is finished");
+  assert.equal(resting(st, finished, new Date("2026-11-28T09:00:00")), false, "a new day, a new fight");
+  const table = runTable({...st, runs: [...st.runs, {set: "n2-set-7", at: "2026-11-28T20:00:00.000Z", gamePoints: 300000, questions: 1000}]},
+    r => r.set === "n2-set-6" ? {total: 120, sections: []} : null);
+  assert.equal(table[0].set, "n2-set-6", "merged: 250,000 + 120 × 1,000 beats 300,000 with no exam yet");
+  assert.equal(table[0].total, 250000 + 120 * EXAM_POINT);
+  assert.equal(table[0].gamePoints, 250000); assert.equal(table[0].examPoints, 120000, "both parts kept");
+});
+
+test("the boss is the real paper at half the time and never counts as a standard sitting", () => {
+  const mock = src("../n2-mock.js"), study = src("../n2-study.js");
+  assert.match(mock, /if \(state\.phase === "ready" && params\.get\("boss"\) === "1" && realistic\(year\)\) state\.boss = true;/);
+  assert.match(mock, /const half = m => state\.boss \? Math\.ceil\(m \/ 2\) : m;/);
+  assert.match(mock, /const minutes = phase => half\(/);
+  assert.match(mock, /location\.href = "\?book=" \+ boss\.id \+ "&boss=1";/);
+  assert.match(study, /eligibleBooks\.includes\(a\.book\) && !a\.boss && !first\.has\(a\.book\)/, "not checkpoint evidence");
+  assert.match(study, /a\.phase === "results" && !a\.boss && papers\.get/, "not on the readiness chart");
+});
+
+test("pacing: a hook after time away, waves of tension and release, and a final stretch before the boss", () => {
+  const now = Date.parse("2026-11-27T20:00:00Z");
+  assert.equal(pace({}, now).name, "hook", "first ever round");
+  assert.equal(pace({seen: {a: now - HOOK.awayMs - 1}, answered: 30}, now).name, "hook", "back after a break");
+  const at = done => pace({seen: {a: now - 1000}, answered: done}, now).name;
+  assert.deepEqual([0, 10, 20, 30, 40, 50].map(at), ["breather", "easy", "steady", "hard", "peak", "breather"]);
+  assert.equal(at(960), "stretch");
+  assert.ok(WAVE.at(-1).bonus === 2 && STRETCH.bonus === 2, "peaks pay more surprises");
+  assert.ok(WAVE[0].offset < 0 && WAVE.at(-1).offset > 0, "release, then tension");
 });

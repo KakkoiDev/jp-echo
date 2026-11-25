@@ -1,4 +1,4 @@
-# Rules (as built, v270)
+# Rules (as built, v272)
 
 Source: `n2-game.js` (logic) and `game()` in `n2-mock.js` (screen).
 
@@ -55,6 +55,31 @@ already won (answered right and fast before, or recalled instantly), 1 weak,
 1 fresh, and only 2 of the misses. It says "Warm-up round: things you know."
 One round with seven or more right ends it.
 
+## Home
+
+Quick round opens on its home: **Play**, **Radio** and **Settings**, with a
+meter to the next boss and the ranking of runs. Back from a round returns
+here.
+
+## Pacing
+
+Games pace in waves of tension and release (Left 4 Dead's AI Director:
+build-up, peak, relax; puzzle-game sawtooth curves; Schell's interest curve:
+hook, rising peaks, climax, resolution). Each round's difficulty is the zone
+level (below) plus an offset for that round:
+
+| Beat | When | Offset | Bonus chance |
+| --- | --- | --- | --- |
+| hook | first round after 30 minutes away | −0.3 | ×1 |
+| breather | rounds 1, 6, 11… since the last boss | −0.25 | ×1 |
+| easy | rounds 2, 7… | −0.1 | ×1 |
+| steady | rounds 3, 8… | 0 | ×1 |
+| hard | rounds 4, 9… | +0.1 | ×1 |
+| peak | rounds 5, 10… | +0.2 | ×2 |
+| final stretch | the last 50 questions before the boss | +0.25 | ×2 |
+
+The first question of a hook, breather, peak or stretch round names it.
+
 ## The zone (difficulty curve)
 
 A hidden level from 0 (easy) to 1 (hard), starting at 0.5, keeps the player
@@ -95,13 +120,27 @@ Speed is rewarded and mistakes are punished hard (the learner's choice).
   "I don't know". The screen still says "Part of the game. Keep going.": the
   points punish, the words don't.
 
-## Day and boss
+## The boss and runs
 
-- **Daily goal: 1,000 questions.** The round's end shows "N of 1,000
-  questions today".
-- **The boss**: when the day's 1,000 are done, a full-length mock opens on
-  the first set not sat yet (sets 19 and 20 last), about 2 h 50 min with the
-  break. Before that it shows as locked.
+- **Every 1,000 questions** answered since the last boss, the boss opens: the
+  real full mock of the first set not sat yet (sets 19 and 20 last) at **half
+  the time** (53 minutes written, 25 listening).
+- Taking it closes a **run**: the 1,000 questions' points. When the boss is
+  finished, its estimated score (0–180) joins the run at 1,000 points per
+  exam point. Runs are **ranked by the merged score**; each keeps both parts
+  (questions' points, exam total and section scores) for the in-depth view.
+- A boss sitting never counts as a standard mock: it is left out of the
+  sprint checkpoint and the readiness chart.
+- After the boss is finished, the home says **rest** for the rest of that day
+  (Play stays a tap away).
+- The day's count against 1,000 a day and the 14-day chart stay as they were.
+
+## Bedtime
+
+From the learner's bedtime (Settings, default 23:30) until 5 am, a round's
+end says "The night keeps today's work" and its main button becomes
+**Evening recall, then sleep** (or **Start the Night Radio** when nothing is
+left to recall). **One more round** stays one tap away.
 
 ## Feedback
 

@@ -293,11 +293,42 @@ export function inSlump(state = {}) {
   return !!last && (last.right / Math.max(1, last.n) < .5 || last.score < 0);
 }
 export function nextRound({pool, recall = [], state = {}, random = Math.random, now = Date.now()}) {
-  const slump = inSlump(state), level = levelOf(state);
+  const slump = inSlump(state), beat = pace(state, now);
+  const level = Math.min(1, Math.max(0, levelOf(state) + beat.offset));
   const round = pickRound({pool, recall, seen: state.seen || {}, wins: state.wins || {}, random, now,
     comeback: slump ? (state.comeback || []).slice(-WARM_UP.comeback) : state.comeback || [], mix: slump ? WARM_UP.mix : flowMix(level)})
-    .map(q => ({...q, seconds: flowSeconds(q.seconds, level), bonus: !q.comeback && random() < BONUS.chance}));
-  return {round, warmUp: slump, level};
+    .map(q => ({...q, seconds: flowSeconds(q.seconds, level), bonus: !q.comeback && random() < BONUS.chance * beat.bonus}));
+  return {round, warmUp: slump, level, beat};
+}
+
+// ---- Pacing ----
+// Games pace in waves of tension and release, not a flat line: Valve's
+// AI Director in Left 4 Dead cycles build-up, peak and relax; level curves in
+// puzzle games run as a sawtooth, a hard level followed by easier ones; and
+// Jesse Schell's interest curve opens on a hook, climbs through peaks to a
+// climax, then resolves. Quick round does the same on top of the zone:
+//   hook      the first round after 30 minutes away is easy, to pull you in;
+//   waves     rounds run in fives: breather, easy, steady, hard, peak (the
+//             peak doubles the bonus chance), then a breather again;
+//   stretch   the last 50 questions before the boss run at peak;
+//   climax    the boss; then rest.
+// The offset is added to the hidden level for that round only; the staircase
+// keeps learning from every answer.
+export const WAVE = Object.freeze([
+  {name: "breather", offset: -.25, bonus: 1, line: "Breather round"},
+  {name: "easy", offset: -.1, bonus: 1, line: ""},
+  {name: "steady", offset: 0, bonus: 1, line: ""},
+  {name: "hard", offset: .1, bonus: 1, line: ""},
+  {name: "peak", offset: .2, bonus: 2, line: "Peak round: bonuses doubled"},
+]);
+export const HOOK = Object.freeze({awayMs: 30 * 60_000, offset: -.3, line: "Warm-up: an easy start"});
+export const STRETCH = Object.freeze({from: 950, offset: .25, bonus: 2, line: "Final stretch to the boss"});
+export function pace(state = {}, now = Date.now()) {
+  const last = Math.max(0, ...Object.values(state.seen || {}));
+  if (!last || now - last > HOOK.awayMs) return {name: "hook", offset: HOOK.offset, bonus: 1, line: HOOK.line};
+  const done = bossProgress(state).done;
+  if (done >= STRETCH.from && done < BOSS_EVERY) return {name: "stretch", offset: STRETCH.offset, bonus: STRETCH.bonus, line: STRETCH.line};
+  return WAVE[Math.floor(done / ROUND_SIZE) % WAVE.length];
 }
 
 // ---- The zone ----
@@ -330,4 +361,49 @@ export function bonusPoints({points, bonus = false, streak = 0}) {
   if (points <= 0) return {points, jackpot: 0};
   const jackpot = BONUS.jackpots[streak] || 0;
   return {points: (bonus ? points * BONUS.times : points) + jackpot, jackpot};
+}
+
+// ---- Bedtime ----
+// From the learner's bedtime until 5 am, a round's end points to Evening
+// recall and the Night Radio instead of another round: the night is when the
+// day's questions are kept, so sleep wins. "One more round" stays one tap away.
+export const BEDTIME = "23:30";
+export function atBedtime(now = new Date(), bedtime = BEDTIME) {
+  const [h, m] = (/^\d{1,2}:\d{2}$/.test(bedtime || "") ? bedtime : BEDTIME).split(":").map(Number);
+  const minutes = now.getHours() * 60 + now.getMinutes();
+  return minutes >= h * 60 + m || minutes < 5 * 60;
+}
+
+// ---- The boss, every 1,000 questions ----
+// Every 1,000 questions answered since the last boss, the boss opens: a full
+// mock (bossSet). Taking it restarts the count; once it is finished, the game
+// says rest for the rest of that day (Play stays one tap away).
+export const BOSS_EVERY = 1000;
+export function bossProgress(state = {}) {
+  const done = Math.max(0, (state.answered || 0) - (state.bossFrom || 0));
+  return {done: Math.min(done, BOSS_EVERY), left: Math.max(0, BOSS_EVERY - done), open: done >= BOSS_EVERY};
+}
+export function takeBoss(state = {}, {set, now = Date.now()}) {
+  const at = new Date(now).toISOString();
+  // A run: the 1,000 questions' points, closed when the boss is taken; its
+  // exam score joins it once the boss is finished (runTable).
+  const run = {set, at, gamePoints: (state.total || 0) - (state.runFrom || 0), questions: (state.answered || 0) - (state.bossFrom || 0)};
+  return {...state, bossFrom: state.answered || 0, runFrom: state.total || 0, bossTaken: {set, at}, runs: [...(state.runs || []), run].slice(-200)};
+}
+// Runs, ranked by the merged score, each keeping its two parts for the
+// in-depth view. examOf(run) gives the finished boss sitting's estimate
+// ({total 0–180, sections}) or null while it is not done. The exam counts
+// 1,000 points per scaled point, so a full exam (180) weighs about as much as
+// 1,000 questions played well.
+export const EXAM_POINT = 1000;
+export function runTable(state = {}, examOf = () => null) {
+  return (state.runs || []).map(r => {
+    const exam = examOf(r);
+    return {...r, exam, examPoints: exam ? exam.total * EXAM_POINT : 0, total: r.gamePoints + (exam ? exam.total * EXAM_POINT : 0)};
+  }).sort((a, b) => b.total - a.total || a.at.localeCompare(b.at));
+}
+export function resting(state = {}, attempts = [], now = new Date()) {
+  const t = state.bossTaken;
+  if (!t?.at || localDay(new Date(t.at)) !== localDay(now)) return false;
+  return attempts.some(a => a.book === t.set && a.phase === "results" && (a.completedAt || "") >= t.at);
 }

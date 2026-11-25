@@ -304,6 +304,15 @@ Before considering the change complete:
   right; it sets the round mix, the clock and how close the wrong choices are.
   About one question in eight is a ×3 bonus; combos of 5 and 10 pay jackpots
   (`BONUS`). Fast, light, fun: it is a game.
+  From the learner's bedtime (`settings.gameBedtime`, default `BEDTIME`
+  23:30) until 5 am, the round's end leads to Evening recall and the Night
+  Radio (`atBedtime`), with "One more round" a tap away: sleep keeps the day.
+  Home is Play, Radio, Settings. The boss comes every 1,000 questions
+  (`BOSS_EVERY`, `bossProgress`): the real mock at half the time
+  (`?book=…&boss=1`, `state.boss`), never checkpoint or chart evidence. A run
+  is the 1,000 questions' points plus the boss estimate × `EXAM_POINT`
+  (`runTable`), both parts kept. Rounds pace in waves (`pace`: hook, breather
+  … peak, final stretch) on top of the zone level.
   After a bad round (`inSlump`) the next is a warm-up of questions already won
   (`wins`, `WARM_UP`) with only two misses back, to keep the player going.
   Its flag is one tap with no sheet (owner, 26 Nov: "I don't think, you

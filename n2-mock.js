@@ -8,7 +8,7 @@ import {REPORT_REASONS,createReport,fileReport,reportSyncLine,reportsAdapter,rep
 import {recognitionFactory} from "./speech.js";
 import {speakOnce,speakAndWait,japaneseVoices} from "./speech.js";
 import {readNights, nightComparison, comparisonLine, eveningRecall, EVENING_SOURCE} from "./n2-night.js";
-import {gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
+import {gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
 import {spokenWord,radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
 import {TAG,TAGS,HELD_OUT,CAUSES,comprehensionStats,weakestTag,tagDrill,drillExposure,attemptTags,tagsOf,sourceOf} from "./n2-comprehension.js";
 import {exampleSegments,patternNeedles,delayedChecks,checkItems,checkAsk,contextNote,sentenceParts,checkDetail,audioGrade,delayedAccuracy,CHECK_SOURCE,WHY_LINE,evidenceFor,evidenceLine} from "./n2-delayed.js";
@@ -1091,20 +1091,54 @@ async function game() {
   const sat = new Set(data.attempts.map(a => a.book).filter(id => /^n2-set-\d+$/.test(id || "")));
   const sets = (await Promise.all([...sat].filter(id => themes[id]).map(id => json(setFile(id)).catch(() => null)))).filter(Boolean);
   const pool = gamePool({inventory, examples: await deckExamples(), sets, sat});
-  let warmUp = false, state = readGame(), round = [], index = 0, score = 0, streak = 0, timer = null, shownAt = 0, current = null, locked = false, misses = [];
+  let warmUp = false, beatLine = "", state = readGame(), round = [], index = 0, score = 0, streak = 0, timer = null, shownAt = 0, current = null, locked = false, misses = [];
   const bar = $("game-bar");
   const sound = () => readGame().sound !== false;
   const head = () => {
     $("game-score").textContent = String(score);
-    $("game-combo").textContent = streak >= 3 ? "Combo " + streak + " · ×" + (1 + Math.min(streak, 10) / 10).toFixed(1) : warmUp && index === 0 ? "Warm-up round: things you know." : "";
+    $("game-combo").textContent = streak >= 3 ? "Combo " + streak + " · ×" + (1 + Math.min(streak, 10) / 10).toFixed(1) : warmUp && index === 0 ? "Warm-up round: things you know." : index === 0 ? beatLine : "";
   };
-  const todayLine = () => { const t = gameToday(readGame()); return t.answered.toLocaleString() + " / " + DAILY_GOAL.toLocaleString() + " today"; };
+  const todayLine = () => { const b = bossProgress(readGame()); return b.open ? "boss open" : b.done.toLocaleString() + " / " + BOSS_EVERY.toLocaleString(); };
+  // The boss: every 1,000 questions, a full mock on a set not sat yet.
+  const bossNow = () => bossSet({sets: bookIds.filter(id => realistic(id)), attempts: data.attempts});
+  const fightBoss = (e, boss) => { e.preventDefault(); writeGame(takeBoss(readGame(), {set: boss.id})); location.href = "?book=" + boss.id + "&boss=1"; };
+  // Home: Play, Radio, Settings. The way in and the place a round's Back returns to.
+  function home() {
+    clearTimeout(timer); window.speechSynthesis?.cancel();
+    for (const id of ["game-play", "game-review", "game-done"]) $(id).hidden = true;
+    $("game-home").hidden = false; $("game-sub").textContent = ""; $("game-score").textContent = "";
+    bar.style.transition = "none"; bar.style.width = "0%";
+    $("game-back").href = "./"; $("game-back").onclick = null;
+    const st = readGame(), b = bossProgress(st), boss = bossNow(), rest = resting(st, data.attempts);
+    $("game-home-line").textContent = rest ? "Boss down. Rest now: the Night Radio keeps today’s work."
+      : b.open && boss ? "The boss is open: a full mock, Mock " + titleOf(boss.id) + ", about 2 h 50 min."
+      : "Ten fast questions a round. Every " + BOSS_EVERY.toLocaleString() + ", the boss: a full mock.";
+    $("game-home-meter").replaceChildren(loadMeter({fits: b.done, needs: BOSS_EVERY, caption: b.open ? "The boss is open" : b.done.toLocaleString() + " of " + BOSS_EVERY.toLocaleString() + " to the boss"}));
+    $("game-home-boss").hidden = !(b.open && boss);
+    if (b.open && boss) { $("game-home-boss").textContent = "Fight the boss"; $("game-home-boss").onclick = e => fightBoss(e, boss); }
+    // Runs: the merged score ranks them; each row keeps both parts.
+    const papersById = new Map(data.papers.map(p => [p.id, p]));
+    const examOf = run => {
+      const a = data.attempts.filter(x => x.book === run.set && x.boss && x.phase === "results" && (x.startedAt || "") >= run.at).sort((x, y) => (x.startedAt || "").localeCompare(y.startedAt || ""))[0];
+      const paper = a && papersById.get(a.paper || a.book);
+      return paper ? estimate(paper, a) : null;
+    };
+    const runs = runTable(st, examOf);
+    $("game-runs-wrap").hidden = !runs.length;
+    $("game-runs").replaceChildren(...runs.slice(0, 5).map((r, i) => el("li", {},
+      el("span", {text: (i + 1) + ". " + r.total.toLocaleString()}),
+      el("span", {class: "hint", text: r.gamePoints.toLocaleString() + " from " + r.questions.toLocaleString() + " questions · " + (r.exam ? "boss " + r.exam.total + "/180 (" + r.exam.sections.map(x => x.scaled ?? "–").join("·") + ")" : "boss not finished") + " · " + shortDate(new Date(r.at))}))));
+    $("game-home-play").className = b.open && boss ? "outline" : "primary";
+    $("game-home-play").textContent = b.open && boss ? "Play a round" : rest ? "Play anyway" : "Play";
+  }
   const runBar = seconds => { bar.style.transition = "none"; bar.style.width = "100%"; void bar.offsetWidth; bar.style.transition = "width " + seconds + "s linear"; bar.style.width = "0%"; };
   const stopBar = () => { const w = getComputedStyle(bar).width; bar.style.transition = "none"; bar.style.width = w; };
   function start() {
+    $("game-home").hidden = true;
+    $("game-back").href = "?view=game"; $("game-back").onclick = e => { e.preventDefault(); home(); };
     state = readGame();
     const next = nextRound({pool, recall: data.recall, state});
-    round = next.round; warmUp = next.warmUp;
+    round = next.round; warmUp = next.warmUp; beatLine = next.beat?.line || "";
     index = 0; score = 0; streak = 0; misses = [];
     $("game-done").hidden = true; $("game-review").hidden = true; $("game-play").hidden = false;
     ask();
@@ -1198,16 +1232,16 @@ async function game() {
     $("game-done-title").textContent = score + " points" + (score >= state.best && score > 0 ? " · your best" : "");
     $("game-done-line").textContent = right + " of " + round.length + " right · best " + state.best + (misses.length ? " · your " + misses.length + " miss" + (misses.length === 1 ? "" : "es") + " open the next round" : "");
     const t = gameToday(state);
-    $("game-today").replaceChildren(loadMeter({fits: Math.min(t.answered, DAILY_GOAL), needs: DAILY_GOAL, caption: t.answered.toLocaleString() + " of " + DAILY_GOAL.toLocaleString() + " questions today" + (t.left ? " · " + t.left.toLocaleString() + " to the boss" : " · the boss is open")}));
-    // The boss: a full mock on a set not sat yet, once the day's 1,000 are done.
-    const boss = bossSet({sets: bookIds.filter(id => realistic(id)), attempts: data.attempts});
+    $("game-today").replaceChildren(loadMeter({fits: Math.min(t.answered, DAILY_GOAL), needs: DAILY_GOAL, caption: t.answered.toLocaleString() + " of " + DAILY_GOAL.toLocaleString() + " questions today"}));
+    // The boss: every 1,000 questions since the last one.
+    const b = bossProgress(state), boss = bossNow();
     $("game-boss").hidden = !boss;
     if (boss) {
-      $("game-boss").href = t.left ? "#" : "?book=" + boss.id;
-      $("game-boss").setAttribute("aria-disabled", String(!!t.left));
-      $("game-boss-title").textContent = t.left ? "Today’s boss · locked" : boss.beatenToday ? "Today’s boss · beaten" : "Today’s boss · open";
-      $("game-boss-line").textContent = (t.left ? "Unlocks at " + DAILY_GOAL.toLocaleString() + " questions today. " : "") + "A full mock, Mock " + titleOf(boss.id) + " · about 2 h 50 min with the break";
-      $("game-boss").onclick = e => { if (t.left) e.preventDefault(); };
+      $("game-boss").href = b.open ? "?book=" + boss.id + "&boss=1" : "#";
+      $("game-boss").setAttribute("aria-disabled", String(!b.open));
+      $("game-boss-title").textContent = b.open ? "The boss · open" : "The boss · locked";
+      $("game-boss-line").textContent = (b.open ? "" : b.left.toLocaleString() + " questions to go. ") + "A full mock, Mock " + titleOf(boss.id) + " · about 2 h 50 min with the break";
+      $("game-boss").onclick = e => { if (!b.open) e.preventDefault(); else fightBoss(e, boss); };
     }
     const rank = ranking(state);
     $("game-rank").replaceChildren(...rank.top.map((r, i) => { const li = el("li", {"aria-current": String(r.i === state.history.length - 1)}, el("span", {text: (i + 1) + ". " + r.score + " points"}), el("span", {class: "hint", text: r.right + "/" + r.n + " · " + shortDate(new Date(r.at))})); return li; }),
@@ -1216,6 +1250,17 @@ async function game() {
     $("game-chart").replaceChildren(scoreChart({points: days.map(d => ({value: d.answered, ok: d.answered >= DAILY_GOAL, label: shortDate(new Date(d.day + "T12:00:00"))})),
       max: Math.max(DAILY_GOAL * 1.2, ...days.map(d => d.answered)), line: DAILY_GOAL, label: "Questions a day", caption: "The last 14 days; the line is " + DAILY_GOAL.toLocaleString() + " a day."}));
     $("game-sound").setAttribute("aria-pressed", String(sound())); $("game-sound").textContent = sound() ? "Sound on" : "Sound off";
+    // Bedtime: the round's end points to Evening recall (or straight to the
+    // Night Radio when nothing is left to recall); one more round stays a tap away.
+    const late = atBedtime(new Date(), settings.gameBedtime);
+    $("game-bedtime").hidden = !late; $("game-sleep").hidden = !late;
+    $("game-again").className = late ? "quiet" : "primary";
+    $("game-again").textContent = late ? "One more round" : "Next round";
+    if (late) deckExamples().then(examples => {
+      const left = eveningRecall({inventory, recall: data.recall, evidence: scored(data), events: data.events, examples}).length;
+      $("game-sleep").href = left ? "?view=evening" : "./radio";
+      $("game-sleep").textContent = left ? "Evening recall, then sleep" : "Start the Night Radio";
+    }).catch(() => {});
   }
   $("game-sound").onclick = () => { const st = readGame(); st.sound = st.sound === false; writeGame(st); $("game-sound").setAttribute("aria-pressed", String(st.sound)); $("game-sound").textContent = st.sound ? "Sound on" : "Sound off"; };
   $("game-skip").onclick = () => answer(-1);
@@ -1258,12 +1303,13 @@ async function game() {
     if (held) { clearTimeout(timer); stopBar(); } else review(reviewAt);
   };
   $("game-again").onclick = start;
+  $("game-home-play").onclick = start;
   document.addEventListener("keydown", e => {
     if ($("game").hidden || e.target.closest("input,textarea,select") || e.metaKey || e.ctrlKey) return;
     if (!$("game-play").hidden && ["1", "2", "3", "4"].includes(e.key)) answer(Number(e.key) - 1);
     else if (!$("game-play").hidden && (e.key === "0" || e.key === "?")) answer(-1);
     else if (!$("game-review").hidden && (e.key === "Enter" || e.key === "ArrowRight")) review(reviewAt + 1);
-    else if (!$("game-done").hidden && e.key === "Enter") start();
+    else if ((!$("game-done").hidden || !$("game-home").hidden) && e.key === "Enter") start();
   });
   // What a flag carries, so an audit can see the question exactly as shown:
   // the kind, prompt, sentence, the four choices, the answer and what was picked.
@@ -1275,7 +1321,7 @@ async function game() {
     if (!$("game-review").hidden && misses[reviewAt]) return cardOf(misses[reviewAt].q, misses[reviewAt].picked);
     return current && !$("game-play").hidden ? cardOf(current) : null;
   };
-  start();
+  home();
 }
 
 // Yesterday's misses and uncertain answers, one session, print and audio. A
@@ -1597,8 +1643,12 @@ async function exam() {
     try { await access("history", "put", {...saved, id: saved.id || "legacy-" + year, book: year, unscorable: true}); localStorage.removeItem(storageKey); }
     catch { warn("An earlier unfinished attempt could not be moved aside; this sitting will not be saved."); }
   }
+  // The boss (Quick round): the real paper at half the time. It stays a boss
+  // once started, and never counts as a standard sitting (checkpoint, chart).
+  if (state.phase === "ready" && params.get("boss") === "1" && realistic(year)) state.boss = true;
+  const half = m => state.boss ? Math.ceil(m / 2) : m;
 
-  const minutes = phase => paper.minutes ? (typeof paper.minutes === "object" ? paper.minutes[phase] || 5 : paper.minutes) : adaptive ? Math.ceil((phase === "written" ? written : questions.length - written) * 1.5) : (phase === "written" ? 105 : 50);
+  const minutes = phase => half(paper.minutes ? (typeof paper.minutes === "object" ? paper.minutes[phase] || 5 : paper.minutes) : adaptive ? Math.ceil((phase === "written" ? written : questions.length - written) * 1.5) : (phase === "written" ? 105 : 50));
   function persist() {
     if (archivedView || state.phase === "ready") return;
     try {
@@ -1942,7 +1992,8 @@ async function exam() {
       : paper.drill ? (paper.drill.section === "listening" ? "One section, timed. Play each script once, as the hall does. Mark a question unsure with the flag; read why each answer is right at the end." : "One section, timed: about the pace the real paper leaves for reading. Mark a question unsure with the flag; read why each answer is right at the end.")
       : adaptive ? "Questions written for your weak points. Topics come from your saved evidence." : native ? "One sitting, timed like the real paper, with a break before listening. Mark a question unsure with the flag." : "The publisher's booklet opens beside the answer sheet. Its audio needs internet.";
     $("start").textContent = "Start · " + minutes(firstPhase) + " min";
-    $("intro-note").textContent = "Leaving keeps your answers. The timer keeps running, as it would in the hall, unless you pause it.";
+    if (state.boss) { $("intro-title").textContent = "The boss · half time"; }
+    $("intro-note").textContent = (state.boss ? "The real paper at half the time: " + minutes("written") + " min written, " + minutes("listening") + " min listening. It counts for your run, not for the checkpoint. " : "") + "Leaving keeps your answers. The timer keeps running, as it would in the hall, unless you pause it.";
   }
 
   $("start").onclick = () => start(firstPhase);
