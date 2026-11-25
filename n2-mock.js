@@ -8,7 +8,7 @@ import {REPORT_REASONS,createReport,fileReport,reportSyncLine,reportsAdapter,rep
 import {recognitionFactory} from "./speech.js";
 import {speakOnce,speakAndWait,japaneseVoices} from "./speech.js";
 import {readNights, nightComparison, comparisonLine, eveningRecall, EVENING_SOURCE} from "./n2-night.js";
-import {gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
+import {gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
 import {spokenWord,radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
 import {TAG,TAGS,HELD_OUT,CAUSES,comprehensionStats,weakestTag,tagDrill,drillExposure,attemptTags,tagsOf,sourceOf} from "./n2-comprehension.js";
 import {exampleSegments,patternNeedles,delayedChecks,checkItems,checkAsk,contextNote,sentenceParts,checkDetail,audioGrade,delayedAccuracy,CHECK_SOURCE,WHY_LINE,evidenceFor,evidenceLine} from "./n2-delayed.js";
@@ -1094,6 +1094,7 @@ async function game() {
   let warmUp = false, beatLine = "", state = readGame(), round = [], index = 0, score = 0, streak = 0, timer = null, shownAt = 0, current = null, locked = false, misses = [];
   const bar = $("game-bar");
   const sound = () => readGame().sound !== false;
+  const difficulty = () => difficultyOf(settings.gameDifficulty);
   const head = () => {
     $("game-score").textContent = String(score);
     $("game-combo").textContent = streak >= 3 ? "Combo " + streak + " · ×" + (1 + Math.min(streak, 10) / 10).toFixed(1) : warmUp && index === 0 ? "Warm-up round: things you know." : index === 0 ? beatLine : "";
@@ -1113,6 +1114,11 @@ async function game() {
     $("game-home-line").textContent = rest ? "Boss down. Rest now: the Night Radio keeps today’s work."
       : b.open && boss ? "The boss is open: a full mock, Mock " + titleOf(boss.id) + ", about 2 h 50 min."
       : "Ten fast questions a round. Every " + BOSS_EVERY.toLocaleString() + ", the boss: a full mock.";
+    // The run clock: beat the boss soon and the whole run counts more.
+    const clock = runClock(st.runStart), hours = Math.floor(clock.leftMs / 3600_000), mins = Math.floor(clock.leftMs % 3600_000 / 60_000);
+    $("game-home-clock").textContent = rest ? "" : !clock.started ? "Run bonus ×" + clock.times + ": beat the boss within 24 h of your first answer."
+      : clock.times > 1 ? "Run bonus ×" + clock.times + " · " + hours + " h " + mins + " min left to beat the boss" : "Run bonus over: the boss still closes the run.";
+    $("game-home-level").textContent = DIFFICULTY[difficulty()].label + (difficulty() === "normal" ? " · adaptive" : "") + " · change in Settings";
     $("game-home-meter").replaceChildren(loadMeter({fits: b.done, needs: BOSS_EVERY, caption: b.open ? "The boss is open" : b.done.toLocaleString() + " of " + BOSS_EVERY.toLocaleString() + " to the boss"}));
     $("game-home-boss").hidden = !(b.open && boss);
     if (b.open && boss) { $("game-home-boss").textContent = "Fight the boss"; $("game-home-boss").onclick = e => fightBoss(e, boss); }
@@ -1121,13 +1127,13 @@ async function game() {
     const examOf = run => {
       const a = data.attempts.filter(x => x.book === run.set && x.boss && x.phase === "results" && (x.startedAt || "") >= run.at).sort((x, y) => (x.startedAt || "").localeCompare(y.startedAt || ""))[0];
       const paper = a && papersById.get(a.paper || a.book);
-      return paper ? estimate(paper, a) : null;
+      return paper ? {...estimate(paper, a), completedAt: a.completedAt} : null;
     };
     const runs = runTable(st, examOf);
     $("game-runs-wrap").hidden = !runs.length;
     $("game-runs").replaceChildren(...runs.slice(0, 5).map((r, i) => el("li", {},
       el("span", {text: (i + 1) + ". " + r.total.toLocaleString()}),
-      el("span", {class: "hint", text: r.gamePoints.toLocaleString() + " from " + r.questions.toLocaleString() + " questions · " + (r.exam ? "boss " + r.exam.total + "/180 (" + r.exam.sections.map(x => x.scaled ?? "–").join("·") + ")" : "boss not finished") + " · " + shortDate(new Date(r.at))}))));
+      el("span", {class: "hint", text: r.gamePoints.toLocaleString() + " from " + r.questions.toLocaleString() + " questions · " + (r.exam ? "boss " + r.exam.total + "/180 (" + r.exam.sections.map(x => x.scaled ?? "–").join("·") + ")" + (r.times > 1 ? " · ×" + r.times + " for speed" : "") : "boss not finished") + " · " + shortDate(new Date(r.at))}))));
     $("game-home-play").className = b.open && boss ? "outline" : "primary";
     $("game-home-play").textContent = b.open && boss ? "Play a round" : rest ? "Play anyway" : "Play";
   }
@@ -1137,7 +1143,7 @@ async function game() {
     $("game-home").hidden = true;
     $("game-back").href = "?view=game"; $("game-back").onclick = e => { e.preventDefault(); home(); };
     state = readGame();
-    const next = nextRound({pool, recall: data.recall, state});
+    const next = nextRound({pool, recall: data.recall, state, difficulty: difficulty()});
     round = next.round; warmUp = next.warmUp; beatLine = next.beat?.line || "";
     index = 0; score = 0; streak = 0; misses = [];
     $("game-done").hidden = true; $("game-review").hidden = true; $("game-play").hidden = false;
@@ -1175,6 +1181,8 @@ async function game() {
     const outcome = why === "timeout" ? "timeout" : i < 0 ? "dontknow" : i === q.key ? "right" : "wrong";
     const result = scoreAnswer({outcome, ms, seconds: q.seconds, streak});
     const paid = bonusPoints({points: result.points, bonus: q.bonus, streak: result.streak});
+    // Easy pays less, Hard more; a penalty stays a penalty.
+    if (paid.points > 0) paid.points = Math.round(paid.points * DIFFICULTY[difficulty()].points);
     score += paid.points; streak = result.streak; head();
     if (sound()) outcome !== "right" ? sfx.wrong() : paid.jackpot ? sfx.jackpot() : q.bonus ? sfx.bonus() : sfx.right(streak);
     if (paid.jackpot) $("game-combo").textContent = "Jackpot +" + paid.jackpot + " · combo " + streak;
@@ -1185,7 +1193,7 @@ async function game() {
     if (rows[q.key]) rows[q.key].dataset.state = "right";
     if (outcome === "wrong" && rows[i]) rows[i].dataset.state = "wrong";
     if (outcome !== "right") misses.push({q, picked: i >= 0 ? q.choices[i] : outcome === "timeout" ? "Time ran out" : "I don’t know"});
-    state = rememberAnswer(readGame(), {q, outcome, points: paid.points, fast: result.fast}); writeGame(state);
+    state = rememberAnswer(readGame(), {q, outcome, points: paid.points, fast: result.fast, difficulty: difficulty()}); writeGame(state);
     if (recallsMiss(q, outcome)) {
       try {
         const id = recallId(q.dimension, q.target), previous = data.recall.find(r => r.id === id);

@@ -1,4 +1,4 @@
-# Rules (as built, v272)
+# Rules (as built, v273)
 
 Source: `n2-game.js` (logic) and `game()` in `n2-mock.js` (screen).
 
@@ -60,6 +60,16 @@ One round with seven or more right ends it.
 Quick round opens on its home: **Play**, **Radio** and **Settings**, with a
 meter to the next boss and the ranking of runs. Back from a round returns
 here.
+
+## Difficulty (Settings)
+
+| Setting | Aims at | Each right / miss moves the level | Round offset | Points |
+| --- | --- | --- | --- | --- |
+| Easy | 90% right | +0.01 / −0.09 | −0.2 | ×0.75 |
+| Normal (adaptive) | 80% right | +0.02 / −0.08 | 0 | ×1 |
+| Hard | 65% right | +0.035 / −0.065 | +0.2 | ×1.25 |
+
+Penalties are not scaled.
 
 ## Pacing
 
@@ -129,6 +139,10 @@ Speed is rewarded and mistakes are punished hard (the learner's choice).
   finished, its estimated score (0–180) joins the run at 1,000 points per
   exam point. Runs are **ranked by the merged score**; each keeps both parts
   (questions' points, exam total and section scores) for the in-depth view.
+- **The run clock** starts on the run's first answer. If the boss is
+  finished within **24 hours** the whole run counts **×1.5**, within
+  **48 hours ×1.2**, after that ×1. The home shows the live multiplier and
+  the time left on it.
 - A boss sitting never counts as a standard mock: it is left out of the
   sprint checkpoint and the readiness chart.
 - After the boss is finished, the home says **rest** for the rest of that day

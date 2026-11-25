@@ -157,7 +157,7 @@ test("preferences commit on change; credentials only on an explicit save", () =>
   const prefs = app.slice(app.indexOf("function saveSettings(){"), app.indexOf("// One write path"));
   for (const credential of ["providerKeys", "speechKeys", "localEndpoint", "proxyUrl", '"#provider"']) assert.equal(prefs.includes(credential), false, credential + " must not be saved with preferences");
   assert.match(prefs, /if\(settings\.gistAuto&&!gistWasOn\)settings\.gistToken=/, "the gist token only by switching backup on");
-  assert.match(app, /for\(const id of \["theme","motion","voice","discussion-voice-ai","discussion-voice-user","rate","autotag","settings-start-game","settings-game-bedtime","remind-time","gist-auto","gist-url"\]\)\$\("#"\+id\)\.addEventListener\("change",commitPreferences\)/, "commit on change, never on blur");
+  assert.match(app, /for\(const id of \["theme","motion","voice","discussion-voice-ai","discussion-voice-user","rate","autotag","settings-start-game","settings-game-bedtime","settings-game-difficulty","remind-time","gist-auto","gist-url"\]\)\$\("#"\+id\)\.addEventListener\("change",commitPreferences\)/, "commit on change, never on blur");
   assert.match(app, /function commitPreferences\(\)\{if\(saveSettings\(\)\)\{renderPracticeNotices\(\);writeReminderPrefs\(\);syncReminderSchedule\(\)\}else flashSaved\("Not saved/, "success is shown only after the write lands");
   assert.match(app, /return JSON\.parse\(localStorage\.getItem\("jp-echo-settings"\)\|\|"null"\)!==null/);
   for (const id of ["ai-save", "ai-check", "ai-remove", "speech-save"]) assert.match(html, new RegExp(`id="${id}"`), id);

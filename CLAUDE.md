@@ -313,6 +313,10 @@ Before considering the change complete:
   is the 1,000 questions' points plus the boss estimate × `EXAM_POINT`
   (`runTable`), both parts kept. Rounds pace in waves (`pace`: hook, breather
   … peak, final stretch) on top of the zone level.
+  The run clock (`runClock`, `RUN_CLOCK`) multiplies a run ×1.5 if its boss
+  falls within 24 h of its first answer, ×1.2 within 48 h. Settings →
+  Quick round difficulty (`DIFFICULTY`): Easy 90% right ×0.75, Normal the
+  adaptive 80%, Hard 65% ×1.25.
   After a bad round (`inSlump`) the next is a warm-up of questions already won
   (`wins`, `WARM_UP`) with only two misses back, to keep the player going.
   Its flag is one tap with no sheet (owner, 26 Nov: "I don't think, you

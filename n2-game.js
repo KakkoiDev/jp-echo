@@ -228,17 +228,18 @@ export const recallsMiss = (q, outcome) => outcome !== "right" && !!q.target;
 // The device's game memory: best score, rounds, when each question was last
 // seen. Kept small: the most recent 20 000 questions.
 // After each answer: the question is seen; a miss waits for the next round.
-export function rememberAnswer(state = {}, {q, outcome, points = 0, fast = false, now = Date.now()}) {
+export function rememberAnswer(state = {}, {q, outcome, points = 0, fast = false, difficulty = "normal", now = Date.now()}) {
   const seen = {...(state.seen || {}), [q.id]: now};
   const wins = {...(state.wins || {})};
   if (fast) wins[q.id] = (wins[q.id] || 0) + 1;
   const comeback = (state.comeback || []).filter(id => id !== q.id);
   if (outcome !== "right") comeback.push(q.id); // missed again: it comes back again
-  const level = flowStep(state.level, outcome === "right");
+  const level = flowStep(state.level, outcome === "right", difficulty);
+  const runStart = state.runStart || new Date(now).toISOString(); // the run clock starts on its first answer
   const total = (state.total || 0) + points, day = localDay(new Date(now));
   const days = {...(state.days || {})}, d = days[day] || {answered: 0, right: 0, points: 0, rounds: 0, best: 0};
   days[day] = {...d, answered: d.answered + 1, right: d.right + (outcome === "right" ? 1 : 0), points: d.points + points};
-  return {...state, seen, wins, level, comeback: comeback.slice(-ROUND_SIZE), total, answered: (state.answered || 0) + 1, days};
+  return {...state, seen, wins, level, runStart, comeback: comeback.slice(-ROUND_SIZE), total, answered: (state.answered || 0) + 1, days};
 }
 export function rememberRound(state = {}, {score, questions = [], misses, now = Date.now()}) {
   const seen = {...(state.seen || {})};
@@ -292,9 +293,9 @@ export function inSlump(state = {}) {
   const last = (state.history || []).at(-1);
   return !!last && (last.right / Math.max(1, last.n) < .5 || last.score < 0);
 }
-export function nextRound({pool, recall = [], state = {}, random = Math.random, now = Date.now()}) {
+export function nextRound({pool, recall = [], state = {}, difficulty = "normal", random = Math.random, now = Date.now()}) {
   const slump = inSlump(state), beat = pace(state, now);
-  const level = Math.min(1, Math.max(0, levelOf(state) + beat.offset));
+  const level = Math.min(1, Math.max(0, levelOf(state) + beat.offset + (DIFFICULTY[difficulty] || DIFFICULTY.normal).offset));
   const round = pickRound({pool, recall, seen: state.seen || {}, wins: state.wins || {}, random, now,
     comeback: slump ? (state.comeback || []).slice(-WARM_UP.comeback) : state.comeback || [], mix: slump ? WARM_UP.mix : flowMix(level)})
     .map(q => ({...q, seconds: flowSeconds(q.seconds, level), bonus: !q.comeback && random() < BONUS.chance * beat.bonus}));
@@ -339,10 +340,20 @@ export function pace(state = {}, now = Date.now()) {
 // where a game feels hard but winnable. The level is never shown.
 export const FLOW = Object.freeze({start: .5, up: .02, down: .08});
 export const levelOf = state => typeof state?.level === "number" ? state.level : FLOW.start;
-export function flowStep(level = FLOW.start, right) {
-  const l = typeof level === "number" ? level : FLOW.start;
-  return Math.round(Math.min(1, Math.max(0, l + (right ? FLOW.up : -FLOW.down))) * 1000) / 1000;
+export function flowStep(level = FLOW.start, right, difficulty = "normal") {
+  const l = typeof level === "number" ? level : FLOW.start, d = DIFFICULTY[difficulty] || DIFFICULTY.normal;
+  return Math.round(Math.min(1, Math.max(0, l + (right ? d.up : -d.down))) * 1000) / 1000;
 }
+// The learner's difficulty (Settings). Normal is the adaptive zone at 80%
+// right. Easy aims at 90% right and starts every round lower; Hard aims at
+// 65% and starts higher. Points follow: Easy pays ×0.75, Hard ×1.25, so
+// runs on different settings rank fairly.
+export const DIFFICULTY = Object.freeze({
+  easy: {label: "Easy", up: .01, down: .09, offset: -.2, points: .75},
+  normal: {label: "Normal", up: .02, down: .08, offset: 0, points: 1},
+  hard: {label: "Hard", up: .035, down: .065, offset: .2, points: 1.25},
+});
+export const difficultyOf = name => DIFFICULTY[name] ? name : "normal";
 // What the level changes: the mix (easy: mostly known; hard: weak and new)…
 export function flowMix(level = FLOW.start) {
   const weak = Math.round(1 + 4 * level), fresh = Math.round(2 + 3 * level);
@@ -387,8 +398,8 @@ export function takeBoss(state = {}, {set, now = Date.now()}) {
   const at = new Date(now).toISOString();
   // A run: the 1,000 questions' points, closed when the boss is taken; its
   // exam score joins it once the boss is finished (runTable).
-  const run = {set, at, gamePoints: (state.total || 0) - (state.runFrom || 0), questions: (state.answered || 0) - (state.bossFrom || 0)};
-  return {...state, bossFrom: state.answered || 0, runFrom: state.total || 0, bossTaken: {set, at}, runs: [...(state.runs || []), run].slice(-200)};
+  const run = {set, at, start: state.runStart || at, gamePoints: (state.total || 0) - (state.runFrom || 0), questions: (state.answered || 0) - (state.bossFrom || 0)};
+  return {...state, bossFrom: state.answered || 0, runFrom: state.total || 0, runStart: null, bossTaken: {set, at}, runs: [...(state.runs || []), run].slice(-200)};
 }
 // Runs, ranked by the merged score, each keeping its two parts for the
 // in-depth view. examOf(run) gives the finished boss sitting's estimate
@@ -398,9 +409,23 @@ export function takeBoss(state = {}, {set, now = Date.now()}) {
 export const EXAM_POINT = 1000;
 export function runTable(state = {}, examOf = () => null) {
   return (state.runs || []).map(r => {
-    const exam = examOf(r);
-    return {...r, exam, examPoints: exam ? exam.total * EXAM_POINT : 0, total: r.gamePoints + (exam ? exam.total * EXAM_POINT : 0)};
+    const exam = examOf(r), examPoints = exam ? exam.total * EXAM_POINT : 0;
+    const clock = exam ? runClock(r.start || r.at, exam.completedAt || r.at) : null, times = clock?.times || 1;
+    return {...r, exam, examPoints, times, total: Math.round((r.gamePoints + examPoints) * times)};
   }).sort((a, b) => b.total - a.total || a.at.localeCompare(b.at));
+}
+
+// ---- The run clock ----
+// A run's clock starts on its first answer. Beat the boss (finish the 1,000
+// questions and the boss) within 24 hours and the whole run counts ×1.5;
+// within 48 hours, ×1.2; after that, ×1. The home shows the live multiplier
+// and the time left on it, so there is always a reason to finish.
+export const RUN_CLOCK = Object.freeze([{hours: 24, times: 1.5}, {hours: 48, times: 1.2}]);
+export function runClock(start, now = Date.now()) {
+  if (!start) return {times: RUN_CLOCK[0].times, leftMs: RUN_CLOCK[0].hours * 3600_000, started: false};
+  const elapsed = (typeof now === "number" ? now : Date.parse(now)) - Date.parse(start);
+  for (const tier of RUN_CLOCK) if (elapsed < tier.hours * 3600_000) return {times: tier.times, leftMs: tier.hours * 3600_000 - elapsed, started: true};
+  return {times: 1, leftMs: 0, started: true};
 }
 export function resting(state = {}, attempts = [], now = new Date()) {
   const t = state.bossTaken;

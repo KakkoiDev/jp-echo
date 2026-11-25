@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
-import {pace, WAVE, HOOK, STRETCH, bossProgress, takeBoss, resting, runTable, BOSS_EVERY, EXAM_POINT, atBedtime, BEDTIME, FLOW, BONUS, flowStep, flowMix, flowSeconds, levelOf, bonusPoints, SECONDS, PAUSE, REVIEW_SECONDS, inSlump, nextRound, WARM_UP, gamePool, choicesFor, pickRound, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, nearMisses, gloss, today, lastDays, ranking, bossSet,
+import {runClock, RUN_CLOCK, DIFFICULTY, difficultyOf, pace, WAVE, HOOK, STRETCH, bossProgress, takeBoss, resting, runTable, BOSS_EVERY, EXAM_POINT, atBedtime, BEDTIME, FLOW, BONUS, flowStep, flowMix, flowSeconds, levelOf, bonusPoints, SECONDS, PAUSE, REVIEW_SECONDS, inSlump, nextRound, WARM_UP, gamePool, choicesFor, pickRound, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, nearMisses, gloss, today, lastDays, ranking, bossSet,
   ROUND_SIZE, DAILY_GOAL} from "../n2-game.js";
 import {examplesFromDecks} from "../day-radio.js";
 import {HELD_OUT} from "../n2-comprehension.js";
@@ -97,7 +97,7 @@ test("the day counts toward 1,000, the ranking and chart follow, and the boss op
 test("the game is a view of the N2 page, saved per answer, linked from the hub and the home screen", () => {
   const mock = src("../n2-mock.js"), html = src("../n2-mock.html"), sw = src("../sw.js"), manifest = read("../manifest.webmanifest");
   assert.match(mock, /view === "game" \? game :/);
-  assert.match(mock, /state = rememberAnswer\(readGame\(\), \{q, outcome, points: paid\.points, fast: result\.fast\}\); writeGame\(state\);/);
+  assert.match(mock, /state = rememberAnswer\(readGame\(\), \{q, outcome, points: paid\.points, fast: result\.fast, difficulty: difficulty\(\)\}\); writeGame\(state\);/);
   assert.match(mock, /"missed", new Date\(\), \{source: GAME_SOURCE/);
   assert.match(html, /href="\?view=game"><span class="library-tool-glyph" lang="ja" aria-hidden="true">速<\/span>/);
   assert.match(html, /id="game-skip" type="button">I don’t know<\/button>/);
@@ -237,7 +237,7 @@ test("the boss comes every 1,000 questions, closes a run, and after it the game 
   const now = new Date("2026-11-27T20:00:00");
   st = takeBoss(st, {set: "n2-set-6", now: now.getTime()});
   assert.deepEqual(bossProgress(st), {done: 0, left: 1000, open: false}, "the count starts again");
-  assert.deepEqual(st.runs.at(-1), {set: "n2-set-6", at: now.toISOString(), gamePoints: 250000, questions: 1000});
+  assert.deepEqual(st.runs.at(-1), {set: "n2-set-6", at: now.toISOString(), start: now.toISOString(), gamePoints: 250000, questions: 1000});
   const finished = [{book: "n2-set-6", boss: true, phase: "results", startedAt: now.toISOString(), completedAt: new Date(now.getTime() + 5400000).toISOString()}];
   assert.equal(resting(st, finished, new Date("2026-11-27T22:00:00")), true);
   assert.equal(resting(st, [], new Date("2026-11-27T22:00:00")), false, "not before the boss is finished");
@@ -245,7 +245,7 @@ test("the boss comes every 1,000 questions, closes a run, and after it the game 
   const table = runTable({...st, runs: [...st.runs, {set: "n2-set-7", at: "2026-11-28T20:00:00.000Z", gamePoints: 300000, questions: 1000}]},
     r => r.set === "n2-set-6" ? {total: 120, sections: []} : null);
   assert.equal(table[0].set, "n2-set-6", "merged: 250,000 + 120 × 1,000 beats 300,000 with no exam yet");
-  assert.equal(table[0].total, 250000 + 120 * EXAM_POINT);
+  assert.equal(table[0].total, (250000 + 120 * EXAM_POINT) * 1.5, "and the run bonus: the boss fell inside the 24 h");
   assert.equal(table[0].gamePoints, 250000); assert.equal(table[0].examPoints, 120000, "both parts kept");
 });
 
@@ -268,4 +268,37 @@ test("pacing: a hook after time away, waves of tension and release, and a final 
   assert.equal(at(960), "stretch");
   assert.ok(WAVE.at(-1).bonus === 2 && STRETCH.bonus === 2, "peaks pay more surprises");
   assert.ok(WAVE[0].offset < 0 && WAVE.at(-1).offset > 0, "release, then tension");
+});
+
+test("the run clock: beat the boss within 24 h for ×1.5, within 48 h for ×1.2, and the clock starts on the run's first answer", () => {
+  const start = "2026-11-27T08:00:00.000Z", h = n => Date.parse(start) + n * 3600_000;
+  assert.equal(runClock(null).started, false);
+  assert.deepEqual([runClock(start, h(3)).times, runClock(start, h(30)).times, runClock(start, h(50)).times], [1.5, 1.2, 1]);
+  assert.equal(runClock(start, h(20)).leftMs, 4 * 3600_000);
+  let st = rememberAnswer({}, {q: {id: "m:a"}, outcome: "right", points: 300, now: Date.parse(start)});
+  assert.equal(st.runStart, start, "first answer starts it");
+  st = rememberAnswer(st, {q: {id: "m:b"}, outcome: "right", points: 300, now: h(2)});
+  assert.equal(st.runStart, start, "later answers keep it");
+  st = takeBoss({...st, answered: 1000, total: 200000}, {set: "n2-set-8", now: h(10)});
+  assert.equal(st.runStart, null, "taking the boss closes the clock; the next answer starts a new run");
+  assert.equal(st.runs.at(-1).start, start);
+  const [run] = runTable(st, () => ({total: 100, sections: [], completedAt: new Date(h(12)).toISOString()}));
+  assert.equal(run.times, 1.5); assert.equal(run.total, Math.round((200000 + 100000) * 1.5));
+  const [late] = runTable(st, () => ({total: 100, sections: [], completedAt: new Date(h(60)).toISOString()}));
+  assert.equal(late.times, 1, "too late for a bonus");
+  assert.ok(RUN_CLOCK[0].times > RUN_CLOCK[1].times);
+});
+
+test("difficulty: Normal is the 80% zone, Easy aims higher and pays less, Hard aims lower and pays more", () => {
+  const settle = d => { const c = DIFFICULTY[d]; return c.down / (c.up + c.down); };
+  assert.ok(Math.abs(settle("normal") - .8) < 1e-9);
+  assert.ok(Math.abs(settle("easy") - .9) < 1e-9);
+  assert.ok(Math.abs(settle("hard") - .65) < 1e-9);
+  assert.ok(DIFFICULTY.easy.offset < 0 && DIFFICULTY.hard.offset > 0);
+  assert.deepEqual([DIFFICULTY.easy.points, DIFFICULTY.normal.points, DIFFICULTY.hard.points], [.75, 1, 1.25]);
+  assert.equal(difficultyOf("silly"), "normal");
+  assert.equal(flowStep(.5, true, "hard"), .535); assert.equal(flowStep(.5, false, "easy"), .41);
+  const index = src("../index.html"), mock = src("../n2-mock.js");
+  assert.match(index, /id="settings-game-difficulty"><option value="easy">/);
+  assert.match(mock, /if \(paid\.points > 0\) paid\.points = Math\.round\(paid\.points \* DIFFICULTY\[difficulty\(\)\]\.points\);/);
 });
