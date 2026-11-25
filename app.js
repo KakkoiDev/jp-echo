@@ -12,7 +12,7 @@ import {moraMnemonicTokens,moraModified,DEFAULT_PAIR,LANGUAGES,safeLanguage,MORA
 import {isExactMatch,markAttempt,markTarget} from "./diff.js";
 import {applyReadingCorrection,removeArchivedMiniCards,readImportRecovery,saveImportRecovery,deleteSentence as dbDeleteSentence,getSentence,listSentences,migrateStore,replaceAll,mergeIntoStore,saveSentence as persistSentence} from "./db.js";
 import {readGistIndex,readGistFile,parseGistId,gistRevision,listGistRevisions} from "./gist-backup.js";
-import {allDataBundle,isAllDataBundle,bundleCounts,restorePreview,countsLine,previewLine} from "./restore.js";
+import {allDataBundle,isAllDataBundle,bundleCounts,restorePreview,countsLine,previewLine,latestRequest} from "./restore.js";
 import {startAutoSync,gistSettings,breakTies,markDirty,syncState,mergeDeleted,applyDeleted,readDeleted,saveDeleted,recordDeletion,forgetDeletion} from "./sync.js";
 import {n2Adapter} from "./n2-progress.js";
 import {READINGS_RULE,correctSentenceReadings,analyzeSentenceGrammar,askModel,rewriteSentence,adjustNote,carries,compose,composeFromIntent,PROVIDER_DEFAULTS,tagGrammar,translate,discuss,generateReading,writeNotes,writeWordNote,transcribeAudio} from "./api.js";
@@ -2472,31 +2472,39 @@ async function importAnything(data){
 let savesChosen=null;
 // Saves seconds apart are told apart by their seconds.
 const saveWhen=value=>new Intl.DateTimeFormat(undefined,{dateStyle:"medium",timeStyle:"medium"}).format(new Date(value));
+// One preview object ({save, docs, line}) is published whole, and only while
+// it is still the latest choice; Apply holds exactly what is on screen.
+const savesRequest=latestRequest();
+function clearSavesPreview(){savesRequest.cancel();savesChosen=null;$("#saves-apply").disabled=true;$("#saves-preview").hidden=true}
 async function openSaves(){
   const id=parseGistId(settings.gistUrl);if(!id)return;
-  const list=$("#saves-list"),status=$("#saves-status");savesChosen=null;$("#saves-preview").hidden=true;list.hidden=false;list.replaceChildren();status.classList.remove("error");status.textContent="Loading saves…";
+  clearSavesPreview();const current=savesRequest.begin();
+  const list=$("#saves-list"),status=$("#saves-status");list.hidden=false;list.replaceChildren();status.classList.remove("error");status.textContent="Loading saves…";
   $("#saves-dialog").showModal();
-  try{const saves=await listGistRevisions({id,token:settings.gistToken||""});status.textContent=saves.length?"":"No saves yet.";
+  try{const saves=await listGistRevisions({id,token:settings.gistToken||""});if(!current())return;status.textContent=saves.length?"":"No saves yet.";
     list.replaceChildren(...saves.map((save,i)=>{const b=document.createElement("button");b.type="button";b.dataset.ui="button";b.className="settings-row menu-row";
       b.innerHTML=`<span class="settings-row-text"><span class="settings-row-title"></span><span class="settings-row-status"></span></span>`;
       b.querySelector(".settings-row-title").textContent=saveWhen(save.at);b.querySelector(".settings-row-status").textContent=i===0?"Latest":"";
       b.onclick=()=>previewSave(id,save);return b}))}
-  catch(error){status.classList.add("error");status.textContent=error.message}}
+  catch(error){if(current()){status.classList.add("error");status.textContent=error.message}}}
 async function previewSave(id,save){
+  clearSavesPreview();const current=savesRequest.begin();
   const status=$("#saves-status");status.classList.remove("error");status.textContent="Reading that save…";
   try{const {docs}=await readGistDocuments("https://gist.github.com/"+id+"/"+save.version,settings.gistToken||"");validateDocuments(docs);
-    savesChosen={docs,save};
-    $("#saves-when").textContent=saveWhen(save.at);$("#saves-counts").textContent="This save holds "+countsLine(bundleCounts(docs))+".";
-    $("#saves-diff").textContent=previewLine(restorePreview(await localDocuments(),docs));
-    $("#saves-list").hidden=true;$("#saves-preview").hidden=false;status.textContent="";$("#saves-apply").focus()}
-  catch(error){status.classList.add("error");status.textContent=error.message}}
+    const preview={save,docs,counts:"This save holds "+countsLine(bundleCounts(docs))+".",line:previewLine(restorePreview(await localDocuments(),docs))};
+    if(!current())return;
+    savesChosen=preview;
+    $("#saves-when").textContent=saveWhen(save.at);$("#saves-counts").textContent=preview.counts;$("#saves-diff").textContent=preview.line;
+    $("#saves-list").hidden=true;$("#saves-preview").hidden=false;$("#saves-apply").disabled=false;status.textContent="";$("#saves-apply").focus()}
+  catch(error){if(current()){status.classList.add("error");status.textContent=error.message}}}
 $("#saves-open").onclick=openSaves;
-$("#saves-back").onclick=()=>{savesChosen=null;$("#saves-preview").hidden=true;$("#saves-list").hidden=false};
-$("#saves-apply").onclick=async()=>{if(!savesChosen)return;const button=$("#saves-apply"),status=$("#saves-status");button.disabled=true;status.classList.remove("error");status.textContent="Bringing it in…";
-  try{const restored=await applyDocuments(savesChosen.docs);status.textContent="Restored "+listJoin(restored)+" from the save of "+saveWhen(savesChosen.save.at)+".";$("#saves-preview").hidden=true;savesChosen=null;refreshDueBadge();renderHistory()}
-  catch(error){status.classList.add("error");status.textContent=error.message}finally{button.disabled=false}};
+$("#saves-back").onclick=()=>{clearSavesPreview();$("#saves-status").textContent="";$("#saves-list").hidden=false};
+$("#saves-apply").onclick=async()=>{const chosen=savesChosen;if(!chosen)return;const button=$("#saves-apply"),status=$("#saves-status");button.disabled=true;status.classList.remove("error");status.textContent="Bringing it in…";
+  try{const restored=await applyDocuments(chosen.docs);status.textContent="Restored "+listJoin(restored)+" from the save of "+saveWhen(chosen.save.at)+".";clearSavesPreview();refreshDueBadge();renderHistory()}
+  catch(error){status.classList.add("error");status.textContent=error.message;button.disabled=savesChosen!==chosen}};
 $("#saves-done").onclick=()=>$("#saves-dialog").close();
 $("#saves-dialog").addEventListener("click",event=>{if(event.target===$("#saves-dialog"))$("#saves-dialog").close()});
+$("#saves-dialog").addEventListener("close",clearSavesPreview);
 $("#export-all").onclick=exportEverything;
 // "Your sentences with it  2": the count sits at the end of the rule heading.
 function sheetCount(head,n){let count=head.querySelector(".count");if(!count){count=el("span","count","");head.append(count)}count.textContent=String(n);head.classList.add("counted")}

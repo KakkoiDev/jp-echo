@@ -99,7 +99,7 @@ test("a new learner's day starts with a 20-minute short sample of all four skill
 test("results: a short session shows a denominator per section; a full paper offers practising its weakest section (J1Done, J2Result)", () => {
   assert.match(mock, /got \+ " of " \+ questions\.length \+ " right"/);
   assert.match(mock, /r\.got \+ " of " \+ r\.items\.length/);
-  assert.match(mock, /"Practise listening", "\?view=radio&mode=recall"/);
+  assert.match(mock, /const plan = resultPractice\(rates\);/);
   assert.match(page, /id="result-next"[^>]*>Back to the plan/);
   assert.match(mock, /The line that decided it/);
 });

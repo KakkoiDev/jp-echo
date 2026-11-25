@@ -2,7 +2,7 @@ import {dateKey, parseGoalDate, firstPassEnd, goalKey, readGoal, writeGoal, shor
 import {bookIds,bookName,EDITION,SETS_EDITION,form,realisticRows,realisticPaperId,setFile,instructionFor,solutionOf,whyReadings} from "./n2-forms.js";
 import {access,currentAttempts,download,prefix,report,scored,n2Adapter} from "./n2-progress.js";
 import {startAutoSync,markDirty,gistSettings} from "./sync.js";
-import {SKILLS,SKILL_JA,SECTIONS,PASS_TOTAL,SECTION_MIN,SECTION_MAX,estimate,sprintCheckpoint,nextExamDate,daysUntil,recallQueue,recallRecord,recallId,dailyGoal,coverage,localDay,todayPlan,measuredPace,capMinutes,DAY_MINUTES,EXAM_CHECKLIST,goalDates,formatMinutes,shortenPlan,maintenancePlan,resultsMonth,doneToday,markDone,scoreSeries,scoreCaption,examHeadLine,nextKicker,checkpointLine,mockTileState,historyKind} from "./n2-study.js";
+import {SKILLS,SKILL_JA,SECTIONS,PASS_TOTAL,SECTION_MIN,SECTION_MAX,estimate,sprintCheckpoint,nextExamDate,daysUntil,recallQueue,recallRecord,recallId,dailyGoal,coverage,localDay,todayPlan,measuredPace,capMinutes,DAY_MINUTES,EXAM_CHECKLIST,goalDates,formatMinutes,shortenPlan,maintenancePlan,resultsMonth,doneToday,markDone,scoreSeries,scoreCaption,examHeadLine,nextKicker,checkpointLine,mockTileState,historyKind,answering,resultPractice} from "./n2-study.js";
 import {collapseRow,collapseChevronSvg,scoreChart,flagSvg,chevronLeftSvg,chevronRightSvg,replaySvg,planSteps,loadMeter,evidenceRow,pauseRing,openReportSheet,mountReportButtons} from "./components.js";
 import {REPORT_REASONS,createReport,fileReport,reportSyncLine,reportsAdapter,reportHistory,screenOf,appVersion,deviceInfo} from "./reports.js";
 import {recognitionFactory} from "./speech.js";
@@ -1418,7 +1418,7 @@ async function exam() {
     persist(); render(); scrollTo(0, 0);
   }
   function move(index) {
-    if (tick()) return;
+    if (!answering(state) || tick()) return;
     const [first, end] = range();
     if (index < first || index >= end) return;
     recordTime(); stopVoice();
@@ -1426,14 +1426,14 @@ async function exam() {
     persist(); renderExam(); scrollTo(0, 0);
   }
   function choose(n) {
-    if (tick()) return;
+    if (!answering(state) || tick()) return;
     state.answers[state.index] = n;
     persist(); renderExam();
   }
   // The first time each question is on screen, separate from when the paper
   // was made: readiness counts only material actually seen (drillExposure).
   function markShown() {
-    if (archivedView || state.shownAt?.[state.index]) return;
+    if (archivedView || !answering(state) || state.shownAt?.[state.index]) return;
     const at = new Date().toISOString();
     state.shownAt = {...(state.shownAt || {}), [state.index]: at};
     persist();
@@ -1491,6 +1491,7 @@ async function exam() {
       extra: {paper: paper.title, edition: paper.edition, source: sourceOf(paper, q), mondai: q.mondai, choices: (q.choices || []).join(" / "), context: q.context ? String(q.context).slice(0, 300) : ""}};
   };
   function openGrid() {
+    if (!answering(state)) return;
     const [first, end] = range();
     const answers = state.answers.slice(first, end), unsure = state.guesses.slice(first, end).filter(Boolean).length, blanks = answers.filter(a => !a).length;
     $("grid-title").textContent = (state.phase === "listening" ? "聴解" : questions[first].skill === 3 ? "聴解" : "言語知識・読解") + " · " + (end - first) + " questions";
@@ -1588,14 +1589,15 @@ async function exam() {
         el("span", {text: g.got + " of " + g.n + " correct" + (g.missed.length && g.missed.length <= 2 ? " · question " + g.missed.join(", ") + " missed" : "")})))));
   }
   // One filled button, Back to the plan; one outlined, the weakest section's
-  // practice ("Practise listening" opens Day Radio recall); retaking is a link.
+  // practice, which opens what it names (resultPractice); retaking is a link.
   function resultActions(short) {
     const drill = $("result-drill");
     if (short || archivedView) { drill.hidden = true; return; }
-    const e = estimate(paper, state);
-    const weakest = [...e.sections].filter(s => s.total).sort((a, b) => a.correct / a.total - b.correct / b.total)[0];
-    const plan = weakest?.key === "listening" ? ["Practise listening", "?view=radio&mode=recall"] : ["Drill my weak items", "?view=recall&queue=weak"];
-    drill.textContent = plan[0] + (weakest ? " · " + weakest.ja + " first" : ""); drill.href = plan[1]; drill.hidden = false;
+    const rates = [0, 1, 2, 3].map(skill => { const rows = questions.filter(q => q.skill === skill); return {n: rows.length, got: rows.filter(q => state.answers[q.index] === q.key).length}; }); // as the score card counts
+    const plan = resultPractice(rates);
+    drill.textContent = plan.label; drill.hidden = false;
+    drill.href = plan.href || "./n2-mock.html";
+    drill.onclick = plan.section ? async event => { event.preventDefault(); startSection(plan.section, {data: await report()}); } : null;
   }
   // The line that decided an answer, marked in its passage or script.
   function decisive(q) {
@@ -1697,15 +1699,15 @@ async function exam() {
   $("listen").onclick = () => start("listening");
   $("listen").textContent = "Start listening · " + minutes("listening") + " min";
   $("guess").innerHTML = flagSvg;
-  $("guess").onclick = () => { if (tick()) return; state.guesses[state.index] = !state.guesses[state.index]; persist(); renderExam(); };
+  $("guess").onclick = () => { if (!answering(state) || tick()) return; state.guesses[state.index] = !state.guesses[state.index]; persist(); renderExam(); };
   $("prev").onclick = () => move(state.index - 1);
   $("next").onclick = () => { const [, end] = range(); state.index === end - 1 ? openGrid() : move(state.index + 1); };
   $("grid-open").onclick = openGrid;
   $("grid-close").onclick = () => $("grid-dialog").close();
-  $("submit").onclick = () => { if (!tick()) finish(); };
+  $("submit").onclick = () => { if (answering(state) && !tick()) finish(); };
   $("exam-pause").onclick = pause; $("exam-resume").onclick = resume;
   $("speak").onclick = () => {
-    if (tick()) return;
+    if (!answering(state) || tick()) return;
     const q = questions[state.index];
     playScript(q.mondai ? listeningLines(q) : [q.context + "。" + q.prompt + (q.options === 3 ? "。" + q.choices.map((c, i) => (i + 1) + "番。" + c).join("。") : "")]);
   };
@@ -1718,7 +1720,7 @@ async function exam() {
     } catch (e) { warn("Could not archive this attempt. " + e.message); }
   };
   document.addEventListener("keydown", e => {
-    if (!active() || $("grid-dialog").open || e.metaKey || e.ctrlKey || e.altKey || e.target.closest("audio,video,a,input,textarea,select,iframe")) return;
+    if (!answering(state) || $("grid-dialog").open || e.metaKey || e.ctrlKey || e.altKey || e.target.closest("audio,video,a,input,textarea,select,iframe")) return;
     const q = questions[state.index];
     if (/^[1-4]$/.test(e.key) && Number(e.key) <= q.options) choose(Number(e.key));
     else if (e.key === "ArrowRight") move(state.index + 1);

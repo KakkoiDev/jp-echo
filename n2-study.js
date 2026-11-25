@@ -20,6 +20,32 @@ export const localDay = (date = new Date()) => date.toLocaleDateString("en-CA");
 
 // The hub's head line. With no saved goal the countdown still runs to the next
 // standard exam date, so the head names that date rather than "no date".
+// Results' practice action names what it opens (bug handoff 25 Nov, #5).
+// `rates` is the share right per skill (0 vocabulary … 3 listening) on this
+// attempt. Reading and listening open a timed section of that skill from an
+// unsat set; language knowledge opens the weak recall queue of whichever of
+// words or grammar went worse. Without a scored section, the label says
+// what the fallback is.
+export function resultPractice(rates = []) {
+  const scored = SECTIONS.map(s => {
+    const rows = s.skills.filter(k => rates[k]?.n);
+    const got = rows.reduce((t, k) => t + rates[k].got, 0), n = rows.reduce((t, k) => t + rates[k].n, 0);
+    return {...s, rate: n ? got / n : null};
+  }).filter(s => s.rate != null);
+  const weakest = scored.sort((a, b) => a.rate - b.rate)[0];
+  if (!weakest) return {label: "Recall weak words and grammar", href: "?view=recall&queue=weak"};
+  if (weakest.key === "reading") return {label: "Practise reading · a timed 読解 section", section: "reading"};
+  if (weakest.key === "listening") return {label: "Practise listening · a timed 聴解 section", section: "listening"};
+  const rate = k => rates[k]?.n ? rates[k].got / rates[k].n : 1;
+  return rate(1) < rate(0) ? {label: "Recall weak grammar · 文法", href: "?view=recall&type=grammar&queue=weak"}
+    : {label: "Recall weak words · 文字・語彙", href: "?view=recall&type=meaning&queue=weak"};
+}
+
+// An attempt takes answers, moves and exposure only while a timed section is
+// running and not paused (bug handoff 25 Nov, #1): a paused question is
+// hidden, so nothing may change it until Resume.
+export const answering = state => (state?.phase === "written" || state?.phase === "listening") && !state.pausedAt;
+
 export function examHeadLine({saved, exam, firstPass, format}) {
   return "Exam " + format(exam) + (saved ? " · first pass " + format(firstPass) : "");
 }
@@ -29,10 +55,14 @@ export function nextKicker(index, count, minutes) {
   return "Next · step " + (index + 1) + " of " + count + (minutes ? " · " + formatMinutes(minutes) : "");
 }
 
-// "0 of 2 so far": runs in the window that meet the bar, at most two.
+// One reason, matching sprintCheckpoint's latest-two rule (bug handoff
+// 25 Nov, #4): two passes on one date are not "2 of 2", and a pass older
+// than seven days has already left `recent`.
 export function checkpointLine(checkpoint) {
   if (checkpoint.met) return "Both done.";
-  return Math.min(2, checkpoint.recent.filter(r => r.meets).length) + " of 2 so far.";
+  const [a, b] = checkpoint.recent;
+  if (a?.meets && b?.meets && a.day === b.day) return "Both scores cleared the floor on the same day. Take a fresh mock on another day.";
+  return checkpoint.recent.filter(r => r.meets).length + " of 2 in the last seven days.";
 }
 
 // A mock tile's state: in progress, over or below the pass line on its best

@@ -42,3 +42,21 @@ test("break: a head naming the mock, estimated written scores, one filled Start 
   assert.match(mock, /"written section done"/); assert.match(mock, /" estimated"\), el\("strong", \{text: s\.scaled \+ " of " \+ SECTION_MAX\}\)/);
   assert.match(mock, /A direction, not a prediction\. Listening scores after the next section\./);
 });
+
+// Bug handoff 25 Nov, #1: a paused exam took keyboard answers and moves.
+test("a paused attempt takes no answers, moves, unsure marks or exposure until Resume", async () => {
+  const {answering} = await import("../n2-study.js");
+  assert.equal(answering({phase: "written"}), true);
+  assert.equal(answering({phase: "listening"}), true);
+  assert.equal(answering({phase: "written", pausedAt: Date.now()}), false, "paused");
+  assert.equal(answering({phase: "rest"}), false);
+  assert.equal(answering({phase: "results"}), false);
+  assert.equal(answering({phase: "intro"}), false);
+  for (const fn of ["move", "choose"]) assert.match(mock, new RegExp("function " + fn + "\\([^)]*\\) \\{\\n    if \\(!answering\\(state\\) \\|\\| tick\\(\\)\\) return;"), fn + " is guarded");
+  assert.match(mock, /function markShown\(\) \{\n    if \(archivedView \|\| !answering\(state\)/, "exposure is not recorded while paused, nor on a paused reload");
+  assert.match(mock, /function openGrid\(\) \{\n    if \(!answering\(state\)\) return;/);
+  assert.match(mock, /\$\("guess"\)\.onclick = \(\) => \{ if \(!answering\(state\) \|\| tick\(\)\) return;/);
+  assert.match(mock, /\$\("submit"\)\.onclick = \(\) => \{ if \(answering\(state\) && !tick\(\)\) finish\(\); \};/);
+  assert.match(mock, /addEventListener\("keydown", e => \{\n    if \(!answering\(state\) \|\| \$\("grid-dialog"\)\.open/, "digits, arrows and F do nothing while paused");
+  assert.match(mock, /\$\("exam-pause"\)\.onclick = pause; \$\("exam-resume"\)\.onclick = resume;/, "Resume stays wired");
+});

@@ -29,8 +29,8 @@ test("every hub disclosure is the shared collapse-row: title, meta line, chevron
 });
 
 test("sprint checkpoint says the rule once and how far along (H4)", () => {
-  assert.equal(checkpointLine({met: false, recent: []}), "0 of 2 so far.");
-  assert.equal(checkpointLine({met: false, recent: [{meets: true}, {meets: false}]}), "1 of 2 so far.");
+  assert.equal(checkpointLine({met: false, recent: []}), "0 of 2 in the last seven days.");
+  assert.equal(checkpointLine({met: false, recent: [{meets: true, day: "2026-11-25"}, {meets: false, day: "2026-11-24"}]}), "1 of 2 in the last seven days.");
   assert.equal(checkpointLine({met: true, recent: [{meets: true}, {meets: true}]}), "Both done.");
   assert.match(mock, /Two fresh mocks on different days within seven days: 70% average, 60% in each section\. /);
 });
@@ -58,4 +58,27 @@ test("history: one kind glyph per row, a filter, an empty state, and never 'unde
   assert.equal(bookName(undefined), "Unknown paper");
   assert.equal(bookName("undefined"), "Unknown paper");
   assert.equal(bookName("2018"), "Official workbook · 2018");
+});
+
+// Bug handoff 25 Nov, #4: the label followed its own count, not the rule.
+test("the checkpoint label follows the latest-two rule: same day, separate days, a failed section, an expired pass", async () => {
+  const {sprintCheckpoint, SECTIONS} = await import("../n2-study.js");
+  const now = new Date(2026, 10, 25, 20);
+  // One question per section; a pass answers all three, a fail misses Reading.
+  const paper = id => ({id, questions: SECTIONS.map((s, index) => ({index, skill: s.skills[0], key: 1}))});
+  const sit = (book, daysAgo, pass = true) => {
+    const at = new Date(2026, 10, 25 - daysAgo, 9);
+    return {id: book + "-a", book, paper: book, phase: "results", startedAt: at.toISOString(), completedAt: new Date(at.getTime() + 3600e3).toISOString(),
+      answers: SECTIONS.map((s, i) => pass || i !== 1 ? 1 : 2), guesses: SECTIONS.map(() => false)};
+  };
+  const run = attempts => { const books = attempts.map(a => a.book), papers = new Map(books.map(b => [b, paper(b)])); return sprintCheckpoint(attempts, papers, books, now); };
+  const sameDay = run([sit("b1", 1), sit("b2", 0), sit("b3", 0)]);
+  assert.equal(sameDay.met, false);
+  assert.equal(checkpointLine(sameDay), "Both scores cleared the floor on the same day. Take a fresh mock on another day.", "never 2 of 2 while unmet");
+  const apart = run([sit("b1", 1), sit("b2", 0)]);
+  assert.equal(apart.met, true); assert.equal(checkpointLine(apart), "Both done.");
+  const failed = run([sit("b1", 1), sit("b2", 0, false)]);
+  assert.equal(failed.met, false); assert.equal(checkpointLine(failed), "1 of 2 in the last seven days.");
+  const expired = run([sit("b1", 9), sit("b2", 0)]);
+  assert.equal(expired.met, false); assert.equal(checkpointLine(expired), "1 of 2 in the last seven days.");
 });

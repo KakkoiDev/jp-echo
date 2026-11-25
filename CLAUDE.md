@@ -173,7 +173,10 @@ Before considering the change complete:
   sentence or note must record one, or another device brings it back. Writes
   that change the library go through the `saveSentence` / `deleteSentence` /
   note / word wrappers in `app.js` (which call `markBackupDirty`); every N2
-  write goes through `access` (which marks N2 dirty). Never PATCH a file the
+  write goes through `access` (which marks N2 dirty). Earlier saves preview a
+  restore with the very merges Apply runs (`restorePreview`, restore.js),
+  naming additions, recoveries of what was deleted here, and updates; only
+  the latest choice may publish its preview (`latestRequest`). Never PATCH a file the
   page did not build; never write the library from the N2 page.
 - **Updates are offered, never forced.** A new worker waits while Echo is open
   (no `skipWaiting` on install). `app.js` shows "A new version of Echo is ready"
@@ -238,7 +241,9 @@ Before considering the change complete:
   (`solutionOf`, `whyReadings`, n2-forms.js).
 - **An N2 exam may be paused, honestly.** The pause stops the clock, hides
   the question and keeps `pausedMs`/`pauses` on the attempt; the results line
-  says how long it was paused. Paused time is never answer time.
+  says how long it was paused. Paused time is never answer time, and a
+  paused attempt takes no answers, moves, unsure marks or exposure
+  (`answering`, n2-study.js) until Resume.
 - **The N2 day fits six hours including breaks.** `BUDGET`, `capMinutes` and
   `firstCheckForecast` (n2-study.js) size every plan, the coach's included;
   first-check minutes follow `measuredPace`. Timed reading and listening sections
