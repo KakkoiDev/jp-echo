@@ -192,6 +192,12 @@ Before considering the change complete:
   cancels its benefit (Schreiner, Lehmann & Rasch 2015). The meaning plays in
   the wind-down and, by the learner's choice, the rest of the night. The night
   needs the screen on (wake lock): a locked phone stops speech on iOS and Android.
+  Night plays today's N2 work by default (`nightPlan`, n2-night.js): the batch
+  Today's checks opens tomorrow, each item as its deck sentence. Sleep only
+  strengthens what was studied awake, so the night never brings in new items.
+  "Cue half" holds a fixed half back and `nightComparison` counts the next
+  day's checks by half; the split lives in localStorage `echo-n2-night`, never
+  in the N2 records, a backup or the gist.
 - **Mora pictures are the owner's drawn set.** `anchors/` and `anchors-dark/`
   hold one picture per current anchor (MORA_MNEMONICS v5), switched by theme
   through `themedPictureHtml`; `mora-pictures.js` maps kana to file, section and

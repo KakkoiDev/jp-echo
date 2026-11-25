@@ -7,6 +7,7 @@ import {collapseRow,collapseChevronSvg,scoreChart,flagSvg,chevronLeftSvg,chevron
 import {REPORT_REASONS,createReport,fileReport,reportSyncLine,reportsAdapter,reportHistory,screenOf,appVersion,deviceInfo} from "./reports.js";
 import {recognitionFactory} from "./speech.js";
 import {speakOnce,speakAndWait,japaneseVoices} from "./speech.js";
+import {NIGHT_KEY, nightComparison, comparisonLine} from "./n2-night.js";
 import {spokenWord,radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
 import {TAG,TAGS,HELD_OUT,CAUSES,comprehensionStats,weakestTag,tagDrill,drillExposure,attemptTags,tagsOf,sourceOf} from "./n2-comprehension.js";
 import {exampleSegments,patternNeedles,delayedChecks,checkItems,checkAsk,contextNote,sentenceParts,checkDetail,audioGrade,delayedAccuracy,CHECK_SOURCE,WHY_LINE,evidenceFor,evidenceLine} from "./n2-delayed.js";
@@ -140,6 +141,14 @@ async function json(path) {
 }
 async function materials() {
   if (!inventory) [inventory, original, themes] = await Promise.all([json("./n2-inventory.json"), json("./n2-echo-bank.json"), json("./n2-sets/index.json").catch(() => ({}))]);
+}
+// Night Radio's cued-against-held tally (n2-night.js), after the checks it counts.
+async function nightLine() {
+  let nights = [];
+  try { nights = JSON.parse(localStorage.getItem(NIGHT_KEY) || "[]"); } catch {}
+  if (!nights.some(n => n?.compare)) return "";
+  const data = await report();
+  return comparisonLine(nightComparison({nights, recall: data.recall, events: data.events}));
 }
 // Example sentences: the N2 decks first (natural contexts), then the exam
 // questions that test the same target (a second, different context).
@@ -1147,6 +1156,7 @@ async function checks() {
     $("check-bar").style.width = "100%";
     $("check-done-title").textContent = (session.length - skipped) + " checked a day later";
     $("check-done-line").textContent = tally.instant + " instant · " + tally.slow + " slow · " + tally.missed + " missed · " + skipped + " skipped. Today's misses come back tomorrow.";
+    nightLine().then(line => { $("check-night").textContent = line; $("check-night").hidden = !line; });
     $("check-missed").replaceChildren(...missed.map(m => el("li", {},
       el("span", {class: "drill-missed-text"}, el("span", {lang: "ja", text: m.prompt + (m.reading && m.reading !== m.prompt ? "（" + m.reading + "）" : "")}), el("span", {class: "hint", text: m.answer + " · " + (audio(m) ? "by ear" : "in print")})))));
   }

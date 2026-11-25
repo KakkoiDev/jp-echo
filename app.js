@@ -14,7 +14,9 @@ import {applyReadingCorrection,removeArchivedMiniCards,readImportRecovery,saveIm
 import {readGistIndex,readGistFile,parseGistId,gistRevision,listGistRevisions} from "./gist-backup.js";
 import {allDataBundle,isAllDataBundle,bundleCounts,restorePreview,countsLine,previewLine,latestRequest} from "./restore.js";
 import {startAutoSync,gistSettings,breakTies,markDirty,syncState,mergeDeleted,applyDeleted,readDeleted,saveDeleted,recordDeletion,forgetDeletion} from "./sync.js";
-import {n2Adapter} from "./n2-progress.js";
+import {n2Adapter,report as n2Report,scored as n2Scored} from "./n2-progress.js";
+import {examplesFromDecks} from "./day-radio.js";
+import {NIGHT_KEY,nightPlan,nightRecord,keepNight,nightComparison,comparisonLine} from "./n2-night.js";
 import {READINGS_RULE,correctSentenceReadings,analyzeSentenceGrammar,askModel,rewriteSentence,adjustNote,carries,compose,composeFromIntent,PROVIDER_DEFAULTS,tagGrammar,translate,discuss,generateReading,writeNotes,writeWordNote,transcribeAudio} from "./api.js";
 import {grammarListItems,setImportedGrammar,byLevel as grammarByLevel,cleanTags as grammarTags,coverage as grammarCoverage,hasGrammar,isTagged,learned as grammarLearned,LEVELS as GRAMMAR_LEVELS,point as grammarPoint,POINTS as GRAMMAR_POINTS,summarise as grammarSummarise,untagged as untaggedSentences} from "./grammar.js";
 import {speakOnce,japaneseVoices,recognitionFactory,ShadowLoop,ConversationLoop,RadioPlayer,NoiseBed} from "./speech.js";
@@ -2788,29 +2790,50 @@ function renderRadioResume(){let day={};try{day=JSON.parse(localStorage.getItem(
   $("#radio-resume").hidden=!paused;
   if(paused)$("#radio-resume-text").textContent=t("Paused · Day Radio, sentence {n} of {total}",{n:day.index+1,total:day.ids.length});
   $("#radio-start").classList.toggle("primary",!paused);$("#radio-start").classList.toggle("outline",!!paused)}
-async function renderRadio(){radioSentences=radioQueue(await listSentences());renderRadioResume();
-  $("#radio-empty").hidden=radioSentences.length>0;$("#radio-setup").hidden=!radioSentences.length;
+// Tonight plays today's N2 work (n2-night.js) or the reviewed Echo sentences.
+// The N2 night may cue half and hold half back; tomorrow's checks compare them.
+let radioN2=null,radioN2Materials=null;
+function readNights(){try{return JSON.parse(localStorage.getItem(NIGHT_KEY)||"[]")}catch{return []}}
+async function n2NightMaterials(){if(!radioN2Materials)radioN2Materials=(async()=>{const get=path=>fetch(path).then(r=>r.ok?r.json():null).catch(()=>null);
+  const [inventory,...decks]=await Promise.all(["./n2-inventory.json","./decks/n2-words.json","./decks/n2-grammar.json"].map(get));
+  return inventory?{inventory,examples:examplesFromDecks(inventory,decks.filter(Boolean))}:null})();return radioN2Materials}
+async function loadRadioN2(){try{const materials=await n2NightMaterials();if(!materials)return null;const data=await n2Report();
+  return {plan:nightPlan({...materials,recall:data.recall,evidence:n2Scored(data),events:data.events,compare:settings.radioCompare!==false}),line:comparisonLine(nightComparison({nights:readNights(),recall:data.recall,events:data.events}))}}catch{return null}}
+function radioSource(){const n2=radioN2?.plan.cued.length>0;return settings.radioSource==="echo"||(!settings.radioSource&&!n2&&radioSentences.length)?"echo":"n2"}
+function radioQueueNow(){return radioSource()==="n2"?radioN2?.plan.cued||[]:radioSentences}
+async function renderRadio(){[radioSentences,radioN2]=await Promise.all([listSentences().then(radioQueue),loadRadioN2()]);renderRadioResume();
+  const source=radioSource(),queue=radioQueueNow(),plan=radioN2?.plan;
+  for(const tab of document.querySelectorAll("#radio-source [data-source]"))tab.setAttribute("aria-selected",String(tab.dataset.source===source));
+  $("#radio-empty").hidden=queue.length>0;$("#radio-setup").hidden=!queue.length;
+  $("#radio-empty-text").textContent=source==="n2"?"Nothing from N2 today yet. Tonight plays what you miss, answer slowly, guess or hear on Day Radio today on the N2 page.":"Radio plays only sentences you have reviewed at least once. Review a few first, then come back tonight.";
+  $("#radio-to-review").hidden=source==="n2";$("#radio-to-n2").hidden=source!=="n2";
   $("#radio-hours").value=String(radioOptions().hours);$("#radio-noise").checked=settings.radioNoise!==false;
-  $("#radio-count").textContent=spell(radioSentences.length)+" studied sentence"+(radioSentences.length===1?"":"s")+", newest first";
+  $("#radio-compare-label").hidden=source!=="n2";$("#radio-compare").checked=settings.radioCompare!==false;
+  const line=source==="n2"?radioN2?.line||"":"";$("#radio-compare-line").hidden=!line;$("#radio-compare-line").textContent=line;
+  $("#radio-count").textContent=source==="n2"
+    ?spell(queue.length)+" from today’s N2"+(plan?.compare?" · "+spell(plan.held.length)+" held back for tomorrow’s comparison":"")
+    :spell(radioSentences.length)+" studied sentence"+(radioSentences.length===1?"":"s")+", newest first";
   let at=0;const rows=radioPlan(radioOptions()).filter(part=>part.minutes>0).map(part=>{const li=document.createElement("li"),copy=RADIO_PHASE_COPY[part.phase];
     li.append(el("span","radio-when",radioSpan(at,at+part.minutes)),el("strong","",copy.title),el("p","hint",copy.line+(part.phase==="night"?" Your choice — the studies do not test this part.":"")));at+=part.minutes;return li});
   $("#radio-plan").replaceChildren(...rows)}
 function radioSpan(from,to){const f=minutes=>minutes%60?Math.floor(minutes/60)+"h"+String(minutes%60).padStart(2,"0"):minutes/60+"h";return (from?f(from):"0")+"–"+f(to)}
-function saveRadioOptions(){settings.radioHours=Number($("#radio-hours").value)||RADIO_DEFAULTS.hours;settings.radioNoise=$("#radio-noise").checked;storePreference("jp-echo-settings",JSON.stringify(settings));renderRadio()}
+function saveRadioOptions(){settings.radioHours=Number($("#radio-hours").value)||RADIO_DEFAULTS.hours;settings.radioNoise=$("#radio-noise").checked;settings.radioCompare=$("#radio-compare").checked;storePreference("jp-echo-settings",JSON.stringify(settings));renderRadio()}
 async function holdRadioWake(){try{radioWake=await navigator.wakeLock?.request("screen")||null}catch{radioWake=null}
   $("#radio-status").textContent=radioWake?"":"This browser may still turn the screen off. If it does, set Auto-Lock (iPhone) or Screen timeout (Android) to the longest setting for the night."}
 function releaseRadioWake(){try{radioWake?.release()}catch{}radioWake=null}
-function startRadio(){if(!radioSentences.length)return;loop.stop();discussionLoop.stop();readingLoop.stop();
+function startRadio(){const queue=radioQueueNow();if(!queue.length)return;loop.stop();discussionLoop.stop();readingLoop.stop();
   const plan=radioPlan(radioOptions()),voiceFor=lang=>lang===targetLang()?(voices[Number($("#voice").value)]||voices[0]||null):(japaneseVoices(lang)[0]||null);
   if(settings.radioNoise!==false)radioNoise.start();
   $("#radio-night").hidden=false;
-  radio.start(radioSentences,{steps:radioSteps,phaseAt:elapsed=>radioPhase(elapsed,plan),voiceFor,rate:Math.min(1,Number($("#rate").value)||1)});
+  radio.start(queue,{steps:radioSteps,phaseAt:elapsed=>radioPhase(elapsed,plan),voiceFor,rate:Math.min(1,Number($("#rate").value)||1)});
+  if(radioSource()==="n2"&&radioN2)try{localStorage.setItem(NIGHT_KEY,JSON.stringify(keepNight(readNights(),nightRecord(radioN2.plan))))}catch{}
   holdRadioWake()}
 function stopRadio(){if(!radio.running&&$("#radio-night").hidden)return;radio.stop();radioNoise.stop();releaseRadioWake();$("#radio-night").hidden=true}
 function renderRadioState(at,item){const copy=RADIO_PHASE_COPY[at.phase];$("#radio-phase").textContent=copy.title;$("#radio-line").textContent=item&&at.phase==="wind-down"?stripFurigana(item.target):copy.line;
   $("#radio-until").textContent=at.phase==="done"?"":"Until "+clockAt(Date.now()+at.left)}
 $("#review-radio").onclick=()=>showView("radio");$("#radio-back").onclick=()=>showView("review");$("#radio-to-review").onclick=()=>showView("review");
-$("#radio-start").onclick=startRadio;$("#radio-stop").onclick=stopRadio;$("#radio-hours").onchange=saveRadioOptions;$("#radio-noise").onchange=saveRadioOptions;
+$("#radio-start").onclick=startRadio;$("#radio-stop").onclick=stopRadio;$("#radio-hours").onchange=saveRadioOptions;$("#radio-noise").onchange=saveRadioOptions;$("#radio-compare").onchange=saveRadioOptions;
+for(const tab of document.querySelectorAll("#radio-source [data-source]"))tab.onclick=()=>{settings.radioSource=tab.dataset.source;storePreference("jp-echo-settings",JSON.stringify(settings));renderRadio()};
 // A wake lock is dropped whenever the page is hidden; take it again on return.
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&radio.running)holdRadioWake()});
 $("#mora-back").onclick=()=>showView("library");$("#mora-quiz").onchange=()=>{moraRevealed.clear();renderMora()};for(const tab of document.querySelectorAll("#mora-sections [data-section], #mora-section-specials [data-section]"))tab.onclick=()=>{moraSection=tab.dataset.section;syncRoute({});renderMora();if(tab.closest("#mora-section-specials"))$("#mora-sections").scrollIntoView({block:"nearest"})};for(const id of ["#mora-show-pictures","#mora-show-furigana","#mora-show-english"])$(id).onchange=saveMoraDisplay;

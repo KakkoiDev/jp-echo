@@ -1,0 +1,92 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import {readFileSync} from "node:fs";
+import {nightPlan, nightRecord, keepNight, nightComparison, comparisonLine, nextDay, studyDay, NIGHT_MIN_SPLIT} from "../n2-night.js";
+import {delayedChecks, CHECK_SOURCE} from "../n2-delayed.js";
+import {radioEvent, examplesFromDecks} from "../day-radio.js";
+import {recallRecord, recallId} from "../n2-study.js";
+import {radioSteps} from "../radio.js";
+
+const read = p => JSON.parse(readFileSync(new URL(p, import.meta.url), "utf8"));
+const src = p => readFileSync(new URL(p, import.meta.url), "utf8");
+const inventory = read("../n2-inventory.json");
+const examples = examplesFromDecks(inventory, [read("../decks/n2-words.json"), read("../decks/n2-grammar.json")]);
+const K = JSON.stringify;
+const at = (day, hour = 10) => new Date(day + "T" + String(hour).padStart(2, "0") + ":00:00").toISOString();
+const word = i => ["word", ...inventory.words[i].slice(0, 2)];
+const missed = (i, day) => {
+  const target = word(i), row = {id: recallId("meaning", target), type: "meaning", item: {target, prompt: target[1], reading: target[2], answer: inventory.words[i][2]}};
+  return recallRecord(null, row, "missed", new Date(at(day)));
+};
+
+test("the night belongs to the day studied, until 5 am", () => {
+  assert.equal(nextDay("2026-11-30"), "2026-12-01");
+  assert.equal(studyDay(new Date("2026-11-25T23:30:00")), "2026-11-25");
+  assert.equal(studyDay(new Date("2026-11-26T02:00:00")), "2026-11-25");
+  assert.equal(studyDay(new Date("2026-11-26T06:00:00")), "2026-11-26");
+});
+
+test("tonight is today's misses, the batch tomorrow's checks will open, with the deck sentence studied", () => {
+  const recall = [0, 1, 2].map(i => missed(i, "2026-11-25"));
+  const old = missed(3, "2026-11-20");
+  const plan = nightPlan({inventory, recall: [...recall, old], examples, day: "2026-11-25", compare: false});
+  assert.deepEqual(plan.cued.map(i => i.key).sort(), recall.map(r => K(r.target)).sort(), "only today's work, not an old miss");
+  assert.deepEqual(plan.held, []);
+  const tomorrow = delayedChecks({inventory, recall: [...recall, old], today: "2026-11-26", size: Infinity}).map(c => K(c.target)).sort();
+  assert.deepEqual(plan.cued.map(i => i.key).sort(), [...new Set(tomorrow)]);
+  const first = plan.cued.find(i => i.key === K(word(0)));
+  assert.equal(first.target, examples.get(K(word(0)))[0].ja, "the cue is the deck sentence, with its readings");
+  assert.equal(first.source, examples.get(K(word(0)))[0].en);
+  // In deep sleep the cue is the sentence alone (radio.js).
+  assert.deepEqual(radioSteps("cues", first).filter(s => s.say).map(s => s.lang), ["ja"]);
+});
+
+test("Day Radio plays and listening misses today reach the night; nothing today means an empty night", () => {
+  const heard = radioEvent({target: word(5), kind: "exposure", source: "day-radio", mode: "listen", now: new Date(at("2026-11-25"))});
+  const plan = nightPlan({inventory, events: [heard], examples, day: "2026-11-25"});
+  assert.deepEqual(plan.cued.map(i => i.key), [K(word(5))]);
+  assert.equal(plan.compare, false, "too few to split");
+  assert.deepEqual(nightPlan({inventory, events: [heard], examples, day: "2026-11-26"}).cued, []);
+});
+
+test("compare cues a fixed half and holds the rest back; the halves never overlap", () => {
+  const recall = Array.from({length: 30}, (_, i) => missed(i, "2026-11-25"));
+  const plan = nightPlan({inventory, recall, examples, day: "2026-11-25"});
+  assert.equal(plan.compare, true);
+  assert.equal(plan.cued.length + plan.held.length, 30);
+  assert.ok(plan.cued.length >= 5 && plan.held.length >= 5, "roughly half each");
+  const cued = new Set(plan.cued.map(i => i.key));
+  assert.ok(plan.held.every(i => !cued.has(i.key)));
+  const again = nightPlan({inventory, recall, examples, day: "2026-11-25"});
+  assert.deepEqual(again.cued.map(i => i.key), plan.cued.map(i => i.key), "reopening keeps the same halves");
+  assert.ok(NIGHT_MIN_SPLIT > 1);
+});
+
+test("the next day's checks are counted by half; a print miss or a slow ear counts as not recalled", () => {
+  const record = nightRecord({day: "2026-11-25", compare: true, cued: [{key: K(word(0))}, {key: K(word(1))}], held: [{key: K(word(2))}, {key: K(word(3))}]});
+  const nights = keepNight(keepNight([], {...record, cued: []}), record);
+  assert.equal(nights.length, 1, "one record per day, the latest wins");
+  const check = (i, grade) => {
+    const target = word(i), r = missed(i, "2026-11-25");
+    return {...r, events: [...r.events, {at: at("2026-11-26", 9), grade, source: CHECK_SOURCE}]};
+  };
+  const recall = [check(0, "instant"), check(1, "instant"), check(2, "missed")];
+  const events = [radioEvent({target: word(3), kind: "recall", grade: "slow", source: CHECK_SOURCE, mode: "check", now: new Date(at("2026-11-26", 9))})];
+  const tally = nightComparison({nights, recall, events});
+  assert.deepEqual(tally, {cued: {right: 2, n: 2}, held: {right: 0, n: 2}, nights: 1});
+  assert.match(comparisonLine(tally), /cued 2 of 2 \(100%\), not cued 0 of 2 \(0%\)\. Too few yet to tell\./);
+  assert.equal(comparisonLine(nightComparison({nights: [], recall, events})), "");
+});
+
+test("the Radio screen plays the cued half only and keeps the split on this device, out of every backup", () => {
+  const app = src("../app.js"), html = src("../index.html"), sw = src("../sw.js"), mock = src("../n2-mock.js"), night = src("../n2-night.js");
+  assert.match(app, /return radioSource\(\)==="n2"\?radioN2\?\.plan\.cued\|\|\[\]:radioSentences/);
+  assert.match(app, /radio\.start\(queue,/);
+  assert.match(app, /localStorage\.setItem\(NIGHT_KEY,JSON\.stringify\(keepNight\(readNights\(\),nightRecord\(radioN2\.plan\)\)\)\)/);
+  assert.match(html, /id="radio-source" class="segmented radio-source" role="tablist"/);
+  assert.match(html, /id="radio-compare" type="checkbox"> Cue half, to compare tomorrow/);
+  assert.match(sw, /"\.\/n2-night\.js"/);
+  assert.match(mock, /comparisonLine\(nightComparison\(/);
+  assert.doesNotMatch(night, /access\(|indexedDB|markDirty/, "the split is not learning evidence");
+  assert.doesNotMatch(src("../sync.js") + src("../restore.js"), /echo-n2-night/);
+});
