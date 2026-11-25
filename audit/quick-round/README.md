@@ -62,6 +62,10 @@ teach the wrong thing.
 - Are the time limits (RULES.md) realistic for N2 pace?
 - **data/connectives.tsv**: is each connective's job right? Which important
   N2 connectives are missing?
+- **questions/connective.jsonl** (問題9 style): in each excerpt, is the
+  answer the only connective that fits, and could any wrong choice also fit?
+  The wrong choices skip jobs listed as overlapping in `OVERLAP`
+  (n2-connectives.js); say if a pair should be added.
 - **data/connective-passages.tsv**: for the planned connective cards, is the
   blanked connective the only good fit given the sentence before? Mark rows
   where two connectives would fit.
@@ -78,8 +82,6 @@ Read RULES.md as a game designer and a learning scientist:
 
 ## What is not built yet
 
-- **Connective cards** (data ready: data/connectives.tsv and
-  data/connective-passages.tsv).
 - **Kanji from parts**: a compound the learner hasn't studied, its reading or
   meaning worked out from what its kanji usually do (data/kanji.tsv).
 - **Grammar from parts**: a pattern shown as its building blocks

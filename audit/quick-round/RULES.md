@@ -1,4 +1,4 @@
-# Rules (as built, v273)
+# Rules (as built, v274)
 
 Source: `n2-game.js` (logic) and `game()` in `n2-mock.js` (screen).
 
@@ -25,11 +25,13 @@ questions. Speed is the skill being trained.
 | listen | the word, spoken with its reading by the device voice | its meaning | as meaning | 5 |
 | homophone | a sentence with one word written as its reading | the word in kanji | words with the same reading, then words sharing a kanji | 5 |
 | grammar | a pattern underlined in its sentence | its meaning | meanings of other N2 patterns | 6 |
+| connective | 問題9 文章の文法: up to two sentences of a reading passage, then the next sentence with its connective blanked, "（　）に入るのは？" | the connective | one common connective per job, leaving out every job that could stand in for the answer's (n2-connectives.js `OVERLAP`) | 7 |
 | exam | an authored question (問題1–5 or 7) | as authored | as authored | 4 (問題1), 5 (2, 3), 7 (4), 6 (5), 8 (7) |
 
 - Meanings are the first two senses of the dictionary entry, with any
   Japanese removed so a definition can't give its answer away.
 - Words written with ～ (affixes such as ～発) are left out.
+- Connective questions come from reading passages (問題10–14 texts) of sets already sat, never sets 19–20. A miss saves no recall record (a connective is not an inventory item) but comes back next round.
 - Exam questions come only from sets the learner has already sat, so a set not
   yet sat stays unseen for a full mock. Sets 19 and 20 are never used.
 
@@ -162,6 +164,7 @@ left to recall). **One more round** stays one tap away.
   the next question comes after 0.25 s.
 - Wrong: the picked row is struck through, the right row tinted, a low note,
   "Part of the game. Keep going.", and the next question after 0.8 s.
+- After every answer, right or wrong, the right word or grammar pattern is spoken once in the device's default Japanese voice, with its reading (never a whole sentence). The Sound switch turns it off with the other sounds.
 - Each card carries a reminder to say it out loud.
 - Sounds are generated on the device; a Sound button turns them off.
 

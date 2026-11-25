@@ -27,6 +27,7 @@ export const CONNECTIVES = Object.freeze([
   ["けれども", "turn", "but, although"],
   ["それでも", "turn", "even so, still"],
   ["にもかかわらず", "turn", "in spite of that"],
+  ["それなのに", "turn", "and yet, despite that"],
   ["とはいえ", "turn", "that said, even so"],
   ["もっとも", "turn", "though, admittedly (a qualification after the point)"],
   ["確かに", "concede", "certainly, it is true that"],
@@ -66,3 +67,29 @@ export function connectiveSites(text = "") {
   while ((m = re.exec(text))) out.push({word: m[2], at: m.index + m[1].length});
   return out;
 }
+
+// For 問題9-style questions: jobs that can stand in for each other in some
+// passages are never offered as wrong choices for one another, so a wrong
+// choice is wrong wherever the passage goes (しかし and 一方 can both fit a
+// contrast; つまり and したがって can both close an argument).
+export const OVERLAP = Object.freeze({
+  turn: ["turn", "concede", "exception", "contrast", "rather"],
+  concede: ["concede", "turn"],
+  restate: ["restate", "conclude", "infer"],
+  conclude: ["conclude", "restate", "infer"],
+  add: ["add", "aside", "example"],
+  contrast: ["contrast", "turn", "rather"],
+  rather: ["rather", "turn", "contrast"],
+  example: ["example", "add"],
+  reason: ["reason"],
+  exception: ["exception", "turn", "aside"],
+  aside: ["aside", "add", "exception", "contrast"],
+  shift: ["shift"],
+  infer: ["infer", "conclude", "restate"],
+});
+// The connectives the exam leans on, used for wrong choices: one per job,
+// the most common form.
+export const CHOICE_FOR_JOB = Object.freeze({turn: "しかし", concede: "確かに", restate: "つまり", conclude: "そのため", add: "さらに", contrast: "一方",
+  rather: "むしろ", example: "例えば", reason: "なぜなら", exception: "ただし", aside: "なお", shift: "ところで", infer: "とすれば"});
+export const jobOf = word => CONNECTIVES.find(c => c[0] === word)?.[1] || null;
+export const glossOf = word => CONNECTIVES.find(c => c[0] === word)?.[2] || "";

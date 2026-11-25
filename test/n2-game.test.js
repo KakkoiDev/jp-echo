@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
-import {runClock, RUN_CLOCK, DIFFICULTY, difficultyOf, pace, WAVE, HOOK, STRETCH, bossProgress, takeBoss, resting, runTable, BOSS_EVERY, EXAM_POINT, atBedtime, BEDTIME, FLOW, BONUS, flowStep, flowMix, flowSeconds, levelOf, bonusPoints, SECONDS, PAUSE, REVIEW_SECONDS, inSlump, nextRound, WARM_UP, gamePool, choicesFor, pickRound, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, nearMisses, gloss, today, lastDays, ranking, bossSet,
+import {answerSpeech, runClock, RUN_CLOCK, DIFFICULTY, difficultyOf, pace, WAVE, HOOK, STRETCH, bossProgress, takeBoss, resting, runTable, BOSS_EVERY, EXAM_POINT, atBedtime, BEDTIME, FLOW, BONUS, flowStep, flowMix, flowSeconds, levelOf, bonusPoints, SECONDS, PAUSE, REVIEW_SECONDS, inSlump, nextRound, WARM_UP, gamePool, choicesFor, pickRound, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, nearMisses, gloss, today, lastDays, ranking, bossSet,
   ROUND_SIZE, DAILY_GOAL} from "../n2-game.js";
 import {examplesFromDecks} from "../day-radio.js";
 import {HELD_OUT} from "../n2-comprehension.js";
@@ -301,4 +301,36 @@ test("difficulty: Normal is the 80% zone, Easy aims higher and pays less, Hard a
   const index = src("../index.html"), mock = src("../n2-mock.js");
   assert.match(index, /id="settings-game-difficulty"><option value="easy">/);
   assert.match(mock, /if \(paid\.points > 0\) paid\.points = Math\.round\(paid\.points \* DIFFICULTY\[difficulty\(\)\]\.points\);/);
+});
+
+test("connectives are 問題9 文章の文法: a passage excerpt, one blank, four connectives, wrong ones from jobs that cannot stand in", async () => {
+  const {OVERLAP, jobOf, CHOICE_FOR_JOB} = await import("../n2-connectives.js");
+  const pool = gamePool({inventory, examples, sets, sat: new Set(ids.filter(id => !HELD_OUT.includes(id)))});
+  const cs = pool.filter(q => q.kind === "connective");
+  assert.ok(cs.length > 150, "plenty from the sets already sat");
+  assert.equal(gamePool({inventory, examples, sets, sat: new Set()}).filter(q => q.kind === "connective").length, 0, "only from sets already sat");
+  for (const q of cs) {
+    assert.equal(q.prompt, "（　）に入るのは？", "the 問題9 wording");
+    assert.equal((q.sentence.match(/（　）/g) || []).length, 1, q.id);
+    assert.ok(!q.sentence.includes(q.answer + "、") || q.sentence.indexOf(q.answer + "、") !== q.sentence.indexOf("（　）"), q.id);
+    const blocked = new Set(OVERLAP[jobOf(q.answer)]);
+    assert.ok(q.wrong.every(w => !blocked.has(jobOf(w))), q.id + ": a wrong choice could stand in");
+    const {choices, key} = choicesFor(q, seeded(2));
+    assert.equal(choices.length, 4); assert.equal(choices[key], q.answer);
+    assert.ok(q.id.match(/^c:n2-set-\d+#\d+@\d+$/) && !HELD_OUT.some(h => q.id.includes(h + "#")), q.id);
+  }
+  assert.ok(Object.values(CHOICE_FOR_JOB).every(w => jobOf(w)), "every wrong choice has a job");
+});
+
+test("after each answer the right word or pattern is spoken, with its reading, never a whole sentence", () => {
+  assert.equal(answerSpeech({kind: "reading", solution: {word: "重役", reading: "じゅうやく"}}), "重役【じゅうやく】");
+  assert.equal(answerSpeech({kind: "definition", solution: {word: "噴水", reading: "ふんすい"}}), "噴水【ふんすい】");
+  assert.equal(answerSpeech({kind: "grammar", prompt: "得る（える・うる）", solution: {word: "得る（える・うる）"}}), "得る");
+  assert.equal(answerSpeech({kind: "grammar", prompt: "～ざる", solution: {word: "～ざる"}}), "ざる");
+  assert.equal(answerSpeech({kind: "connective", answer: "ところが"}), "ところが");
+  assert.equal(answerSpeech({kind: "exam", target: ["word", "先祖", "せんぞ"]}), "先祖【せんぞ】");
+  assert.equal(answerSpeech({kind: "exam", target: null, prompt: "a long authored sentence"}), null, "no target, nothing spoken");
+  const mock = src("../n2-mock.js");
+  assert.match(mock, /const spoken = sound\(\) && answerSpeech\(q\);/, "the Sound switch silences it too");
+  assert.match(mock, /speakOnce\(spoken, \{voice: null,/, "the default voice");
 });

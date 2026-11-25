@@ -93,7 +93,7 @@ const lines = [
   "Built by `node tools/build-game-audit.mjs` from the code the game runs. Do not edit by hand: change the source and rebuild.", "",
   "## Questions the game can ask today", "",
   "| Kind | Label in the game | Seconds | Questions | File |", "| --- | --- | --- | --- | --- |",
-  ...[...byKind].map(([k, l]) => `| ${k} | ${KIND_LABEL[k]} | ${k === "exam" ? "8–16" : SECONDS[k]} | ${l.length.toLocaleString("en")} | questions/${k}.jsonl |`),
+  ...[...byKind].map(([k, l]) => `| ${k} | ${KIND_LABEL[k]} | ${k === "exam" ? "4–8" : SECONDS[k]} | ${l.length.toLocaleString("en")} | questions/${k}.jsonl |`),
   `| **all** | | | **${pool.length.toLocaleString("en")}** | |`, "",
   "Exam questions count every set from 02 to 18 as sat. In the game, only sets the learner has sat are used; sets 19 and 20 are never used.", "",
   "## Source lists", "",

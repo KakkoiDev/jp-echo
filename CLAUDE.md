@@ -290,7 +290,9 @@ Before considering the change complete:
 - **Quick round is the N2 game** (`?view=game`, logic in `n2-game.js`, tested
   in `test/n2-game.test.js`). Blitz, not shogi: `SECONDS` and `PAUSE` stay
   short (3–8 s a question). Rounds of 10 mixed multiple-choice questions
-  (reading near-misses, meaning, definition, listen, homophone, grammar, and
+  (reading near-misses, meaning, definition, listen, homophone, grammar,
+  問題9-style connectives from passages of sets already sat (`OVERLAP` keeps
+  every wrong choice unable to stand in for the answer), and
   short exam questions only from sets already sat, never `HELD_OUT`), a timed
   review of the misses, and the next round opens with them. A right answer
   saves nothing (picking is not recalling); a miss, timeout or "I don't know"
@@ -317,6 +319,8 @@ Before considering the change complete:
   falls within 24 h of its first answer, ×1.2 within 48 h. Settings →
   Quick round difficulty (`DIFFICULTY`): Easy 90% right ×0.75, Normal the
   adaptive 80%, Hard 65% ×1.25.
+  After each answer the right word or pattern is spoken once (`answerSpeech`,
+  default voice, with its reading; never a whole sentence).
   After a bad round (`inSlump`) the next is a warm-up of questions already won
   (`wins`, `WARM_UP`) with only two misses back, to keep the player going.
   Its flag is one tap with no sheet (owner, 26 Nov: "I don't think, you

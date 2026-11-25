@@ -8,7 +8,7 @@ import {REPORT_REASONS,createReport,fileReport,reportSyncLine,reportsAdapter,rep
 import {recognitionFactory} from "./speech.js";
 import {speakOnce,speakAndWait,japaneseVoices} from "./speech.js";
 import {readNights, nightComparison, comparisonLine, eveningRecall, EVENING_SOURCE} from "./n2-night.js";
-import {gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
+import {gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
 import {spokenWord,radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
 import {TAG,TAGS,HELD_OUT,CAUSES,comprehensionStats,weakestTag,tagDrill,drillExposure,attemptTags,tagsOf,sourceOf} from "./n2-comprehension.js";
 import {exampleSegments,patternNeedles,delayedChecks,checkItems,checkAsk,contextNote,sentenceParts,checkDetail,audioGrade,delayedAccuracy,CHECK_SOURCE,WHY_LINE,evidenceFor,evidenceLine} from "./n2-delayed.js";
@@ -1185,6 +1185,9 @@ async function game() {
     if (paid.points > 0) paid.points = Math.round(paid.points * DIFFICULTY[difficulty()].points);
     score += paid.points; streak = result.streak; head();
     if (sound()) outcome !== "right" ? sfx.wrong() : paid.jackpot ? sfx.jackpot() : q.bonus ? sfx.bonus() : sfx.right(streak);
+    // Then the right answer, spoken once in the default Japanese voice.
+    const spoken = sound() && answerSpeech(q);
+    if (spoken) setTimeout(() => speakOnce(spoken, {voice: null, rate: Number(settings.rate) || 1, lang: "ja"}), 180);
     if (paid.jackpot) $("game-combo").textContent = "Jackpot +" + paid.jackpot + " · combo " + streak;
     else if (q.bonus && outcome === "right") $("game-combo").textContent = "Bonus +" + paid.points;
     // Rule two: a mistake is part of the game. Say so, then keep going.

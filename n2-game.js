@@ -10,6 +10,9 @@
 //   listen      a word heard (device voice, with its reading); pick its meaning
 //   homophone   a reading in a sentence; pick the word (問題2 表記)
 //   grammar     a pattern underlined in its deck sentence; pick its meaning
+//   connective  問題9 文章の文法: a passage excerpt with a connective blanked,
+//               four connectives to choose from, wrong ones from jobs that
+//               cannot stand in for the answer's (n2-connectives.js)
 //   exam        short authored questions (問題1–5, 7) from sets the learner
 //               has already sat, so an unseen set stays unseen for a mock
 //
@@ -19,6 +22,7 @@
 // Pure (no DOM, no storage): test/n2-game.test.js holds it.
 import {recallItems, localDay} from "./n2-study.js";
 import {HELD_OUT} from "./n2-comprehension.js";
+import {connectiveSites, jobOf, glossOf, JOBS, OVERLAP, CHOICE_FOR_JOB} from "./n2-connectives.js";
 
 const keyOf = target => JSON.stringify(target);
 export const GAME_KEY = "echo-n2-game";
@@ -27,10 +31,10 @@ export const GAME_SOURCE = "game";
 // as it is given, so closing the page mid-round loses nothing.
 // Blitz chess, not shogi (owner, 26 Nov): seconds, not minutes, per question.
 export const ROUND_SIZE = 10, REVIEW_SECONDS = 5, DAILY_GOAL = 1000, RECENT_MS = 4 * 3600_000;
-export const SECONDS = Object.freeze({reading: 3, meaning: 3, definition: 4, listen: 5, homophone: 5, grammar: 6, exam: {1: 4, 2: 5, 3: 5, 4: 7, 5: 6, 7: 8}});
+export const SECONDS = Object.freeze({reading: 3, meaning: 3, definition: 4, listen: 5, homophone: 5, grammar: 6, connective: 7, exam: {1: 4, 2: 5, 3: 5, 4: 7, 5: 6, 7: 8}});
 // The pause after an answer before the next question, in milliseconds.
 export const PAUSE = Object.freeze({right: 250, miss: 800});
-export const KIND_LABEL = Object.freeze({reading: "Reading", meaning: "Meaning", definition: "Which word", listen: "Listen", homophone: "Which kanji", grammar: "Grammar", exam: "Exam question"});
+export const KIND_LABEL = Object.freeze({reading: "Reading", meaning: "Meaning", definition: "Which word", listen: "Listen", connective: "Connective · 問題9", homophone: "Which kanji", grammar: "Grammar", exam: "Exam question"});
 const EXAM_MONDAI = new Set([1, 2, 3, 4, 5, 7]);
 const KANJI = /[一-鿿々]/g;
 const plain = s => String(s || "").replace(/【[^】]*】/g, "");
@@ -131,6 +135,18 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
       sentence: plain(ex.ja), needle: g.prompt.replace(/[〜～]/g, ""), answer: g.answer, wrong: [...new Set(wrong)], seconds: SECONDS.grammar,
       solution: {word: g.prompt, meaning: g.answer, ja: ex.ja, en: ex.en || ""}});
   }
+  // Connectives (問題9): from reading passages of sets already sat. The
+  // excerpt is up to two sentences before the blank and the blank's sentence.
+  for (const set of sets) {
+    if (!set?.id || HELD_OUT.includes(set.id) || !sat.has(set.id)) continue;
+    const seen = new Set();
+    for (const [i, q] of (set.questions || []).entries()) {
+      const text = q.context || "";
+      if (q.skill !== "Reading" || !text || seen.has(text) || /（[０-９\d]+）/.test(text)) continue;
+      seen.add(text);
+      for (const site of connectiveSites(text)) pool.push(...connectiveQuestion(set.id + "#" + i, text, site));
+    }
+  }
   for (const set of sets) {
     if (!set?.id || HELD_OUT.includes(set.id) || !sat.has(set.id)) continue;
     for (const [i, q] of (set.questions || []).entries()) {
@@ -143,6 +159,20 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
     }
   }
   return pool;
+}
+
+function connectiveQuestion(source, text, site) {
+  const job = jobOf(site.word);
+  if (!job) return [];
+  const before = text.slice(0, site.at).replace(/\n/g, ""), after = text.slice(site.at + site.word.length);
+  const prev = (before.match(/(?:[^。」]*[。」]){1,2}\s*$/) || [""])[0].trim();
+  const rest = (after.match(/^、[^。\n]*[。」]?/) || [""])[0];
+  if (!prev || rest.length < 6) return [];
+  const blocked = new Set(OVERLAP[job] || [job]);
+  const wrong = Object.entries(CHOICE_FOR_JOB).filter(([j]) => !blocked.has(j)).map(([, w]) => w);
+  return [{id: "c:" + source + "@" + site.at, kind: "connective", target: null, dimension: null, prompt: "（　）に入るのは？",
+    sentence: prev + "（　）" + rest, needle: "（　）", answer: site.word, wrong, seconds: SECONDS.connective,
+    solution: {word: site.word, meaning: glossOf(site.word) + " · " + JOBS[job], ja: prev + site.word + rest, source, job}}];
 }
 
 // The four choices, in a fixed order per question for exam items (as
@@ -431,4 +461,19 @@ export function resting(state = {}, attempts = [], now = new Date()) {
   const t = state.bossTaken;
   if (!t?.at || localDay(new Date(t.at)) !== localDay(now)) return false;
   return attempts.some(a => a.book === t.set && a.phase === "results" && (a.completedAt || "") >= t.at);
+}
+
+// ---- The answer, spoken ----
+// After each answer the right word or pattern is spoken once (the device's
+// default Japanese voice), never a whole sentence: the sound, the reading and
+// the situation together. Words carry their reading (【】), so the voice
+// never guesses (重役 → おもやく).
+export function answerSpeech(q) {
+  const word = (text, reading) => text && reading && text !== reading ? text + "【" + reading + "】" : text || reading || "";
+  const pattern = text => String(text || "").replace(/[〜～]/g, "").replace(/（[^）]*）|\([^)]*\)/g, "").trim();
+  if (["reading", "meaning", "definition", "listen", "homophone"].includes(q.kind)) return word(q.solution?.word, q.solution?.reading) || null;
+  if (q.kind === "grammar") return pattern(q.solution?.word || q.prompt) || null;
+  if (q.kind === "connective") return q.answer;
+  if (q.kind === "exam" && q.target) return q.target[0] === "grammar" ? pattern(q.target[1]) || null : word(q.target[1], q.target[2]).replace(/[〜～]/g, "") || null;
+  return null;
 }

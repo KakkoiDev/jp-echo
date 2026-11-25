@@ -193,7 +193,7 @@ Boards at 375 px, each with a light and a dark twin, plus one desktop view
 
 ### Coming question kinds (design the cards now)
 
-- **Connectives**: a short passage from an authored N2 text with a connective
+- **Connectives** (built in v274, as 問題9 文章の文法): a short passage from an authored N2 text with a connective
   blanked (しかし, ところが, つまり, したがって, 一方, むしろ, 確かに…); pick the one
   that fits. The answer explains its job (turn, restate, conclude, add,
   contrast, concede). Passages run 2 to 6 sentences.
