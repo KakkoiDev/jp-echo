@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
-import {SECONDS, PAUSE, REVIEW_SECONDS, gamePool, choicesFor, pickRound, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, nearMisses, gloss, today, lastDays, ranking, bossSet,
+import {SECONDS, PAUSE, REVIEW_SECONDS, inSlump, nextRound, WARM_UP, gamePool, choicesFor, pickRound, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, nearMisses, gloss, today, lastDays, ranking, bossSet,
   ROUND_SIZE, DAILY_GOAL} from "../n2-game.js";
 import {examplesFromDecks} from "../day-radio.js";
 import {HELD_OUT} from "../n2-comprehension.js";
@@ -97,7 +97,7 @@ test("the day counts toward 1,000, the ranking and chart follow, and the boss op
 test("the game is a view of the N2 page, saved per answer, linked from the hub and the home screen", () => {
   const mock = src("../n2-mock.js"), html = src("../n2-mock.html"), sw = src("../sw.js"), manifest = read("../manifest.webmanifest");
   assert.match(mock, /view === "game" \? game :/);
-  assert.match(mock, /state = rememberAnswer\(readGame\(\), \{q, outcome, points: result\.points\}\); writeGame\(state\);/);
+  assert.match(mock, /state = rememberAnswer\(readGame\(\), \{q, outcome, points: result\.points, fast: result\.fast\}\); writeGame\(state\);/);
   assert.match(mock, /"missed", new Date\(\), \{source: GAME_SOURCE/);
   assert.match(html, /href="\?view=game"><span class="library-tool-glyph" lang="ja" aria-hidden="true">速<\/span>/);
   assert.match(html, /id="game-skip" type="button">I don’t know<\/button>/);
@@ -155,4 +155,27 @@ test("blitz, not shogi: a few seconds a question and almost no pause between the
   for (const [kind, sec] of Object.entries(SECONDS)) for (const v of typeof sec === "object" ? Object.values(sec) : [sec]) assert.ok(v <= 8, kind);
   assert.ok(SECONDS.reading <= 3 && SECONDS.meaning <= 3);
   assert.ok(PAUSE.right <= 300 && PAUSE.miss <= 1000 && REVIEW_SECONDS <= 5);
+});
+
+test("after a bad round, the next is a warm-up of things the player wins at, with only two misses back", () => {
+  const pool = gamePool({inventory, examples, sets, sat: new Set(["n2-set-5"])});
+  const won = pool.filter(q => q.kind !== "exam").slice(0, 40);
+  const wins = Object.fromEntries(won.map(q => [q.id, 2]));
+  const distinct = [...new Map(pool.slice(500).map(q => [JSON.stringify(q.target), q])).values()];
+  const missed = distinct.slice(0, 8).map(q => q.id);
+  const bad = {history: [{at: "2026-11-26T10:00:00Z", score: -400, right: 2, n: 10}], wins, comeback: missed};
+  assert.equal(inSlump(bad), true);
+  assert.equal(inSlump({history: [{score: 900, right: 7, n: 10}]}), false, "one good round ends it");
+  assert.equal(inSlump({}), false);
+  const {round, warmUp} = nextRound({pool, state: bad, random: seeded(5)});
+  assert.equal(warmUp, true);
+  assert.equal(round.filter(q => q.comeback).length, WARM_UP.comeback, "two misses, not eight");
+  assert.ok(round.filter(q => wins[q.id]).length >= 6, "mostly questions already won");
+  const normal = nextRound({pool, state: {...bad, history: [{score: 900, right: 8, n: 10}]}, random: seeded(5)});
+  assert.equal(normal.warmUp, false);
+  assert.equal(normal.round.filter(q => q.comeback).length, missed.length, "all misses back in a normal round");
+  let st = rememberAnswer({}, {q: {id: "m:a"}, outcome: "right", points: 300, fast: true});
+  assert.equal(st.wins["m:a"], 1, "a fast right answer is a win");
+  st = rememberAnswer(st, {q: {id: "m:a"}, outcome: "right", points: 60, fast: false});
+  assert.equal(st.wins["m:a"], 1, "a slow one is not");
 });

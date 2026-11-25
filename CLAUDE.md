@@ -300,6 +300,8 @@ Before considering the change complete:
   and the boss (a full mock on an unsat set once the 1,000 are done) live in
   localStorage `echo-n2-game`. Settings → "Open Echo on Quick round" sends a
   fresh launch there once per session (`echo-launched`), so Back reaches Echo.
+  After a bad round (`inSlump`) the next is a warm-up of questions already won
+  (`wins`, `WARM_UP`) with only two misses back, to keep the player going.
   Its flag is one tap with no sheet (owner, 26 Nov: "I don't think, you
   think"): it files a card report with the question exactly as shown and the
   game moves on; the audit (docs/REPORTS.md) works out why. The head report

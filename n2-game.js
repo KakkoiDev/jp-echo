@@ -162,10 +162,12 @@ export function choicesFor(q, random = Math.random) {
 // a large pool almost never repeats. No two of a kind in a row.
 // comeback: ids missed last round, asked again first (the chance to prove
 // them), in a new order and with the choices shuffled again.
-export function pickRound({pool, recall = [], seen = {}, size = ROUND_SIZE, random = Math.random, mix = {weak: 4, fresh: 4, known: 2}, comeback = [], now = Date.now()}) {
+// wins: question id → times answered right and fast in the game; a question
+// won before counts as known even if no recall record says so.
+export function pickRound({pool, recall = [], seen = {}, wins = {}, size = ROUND_SIZE, random = Math.random, mix = {weak: 4, fresh: 4, known: 2}, comeback = [], now = Date.now()}) {
   const last = new Map();
   for (const r of recall) last.set(r.dimension + keyOf(r.target), r.last);
-  const state = q => { const g = q.target && last.get(q.dimension + keyOf(q.target)); return !g ? "fresh" : g === "instant" ? "known" : "weak"; };
+  const state = q => { const g = q.target && last.get(q.dimension + keyOf(q.target)); return g && g !== "instant" ? "weak" : g === "instant" || wins[q.id] ? "known" : "fresh"; };
   // Seen in the last four hours: only if nothing else is left (a small kind
   // such as the homophones would otherwise come round several times a day).
   const groups = {weak: [], fresh: [], known: []}, recent = [];
@@ -224,14 +226,16 @@ export const recallsMiss = (q, outcome) => outcome !== "right" && !!q.target;
 // The device's game memory: best score, rounds, when each question was last
 // seen. Kept small: the most recent 20 000 questions.
 // After each answer: the question is seen; a miss waits for the next round.
-export function rememberAnswer(state = {}, {q, outcome, points = 0, now = Date.now()}) {
+export function rememberAnswer(state = {}, {q, outcome, points = 0, fast = false, now = Date.now()}) {
   const seen = {...(state.seen || {}), [q.id]: now};
+  const wins = {...(state.wins || {})};
+  if (fast) wins[q.id] = (wins[q.id] || 0) + 1;
   const comeback = (state.comeback || []).filter(id => id !== q.id);
   if (outcome !== "right") comeback.push(q.id); // missed again: it comes back again
   const total = (state.total || 0) + points, day = localDay(new Date(now));
   const days = {...(state.days || {})}, d = days[day] || {answered: 0, right: 0, points: 0, rounds: 0, best: 0};
   days[day] = {...d, answered: d.answered + 1, right: d.right + (outcome === "right" ? 1 : 0), points: d.points + points};
-  return {...state, seen, comeback: comeback.slice(-ROUND_SIZE), total, answered: (state.answered || 0) + 1, days};
+  return {...state, seen, wins, comeback: comeback.slice(-ROUND_SIZE), total, answered: (state.answered || 0) + 1, days};
 }
 export function rememberRound(state = {}, {score, questions = [], misses, now = Date.now()}) {
   const seen = {...(state.seen || {})};
@@ -274,4 +278,20 @@ export function bossSet({sets = [], attempts = [], now = new Date()}) {
   const id = fresh || [...order].sort((a, b) => lastAt.get(a).localeCompare(lastAt.get(b)))[0];
   const day = localDay(now), beatenToday = attempts.some(a => a.phase === "results" && a.completedAt && localDay(new Date(a.completedAt)) === day && (a.book || "").startsWith("n2-set-"));
   return {id, fresh: !!fresh, beatenToday};
+}
+
+// A slump: the last round went badly (under half right, or points below
+// zero). The next round is a warm-up of things the player already wins at,
+// with at most two of the misses, to bring the motivation back (owner,
+// 26 Nov). One good round (seven or more right) ends it.
+export const WARM_UP = Object.freeze({mix: {weak: 1, fresh: 1, known: 8}, comeback: 2});
+export function inSlump(state = {}) {
+  const last = (state.history || []).at(-1);
+  return !!last && (last.right / Math.max(1, last.n) < .5 || last.score < 0);
+}
+export function nextRound({pool, recall = [], state = {}, random = Math.random, now = Date.now()}) {
+  const slump = inSlump(state);
+  const round = pickRound({pool, recall, seen: state.seen || {}, wins: state.wins || {}, random, now,
+    comeback: slump ? (state.comeback || []).slice(-WARM_UP.comeback) : state.comeback || [], ...(slump ? {mix: WARM_UP.mix} : {})});
+  return {round, warmUp: slump};
 }

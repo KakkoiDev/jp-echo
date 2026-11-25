@@ -49,6 +49,12 @@ grammar, readings and exam questions aren't drowned by the many word
 questions. A question seen in the last four hours is used only if nothing
 else is left. A miss missed again comes back again.
 
+**Warm-up after a slump.** When a round goes badly (under half right, or
+below zero points), the next round is a warm-up: 8 questions the player has
+already won (answered right and fast before, or recalled instantly), 1 weak,
+1 fresh, and only 2 of the misses. It says "Warm-up round: things you know."
+One round with seven or more right ends it.
+
 ## Points
 
 Speed is rewarded and mistakes are punished hard (the learner's choice).

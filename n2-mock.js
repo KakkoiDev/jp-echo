@@ -8,7 +8,7 @@ import {REPORT_REASONS,createReport,fileReport,reportSyncLine,reportsAdapter,rep
 import {recognitionFactory} from "./speech.js";
 import {speakOnce,speakAndWait,japaneseVoices} from "./speech.js";
 import {readNights, nightComparison, comparisonLine, eveningRecall, EVENING_SOURCE} from "./n2-night.js";
-import {gamePool, choicesFor, pickRound, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
+import {gamePool, choicesFor, pickRound, nextRound, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
 import {spokenWord,radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
 import {TAG,TAGS,HELD_OUT,CAUSES,comprehensionStats,weakestTag,tagDrill,drillExposure,attemptTags,tagsOf,sourceOf} from "./n2-comprehension.js";
 import {exampleSegments,patternNeedles,delayedChecks,checkItems,checkAsk,contextNote,sentenceParts,checkDetail,audioGrade,delayedAccuracy,CHECK_SOURCE,WHY_LINE,evidenceFor,evidenceLine} from "./n2-delayed.js";
@@ -1089,19 +1089,20 @@ async function game() {
   const sat = new Set(data.attempts.map(a => a.book).filter(id => /^n2-set-\d+$/.test(id || "")));
   const sets = (await Promise.all([...sat].filter(id => themes[id]).map(id => json(setFile(id)).catch(() => null)))).filter(Boolean);
   const pool = gamePool({inventory, examples: await deckExamples(), sets, sat});
-  let state = readGame(), round = [], index = 0, score = 0, streak = 0, timer = null, shownAt = 0, current = null, locked = false, misses = [];
+  let warmUp = false, state = readGame(), round = [], index = 0, score = 0, streak = 0, timer = null, shownAt = 0, current = null, locked = false, misses = [];
   const bar = $("game-bar");
   const sound = () => readGame().sound !== false;
   const head = () => {
     $("game-score").textContent = String(score);
-    $("game-combo").textContent = streak >= 3 ? "Combo " + streak + " · ×" + (1 + Math.min(streak, 10) / 10).toFixed(1) : "";
+    $("game-combo").textContent = streak >= 3 ? "Combo " + streak + " · ×" + (1 + Math.min(streak, 10) / 10).toFixed(1) : warmUp && index === 0 ? "Warm-up round: things you know." : "";
   };
   const todayLine = () => { const t = gameToday(readGame()); return t.answered.toLocaleString() + " / " + DAILY_GOAL.toLocaleString() + " today"; };
   const runBar = seconds => { bar.style.transition = "none"; bar.style.width = "100%"; void bar.offsetWidth; bar.style.transition = "width " + seconds + "s linear"; bar.style.width = "0%"; };
   const stopBar = () => { const w = getComputedStyle(bar).width; bar.style.transition = "none"; bar.style.width = w; };
   function start() {
     state = readGame();
-    round = pickRound({pool, recall: data.recall, seen: state.seen || {}, comeback: state.comeback || []});
+    const next = nextRound({pool, recall: data.recall, state});
+    round = next.round; warmUp = next.warmUp;
     index = 0; score = 0; streak = 0; misses = [];
     $("game-done").hidden = true; $("game-review").hidden = true; $("game-play").hidden = false;
     ask();
@@ -1112,7 +1113,7 @@ async function game() {
     if (!current) { review(0); return; }
     const q = current, {choices, key} = choicesFor(q);
     q.choices = choices; q.key = key;
-    $("game-sub").textContent = (index + 1) + " / " + round.length + (q.comeback ? " · again" : "") + " · " + todayLine();
+    $("game-sub").textContent = (index + 1) + " / " + round.length + (warmUp ? " · warm-up" : q.comeback ? " · again" : "") + " · " + todayLine();
     $("game-kind").textContent = KIND_LABEL[q.kind] + (q.kind === "exam" ? " · 問題" + q.mondai : "");
     const listen = q.kind === "listen";
     $("game-prompt").textContent = listen ? "…" : q.prompt;
@@ -1144,7 +1145,7 @@ async function game() {
     if (rows[q.key]) rows[q.key].dataset.state = "right";
     if (outcome === "wrong" && rows[i]) rows[i].dataset.state = "wrong";
     if (outcome !== "right") misses.push({q, picked: i >= 0 ? q.choices[i] : outcome === "timeout" ? "Time ran out" : "I don’t know"});
-    state = rememberAnswer(readGame(), {q, outcome, points: result.points}); writeGame(state);
+    state = rememberAnswer(readGame(), {q, outcome, points: result.points, fast: result.fast}); writeGame(state);
     if (recallsMiss(q, outcome)) {
       try {
         const id = recallId(q.dimension, q.target), previous = data.recall.find(r => r.id === id);
