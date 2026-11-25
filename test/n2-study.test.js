@@ -247,9 +247,12 @@ test("Day Radio's five bar buttons fit a 375px phone with 44px targets",()=>{
   const css=readFileSync(new URL("../styles.css",import.meta.url),"utf8");
   const rule=css.match(/\.n2-day-bar\{grid-template-columns:([^;]+);gap:(\d+)px/);
   assert.ok(rule,"the Day Radio bar sets its columns and gap");
-  const mins=[...rule[1].matchAll(/minmax\((\d+)px/g)].map(m=>+m[1]);
-  assert.equal(rule[1].match(/minmax/g).length,5);
-  for(const m of mins) if(m) assert.ok(m>=44);
-  const used=mins.reduce((a,b)=>a+b,0)+4*Number(rule[2]);
-  assert.ok(used+44<=375-44,"leaves room for Play inside the 22px gutters");
+  const cols=rule[1].trim().split(/\s+(?![^(]*\))/);
+  assert.equal(cols.length,5);
+  const fixed=cols.filter(c=>/^\d+px$/.test(c)).map(c=>parseInt(c));
+  for(const w of fixed) assert.ok(w>=44,"icon buttons are at least 44px");
+  // Play takes the free width; Later (icon + word) is about 90px.
+  const used=fixed.reduce((a,b)=>a+b,0)+90+4*Number(rule[2]);
+  assert.ok(used+60<=375-44,"leaves Play at least 60px inside the gutters");
+  assert.match(css,/\.n2-day-bar button,\.n2-exam-bar button\{min-height:44px;height:44px/);
 });

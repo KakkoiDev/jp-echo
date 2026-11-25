@@ -9,7 +9,7 @@
 <link rel="icon" href="./favicon.ico" sizes="32x32"><link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="./apple-touch-icon.png"><link rel="manifest" href="./manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
-<link rel="stylesheet" href="./styles.css?v=197">
+<link rel="stylesheet" href="./styles.css?v=198">
 </head>
 <body class="n2">
 <main id="n2-main">
@@ -113,7 +113,7 @@
 
 <!-- Recall -->
 <section id="recall" hidden>
-  <div class="drill-head"><a class="icon-button" href="./n2-mock.html" aria-label="Back to N2"><svg width="18" height="16" viewBox="0 0 18 16" fill="none" aria-hidden="true"><path d="M8 1 1 8l7 7M1 8h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a><span class="drill-title">Recall</span><button data-ui="button" class="icon-button" id="recall-prev" type="button" aria-label="Previous card" hidden><svg width="18" height="16" viewBox="0 0 18 16" fill="none" aria-hidden="true"><path d="M5 2 1.5 5.5 5 9M1.5 5.5H11a5 5 0 0 1 0 10H6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="drill-progress" id="recall-progress"></span></div>
+  <div class="drill-head"><a class="icon-button" href="./n2-mock.html" aria-label="Back to N2"><svg width="18" height="16" viewBox="0 0 18 16" fill="none" aria-hidden="true"><path d="M8 1 1 8l7 7M1 8h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a><span class="tool-titles"><span class="drill-title">Recall</span><span class="overline" id="recall-sub" lang="ja"></span></span><span class="drill-progress" id="recall-progress"></span></div>
   <div class="drill-bar"><span id="recall-bar"></span></div>
   <div class="segmented" role="tablist" aria-label="What to recall">
     <button data-ui="button" role="tab" data-type="meaning" type="button">意味 Meaning</button><button data-ui="button" role="tab" data-type="reading" type="button">読み Reading</button><button data-ui="button" role="tab" data-type="grammar" type="button">文法 Grammar</button>
@@ -121,20 +121,20 @@
   <div class="chips" role="group" aria-label="Queue">
     <button data-ui="button" type="button" data-queue="daily">Daily</button><button data-ui="button" type="button" data-queue="weak">Weak</button><button data-ui="button" type="button" data-queue="new">Unchecked</button>
   </div>
-  <div id="recall-card" class="n2-card">
-    <p class="overline" id="recall-ask"></p>
+  <div id="recall-card" class="n2-card n2-panel-card">
+    <div class="n2-card-top"><p class="overline" id="recall-ask"></p><button data-ui="button" class="outline small n2-prev" id="recall-prev" type="button" aria-label="Previous card" data-icon="prev" hidden><span>Previous card</span></button></div>
     <p class="n2-prompt" id="recall-prompt" lang="ja"></p>
     <button data-ui="button" class="plain n2-say" id="recall-say" type="button" aria-label="Hear it"><svg width="18" height="16" viewBox="0 0 18 16" fill="none" aria-hidden="true"><path d="M2 5.5h3l4-3.5v12l-4-3.5H2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M12 5a4 4 0 0 1 0 6M14.5 2.5a7.5 7.5 0 0 1 0 11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span>Hear it</span></button>
-    <div id="recall-answer" class="n2-answer" hidden><p class="n2-reading" id="recall-reading" lang="ja"></p><p class="n2-meaning" id="recall-meaning"></p></div>
     <div class="n2-day-example n2-recall-example" id="recall-example" hidden><p lang="ja" id="recall-example-ja"></p><p class="hint" id="recall-example-en" hidden></p><button data-ui="button" class="plain n2-say" id="recall-example-say" type="button" aria-label="Hear the sentence"><svg width="18" height="16" viewBox="0 0 18 16" fill="none" aria-hidden="true"><path d="M2 5.5h3l4-3.5v12l-4-3.5H2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M12 5a4 4 0 0 1 0 6M14.5 2.5a7.5 7.5 0 0 1 0 11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span>Hear the sentence</span></button></div>
+    <div id="recall-answer" class="n2-answer" hidden><p class="n2-reading" id="recall-reading" lang="ja"></p><p class="n2-meaning" id="recall-meaning"></p></div>
     <p class="hint" id="recall-state"></p>
   </div>
   <div class="drill-done" id="recall-done" hidden><span class="drill-done-seal" lang="ja" aria-hidden="true">済</span><strong id="recall-done-title"></strong><p class="hint" id="recall-done-line"></p><ul class="drill-missed" id="recall-missed"></ul><div class="drill-done-actions"><button data-ui="button" class="primary" id="recall-again" type="button">Another round</button><a class="button outline" href="./n2-mock.html">Back to N2</a></div></div>
   <div class="review-actions n2-grades" id="recall-actions">
     <button data-ui="button" class="primary n2-wide" id="reveal" type="button">Show answer</button>
     <button data-ui="button" class="again" data-grade="missed" type="button" hidden>Missed</button>
-    <button data-ui="button" class="quiet" data-grade="slow" type="button" hidden>Slow</button>
-    <button data-ui="button" class="outline" data-grade="instant" type="button" hidden>Instant</button>
+    <button data-ui="button" class="outline" data-grade="slow" type="button" hidden>Slow</button>
+    <button data-ui="button" class="primary" data-grade="instant" type="button" hidden>Instant</button>
   </div>
 </section>
 
@@ -142,16 +142,16 @@
 <section id="check" hidden>
   <div class="drill-head"><a class="icon-button" href="./n2-mock.html" aria-label="Back to N2"><svg width="18" height="16" viewBox="0 0 18 16" fill="none" aria-hidden="true"><path d="M8 1 1 8l7 7M1 8h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a><span class="tool-titles"><span class="drill-title">Today's checks</span><span class="overline" id="check-sub"></span></span><span class="drill-progress" id="check-progress"></span></div>
   <div class="drill-bar"><span id="check-bar"></span></div>
-  <div id="check-card" class="n2-card">
+  <div id="check-card" class="n2-card n2-panel-card">
     <p class="overline" id="check-ask"></p>
     <p class="n2-prompt" id="check-prompt" lang="ja"></p>
     <div class="n2-day-example" id="check-sentence" hidden><p lang="ja" id="check-sentence-ja"></p><p class="hint" id="check-sentence-en" hidden></p></div>
     <button data-ui="button" class="plain n2-say" id="check-say" type="button" aria-label="Hear it"><svg width="18" height="16" viewBox="0 0 18 16" fill="none" aria-hidden="true"><path d="M2 5.5h3l4-3.5v12l-4-3.5H2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M12 5a4 4 0 0 1 0 6M14.5 2.5a7.5 7.5 0 0 1 0 11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span id="check-say-label">Hear it</span></button>
     <div id="check-answer" class="n2-answer" hidden><p class="n2-reading" id="check-reading" lang="ja"></p><p class="n2-meaning" id="check-meaning"></p></div>
-    <p class="hint" id="check-why"></p>
-    <p class="hint" id="check-note"></p>
     <div class="n2-evidence-after" id="check-evidence" hidden><p class="n2-evidence-kind" id="check-evidence-kind"></p><p class="hint" id="check-evidence-line"></p><button data-ui="button" class="link-button" id="check-evidence-open" type="button">See the evidence</button></div>
   </div>
+  <p class="n2-provenance" id="check-provenance"><span id="check-why"></span><button data-ui="button" class="outline n2-help" id="check-help" type="button" aria-expanded="false" aria-controls="check-note" aria-label="Why this check">?</button></p>
+  <p class="hint n2-help-note" id="check-note" hidden></p>
   <div class="drill-done" id="check-done" hidden><span class="drill-done-seal" lang="ja" aria-hidden="true">確</span><strong id="check-done-title"></strong><p class="hint" id="check-done-line"></p><ul class="drill-missed" id="check-missed"></ul><div class="drill-done-actions"><a class="button primary" href="./n2-mock.html">Back to today's plan</a></div></div>
   <div class="review-actions n2-grades" id="check-actions">
     <button data-ui="button" type="button" id="check-skip-audio" hidden>Skip audio check</button>
@@ -169,7 +169,9 @@
   <div class="segmented" role="tablist" aria-label="Day Radio mode">
     <button data-ui="button" role="tab" data-mode="listen" type="button">聞 Listen</button><button data-ui="button" role="tab" data-mode="recall" type="button">憶 Recall</button>
   </div>
-  <p class="hint n2-day-lede" id="day-lede"></p>
+  <details class="collapse-row n2-day-howto" id="day-howto"><summary><span class="collapse-title">How Day Radio works</span><span class="collapse-meta">Shown open on your first visit only</span><svg class="collapse-chevron" width="12" height="8" viewBox="0 0 12 8" fill="none" aria-hidden="true"><path d="m1 1.5 5 5 5-5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+    <p class="hint n2-day-lede" id="day-lede"></p>
+  </details>
   <div class="chips" id="day-pace" role="group" aria-label="Pause before the answer"></div>
   <div class="n2-card n2-day-card" id="day-card">
     <p class="overline" id="day-why"></p>
@@ -182,11 +184,11 @@
   </div>
   <div class="drill-done" id="day-done" hidden><span class="drill-done-seal" lang="ja" aria-hidden="true">聴</span><strong id="day-done-title"></strong><p class="hint" id="day-done-line"></p><div class="drill-done-actions"><button data-ui="button" class="primary" id="day-again" type="button">Play again from the start</button><a class="button outline" href="./n2-mock.html">Back to N2</a></div></div>
   <div class="review-actions n2-day-bar" id="day-bar-actions">
-    <button data-ui="button" class="quiet" id="day-prev" type="button" aria-label="Previous">‹</button>
-    <button data-ui="button" class="quiet" id="day-repeat" type="button" aria-label="Repeat this one">⟲</button>
+    <button data-ui="button" class="quiet bar-icon-button" id="day-prev" type="button" aria-label="Previous item" data-icon="prev"></button>
+    <button data-ui="button" class="quiet bar-icon-button" id="day-repeat" type="button" aria-label="Repeat this one" data-icon="replay"></button>
     <button data-ui="button" class="primary" id="day-play" type="button">Play</button>
-    <button data-ui="button" class="quiet" id="day-later" type="button" aria-label="Practice later" aria-pressed="false">Later</button>
-    <button data-ui="button" class="quiet" id="day-next" type="button" aria-label="Next">›</button>
+    <button data-ui="button" class="quiet bar-toggle" id="day-later" type="button" aria-label="Practice later" aria-pressed="false" data-icon="flag"><span>Later</span></button>
+    <button data-ui="button" class="quiet bar-icon-button" id="day-next" type="button" aria-label="Next item" data-icon="next"></button>
   </div>
 </section>
 
@@ -213,10 +215,10 @@
     <div class="n2-choices" id="choices" role="radiogroup" aria-label="Answer choices"></div>
   </article>
   <div class="review-actions n2-exam-bar">
-    <button data-ui="button" class="quiet" id="prev" type="button" aria-label="Previous question">‹</button>
+    <button data-ui="button" class="quiet bar-icon-button" id="prev" type="button" aria-label="Previous question" data-icon="prev"></button>
     <button data-ui="button" class="icon-button n2-flag" id="guess" type="button" aria-pressed="false" aria-label="Mark as unsure"></button>
     <button data-ui="button" class="quiet n2-grid-open" id="grid-open" type="button">Questions</button>
-    <button data-ui="button" class="outline" id="next" type="button" aria-label="Next question">›</button>
+    <button data-ui="button" class="outline bar-icon-button" id="next" type="button" aria-label="Next question" data-icon="next"></button>
   </div>
   <dialog id="grid-dialog" class="sheet-dialog" aria-labelledby="grid-title">
     <p class="overline" id="grid-title">Questions</p>

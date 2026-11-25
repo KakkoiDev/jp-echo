@@ -6,6 +6,11 @@
 export const micSvg=`<svg class="mic-glyph" width="16" height="20" viewBox="0 0 16 20" fill="none" aria-hidden="true"><rect x="5" y="1" width="6" height="11" rx="3" stroke="currentColor" stroke-width="1.4"/><path d="M2 9.2a6 6 0 0 0 12 0M8 15.4V19M5.2 19h5.6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>`;
 // The flag is a drawn line icon (Icons/flag), never the ⚑ character. Pressed,
 // it fills: `[aria-pressed="true"] .flag-glyph` in styles.css.
+// Bar icons (N2 polish, 25 Nov): 44×44 icon buttons in a bottom bar, never
+// text glyphs like ‹ ⟲ ›. The button carries the aria-label.
+export const chevronLeftSvg=`<svg class="bar-icon" width="10" height="16" viewBox="0 0 10 16" fill="none" aria-hidden="true"><path d="M8.5 1.5 2 8l6.5 6.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+export const chevronRightSvg=`<svg class="bar-icon" width="10" height="16" viewBox="0 0 10 16" fill="none" aria-hidden="true"><path d="M1.5 1.5 8 8l-6.5 6.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+export const replaySvg=`<svg class="bar-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.5 8a5.5 5.5 0 1 0 1.7-4M2.5 1.8v3.4h3.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 export const flagSvg=`<svg class="flag-glyph" width="13" height="15" viewBox="0 0 13 15" fill="none" aria-hidden="true"><path d="M1.5 14V1.5M1.5 2h8.6l-1.8 3.2 1.8 3.2H1.5" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
 // One flag control, three forms: icon-only in a session bar (.icon-button,
 // named by aria-label), a row in a menu sheet (.settings-row), or a labelled
@@ -214,6 +219,15 @@ export function scoreChart({points=[],max=100,line=null,caption="",label="Scores
 // LoadMeter — the library meter line for a day's load, always labelled with
 // its denominator ("6 h of 7 h 10 min fits today"). The part that does not fit
 // is hatched; the caption and the accessible name say the same words.
+// CollapseRow (COMPONENTS.md): the one disclosure. A 52 px row with a title,
+// one meta line saying what is inside and a chevron that turns when open.
+export const collapseChevronSvg=`<svg class="collapse-chevron" width="12" height="8" viewBox="0 0 12 8" fill="none" aria-hidden="true"><path d="m1 1.5 5 5 5-5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+export function collapseRow({title="",meta="",open=false,className=""}={},...children){
+  const details=document.createElement("details");details.className=("collapse-row "+className).trim();details.open=!!open;
+  const summary=document.createElement("summary"),t=document.createElement("span"),m=document.createElement("span");
+  t.className="collapse-title";t.textContent=title;m.className="collapse-meta";m.textContent=meta;
+  summary.append(t,m);summary.insertAdjacentHTML("beforeend",collapseChevronSvg);
+  details.append(summary,...children.filter(Boolean));return details}
 export function loadMeter({fits,needs,caption}={}){
   const wrap=document.createElement("div");wrap.className="load-meter";
   const bar=document.createElement("span");bar.className="load-meter-bar";bar.setAttribute("role","img");bar.setAttribute("aria-label",caption);

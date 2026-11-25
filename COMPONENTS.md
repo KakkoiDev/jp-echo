@@ -341,6 +341,19 @@ A 52 px row: the title, one line saying what is inside, and the chevron that
 turns when open, with a hairline below. Never a bare `<details>` or a marker
 glyph. The N2 hub's plan, AI-key section, coverage and workbooks use it.
 
+`collapseRow({title, meta, open}, ...children)` (components.js) builds one
+from script; static pages use the same markup and `collapseChevronSvg`.
+
+### Heads and bottom bars
+
+Heads: the title is one line with an ellipsis, the kind a second uppercase
+`.overline`, the counter (`.drill-progress`) tabular and never wrapping, and
+every button `flex-shrink: 0`. Bottom bars (`.review-actions`): 44×44 icon
+buttons with `chevronLeftSvg` / `chevronRightSvg` / `replaySvg` and an
+`aria-label`, never ‹ ⟲ › text. Disabled buttons carry `disabled` (hairline,
+45% opacity). Toggles carry `aria-pressed`; ON is the seal idiom (seal-tint
+ground, seal-deep text, seal-edge border) and a filled `flagSvg`.
+
 ### Status chips in rows
 
 One `.status-chip` at a row's end says its state; the meta line keeps the
