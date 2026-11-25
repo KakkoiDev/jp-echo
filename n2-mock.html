@@ -68,7 +68,8 @@
     <p class="hint" id="rest-summary"></p>
     <div class="n2-rows">
       <button data-ui="button" class="library-tool two-line" id="breathe-open" type="button"><span class="library-tool-glyph" lang="ja" aria-hidden="true">息</span><span class="library-tool-label"><strong>Breathe for one minute</strong><span>In 4 · hold 4 · out 6. Before a mock, after a bad section, at night.</span></span></button>
-      <a class="library-tool two-line" href="./radio"><span class="library-tool-glyph" lang="ja" aria-hidden="true">夜</span><span class="library-tool-label"><strong>Night Radio</strong><span>Your sentences, softly, as you fall asleep</span></span></a>
+      <a class="library-tool two-line" href="?view=evening"><span class="library-tool-glyph" lang="ja" aria-hidden="true">夕</span><span class="library-tool-label"><strong>Evening recall</strong><span>Today's misses once more, just before bed · about 10 minutes</span></span></a>
+      <a class="library-tool two-line" href="./radio"><span class="library-tool-glyph" lang="ja" aria-hidden="true">夜</span><span class="library-tool-label"><strong>Night Radio</strong><span>Today's N2 work, softly, as you fall asleep</span></span></a>
       <a class="library-tool two-line" href="./settings/import?deck=/decks/n2-grammar.json"><span class="library-tool-glyph" lang="ja" aria-hidden="true">文</span><span class="library-tool-label"><strong>Add N2 grammar to Review</strong><span>221 example sentences, one per grammar point · opens Import, you tap Import</span></span></a>
       <a class="library-tool two-line" href="./settings/import?deck=/decks/n2-words.json"><span class="library-tool-glyph" lang="ja" aria-hidden="true">語</span><span class="library-tool-label"><strong>Add N2 vocabulary to Review</strong><span>1,748 example sentences, one per word · Review introduces a few new each day</span></span></a>
     </div>
@@ -140,7 +141,7 @@
 
 <!-- Today's checks: yesterday's misses, a day later, in print and by ear -->
 <section id="check" hidden>
-  <div class="drill-head"><a class="icon-button" href="./n2-mock.html" aria-label="Back to N2"><svg width="18" height="16" viewBox="0 0 18 16" fill="none" aria-hidden="true"><path d="M8 1 1 8l7 7M1 8h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a><span class="tool-titles"><span class="drill-title">Today's checks</span><span class="overline" id="check-sub"></span></span><span class="drill-progress" id="check-progress"></span></div>
+  <div class="drill-head"><a class="icon-button" href="./n2-mock.html" aria-label="Back to N2"><svg width="18" height="16" viewBox="0 0 18 16" fill="none" aria-hidden="true"><path d="M8 1 1 8l7 7M1 8h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a><span class="tool-titles"><span class="drill-title" id="check-title">Today's checks</span><span class="overline" id="check-sub"></span></span><span class="drill-progress" id="check-progress"></span></div>
   <div class="drill-bar"><span id="check-bar"></span></div>
   <div id="check-card" class="n2-card n2-panel-card">
     <p class="overline" id="check-ask"></p>
@@ -152,7 +153,7 @@
   </div>
   <p class="n2-provenance" id="check-provenance"><span id="check-why"></span><button data-ui="button" class="outline n2-help" id="check-help" type="button" aria-expanded="false" aria-controls="check-note" aria-label="Why this check">?</button></p>
   <p class="hint n2-help-note" id="check-note" hidden></p>
-  <div class="drill-done" id="check-done" hidden><span class="drill-done-seal" lang="ja" aria-hidden="true">確</span><strong id="check-done-title"></strong><p class="hint" id="check-done-line"></p><p class="hint" id="check-night" hidden></p><ul class="drill-missed" id="check-missed"></ul><div class="drill-done-actions"><a class="button primary" href="./n2-mock.html">Back to today's plan</a></div></div>
+  <div class="drill-done" id="check-done" hidden><span class="drill-done-seal" id="check-seal" lang="ja" aria-hidden="true">確</span><strong id="check-done-title"></strong><p class="hint" id="check-done-line"></p><p class="hint" id="check-night" hidden></p><ul class="drill-missed" id="check-missed"></ul><div class="drill-done-actions"><a class="button primary" id="check-done-go" href="./n2-mock.html">Back to today's plan</a></div></div>
   <div class="review-actions n2-grades" id="check-actions">
     <button data-ui="button" type="button" id="check-skip-audio" hidden>Skip audio check</button>
     <button data-ui="button" class="primary n2-wide" id="check-reveal" type="button">Show answer</button>

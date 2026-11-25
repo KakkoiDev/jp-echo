@@ -200,6 +200,9 @@ Before considering the change complete:
   localStorage `echo-n2-night` and travels as `nights` in the N2 file and the
   N2 export (merged by day in `mergeN2`, the later save winning), so it can be
   shared and studied; it is a record of what played, never recall evidence.
+  Evening recall (`?view=evening`, `eveningRecall`) is the checks session on
+  tonight's items, both halves, in the sentence the night cues; its grades use
+  `EVENING_SOURCE`, never `CHECK_SOURCE`, so tomorrow's checks still test all.
 - **Mora pictures are the owner's drawn set.** `anchors/` and `anchors-dark/`
   hold one picture per current anchor (MORA_MNEMONICS v5), switched by theme
   through `themedPictureHtml`; `mora-pictures.js` maps kana to file, section and

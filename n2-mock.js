@@ -7,7 +7,7 @@ import {collapseRow,collapseChevronSvg,scoreChart,flagSvg,chevronLeftSvg,chevron
 import {REPORT_REASONS,createReport,fileReport,reportSyncLine,reportsAdapter,reportHistory,screenOf,appVersion,deviceInfo} from "./reports.js";
 import {recognitionFactory} from "./speech.js";
 import {speakOnce,speakAndWait,japaneseVoices} from "./speech.js";
-import {readNights, nightComparison, comparisonLine} from "./n2-night.js";
+import {readNights, nightComparison, comparisonLine, eveningRecall, EVENING_SOURCE} from "./n2-night.js";
 import {spokenWord,radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
 import {TAG,TAGS,HELD_OUT,CAUSES,comprehensionStats,weakestTag,tagDrill,drillExposure,attemptTags,tagsOf,sourceOf} from "./n2-comprehension.js";
 import {exampleSegments,patternNeedles,delayedChecks,checkItems,checkAsk,contextNote,sentenceParts,checkDetail,audioGrade,delayedAccuracy,CHECK_SOURCE,WHY_LINE,evidenceFor,evidenceLine} from "./n2-delayed.js";
@@ -1050,13 +1050,23 @@ async function openEvidence(item, why = "") {
 // Yesterday's misses and uncertain answers, one session, print and audio. A
 // print check writes its recall record; an audio check a listening event.
 const DIMENSION = {meaning: "meaning", reading: "reading", grammar: "grammar"};
-async function checks() {
+// Evening recall (n2-night.js) is the same session on tonight's items, before
+// the Night Radio: same-day grades under EVENING_SOURCE, never a delayed check.
+async function checks(mode = "check") {
+  const evening = mode === "evening";
   show("check");
-  if (params.get("view") !== "check") history.replaceState(history.state, "", "?view=check");
+  if (params.get("view") !== mode) history.replaceState(history.state, "", "?view=" + mode);
   await materials();
   const data = await report(), evidence = scored(data);
   const items = checkItems(inventory);
-  const session = delayedChecks({inventory, recall: data.recall, evidence, events: data.events, examples: await everyExample(), items});
+  const session = evening
+    ? eveningRecall({inventory, recall: data.recall, evidence, events: data.events, examples: await deckExamples(), items})
+    : delayedChecks({inventory, recall: data.recall, evidence, events: data.events, examples: await everyExample(), items});
+  const sourceOf = evening ? EVENING_SOURCE : CHECK_SOURCE;
+  $("check-title").textContent = evening ? "Evening recall" : "Today's checks";
+  $("check-seal").textContent = evening ? "夕" : "確";
+  $("check-done-go").textContent = evening ? "Start the Night Radio" : "Back to today's plan";
+  $("check-done-go").href = evening ? "./radio" : "./n2-mock.html";
   let index = 0, revealed = false, clock = null, responseMs = 0, plays = 0;
   const tally = {instant: 0, slow: 0, missed: 0}, missed = [];
   const grades = [...document.querySelectorAll("#check-actions [data-check-grade]")];
@@ -1081,7 +1091,7 @@ async function checks() {
     $("check-sentence").hidden = !c.example;
   };
   const byEar = session.filter(audio).length;
-  $("check-sub").textContent = session.length ? session.length + " from yesterday" + (byEar ? " · " + byEar + " by ear" : "") : "";
+  $("check-sub").textContent = session.length ? session.length + (evening ? " from today" : " from yesterday") + (byEar ? " · " + byEar + " by ear" : "") : "";
   function draw(gesture = false) {
     const c = session[index];
     revealed = false; plays = 0; responseMs = 0; heardPrompt = false; playback++;
@@ -1093,9 +1103,9 @@ async function checks() {
     $("check-evidence").hidden = true;
     if (!session.length) {
       $("check-ask").textContent = "";
-      $("check-prompt").textContent = "Nothing from yesterday.";
+      $("check-prompt").textContent = evening ? "Nothing left from today." : "Nothing from yesterday.";
       $("check-prompt").classList.add("long");
-      $("check-why").textContent = "Misses, guesses and slow answers from recall, mocks and Day Radio come back here the next day, in a sentence you did not see.";
+      $("check-why").textContent = evening ? "Today's misses, guesses, slow answers and Day Radio plays come here once in the evening, in the sentence the Night Radio plays." : "Misses, guesses and slow answers from recall, mocks and Day Radio come back here the next day, in a sentence you did not see.";
       $("check-note").textContent = ""; $("check-provenance").hidden = false; $("check-help").hidden = false; $("check-help").hidden = true; $("check-sentence").hidden = true; $("check-say").hidden = true; $("check-actions").hidden = true;
       return;
     }
@@ -1108,8 +1118,8 @@ async function checks() {
     $("check-say").hidden = !audio(c);
     $("check-say-label").textContent = "Play";
     // One quiet line says why it is here; ? opens what to do and the context.
-    $("check-why").textContent = [WHY_LINE[c.why] + (c.recurring ? ", and before" : ""), CONTEXT_SHORT[c.context === "fresh" ? (c.seen.length ? "fresh" : "") : c.context === "same" ? "same" : audio(c) ? "heard" : "word"]].filter(Boolean).join(" · ");
-    $("check-note").textContent = [checkAsk(c) + ".", contextNote(c)].filter(Boolean).join(" ").replace(/\.\./g, ".");
+    $("check-why").textContent = evening ? [WHY_LINE[c.why].replace("yesterday", "today"), c.example ? "the sentence tonight's radio plays" : "the word alone"].join(" · ") : [WHY_LINE[c.why] + (c.recurring ? ", and before" : ""), CONTEXT_SHORT[c.context === "fresh" ? (c.seen.length ? "fresh" : "") : c.context === "same" ? "same" : audio(c) ? "heard" : "word"]].filter(Boolean).join(" · ");
+    $("check-note").textContent = [checkAsk(c) + ".", evening ? "Recalling it now, just before sleep, gives the night's cue something to strengthen." : contextNote(c)].filter(Boolean).join(" ").replace(/\.\./g, ".");
     $("check-note").hidden = true; $("check-help").setAttribute("aria-expanded", "false"); $("check-provenance").hidden = false; $("check-help").hidden = false;
     if (audio(c) && gesture) speakCurrent();
   }
@@ -1125,18 +1135,18 @@ async function checks() {
     $("check-answer").hidden = false; $("check-reveal").hidden = true; grades.forEach(b => b.hidden = false);
     $("check-say").hidden = false; $("check-say-label").textContent = "Hear it";
     // What this check is evidence of, in the copy contract, and what did not move.
-    $("check-evidence-kind").replaceChildren(el("span", {lang: "ja", text: c.text}), (audio(c) ? "listening" : c.dimension === "grammar" ? "grammar" : "written " + c.dimension) + " · Instant records “recalled on another day”" + (c.context === "fresh" ? " and “understood in a new passage”" : ""));
+    $("check-evidence-kind").replaceChildren(el("span", {lang: "ja", text: c.text}), (audio(c) ? "listening" : c.dimension === "grammar" ? "grammar" : "written " + c.dimension) + (evening ? " · a same-day recall; tomorrow's check is the one that counts as another day" : " · Instant records “recalled on another day”" + (c.context === "fresh" ? " and “understood in a new passage”" : "")));
     $("check-evidence-line").textContent = audio(c) ? evidenceLine(c.target, {recall: data.recall, events: data.events}) : "Your listening record is unchanged.";
-    $("check-evidence-open").onclick = () => openEvidence(c, "Why it was picked: " + (WHY_LINE[c.why] || "").toLowerCase() + (c.recurring ? ", and missed before too" : "") + ". Today's checks pick yesterday's misses, slow answers, guesses and Day Radio plays.");
+    $("check-evidence-open").onclick = () => openEvidence(c, evening ? "Why it is here: " + (WHY_LINE[c.why] || "").replace("yesterday", "today").toLowerCase() + ". Evening recall takes tonight's Night Radio items, both the cued and the held-back half." : "Why it was picked: " + (WHY_LINE[c.why] || "").toLowerCase() + (c.recurring ? ", and missed before too" : "") + ". Today's checks pick yesterday's misses, slow answers, guesses and Day Radio plays.");
     $("check-evidence").hidden = false;
   }
   async function grade(value) {
     const c = session[index]; if (!c || !revealed) return;
     revealed = false;
-    const detail = checkDetail(c, {activeMs: clock.read(), responseMs, replays: audio(c) ? Math.max(0, plays - 1) : 0});
+    const detail = {...checkDetail(c, {activeMs: clock.read(), responseMs, replays: audio(c) ? Math.max(0, plays - 1) : 0}), source: sourceOf};
     try {
       if (audio(c)) {
-        const event = radioEvent({target: c.target, kind: "recall", grade: audioGrade(value), source: CHECK_SOURCE, mode: "check", exampleId: c.example?.id, detail});
+        const event = radioEvent({target: c.target, kind: "recall", grade: audioGrade(value), source: sourceOf, mode, exampleId: c.example?.id, detail});
         await access("events", "put", event); data.events.push(event);
       } else {
         const id = recallId(c.dimension, c.target), previous = data.recall.find(r => r.id === id);
@@ -1153,9 +1163,9 @@ async function checks() {
     clock?.stop();
     $("check-card").hidden = true; $("check-actions").hidden = true; $("check-done").hidden = false; $("check-provenance").hidden = true; $("check-note").hidden = true;
     $("check-bar").style.width = "100%";
-    $("check-done-title").textContent = (session.length - skipped) + " checked a day later";
-    $("check-done-line").textContent = tally.instant + " instant · " + tally.slow + " slow · " + tally.missed + " missed · " + skipped + " skipped. Today's misses come back tomorrow.";
-    nightLine().then(line => { $("check-night").textContent = line; $("check-night").hidden = !line; });
+    $("check-done-title").textContent = (session.length - skipped) + (evening ? " recalled before sleep" : " checked a day later");
+    $("check-done-line").textContent = tally.instant + " instant · " + tally.slow + " slow · " + tally.missed + " missed · " + skipped + " skipped. " + (evening ? "Now the Night Radio: it cues today's items as you sleep, and tomorrow's checks test them all." : "Today's misses come back tomorrow.");
+    if (!evening) nightLine().then(line => { $("check-night").textContent = line; $("check-night").hidden = !line; });
     $("check-missed").replaceChildren(...missed.map(m => el("li", {},
       el("span", {class: "drill-missed-text"}, el("span", {lang: "ja", text: m.prompt + (m.reading && m.reading !== m.prompt ? "（" + m.reading + "）" : "")}), el("span", {class: "hint", text: m.answer + " · " + (audio(m) ? "by ear" : "in print")})))));
   }
@@ -1745,7 +1755,7 @@ async function exam() {
 // The former Day Radio "Yesterday" tab opens Today's checks.
 const view = params.get("view") === "radio" && params.get("mode") === "check" ? "check" : params.get("view");
 offlineNotice(); voiceCheck();
-const route = year ? exam : view === "recall" ? recall : view === "check" ? checks : view === "radio" ? dayRadio : hub;
+const route = year ? exam : view === "recall" ? recall : view === "check" ? checks : view === "evening" ? () => checks("evening") : view === "radio" ? dayRadio : hub;
 mountReportButtons(document, () => openReport());
 route().catch(error => { show(""); warn(error.message); });
 // Two-way gist sync (sync.js): N2 study and reports. The library file is

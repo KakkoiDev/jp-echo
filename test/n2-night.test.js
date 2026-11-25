@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
-import {nightPlan, nightRecord, keepNight, nightComparison, comparisonLine, nextDay, studyDay, NIGHT_MIN_SPLIT} from "../n2-night.js";
+import {nightPlan, nightRecord, keepNight, nightComparison, comparisonLine, nextDay, studyDay, NIGHT_MIN_SPLIT, eveningRecall, EVENING_SOURCE} from "../n2-night.js";
 import {delayedChecks, CHECK_SOURCE} from "../n2-delayed.js";
 import {radioEvent, examplesFromDecks} from "../day-radio.js";
 import {recallRecord, recallId} from "../n2-study.js";
@@ -111,4 +111,31 @@ test("nights merge by day across devices, the later save winning, and a restore 
   assert.equal(preview.nights, 1);
   assert.match(previewLine(preview), /1 Night Radio night/);
   assert.equal(nightRecord({day: "2026-11-25", compare: false, cued: [], held: []}).id, "night-2026-11-25");
+});
+
+test("evening recall takes tonight's items, both halves, in the sentence the night cues; done ones leave; it never counts as a delayed check", () => {
+  const recall = Array.from({length: 12}, (_, i) => missed(i, "2026-11-25"));
+  const plan = nightPlan({inventory, recall, examples, day: "2026-11-25"});
+  const evening = eveningRecall({inventory, recall, examples, day: "2026-11-25"});
+  assert.deepEqual(evening.map(c => K(c.target)).sort(), [...plan.cued, ...plan.held].map(i => i.key).sort(), "cued and held alike, so the comparison stays fair");
+  const first = evening.find(c => K(c.target) === K(word(0)));
+  assert.equal(first.example.ja, plan.cued.concat(plan.held).find(i => i.key === K(word(0))).target, "the very sentence the night plays");
+  assert.equal(first.context, "night");
+  // Recalled tonight (print, evening source): it leaves the evening, but tomorrow's check still asks it.
+  const graded = recall.map((r, i) => i === 0 ? {...r, events: [...r.events, {at: at("2026-11-25", 22), grade: "instant", source: EVENING_SOURCE}]} : r);
+  assert.equal(eveningRecall({inventory, recall: graded, examples, day: "2026-11-25"}).some(c => K(c.target) === K(word(0))), false);
+  assert.ok(delayedChecks({inventory, recall: graded, today: "2026-11-26"}).some(c => K(c.target) === K(word(0))), "tomorrow still checks it");
+  assert.deepEqual(nightComparison({nights: [nightRecord(plan)], recall: graded, events: []}), {cued: {right: 0, n: 0}, held: {right: 0, n: 0}, nights: 0}, "an evening grade is not a next-day check");
+  assert.equal(eveningRecall({inventory, recall, examples, day: "2026-11-25", size: 5}).length, 5);
+});
+
+test("evening recall is the checks session in its own mode, linked from the hub and the Radio screen", () => {
+  const mock = src("../n2-mock.js"), html = src("../n2-mock.html"), index = src("../index.html");
+  assert.match(mock, /view === "evening" \? \(\) => checks\("evening"\)/);
+  assert.match(mock, /const sourceOf = evening \? EVENING_SOURCE : CHECK_SOURCE;/);
+  assert.match(mock, /source: sourceOf\};/, "print grades carry the evening source");
+  assert.match(mock, /source: sourceOf, mode, exampleId/, "audio grades too");
+  assert.match(mock, /\$\("check-done-go"\)\.href = evening \? "\.\/radio" : "\.\/n2-mock\.html";/);
+  assert.match(html, /href="\?view=evening"><span class="library-tool-glyph" lang="ja" aria-hidden="true">夕<\/span>/);
+  assert.match(index, /id="radio-evening" href="\.\/n2-mock\.html\?view=evening"/);
 });

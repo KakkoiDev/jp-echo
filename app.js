@@ -2807,7 +2807,7 @@ async function renderRadio(){[radioSentences,radioN2]=await Promise.all([listSen
   $("#radio-empty-text").textContent=source==="n2"?"Nothing from N2 today yet. Tonight plays what you miss, answer slowly, guess or hear on Day Radio today on the N2 page.":"Radio plays only sentences you have reviewed at least once. Review a few first, then come back tonight.";
   $("#radio-to-review").hidden=source==="n2";$("#radio-to-n2").hidden=source!=="n2";
   $("#radio-hours").value=String(radioOptions().hours);$("#radio-noise").checked=settings.radioNoise!==false;
-  $("#radio-compare-label").hidden=source!=="n2";$("#radio-compare").checked=settings.radioCompare!==false;
+  $("#radio-compare-label").hidden=source!=="n2";$("#radio-evening").hidden=source!=="n2";$("#radio-compare").checked=settings.radioCompare!==false;
   const line=source==="n2"?radioN2?.line||"":"";$("#radio-compare-line").hidden=!line;$("#radio-compare-line").textContent=line;
   $("#radio-count").textContent=source==="n2"
     ?spell(queue.length)+" from today’s N2"+(plan?.compare?" · "+spell(plan.held.length)+" held back for tomorrow’s comparison":"")

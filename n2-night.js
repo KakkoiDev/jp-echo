@@ -102,3 +102,21 @@ export function comparisonLine({cued, held, nights}) {
   const base = "Next-day checks after " + nights + " night" + (nights === 1 ? "" : "s") + ": cued " + cued.right + " of " + cued.n + " (" + share(cued) + "), not cued " + held.right + " of " + held.n + " (" + share(held) + ").";
   return base + (cued.n + held.n < 60 ? " Too few yet to tell." : "");
 }
+
+// Evening recall: tonight's items, recalled once while awake, right before
+// the Night Radio. Cueing helps most what was retrieved shortly before sleep,
+// so the evening covers both halves alike (the comparison stays fair) and
+// shows each item in the very sentence the night will cue. Its grades are
+// same-day evidence under their own source, never a delayed check: tomorrow's
+// checks still test everything.
+export const EVENING_SOURCE = "evening-recall";
+export const EVENING_SIZE = 30;
+export function eveningRecall({inventory, recall = [], evidence = [], events = [], examples = new Map(), day = studyDay(), size = EVENING_SIZE, items}) {
+  const done = new Set(), on = at => at && localDay(new Date(at)) === day;
+  for (const r of recall) for (const e of r.events || []) if (e.source === EVENING_SOURCE && on(e.at)) done.add(keyOf(["print", r.dimension, r.target]));
+  for (const e of events) if (e.kind === "recall" && e.context?.source === EVENING_SOURCE && on(e.at)) done.add(keyOf(["audio", e.target?.[0] === "grammar" ? "grammar" : "meaning", e.target]));
+  return delayedChecks({inventory, recall, evidence, events, today: nextDay(day), size: Infinity, ...(items ? {items} : {})})
+    .filter(c => !done.has(keyOf([c.modality, c.dimension, c.target])))
+    .slice(0, size)
+    .map(c => { const example = (examples.get(keyOf(c.target)) || [])[0] || null; return {...c, example, context: example ? "night" : "none", seen: []}; });
+}
