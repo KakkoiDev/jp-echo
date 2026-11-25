@@ -1,6 +1,6 @@
 # Echo handoff packet
 
-**Start with the [24 November audit and cross-device recovery handoff](ECHO-POST-UPDATE-HANDOFF.md).** It covers the latest fixes, restore instructions and open verification work.
+**Start with the [25 November bug and UX handoff](ECHO-UX-BUG-HANDOFF-2026-11-25.md).** It covers the updated app, reproducible defects and acceptance tests. The [24 November recovery handoff](ECHO-POST-UPDATE-HANDOFF.md) explains the underlying sync model.
 
 **Sprint outcome:** [Two-week program and readiness checkpoint](N2-TWO-WEEK-PROGRAM.md). The N2 hub now evaluates recent first sittings and points to the weakest section.
 
