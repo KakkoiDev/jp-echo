@@ -2166,6 +2166,8 @@ html.motion-off .n2-breath span{transition:none}
 /* Quick round (?view=game): the recall card and exam choice rows, with the
    answer's state shown on the row and the drill bar as the clock. */
 .n2-game-card{min-height:0}
+.n2-game-card[data-bonus=true]{border-color:var(--seal-edge);background:var(--seal-tint)}
+.n2-game-card[data-bonus=true] .overline{color:var(--seal-deep)}
 .n2-game-card .n2-prompt.long{font-size:22px;line-height:1.6}
 .n2-game-card .n2-prompt.mid{font-size:30px}
 .n2-game-choices{margin-top:14px}

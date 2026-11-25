@@ -1,4 +1,4 @@
-# Rules (as built, v268)
+# Rules (as built, v270)
 
 Source: `n2-game.js` (logic) and `game()` in `n2-mock.js` (screen).
 
@@ -54,6 +54,31 @@ below zero points), the next round is a warm-up: 8 questions the player has
 already won (answered right and fast before, or recalled instantly), 1 weak,
 1 fresh, and only 2 of the misses. It says "Warm-up round: things you know."
 One round with seven or more right ends it.
+
+## The zone (difficulty curve)
+
+A hidden level from 0 (easy) to 1 (hard), starting at 0.5, keeps the player
+right about **80%** of the time: each right answer raises it by 0.02, each
+miss lowers it by 0.08, so it settles where 0.8 × 0.02 = 0.2 × 0.08.
+Learning is fastest near that error rate (Wilson et al. 2019) and it is where
+a game feels hard but winnable. The level changes three things:
+
+- **The mix** of a round: at 0, 1 weak, 2 new and 7 known; at 1, 5 weak, 5
+  new, none known (rounded in between).
+- **The clock**: ×1.3 at 0 down to ×0.8 at 1, rounded to half a second,
+  never under 2 seconds.
+- **How close the wrong choices are**: at 0 none of the confusable choices
+  (sharing a kanji) is forced in; at 1 all three are.
+
+The warm-up after a slump (below) overrides the mix for one round.
+
+## Surprise
+
+- About **one question in eight is a bonus**: "Bonus ×3", tinted, worth three
+  times the points if right, no extra penalty if wrong. Never on a question
+  that came back from last round.
+- **Jackpots**: reaching a combo of 5 pays +500, a combo of 10 pays +1,500,
+  with their own sound.
 
 ## Points
 

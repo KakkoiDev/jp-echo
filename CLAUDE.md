@@ -300,6 +300,10 @@ Before considering the change complete:
   and the boss (a full mock on an unsat set once the 1,000 are done) live in
   localStorage `echo-n2-game`. Settings → "Open Echo on Quick round" sends a
   fresh launch there once per session (`echo-launched`), so Back reaches Echo.
+  A hidden staircase level (`FLOW`, `flowStep`) keeps the player about 80%
+  right; it sets the round mix, the clock and how close the wrong choices are.
+  About one question in eight is a ×3 bonus; combos of 5 and 10 pay jackpots
+  (`BONUS`). Fast, light, fun: it is a game.
   After a bad round (`inSlump`) the next is a warm-up of questions already won
   (`wins`, `WARM_UP`) with only two misses back, to keep the player going.
   Its flag is one tap with no sheet (owner, 26 Nov: "I don't think, you

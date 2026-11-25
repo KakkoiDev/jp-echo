@@ -147,9 +147,11 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
 
 // The four choices, in a fixed order per question for exam items (as
 // authored), shuffled otherwise. Near misses come first when there are any.
-export function choicesFor(q, random = Math.random) {
+// level (0 easy … 1 hard, see flowLevel) decides how many of the confusable
+// wrong choices (sharing a kanji) are used: none when easy, all three when hard.
+export function choicesFor(q, random = Math.random, level = .5) {
   if (q.fixed) return {choices: q.fixed, key: q.fixed.indexOf(q.answer)};
-  const near = q.nearCount ? q.wrong.slice(0, q.nearCount) : [];
+  const near = q.nearCount ? q.wrong.slice(0, Math.min(q.nearCount, Math.round(level * 3))) : [];
   const rest = shuffle(q.wrong.filter(w => !near.includes(w)), random);
   const picked = [...new Set([...near, ...rest])].filter(w => w !== q.answer).slice(0, 3);
   const choices = shuffle([q.answer, ...picked], random);
@@ -232,10 +234,11 @@ export function rememberAnswer(state = {}, {q, outcome, points = 0, fast = false
   if (fast) wins[q.id] = (wins[q.id] || 0) + 1;
   const comeback = (state.comeback || []).filter(id => id !== q.id);
   if (outcome !== "right") comeback.push(q.id); // missed again: it comes back again
+  const level = flowStep(state.level, outcome === "right");
   const total = (state.total || 0) + points, day = localDay(new Date(now));
   const days = {...(state.days || {})}, d = days[day] || {answered: 0, right: 0, points: 0, rounds: 0, best: 0};
   days[day] = {...d, answered: d.answered + 1, right: d.right + (outcome === "right" ? 1 : 0), points: d.points + points};
-  return {...state, seen, wins, comeback: comeback.slice(-ROUND_SIZE), total, answered: (state.answered || 0) + 1, days};
+  return {...state, seen, wins, level, comeback: comeback.slice(-ROUND_SIZE), total, answered: (state.answered || 0) + 1, days};
 }
 export function rememberRound(state = {}, {score, questions = [], misses, now = Date.now()}) {
   const seen = {...(state.seen || {})};
@@ -290,8 +293,41 @@ export function inSlump(state = {}) {
   return !!last && (last.right / Math.max(1, last.n) < .5 || last.score < 0);
 }
 export function nextRound({pool, recall = [], state = {}, random = Math.random, now = Date.now()}) {
-  const slump = inSlump(state);
+  const slump = inSlump(state), level = levelOf(state);
   const round = pickRound({pool, recall, seen: state.seen || {}, wins: state.wins || {}, random, now,
-    comeback: slump ? (state.comeback || []).slice(-WARM_UP.comeback) : state.comeback || [], ...(slump ? {mix: WARM_UP.mix} : {})});
-  return {round, warmUp: slump};
+    comeback: slump ? (state.comeback || []).slice(-WARM_UP.comeback) : state.comeback || [], mix: slump ? WARM_UP.mix : flowMix(level)})
+    .map(q => ({...q, seconds: flowSeconds(q.seconds, level), bonus: !q.comeback && random() < BONUS.chance}));
+  return {round, warmUp: slump, level};
+}
+
+// ---- The zone ----
+// A staircase keeps the player right about 80% of the time: up a little for
+// each right answer, down four times as much for each miss, so it settles
+// where right × 0.02 = miss × 0.08, i.e. 80% right. Learning is fastest near
+// that rate (Wilson et al. 2019, "the eighty-five percent rule"), and it is
+// where a game feels hard but winnable. The level is never shown.
+export const FLOW = Object.freeze({start: .5, up: .02, down: .08});
+export const levelOf = state => typeof state?.level === "number" ? state.level : FLOW.start;
+export function flowStep(level = FLOW.start, right) {
+  const l = typeof level === "number" ? level : FLOW.start;
+  return Math.round(Math.min(1, Math.max(0, l + (right ? FLOW.up : -FLOW.down))) * 1000) / 1000;
+}
+// What the level changes: the mix (easy: mostly known; hard: weak and new)…
+export function flowMix(level = FLOW.start) {
+  const weak = Math.round(1 + 4 * level), fresh = Math.round(2 + 3 * level);
+  return {weak, fresh, known: Math.max(0, ROUND_SIZE - weak - fresh)};
+}
+// …and the clock (easy: 30% more time; hard: 20% less), never under 2 s.
+export function flowSeconds(seconds, level = FLOW.start) {
+  return Math.max(2, Math.round(seconds * (1.3 - .5 * level) * 2) / 2);
+}
+
+// ---- Surprise ----
+// About one question in eight is a bonus worth three times the points, never
+// more of a penalty. A combo of 5 and of 10 pays a jackpot on top.
+export const BONUS = Object.freeze({chance: .12, times: 3, jackpots: {5: 500, 10: 1500}});
+export function bonusPoints({points, bonus = false, streak = 0}) {
+  if (points <= 0) return {points, jackpot: 0};
+  const jackpot = BONUS.jackpots[streak] || 0;
+  return {points: (bonus ? points * BONUS.times : points) + jackpot, jackpot};
 }

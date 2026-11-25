@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
-import {SECONDS, PAUSE, REVIEW_SECONDS, inSlump, nextRound, WARM_UP, gamePool, choicesFor, pickRound, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, nearMisses, gloss, today, lastDays, ranking, bossSet,
+import {FLOW, BONUS, flowStep, flowMix, flowSeconds, levelOf, bonusPoints, SECONDS, PAUSE, REVIEW_SECONDS, inSlump, nextRound, WARM_UP, gamePool, choicesFor, pickRound, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, nearMisses, gloss, today, lastDays, ranking, bossSet,
   ROUND_SIZE, DAILY_GOAL} from "../n2-game.js";
 import {examplesFromDecks} from "../day-radio.js";
 import {HELD_OUT} from "../n2-comprehension.js";
@@ -97,7 +97,7 @@ test("the day counts toward 1,000, the ranking and chart follow, and the boss op
 test("the game is a view of the N2 page, saved per answer, linked from the hub and the home screen", () => {
   const mock = src("../n2-mock.js"), html = src("../n2-mock.html"), sw = src("../sw.js"), manifest = read("../manifest.webmanifest");
   assert.match(mock, /view === "game" \? game :/);
-  assert.match(mock, /state = rememberAnswer\(readGame\(\), \{q, outcome, points: result\.points, fast: result\.fast\}\); writeGame\(state\);/);
+  assert.match(mock, /state = rememberAnswer\(readGame\(\), \{q, outcome, points: paid\.points, fast: result\.fast\}\); writeGame\(state\);/);
   assert.match(mock, /"missed", new Date\(\), \{source: GAME_SOURCE/);
   assert.match(html, /href="\?view=game"><span class="library-tool-glyph" lang="ja" aria-hidden="true">速<\/span>/);
   assert.match(html, /id="game-skip" type="button">I don’t know<\/button>/);
@@ -178,4 +178,38 @@ test("after a bad round, the next is a warm-up of things the player wins at, wit
   assert.equal(st.wins["m:a"], 1, "a fast right answer is a win");
   st = rememberAnswer(st, {q: {id: "m:a"}, outcome: "right", points: 60, fast: false});
   assert.equal(st.wins["m:a"], 1, "a slow one is not");
+});
+
+test("the zone: the hidden level settles where the player is right about 80% of the time", () => {
+  // Simulate a player who is right with probability p at every level: the
+  // staircase climbs while p > 0.8 and falls while p < 0.8.
+  const run = p => { let level = FLOW.start, r = seeded(11); for (let i = 0; i < 400; i++) level = flowStep(level, r() < p); return level; };
+  assert.ok(run(.95) > .9, "too easy: it climbs to the top");
+  assert.ok(run(.5) < .1, "too hard: it falls to the bottom");
+  assert.equal(flowStep(.5, true), .52); assert.equal(flowStep(.5, false), .42);
+  assert.ok(.8 * FLOW.up - .2 * FLOW.down === 0 || Math.abs(.8 * FLOW.up - .2 * FLOW.down) < 1e-12, "balanced at 80% right");
+  assert.equal(levelOf({}), FLOW.start);
+});
+
+test("the level changes the mix, the clock and how close the wrong choices are", () => {
+  assert.deepEqual(flowMix(0), {weak: 1, fresh: 2, known: 7}, "easy: mostly things known");
+  assert.deepEqual(flowMix(1), {weak: 5, fresh: 5, known: 0}, "hard: weak and new");
+  assert.equal(flowSeconds(3, 0), 4, "easy: more time"); assert.equal(flowSeconds(3, 1), 2.5, "hard: less");
+  assert.equal(flowSeconds(2, 1), 2, "never under 2 s");
+  const pool = gamePool({inventory, examples, sets, sat: new Set()});
+  const q = pool.find(x => x.kind === "meaning" && x.nearCount === 3);
+  const near = new Set(q.wrong.slice(0, 3));
+  const nearIn = level => choicesFor(q, seeded(4), level).choices.filter(c => near.has(c)).length;
+  assert.equal(nearIn(0), 0, "easy: no confusable choices forced in"); assert.equal(nearIn(1), 3, "hard: all three");
+});
+
+test("surprise: bonus questions pay three times, never cost more, and combos of 5 and 10 pay a jackpot", () => {
+  assert.deepEqual(bonusPoints({points: 200, bonus: true, streak: 2}), {points: 600, jackpot: 0});
+  assert.deepEqual(bonusPoints({points: -200, bonus: true, streak: 0}), {points: -200, jackpot: 0}, "no extra penalty");
+  assert.deepEqual(bonusPoints({points: 200, streak: 5}), {points: 700, jackpot: 500});
+  assert.deepEqual(bonusPoints({points: 200, streak: 10}), {points: 1700, jackpot: 1500});
+  const pool = gamePool({inventory, examples, sets, sat: new Set()});
+  let bonuses = 0, n = 0; const r = seeded(21);
+  for (let i = 0; i < 60; i++) { const {round} = nextRound({pool, state: {}, random: r}); n += round.length; bonuses += round.filter(x => x.bonus).length; }
+  assert.ok(Math.abs(bonuses / n - BONUS.chance) < .05, "about one in eight");
 });

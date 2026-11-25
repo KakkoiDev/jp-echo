@@ -8,7 +8,7 @@ import {REPORT_REASONS,createReport,fileReport,reportSyncLine,reportsAdapter,rep
 import {recognitionFactory} from "./speech.js";
 import {speakOnce,speakAndWait,japaneseVoices} from "./speech.js";
 import {readNights, nightComparison, comparisonLine, eveningRecall, EVENING_SOURCE} from "./n2-night.js";
-import {gamePool, choicesFor, pickRound, nextRound, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
+import {gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
 import {spokenWord,radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
 import {TAG,TAGS,HELD_OUT,CAUSES,comprehensionStats,weakestTag,tagDrill,drillExposure,attemptTags,tagsOf,sourceOf} from "./n2-comprehension.js";
 import {exampleSegments,patternNeedles,delayedChecks,checkItems,checkAsk,contextNote,sentenceParts,checkDetail,audioGrade,delayedAccuracy,CHECK_SOURCE,WHY_LINE,evidenceFor,evidenceLine} from "./n2-delayed.js";
@@ -1077,6 +1077,8 @@ const sfx = (() => {
     right: streak => { const f = 523 * 2 ** (Math.min(streak, 12) / 12); tone(f, 0, .12); tone(f * 1.5, .07, .16); },
     wrong: () => { tone(196, 0, .22, "triangle", .08); tone(147, .1, .26, "triangle", .06); },
     round: () => [523, 659, 784, 1047].forEach((f, i) => tone(f, i * .09, .2)),
+    bonus: () => [784, 988, 1175].forEach((f, i) => tone(f, i * .05, .14, "square", .04)),
+    jackpot: () => [523, 659, 784, 1047, 1319, 1568].forEach((f, i) => tone(f, i * .06, .18, "square", .045)),
   };
 })();
 function readGame() { try { return JSON.parse(localStorage.getItem(GAME_KEY) || "{}"); } catch { return {}; } }
@@ -1111,10 +1113,11 @@ async function game() {
     clearTimeout(timer); locked = false;
     current = round[index];
     if (!current) { review(0); return; }
-    const q = current, {choices, key} = choicesFor(q);
+    const q = current, {choices, key} = choicesFor(q, Math.random, levelOf(readGame()));
     q.choices = choices; q.key = key;
     $("game-sub").textContent = (index + 1) + " / " + round.length + (warmUp ? " · warm-up" : q.comeback ? " · again" : "") + " · " + todayLine();
-    $("game-kind").textContent = KIND_LABEL[q.kind] + (q.kind === "exam" ? " · 問題" + q.mondai : "");
+    $("game-kind").textContent = (q.bonus ? "Bonus ×3 · " : "") + KIND_LABEL[q.kind] + (q.kind === "exam" ? " · 問題" + q.mondai : "");
+    $("game-card").dataset.bonus = String(!!q.bonus);
     const listen = q.kind === "listen";
     $("game-prompt").textContent = listen ? "…" : q.prompt;
     $("game-prompt").lang = q.kind === "definition" ? "en" : "ja";
@@ -1137,15 +1140,18 @@ async function game() {
     const q = current, ms = performance.now() - shownAt;
     const outcome = why === "timeout" ? "timeout" : i < 0 ? "dontknow" : i === q.key ? "right" : "wrong";
     const result = scoreAnswer({outcome, ms, seconds: q.seconds, streak});
-    score += result.points; streak = result.streak; head();
-    if (sound()) outcome === "right" ? sfx.right(streak) : sfx.wrong();
+    const paid = bonusPoints({points: result.points, bonus: q.bonus, streak: result.streak});
+    score += paid.points; streak = result.streak; head();
+    if (sound()) outcome !== "right" ? sfx.wrong() : paid.jackpot ? sfx.jackpot() : q.bonus ? sfx.bonus() : sfx.right(streak);
+    if (paid.jackpot) $("game-combo").textContent = "Jackpot +" + paid.jackpot + " · combo " + streak;
+    else if (q.bonus && outcome === "right") $("game-combo").textContent = "Bonus +" + paid.points;
     // Rule two: a mistake is part of the game. Say so, then keep going.
     if (outcome !== "right") $("game-combo").textContent = outcome === "wrong" ? "Part of the game. Keep going." : "Fine. Keep going.";
     const rows = [...$("game-choices").children];
     if (rows[q.key]) rows[q.key].dataset.state = "right";
     if (outcome === "wrong" && rows[i]) rows[i].dataset.state = "wrong";
     if (outcome !== "right") misses.push({q, picked: i >= 0 ? q.choices[i] : outcome === "timeout" ? "Time ran out" : "I don’t know"});
-    state = rememberAnswer(readGame(), {q, outcome, points: result.points, fast: result.fast}); writeGame(state);
+    state = rememberAnswer(readGame(), {q, outcome, points: paid.points, fast: result.fast}); writeGame(state);
     if (recallsMiss(q, outcome)) {
       try {
         const id = recallId(q.dimension, q.target), previous = data.recall.find(r => r.id === id);
