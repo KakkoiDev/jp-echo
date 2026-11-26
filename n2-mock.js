@@ -1743,17 +1743,20 @@ async function game() {
     paperReview = {href: "?book=" + encodeURIComponent(sitting.book) + "&attempt=" + encodeURIComponent(sitting.id)};
     // A vocabulary or grammar question reads like a round's review card (owner, 27 Nov): the word, its reading and
     // its meaning large, at a glance (険しい · けわしい · steep); the paper's sentence under them, then the why.
-    const known = t => t && n2Cards.find(c => c.kind !== "exam" && c.solution?.meaning && c.target?.[0] === t[0] && c.target[1] === t[1] && (t[2] === undefined || c.target[2] === t[2]))?.solution;
+    const known = t => t && n2Cards.find(c => c.kind !== "exam" && c.solution?.meaning && c.target?.[0] === t[0] && c.target[1] === t[1] && (t[2] === undefined || c.target[2] === t[2]));
     misses = items.map(it => {
-      const sol = known(it.target), id = "paper:" + sitting.book + "#" + it.index, source = sitting.book + "#" + it.index;
+      const card = known(it.target), sol = card?.solution, id = "paper:" + sitting.book + "#" + it.index, source = sitting.book + "#" + it.index;
       const picked = it.picked === null ? "No answer" : it.unsure ? "Right, but marked unsure" : it.picked;
       const base = {kind: "paper", id, prompt: it.ask, mondai: it.mondai, answer: it.answer, seconds: it.seconds};
       // A usage question (問題6) asks with the bare word and answers with a sentence: that sentence is the line.
       const usage = sol && !/【|（\s*）/.test(it.ask) && it.answer.length > it.ask.length;
-      if (sol) return {picked, q: {...base, paperLine: usage ? it.answer.replace(it.ask, "【" + it.ask + "】") : it.ask, target: it.target,
+      // Every card of the review is spoken once (owner, 27 Nov: some were, some were not): the word with its
+      // reading, the pattern as its sentence reads it, a listening line, or else the right answer.
+      const voiceOf = () => card.kind === "grammar" ? grammarVoice(card, sol).speak : spokenWord(sol.word.replace(/[〜～]/g, ""), String(sol.reading || "").replace(/[〜～]/g, ""));
+      if (sol) return {picked, q: {...base, say: voiceOf(), paperLine: usage ? it.answer.replace(it.ask, "【" + it.ask + "】") : it.ask, target: it.target,
         // The paper's answer, where the sentence does not already hold it (a synonym question).
         solution: {word: sol.word, reading: sol.reading || "", meaning: sol.meaning, ja: "", en: usage || /（\s*）/.test(it.ask) || [sol.word, sol.reading].includes(it.answer) ? "" : "Answer: " + it.answer, why: it.why, source}}};
-      return {picked, q: {...base, ask: it.ask, ...(it.heard && it.lines.length ? {say: it.lines.join("　")} : {}),
+      return {picked, q: {...base, ask: it.ask, say: it.heard && it.lines.length ? it.lines.join("　") : it.answer,
         solution: {word: it.answer, meaning: "", ja: it.lines.join(""), en: it.en, why: it.why, source}}};
     });
     $("game-back").href = "?view=game"; $("game-back").setAttribute("aria-label", "Back to home"); $("game-back").dataset.end = "false";

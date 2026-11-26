@@ -547,6 +547,12 @@ Before considering the change complete:
   `tools/scored-review/make-review.mjs` (word parts, connectives, the open
   grammar findings, the deciding lines, a sample of each other level);
   `docs/SCORED-CONTENT-REVIEW-HANDOFF.md` is the brief.
+- **A card's rest doubles with its level (v307).** `restFor` (n2-game.js):
+  4 h at level 0, then 8, 16, 32, 64 h, three days at 極. A flat four hours
+  made a small kind loop (eleven connective excerpts with one paper sat)
+  until the answer was known by the look of the card. Every boss review card
+  is spoken once (`say`): the word, the pattern, a listening line, or else
+  the answer.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

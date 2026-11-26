@@ -242,3 +242,23 @@ test("a flagged card leaves the misses and rests a week: it cannot come back rou
   for (const w of ["崩す", "組み立てる", "通ずる", "坊っちゃん"]) { const q = listen.find(c => c.prompt === w); assert.ok(q && heardGap(q.solution.ja, q.prompt), w); }
   assert.equal(listen.filter(q => q.solution.ja && !heardGap(q.solution.ja, q.prompt)).length, 0, "every audio card with a sentence shows it");
 });
+
+test("a card known better rests longer, so a small kind cannot loop", async () => {
+  const {restFor, pickRound, ITEM_LEVEL, RECENT_MS} = await import("../n2-game.js");
+  const h = 3600_000;
+  assert.deepEqual([0, 1, 2, 3, 4, 5].map(l => restFor(l) / h), [4, 8, 16, 32, 64, 72]); assert.equal(restFor(9), ITEM_LEVEL.restMs); assert.equal(restFor(undefined), RECENT_MS);
+  // Eleven connective cards among thousands: one at level 2 seen ten hours ago still rests; at sixteen hours it may return.
+  const con = pool.filter(q => q.kind === "connective"), others = pool.filter(q => q.kind === "meaning").slice(0, 200), now = 1000 * h;
+  assert.ok(con.length > 0 && con.length < 20, "a small kind: one paper sat");
+  const state = hours => ({seen: Object.fromEntries(con.map(q => [q.id, now - hours * h])), lv: Object.fromEntries(con.map(q => [q.id, 2]))});
+  for (let n = 1; n <= 10; n++) assert.ok(!pickRound({pool: [...con, ...others], ...state(10), random: seeded(n), now}).some(q => q.kind === "connective"));
+  assert.ok([1, 2, 3, 4, 5].some(n => pickRound({pool: [...con, ...others], ...state(17), random: seeded(n), now}).some(q => q.kind === "connective")));
+});
+
+test("every boss review card is spoken once: the word, the pattern, a listening line, or the answer", () => {
+  const js = src("../n2-mock.js");
+  assert.ok(js.includes('const voiceOf = () => card.kind === "grammar" ? grammarVoice(card, sol).speak : spokenWord(sol.word.replace(/[〜～]/g, ""), String(sol.reading || "").replace(/[〜～]/g, ""));'));
+  assert.ok(js.includes('if (sol) return {picked, q: {...base, say: voiceOf(), paperLine:'));
+  assert.ok(js.includes('say: it.heard && it.lines.length ? it.lines.join("　") : it.answer,'));
+  assert.ok(js.includes("if (sound() && (q.say || spoken)) setTimeout(() => { if (reviewToken === askToken && !$(\"game-review\").hidden) say(q.say || spoken); }, 150);"));
+});

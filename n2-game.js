@@ -432,7 +432,10 @@ export function pickRound({pool, recall = [], seen = {}, wins = {}, lv = {}, siz
   // such as the homophones would otherwise come round several times a day).
   const groups = {weak: [], fresh: [], known: []}, recent = [];
   // A mastered item (極) rests three days between visits: it comes up less.
-  const resting = q => now - (seen[q.id] || 0) < ((lv[q.id] || 0) >= ITEM_LEVEL.max ? ITEM_LEVEL.restMs : RECENT_MS);
+  // The rest doubles with each level (4 h, 8 h, 16 h, 32 h, 64 h, then three days): a card known better comes
+  // back later. Without it a small kind looped: eleven connective excerpts came round every four hours until the
+  // answer was known by the look of the card, not by reading it (owner's flags, 27 Nov).
+  const resting = q => now - (seen[q.id] || 0) < restFor(lv[q.id]);
   for (const q of shuffle(pool, random)) { const s = state(q); (calm && s === "known" ? groups.known : resting(q) ? recent : groups[s]).push(q); }
   // Least recently seen first, then the kinds taken in turn, so grammar,
   // readings and exam questions are not drowned by the many word questions.
@@ -501,6 +504,7 @@ export const recallsMiss = (q, outcome) => outcome !== "right" && !!q.target && 
 // answer leaves it. Level 5 is 極, mastered: it rests for three days between
 // visits. Felt on the card, never browsed.
 export const ITEM_LEVEL = Object.freeze({max: 5, gapMs: 4 * 3600_000, restMs: 3 * 86400_000});
+export const restFor = (level = 0) => Math.min(ITEM_LEVEL.restMs, RECENT_MS * 2 ** Math.min(ITEM_LEVEL.max, Math.max(0, Math.floor(Number(level) || 0))));
 export const itemLevel = (state = {}, id) => Math.min(ITEM_LEVEL.max, Math.max(0, Math.floor(Number(state.lv?.[id]) || 0)));
 export function levelAfter(state = {}, {id, outcome, fast = false, now = Date.now()}) {
   const before = itemLevel(state, id);
