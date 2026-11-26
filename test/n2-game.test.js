@@ -3,7 +3,8 @@ import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
 import {payoutCap, sameSense, answerSpeech, runClock, RUN_CLOCK, DIFFICULTY, difficultyOf, pace, WAVE, HOOK, STRETCH, bossProgress, takeBoss, resting, runTable, BOSS_EVERY, EXAM_POINT, atBedtime, BEDTIME, FLOW, BONUS, flowStep, flowMix, flowSeconds, levelOf, bonusPoints, SECONDS, PAUSE, REVIEW_SECONDS, inSlump, nextRound, WARM_UP, gamePool, choicesFor, pickRound, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, nearMisses, gloss, today, lastDays, ranking, bossSet,
   ROUND_SIZE, DAILY_GOAL, RANKS, DEFAULT_RANK, REVIEW_SHARE, rankOf, setRank, rankLevels, hasBoss, levelOfCard,
-  itemRecord, itemLevel, ITEM_LEVEL, levelCoverage, KNOWN_LEVEL, COVERED, isCovered, aheadLevel, EXAM_PASS, RANK_RULES, bossVerdict, applyBoss, verdictLine} from "../n2-game.js";
+  itemRecord, itemLevel, ITEM_LEVEL, levelCoverage, KNOWN_LEVEL, COVERED, isCovered, aheadLevel, EXAM_PASS, RANK_RULES, bossVerdict, applyBoss, verdictLine,
+  KANJI_KNOWN, KANJI_MIX, newWord, kanjiAfter, kanjiStates, kanjiCoverage, kanjiPick} from "../n2-game.js";
 const ITEM_GAP = ITEM_LEVEL.gapMs;
 import {FETCHED_LEVELS, levelFile} from "../jlpt-levels.js";
 import {REVIEWED_LEVELS} from "../n2-game-review.js";
@@ -857,7 +858,9 @@ test("the game screen settles bosses on Home, shows coverage where there is no b
   const js = src("../n2-mock.js");
   assert.match(js, /const exam = run\.rank && !\(st\.bossLog \|\| \[\]\)\.some\(e => e\.key === run\.at\) \? examOf\(run\) : null;/, "runs from before the rules are left alone");
   assert.match(js, /applyBoss\(st, \{key: run\.at, rank: run\.rank, total: exam\.total, sectionsOk: exam\.sections\.every\(x => x\.ok\)\}\)/);
-  assert.match(js, /const cover = !hasBoss\(rankOf\(st\)\) && !missing\.includes\(rankOf\(st\)\) \? levelCoverage\(pool, st\) : null;/);
+  assert.match(js, /const byKanji = !hasBoss\(rankOf\(st\)\) && !missing\.includes\(rankOf\(st\)\) && rankKanji \? kanjiCoverage\(rankKanji, st\) : null;/, "Home counts kanji, not words");
+  assert.match(js, /kanjiFirst = pools\[0\] && level !== "N2" && rankKanji \? \{order: rankKanji, examples: \[\.\.\.lower, \.\.\.n2Pool\.filter\(q => q\.kanji\)\]\} : null;/, "N2 is picked as it always was");
+  assert.match(js, /nextRound\(\{pool: playable, review, kanji: kanjiFirst && /);
   assert.match(js, /if \(pools\[0\] && ahead && isCovered\(levelCoverage\(pool, readGame\(\)\)\)\)/);
   assert.match(js, /const lvFrom = q\.practice && !q\.record \? 0 : itemLevel/);
 });
@@ -941,4 +944,113 @@ test("the game screen loads the rank's levels, shows the rank on Home and sets i
   assert.match(js, /hasBoss\(rankOf\(readGame\(\)\)\) \? bossSet/, "no boss is promised for a level without mocks");
   for (const r of RANKS) assert.ok(html.includes('role="radio" data-value="' + r + '">' + r + "</button>"), r);
   assert.match(html, /id="game-set-rank" role="radiogroup" aria-label="Rank"/);
+});
+
+// ---- Kanji first ----
+const n2Parts = read("../n2-kanji-parts.json");
+
+test("every word card names its kanji, with the base reading where the word splits", () => {
+  const n2 = gamePool({inventory, examples, parts: n2Parts});
+  assert.deepEqual(n2.find(q => q.id === "r:就任").kanji, ["就しゅう", "任にん"]);
+  assert.deepEqual(n2.find(q => q.id === "m:就任").kanji, ["就しゅう", "任にん"]);
+  assert.ok(n2.filter(q => q.kind === "grammar").every(q => !q.kanji));
+  assert.deepEqual(gamePool({inventory, examples}).find(q => q.id === "r:就任").kanji, ["就", "任"], "without the split, the bare kanji");
+  const n3 = levelPool("N3");
+  assert.deepEqual(n3.find(q => q.id === "r:N3:一般").kanji, ["一いち", "般はん"], "the base reading, not the sound change (いっぱん)");
+  assert.ok(n3.filter(q => q.kind === "reading").every(q => q.kanji?.length));
+  // Stripping the tag leaves the N2 pool exactly as it was.
+  const strip = pool => pool.map(({kanji, ...q}) => q);
+  assert.deepEqual(strip(n2), strip(gamePool({inventory, examples})));
+});
+
+test("the kanji record: met on any card, read on reading cards, transfer on a word never shown", () => {
+  const card = (id, kind, kanji) => ({id, kind, kanji, practice: true, record: true});
+  let st = rememberAnswer({}, {q: card("m:N3:一般", "meaning", ["一いつ", "般はん"]), outcome: "wrong", now: 10});
+  assert.deepEqual(st.kj, {"一いつ": [1, 0, 0, 0, 10, 0], "般はん": [1, 0, 0, 0, 10, 0]}, "a meaning card meets the kanji and says nothing of its reading");
+  // The same word again: right, but no transfer: the word has been shown.
+  assert.equal(newWord(st, {id: "r:N3:一般"}), false);
+  st = rememberAnswer(st, {q: card("r:N3:一般", "reading", ["一いつ", "般はん"]), outcome: "right", now: 20});
+  assert.deepEqual(st.kj["般はん"], [2, 1, 0, 0, 20, 0]);
+  // 般 in a word never shown: the reading was rebuilt.
+  assert.equal(newWord(st, {id: "r:N3:全般"}), true);
+  st = rememberAnswer(st, {q: card("r:N3:全般", "reading", ["全ぜん", "般はん"]), outcome: "right", now: 30});
+  assert.deepEqual(st.kj["般はん"], [3, 2, 0, 1, 30, 0]);
+  assert.deepEqual(st.kj["全ぜん"], [1, 1, 0, 0, 30, 0], "a kanji never met cannot transfer: it may have been a guess");
+  st = rememberAnswer(st, {q: card("r:N3:諸般", "reading", ["諸しょ", "般はん"]), outcome: "timeout", now: 40});
+  assert.deepEqual(st.kj["般はん"], [4, 2, 1, 1, 40, 1], "a missed reading marks it weak");
+  assert.deepEqual(kanjiStates(st).get("般"), {met: 4, right: 2, transfer: 1, at: 40, weak: true});
+  // Scored N2 cards keep it too; cards without kanji leave it alone.
+  const n2 = rememberAnswer({}, {q: {id: "r:就任", kind: "reading", kanji: ["就しゅう", "任にん"], target: ["word", "就任", "しゅうにん"]}, outcome: "right", now: 5});
+  assert.deepEqual(n2.kj["就しゅう"], [1, 1, 0, 0, 5, 0]);
+  assert.deepEqual(kanjiAfter({kj: {x: [1]}}, {q: {id: "g:x", kind: "grammar"}, outcome: "right"}), {x: [1]});
+});
+
+test("coverage counts a level's kanji: met, and known by one transfer or three right readings", () => {
+  assert.deepEqual({...KANJI_KNOWN}, {transfer: 1, right: 3});
+  const st = {kj: {"般はん": [3, 2, 0, 1, 1, 0], "一いつ": [5, 1, 0, 0, 1, 0], "一いち": [4, 2, 0, 0, 1, 0], "全ぜん": [1, 1, 0, 0, 1, 0], "影": [1, 0, 0, 0, 1, 0]}};
+  assert.deepEqual(kanjiCoverage("般一全影響", st), {items: 5, met: 4, known: 2}, "一 is known over its two readings together");
+  assert.deepEqual(kanjiCoverage(levelsManifest.kanji.N3, {}), {items: 638, met: 0, known: 0});
+});
+
+test("a kanji-first round: new kanji in level order, then proving them in words never shown, a missed one again", () => {
+  const order = levelsManifest.kanji.N3, pool = levelPool("N3"), examples = [...levelPool("N5"), ...levelPool("N4"), ...gamePool({inventory, examples: new Map(), parts: n2Parts}).filter(q => q.kanji)];
+  const first = kanjiPick({pool, examples, order, state: {}, size: 8, random: seeded(1), now: 1e12});
+  assert.equal(first.length, 8);
+  assert.ok(first.every(q => q.why === "fresh" && order.includes(q.focus) && q.kanji.some(key => key.startsWith(q.focus))), "a new player meets new kanji");
+  assert.deepEqual(first.map(q => q.focus).sort(), [...order].filter(k => pool.some(q => q.kanji?.some(key => key.startsWith(k)))).slice(0, 8).sort(), "the level's first eight, in its order");
+  assert.equal(new Set(first.map(q => q.item)).size, 8, "no word twice");
+  assert.ok(new Set(first.map(q => q.kind)).size > 1, "not all one kind of card");
+  // Answer them (one reading missed), then the next round proves and repairs.
+  let st = {};
+  const missed = first.find(q => q.kind === "reading");
+  for (const q of first) st = rememberAnswer(st, {q, outcome: q === missed ? "wrong" : "right", now: 1e12});
+  const second = kanjiPick({pool, examples, order, state: st, size: 8, random: seeded(2), now: 1e12 + 5 * 3600_000});
+  const by = why => second.filter(q => q.why === why);
+  assert.ok(by("weak").some(q => q.focus === missed.focus && q.kind === "reading"), "the missed reading comes back");
+  assert.equal(by("fresh").length, KANJI_MIX.fresh); assert.equal(by("prove").length, KANJI_MIX.prove + (KANJI_MIX.weak - by("weak").length));
+  for (const q of [...by("prove"), ...by("weak")]) assert.equal(q.kind, "reading", "proving is reading");
+  const unseenFor = k => [...pool, ...examples].some(q => q.kind === "reading" && newWord(st, q) && q.kanji.some(key => key.startsWith(k)));
+  for (const q of by("prove")) assert.equal(newWord(st, q), unseenFor(q.focus), q.focus + ": in a word never shown when there is one");
+  // 一般 was shown; 般 is then proved in another word, never 一般 again, when the lists have one.
+  const mini = [{id: "r:N3:一般", kind: "reading", item: "N3:一般", kanji: ["一いち", "般はん"]}, {id: "r:N3:全般", kind: "reading", item: "N3:全般", kanji: ["全ぜん", "般はん"]}];
+  const met = rememberAnswer({}, {q: {...mini[0], practice: true, record: true}, outcome: "right", now: 1});
+  assert.deepEqual(kanjiPick({pool: mini, order: "般", state: met, size: 1, now: 1e12}).map(q => [q.id, q.why]), [["r:N3:全般", "prove"]]);
+  assert.ok(second.every(q => !first.some(f => f.item && f.item === q.item) || !newWord(st, q)));
+  // A word may come from another level when the rank's own list has no second one.
+  let far = st; const seenAll = {...st.seen}; for (const q of pool) seenAll[q.id] = 1; far = {...st, seen: seenAll};
+  assert.ok(kanjiPick({pool, examples, order, state: far, size: 8, random: seeded(3), now: 1e12}).some(q => q.level !== "N3"), "examples from other levels");
+});
+
+test("at a rank of word cards the round is kanji first, with the comebacks first and the review places kept", () => {
+  const order = levelsManifest.kanji.N3, pool = levelPool("N3"), review = [...levelPool("N5"), ...levelPool("N4")];
+  const back = pool.find(q => q.kind === "reading");
+  const {round} = nextRound({pool, review, kanji: {order, examples: review}, state: {comeback: [back.id]}, random: seeded(4), now: 1e12});
+  assert.equal(round.length, ROUND_SIZE);
+  assert.equal(round[0].id, back.id); assert.equal(round[0].comeback, true);
+  assert.equal(round.filter(q => q.review).length, REVIEW_SHARE);
+  assert.equal(round.filter(q => q.focus).length, ROUND_SIZE - REVIEW_SHARE - 1);
+  assert.equal(new Set(round.map(q => q.item)).size, ROUND_SIZE, "no word twice, the review places included");
+  // Without `kanji` nothing changes: the round is picked by card, as N2's is.
+  assert.ok(nextRound({pool, review, state: {}, random: seeded(4), now: 1e12}).round.every(q => !q.focus));
+});
+
+test("the kanji record syncs: counts take the larger, last seen and weak follow the later sighting", async () => {
+  const {mergeGame} = await import("../sync.js");
+  const a = {updatedAt: "2026-11-27T10:00:00Z", kj: {"般はん": [3, 2, 0, 1, 500, 0], "一いつ": [1, 0, 0, 0, 100, 0]}};
+  const b = {updatedAt: "2026-11-27T09:00:00Z", kj: {"般はん": [4, 1, 1, 0, 900, 1], "全ぜん": [1, 1, 0, 0, 50, 0]}};
+  for (const m of [mergeGame(a, b), mergeGame(b, a)]) assert.deepEqual(m.kj, {"般はん": [4, 2, 1, 1, 900, 1], "一いつ": [1, 0, 0, 0, 100, 0], "全ぜん": [1, 1, 0, 0, 50, 0]});
+  assert.ok(!("kj" in mergeGame({answered: 1}, {answered: 2})));
+});
+
+test("every kanji of a level can be asked: each has a reading card, with wrong readings that are wrong", () => {
+  for (const level of FETCHED_LEVELS) {
+    const pool = levelPool(level), reads = pool.filter(q => q.kind === "reading");
+    for (const k of levelsManifest.kanji[level]) assert.ok(reads.some(q => q.kanji.some(key => key.startsWith(k))), level + " " + k);
+    for (const q of reads) { assert.ok(!q.wrong.includes(q.answer), q.id); assert.ok(new Set(q.wrong).size >= 3, q.id); }
+  }
+  // 委員 いいん has no voicing or long-vowel trap: words that share a kanji give the wrong readings.
+  const q = levelPool("N3").find(q => q.id === "r:N3:委員");
+  assert.equal(q.answer, "いいん"); assert.ok(q.wrong.includes("かいいん"));
+  // N2's reading cards are not widened: its pool is audited as it is.
+  assert.equal(gamePool({inventory, examples}).filter(q => q.kind === "reading").length, gamePool({inventory, examples, parts: n2Parts}).filter(q => q.kind === "reading").length);
 });

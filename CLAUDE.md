@@ -421,6 +421,24 @@ Before considering the change complete:
   `levelCoverage` (words known, at item level 3 or more). When 95% of the
   rank's words have been met, the level above joins the review places
   (`aheadLevel`, `isCovered`). The Settings segment still sets the rank by hand.
+- **Quick round learns kanji, not word lists (owner, 26 Nov, v290).** The
+  unit is the kanji with its reading; a word is the example that carries it.
+  `kanji-split.js` (build-time only) splits a word's reading over its kanji
+  with KANJIDIC, through voicing, p-sounds and small っ; the base readings
+  are an inventory row's fourth field, N2's are `n2-kanji-parts.json`
+  (precached), and `levels/manifest.json` `kanji` names the kanji each level
+  brings (436, 332, 638, 247, 263). All of it comes from
+  `tools/build-level-inventories.mjs`. Word cards carry `kanji` (就しゅう);
+  `kj` in the game state keeps met / right / missed / transfer per
+  kanji-and-reading (`kanjiAfter`), synced by `mergeGame`. A kanji is known
+  after one transfer (read right in a word never shown, the kanji met before)
+  or three right readings (`KANJI_KNOWN`). Levels of word cards are picked
+  kanji first (`kanjiPick`: a missed reading again, new kanji in the level's
+  order, then proving them in unseen words, with words from other levels as
+  examples); N2 rounds are picked by card as before. Home counts kanji
+  (`kanjiCoverage`). Outside N2 every kanji word has a reading card: where a
+  reading has no trap of its own, readings of words sharing a kanji are the
+  wrong choices. N2's reading cards are not widened.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

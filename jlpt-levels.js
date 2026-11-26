@@ -23,17 +23,33 @@ export const levelFile = level => String(level).toLowerCase() + ".json";
 // A word is written as the dictionary shows it (kana when it is usually
 // written in kana); its meaning is the first sense. The same word and reading
 // listed twice is kept once.
-export function buildInventory(level, {words = [], grammar = []}) {
+// split(text, reading) gives the base reading of each kanji (kanji-split.js);
+// when a word splits cleanly they are its fourth field, joined by "|".
+export function buildInventory(level, {words = [], grammar = [], split = null}) {
   const seen = new Set(), rows = [];
   for (const word of words) {
     if (word.jlpt !== level || !word.w || !word.r || !word.en?.[0]) continue;
     const key = word.w + "/" + word.r;
     if (seen.has(key)) continue;
     seen.add(key);
-    rows.push([word.w, word.r, word.en[0].replace(/;\s*/g, ", ")]);
+    const parts = split?.(word.w, word.r);
+    rows.push([word.w, word.r, word.en[0].replace(/;\s*/g, ", "), ...(parts ? [parts.map(x => x.base).join("|")] : [])]);
   }
   const points = grammar.filter(point => point.level === level).sort((a, b) => a.order - b.order).map(point => [point.id, point.title, point.hint || ""]);
   return {level, words: rows, grammar: points};
+}
+
+// The kanji each level brings: those of its words that no easier level's
+// words use, in the order the list meets them. lists: {N5: words, …}, all five.
+const KANJI = /[一-鿿]/g;
+export function levelKanji(lists) {
+  const seen = new Set(), out = {};
+  for (const level of LEVELS) {
+    let fresh = "";
+    for (const [text] of lists[level] || []) for (const k of text.match(KANJI) || []) if (!seen.has(k)) { seen.add(k); fresh += k; }
+    out[level] = fresh;
+  }
+  return out;
 }
 
 // The page's half. inventory(level) resolves to the level's inventory, or to

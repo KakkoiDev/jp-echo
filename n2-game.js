@@ -112,8 +112,16 @@ export function nearMisses(reading = "") {
 // first card; only points, the day and the boss count wait for the review.
 // Grammar, connective and exam cards for other levels wait for their decks
 // and sets.
-export function gamePool({inventory, examples = new Map(), sets = [], sat = new Set(), level = "N2"}) {
+//
+// Every word card names the kanji it exercises (`kanji`): each kanji with its
+// base reading where the word splits cleanly (就しゅう, 任にん), the bare kanji
+// otherwise. The readings are an inventory row's fourth field, or `parts`
+// for N2 (n2-kanji-parts.json: "就任/しゅうにん" → "しゅう|にん").
+export function gamePool({inventory, examples = new Map(), sets = [], sat = new Set(), level = "N2", parts = null}) {
   const other = level !== "N2", tag = other ? level + ":" : "";
+  const split = new Map(inventory.words.map(([w, r, , p]) => [w + "/" + r, p || parts?.[w + "/" + r] || ""]));
+  const kanjiOf = w => { const ks = (w.text.match(KANJI) || []).filter(k => k !== "々"), bases = (split.get(w.target[1] + "/" + w.target[2]) || "").split("|");
+    return [...new Set(ks.map((k, i) => bases.length === (w.text.match(KANJI) || []).length && bases[i] ? k + bases[i] : k))]; };
   const items = recallItems(inventory), pool = [];
   // Affixes such as ～発 are left out: they are not words to pick or read alone.
   // READING_KEY and GLOSS_FIX correct the N2 list; they are not applied elsewhere.
@@ -136,6 +144,13 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
     if (kanji && w.reading && w.reading !== w.text) {
       const accepted = new Set([w.reading, ...(ACCEPTED_READINGS[w.text] || [])]);
       const misses = nearMisses(w.reading).filter(m => !accepted.has(m));
+      // A reading with no trap of its own (委員 いいん) would have no card, and its
+      // kanji could never be asked. In the levels played kanji first, the
+      // readings of words that share a kanji stand in (会員 かいいん, 委任 いにん).
+      if (other && misses.length < 3) for (const o of new Set((kanji || []).flatMap(k => byKanji.get(k) || []))) if (o.text !== w.text && o.text.match(KANJI)?.length && !accepted.has(o.reading) && !misses.includes(o.reading)) misses.push(o.reading);
+      // A kanji found in no other word of the level: readings of the same length from anywhere in it.
+      if (other && misses.length < 3) for (let step = 1; step < words.length && misses.length < 5; step++) { const o = words[(i + step * 37) % words.length];
+        if (o.text.match(KANJI) && Math.abs(o.reading.length - w.reading.length) <= 1 && !accepted.has(o.reading) && !misses.includes(o.reading)) misses.push(o.reading); }
       if (misses.length >= 3) pool.push({id: "r:" + id, kind: "reading", target: w.target, dimension: "reading", prompt: w.text,
         sentence: ex && plain(ex.ja).includes(w.text) ? plain(ex.ja) : "", needle: w.text, answer: w.reading, wrong: misses, seconds: SECONDS.reading,
         solution: {word: w.text, reading: w.reading, meaning: w.answer, ja: ex?.ja || "", en: ex?.en || ""}});
@@ -211,6 +226,9 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
     }
   }
   // The bar for every item: not excluded, and four distinct choices.
+  // The kanji a word card exercises; grammar, connective and exam cards have none.
+  const byTarget = new Map(words.map(w => [w.target, kanjiOf(w)]));
+  for (const q of pool) { const ks = byTarget.get(q.target); if (ks?.length) q.kanji = ks; }
   const fit = pool.filter(q => !EXCLUDED[q.id] && (q.fixed ? new Set(q.fixed).size === 4 : new Set(q.wrong.filter(w => w !== q.answer)).size >= 3));
   if (!other) return fit;
   // item: what a round counts as one thing, where N2 cards use their target.
@@ -377,6 +395,7 @@ export function rememberAnswer(state = {}, {q, outcome, points = 0, fast = false
   // Practice (connectives until reviewed) is exposure only: it never moves
   // accuracy, the level, the day or boss counts, the run clock, wins or repeats.
   if (q.practice && !q.record) return {...state, seen, practiced: (state.practiced || 0) + 1};
+  const kj = kanjiAfter(state, {q, outcome, now});
   // The item record (owner, 26 Nov): how often each card was tried and missed.
   const tried = {...(state.tried || {}), [q.id]: (state.tried?.[q.id] || 0) + 1};
   const missed = outcome === "right" ? state.missed || {} : {...(state.missed || {}), [q.id]: (state.missed?.[q.id] || 0) + 1};
@@ -388,7 +407,7 @@ export function rememberAnswer(state = {}, {q, outcome, points = 0, fast = false
     const lv = {...(state.lv || {})}, lvAt = {...(state.lvAt || {})};
     if (to !== was) { lv[q.id] = to; if (to > was) lvAt[q.id] = now; }
     const comeback = [...(state.comeback || []).filter(id => id !== q.id), ...(outcome === "right" ? [] : [q.id])].slice(-ROUND_SIZE);
-    return {...state, seen, tried, missed, wins, lv, lvAt, comeback, practiced: (state.practiced || 0) + 1};
+    return {...state, seen, tried, missed, kj, wins, lv, lvAt, comeback, practiced: (state.practiced || 0) + 1};
   }
   const wins = {...(state.wins || {})};
   if (fast) wins[q.id] = (wins[q.id] || 0) + 1;
@@ -402,7 +421,7 @@ export function rememberAnswer(state = {}, {q, outcome, points = 0, fast = false
   const total = (state.total || 0) + points, day = localDay(new Date(now));
   const days = {...(state.days || {})}, d = days[day] || {answered: 0, right: 0, points: 0, rounds: 0, best: 0};
   days[day] = {...d, answered: d.answered + 1, right: d.right + (outcome === "right" ? 1 : 0), points: d.points + points};
-  return {...state, seen, tried, missed, wins, lv, lvAt, level, runStart, comeback: comeback.slice(-ROUND_SIZE), total, answered: (state.answered || 0) + 1, days};
+  return {...state, seen, tried, missed, kj, wins, lv, lvAt, level, runStart, comeback: comeback.slice(-ROUND_SIZE), total, answered: (state.answered || 0) + 1, days};
 }
 export function rememberRound(state = {}, {score, questions = [], misses, scored, now = Date.now()}) {
   const seen = {...(state.seen || {})};
@@ -462,19 +481,112 @@ export function inSlump(state = {}) {
 // there are any, REVIEW_SHARE of the round's places go to them, least recently
 // seen first, so a level passed keeps coming back. With none, the round is
 // picked exactly as it always was.
-export function nextRound({pool, review = [], recall = [], state = {}, difficulty = "normal", random = Math.random, now = Date.now()}) {
+// kanji: {order, examples} picks the rank's places by kanji (kanjiPick)
+// instead of by card: the way of every level whose cards are word cards only.
+export function nextRound({pool, review = [], kanji = null, recall = [], state = {}, difficulty = "normal", random = Math.random, now = Date.now()}) {
   const slump = inSlump(state), beat = pace(state, now);
   const level = Math.min(1, Math.max(0, levelOf(state) + beat.offset + (DIFFICULTY[difficulty] || DIFFICULTY.normal).offset));
   const share = review.length && pool.length ? REVIEW_SHARE : 0, memory = {recall, seen: state.seen || {}, wins: state.wins || {}, lv: state.lv || {}, random, now};
-  let picked = pickRound({...memory, pool, size: ROUND_SIZE - share,
-    comeback: slump ? (state.comeback || []).slice(-WARM_UP.comeback) : state.comeback || [], mix: slump ? WARM_UP.mix : flowMix(level)});
+  const comeback = slump ? (state.comeback || []).slice(-WARM_UP.comeback) : state.comeback || [];
+  let picked;
+  if (kanji?.order) {
+    const byId = new Map(pool.map(q => [q.id, q])), places = ROUND_SIZE - share;
+    const back = shuffle(comeback.map(id => byId.get(id)).filter(Boolean), random).slice(0, places).map(q => ({...q, comeback: true}));
+    picked = [...back, ...kanjiPick({pool, examples: kanji.examples || [], order: kanji.order, state, size: places - back.length, skip: back, random, now})];
+    // Kanji with nothing left to ask: the places left are picked by card, so a round is always full.
+    if (picked.length < places) { const words = new Set(picked.map(q => q.item)); picked.push(...pickRound({...memory, pool: pool.filter(q => !words.has(q.item)), size: places - picked.length, mix: flowMix(level)})); }
+  } else picked = pickRound({...memory, pool, size: ROUND_SIZE - share, comeback, mix: slump ? WARM_UP.mix : flowMix(level)});
   if (share) {
     // The comeback cards stay first; the review cards are spread among the rest.
-    const back = picked.filter(q => q.comeback), old = pickRound({...memory, pool: review, size: Math.max(0, ROUND_SIZE - picked.length), mix: {weak: share, fresh: share, known: share}}).map(q => ({...q, review: true}));
+    const words = new Set(picked.map(q => q.item).filter(Boolean));
+    const back = picked.filter(q => q.comeback), old = pickRound({...memory, pool: review.filter(q => !words.has(q.item)), size: Math.max(0, ROUND_SIZE - picked.length), mix: {weak: share, fresh: share, known: share}}).map(q => ({...q, review: true}));
     picked = [...back, ...interleave(shuffle([...picked.filter(q => !q.comeback), ...old], random))];
   }
   const round = picked.map(q => ({...q, seconds: flowSeconds(q.seconds, level), bonus: !q.comeback && !q.practice && random() < BONUS.chance * beat.bonus}));
   return {round, warmUp: slump, level, beat};
+}
+
+// ---- Kanji first ----
+// What is learned is the kanji with its reading, not the word (owner, 26 Nov):
+// N3 is 638 kanji, not 2,055 words. A word is the example that carries them.
+// `kj` in the game state keeps, per kanji-and-reading (the keys of a card's
+// `kanji`): [met, right, missed, transfer, last seen, weak].
+//   met       cards answered that hold it, of any kind;
+//   right /   reading cards only: the one card that asks how it is read;
+//   missed
+//   transfer  read right in a word the game had never shown, the kanji met
+//             before: the reading was rebuilt, not remembered. One is enough
+//             to call the kanji known; so are three right readings, for a
+//             kanji with no second word to prove it in (KANJI_KNOWN);
+//   weak      1 after a missed reading, until one is right.
+export const KANJI_KNOWN = Object.freeze({transfer: 1, right: 3});
+const knows = e => !!e && (e.transfer >= KANJI_KNOWN.transfer || e.right >= KANJI_KNOWN.right);
+const WORD_KINDS = ["r:", "m:", "d:", "l:", "h:"];
+// No card of this word has ever been shown.
+export const newWord = (state = {}, q) => !WORD_KINDS.some(p => state.seen?.[p + String(q.id).slice(2)]);
+export function kanjiAfter(state = {}, {q, outcome, now = Date.now()}) {
+  if (!q.kanji?.length) return state.kj || {};
+  const kj = {...(state.kj || {})}, reads = q.kind === "reading", fresh = reads && outcome === "right" && newWord(state, q);
+  for (const key of q.kanji) {
+    const [met = 0, right = 0, missed = 0, transfer = 0, , weak = 0] = kj[key] || [];
+    kj[key] = [met + 1, right + (reads && outcome === "right" ? 1 : 0), missed + (reads && outcome !== "right" ? 1 : 0),
+      transfer + (fresh && met > 0 ? 1 : 0), now, reads ? (outcome === "right" ? 0 : 1) : weak];
+  }
+  return kj;
+}
+// One kanji, over all its readings: met, known (some reading transferred), weak.
+export function kanjiStates(state = {}) {
+  const out = new Map();
+  for (const [key, [met = 0, right = 0, , transfer = 0, at = 0, weak = 0]] of Object.entries(state.kj || {})) {
+    const k = [...key][0], e = out.get(k) || {met: 0, right: 0, transfer: 0, at: 0, weak: false};
+    out.set(k, {met: e.met + met, right: e.right + right, transfer: e.transfer + transfer, at: Math.max(e.at, at), weak: e.weak || !!weak});
+  }
+  return out;
+}
+// order: a level's kanji (levels/manifest.json `kanji`), as a string.
+export function kanjiCoverage(order = "", state = {}) {
+  const states = kanjiStates(state), all = [...order];
+  return {items: all.length, met: all.filter(k => states.get(k)?.met).length, known: all.filter(k => knows(states.get(k))).length};
+}
+// A round picked by kanji. Each place is a kanji of the level, then a word
+// for it:
+//   weak   a reading missed last time: asked again, in another word if there is one;
+//   new    never met, in the level's order: in a word whose other kanji are
+//          already met when there is one, so one new thing at a time;
+//   prove  met but not yet transferred: its reading in a word never shown;
+//   known  a known kanji in a word never shown, for pace.
+// pool: the rank's cards. examples: cards of other levels, used when the
+// rank's own list has no fitting word (half of a level's kanji sit in a
+// single word of that level). No word twice; nothing shown in the last four
+// hours unless nothing else is left.
+export const KANJI_MIX = Object.freeze({weak: 3, fresh: 3, prove: 2});
+export function kanjiPick({pool = [], examples = [], order = "", state = {}, size = ROUND_SIZE, skip = [], random = Math.random, now = Date.now()}) {
+  const states = kanjiStates(state), seen = state.seen || {}, cards = new Map();
+  for (const q of [...pool, ...examples]) for (const key of q.kanji || []) { const k = [...key][0]; if (!cards.has(k)) cards.set(k, []); cards.get(k).push(q); }
+  const wordOf = q => q.item || (q.target ? keyOf(q.target) : q.id), used = new Set(skip.map(wordOf)), out = [];
+  const recent = q => now - (seen[q.id] || 0) < RECENT_MS, metAll = (q, k) => q.kanji.every(key => [...key][0] === k || states.get([...key][0])?.met);
+  // The first card that fits, by the tests in turn; a reading card unless `kinds` says otherwise.
+  const choose = (k, tests, kinds = ["reading"]) => {
+    const list = (cards.get(k) || []).filter(q => kinds.includes(q.kind) && !used.has(wordOf(q)));
+    for (const test of tests) { const hit = list.find(q => !recent(q) && test(q)) ; if (hit) return hit; }
+    return list.sort((a, b) => (seen[a.id] || 0) - (seen[b.id] || 0))[0] || null;
+  };
+  const place = (k, group) => {
+    const unseen = q => newWord(state, q);
+    const q = group === "fresh" ? choose(k, [q => metAll(q, k), () => true], [["reading"], ["meaning"], ["reading"], ["listen", "meaning"]][out.length % 4]) || choose(k, [() => true], ["reading", "meaning", "definition", "listen"])
+      : group === "weak" ? choose(k, [q => unseen(q) && metAll(q, k), unseen, () => true])
+      : choose(k, [q => unseen(q) && metAll(q, k), unseen, () => true]);
+    if (!q || (group === "known" && !unseen(q))) return false;
+    used.add(wordOf(q)); out.push({...q, focus: k, why: group}); return true;
+  };
+  const groups = {weak: [], fresh: [], prove: [], known: []};
+  for (const k of order) { const e = states.get(k); if (!cards.has(k)) continue; groups[e?.weak ? "weak" : !e?.met ? "fresh" : knows(e) ? "known" : "prove"].push(k); }
+  groups.weak.sort((a, b) => states.get(a).at - states.get(b).at); groups.prove.sort((a, b) => states.get(a).at - states.get(b).at); groups.known = shuffle(groups.known, random);
+  const fill = (group, n) => { const list = groups[group]; while (n > 0 && list.length && out.length < size) if (place(list.shift(), group)) n--; };
+  fill("weak", KANJI_MIX.weak); fill("fresh", KANJI_MIX.fresh); fill("prove", KANJI_MIX.prove);
+  // Places left over go to proving before anything new: consolidate, then move on.
+  for (const group of ["prove", "fresh", "weak", "known"]) fill(group, size - out.length);
+  return shuffle(out, random);
 }
 
 // ---- The rank ----

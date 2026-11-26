@@ -9,7 +9,7 @@ import {recognitionFactory} from "./speech.js";
 import {speakOnce,speakAndWait,japaneseVoices,RadioPlayer,NoiseBed} from "./speech.js";
 import {RADIO_DEFAULTS,RADIO_PHASE_COPY,clockAt,radioPhase,radioPlan,radioSteps} from "./radio.js";
 import {readNights, nightComparison, comparisonLine, eveningRecall, EVENING_SOURCE, nightPlan, nightRecord, keepNight, NIGHT_KEY} from "./n2-night.js";
-import {levelCoverage, isCovered, aheadLevel, applyBoss, verdictLine, rankOf, setRank, rankLevels, hasBoss, RANKS, inSlump, itemLevel, levelAfter, ITEM_LEVEL, gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, patternVoice, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
+import {kanjiCoverage, levelCoverage, isCovered, aheadLevel, applyBoss, verdictLine, rankOf, setRank, rankLevels, hasBoss, RANKS, inSlump, itemLevel, levelAfter, ITEM_LEVEL, gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, patternVoice, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
 import {createLevels} from "./jlpt-levels.js";
 import {spokenWord,radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
 import {TAG,TAGS,HELD_OUT,CAUSES,comprehensionStats,weakestTag,tagDrill,drillExposure,attemptTags,tagsOf,sourceOf} from "./n2-comprehension.js";
@@ -1130,9 +1130,10 @@ async function game() {
   // N2 is built from the app's own files; another level's inventory is fetched
   // once and kept (jlpt-levels.js). A level that cannot be had (offline and
   // never fetched) is left out, and if it is the rank's own, N2 is played.
-  const n2Pool = gamePool({inventory, examples: await deckExamples(), sets, sat});
+  const n2Pool = gamePool({inventory, examples: await deckExamples(), sets, sat, parts: await json("./n2-kanji-parts.json").catch(() => null)});
   const levelPools = new Map([["N2", n2Pool]]);
-  let pool = n2Pool, lower = [], missing = [];
+  // kanjiFirst: the rank's kanji in order and, as examples, the cards of the other levels at hand.
+  let pool = n2Pool, lower = [], missing = [], kanjiFirst = null, rankKanji = "";
   async function loadRank() {
     const {level, review} = rankLevels(rankOf(readGame())), wanted = [level, ...review];
     const pools = await Promise.all(wanted.map(async l => {
@@ -1141,6 +1142,9 @@ async function game() {
     }));
     missing = wanted.filter((_, i) => !pools[i]);
     pool = pools[0] || n2Pool; lower = pools[0] ? pools.slice(1).filter(Boolean).flat() : [];
+    // Levels of word cards are played kanji first; N2, with its grammar and exam cards, as it always was.
+    rankKanji = (await gameLevels.ready())?.kanji?.[pools[0] ? level : "N2"] || "";
+    kanjiFirst = pools[0] && level !== "N2" && rankKanji ? {order: rankKanji, examples: [...lower, ...n2Pool.filter(q => q.kanji)]} : null;
     // The rank's words nearly all met: the level above joins the review places as a preview.
     const ahead = aheadLevel(level);
     if (pools[0] && ahead && isCovered(levelCoverage(pool, readGame()))) {
@@ -1303,7 +1307,9 @@ async function game() {
     const all = st.runs || [], runNo = all.length + 1, clock = runClock(st.runStart);
     const stretch = b.done >= 950 && !open && !rest, first = !all.length && !clock.started && !b.done;
     // A rank with no boss yet: the run card shows how much of the level is known.
-    const cover = !hasBoss(rankOf(st)) && !missing.includes(rankOf(st)) ? levelCoverage(pool, st) : null;
+    // The count is kanji, not words (owner, 26 Nov); words only if the kanji list could not be had.
+    const byKanji = !hasBoss(rankOf(st)) && !missing.includes(rankOf(st)) && rankKanji ? kanjiCoverage(rankKanji, st) : null;
+    const cover = byKanji ? {...byKanji, seen: byKanji.met, unit: "kanji"} : !hasBoss(rankOf(st)) && !missing.includes(rankOf(st)) ? {...levelCoverage(pool, st), unit: "words"} : null;
     homeView = {open, rest, stretch, first, left: BOSS_EVERY - b.done, cover: !!cover};
     const showCount = countShown(clock, homeView), mockNo = boss ? String(bookIds.indexOf(boss.id) + 1).padStart(2, "0") : "";
     // Run card (board 1 · Home A/D), the boss card (B) or the rest above a quiet card (C).
@@ -1324,7 +1330,7 @@ async function game() {
       : first && boss ? "At " + BOSS_EVERY.toLocaleString() + " the boss opens: Mock " + mockNo + ", written at half time." : "";
     root.querySelector("#game-runcard .qr-oni").hidden = !!cover;
     if (cover) {
-      $("game-run-name").textContent = rankOf(st) + " words"; $("game-run-clock").textContent = "practice · not scored"; $("game-run-clock").dataset.tone = "";
+      $("game-run-name").textContent = rankOf(st) + " " + cover.unit; $("game-run-clock").textContent = "practice · not scored"; $("game-run-clock").dataset.tone = "";
       $("game-run-big").textContent = cover.known.toLocaleString(); $("game-run-of").textContent = "of " + cover.items.toLocaleString() + " known";
       $("game-run-fill").style.width = cover.known / cover.items * 100 + "%";
       $("game-run-row").hidden = false; $("game-run-points").textContent = cover.seen.toLocaleString() + " met"; $("game-run-points").dataset.neg = "false"; $("game-run-waits").textContent = "no " + rankOf(st) + " boss yet";
@@ -1446,7 +1452,7 @@ async function game() {
     // phone has no Japanese voice, or the voice failed twice this session.
     const playable = hears() ? pool : pool.filter(q => q.kind !== "listen");
     const review = hears() ? lower : lower.filter(q => q.kind !== "listen");
-    const next = nextRound({pool: playable, review, recall: data.recall, state, difficulty: difficulty()});
+    const next = nextRound({pool: playable, review, kanji: kanjiFirst && {...kanjiFirst, examples: hears() ? kanjiFirst.examples : kanjiFirst.examples.filter(q => q.kind !== "listen")}, recall: data.recall, state, difficulty: difficulty()});
     round = next.round; roundLevel = next.level; warmUp = next.warmUp; beat = next.beat || null; rights = 0; flagged = 0; practiced = 0; bestCombo = 0;
     index = 0; score = 0; streak = 0; misses = []; marks = []; ups = [];
     mode("play");
@@ -1465,7 +1471,7 @@ async function game() {
     try {
       const s = JSON.parse(localStorage.getItem(ROUND_KEY) || "null");
       if (!s || Date.now() - s.at > ROUND_KEEP_MS || !(s.index >= 1 && s.index < s.items.length)) { if (s) clearRound(); return null; }
-      const byId = new Map([...lower, ...pool].map(q => [q.id, q])), items = s.items.map(it => byId.has(it.id) ? {...byId.get(it.id), ...it} : null);
+      const byId = new Map([...n2Pool, ...lower, ...pool].map(q => [q.id, q])), items = s.items.map(it => byId.has(it.id) ? {...byId.get(it.id), ...it} : null);
       if (items.includes(null)) { clearRound(); return null; }
       return {...s, round: items, ups: s.ups || [], misses: (s.misses || []).map(m => ({q: items.find(q => q.id === m.id), picked: m.picked, from: m.from, to: m.to})).filter(m => m.q)};
     } catch { return null; }

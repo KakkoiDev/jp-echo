@@ -131,6 +131,28 @@ above joins those places once 95% of the rank's words have been met.
 The gate judges the half-time boss as it is sat (owner, 26 Nov): promotion
 has no separate full-time sitting.
 
+Kanji first (v290, owner 26 Nov: "we were focusing on the compounds and
+roots of each kanji and grammar points"). A level is its kanji, not its word
+list: N3 is 638 kanji. Rounds at a rank of word cards pick a kanji, then a
+word for it; Home counts kanji known. In a simulation at 80% right, all 638
+N3 kanji are met in about 200 rounds and known in about 300, having shown
+about a third of the level's cards.
+
+Open after v290:
+- **N2 is still picked by card.** Its record keeps kanji too, but its rounds
+  and Home are unchanged. Kanji-first picking for N2 is the owner's call.
+- **A word from another level can score.** A kanji-first round at N3 may use
+  an N2 word as its example; that card is N2's, so it pays points and a miss
+  saves an N2 recall check.
+- **Wrong readings borrowed from other words** (援助: たすける, きゅうじょ) are
+  easier to rule out than the 問題1 traps. Better: swap in another reading of
+  the same kanji (行: こう / ぎょう). Needs the audit before these cards score.
+- **Irregular words** (今日, 大人: 2–9% of a level) do not split; their kanji
+  are tracked without a reading.
+- **Kanji from parts as its own card** (board 18) and **grammar points** as
+  the second unit: grammar outside N2 still has no cards (no decks).
+- **Home's kanji count** ("N3 kanji · 1 of 638 known · 11 met") is not on a board.
+
 Waiting on the owner:
 - **Mock exams for N5, N4, N3 and N1**: in their own session. Add each level
   to `BOSS_LEVELS` (n2-game.js) once its sets and its exam screen exist.

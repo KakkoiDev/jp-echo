@@ -11,10 +11,15 @@ import {writeFileSync, mkdirSync, rmSync, existsSync, readdirSync} from "node:fs
 import {createHash} from "node:crypto";
 import {WORDS} from "../words-data.js";
 import {GRAMMAR} from "../grammar-data.js";
-import {FETCHED_LEVELS, buildInventory, levelFile} from "../jlpt-levels.js";
+import {readFileSync} from "node:fs";
+import {FETCHED_LEVELS, buildInventory, levelFile, levelKanji} from "../jlpt-levels.js";
+import {READINGS} from "../kanji-readings.js";
+import {splitReading} from "../kanji-split.js";
+
+const split = (text, reading) => splitReading(text, reading, READINGS);
 
 const root = new URL("../levels/", import.meta.url);
-const built = FETCHED_LEVELS.map(level => [level, JSON.stringify(buildInventory(level, {words: WORDS, grammar: GRAMMAR})) + "\n"]);
+const built = FETCHED_LEVELS.map(level => [level, JSON.stringify(buildInventory(level, {words: WORDS, grammar: GRAMMAR, split})) + "\n"]);
 const version = createHash("sha256").update(built.map(([, text]) => text).join("")).digest("hex").slice(0, 10);
 
 mkdirSync(root, {recursive: true});
@@ -28,5 +33,12 @@ for (const [level, text] of built) {
   levels[level] = {words: data.words.length, grammar: data.grammar.length};
   console.log(level, data.words.length, "words,", data.grammar.length, "grammar,", Math.round(text.length / 1024) + " KB");
 }
-writeFileSync(new URL("manifest.json", root), JSON.stringify({version, levels}, null, 1) + "\n");
+// The kanji each level brings (all five lists, N2's from n2-inventory.json),
+// and N2's own split readings: n2-kanji-parts.json, part of the app like its inventory.
+const n2 = JSON.parse(readFileSync(new URL("../n2-inventory.json", import.meta.url), "utf8"));
+const lists = {N2: n2.words, ...Object.fromEntries(built.map(([level, text]) => [level, JSON.parse(text).words]))};
+const parts = {};
+for (const [text, reading] of n2.words) { const p = split(text, reading); if (p) parts[text + "/" + reading] = p.map(x => x.base).join("|"); }
+writeFileSync(new URL("../n2-kanji-parts.json", import.meta.url), JSON.stringify(parts) + "\n");
+writeFileSync(new URL("manifest.json", root), JSON.stringify({version, levels, kanji: levelKanji(lists)}, null, 1) + "\n");
 console.log("levels/" + version);
