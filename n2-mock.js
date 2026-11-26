@@ -1163,7 +1163,7 @@ async function game() {
   const grammarCards = n2Cards.filter(grammarBlockCard), n2Pool = n2Cards.filter(q => !grammarBlockCard(q));
   const levelPools = new Map([["N2", n2Pool]]);
   // kanjiFirst: the rank's kanji in order and, as examples, the cards of the other levels at hand.
-  let pool = n2Pool, lower = [], missing = [], kanjiFirst = null, rankKanji = "", bossIds = [];
+  let pool = n2Pool, lower = [], missing = [], kanjiFirst = null, rankKanji = "", bossIds = [], bossLevels = ["N2"];
   async function loadRank() {
     const {level, review} = rankLevels(rankOf(readGame())), wanted = [level, ...review];
     const pools = await Promise.all(wanted.map(async l => {
@@ -1174,6 +1174,8 @@ async function game() {
     // The rank's boss papers: N2's are part of the app; another level's are
     // listed now and fetched whole in the background, so the boss never needs
     // the network when it arrives. A level with no papers yet has no boss.
+    // Which levels have papers to sit: the rank only moves to one of these.
+    bossLevels = (await Promise.all(RANKS.map(async l => l === "N2" || Object.keys((await gameSets.index(l))?.sets || gameSets.ready(l)?.sets || {}).length ? l : null))).filter(Boolean);
     if (level === "N2") bossIds = bookIds.filter(id => realistic(id));
     else { bossIds = Object.keys((await gameSets.index(level))?.sets || gameSets.ready(level)?.sets || {}); gameSets.keep(level).catch(() => {}); }
     pool = pools[0] || n2Pool; lower = pools[0] ? pools.slice(1).filter(Boolean).flat() : [];
@@ -1339,7 +1341,7 @@ async function game() {
     for (const run of st.runs || []) {
       const exam = run.rank && !(st.bossLog || []).some(e => e.key === run.at) ? examOf(run) : null;
       if (!exam?.complete) continue;
-      const next = applyBoss(st, {key: run.at, rank: run.rank, total: exam.total, sectionsOk: exam.sections.every(x => x.ok)});
+      const next = applyBoss(st, {key: run.at, rank: run.rank, total: exam.total, sectionsOk: exam.sections.every(x => x.ok), levels: bossLevels});
       if (next !== st) { moved = moved || rankOf(next) !== rankOf(st); st = next; writeGame(st); }
     }
     if (moved) { loadRank().then(home); return; }
