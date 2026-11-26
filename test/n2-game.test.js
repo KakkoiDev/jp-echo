@@ -1188,3 +1188,11 @@ test("a listen card keeps its sentence when the word is written there in another
   assert.match(mock, /const gap = listen && q\.solution\?\.ja \? heardGap\(q\.solution\.ja, q\.prompt\) : "";/);
   assert.match(mock, /\$\("game-blank"\)\.textContent = q\.kind === "listen" \? q\.gap \|\| q\.prompt : q\.answer;/, "the gap fills with what the sentence holds, not the dictionary form");
 });
+
+// Owner, 27 Nov: "a link to the run on Home so that I can look at my mistakes anytime".
+test("a finished run on Home links to its boss results", () => {
+  const js = src("../n2-mock.js");
+  assert.match(js, /el\(sitting \? "a" : "div", \{class: "qr-rk", href: sitting \? "\?book=" \+ encodeURIComponent\(sitting\.book\) \+ "&attempt=" \+ encodeURIComponent\(sitting\.id\) : undefined,/);
+  assert.match(js, /const no = all\.findIndex\(x => x\.at === r\.at\) \+ 1, sitting = r\.exam && bossSitting\(r\);/, "only a run whose boss is finished");
+  assert.match(src("../styles.css"), /\.n2-game a\.qr-rk:hover\{color:var\(--sumi\)\}/);
+});

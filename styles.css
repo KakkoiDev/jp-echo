@@ -2304,6 +2304,8 @@ body[data-view=game] .n2-game{position:fixed;inset:0;box-sizing:border-box;width
 .qr-rk .p{width:18px;font-weight:900;color:var(--ink-muted)}
 .qr-rk .qr-chip{height:22px;padding:0 8px}
 .qr-rk .v{margin-left:auto;font-weight:900;font-variant-numeric:tabular-nums}
+/* A finished run is a link to its boss results: a quiet chevron after the score. */
+.qr-rk svg{flex:none;margin-left:-4px;color:var(--ink-muted)}.n2-game a.qr-rk:hover{color:var(--sumi)}
 .qr-days{display:flex;align-items:flex-end;gap:3px;height:36px;position:relative;margin-top:6px}
 .qr-days i{flex:1;background:var(--hairline);border-radius:2px;min-height:2px}
 .qr-days i.full{background:var(--sumi)}

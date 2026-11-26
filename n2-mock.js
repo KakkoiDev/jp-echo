@@ -1138,6 +1138,7 @@ function readGame() { try { return JSON.parse(localStorage.getItem(GAME_KEY) || 
 // Every save is stamped and marked for the gist sync (the N2 file carries it).
 function writeGame(state) { try { localStorage.setItem(GAME_KEY, JSON.stringify({...state, updatedAt: new Date().toISOString()})); markDirty("n2"); } catch {} }
 const gameLevels = createLevels();
+const RUN_CHEVRON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
 async function game() {
   show("game");
   if (params.get("view") !== "game") history.replaceState(history.state, "", "?view=game");
@@ -1315,9 +1316,10 @@ async function game() {
     $("game-back").href = "./"; $("game-back").setAttribute("aria-label", "Back to Echo"); $("game-back").dataset.end = "false"; $("game-title").textContent = "Quick round";
     $("game-back").onclick = e => { e.preventDefault(); if (history.length > 1 && document.referrer && new URL(document.referrer).origin === location.origin && !/n2-mock\.html\?view=game/.test(document.referrer)) history.back(); else location.href = "./"; };
     const papersById = new Map(data.papers.map(p => [p.id, p]));
-    const examOf = run => {
-      const a = (run.attemptId && data.attempts.find(x => x.id === run.attemptId && x.phase === "results"))
+    const bossSitting = run => (run.attemptId && data.attempts.find(x => x.id === run.attemptId && x.phase === "results"))
         || data.attempts.filter(x => x.book === run.set && x.boss && x.phase === "results" && (x.startedAt || "") >= run.at).sort((x, y) => (x.startedAt || "").localeCompare(y.startedAt || ""))[0];
+    const examOf = run => {
+      const a = bossSitting(run);
       const paper = a && papersById.get(a.paper || a.book);
       return paper ? {...estimate(paper, a), completedAt: a.completedAt} : null;
     };
@@ -1380,10 +1382,15 @@ async function game() {
     // Boards 1 · D has the run card alone; B and C keep two runs and no chart.
     const focus = showCount || stretch;
     $("game-runs-wrap").hidden = focus; $("game-runs-note").hidden = open || rest || !runs.length; $("game-runs-wrap").dataset.empty = String(!runs.length);
-    $("game-runs").replaceChildren(...(runs.length ? runs.slice(0, open || rest ? 2 : 3).map((r, i) => el("div", {class: "qr-rk"},
-      el("span", {class: "p", text: String(i + 1)}), el("span", {text: "Run " + (all.findIndex(x => x.at === r.at) + 1)}),
-      ...(r.exam ? [rest && r.at === latest?.at ? el("span", {class: "qr-chip", "data-tone": "gold", text: "new"}) : el("span", {class: "qr-chip", "data-tone": r.times > 1 ? "seal" : "", text: "×" + r.times})] : [el("span", {class: "qr-tiny", text: "boss not finished"})]),
-      el("span", {class: "v", text: num(r.total)})))
+    // A run whose boss is finished opens that sitting's results: every question, the answer and why (owner, 27 Nov).
+    $("game-runs").replaceChildren(...(runs.length ? runs.slice(0, open || rest ? 2 : 3).map((r, i) => {
+      const no = all.findIndex(x => x.at === r.at) + 1, sitting = r.exam && bossSitting(r);
+      const row = el(sitting ? "a" : "div", {class: "qr-rk", href: sitting ? "?book=" + encodeURIComponent(sitting.book) + "&attempt=" + encodeURIComponent(sitting.id) : undefined, "aria-label": sitting ? "Run " + no + ": review the boss, " + num(r.total) + " points" : undefined},
+        el("span", {class: "p", text: String(i + 1)}), el("span", {text: "Run " + no}),
+        ...(r.exam ? [rest && r.at === latest?.at ? el("span", {class: "qr-chip", "data-tone": "gold", text: "new"}) : el("span", {class: "qr-chip", "data-tone": r.times > 1 ? "seal" : "", text: "×" + r.times})] : [el("span", {class: "qr-tiny", text: "boss not finished"})]),
+        el("span", {class: "v", text: num(r.total)}));
+      if (sitting) row.insertAdjacentHTML("beforeend", RUN_CHEVRON);
+      return row; })
       : [el("div", {class: "qr-rkempty", text: "Your first run lands here once its boss falls."})]));
     // The last 14 days, as bars against the 1,000 line; dashed outlines before the first day (board 12 · D).
     const days = lastDays(st, 14), top = Math.max(DAILY_GOAL * 1.2, ...days.map(d => d.answered)), none = days.every(d => !d.answered);
