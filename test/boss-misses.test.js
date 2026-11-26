@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
-import {gamePool, bossCards, bossQueue, nextRound, rememberAnswer, BOSS_PLACES, BOSS_WORDS, KEY_SECONDS, KIND_LABEL, ROUND_SIZE} from "../n2-game.js";
+import {gamePool, bossCards, bossQueue, bossReview, BOSS_REVIEW, nextRound, rememberAnswer, BOSS_PLACES, BOSS_WORDS, ROUND_SIZE} from "../n2-game.js";
 import {examplesFromDecks} from "../day-radio.js";
 import {mergeGame} from "../sync.js";
 import {checkKey, LIMITS} from "../tools/n2-build-keys.mjs";
@@ -17,48 +17,33 @@ const line = i => set.questions[i].context.split("\n").map(l => l.replace(/^[男
 const keyOf = i => ({lines: [line(i)], en: "The meaning of the deciding line", wrong: ["A first misreading of it", "A second misreading of it", "A third misreading of it"]});
 const keys = {"n2-set-2#60": keyOf(60), "n2-set-2#80": keyOf(80)};
 
-test("a vocabulary or grammar miss comes back as the question itself and the card of what it tests", () => {
+test("a vocabulary or grammar miss brings the card of what it tested, never the question again", () => {
   const cards = bossCards({set, missed: [0, 30], pool});
   // 険しい has no reading card (no fair traps), so its meaning card stands in; a grammar question brings the grammar card.
-  assert.deepEqual(cards.map(q => q.id), ["e:n2-set-2#0", "m:険しい", "e:n2-set-2#30", "g:ところを見ると"]);
-  // Where the word has a reading card, a reading question brings that one.
-  const read = set.questions.findIndex((q, i) => q.dimension === "reading" && q.target && pool.some(p => p.kind === "reading" && p.target?.[1] === q.target[1]));
+  assert.deepEqual(cards.map(q => q.id), ["m:険しい", "g:ところを見ると"]);
+  assert.ok(cards.every(q => !q.practice && pool.some(p => p.id === q.id)), "scored cards of the pool");
+  const read = set.questions.findIndex(q => q.dimension === "reading" && q.target && pool.some(p => p.kind === "reading" && p.target?.[1] === q.target[1]));
   assert.equal(bossCards({set, missed: [read], pool}).at(-1).kind, "reading");
-  assert.ok(cards.every(q => !q.practice && pool.some(p => p.id === q.id)));
 });
 
-test("a written question the game has no exam card for still brings its word or pattern", () => {
-  const usage = set.questions.findIndex(q => q.mondai === 6 && q.target);
-  const cards = bossCards({set, missed: [usage], pool});
-  assert.ok(cards.length >= 1 && cards.every(q => q.kind !== "exam" && q.target?.[1] === set.questions[usage].target[1]));
+test("no card of the queue asks a boss question again: that would teach its answer", () => {
+  const all = set.questions.map((_, i) => i), cards = bossCards({set, missed: all, keys, pool});
+  assert.ok(cards.length > 50);
+  assert.ok(!cards.some(q => q.kind === "exam" || q.fixed || /^(e|kl|kq):/.test(q.id)));
+  // Each card's sentence is its own deck example, not the paper's.
+  for (const q of cards) if (q.sentence) assert.ok(!set.questions.some(x => x.prompt === q.sentence || (x.context || "").includes(q.sentence)), q.id);
+  assert.ok(cards.every(q => pool.some(p => p.id === q.id)), "only cards the game already had");
 });
 
-test("a reading miss becomes two cards on its deciding lines: what they mean, then the paper's question", () => {
-  const cards = bossCards({set, missed: [60], keys, pool}), [means, asks] = cards;
-  assert.deepEqual([means.id, asks.id], ["kl:n2-set-2#60", "kq:n2-set-2#60"]);
-  assert.equal(means.kind, "keyline"); assert.equal(means.answer, keys["n2-set-2#60"].en); assert.equal(means.wrong.length, 3);
-  assert.equal(asks.kind, "key"); assert.equal(asks.prompt, set.questions[60].prompt);
-  assert.deepEqual(asks.fixed, set.questions[60].choices); assert.equal(asks.answer, set.questions[60].choices[set.questions[60].key - 1]);
-  for (const q of [means, asks]) {
-    assert.equal(q.sentence, keys["n2-set-2#60"].lines[0]);
-    assert.ok(set.questions[60].context.includes(q.sentence), "the lines are the passage's own");
-    assert.ok(q.practice && q.record, "unreviewed: no points, but the answer counts");
-    assert.equal(q.item, "key:n2-set-2#60"); assert.equal(q.target, null);
-    assert.equal(q.seconds, KEY_SECONDS[q.kind]); assert.ok(KIND_LABEL[q.kind]);
-    assert.ok(!q.heard);
-  }
-  assert.ok(KEY_SECONDS.keyline <= 8 && KEY_SECONDS.key <= 12, "blitz pace");
-});
-
-test("a listening line is heard, not read", () => {
-  const [means, asks] = bossCards({set, missed: [80], keys, pool});
-  for (const q of [means, asks]) { assert.equal(q.heard, true); assert.equal(q.say, keys["n2-set-2#80"].lines[0]); assert.ok(!/^[男女]/.test(q.say)); }
-});
-
-test("a question with no deciding lines makes no key card, only its words", () => {
-  const cards = bossCards({set, missed: [61], keys, pool});
-  assert.ok(cards.every(q => q.kind === "meaning" && q.passage === "n2-set-2#61"));
-  for (const q of cards) assert.ok((set.questions[61].context + set.questions[61].choices.join("")).includes(q.prompt) && q.prompt.length >= 2);
+test("a reading or listening miss brings the N2 words and whole patterns of its passage, the deciding lines' first", () => {
+  const cards = bossCards({set, missed: [60], keys, pool});
+  assert.ok(cards.length && cards.every(q => q.passage === "n2-set-2#60" && ["meaning", "grammar"].includes(q.kind)));
+  const text = set.questions[60].context + set.questions[60].choices.join("");
+  for (const q of cards) assert.ok(text.includes(q.kind === "grammar" ? q.prompt.replace(/[〜～]/g, "") : q.prompt), q.id);
+  const inLine = cards.filter(q => keys["n2-set-2#60"].lines[0].includes(q.prompt));
+  assert.deepEqual(cards.slice(0, inLine.length).map(q => q.id), inLine.map(q => q.id));
+  // A pattern is found only where it is written whole, three characters or more.
+  for (const q of bossCards({set, missed: set.questions.map((_, i) => i), pool}).filter(c => c.kind === "grammar" && c.passage)) assert.ok(q.prompt.replace(/[〜～]/g, "").length >= 3, q.prompt);
 });
 
 test("the queue keeps a passage's unknown words, three at most, and drops what is done", () => {
@@ -67,41 +52,55 @@ test("the queue keeps a passage's unknown words, three at most, and drops what i
   const first = bossQueue({cards, state: {}, key: "a1"});
   assert.equal(first.filter(q => q.passage).length, BOSS_WORDS);
   assert.ok(first.every(q => q.boss === "a1"));
-  // A word already known is not asked for the boss's sake; the next unknown one takes its place.
   const known = first.find(q => q.passage).id;
   const next = bossQueue({cards, state: {lv: {[known]: 3}}, key: "a1"});
   assert.ok(!next.some(q => q.id === known)); assert.equal(next.filter(q => q.passage).length, BOSS_WORDS);
-  const done = bossQueue({cards, state: {bossDone: {key: "a1", ids: {"e:n2-set-2#0": 1, "kl:n2-set-2#60": 1}}}, key: "a1"});
-  assert.ok(!done.some(q => q.id === "e:n2-set-2#0" || q.id === "kl:n2-set-2#60")); assert.ok(done.some(q => q.id === "kq:n2-set-2#60"));
-  // Another boss: what was done for the last one says nothing about this one.
-  assert.equal(bossQueue({cards, state: {bossDone: {key: "a1", ids: {"e:n2-set-2#0": 1}}}, key: "b2"}).filter(q => q.id === "e:n2-set-2#0").length, 1);
+  const done = bossQueue({cards, state: {bossDone: {key: "a1", ids: {"m:険しい": 1}}}, key: "a1"});
+  assert.ok(!done.some(q => q.id === "m:険しい"));
+  assert.equal(bossQueue({cards, state: {bossDone: {key: "a1", ids: {"m:険しい": 1}}}, key: "b2"}).filter(q => q.id === "m:険しい").length, 1);
 });
 
-test("a round gives the boss's misses a few places, never two cards of one question, and none in a recovery round", () => {
+test("a round gives the boss's misses a few places, and none in a recovery round", () => {
   const cards = bossCards({set, missed: [0, 2, 5, 30, 60, 80], keys, pool}), boss = bossQueue({cards, state: {}, key: "a1"});
   const {round} = nextRound({pool, boss, state: {}, random: seeded(3)});
   const mine = round.filter(q => q.boss);
   assert.equal(round.length, ROUND_SIZE); assert.equal(mine.length, BOSS_PLACES);
-  assert.equal(new Set(mine.map(q => q.target ? JSON.stringify(q.target) : q.item)).size, mine.length);
-  assert.ok(!round.some(q => q.kind === "key") || !round.some(q => q.kind === "keyline" && q.source === round.find(k => k.kind === "key").source));
+  assert.equal(new Set(mine.map(q => JSON.stringify(q.target))).size, mine.length);
   const slump = {history: [{at: "2026-11-27T00:00:00Z", score: -500, right: 2, n: 10}]};
   assert.equal(nextRound({pool, boss, state: slump, random: seeded(3)}).round.filter(q => q.boss).length, 0);
-  // Without a boss the round is picked exactly as before.
   assert.deepEqual(nextRound({pool, state: {}, random: seeded(3)}).round.map(q => q.id), nextRound({pool, boss: [], state: {}, random: seeded(3)}).round.map(q => q.id));
 });
 
-test("a miss is cleared by a right answer; a wrong one leaves it in the queue; every answer counts toward the boss", () => {
-  const cards = bossCards({set, missed: [60], keys, pool}), [q] = bossQueue({cards, state: {}, key: "a1"});
+test("a miss is cleared by a right answer; a wrong one leaves it in the queue; it is scored like any card", () => {
+  const cards = bossCards({set, missed: [0], pool}), [q] = bossQueue({cards, state: {}, key: "a1"});
   const wrong = rememberAnswer({}, {q, outcome: "wrong", points: -200});
-  assert.equal(wrong.bossDone, undefined); assert.equal(wrong.answered, 1); assert.equal(wrong.total, 0, "a key card pays and costs nothing");
+  assert.equal(wrong.bossDone, undefined); assert.equal(wrong.answered, 1); assert.equal(wrong.total, -200);
   assert.ok(bossQueue({cards, state: wrong, key: "a1"}).some(c => c.id === q.id));
   const right = rememberAnswer(wrong, {q, outcome: "right", points: 300});
-  assert.deepEqual(right.bossDone, {key: "a1", ids: {[q.id]: 1}}); assert.equal(right.answered, 2); assert.equal(right.total, 0);
+  assert.deepEqual(right.bossDone, {key: "a1", ids: {[q.id]: 1}}); assert.equal(right.answered, 2); assert.equal(right.total, 100);
   assert.ok(!bossQueue({cards, state: right, key: "a1"}).some(c => c.id === q.id));
-  // The same card met outside the queue clears nothing.
   assert.equal(rememberAnswer({}, {q: {...q, boss: undefined}, outcome: "right"}).bossDone, undefined);
-  // A new boss starts its own list.
   assert.deepEqual(rememberAnswer(right, {q: {...q, boss: "b2"}, outcome: "right"}).bossDone, {key: "b2", ids: {[q.id]: 1}});
+});
+
+test("the boss review lists every wrong or unsure answer, as a card to read", () => {
+  const answers = set.questions.map(q => q.key); answers[0] = set.questions[0].key % 4 + 1; answers[60] = set.questions[60].key % 4 + 1; answers[66] = 0; answers[92] = set.questions[92].key % 3 + 1;
+  const guesses = []; guesses[30] = true;
+  const items = bossReview({paper: set, attempt: {answers, guesses}, keys, source: set.id});
+  assert.deepEqual(items.map(it => it.index), [0, 30, 60, 66, 92]);
+  const [word, unsure, reading, blank, reply] = items;
+  assert.equal(word.answer, "けわしい"); assert.equal(word.picked, set.questions[0].choices[answers[0] - 1]); assert.equal(word.seconds, BOSS_REVIEW.short); assert.deepEqual(word.lines, []);
+  assert.equal(unsure.unsure, true); assert.equal(unsure.picked, "", "right, but marked unsure: nothing to strike");
+  assert.deepEqual(reading.lines, keys["n2-set-2#60"].lines); assert.equal(reading.en, keys["n2-set-2#60"].en); assert.equal(reading.ask, set.questions[60].prompt);
+  assert.equal(reading.seconds, BOSS_REVIEW.long); assert.ok(BOSS_REVIEW.long > BOSS_REVIEW.short && BOSS_REVIEW.long <= 10, "more to read, still the game's pace");
+  assert.equal(blank.picked, null, "left unanswered"); assert.deepEqual(blank.lines, [], "no deciding lines: the question, its answer and why");
+  // A quick-response item is its own line, heard, the speaker's label left out.
+  assert.equal(reply.heard, true); assert.equal(reply.lines.length, 1); assert.ok(set.questions[92].context.endsWith(reply.lines[0]) && !/^[男女]/.test(reply.lines[0]));
+  // A paper as the device stores it numbers its skills; lines apply only to the set they were written for.
+  const stored = {questions: set.questions.map(q => ({...q, skill: ["Vocabulary", "Grammar", "Reading", "Listening"].indexOf(q.skill)}))};
+  assert.deepEqual(bossReview({paper: stored, attempt: {answers, guesses}, keys, source: set.id}), items);
+  assert.deepEqual(bossReview({paper: set, attempt: {answers, guesses}, keys}).find(it => it.index === 60).lines, []);
+  assert.deepEqual(bossReview({paper: set, attempt: {answers: set.questions.map(q => q.key)}}), []);
 });
 
 test("what was cleared on two devices is kept from both while it is the same boss", () => {
@@ -136,10 +135,17 @@ test("the shipped lines pass the validator, were solved blind, and are precached
   assert.ok(src("../sw.js").includes('"./n2-sets/keys.json"'));
 });
 
-test("the game does not say where these cards come from", () => {
-  // Owner, 27 Nov: no row, no count, no label about the boss; the next boss is a fresh paper.
+test("the rounds do not say where these cards come from; the review opens from the run and counts for nothing", () => {
   const html = src("../n2-mock.html"), js = src("../n2-mock.js");
   assert.ok(!/boss mistakes|from (your|the) (last )?boss/i.test(html + js));
   assert.ok(js.includes("boss: pool === n2Pool ? bossQueue({cards: bossAll, state, key: lastBoss?.id || \"\"})"));
   assert.ok(js.includes("a.boss && a.phase === \"results\" && sat.has(a.book) && a.paper === realisticPaperId(a.book)"), "only a boss sat on the paper's current edition");
+  // The run on Home opens the review; the full results stay one tap away.
+  assert.ok(js.includes("if (paper && startPaperReview(sitting, paper)) e.preventDefault();"));
+  assert.ok(js.includes('el("a", {class: "qr-chip", href: paperReview.href, text: "Full paper"})'));
+  // It is the round's review screen with its hold button, and it writes nothing.
+  const body = js.slice(js.indexOf("function startPaperReview"), js.indexOf("function review(n)") > js.indexOf("function startPaperReview") ? js.indexOf("function review(n)") : js.indexOf("function done()"));
+  assert.ok(body.includes("review(0);")); assert.ok(!/writeGame|rememberAnswer|rememberRound|access\(/.test(body));
+  assert.ok(js.includes("if (!paperReview) clearRound();"), "a round in progress is kept");
+  assert.ok(html.includes('id="game-review-ask"') && html.includes('id="game-hold"'));
 });

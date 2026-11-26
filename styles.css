@@ -2546,9 +2546,13 @@ body[data-view=game] .n2-game{position:fixed;inset:0;box-sizing:border-box;width
 .qr-sent.heard[data-lines="1"]{text-align:center}
 .qr-sent.passage{font-size:17px;line-height:1.85;text-align:left;margin-top:12px}
 /* A key card: the paper's question under its deciding lines. */
-/* Nothing to say aloud on a key card: the line and its glyph leave. */
-.qr-card[data-kind=key] .qr-say,.qr-card[data-kind=keyline] .qr-say{display:none}
-.qr-sent .qr-ask{display:block;margin-top:10px;padding-top:8px;border-top:1px solid var(--hairline);font-family:var(--ui);font-size:14px;line-height:1.5;font-weight:700;color:var(--sumi)}
+/* The boss review: the paper's question over the right choice; a sentence-long choice is set as a line. */
+.qr-hero .qr-ask{margin:0 0 12px;font-family:var(--display);font-size:17px;line-height:1.7;text-align:left;color:var(--ink-muted)}
+.qr-hero .qr-ask u{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:6px;text-decoration-color:var(--seal);color:var(--sumi)}
+.qr-word.line{font-family:var(--ui);font-size:19px;line-height:1.5;text-align:left}
+[data-paper=true] .qr-reviewsay{display:none}
+/* A passage line is longer than an example sentence: set smaller so the card and its buttons stay on one screen. */
+[data-paper=true] .qr-exs{font-size:16px;line-height:1.7}[data-paper=true] .qr-ex{padding:12px 14px;margin-top:12px}[data-paper=true] .qr-hero .qr-ask{font-size:15px;margin-bottom:8px}[data-paper=true] .qr-word.line{font-size:17px}[data-paper=true] .qr-pick{margin-top:10px}
 @keyframes n2g-square{from{transform:scale(1.5);background:var(--seal);border-color:var(--seal)}to{transform:none}}
 @keyframes n2g-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 @keyframes n2g-float{0%{opacity:0;transform:translateY(4px)}20%,80%{opacity:1;transform:none}100%{opacity:0;transform:none}}
@@ -2574,7 +2578,6 @@ html.motion-off .n2-game *{animation:none !important}html.motion-off .n2-game *:
   body[data-view=game] .qr-say{margin-top:10px}
   /* Board 13 · F: a build card gives up the "say it" line first, then its rows tighten. */
   body[data-view=game] .qr-card[data-kind=build] .qr-say{display:none}
-  body[data-view=game] .qr-card[data-kind=key] .qr-sent.passage{font-size:15px;line-height:1.6;margin-top:8px}body[data-view=game] .qr-card[data-kind=key] .qr-ask{font-size:13px;margin-top:6px;padding-top:6px}
   body[data-view=game] .qr-card[data-kind=build] .qr-sent{line-height:1.6;margin-top:8px}
   /* Measured at 375 × 667: five rows, a two-line sentence and one two-line choice overflowed by 11 px; five rows take 24 px each. */
   body[data-view=game] .qr-grammar-parts[data-rows="5"] b,body[data-view=game] .qr-grammar-parts[data-rows="5"] span{min-height:24px;padding:2px 0}

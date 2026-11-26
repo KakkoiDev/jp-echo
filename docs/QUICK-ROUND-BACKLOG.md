@@ -129,34 +129,34 @@ passage with its questions, a listening question, the break, pause, the
 question grid, results (three sections and two sections), and the rank moving
 up or down. Not started.
 
-## A boss's misses as blitz cards (v303, 27 Nov 2026): built without boards
+## A boss's misses (v303, 27 Nov 2026): built without boards
 
-Owner, 27 Nov: work on the last boss's mistakes at the game's speed, with no
-word about where the cards come from, counting toward the next boss.
-`bossCards` / `bossQueue` (n2-game.js), content in `n2-sets/keys.json`.
+Owner, 27 Nov. First built as cards re-asking the boss's questions on their
+deciding lines; the owner saw that this trains memory of one answer, so it
+was reworked the same day: the rounds take only what transfers (`bossCards`),
+and the questions are read, not answered, in a boss review opened from the
+run on Home (`bossReview`).
 
-Built, for the designer to look at:
-- **The key card** (head label "Key sentence"): the deciding lines as a
-  passage (17 px Mincho), a hairline, the paper's question in the sans bold,
-  then the choices. Sentence-long Japanese choices use a new `.qr-ch.s`
-  (15 px, three lines); the 声 line leaves the card.
-- A listening line is spoken; the lines appear once answered.
+Built from existing pieces, for the designer to look at:
+- **The boss review** is the round's review screen. New on it: the paper's
+  question above the answer (`#game-review-ask`, Mincho 17 px, muted, the
+  tested word or the filled blank underlined in seal), a sentence-long answer
+  set as a line (`.qr-word.line`, sans 19 px, left), a "Full paper" chip in
+  the sub line's right slot, and no "Say it with the voice" line.
+- `.qr-ch.s`: sentence-long Japanese choices at 15 px on three lines (an exam
+  card's long choices were cut at two).
 
 Open:
-- **Lines exist for sets 2 and 3 only** (97 cards from 106 questions; 6
-  skipped, 3 not solved blind). The other seventeen papers need the same two
-  passes (`tools/n2-build-keys.mjs` explains them). A boss on a paper without
-  lines still brings its vocabulary, grammar and passage words.
-- **No card for 問題8 (ordering) or 問題9 (passage blanks)**: they have no
-  target and no exam card. Five of the owner's 45 misses on set 2.
-- **The key cards are unreviewed**: drafted and solved by AI models. Several
-  wrong meanings are far from the line, not a misreading of it, so the
-  "what it means" card is easier than it should be.
-- **A listening line goes to the voice without readings** (the rule "the
-  voice gets the reading" is not met for these lines).
-- **Not seen**: a listening card with sound, the dark theme, the review of a
-  missed key card.
-- The exam card's "Mock 02" chip still names the paper, as it always has.
+- **Deciding lines exist for sets 2 and 3 only** (97 of 106 questions).
+  Elsewhere a reading or listening review card has the question, the answer
+  and the why, with no line from the passage.
+- **The lines and their English are AI-drafted**, checked by a blind solve,
+  not by a reader. The three "wrong meanings" written for each are unused now.
+- **Few listed N2 words sit in a deciding line**, so most passage cards come
+  from the rest of the passage. Patterns are found only when written whole.
+- **A listening line goes to the voice without readings.**
+- 問題8 and 問題9 misses bring nothing into the rounds (no target); they are
+  in the review.
 
 ## Grammar from its blocks
 

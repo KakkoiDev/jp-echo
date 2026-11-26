@@ -37,7 +37,7 @@ export const ROUND_SIZE = 10, REVIEW_SECONDS = 5, DAILY_GOAL = 1000, RECENT_MS =
 export const SECONDS = Object.freeze({reading: 3, meaning: 3, definition: 4, listen: 5, homophone: 5, grammar: 6, connective: 7, exam: {1: 4, 2: 5, 3: 5, 4: 7, 5: 6, 7: 8}});
 // The pause after an answer before the next question, in milliseconds.
 export const PAUSE = Object.freeze({right: 250, miss: 800});
-export const KIND_LABEL = Object.freeze({reading: "Reading", meaning: "Meaning", definition: "Which word", listen: "Listen", connective: "Connective · 問題9", homophone: "Which kanji", grammar: "Grammar", block: "Grammar piece", build: "Grammar parts", infer: "New grammar", exam: "Exam question", keyline: "Key sentence", key: "Key sentence"});
+export const KIND_LABEL = Object.freeze({reading: "Reading", meaning: "Meaning", definition: "Which word", listen: "Listen", connective: "Connective · 問題9", homophone: "Which kanji", grammar: "Grammar", block: "Grammar piece", build: "Grammar parts", infer: "New grammar", exam: "Exam question"});
 const EXAM_MONDAI = new Set([1, 2, 3, 4, 5, 7]), WRITTEN = new Set(["Vocabulary", "Grammar"]);
 const KANJI = /[一-鿿々]/g;
 const plain = s => String(s || "").replace(/【[^】]*】/g, "");
@@ -570,53 +570,44 @@ export function bossSet({sets = [], attempts = [], now = new Date(), held = HELD
 }
 
 // ---- The boss's misses ----
-// What was missed on the last boss comes back as blitz cards, without a word
-// about where it came from (owner, 27 Nov): a few places of each round, until
-// every card has been answered right once. The next boss stays a fresh paper.
-//   a vocabulary or grammar question   the question itself (the exam card) and
-//                                      the card of the word or pattern it tests;
-//   a reading or listening question    its deciding lines (n2-sets/keys.json)
-//                                      as two cards: what the lines mean, then
-//                                      the paper's own question on those lines
-//                                      alone; and the N2 words of the passage.
-// The key cards are practice until the lines are reviewed: no points, but
-// each answer counts toward the day and the next boss. A listening line is
-// heard, not read (`heard`), and shown once answered.
+// A boss shows what is not known yet. Asking the same question again would
+// only teach its answer (owner, 27 Nov), so the rounds take what transfers:
+// the word or pattern a missed question tested, on its own card, in another
+// sentence; and from a reading or listening miss, the N2 words and patterns
+// of the passage, those of its deciding lines (n2-sets/keys.json) first.
+// A few places of each round, with no word about where they come from, until
+// each card has been answered right once. The question itself is only ever
+// shown again in the boss review (bossReview), which asks nothing.
 export const BOSS_PLACES = 4, BOSS_WORDS = 3;
-export const KEY_SECONDS = Object.freeze({keyline: 8, key: 12});
 export function bossCards({set, missed = [], keys = {}, pool = []}) {
   if (!set?.id) return [];
-  const byId = new Map(pool.map(q => [q.id, q])), byTarget = new Map();
+  const byTarget = new Map();
   for (const q of pool) if (q.target && q.kind !== "exam") byTarget.set(keyOf(q.target), [...(byTarget.get(keyOf(q.target)) || []), q]);
   const words = pool.filter(q => q.kind === "meaning" && q.target?.[0] === "word" && q.prompt.length >= 2 && q.prompt.match(KANJI));
+  // A pattern counts as in the text only when it is written there whole.
+  const patterns = pool.filter(q => q.kind === "grammar").map(q => [q, q.prompt.replace(/[〜～]/g, "")]).filter(([, name]) => name.length >= 3 && !/[・（(]/.test(name));
   const out = [], seen = new Set();
   const add = q => { if (q && !seen.has(q.id)) { seen.add(q.id); out.push(q); } };
   for (const i of [...new Set(missed)].sort((a, b) => a - b)) {
     const q = set.questions?.[i], source = set.id + "#" + i;
     if (!q) continue;
     if (WRITTEN.has(q.skill)) {
-      add(byId.get("e:" + source));
       const cards = q.target ? byTarget.get(keyOf(q.target)) || [] : [];
       const kind = q.target?.[0] === "grammar" ? "grammar" : q.dimension === "reading" ? "reading" : "meaning";
       add(cards.find(c => c.kind === kind) || cards[0]);
       continue;
     }
-    const key = keys[source], heard = q.skill === "Listening";
-    if (key?.lines?.length && Array.isArray(q.choices) && q.key) {
-      const text = key.lines.join(key.lines.length > 1 && !/[。！？」]$/.test(key.lines[0]) ? "…" : ""), answer = q.choices[q.key - 1];
-      const base = {target: null, dimension: null, practice: true, record: true, item: "key:" + source, source, sentence: text, ...(heard ? {heard: true, say: key.lines.join("　")} : {})};
-      add({...base, id: "kl:" + source, kind: "keyline", prompt: text, answer: key.en, wrong: key.wrong, seconds: KEY_SECONDS.keyline,
-        solution: {word: key.en, meaning: "", ja: text, en: "", why: q.why || ""}});
-      add({...base, id: "kq:" + source, kind: "key", prompt: q.prompt, answer, wrong: q.choices.filter((_, j) => j !== q.key - 1), fixed: q.choices, seconds: KEY_SECONDS.key,
-        solution: {word: "", meaning: key.en, ja: text, en: "", why: q.why || ""}});
+    const lines = (keys[source]?.lines || []).join(""), passage = (q.context || "") + (q.choices || []).join("");
+    for (const text of [lines, passage]) {
+      if (!text) continue;
+      for (const [g, name] of patterns) if (text.includes(name)) add({...g, passage: source});
+      for (const w of words) if (text.includes(w.prompt)) add({...w, passage: source});
     }
-    const passage = (q.context || "") + (q.choices || []).join("");
-    for (const w of words) if (passage.includes(w.prompt)) add({...w, passage: source});
   }
   return out;
 }
 // What is left of them: the cards not yet answered right since this boss.
-// Of a passage's words only those not known yet are kept, BOSS_WORDS a passage.
+// Of a passage's words and patterns only those not known yet are kept, BOSS_WORDS a passage.
 export function bossQueue({cards = [], state = {}, key = ""}) {
   const done = state.bossDone?.key === key ? state.bossDone.ids || {} : {}, perPassage = new Map();
   return cards.filter(q => {
@@ -626,6 +617,28 @@ export function bossQueue({cards = [], state = {}, key = ""}) {
     const n = perPassage.get(q.passage) || 0; perPassage.set(q.passage, n + 1);
     return n < BOSS_WORDS;
   }).map(q => ({...q, boss: key}));
+}
+
+// The boss review: every wrong or unsure answer of one sitting as a card that
+// is read, not answered: the question, the right choice, the one picked, the
+// why, and for a reading or listening question its deciding lines. It runs
+// at the game's pace (BOSS_REVIEW seconds a card, with the hold button) and
+// counts toward nothing: it is a look at the answers, not an exercise.
+// `paper` is the sitting's own paper (its questions as they were shown);
+// `keys` apply only when `source` names the set they were written for.
+export const BOSS_REVIEW = Object.freeze({short: 5, long: 8});
+export function bossReview({paper, attempt, keys = {}, source = ""}) {
+  return (paper?.questions || []).flatMap((q, i) => {
+    const given = attempt?.answers?.[i], unsure = !!attempt?.guesses?.[i];
+    if (!q?.key || !Array.isArray(q.choices) || (given === q.key && !unsure)) return [];
+    // A stored paper numbers its skills (0 vocabulary … 3 listening); a set file names them.
+    const long = [2, 3, "Reading", "Listening"].includes(q.skill);
+    const key = source ? keys[source + "#" + i] : null, heard = q.skill === "Listening" || q.skill === 3;
+    return [{index: i, mondai: q.mondai, long, heard, ask: q.prompt || "", answer: q.choices[q.key - 1],
+      picked: given === q.key ? "" : given ? q.choices[given - 1] || "" : null, unsure: given === q.key,
+      lines: key?.lines || (heard && (q.choices.length === 3) ? [String(q.context || "").replace(/^[男女][０-９0-9１２]?[：:]/, "")] : []), en: key?.en || "", why: q.why || "",
+      seconds: long ? BOSS_REVIEW.long : BOSS_REVIEW.short}];
+  });
 }
 
 // A slump: the last round went badly (under half right, or points below
