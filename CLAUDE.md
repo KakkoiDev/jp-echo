@@ -375,6 +375,11 @@ Before considering the change complete:
   context resumed on every note). Every report from the N2 page carries a
   `snapshot` (`screenSnapshot`, reports.js: visible markup, viewport, theme,
   motion; capped at `SNAPSHOT_MAX`), rebuilt with `tools/reports.mjs --html`.
+- **Radio from Quick round (v283).** The game's Radio screen starts Day and
+  Night the same way (one 60 px button per card). Day Radio and Evening recall
+  are still Echo's screens and logic; with `?from=game` they wear the game's
+  look through one skin (`body[data-from=game]`, right after the Quick round block in styles.css)
+  and lead back to the game's Radio. Never fork those players for the game.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

@@ -495,11 +495,11 @@ test("Radio stays inside the game: Day Radio and Evening recall come back, the N
   const game = html.slice(html.indexOf('<section id="game"'), html.indexOf('<section id="check"'));
   assert.doesNotMatch(game, /href="\.\/radio"/, "no link out to Echo's Radio from the game");
   assert.match(game, /id="game-radio-open" type="button">[\s\S]*?Radio<\/button>/);
-  assert.match(game, /href="\?view=radio&amp;mode=listen&amp;from=game"/); assert.match(game, /href="\?view=radio&amp;mode=recall&amp;from=game"/); assert.match(game, /href="\?view=evening&amp;from=game"/);
+  assert.match(game, /href="\?view=radio&amp;mode=listen&amp;from=game"/); assert.match(game, /data-recall="\?view=radio&amp;mode=recall&amp;from=game"/); assert.match(game, /href="\?view=evening&amp;from=game"/);
   assert.match(game, /id="game-night" class="qr-night"/);
   assert.match(mock, /nightPlayer\.start\(tonight\.cued, \{steps: radioSteps/, "the cued half, the same plan as Echo's");
   assert.match(mock, /keepNight\(readNights\(\), nightRecord\(tonight\)\)/, "the night is recorded for the comparison");
-  assert.match(mock, /if \(params\.get\("from"\) === "game"\) \$\("day-back"\)\.href = "\?view=game&panel=radio";/);
+  assert.match(mock, /if \(FROM_GAME\) \{ \$\("day-back"\)\.href = "\?view=game&panel=radio";/);
   assert.match(mock, /\$\("check-done-go"\)\.href = evening \? \(fromGame \? "\?view=game&panel=radio" : "\.\/radio"\)/);
   assert.match(mock, /if \(params\.get\("panel"\) === "radio"\) radioPanel\(\); else home\(\);/);
   assert.match(mock, /\["game-radio", "radio"\]/, "the screen switcher shows it");
@@ -639,4 +639,16 @@ test("the game is pinned to the screen: nothing above it and no viewport unit ca
   const css = src("../styles.css");
   assert.match(css, /body\[data-view=game\] \.n2-game\{position:fixed;inset:0;box-sizing:border-box;width:100%;min-height:0;padding:0 16px;overflow-y:auto;/);
   assert.match(css, /body\[data-view=game\] #n2-main\{padding:0\}/, "the 16 px gutter moved onto the game itself");
+});
+
+test("Radio from the game: Day and Night start alike, and Day Radio and Evening recall wear the game's look, not a fork", () => {
+  const html = src("../n2-mock.html"), css = src("../styles.css"), mock = src("../n2-mock.js");
+  const radio = html.slice(html.indexOf('id="game-radio"'), html.indexOf('id="game-play"'));
+  assert.match(radio, /id="game-day-mode" role="radiogroup"[\s\S]*?id="game-day-start" href="\?view=radio&amp;mode=listen&amp;from=game"/, "Day has its own start");
+  assert.match(radio, /class="qr-btn qr-btn60 qr-mt12" id="game-night-start"/); assert.doesNotMatch(radio, /class="qr-dock"/, "no bottom button for the night alone");
+  assert.match(mock, /if \(FROM_GAME\) \{ document\.body\.dataset\.from = "game";/);
+  assert.match(css, /body\[data-from=game\]\{background-image:none;background:var\(--washi\);font-family:var\(--ui\)\}/);
+  assert.match(css, /body\[data-from=game\] \.drill-title\{font-family:var\(--ui\);font-size:20px;font-weight:900/);
+  assert.doesNotMatch(css.slice(css.indexOf("body[data-from=game]{"), css.indexOf("/* Day Radio */")), /#[0-9A-Fa-f]{6}\b/, "tokens only in the skin");
+  assert.match(mock, /\$\("day-done-back"\)\.href = "\?view=game&panel=radio"/, "the end of Day Radio leads back to the game's Radio");
 });

@@ -9,7 +9,7 @@
 <link rel="icon" href="./favicon.ico" sizes="32x32"><link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="./apple-touch-icon.png"><link rel="manifest" href="./manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
-<link rel="stylesheet" href="./styles.css?v=209">
+<link rel="stylesheet" href="./styles.css?v=210">
 </head>
 <body class="n2">
 <main id="n2-main">
@@ -206,7 +206,8 @@
   <div id="game-radio" class="qr-panel" hidden>
     <div class="qr-grp qr-grp-pad">
       <div class="qr-radiohead"><span class="qr-glyph qr-glyph-day" lang="ja" aria-hidden="true">昼</span><div><strong>Day Radio</strong><span>For walking: today’s items, out loud</span></div></div>
-      <div class="qr-pair qr-mt"><a class="qr-btn2" href="?view=radio&amp;mode=listen&amp;from=game">Listen</a><a class="qr-btn2" href="?view=radio&amp;mode=recall&amp;from=game">Recall</a></div>
+      <div class="qr-seg qr-mt" id="game-day-mode" role="radiogroup" aria-label="Day Radio mode"><button data-ui="button" type="button" role="radio" data-value="listen">Listen<small>hear it, say it back</small></button><button data-ui="button" type="button" role="radio" data-value="recall">Recall<small>answer before the voice</small></button></div>
+      <a class="qr-btn qr-btn60 qr-btn-night qr-mt12" id="game-day-start" href="?view=radio&amp;mode=listen&amp;from=game" data-listen="?view=radio&amp;mode=listen&amp;from=game" data-recall="?view=radio&amp;mode=recall&amp;from=game"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4l13 8-13 8z"/></svg><span>Start the Day Radio</span></a>
     </div>
     <div class="qr-grp qr-grp-pad qr-mt12">
       <div class="qr-radiohead"><span class="qr-glyph qr-glyph-night" lang="ja" aria-hidden="true">夜</span><div><strong>Night Radio</strong><span class="qr-n" id="game-night-count"></span></div></div>
@@ -215,8 +216,9 @@
       <div class="qr-seg" id="game-night-hours" role="radiogroup" aria-label="Stop after"><button data-ui="button" type="button" role="radio" data-value="6">6 h</button><button data-ui="button" type="button" role="radio" data-value="7">7 h</button><button data-ui="button" type="button" role="radio" data-value="8">8 h</button><button data-ui="button" type="button" role="radio" data-value="9">9 h</button></div>
       <div class="qr-it qr-it-flat"><div class="qr-tx">Soft noise</div><button data-ui="button" class="qr-sw" id="game-night-noise" type="button" role="switch" aria-label="Soft noise" aria-pressed="false"><i></i></button></div>
       <div class="qr-it qr-it-flat"><div class="qr-tx">Cue half, to compare tomorrow</div><button data-ui="button" class="qr-sw" id="game-night-compare" type="button" role="switch" aria-label="Cue half" aria-pressed="false"><i></i></button></div>
+      <button data-ui="button" class="qr-btn qr-btn60 qr-mt12" id="game-night-start" type="button"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><span>Start the Night Radio</span></button><p class="qr-tiny qr-center qr-n" id="game-night-until"></p>
     </div>
-    <div class="qr-dock"><button data-ui="button" class="qr-btn qr-btn60" id="game-night-start" type="button"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><span>Start the Night Radio</span></button><p class="qr-tiny qr-center qr-n" id="game-night-until"></p></div>
+
   </div>
 
   <div id="game-play" class="qr-panel" hidden>
@@ -315,7 +317,7 @@
     <div class="n2-day-rate" id="day-rate" hidden><button data-ui="button" class="again" data-rate="missed" type="button">Not yet</button><button data-ui="button" class="outline" data-rate="got" type="button">Got it</button><p class="hint n2-day-rate-note">Not yet / Got it marks this play only. It never changes your written reading record.</p></div>
     <p class="hint" id="day-note"></p>
   </div>
-  <div class="drill-done" id="day-done" hidden><span class="drill-done-seal" lang="ja" aria-hidden="true">聴</span><strong id="day-done-title"></strong><p class="hint" id="day-done-line"></p><div class="drill-done-actions"><button data-ui="button" class="primary" id="day-again" type="button">Play again from the start</button><a class="button outline" href="./n2-mock.html">Back to N2</a></div></div>
+  <div class="drill-done" id="day-done" hidden><span class="drill-done-seal" lang="ja" aria-hidden="true">聴</span><strong id="day-done-title"></strong><p class="hint" id="day-done-line"></p><div class="drill-done-actions"><button data-ui="button" class="primary" id="day-again" type="button">Play again from the start</button><a class="button outline" id="day-done-back" href="./n2-mock.html">Back to N2</a></div></div>
   <div class="review-actions n2-day-bar" id="day-bar-actions">
     <button data-ui="button" class="quiet bar-icon-button" id="day-prev" type="button" aria-label="Previous item" data-icon="prev"></button>
     <button data-ui="button" class="quiet bar-icon-button" id="day-repeat" type="button" aria-label="Repeat this one" data-icon="replay"></button>

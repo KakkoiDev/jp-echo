@@ -106,6 +106,11 @@ addEventListener("online", offlineNotice); addEventListener("offline", offlineNo
 const BAR_ICONS = {prev: chevronLeftSvg, next: chevronRightSvg, replay: replaySvg, flag: flagSvg};
 for (const button of document.querySelectorAll("[data-icon]")) button.insertAdjacentHTML("afterbegin", BAR_ICONS[button.dataset.icon] || "");
 function show(id) { for (const s of ["hub", "recall", "check", "game", "day", "intro", "exam", "rest", "results"]) $(s).hidden = s !== id; document.body.dataset.view = id; }
+// Opened from Quick round, Day Radio and Evening recall wear the game's look
+// (the skin after the Quick round block in styles.css) and its chevron; nothing else changes.
+const FROM_GAME = params.get("from") === "game";
+const GAME_CHEVRON = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>';
+if (FROM_GAME) { document.body.dataset.from = "game"; for (const id of ["day-back", "check-back"]) { $(id).innerHTML = GAME_CHEVRON; $(id).setAttribute("aria-label", "Back to Radio"); } }
 
 // Reports (reports.js, ReportSheet): every head has the report button. Each
 // view sets `reportCard` to describe the word, check or question on screen, so
@@ -1152,7 +1157,7 @@ async function game() {
     $("game-night-phase").textContent = copy.title + (at.phase === "cues" ? " · cues" : "");
     $("game-night-text").textContent = item ? String(item.target).replace(/【[^】]*】/g, "") : copy.line;
     if (item && at.phase === "cues") nightCue++;
-    $("game-night-cue").textContent = item && at.phase === "cues" ? "cue " + nightCue : "";
+    $("game-night-cue").textContent = item && at.phase === "cues" ? "cue " + nightCue + " · " + (tonight?.cued.length || 0) + " sentences tonight" : "";
     $("game-night-clock").textContent = at.phase === "done" ? "" : "Until " + clockAt(nightEnd);
   }, onDone: () => stopNight()});
   const nightNoise = new NoiseBed();
@@ -1160,7 +1165,8 @@ async function game() {
   async function radioPanel() {
     mode("radio"); $("game-title").textContent = "Radio";
     $("game-back").href = "?view=game"; $("game-back").setAttribute("aria-label", "Back to Quick round home"); $("game-back").dataset.end = "false"; $("game-back").onclick = e => { e.preventDefault(); home(); };
-    const hours = Number(settings.radioHours) || RADIO_DEFAULTS.hours;
+    const hours = Number(settings.radioHours) || RADIO_DEFAULTS.hours, dayMode = readDay().mode === "recall" ? "recall" : "listen";
+    setSeg("game-day-mode", dayMode); $("game-day-start").href = $("game-day-start").dataset[dayMode];
     setSeg("game-night-hours", hours); setSwitch("game-night-noise", settings.radioNoise !== false); setSwitch("game-night-compare", settings.radioCompare !== false);
     const examples = await deckExamples();
     tonight = nightPlan({inventory, recall: data.recall, evidence: scored(data), events: data.events, examples, compare: settings.radioCompare !== false});
@@ -1186,6 +1192,7 @@ async function game() {
   $("game-night-stop").onclick = stopNight;
   const segClick = (id, fn) => { for (const b of $(id).querySelectorAll("button")) b.onclick = () => { setSeg(id, b.dataset.value); fn(b.dataset.value); }; };
   const switchClick = (id, fn) => { $(id).onclick = () => { const on = $(id).getAttribute("aria-pressed") !== "true"; setSwitch(id, on); fn(on); }; };
+  segClick("game-day-mode", v => { $("game-day-start").href = $("game-day-start").dataset[v]; });
   segClick("game-night-hours", v => { savePreference("radioHours", Number(v)); $("game-night-until").textContent = "Until " + clockAt(Date.now() + Number(v) * 3600_000) + " · keep the phone on its charger, screen on"; });
   switchClick("game-night-noise", on => savePreference("radioNoise", on));
   switchClick("game-night-compare", on => { savePreference("radioCompare", on); radioPanel(); });
@@ -1701,7 +1708,8 @@ async function checks(mode = "check") {
   $("check-done-go").textContent = evening ? "Start the Night Radio" : "Back to today's plan";
   const fromGame = params.get("from") === "game";
   $("check-done-go").href = evening ? (fromGame ? "?view=game&panel=radio" : "./radio") : "./n2-mock.html";
-  if (fromGame) $("check-back").href = "?view=game";
+  if (fromGame) $("check-back").href = evening ? "?view=game&panel=radio" : "?view=game";
+  $("check").dataset.evening = String(evening);
   let index = 0, revealed = false, clock = null, responseMs = 0, plays = 0;
   const tally = {instant: 0, slow: 0, missed: 0}, missed = [];
   const grades = [...document.querySelectorAll("#check-actions [data-check-grade]")];
@@ -1828,7 +1836,7 @@ function readDay() { try { return JSON.parse(localStorage.getItem(DAY_KEY) || "{
 function writeDay(patch) { try { localStorage.setItem(DAY_KEY, JSON.stringify({...readDay(), ...patch})); } catch {} }
 async function dayRadio() {
   show("day");
-  if (params.get("from") === "game") $("day-back").href = "?view=game&panel=radio";
+  if (FROM_GAME) { $("day-back").href = "?view=game&panel=radio"; $("day-done-back").href = "?view=game&panel=radio"; $("day-done-back").textContent = "Back to Radio"; }
   await materials();
   const [data, examples] = await Promise.all([report(), deckExamples()]);
   const evidence = scored(data), items = radioItems(inventory);

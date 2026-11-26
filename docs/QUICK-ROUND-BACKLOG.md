@@ -81,6 +81,26 @@ Still open (need logic, content or a designer answer):
 - `--right-on` (dark #141820) has no Echo token: `--panel` stands in.
 - Home B's "?" projection row, the night screen's "cue N of M", level chips.
 
+## Radio in the game (v283, 26 Nov 2026): built without boards, for the designer
+
+Owner: "the radio screen and feature feels half baked": only the night looked
+startable, and Day Radio opened an Echo-styled screen. Built from the boards'
+pieces; the designer should correct any of this:
+
+- **Radio screen (changes board 11 · C).** Each card ends in its own 60 px
+  start button in its glyph's colour (昼 indigo, 夜 seal); the bottom dock is
+  gone. Day has a Listen / Recall segment above its button, like "Stop after".
+- **Day Radio and Evening recall keep Echo's screens and logic** (`?view=radio`,
+  `?view=evening`, with `from=game`) and wear the game's look through one skin
+  after the Quick round block in styles.css (`body[data-from=game]`): 64 px head with the
+  chevron, 8 px progress bar, flat washi, sans UI, 20 px-radius cards, the word
+  in Mincho 44/700, the reading in indigo, 52 px buttons (Missed seal-tint,
+  Slow outlined, Instant indigo, Show answer ink, Play seal), pause chips as
+  pills, the done screen as a round end (72 px button).
+- **Night screen.** "cue 41 · 17 sentences tonight": the cues run for a time,
+  not a count, so there is no honest "of 136".
+- Not done: the game's Sound switch does not apply on those two screens.
+
 ## After the exam: the rank becomes the level
 
 `docs/JLPT-LEVELS-PLAN.md`, phase 4: start at N5, move up a level by passing
