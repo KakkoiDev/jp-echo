@@ -262,10 +262,14 @@ function addGrammarBlocks(pool, {blocks = {}, patterns = {}}) {
     q.blocks = ids;
     // Use the deck's reviewed span when available, including split spans.
     // Otherwise require the actual ordered pieces, never a guessed stem.
-    const pieces = pattern.parts.map(p => p.text);
-    const written = pieces.join("");
-    const variants = pieces.length === 1 && ids.length === 1 ? blocks[ids[0]].forms : [];
-    const needle = GRAMMAR_SPANS[q.id] || piecesNeedle(q.sentence, q.prompt) || [written, ...variants].find(form => q.sentence.includes(form));
+    const variants = pattern.parts.map(({text, block}) => {
+      const b = blocks[block];
+      const alternatives = b?.type === "verb" || (b?.type === "ending" && pattern.parts.length === 1) ? b.forms : [];
+      const escape = form => form.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      return "(" + [...new Set([text, ...alternatives])].map(escape).join("|") + ")";
+    });
+    const surface = q.sentence.match(new RegExp(variants.join("")));
+    const needle = GRAMMAR_SPANS[q.id] || piecesNeedle(q.sentence, q.prompt) || surface?.[0];
     if (!needle || !exampleSegments(q.sentence, [needle]).some(part => part.mark)) continue;
     const others = grammar.filter(other => other !== q);
     const wrong = fair(q.answer, others.map(other => other.answer));
@@ -274,7 +278,7 @@ function addGrammarBlocks(pool, {blocks = {}, patterns = {}}) {
       sentence: q.sentence, needle, answer: q.answer, wrong, near, solution: pattern.transparency === "opaque"
         ? {...q.solution, why: "Learn this pattern as a whole."} : q.solution};
     pool.push({...card, id: "gb:" + key, kind: "build",
-      parts: pattern.parts.map(p => ({text: p.text, gloss: blocks[p.block]?.gloss || ""}))});
+      parts: pattern.parts.map((p, i) => ({text: surface?.[i + 1] || p.text, gloss: blocks[p.block]?.gloss || ""}))});
     if (["clear", "partial"].includes(pattern.transparency) && pattern.solved?.right) {
       pool.push({...card, id: "gi:" + key, kind: "infer"});
     }

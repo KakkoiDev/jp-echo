@@ -255,7 +255,8 @@
     "aru": {
       "form": "ある",
       "forms": [
-        "ある"
+        "ある",
+        "あって"
       ],
       "type": "verb",
       "gloss": "exists or is present",
@@ -1124,7 +1125,8 @@
       "form": "かねる",
       "forms": [
         "かねる",
-        "かね"
+        "かね",
+        "かねます"
       ],
       "type": "ending",
       "gloss": "signals reluctance or difficulty",
@@ -3329,15 +3331,15 @@
           "block": "kara"
         },
         {
-          "text": "すれ",
+          "text": "する",
           "block": "suru-assume"
         },
         {
-          "text": "ば",
-          "block": "conditional-ba"
+          "text": "と",
+          "block": "to-when"
         }
       ],
-      "literal": "if taken from that starting point",
+      "literal": "when judged from that source",
       "transparency": "pending"
     },
     "ものか": {

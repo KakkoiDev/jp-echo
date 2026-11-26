@@ -1,6 +1,6 @@
 # Grammar from its blocks — design and build guide
 
-Status: **not built**. Written 27 Nov 2026 for the agents who will build it.
+Status: **local preview built**. See the [implementation report](GRAMMAR-BLOCKS-IMPLEMENTATION.md) for the content and browser checks still open. This guide defines the release requirements.
 The author of this page audits the result against "How the work is audited"
 at the end. If something here is wrong or cannot be done, say so in your
 report; do not quietly do something else.

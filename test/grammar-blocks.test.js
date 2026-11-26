@@ -18,8 +18,11 @@ test("draft structure is valid; the release validator rejects an unfinished inve
   const {errors, counts} = validateGrammarBlocks(draft, {draft: true});
   assert.deepEqual(errors, []);
   assert.ok(counts.sharedPatterns > 0);
-  const release = validateGrammarBlocks(draft);
-  assert.equal(release.errors.filter(e => e.endsWith("missing pattern")).length, inventory.grammar.length - counts.patterns);
+  assert.equal(counts.patterns, inventory.grammar.length);
+  const incomplete = structuredClone(draft);
+  delete incomplete.patterns["まい"];
+  const release = validateGrammarBlocks(incomplete);
+  assert.ok(release.errors.includes("まい: missing pattern"));
   assert.ok(release.errors.includes("ざるを得ない: invalid transparency"));
   assert.ok(release.errors.some(e => /maximum 40%/.test(e)));
 });
@@ -67,6 +70,9 @@ test("index adds three practice kinds while preserving the existing cards", () =
   assert.deepEqual(build.blocks, ["zaru", "wo", "dekiru-e"]);
   assert.equal(build.parts.map(p => p.text).join(""), "ざるを得ない");
   assert.equal(infer.parts, undefined);
+  const conjugated = cards.find(q => q.id === "gb:甲斐がある");
+  assert.equal(conjugated.needle, "甲斐があって");
+  assert.equal(conjugated.parts.at(-1).text, "あって");
   for (const q of cards) {
     assert.ok(q.practice && q.record);
     assert.ok(!EXCLUDED[q.id] && !EXCLUDED["g:" + q.patternKey]);
@@ -124,6 +130,8 @@ test("only ordinary grammar slots are reassigned and proof never picks seen patt
     if (q.kind !== "grammar") assert.equal(after[i].id, q.id);
   });
   assert.ok(after.filter(grammarBlockCard).every(q => !q.bonus));
+  const recovery = {...opts, state: {...state, history: [{n: 10, right: 3}]}};
+  assert.deepEqual(nextRound({...recovery, grammarCards: cards}), nextRound(recovery));
   const slot = original.find(q => q.kind === "grammar");
   assert.equal(grammarPick({pool: [infer], slots: [slot], skip: [], now, state})[0].id, infer.id);
   assert.equal(grammarPick({pool: [infer], slots: [slot], skip: [], now,

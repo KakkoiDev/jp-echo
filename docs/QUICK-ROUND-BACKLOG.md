@@ -114,12 +114,16 @@ pieces; the designer should correct any of this:
   not a count, so there is no honest "of 136".
 - Not done: the game's Sound switch does not apply on those two screens.
 
-## Grammar from its blocks (27 Nov 2026): designed, not built
+## Grammar from its blocks
 
-The owner wants to work out a pattern never met from its pieces (ざる + を +
-得ない), as kanji-first play does for readings. The design, the data format,
-the build order and the audit list are in `docs/GRAMMAR-BLOCKS.md`. Nothing
-of it is built. Its `build` card (parts with glosses) needs the designer.
+The local preview uses existing Quick round grammar cards and adds a row of
+chips for the parts and their glosses. The designer still needs to review the
+row at 375 px in both themes, including long glosses and narrow wrapping.
+Capture the screenshots at
+`docs/design/game/shots/grammar-build-375-light.png` and
+`docs/design/game/shots/grammar-build-375-dark.png`. See the
+[implementation report](GRAMMAR-BLOCKS-IMPLEMENTATION.md) for the preview URL
+and the content release checks.
 
 ## Ranks N5 to N1 (v288, 26 Nov 2026): the first step, built without boards
 

@@ -3,7 +3,7 @@ import {join} from "node:path";
 import {randomInt} from "node:crypto";
 import {inventory, validateGrammarBlocks} from "../validate-grammar-blocks.mjs";
 import {sameSense, shuffle} from "../../n2-game.js";
-import {EXCLUDED, GLOSS_FIX} from "../../n2-game-review.js";
+import {GLOSS_FIX} from "../../n2-game-review.js";
 
 const [source, destination, firstRound] = process.argv.slice(2);
 if (!source || !destination) {
@@ -19,7 +19,7 @@ const deck = read(new URL("../../decks/n2-grammar.json", import.meta.url));
 const example = new Map(deck.sentences.map(s => [s.id, s.target]));
 const rows = inventory.grammar.flatMap(([key, , meaning], i) => {
   const p = index.patterns[key];
-  if (!p || EXCLUDED["g:" + key]) return [];
+  if (!p) return [];
   return [{key, p, answer: GLOSS_FIX["g:" + key] || meaning, ids: new Set(p.parts.map(part => part.block).filter(Boolean)),
     ja: example.get("n2-grammar-" + i)}];
 });
