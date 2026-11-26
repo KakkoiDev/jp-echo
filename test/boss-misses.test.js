@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
-import {gamePool, bossCards, bossQueue, bossReview, BOSS_REVIEW, resting, endRest, REST_ENDS, nextRound, rememberAnswer, BOSS_PLACES, BOSS_WORDS, ROUND_SIZE} from "../n2-game.js";
+import {gamePool, bossCards, bossQueue, bossReview, BOSS_REVIEW, resting, endRest, REST_ENDS, nextRound, rememberAnswer, BOSS_PLACES, BOSS_WORDS, ROUND_SIZE, KIND_LABEL as KIND_LABEL_OF} from "../n2-game.js";
 import {examplesFromDecks} from "../day-radio.js";
 import {mergeGame} from "../sync.js";
 import {checkKey, LIMITS} from "../tools/n2-build-keys.mjs";
@@ -188,4 +188,36 @@ test("a vocabulary or grammar review card shows the word, its reading and its me
   assert.ok(js.includes("solution: {word: sol.word, reading: sol.reading || \"\", meaning: sol.meaning,"), "the hero is the word, the reading and the meaning");
   assert.ok(js.includes('if (q.paperLine) { $("game-review-ja").replaceChildren(...paperText(q.paperLine, q.answer));'), "the paper's sentence sits in the example card");
   assert.ok(js.includes('"Answer: " + it.answer'), "a synonym question still shows the paper's answer");
+});
+
+test("prefixes and suffixes have a card: the part underlined in a sentence, its meaning to pick", async () => {
+  const {affixSide, recallsMiss, choicesFor, SECONDS} = await import("../n2-game.js");
+  const {REVIEWED_AFFIXES} = await import("../n2-game-review.js");
+  const cards = pool.filter(q => q.kind === "affix");
+  assert.ok(cards.length >= 140, "most of the list's 167 word parts");
+  const gimi = cards.find(q => q.id === "a:～気味"), zen = cards.find(q => q.id === "a:前～");
+  assert.equal(gimi.sentence, "昨日から少し風邪気味だ。"); assert.equal(gimi.needle, "気味"); assert.equal(gimi.answer, "slightly ~"); assert.equal(gimi.side, "suffix");
+  assert.equal(zen.needle, "前"); assert.equal(zen.side, "prefix"); assert.match(zen.answer, /former/);
+  assert.equal(affixSide("～気味"), "suffix"); assert.equal(affixSide("前～"), "prefix");
+  assert.equal(KIND_LABEL_OF.affix, "Word part"); assert.equal(SECONDS.affix, 5);
+  for (const q of cards) {
+    assert.equal(q.sentence.split(q.needle).length, 2, q.id + ": the part is written once, so the underline is the part");
+    assert.ok(/^[〜～]?[^〜～\s(（]+[〜～]?$/.test(q.prompt), q.id);
+    assert.ok(q.wrong.length >= 3 && !q.wrong.includes(q.answer), q.id);
+    assert.equal(new Set(choicesFor(q, seeded(7), .5).choices).size, 4, q.id);
+    assert.deepEqual(q.target.slice(0, 2), ["word", q.prompt]);
+    // Unreviewed: no points and no recall evidence, but the answer is recorded and counts.
+    assert.equal(q.practice, !REVIEWED_AFFIXES); assert.equal(q.record, !REVIEWED_AFFIXES);
+    assert.equal(recallsMiss(q, "wrong"), REVIEWED_AFFIXES);
+  }
+  assert.equal(new Set(cards.map(q => q.id)).size, cards.length, "～所 しょ and ～所 じょ keep apart");
+  // No whole word is a wrong choice here, and no word card is made of a part.
+  assert.ok(!pool.some(q => q.kind !== "affix" && q.kind !== "exam" && /[〜～]/.test(q.prompt) && q.target?.[0] === "word"));
+  // The other levels' lists hold no parts yet: their pools are unchanged.
+  const answered = rememberAnswer({}, {q: gimi, outcome: "right", points: 300});
+  assert.equal(answered.answered, 1); assert.equal(answered.total, 0);
+  // A missed 問題3 question brings its part into the rounds, and the boss review finds its meaning.
+  const q3 = set.questions.findIndex(q => q.target?.[1] === "～気味");
+  assert.deepEqual(bossCards({set, missed: [q3], pool}).map(q => q.id), ["a:～気味"]);
+  assert.ok(src("../n2-mock.js").includes('"connective", "meaning", "affix"].includes(q.kind)'), "shown as a sentence card");
 });

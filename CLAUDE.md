@@ -519,6 +519,17 @@ Before considering the change complete:
   (n2-game.js) holds from the boss's finish until `REST_ENDS` (5 am), and
   ends at once when the Night Radio is started from Home (`endRest`,
   `restOver` in the game state). Never the whole calendar day.
+- **Prefixes and suffixes are word parts with a card (owner, 27 Nov, v305).**
+  The N2 list's 167 entries written with ～ (前～, ～気味) were never asked:
+  they are not words. `affixCards` (n2-game.js) gives each one written once
+  in its deck sentence a card `a:<text>`, kind `affix`, label "Word part":
+  the sentence with the part underlined, its meaning to pick among other
+  parts' meanings, the same side (prefix or suffix) first. Practice until
+  `REVIEWED_AFFIXES` (n2-game-review.js): the glosses are the list's and the
+  sentences the deck's, not reviewed as affix content. A practice card never
+  writes recall evidence (`recallsMiss`). A missed 問題3 question brings its
+  part into the rounds, and the boss review shows it large. Only N2's list
+  holds parts; the fetched levels have none.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

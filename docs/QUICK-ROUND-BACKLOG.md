@@ -158,6 +158,20 @@ Open:
 - 問題8 and 問題9 misses bring nothing into the rounds (no target); they are
   in the review.
 
+## Word parts: prefixes and suffixes (v305, 27 Nov 2026): built without boards
+
+Built as a grammar card in shape, head label "Word part" (working name).
+Open:
+- **Unreviewed, so unscored.** Several glosses of the list are poor for a
+  part ("kind of field, ground" for ～場, "count for sisters" for ～女), and
+  wrong choices are other parts' glosses, often far from the answer.
+- **18 of 167 have no card**: the part shows twice in its sentence, is
+  conjugated there (～過ぎる, ～きる), or the entry is not a clean part
+  ("しわ (かおの～)").
+- **No 問題3-style card yet**: a word with a gap and four parts to choose
+  from, which is how the paper asks it.
+- N5, N4, N3 and N1 lists hold no parts (they come from JMdict's word lists).
+
 ## Grammar from its blocks
 
 Two handoffs wait on other people (27 Nov 2026):

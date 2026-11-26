@@ -23,7 +23,7 @@
 import {recallItems, localDay} from "./n2-study.js";
 import {HELD_OUT} from "./n2-comprehension.js";
 import {connectiveSites, jobOf, glossOf, JOBS, OVERLAP, CHOICE_FOR_JOB} from "./n2-connectives.js";
-import {ACCEPTED_READINGS, READING_KEY, EXCLUDED, GLOSS_FIX, GRAMMAR_SPANS, REVIEWED_LEVELS, REVIEWED_GRAMMAR_BLOCKS, GRAMMAR_CONFUSABLE} from "./n2-game-review.js";
+import {ACCEPTED_READINGS, READING_KEY, EXCLUDED, GLOSS_FIX, GRAMMAR_SPANS, REVIEWED_LEVELS, REVIEWED_GRAMMAR_BLOCKS, REVIEWED_AFFIXES, GRAMMAR_CONFUSABLE} from "./n2-game-review.js";
 import {exampleSegments} from "./n2-delayed.js";
 import {LEVELS} from "./jlpt-levels.js";
 
@@ -34,10 +34,10 @@ export const GAME_SOURCE = "game";
 // as it is given, so closing the page mid-round loses nothing.
 // Blitz chess, not shogi (owner, 26 Nov): seconds, not minutes, per question.
 export const ROUND_SIZE = 10, REVIEW_SECONDS = 5, DAILY_GOAL = 1000, RECENT_MS = 4 * 3600_000;
-export const SECONDS = Object.freeze({reading: 3, meaning: 3, definition: 4, listen: 5, homophone: 5, grammar: 6, connective: 7, exam: {1: 4, 2: 5, 3: 5, 4: 7, 5: 6, 7: 8}});
+export const SECONDS = Object.freeze({reading: 3, meaning: 3, definition: 4, listen: 5, homophone: 5, grammar: 6, affix: 5, connective: 7, exam: {1: 4, 2: 5, 3: 5, 4: 7, 5: 6, 7: 8}});
 // The pause after an answer before the next question, in milliseconds.
 export const PAUSE = Object.freeze({right: 250, miss: 800});
-export const KIND_LABEL = Object.freeze({reading: "Reading", meaning: "Meaning", definition: "Which word", listen: "Listen", connective: "Connective · 問題9", homophone: "Which kanji", grammar: "Grammar", block: "Grammar piece", build: "Grammar parts", infer: "New grammar", exam: "Exam question"});
+export const KIND_LABEL = Object.freeze({reading: "Reading", meaning: "Meaning", definition: "Which word", listen: "Listen", connective: "Connective · 問題9", homophone: "Which kanji", grammar: "Grammar", block: "Grammar piece", build: "Grammar parts", infer: "New grammar", exam: "Exam question", affix: "Word part"});
 const EXAM_MONDAI = new Set([1, 2, 3, 4, 5, 7]), WRITTEN = new Set(["Vocabulary", "Grammar"]);
 const KANJI = /[一-鿿々]/g;
 const plain = s => String(s || "").replace(/【[^】]*】/g, "");
@@ -126,8 +126,10 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
   const items = recallItems(inventory), pool = [];
   // Affixes such as ～発 are left out: they are not words to pick or read alone.
   // READING_KEY and GLOSS_FIX correct the N2 list; they are not applied elsewhere.
-  const words = items.meaning.map(it => { const text = it.target[1], reading = (!other && READING_KEY[text]) || it.reading || it.target[2];
-    return {target: it.target, text, reading, answer: (!other && (GLOSS_FIX[text + "/" + reading] || GLOSS_FIX[text])) || it.answer}; }).filter(w => !/[〜～]/.test(w.text));
+  const allWords = items.meaning.map(it => { const text = it.target[1], reading = (!other && READING_KEY[text]) || it.reading || it.target[2];
+    return {target: it.target, text, reading, answer: (!other && (GLOSS_FIX[text + "/" + reading] || GLOSS_FIX[text])) || it.answer}; });
+  // The prefixes and suffixes of the list (前～, ～気味): not words, but word parts with a card of their own (affixCards).
+  const affixes = allWords.filter(w => /[〜～]/.test(w.text)), words = allWords.filter(w => !/[〜～]/.test(w.text));
   // Stable ids: a word written the same way twice (紅葉 こうよう / もみじ) carries its reading.
   const spellings = new Map(); for (const w of words) spellings.set(w.text, (spellings.get(w.text) || 0) + 1);
   const idOf = w => tag + (spellings.get(w.text) > 1 ? w.text + "/" + w.reading : w.text);
@@ -202,6 +204,7 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
       sentence: plain(ex.ja), needle: GRAMMAR_SPANS["g:" + g.target[1]] || piecesNeedle(plain(ex.ja), g.prompt) || surfaceNeedle(plain(ex.ja), g.prompt) || g.prompt.replace(/[〜～]/g, ""), answer: gAnswer, wrong: [...new Set(wrong)], seconds: SECONDS.grammar,
       solution: {word: g.prompt, meaning: gAnswer, ja: ex.ja, en: ex.en || ""}});
   }
+  if (!other) pool.push(...affixCards(affixes, sentenceOf));
   if (!other && grammarBlocks) addGrammarBlocks(pool, grammarBlocks);
   // Connectives (問題9): from reading passages of sets already sat. The
   // excerpt is up to two sentences before the blank and the blank's sentence.
@@ -239,6 +242,33 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
   // item: what a round counts as one thing, where N2 cards use their target.
   return fit.map(q => ({...q, level, item: level + ":" + q.target[1] + "/" + q.target[2], target: null, ...(REVIEWED_LEVELS.has(level) ? {} : {practice: true, record: true})}));
 }
+// ---- Word parts ----
+// A prefix or a suffix (前～ former, ～気味 slightly) is a building block: it
+// is never met alone, it changes the word it joins, and the paper asks it in
+// 問題3 (owner, 27 Nov). Its card is a grammar card in shape: the deck
+// sentence with the part underlined, its meaning to pick among the meanings
+// of other parts, those on the same side first. Only a part written once in
+// its sentence has a card: where it shows twice the underline could not say
+// which one is meant. Practice until the list's glosses and the sentences
+// are reviewed (REVIEWED_AFFIXES): no points, but every answer counts.
+export const affixSide = text => /^[〜～]/.test(text) ? "suffix" : "prefix";
+function affixCards(affixes, sentenceOf) {
+  const clean = affixes.filter(w => /^[〜～]?[^〜～\s(（)）]+[〜～]?$/.test(w.text) && /^[〜～]/.test(w.text) !== /[〜～]$/.test(w.text) && gloss(w.answer));
+  const spellings = new Map(); for (const w of clean) spellings.set(w.text, (spellings.get(w.text) || 0) + 1);
+  const practice = REVIEWED_AFFIXES ? {} : {practice: true, record: true};
+  return clean.flatMap(w => {
+    const ex = sentenceOf(w.target), sentence = ex ? plain(ex.ja) : "", part = w.text.replace(/[〜～]/g, ""), own = gloss(w.answer);
+    if (!sentence || sentence.split(part).length !== 2) return [];
+    const others = clean.filter(o => o.text.replace(/[〜～]/g, "") !== part && !sameSense(gloss(o.answer), own));
+    const near = [...new Set(others.filter(o => affixSide(o.text) === affixSide(w.text)).map(o => gloss(o.answer)))];
+    const wrong = [...new Set([...near, ...others.map(o => gloss(o.answer))])];
+    if (wrong.length < 3) return [];
+    return [{...practice, id: "a:" + (spellings.get(w.text) > 1 ? w.text + "/" + w.reading : w.text), kind: "affix", target: w.target, dimension: "meaning", prompt: w.text,
+      sentence, needle: part, answer: own, wrong, near, side: affixSide(w.text), seconds: SECONDS.affix,
+      solution: {word: w.text, reading: w.reading, meaning: w.answer, ja: ex.ja, en: ex.en || ""}}];
+  });
+}
+
 function addGrammarBlocks(pool, {blocks = {}, patterns = {}}) {
   const entries = Object.entries(blocks);
   const practice = REVIEWED_GRAMMAR_BLOCKS ? {} : {practice: true, record: true};
@@ -454,7 +484,8 @@ export function scoreAnswer({outcome, ms = 0, seconds = 10, streak = 0}) {
 }
 
 // What a miss saves: a missed recall check of the question's own dimension.
-export const recallsMiss = (q, outcome) => outcome !== "right" && !!q.target;
+// An unreviewed card (practice) writes no recall evidence.
+export const recallsMiss = (q, outcome) => outcome !== "right" && !!q.target && !q.practice;
 
 // The device's game memory: best score, rounds, when each question was last
 // seen. Kept small: the most recent 20 000 questions.

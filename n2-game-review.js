@@ -127,6 +127,9 @@ export const EXCLUDED = Object.freeze({
 export const REVIEWED_LEVELS = new Set(["N2"]);
 
 // Grammar blocks have a separate review gate from rank-level word cards.
+// The word-part cards (前～, ～気味): their meanings are the word list's and their sentences the deck's, neither read by
+// a reviewer as affix content. False: practice, no points. True only after that review.
+export const REVIEWED_AFFIXES = false;
 export const REVIEWED_GRAMMAR_BLOCKS = false;
 
 // Pairs of N2 patterns whose meanings a blind solver could not separate
