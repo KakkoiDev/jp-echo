@@ -104,3 +104,40 @@ The guide's audit sample (a random 30, another model than the writer): packet 1,
 - Merged with `feat/quick-round-levels` at `6ce7df9` (the run link, v297); this branch is v298, `styles.css?v=215`.
 
 Still open: a native or second-model read of every gloss and literal; the designer's review of the parts row; whether the cards may score.
+
+## Content review applied (27 Nov 2026, v302)
+
+An outside review read all 188 blocks, 221 patterns and 33 pairs and returned
+188 findings (70 wrong, 82 misleading, 31 weak, 5 notes):
+`tools/grammar-blocks/reviews/2026-11-27.json`. What was done about each is in
+`tools/grammar-blocks/reviews/2026-11-27-applied.json`: **140 applied, 31
+partly, 17 not applied**.
+
+- **A hint now says what the form shown does, negation included.** 64 patterns
+  carry a gloss per part where the block's general gloss misled
+  (いられない "cannot stay as one is", ならない "it will not do" / "is not",
+  かかわらず "without regard to", か as question, alternative or "some-").
+  This is how most "split this block" findings were met: the block keeps one
+  general gloss for its own card, each pattern hints its own use. Those are
+  the 31 "partly".
+- **The rule that a hint may not share a word with the answer is gone.** It
+  produced abstract or false hints (得ない as "get or attain"). The build card
+  teaches; the infer card, which shows no hints, is the test.
+- **Blocks:** 得る / 得ない and 抜く / 抜き are split; なく is merged into ない;
+  何しろ and にて are learned whole; ところだった is ところ + だった. 191 blocks.
+- **Meanings:** 43 reviewed answers corrected (`GLOSS_FIX`), which changes the
+  scored `g:` cards too: 中を is "through the midst of", かねない "there is a
+  risk that something bad may happen".
+- **Transparency:** 17 patterns lowered from clear to partial by the reviewer
+  (`solved: {by: "review"}`). Now 138 clear, 20 partial, 63 learned whole.
+- **Pairs:** 18 added, 9 released (42), and the list now also keeps confusable
+  patterns apart on the scored `g:` cards.
+- **Deck:** the sentences for それなのに and いわゆる are the reviewer's.
+
+Not applied, and why (all 17 are in the ledger): に has no cue per
+construction yet (61 patterns); つつも does not show its も; a few blocks keep
+their forms or type (思う, 通じる, 頂戴, たって); the reviewer's proposal to ask
+for a paraphrase before showing choices needs a new kind of card.
+
+**The cards stay practice.** The reviewer's own advice, and 3 "wrong" findings
+are not applied and 13 only partly. `REVIEWED_GRAMMAR_BLOCKS` stays false.

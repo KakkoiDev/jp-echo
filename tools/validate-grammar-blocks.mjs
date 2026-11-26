@@ -68,21 +68,28 @@ export function validateGrammarBlocks(index, {draft = false} = {}) {
         continue;
       }
       // A part may carry its own gloss, held to the same rules as a block's.
-      if (part.gloss !== undefined && (!text(part.gloss) || JP.test(part.gloss) || [...part.gloss].length > 40 || sameSense(part.gloss, point.meaning))) add(key, `gloss of part ${part.text} must be short English that does not give the answer`);
+      // A part's own gloss says what this form does here, negation included (review, 27 Nov).
+      if (part.gloss !== undefined && (!text(part.gloss) || JP.test(part.gloss) || [...part.gloss].length > 40)) add(key, `gloss of part ${part.text} must be short English`);
       const b = Object.hasOwn(blocks, part.block) && blocks[part.block];
       if (!object(b)) { add(key, `unknown block: ${part.block}`); continue; }
       users.get(part.block).add(key);
       if (!Array.isArray(b.forms) || !b.forms.includes(part.text)) add(key, `form ${part.text} is not listed for ${part.block}`);
       // A pattern that is one block has nothing to build: its gloss is its meaning, plainly (owner, 27 Nov).
-      if (parts.length > 1 && text(b.gloss) && sameSense(b.gloss, point.meaning)) add(key, `gloss of ${part.block} overlaps the answer`);
+      // No "must not overlap the answer" rule any more (review, 27 Nov 2026): a
+      // hint that dodges the answer's words came out abstract or false (得ない as
+      // "get or attain"). The build card is where the parts are taught, so its
+      // hints say plainly what each form does; the infer card, which shows no
+      // hints, is the test.
     }
     if (!parts.some(p => Object.hasOwn(p, "block"))) add(key, "pattern has no blocks");
     if (t !== "opaque" && !text(literal)) add(key, "missing literal");
     if (literal !== undefined && (!text(literal) || JP.test(literal))) add(key, "literal must be English");
     // One block is the whole pattern: learned whole, by its block card. No solve, no build or infer card.
     if (parts.length === 1 && Object.hasOwn(blocks, parts[0].block) && t !== "opaque") add(key, "a one-block pattern is learned whole (opaque)");
+    // partial also by a reviewer's judgment: solved blind, but a nuance must be taught ({by: "review"}).
     const solves = {clear: ["blocks-only", true], partial: ["blocks+sentence", true]};
-    if (Object.hasOwn(solves, t)) {
+    if (t === "partial" && solved?.by === "review" && solved?.right === true) { /* a reviewer lowered it from clear */ }
+    else if (Object.hasOwn(solves, t)) {
       const [by, right] = solves[t];
       if (solved?.by !== by || solved?.right !== right) add(key, `missing successful ${by} solve`);
     } else if (t === "opaque") {

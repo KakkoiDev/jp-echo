@@ -9,34 +9,22 @@
         "ず"
       ],
       "type": "negative",
-      "gloss": "an old negative ending",
+      "gloss": "negative: without doing; literary forms",
       "ja": "雨【あめ】がひどいので、旅行【りょこう】は中止【ちゅうし】せざるを得【え】ない。",
       "en": "The rain is so heavy that we have no choice but to cancel the trip.",
       "level": "N2"
-    },
-    "naku": {
-      "form": "なく",
-      "forms": [
-        "なく",
-        "ない"
-      ],
-      "type": "negative",
-      "gloss": "negative marker",
-      "ja": "彼【かれ】は一日【いちにち】も休【やす】むことなく、練習【れんしゅう】を続【つづ】けた。",
-      "en": "He kept practicing without taking a single day off.",
-      "level": "N1"
     },
     "eru": {
       "form": "得る",
       "forms": [
-        "得る",
-        "得ない"
+        "得る"
       ],
       "type": "verb",
-      "gloss": "get or attain",
-      "ja": "雨【あめ】がひどいので、旅行【りょこう】は中止【ちゅうし】せざるを得【え】ない。",
-      "en": "The rain is so heavy that we have no choice but to cancel the trip.",
-      "level": "N2"
+      "gloss": "can happen or be done",
+      "ja": "この方法【ほうほう】なら、問題【もんだい】は解決【かいけつ】し得【う】る。",
+      "en": "With this method, the problem could be solved.",
+      "level": "N2",
+      "single": true
     },
     "wo": {
       "form": "を",
@@ -44,7 +32,7 @@
         "を"
       ],
       "type": "particle",
-      "gloss": "marks the direct object",
+      "gloss": "marks an object or a route",
       "ja": "本【ほん】を読【よ】みます。",
       "en": "I read a book.",
       "level": "N5"
@@ -88,7 +76,7 @@
         "は"
       ],
       "type": "particle",
-      "gloss": "sets the topic",
+      "gloss": "marks topic or contrast",
       "ja": "弟【おとうと】は学生【がくせい】です。",
       "en": "My younger brother is a student.",
       "level": "N5"
@@ -99,7 +87,7 @@
         "も"
       ],
       "type": "particle",
-      "gloss": "includes an additional case",
+      "gloss": "also; or even",
       "ja": "私【わたし】も行【い】く。",
       "en": "I am going too.",
       "level": "N5"
@@ -121,9 +109,9 @@
         "か"
       ],
       "type": "particle",
-      "gloss": "marks an open question",
-      "ja": "誰【だれ】か来【き】たかな。",
-      "en": "I wonder if someone came.",
+      "gloss": "question, alternative, or some-",
+      "ja": "それは本当【ほんとう】ですか。",
+      "en": "Is that true?",
       "level": "N5"
     },
     "kara": {
@@ -177,10 +165,11 @@
         "た"
       ],
       "type": "ending",
-      "gloss": "marks a completed action",
+      "gloss": "past or completed form",
       "ja": "駅【えき】に着【つ】いた。",
       "en": "I arrived at the station.",
-      "level": "N2"
+      "level": "N2",
+      "single": true
     },
     "da": {
       "form": "だ",
@@ -189,7 +178,8 @@
         "です",
         "で",
         "では",
-        "じゃ"
+        "じゃ",
+        "だった"
       ],
       "type": "ending",
       "gloss": "asserts an identity or state",
@@ -203,7 +193,7 @@
         "こと"
       ],
       "type": "noun",
-      "gloss": "makes a situation an abstract fact",
+      "gloss": "turns an action or clause into a noun",
       "ja": "読【よ】むことが好【す】きだ。",
       "en": "I like reading.",
       "level": "N4"
@@ -214,7 +204,7 @@
         "うち"
       ],
       "type": "noun",
-      "gloss": "the inside of a boundary",
+      "gloss": "within a group or time window",
       "ja": "若【わか】いうちに旅【たび】をしたい。",
       "en": "I want to travel while I am young.",
       "level": "N2"
@@ -225,7 +215,7 @@
         "上"
       ],
       "type": "noun",
-      "gloss": "an upper layer",
+      "gloss": "on top of; given that",
       "ja": "棚【たな】の上【うえ】に置【お】いた。",
       "en": "I put it on top of the shelf.",
       "level": "N2"
@@ -247,7 +237,7 @@
         "つつ"
       ],
       "type": "ending",
-      "gloss": "holds two actions in parallel",
+      "gloss": "while doing; in the middle of doing",
       "ja": "音楽【おんがく】を聞【き】きつつ歩【ある】いた。",
       "en": "I walked while listening to music.",
       "level": "N2"
@@ -270,7 +260,7 @@
         "際"
       ],
       "type": "noun",
-      "gloss": "a specific moment",
+      "gloss": "occasion; time of an event",
       "ja": "お帰【かえ】りの際【さい】は一声【ひとこえ】かけてください。",
       "en": "Please let me know when you leave.",
       "level": "N2"
@@ -305,7 +295,7 @@
         "限らず"
       ],
       "type": "verb",
-      "gloss": "restricts the scope",
+      "gloss": "restricts to",
       "ja": "参加【さんか】は学生【がくせい】に限【かぎ】る。",
       "en": "Participation is restricted to students.",
       "level": "N2"
@@ -326,14 +316,14 @@
       "form": "抜く",
       "forms": [
         "抜く",
-        "抜き",
         "抜いた"
       ],
       "type": "verb",
-      "gloss": "pulls something out",
-      "ja": "雑草【ざっそう】を抜【ぬ】く。",
-      "en": "I pull out the weeds.",
-      "level": "N2"
+      "gloss": "All~, Completely",
+      "ja": "彼【かれ】は四十二【よんじゅうに】キロを最後【さいご】まで走【はし】り抜【ぬ】いた。",
+      "en": "He ran the full forty-two kilometers all the way to the end.",
+      "level": "N2",
+      "single": true
     },
     "suru-do": {
       "form": "する",
@@ -355,7 +345,7 @@
         "沿って"
       ],
       "type": "verb",
-      "gloss": "stays beside a path",
+      "gloss": "follows a line, plan, or policy",
       "ja": "川【かわ】に沿【そ】って歩【ある】いた。",
       "en": "I walked along the river.",
       "level": "N2",
@@ -368,7 +358,7 @@
         "巡って"
       ],
       "type": "verb",
-      "gloss": "circles or goes around",
+      "gloss": "centers on a topic or issue",
       "ja": "島【しま】を巡【めぐ】る旅【たび】に出【で】た。",
       "en": "I went on a trip around the islands.",
       "level": "N2",
@@ -406,9 +396,9 @@
         "下"
       ],
       "type": "noun",
-      "gloss": "a lower position",
-      "ja": "橋【はし】の下【した】で休【やす】んだ。",
-      "en": "I rested beneath the bridge.",
+      "gloss": "under someone's charge or guidance",
+      "ja": "新【あたら】しい監督【かんとく】の下【もと】で、チームは大【おお】きく変【か】わった。",
+      "en": "Under the new manager, the team changed greatly.",
       "level": "N2",
       "single": true
     },
@@ -550,7 +540,7 @@
         "ところ"
       ],
       "type": "noun",
-      "gloss": "the point reached in an action",
+      "gloss": "phase of an action; observed scene",
       "ja": "今【いま】は休【やす】んでいるところです。",
       "en": "I am taking a break right now.",
       "level": "N2"
@@ -621,7 +611,7 @@
         "見る"
       ],
       "type": "verb",
-      "gloss": "uses the eyes to examine something",
+      "gloss": "sees, observes, or judges",
       "ja": "毎晩【まいばん】星【ほし】を見【み】る。",
       "en": "I look at the stars every night.",
       "level": "N2"
@@ -636,7 +626,7 @@
         "したら"
       ],
       "type": "verb",
-      "gloss": "takes something as a premise",
+      "gloss": "takes or treats something as",
       "ja": "雨【あめ】だとしたら、どうする？",
       "en": "Suppose it rains. What will you do?",
       "level": "N5"
@@ -684,7 +674,7 @@
         "ねば"
       ],
       "type": "negative",
-      "gloss": "tests a case where it is undone",
+      "gloss": "if not; unless one does",
       "ja": "急【いそ】がねば間【ま】に合【あ】わない。",
       "en": "We won't make it unless we hurry.",
       "level": "N2",
@@ -693,10 +683,11 @@
     "nai": {
       "form": "ない",
       "forms": [
-        "ない"
+        "ない",
+        "なく"
       ],
       "type": "negative",
-      "gloss": "marks absence or denial",
+      "gloss": "negative: no, not",
       "ja": "まだ返事【へんじ】がない。",
       "en": "There is no reply yet.",
       "level": "N1"
@@ -720,7 +711,7 @@
         "だけ"
       ],
       "type": "particle",
-      "gloss": "sets the extent or boundary",
+      "gloss": "only; just that much",
       "ja": "私【わたし】だけ残【のこ】った。",
       "en": "I was the only one who stayed.",
       "level": "N5"
@@ -817,7 +808,7 @@
         "じゃ"
       ],
       "type": "particle",
-      "gloss": "frames a situation for comment",
+      "gloss": "if it is; or the copula with a topic",
       "ja": "雨【あめ】では試合【しあい】は無理【むり】だ。",
       "en": "A game would be impossible in this rain.",
       "level": "N3"
@@ -889,7 +880,7 @@
         "あたって"
       ],
       "type": "verb",
-      "gloss": "meets an event face to face",
+      "gloss": "on undertaking or preparing for an event",
       "ja": "開店【かいてん】にあたって準備【じゅんび】をした。",
       "en": "We made preparations for the opening.",
       "level": "N2",
@@ -963,7 +954,7 @@
         "う"
       ],
       "type": "ending",
-      "gloss": "suggests taking an action together",
+      "gloss": "volitional: let's do it, or I will",
       "ja": "一緒【いっしょ】に食【た】べよう。",
       "en": "Let's eat together.",
       "level": "N1",
@@ -1025,7 +1016,7 @@
       "forms": [
         "こそ"
       ],
-      "type": "ending",
+      "type": "particle",
       "gloss": "singles out the focus",
       "ja": "今【いま】こそ始【はじ】めよう。",
       "en": "Now is the time to start.",
@@ -1060,8 +1051,7 @@
       "form": "向かう",
       "forms": [
         "向かう",
-        "向かって",
-        "向けて"
+        "向かって"
       ],
       "type": "verb",
       "gloss": "faces a destination",
@@ -1078,7 +1068,7 @@
         "構わず"
       ],
       "type": "verb",
-      "gloss": "takes heed of something",
+      "gloss": "minds; pays heed to",
       "ja": "失敗【しっぱい】しても構【かま】わない。",
       "en": "I don't mind if we fail.",
       "level": "N2",
@@ -1103,7 +1093,7 @@
         "っこない"
       ],
       "type": "negative",
-      "gloss": "There is no chance of",
+      "gloss": "there's no way it will happen (emphatic",
       "ja": "今日【きょう】中【じゅう】には終【お】わりっこない。",
       "en": "There's no way it will be finished today.",
       "level": "N2",
@@ -1115,7 +1105,7 @@
         "おそらく"
       ],
       "type": "word",
-      "gloss": "Probably, Perhaps",
+      "gloss": "probably, most likely",
       "ja": "おそらく、彼【かれ】は今日【きょう】の会議【かいぎ】には来【こ】ないだろう。",
       "en": "He probably won't come to today's meeting.",
       "level": "N2",
@@ -1346,7 +1336,7 @@
         "手前"
       ],
       "type": "noun",
-      "gloss": "one's own side or position",
+      "gloss": "given what one has said or done",
       "ja": "約束【やくそく】した手前【てまえ】、今【いま】さら断【ことわ】れない。",
       "en": "Having made a promise, I can't turn it down now.",
       "level": "N2",
@@ -1383,7 +1373,7 @@
         "かかわらず"
       ],
       "type": "verb",
-      "gloss": "takes part in a relation",
+      "gloss": "relates to or affects",
       "ja": "これは命【いのち】にかかわる問題【もんだい】だから、すぐに対応【たいおう】すべきだ。",
       "en": "This is a matter of life and death, so it should be dealt with at once.",
       "level": "N2"
@@ -1431,7 +1421,7 @@
         "次第"
       ],
       "type": "noun",
-      "gloss": "the sequence of successive steps",
+      "gloss": "gradually; by degrees",
       "ja": "夕方【ゆうがた】になって、風【かぜ】が次第【しだい】に強【つよ】くなってきた。",
       "en": "As evening came, the wind gradually grew stronger.",
       "level": "N3",
@@ -1444,7 +1434,7 @@
         "問わず"
       ],
       "type": "verb",
-      "gloss": "raises a criterion for consideration",
+      "gloss": "asks about; makes an issue of",
       "ja": "この大会【たいかい】には、年齢【ねんれい】を問【と】わず誰【だれ】でも参加【さんか】できる。",
       "en": "Anyone can enter this competition, regardless of age.",
       "level": "N2",
@@ -1480,7 +1470,7 @@
         "がけ"
       ],
       "type": "ending",
-      "gloss": "the stage of setting out",
+      "gloss": "on the way, especially when leaving",
       "ja": "帰【かえ】りがけに、スーパーで牛乳【ぎゅうにゅう】を買【か】ってきてくれる？",
       "en": "Could you pick up some milk at the supermarket on your way home?",
       "level": "N2",
@@ -1554,7 +1544,7 @@
         "あげく"
       ],
       "type": "noun",
-      "gloss": "After, In the end",
+      "gloss": "after a long process",
       "ja": "一時間【いちじかん】も迷【まよ】ったあげく、何【なに】も買【か】わずに帰【かえ】った。",
       "en": "After dithering for a whole hour, I ended up going home without buying anything.",
       "level": "N2",
@@ -1642,7 +1632,7 @@
         "考えられる"
       ],
       "type": "verb",
-      "gloss": "works through an idea",
+      "gloss": "considers; reasons",
       "ja": "事故【じこ】の原因【げんいん】は、運転手【うんてんしゅ】の不注意【ふちゅうい】と考【かんが】えられる。",
       "en": "The cause of the accident is thought to be the driver's carelessness.",
       "level": "N2"
@@ -1823,8 +1813,8 @@
       ],
       "type": "noun",
       "gloss": "a way forward",
-      "ja": "いくら考【かんが】えても、しょうがない。",
-      "en": "Thinking about it further will get us nowhere.",
+      "ja": "昨日【きのう】あまり寝【ね】ていないので、眠【ねむ】くてしょうがない。",
+      "en": "I barely slept last night, so I'm terribly sleepy.",
       "level": "N2",
       "single": true
     },
@@ -1895,7 +1885,7 @@
         "込めて"
       ],
       "type": "verb",
-      "gloss": "fills something with emotion",
+      "gloss": "puts emotion or effort into something",
       "ja": "母【はは】のために、心【こころ】を込【こ】めてケーキを焼【や】いた。",
       "en": "I put my heart into baking a cake for my mother.",
       "level": "N2",
@@ -1932,7 +1922,7 @@
         "たまらない"
       ],
       "type": "verb",
-      "gloss": "cannot contain a sensation",
+      "gloss": "cannot bear the feeling",
       "ja": "試験【しけん】が終【お】わって、早【はや】く遊【あそ】びに行【い】きたくてたまらない。",
       "en": "The exam is over, and I'm dying to go out and have fun.",
       "level": "N2",
@@ -2043,7 +2033,7 @@
         "もっとも"
       ],
       "type": "noun",
-      "gloss": "a reaction with good grounds",
+      "gloss": "reasonable; understandable",
       "ja": "あんなにひどいことを言【い】われたら、彼【かれ】が怒【おこ】るのももっともだ。",
       "en": "After being told something that awful, it's understandable that he's angry.",
       "level": "N3",
@@ -2055,7 +2045,7 @@
         "たって"
       ],
       "type": "ending",
-      "gloss": "Even if, Even though",
+      "gloss": "even if (colloquial)",
       "ja": "今【いま】から走【はし】ったって、もう間【ま】に合【あ】わないよ。",
       "en": "Even if you run now, you won't make it in time.",
       "level": "N2",
@@ -2079,7 +2069,7 @@
         "おおよそ"
       ],
       "type": "word",
-      "gloss": "Approximately, Roughly",
+      "gloss": "approximately, roughly",
       "ja": "駅【えき】から会場【かいじょう】まで、おおよそ十分【じっぷん】かかります。",
       "en": "It takes roughly ten minutes from the station to the venue.",
       "level": "N2",
@@ -2278,6 +2268,53 @@
       "en": "Because of the rain, the construction isn't progressing as hoped.",
       "level": "N1",
       "single": true
+    },
+    "enai": {
+      "form": "得ない",
+      "forms": [
+        "得ない"
+      ],
+      "type": "verb",
+      "gloss": "cannot happen or be done",
+      "ja": "普通【ふつう】ならあり得【え】ないミスが起【お】きた。",
+      "en": "A mistake that would normally be impossible happened.",
+      "level": "N2"
+    },
+    "nuki": {
+      "form": "抜き",
+      "forms": [
+        "抜き"
+      ],
+      "type": "noun",
+      "gloss": "leaving something out",
+      "ja": "今日【きょう】は堅【かた】い話【はなし】は抜【ぬ】きで、楽【たの】しく飲【の】みましょう。",
+      "en": "Let's skip the serious talk today and enjoy our drinks.",
+      "level": "N2",
+      "single": true
+    },
+    "nanishiro": {
+      "form": "何しろ",
+      "forms": [
+        "何しろ"
+      ],
+      "type": "word",
+      "gloss": "No wonder, After all",
+      "ja": "何【なに】しろ初【はじ】めての海外旅行【かいがいりょこう】なので、緊張【きんちょう】している。",
+      "en": "After all, it's my first trip abroad, so I'm nervous.",
+      "level": "N2",
+      "single": true
+    },
+    "nite": {
+      "form": "にて",
+      "forms": [
+        "にて"
+      ],
+      "type": "particle",
+      "gloss": "In, At",
+      "ja": "説明会【せつめいかい】は、本社【ほんしゃ】の会議室【かいぎしつ】にて行【おこな】います。",
+      "en": "The briefing will be held in the conference room at head office.",
+      "level": "N2",
+      "single": true
     }
   },
   "patterns": {
@@ -2295,7 +2332,7 @@
       "parts": [
         {
           "text": "得ない",
-          "block": "eru"
+          "block": "enai"
         }
       ],
       "literal": "not attain the action",
@@ -2313,8 +2350,8 @@
         },
         {
           "text": "得ない",
-          "block": "eru",
-          "gloss": "cannot get or attain"
+          "block": "enai",
+          "gloss": "cannot manage to"
         }
       ],
       "literal": "cannot succeed in not doing it",
@@ -2360,13 +2397,14 @@
         },
         {
           "text": "やら",
-          "block": "yara"
+          "block": "yara",
+          "gloss": "it is unclear (how)"
         }
       ],
       "literal": "in some way not yet settled",
-      "transparency": "clear",
+      "transparency": "partial",
       "solved": {
-        "by": "blocks-only",
+        "by": "review",
         "right": true
       }
     },
@@ -2378,7 +2416,8 @@
         },
         {
           "text": "やら",
-          "block": "yara"
+          "block": "yara",
+          "gloss": "it is unclear (what)"
         }
       ],
       "literal": "what it is stays unsettled",
@@ -2433,9 +2472,9 @@
         }
       ],
       "literal": "one case in ten thousand",
-      "transparency": "clear",
+      "transparency": "partial",
       "solved": {
-        "by": "blocks-only",
+        "by": "review",
         "right": true
       }
     },
@@ -2451,7 +2490,7 @@
         },
         {
           "text": "ない",
-          "block": "naku"
+          "block": "nai"
         }
       ],
       "literal": "there is no available method",
@@ -2465,7 +2504,8 @@
       "parts": [
         {
           "text": "上",
-          "block": "ue"
+          "block": "ue",
+          "gloss": "on top of that"
         },
         {
           "text": "に",
@@ -2493,7 +2533,8 @@
       "parts": [
         {
           "text": "以上",
-          "block": "ijou"
+          "block": "ijou",
+          "gloss": "more than that level"
         },
         {
           "text": "に",
@@ -2533,17 +2574,18 @@
       "parts": [
         {
           "text": "上",
-          "block": "ue"
+          "block": "ue",
+          "gloss": "now that (a settled premise)"
         },
         {
           "text": "は",
           "block": "wa"
         }
       ],
-      "literal": "sets the upper layer as the topic",
-      "transparency": "clear",
+      "literal": "given that this is already settled",
+      "transparency": "partial",
       "solved": {
-        "by": "blocks-only",
+        "by": "review",
         "right": true
       }
     },
@@ -2667,7 +2709,8 @@
         },
         {
           "text": "限って",
-          "block": "kagiru"
+          "block": "kagiru",
+          "gloss": "restricted to just"
         }
       ],
       "literal": "restricts the case to this one",
@@ -2685,7 +2728,8 @@
         },
         {
           "text": "限らず",
-          "block": "kagiru"
+          "block": "kagiru",
+          "gloss": "not restricted to"
         }
       ],
       "literal": "does not restrict the case to this one",
@@ -2719,7 +2763,7 @@
       "parts": [
         {
           "text": "なく",
-          "block": "naku"
+          "block": "nai"
         },
         {
           "text": "は",
@@ -2727,7 +2771,7 @@
         },
         {
           "text": "ない",
-          "block": "naku"
+          "block": "nai"
         }
       ],
       "literal": "a negative condition is denied",
@@ -2787,10 +2831,11 @@
         },
         {
           "text": "して",
-          "block": "suru-do"
+          "block": "suru-do",
+          "gloss": "facing it"
         }
       ],
-      "literal": "on carrying out the occasion",
+      "literal": "on the occasion of undertaking it",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",
@@ -2819,7 +2864,8 @@
       "parts": [
         {
           "text": "つつ",
-          "block": "tsutsu"
+          "block": "tsutsu",
+          "gloss": "in the middle of doing"
         },
         {
           "text": "ある",
@@ -2847,7 +2893,7 @@
       "parts": [
         {
           "text": "抜き",
-          "block": "nuku"
+          "block": "nuki"
         },
         {
           "text": "で",
@@ -2879,7 +2925,7 @@
         },
         {
           "text": "なく",
-          "block": "naku"
+          "block": "nai"
         }
       ],
       "literal": "with the fact absent",
@@ -2892,20 +2938,11 @@
     "にて": {
       "parts": [
         {
-          "text": "に",
-          "block": "ni"
-        },
-        {
-          "text": "て",
-          "block": "te"
+          "text": "にて",
+          "block": "nite"
         }
       ],
-      "literal": "marks the setting of the action",
-      "transparency": "clear",
-      "solved": {
-        "by": "blocks-only",
-        "right": true
-      }
+      "transparency": "opaque"
     },
     "には": {
       "parts": [
@@ -3045,7 +3082,8 @@
         },
         {
           "text": "気",
-          "block": "ki"
+          "block": "ki",
+          "gloss": "attention or concern"
         },
         {
           "text": "に",
@@ -3053,7 +3091,8 @@
         },
         {
           "text": "なる",
-          "block": "naru"
+          "block": "naru",
+          "gloss": "comes to be"
         }
       ],
       "literal": "attention turns toward something",
@@ -3071,7 +3110,8 @@
         },
         {
           "text": "気",
-          "block": "ki"
+          "block": "ki",
+          "gloss": "attention"
         },
         {
           "text": "を",
@@ -3079,7 +3119,8 @@
         },
         {
           "text": "つける",
-          "block": "tsukeru"
+          "block": "tsukeru",
+          "gloss": "fixes it on"
         }
       ],
       "literal": "direct attention onto a point",
@@ -3093,11 +3134,13 @@
       "parts": [
         {
           "text": "ない",
-          "block": "nai"
+          "block": "nai",
+          "gloss": "not doing"
         },
         {
           "text": "で",
-          "block": "te"
+          "block": "te",
+          "gloss": "and so (negative connective)"
         },
         {
           "text": "は",
@@ -3105,7 +3148,8 @@
         },
         {
           "text": "いられない",
-          "block": "iru"
+          "block": "iru",
+          "gloss": "cannot stay as one is"
         }
       ],
       "literal": "cannot stay in the state of not doing it",
@@ -3119,17 +3163,19 @@
       "parts": [
         {
           "text": "ねば",
-          "block": "neba"
+          "block": "neba",
+          "gloss": "if one does not"
         },
         {
           "text": "ならない",
-          "block": "naru"
+          "block": "naru",
+          "gloss": "it will not do"
         }
       ],
       "literal": "if not done, it will not do",
-      "transparency": "clear",
+      "transparency": "partial",
       "solved": {
-        "by": "blocks-only",
+        "by": "review",
         "right": true
       }
     },
@@ -3173,15 +3219,18 @@
       "parts": [
         {
           "text": "か",
-          "block": "ka"
+          "block": "ka",
+          "gloss": "whether (it did or not)"
         },
         {
           "text": "ない",
-          "block": "nai"
+          "block": "nai",
+          "gloss": "or not"
         },
         {
           "text": "か",
-          "block": "ka"
+          "block": "ka",
+          "gloss": "whether (it did or not)"
         },
         {
           "text": "の",
@@ -3211,7 +3260,8 @@
         },
         {
           "text": "いて",
-          "block": "iru"
+          "block": "iru",
+          "gloss": "keeps on being"
         },
         {
           "text": "は",
@@ -3232,15 +3282,9 @@
           "block": "tokoro-point"
         },
         {
-          "text": "だ",
-          "block": "da"
-        },
-        {
-          "text": "っ"
-        },
-        {
-          "text": "た",
-          "block": "ta"
+          "text": "だった",
+          "block": "da",
+          "gloss": "was (past of the copula)"
         }
       ],
       "literal": "was at the point of doing it",
@@ -3258,7 +3302,8 @@
         },
         {
           "text": "では",
-          "block": "dewa"
+          "block": "dewa",
+          "gloss": "is (not)"
         },
         {
           "text": "ない",
@@ -3364,11 +3409,13 @@
         },
         {
           "text": "して",
-          "block": "suru-assume"
+          "block": "suru-assume",
+          "gloss": "taking it as"
         },
         {
           "text": "も",
-          "block": "mo"
+          "block": "mo",
+          "gloss": "even"
         },
         {
           "text": "に",
@@ -3376,11 +3423,13 @@
         },
         {
           "text": "して",
-          "block": "suru-assume"
+          "block": "suru-assume",
+          "gloss": "taking it as"
         },
         {
           "text": "も",
-          "block": "mo"
+          "block": "mo",
+          "gloss": "even"
         }
       ],
       "literal": "even granting each of the premises",
@@ -3394,7 +3443,8 @@
       "parts": [
         {
           "text": "か",
-          "block": "ka"
+          "block": "ka",
+          "gloss": "was it? (it seemed so)"
         },
         {
           "text": "と",
@@ -3431,10 +3481,10 @@
           "block": "masu"
         }
       ],
-      "literal": "my thought is that this condition would hold",
-      "transparency": "clear",
+      "literal": "I think it would be good if",
+      "transparency": "partial",
       "solved": {
-        "by": "blocks-only",
+        "by": "review",
         "right": true
       }
     },
@@ -3468,7 +3518,8 @@
         },
         {
           "text": "見る",
-          "block": "miru"
+          "block": "miru",
+          "gloss": "views, judges"
         },
         {
           "text": "と",
@@ -3494,7 +3545,8 @@
         },
         {
           "text": "見る",
-          "block": "miru"
+          "block": "miru",
+          "gloss": "observes"
         },
         {
           "text": "と",
@@ -3516,7 +3568,8 @@
         },
         {
           "text": "する",
-          "block": "suru-assume"
+          "block": "suru-assume",
+          "gloss": "judging"
         },
         {
           "text": "と",
@@ -3552,7 +3605,8 @@
       "parts": [
         {
           "text": "こと",
-          "block": "koto"
+          "block": "koto",
+          "gloss": "an arrangement or settled matter"
         },
         {
           "text": "に",
@@ -3560,11 +3614,13 @@
         },
         {
           "text": "なって",
-          "block": "naru"
+          "block": "naru",
+          "gloss": "has come to be"
         },
         {
           "text": "いる",
-          "block": "iru"
+          "block": "iru",
+          "gloss": "and remains so"
         }
       ],
       "literal": "the resulting state is established",
@@ -3598,7 +3654,8 @@
       "parts": [
         {
           "text": "だけ",
-          "block": "dake"
+          "block": "dake",
+          "gloss": "at least that much"
         },
         {
           "text": "まし",
@@ -3624,7 +3681,8 @@
         },
         {
           "text": "では",
-          "block": "dewa"
+          "block": "dewa",
+          "gloss": "if it is like"
         }
       ],
       "literal": "with a situation of this sort as the premise",
@@ -3664,11 +3722,13 @@
         },
         {
           "text": "と",
-          "block": "to-quote"
+          "block": "to-quote",
+          "gloss": "as"
         },
         {
           "text": "して",
-          "block": "suru-assume"
+          "block": "suru-assume",
+          "gloss": "treating it"
         }
       ],
       "literal": "takes the topic as a separate category",
@@ -3682,7 +3742,8 @@
       "parts": [
         {
           "text": "だけ",
-          "block": "dake"
+          "block": "dake",
+          "gloss": "to just that degree"
         },
         {
           "text": "に",
@@ -3690,9 +3751,9 @@
         }
       ],
       "literal": "because of exactly that extent",
-      "transparency": "clear",
+      "transparency": "partial",
       "solved": {
-        "by": "blocks-only",
+        "by": "review",
         "right": true
       }
     },
@@ -3700,7 +3761,8 @@
       "parts": [
         {
           "text": "だけ",
-          "block": "dake"
+          "block": "dake",
+          "gloss": "at least that much"
         },
         {
           "text": "は",
@@ -3732,10 +3794,11 @@
         },
         {
           "text": "ならず",
-          "block": "naru"
+          "block": "naru",
+          "gloss": "not being just that"
         }
       ],
-      "literal": "does not come to this case alone",
+      "literal": "is not only that",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",
@@ -3750,7 +3813,8 @@
         },
         {
           "text": "すぎない",
-          "block": "sugi"
+          "block": "sugi",
+          "gloss": "does not go beyond"
         }
       ],
       "literal": "does not go beyond that point",
@@ -3764,7 +3828,8 @@
       "parts": [
         {
           "text": "も",
-          "block": "mo"
+          "block": "mo",
+          "gloss": "both this"
         },
         {
           "text": "ば",
@@ -3772,10 +3837,11 @@
         },
         {
           "text": "も",
-          "block": "mo"
+          "block": "mo",
+          "gloss": "and that"
         }
       ],
-      "literal": "include this and, given that, include the other",
+      "literal": "this as well as that",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",
@@ -3811,7 +3877,7 @@
           "block": "tomokaku"
         }
       ],
-      "literal": "puts that alternative aside if it is the case",
+      "literal": "if it were that, it would be one thing",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",
@@ -3834,7 +3900,8 @@
         },
         {
           "text": "ならない",
-          "block": "naru"
+          "block": "naru",
+          "gloss": "does not come to count as"
         }
       ],
       "literal": "does not become that fact",
@@ -3856,13 +3923,14 @@
         },
         {
           "text": "ならない",
-          "block": "naru"
+          "block": "naru",
+          "gloss": "it will not do"
         }
       ],
       "literal": "it will not do if that is done",
-      "transparency": "clear",
+      "transparency": "partial",
       "solved": {
-        "by": "blocks-only",
+        "by": "review",
         "right": true
       }
     },
@@ -3878,7 +3946,8 @@
         },
         {
           "text": "いられない",
-          "block": "iru"
+          "block": "iru",
+          "gloss": "cannot stay as one is"
         }
       ],
       "literal": "cannot stay in the state of doing it",
@@ -3902,11 +3971,13 @@
       "parts": [
         {
           "text": "ない",
-          "block": "nai"
+          "block": "nai",
+          "gloss": "not doing"
         },
         {
           "text": "わけ",
-          "block": "wake"
+          "block": "wake",
+          "gloss": "a reasonable course"
         },
         {
           "text": "に",
@@ -3918,7 +3989,8 @@
         },
         {
           "text": "いかない",
-          "block": "iku-acceptable"
+          "block": "iku-acceptable",
+          "gloss": "will not do"
         }
       ],
       "literal": "the option of not doing it will not work",
@@ -3936,11 +4008,13 @@
         },
         {
           "text": "わけ",
-          "block": "wake"
+          "block": "wake",
+          "gloss": "the conclusion one would draw"
         },
         {
           "text": "では",
-          "block": "dewa"
+          "block": "dewa",
+          "gloss": "is (not)"
         },
         {
           "text": "ない",
@@ -3996,11 +4070,13 @@
       "parts": [
         {
           "text": "も",
-          "block": "mo"
+          "block": "mo",
+          "gloss": "even"
         },
         {
           "text": "構わず",
-          "block": "kamau"
+          "block": "kamau",
+          "gloss": "without minding"
         }
       ],
       "literal": "even when it occurs, pay it no heed",
@@ -4024,7 +4100,8 @@
       "parts": [
         {
           "text": "かね",
-          "block": "kaneru"
+          "block": "kaneru",
+          "gloss": "could well (do)"
         },
         {
           "text": "ない",
@@ -4188,9 +4265,9 @@
         }
       ],
       "literal": "takes that starting relation as given",
-      "transparency": "clear",
+      "transparency": "partial",
       "solved": {
-        "by": "blocks-only",
+        "by": "review",
         "right": true
       }
     },
@@ -4318,13 +4395,14 @@
         },
         {
           "text": "したら",
-          "block": "suru-assume"
+          "block": "suru-assume",
+          "gloss": "if one stands as"
         }
       ],
       "literal": "if you stood in that relation",
-      "transparency": "clear",
+      "transparency": "partial",
       "solved": {
-        "by": "blocks-only",
+        "by": "review",
         "right": true
       }
     },
@@ -4332,11 +4410,13 @@
       "parts": [
         {
           "text": "と",
-          "block": "to-quote"
+          "block": "to-quote",
+          "gloss": "as (a role)"
         },
         {
           "text": "して",
-          "block": "suru-assume"
+          "block": "suru-assume",
+          "gloss": "treated"
         },
         {
           "text": "は",
@@ -4354,15 +4434,18 @@
       "parts": [
         {
           "text": "と",
-          "block": "to-quote"
+          "block": "to-quote",
+          "gloss": "as (a supposition)"
         },
         {
           "text": "して",
-          "block": "suru-assume"
+          "block": "suru-assume",
+          "gloss": "taking it"
         },
         {
           "text": "も",
-          "block": "mo"
+          "block": "mo",
+          "gloss": "even"
         }
       ],
       "literal": "grant it as the stated role or case",
@@ -4410,10 +4493,11 @@
         },
         {
           "text": "か",
-          "block": "ka"
+          "block": "ka",
+          "gloss": "shall we? (question)"
         }
       ],
-      "literal": "is there not a joint proposal to do it",
+      "literal": "why do we not do it together?",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",
@@ -4424,7 +4508,8 @@
       "parts": [
         {
           "text": "か",
-          "block": "ka"
+          "block": "ka",
+          "gloss": "as though (uncertain)"
         },
         {
           "text": "の",
@@ -4564,9 +4649,9 @@
         }
       ],
       "literal": "if one puts it that way",
-      "transparency": "clear",
+      "transparency": "partial",
       "solved": {
-        "by": "blocks-only",
+        "by": "review",
         "right": true
       }
     },
@@ -4609,20 +4694,11 @@
     "何しろ": {
       "parts": [
         {
-          "text": "何",
-          "block": "nani"
-        },
-        {
-          "text": "しろ",
-          "block": "shiro"
+          "text": "何しろ",
+          "block": "nanishiro"
         }
       ],
-      "literal": "whichever case you posit",
-      "transparency": "clear",
-      "solved": {
-        "by": "blocks-only",
-        "right": true
-      }
+      "transparency": "opaque"
     },
     "しかしながら": {
       "parts": [
@@ -4653,7 +4729,7 @@
           "block": "de"
         }
       ],
-      "literal": "in the setting of that mental stance",
+      "literal": "acting as if; with that intention",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",
@@ -4716,13 +4792,14 @@
         },
         {
           "text": "ならない",
-          "block": "naru"
+          "block": "naru",
+          "gloss": "is not (negative of the copula)"
         }
       ],
-      "literal": "it cannot turn out to be an alternative",
-      "transparency": "clear",
+      "literal": "is nothing other than that",
+      "transparency": "partial",
       "solved": {
-        "by": "blocks-only",
+        "by": "review",
         "right": true
       }
     },
@@ -4756,9 +4833,9 @@
         }
       ],
       "literal": "supposing such a thing could happen",
-      "transparency": "clear",
+      "transparency": "partial",
       "solved": {
-        "by": "blocks-only",
+        "by": "review",
         "right": true
       }
     },
@@ -4830,7 +4907,8 @@
         },
         {
           "text": "上",
-          "block": "ue"
+          "block": "ue",
+          "gloss": "on top of"
         }
       ],
       "literal": "on an upper layer of the stated case",
@@ -4858,10 +4936,11 @@
         },
         {
           "text": "したがって",
-          "block": "shitagau"
+          "block": "shitagau",
+          "gloss": "in step with; following"
         }
       ],
-      "literal": "keep in step with the changing state",
+      "literal": "in step with it, as it changes",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",
@@ -4880,9 +4959,9 @@
         }
       ],
       "literal": "records what attaches to the unit or circumstance",
-      "transparency": "clear",
+      "transparency": "partial",
       "solved": {
-        "by": "blocks-only",
+        "by": "review",
         "right": true
       }
     },
@@ -4894,13 +4973,14 @@
         },
         {
           "text": "つけ",
-          "block": "tsukeru"
+          "block": "tsukeru",
+          "gloss": "in connection with (each time)"
         }
       ],
       "literal": "attach a reaction to that occasion",
-      "transparency": "clear",
+      "transparency": "partial",
       "solved": {
-        "by": "blocks-only",
+        "by": "review",
         "right": true
       }
     },
@@ -4948,7 +5028,8 @@
         },
         {
           "text": "かかわらず",
-          "block": "kakawaru"
+          "block": "kakawaru",
+          "gloss": "without regard to"
         }
       ],
       "literal": "without taking the circumstance into account",
@@ -4966,11 +5047,13 @@
         },
         {
           "text": "も",
-          "block": "mo"
+          "block": "mo",
+          "gloss": "even"
         },
         {
           "text": "かかわらず",
-          "block": "kakawaru"
+          "block": "kakawaru",
+          "gloss": "without regard to"
         }
       ],
       "literal": "even with the circumstance left unheeded",
@@ -5034,7 +5117,8 @@
         },
         {
           "text": "問わず",
-          "block": "tou"
+          "block": "tou",
+          "gloss": "without asking about"
         }
       ],
       "literal": "without raising it as a criterion",
@@ -5093,7 +5177,7 @@
           "block": "to-when"
         }
       ],
-      "literal": "once done, if the condition does not hold",
+      "literal": "unless and until that has been done",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",
@@ -5306,7 +5390,8 @@
         },
         {
           "text": "か",
-          "block": "ka"
+          "block": "ka",
+          "gloss": "some- (indefinite)"
         }
       ],
       "literal": "somewhere in an unspecified interval",
@@ -5355,7 +5440,7 @@
           "block": "tsuujiru"
         }
       ],
-      "literal": "use the object as a channel",
+      "literal": "through it, from end to end",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",
@@ -5400,7 +5485,8 @@
         },
         {
           "text": "も",
-          "block": "mo"
+          "block": "mo",
+          "gloss": "(not) necessarily"
         },
         {
           "text": "ない",
@@ -5422,7 +5508,8 @@
         },
         {
           "text": "考えられる",
-          "block": "kangaeru"
+          "block": "kangaeru",
+          "gloss": "is thought; can be inferred"
         }
       ],
       "literal": "it is possible to reason to that content",
@@ -5519,13 +5606,14 @@
         },
         {
           "text": "して",
-          "block": "suru-assume"
+          "block": "suru-assume",
+          "gloss": "starting with"
         }
       ],
       "literal": "take that starting point as the first case",
-      "transparency": "clear",
+      "transparency": "partial",
       "solved": {
-        "by": "blocks-only",
+        "by": "review",
         "right": true
       }
     },
@@ -5579,7 +5667,8 @@
       "parts": [
         {
           "text": "の",
-          "block": "no"
+          "block": "no",
+          "gloss": "makes the clause a thing"
         },
         {
           "text": "では",
@@ -5595,10 +5684,11 @@
         },
         {
           "text": "か",
-          "block": "ka"
+          "block": "ka",
+          "gloss": "I wonder (question)"
         }
       ],
-      "literal": "asks whether the supposition is true",
+      "literal": "could it be that it is so?",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",
@@ -5631,7 +5721,8 @@
       "parts": [
         {
           "text": "の",
-          "block": "no"
+          "block": "no",
+          "gloss": "makes the clause a thing"
         },
         {
           "text": "も",
@@ -5692,14 +5783,16 @@
         },
         {
           "text": "決まって",
-          "block": "kimaru"
+          "block": "kimaru",
+          "gloss": "is settled"
         },
         {
           "text": "いる",
-          "block": "iru"
+          "block": "iru",
+          "gloss": "and remains so"
         }
       ],
-      "literal": "the matter has been settled",
+      "literal": "it is a foregone conclusion",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",
@@ -5946,7 +6039,7 @@
           "block": "made"
         }
       ],
-      "literal": "from one thing all the way to another",
+      "literal": "from whatever to whatever",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",
@@ -5957,7 +6050,8 @@
       "parts": [
         {
           "text": "だけ",
-          "block": "dake"
+          "block": "dake",
+          "gloss": "to just that degree"
         },
         {
           "text": "あって",
@@ -5965,9 +6059,9 @@
         }
       ],
       "literal": "linked to having precisely that extent",
-      "transparency": "clear",
+      "transparency": "partial",
       "solved": {
-        "by": "blocks-only",
+        "by": "review",
         "right": true
       }
     },
@@ -6005,7 +6099,8 @@
         },
         {
           "text": "も",
-          "block": "mo"
+          "block": "mo",
+          "gloss": "even"
         }
       ],
       "literal": "no matter which case one mentions",
@@ -6019,7 +6114,8 @@
       "parts": [
         {
           "text": "か",
-          "block": "ka"
+          "block": "ka",
+          "gloss": "or"
         },
         {
           "text": "何",
@@ -6027,7 +6123,8 @@
         },
         {
           "text": "か",
-          "block": "ka"
+          "block": "ka",
+          "gloss": "some- (indefinite)"
         }
       ],
       "literal": "an unspecified thing as another possibility",
@@ -6045,13 +6142,14 @@
         },
         {
           "text": "ならない",
-          "block": "naru"
+          "block": "naru",
+          "gloss": "it is unbearable"
         }
       ],
-      "literal": "the linked feeling will not settle",
-      "transparency": "clear",
+      "literal": "feeling it, and it is unbearable",
+      "transparency": "partial",
       "solved": {
-        "by": "blocks-only",
+        "by": "review",
         "right": true
       }
     },
@@ -6121,11 +6219,13 @@
       "parts": [
         {
           "text": "やら",
-          "block": "yara"
+          "block": "yara",
+          "gloss": "and such (listing)"
         },
         {
           "text": "やら",
-          "block": "yara"
+          "block": "yara",
+          "gloss": "and such (listing)"
         }
       ],
       "literal": "take one tentative example and then another",
@@ -6139,7 +6239,8 @@
       "parts": [
         {
           "text": "だけ",
-          "block": "dake"
+          "block": "dake",
+          "gloss": "to just that degree"
         },
         {
           "text": "の",
@@ -6209,7 +6310,8 @@
       "parts": [
         {
           "text": "の",
-          "block": "no"
+          "block": "no",
+          "gloss": "makes the clause a thing"
         },
         {
           "text": "も",

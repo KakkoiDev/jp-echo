@@ -134,7 +134,10 @@ tests:
 4. A block id is lowercase ASCII (`[a-z0-9-]+`), stable, never reused for
    another meaning. Two meanings of one form are two blocks (`mono-thing`,
    `mono-ought`).
-5. `gloss` is English, at most 40 characters, contains no Japanese (the
+5. (Changed after the content review of 27 Nov 2026: the "must not be the
+   meaning of a pattern" half of this rule was dropped, and a part may carry
+   its own `gloss` for the form shown. See the implementation report.)
+   `gloss` is English, at most 40 characters, contains no Japanese (the
    `JP` rule in `n2-game.js`), and is **not** the meaning of any pattern
    that contains the block: a gloss must not give a card's answer away
    (check with `sameSense`).

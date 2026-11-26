@@ -190,10 +190,13 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
     }
   }
   const grammar = other ? [] : items.grammar;
+  const confusablePair = new Set(GRAMMAR_CONFUSABLE.flatMap(([a, b]) => [a + "\n" + b, b + "\n" + a]));
   for (const [i, g] of grammar.entries()) {
     const ex = sentenceOf(g.target);
     if (!ex) continue;
-    const wrong = distinct(GLOSS_FIX["g:" + g.target[1]] || g.answer, [1, 2, 3, 5, 8, 13, 21, 34].map(d => grammar[(i + d * 17) % grammar.length]).filter(o => o !== g).map(o => o.answer));
+    // Patterns a reviewer could not tell apart by meaning are never each other's wrong choice (GRAMMAR_CONFUSABLE).
+    const answerOf = o => GLOSS_FIX["g:" + o.target[1]] || o.answer;
+    const wrong = distinct(answerOf(g), [1, 2, 3, 5, 8, 13, 21, 34].map(d => grammar[(i + d * 17) % grammar.length]).filter(o => o !== g && !confusablePair.has(g.target[1] + "\n" + o.target[1])).map(answerOf));
     const gAnswer = GLOSS_FIX["g:" + g.target[1]] || g.answer;
     pool.push({id: "g:" + g.target[1], kind: "grammar", target: g.target, dimension: "grammar", prompt: g.prompt,
       sentence: plain(ex.ja), needle: GRAMMAR_SPANS["g:" + g.target[1]] || piecesNeedle(plain(ex.ja), g.prompt) || surfaceNeedle(plain(ex.ja), g.prompt) || g.prompt.replace(/[〜～]/g, ""), answer: gAnswer, wrong: [...new Set(wrong)], seconds: SECONDS.grammar,
@@ -257,7 +260,9 @@ function addGrammarBlocks(pool, {blocks = {}, patterns = {}}) {
     const sentence = plain(block.ja);
     const needle = [...block.forms].sort((a, b) => b.length - a.length).find(form => sentence.includes(form));
     if (!needle) continue;
-    const wrong = fair(block.gloss, entries.filter(([other, b]) => id !== other && b.type === block.type && !b.forms.some(form => block.forms.includes(form))).map(([, b]) => b.gloss));
+    // Wrong choices: blocks of the same type first; a small type (the negatives) is topped up from the others.
+    const others = entries.filter(([other, b]) => id !== other && !basic.has(other) && !b.forms.some(form => block.forms.includes(form)));
+    const wrong = fair(block.gloss, [...others.filter(([, b]) => b.type === block.type), ...others.filter(([, b]) => b.type !== block.type)].map(([, b]) => b.gloss));
     pool.push({...base, id: "b:" + id, kind: "block", item: "block:" + id, blockLevel: block.level, blocks: [id],
       prompt: block.form, sentence, needle, answer: block.gloss, wrong,
       solution: {word: block.form, meaning: block.gloss, ja: block.ja, en: block.en}});

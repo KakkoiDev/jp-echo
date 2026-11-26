@@ -482,8 +482,13 @@ Before considering the change complete:
   line's slot ("piece by piece"); the review of a miss shows the list; an
   infer card that proves a piece shows the 証 strip and holds `PROVED_MS`;
   Home has one "Known · Grammar pieces" strip under the run card, hidden
-  until a piece is proved. A part may carry its own `gloss` (得ない). N5 and
-  N4 particles and endings are taken as known (`BASIC_BLOCK`).
+  until a piece is proved. N5 and N4 particles and endings are taken as
+  known (`BASIC_BLOCK`). A hint says what the form shown does, negation
+  included: a part carries its own `gloss` where the block's would mislead,
+  and a hint may share words with the answer (content review, 27 Nov:
+  `tools/grammar-blocks/reviews/`, with a ledger of every finding). Reviewed
+  grammar answers are `GLOSS_FIX["g:…"]`; `GRAMMAR_CONFUSABLE` keeps
+  look-alike patterns apart on scored and practice cards alike.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

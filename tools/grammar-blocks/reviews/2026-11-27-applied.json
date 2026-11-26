@@ -1,0 +1,1506 @@
+[
+ {
+  "kind": "block",
+  "id": "zaru",
+  "field": "gloss",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "gloss now the reviewer’s: negative: without doing; literary forms"
+ },
+ {
+  "kind": "block",
+  "id": "naku",
+  "field": "forms",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "merged into nai"
+ },
+ {
+  "kind": "block",
+  "id": "eru",
+  "field": "gloss",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "split into eru (can happen) and enai (cannot happen); ざるを得ない hints 得ない as cannot manage to"
+ },
+ {
+  "kind": "block",
+  "id": "ni",
+  "field": "gloss",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "61 patterns use に; a cue per construction is the next pass. It is a basic block with no card of its own"
+ },
+ {
+  "kind": "block",
+  "id": "no",
+  "field": "gloss",
+  "severity": "misleading",
+  "status": "partly",
+  "note": "the nominalizing の is hinted per pattern (makes the clause a thing); the block is not split"
+ },
+ {
+  "kind": "block",
+  "id": "mo",
+  "field": "gloss",
+  "severity": "misleading",
+  "status": "partly",
+  "note": "‘even’ is hinted per pattern; block gloss now ‘also; or even’; not split"
+ },
+ {
+  "kind": "block",
+  "id": "ka",
+  "field": "gloss",
+  "severity": "wrong",
+  "status": "partly",
+  "note": "question, alternative and indefinite uses hinted per pattern; example now それは本当ですか。; not split"
+ },
+ {
+  "kind": "block",
+  "id": "te",
+  "field": "forms",
+  "severity": "wrong",
+  "status": "partly",
+  "note": "ないで hinted as a negative connective in ないではいられない; the で form stays listed under て"
+ },
+ {
+  "kind": "block",
+  "id": "ta",
+  "field": "gloss",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "gloss replaced"
+ },
+ {
+  "kind": "block",
+  "id": "koto",
+  "field": "gloss",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "gloss replaced"
+ },
+ {
+  "kind": "block",
+  "id": "uchi",
+  "field": "gloss",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "gloss replaced"
+ },
+ {
+  "kind": "block",
+  "id": "ue",
+  "field": "gloss",
+  "severity": "wrong",
+  "status": "partly",
+  "note": "additive and premise uses hinted per pattern; block gloss ‘on top of; given that’; not split"
+ },
+ {
+  "kind": "block",
+  "id": "ijou",
+  "field": "gloss",
+  "severity": "wrong",
+  "status": "partly",
+  "note": "以上に hinted as more than that level; clause-final 以上 is a one-block pattern with its plain meaning"
+ },
+ {
+  "kind": "block",
+  "id": "tsutsu",
+  "field": "gloss",
+  "severity": "wrong",
+  "status": "partly",
+  "note": "つつある hinted as in the middle of doing; the concessive つつも is still one block without も shown"
+ },
+ {
+  "kind": "block",
+  "id": "suru-do",
+  "field": "gloss",
+  "severity": "misleading",
+  "status": "partly",
+  "note": "hinted as facing it in に際して; block not renamed to 際する"
+ },
+ {
+  "kind": "block",
+  "id": "nuku",
+  "field": "gloss",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "split: nuku (does it all the way to the end, with 走り抜いた) and nuki (leaving something out)"
+ },
+ {
+  "kind": "block",
+  "id": "sou",
+  "field": "gloss",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "gloss replaced"
+ },
+ {
+  "kind": "block",
+  "id": "meguru",
+  "field": "gloss",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "gloss replaced"
+ },
+ {
+  "kind": "block",
+  "id": "douse",
+  "field": "gloss",
+  "severity": "weak",
+  "status": "partly",
+  "note": "the block carries the pattern’s plain meaning (anyway, after all)"
+ },
+ {
+  "kind": "block",
+  "id": "gake",
+  "field": "gloss",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "gloss replaced"
+ },
+ {
+  "kind": "pattern",
+  "id": "得る-得る",
+  "field": "meaning",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "ざるを得ない",
+  "field": "meaning",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "どうやら",
+  "field": "transparency",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "rated partial (solved by review)"
+ },
+ {
+  "kind": "pattern",
+  "id": "万が一",
+  "field": "transparency",
+  "severity": "weak",
+  "status": "applied",
+  "note": "rated partial (solved by review)"
+ },
+ {
+  "kind": "pattern",
+  "id": "にほかならない",
+  "field": "literal",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "literal replaced"
+ },
+ {
+  "kind": "pattern",
+  "id": "ものなら①",
+  "field": "transparency",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "rated partial (solved by review)"
+ },
+ {
+  "kind": "pattern",
+  "id": "おおよそ",
+  "field": "meaning",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "中を",
+  "field": "meaning",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "上は",
+  "field": "literal",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "literal replaced"
+ },
+ {
+  "kind": "pattern",
+  "id": "にしたがって",
+  "field": "literal",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "literal replaced"
+ },
+ {
+  "kind": "pattern",
+  "id": "につき",
+  "field": "transparency",
+  "severity": "misleading",
+  "status": "partly",
+  "note": "rated partial; the two senses are not split"
+ },
+ {
+  "kind": "pattern",
+  "id": "につけ",
+  "field": "transparency",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "rated partial (solved by review)"
+ },
+ {
+  "kind": "pattern",
+  "id": "かねない",
+  "field": "meaning",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "次第だ-次第で",
+  "field": "meaning",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "-てこそ",
+  "field": "meaning",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "を除いて",
+  "field": "meaning",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "block",
+  "id": "wo",
+  "field": "gloss",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "gloss replaced"
+ },
+ {
+  "kind": "block",
+  "id": "wa",
+  "field": "gloss",
+  "severity": "misleading",
+  "status": "partly",
+  "note": "gloss replaced; the conditional constructions are not taught as units"
+ },
+ {
+  "kind": "block",
+  "id": "da",
+  "field": "forms",
+  "severity": "misleading",
+  "status": "partly",
+  "note": "だった added for ところだった; では/じゃ still listed"
+ },
+ {
+  "kind": "block",
+  "id": "dewa",
+  "field": "gloss",
+  "severity": "wrong",
+  "status": "partly",
+  "note": "copular and conditional uses hinted per pattern; not split"
+ },
+ {
+  "kind": "block",
+  "id": "naru",
+  "field": "gloss",
+  "severity": "wrong",
+  "status": "partly",
+  "note": "each ならない / ならず is hinted for its construction (it will not do, it is unbearable, is not, does not come to count as); the block is not split"
+ },
+ {
+  "kind": "block",
+  "id": "suru-assume",
+  "field": "gloss",
+  "severity": "wrong",
+  "status": "partly",
+  "note": "supposition, role, viewpoint and evidence hinted per pattern; block gloss ‘takes or treats something as’; not split"
+ },
+ {
+  "kind": "block",
+  "id": "to-quote",
+  "field": "gloss",
+  "severity": "misleading",
+  "status": "partly",
+  "note": "role and supposition hinted per pattern"
+ },
+ {
+  "kind": "block",
+  "id": "to-when",
+  "field": "gloss",
+  "severity": "misleading",
+  "status": "not applied",
+  "note": "no second cue written for the viewpoint constructions"
+ },
+ {
+  "kind": "block",
+  "id": "omou",
+  "field": "forms",
+  "severity": "misleading",
+  "status": "not applied",
+  "note": "forms unchanged"
+ },
+ {
+  "kind": "block",
+  "id": "miru",
+  "field": "gloss",
+  "severity": "wrong",
+  "status": "partly",
+  "note": "observes / views, judges hinted per pattern; block gloss widened; not split"
+ },
+ {
+  "kind": "block",
+  "id": "neba",
+  "field": "gloss",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "gloss replaced"
+ },
+ {
+  "kind": "block",
+  "id": "iru",
+  "field": "gloss",
+  "severity": "wrong",
+  "status": "partly",
+  "note": "いられない hinted as cannot stay as one is; block not split"
+ },
+ {
+  "kind": "block",
+  "id": "dake",
+  "field": "gloss",
+  "severity": "misleading",
+  "status": "partly",
+  "note": "degree and at-least uses hinted per pattern; not split"
+ },
+ {
+  "kind": "block",
+  "id": "sugi",
+  "field": "forms",
+  "severity": "misleading",
+  "status": "partly",
+  "note": "すぎない hinted as does not go beyond; one record"
+ },
+ {
+  "kind": "block",
+  "id": "wake",
+  "field": "gloss",
+  "severity": "wrong",
+  "status": "partly",
+  "note": "hinted per pattern (a reasonable course / the conclusion one would draw); わけにはいかない not made one unit"
+ },
+ {
+  "kind": "block",
+  "id": "mono-thing",
+  "field": "gloss",
+  "severity": "misleading",
+  "status": "not applied",
+  "note": "evaluative and hypothetical uses have no separate cue yet"
+ },
+ {
+  "kind": "block",
+  "id": "mono-explanation",
+  "field": "gloss",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "gloss unchanged"
+ },
+ {
+  "kind": "block",
+  "id": "mono-refusal",
+  "field": "gloss",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "ものか is still two parts; rated partial"
+ },
+ {
+  "kind": "block",
+  "id": "tokoro-point",
+  "field": "gloss",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "gloss replaced"
+ },
+ {
+  "kind": "block",
+  "id": "tokoro-degree",
+  "field": "gloss",
+  "severity": "misleading",
+  "status": "not applied",
+  "note": "どころではない is still built from parts"
+ },
+ {
+  "kind": "block",
+  "id": "iku-acceptable",
+  "field": "gloss",
+  "severity": "misleading",
+  "status": "partly",
+  "note": "いかない hinted as will not do"
+ },
+ {
+  "kind": "block",
+  "id": "koso",
+  "field": "type",
+  "severity": "weak",
+  "status": "applied",
+  "note": "type is particle"
+ },
+ {
+  "kind": "block",
+  "id": "mukau",
+  "field": "forms",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "向けて removed; no pattern part uses it"
+ },
+ {
+  "kind": "block",
+  "id": "kamau",
+  "field": "gloss",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "構わず hinted as without minding"
+ },
+ {
+  "kind": "block",
+  "id": "temae",
+  "field": "gloss",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "gloss replaced"
+ },
+ {
+  "kind": "block",
+  "id": "shitagau",
+  "field": "gloss",
+  "severity": "wrong",
+  "status": "partly",
+  "note": "にしたがって hinted as in step with; following; the connective is a one-block pattern with its plain meaning; one block"
+ },
+ {
+  "kind": "block",
+  "id": "tsuki",
+  "field": "gloss",
+  "severity": "misleading",
+  "status": "partly",
+  "note": "につき rated partial; the two senses are not split"
+ },
+ {
+  "kind": "block",
+  "id": "tsukeru",
+  "field": "gloss",
+  "severity": "wrong",
+  "status": "partly",
+  "note": "hinted per pattern (fixes it on / in connection with, each time); one block"
+ },
+ {
+  "kind": "block",
+  "id": "kagiru",
+  "field": "gloss",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "限って and 限らず hinted separately"
+ },
+ {
+  "kind": "block",
+  "id": "kakawaru",
+  "field": "gloss",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "gloss ‘relates to or affects’; かかわらず hinted as without regard to"
+ },
+ {
+  "kind": "block",
+  "id": "tou",
+  "field": "gloss",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "問わず hinted as without asking about"
+ },
+ {
+  "kind": "block",
+  "id": "kaneru",
+  "field": "gloss",
+  "severity": "misleading",
+  "status": "partly",
+  "note": "かね in かねない hinted as could well (do); not a separate block"
+ },
+ {
+  "kind": "block",
+  "id": "tsuujiru",
+  "field": "forms",
+  "severity": "wrong",
+  "status": "not applied",
+  "note": "forms unchanged"
+ },
+ {
+  "kind": "block",
+  "id": "sugi",
+  "field": "gloss",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "すぎない hinted as does not go beyond"
+ },
+ {
+  "kind": "block",
+  "id": "choudai",
+  "field": "type",
+  "severity": "wrong",
+  "status": "not applied",
+  "note": "type and example unchanged"
+ },
+ {
+  "kind": "block",
+  "id": "shiyou",
+  "field": "example",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "example is now 眠くてしょうがない"
+ },
+ {
+  "kind": "block",
+  "id": "tamaranai",
+  "field": "forms",
+  "severity": "misleading",
+  "status": "partly",
+  "note": "gloss ‘cannot bear the feeling’; the source verb is not labelled"
+ },
+ {
+  "kind": "block",
+  "id": "shiro",
+  "field": "gloss",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "何しろ is a fixed adverb of its own again"
+ },
+ {
+  "kind": "block",
+  "id": "yara",
+  "field": "gloss",
+  "severity": "misleading",
+  "status": "partly",
+  "note": "listing and uncertainty hinted per pattern; どうやら rated partial, not made a unit"
+ },
+ {
+  "kind": "block",
+  "id": "demo",
+  "field": "gloss",
+  "severity": "misleading",
+  "status": "not applied",
+  "note": "てでも unchanged"
+ },
+ {
+  "kind": "block",
+  "id": "ikinari",
+  "field": "gloss",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "gloss replaced"
+ },
+ {
+  "kind": "block",
+  "id": "man",
+  "field": "type",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "no schema note added"
+ },
+ {
+  "kind": "block",
+  "id": "sai",
+  "field": "gloss",
+  "severity": "weak",
+  "status": "applied",
+  "note": "gloss replaced"
+ },
+ {
+  "kind": "block",
+  "id": "shita",
+  "field": "example",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "example and gloss replaced"
+ },
+ {
+  "kind": "block",
+  "id": "ki",
+  "field": "gloss",
+  "severity": "weak",
+  "status": "applied",
+  "note": "hinted per pattern (attention or concern / attention)"
+ },
+ {
+  "kind": "block",
+  "id": "atari",
+  "field": "gloss",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "gloss replaced"
+ },
+ {
+  "kind": "block",
+  "id": "you-volition",
+  "field": "gloss",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "gloss replaced"
+ },
+ {
+  "kind": "block",
+  "id": "hatashite",
+  "field": "gloss",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "unchanged"
+ },
+ {
+  "kind": "block",
+  "id": "yagate",
+  "field": "gloss",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "gloss replaced"
+ },
+ {
+  "kind": "block",
+  "id": "imadani",
+  "field": "gloss",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "gloss replaced"
+ },
+ {
+  "kind": "block",
+  "id": "shidai-step",
+  "field": "gloss",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "gloss replaced"
+ },
+ {
+  "kind": "block",
+  "id": "hanmen",
+  "field": "gloss",
+  "severity": "weak",
+  "status": "applied",
+  "note": "gloss replaced"
+ },
+ {
+  "kind": "block",
+  "id": "kangaeru",
+  "field": "gloss",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "考えられる hinted as is thought; can be inferred"
+ },
+ {
+  "kind": "block",
+  "id": "komeru",
+  "field": "gloss",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "gloss replaced"
+ },
+ {
+  "kind": "block",
+  "id": "mottomo",
+  "field": "gloss",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "gloss replaced"
+ },
+ {
+  "kind": "block",
+  "id": "tatte",
+  "field": "forms",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "alternation not documented"
+ },
+ {
+  "kind": "pattern",
+  "id": "つもりで",
+  "field": "literal",
+  "severity": "weak",
+  "status": "applied",
+  "note": "literal replaced"
+ },
+ {
+  "kind": "pattern",
+  "id": "にかかわる",
+  "field": "meaning",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "にもかかわらず",
+  "field": "meaning",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "に限って",
+  "field": "meaning",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "てからでないと",
+  "field": "literal",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "literal replaced"
+ },
+ {
+  "kind": "pattern",
+  "id": "なくはない",
+  "field": "meaning",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "ないことには-ない",
+  "field": "meaning",
+  "severity": "weak",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "たまえ",
+  "field": "sentence",
+  "severity": "misleading",
+  "status": "not applied",
+  "note": "the deck sentence already marks the hierarchy (君、…してくれたまえ); kept"
+ },
+ {
+  "kind": "pattern",
+  "id": "つつ-も",
+  "field": "parts",
+  "severity": "wrong",
+  "status": "not applied",
+  "note": "も is still not shown as a part"
+ },
+ {
+  "kind": "pattern",
+  "id": "に際して",
+  "field": "literal",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "literal replaced"
+ },
+ {
+  "kind": "pattern",
+  "id": "つつある",
+  "field": "meaning",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "～ところに・～ところへ",
+  "field": "meaning",
+  "severity": "weak",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "ところだった2",
+  "field": "parts",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "parts changed as suggested"
+ },
+ {
+  "kind": "pattern",
+  "id": "ては",
+  "field": "meaning",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "ては-ては",
+  "field": "meaning",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "に先立ち",
+  "field": "meaning",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "あげく",
+  "field": "meaning",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "いつの間にか",
+  "field": "meaning",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "からには",
+  "field": "transparency",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "rated partial (solved by review)"
+ },
+ {
+  "kind": "pattern",
+  "id": "抜きで",
+  "field": "meaning",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "を通じて-を通して",
+  "field": "literal",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "literal replaced"
+ },
+ {
+  "kind": "pattern",
+  "id": "にしたら",
+  "field": "transparency",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "rated partial (solved by review)"
+ },
+ {
+  "kind": "pattern",
+  "id": "としても",
+  "field": "meaning",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "にて",
+  "field": "parts",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "parts changed as suggested"
+ },
+ {
+  "kind": "pattern",
+  "id": "かと思ったら-かと思うと",
+  "field": "meaning",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "～ばと思います",
+  "field": "literal",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "literal replaced"
+ },
+ {
+  "kind": "pattern",
+  "id": "というものでもない",
+  "field": "meaning",
+  "severity": "weak",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "からして",
+  "field": "transparency",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "rated partial (solved by review)"
+ },
+ {
+  "kind": "pattern",
+  "id": "そういえば",
+  "field": "transparency",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "rated partial (solved by review)"
+ },
+ {
+  "kind": "pattern",
+  "id": "お-願う",
+  "field": "parts",
+  "severity": "misleading",
+  "status": "not applied",
+  "note": "the underline is still お書き願います as one piece"
+ },
+ {
+  "kind": "pattern",
+  "id": "て頂戴",
+  "field": "meaning",
+  "severity": "weak",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "ようではないか",
+  "field": "literal",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "literal replaced"
+ },
+ {
+  "kind": "pattern",
+  "id": "のではないだろうか",
+  "field": "literal",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "literal replaced"
+ },
+ {
+  "kind": "pattern",
+  "id": "に決まっている",
+  "field": "literal",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "literal replaced"
+ },
+ {
+  "kind": "pattern",
+  "id": "ことになっている",
+  "field": "meaning",
+  "severity": "weak",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "ことだから",
+  "field": "meaning",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "ものがある",
+  "field": "meaning",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "てしょうがない",
+  "field": "meaning",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "だけに",
+  "field": "transparency",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "rated partial (solved by review)"
+ },
+ {
+  "kind": "pattern",
+  "id": "だけあって",
+  "field": "transparency",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "rated partial (solved by review)"
+ },
+ {
+  "kind": "pattern",
+  "id": "手前",
+  "field": "meaning",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "はもとより",
+  "field": "meaning",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "っこない",
+  "field": "meaning",
+  "severity": "weak",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "それとも",
+  "field": "meaning",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "ようでは-ようじゃ",
+  "field": "meaning",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "だけましだ",
+  "field": "meaning",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "に値する",
+  "field": "meaning",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "おそらく",
+  "field": "meaning",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "といった",
+  "field": "meaning",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "何から何まで",
+  "field": "literal",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "literal replaced"
+ },
+ {
+  "kind": "pattern",
+  "id": "何といっても",
+  "field": "meaning",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "てならない",
+  "field": "literal",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "literal replaced"
+ },
+ {
+  "kind": "pattern",
+  "id": "のみならず",
+  "field": "literal",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "literal replaced"
+ },
+ {
+  "kind": "pattern",
+  "id": "それなのに",
+  "field": "sentence",
+  "severity": "weak",
+  "status": "applied",
+  "note": "deck sentence replaced"
+ },
+ {
+  "kind": "pattern",
+  "id": "いわゆる",
+  "field": "sentence",
+  "severity": "weak",
+  "status": "applied",
+  "note": "deck sentence replaced"
+ },
+ {
+  "kind": "pattern",
+  "id": "も-ば-も",
+  "field": "literal",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "literal replaced"
+ },
+ {
+  "kind": "pattern",
+  "id": "何しろ",
+  "field": "parts",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "parts changed as suggested"
+ },
+ {
+  "kind": "pattern",
+  "id": "ならともかく",
+  "field": "literal",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "literal replaced"
+ },
+ {
+  "kind": "pattern",
+  "id": "だけのことはある",
+  "field": "meaning",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "てはならない",
+  "field": "transparency",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "rated partial (solved by review)"
+ },
+ {
+  "kind": "pattern",
+  "id": "ねばならない",
+  "field": "transparency",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "rated partial (solved by review)"
+ },
+ {
+  "kind": "pattern",
+  "id": "てでも",
+  "field": "meaning",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "ないわけにはいかない",
+  "field": "meaning",
+  "severity": "misleading",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pattern",
+  "id": "たって",
+  "field": "meaning",
+  "severity": "weak",
+  "status": "applied",
+  "note": "the reviewed answer is now the reviewer’s (GLOSS_FIX)"
+ },
+ {
+  "kind": "pair",
+  "id": "ざるを得ない ⇄ よりほかない",
+  "field": "pair",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "added to GRAMMAR_CONFUSABLE"
+ },
+ {
+  "kind": "pair",
+  "id": "ざるを得ない ⇄ よりしかたがない",
+  "field": "pair",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "added to GRAMMAR_CONFUSABLE"
+ },
+ {
+  "kind": "pair",
+  "id": "よりほかない ⇄ よりしかたがない",
+  "field": "pair",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "added to GRAMMAR_CONFUSABLE"
+ },
+ {
+  "kind": "pair",
+  "id": "ざるを得ない ⇄ ないわけにはいかない",
+  "field": "pair",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "added to GRAMMAR_CONFUSABLE"
+ },
+ {
+  "kind": "pair",
+  "id": "ないではいられない ⇄ てならない",
+  "field": "pair",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "added to GRAMMAR_CONFUSABLE"
+ },
+ {
+  "kind": "pair",
+  "id": "てならない ⇄ てしょうがない",
+  "field": "pair",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "added to GRAMMAR_CONFUSABLE"
+ },
+ {
+  "kind": "pair",
+  "id": "てならない ⇄ てたまらない",
+  "field": "pair",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "added to GRAMMAR_CONFUSABLE"
+ },
+ {
+  "kind": "pair",
+  "id": "てしょうがない ⇄ てたまらない",
+  "field": "pair",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "added to GRAMMAR_CONFUSABLE"
+ },
+ {
+  "kind": "pair",
+  "id": "にかかわらず ⇄ を問わず",
+  "field": "pair",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "added to GRAMMAR_CONFUSABLE"
+ },
+ {
+  "kind": "pair",
+  "id": "にもかかわらず ⇄ ものの",
+  "field": "pair",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "added to GRAMMAR_CONFUSABLE"
+ },
+ {
+  "kind": "pair",
+  "id": "上に ⇄ その上",
+  "field": "pair",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "added to GRAMMAR_CONFUSABLE"
+ },
+ {
+  "kind": "pair",
+  "id": "おまけに ⇄ しかも",
+  "field": "pair",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "added to GRAMMAR_CONFUSABLE"
+ },
+ {
+  "kind": "pair",
+  "id": "て当然だ ⇄ のも当然だ",
+  "field": "pair",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "added to GRAMMAR_CONFUSABLE"
+ },
+ {
+  "kind": "pair",
+  "id": "にすぎない ⇄ でしかない",
+  "field": "pair",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "added to GRAMMAR_CONFUSABLE"
+ },
+ {
+  "kind": "pair",
+  "id": "に相違ない ⇄ に決まっている",
+  "field": "pair",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "added to GRAMMAR_CONFUSABLE"
+ },
+ {
+  "kind": "pair",
+  "id": "ないことには-ない ⇄ てからでないと",
+  "field": "pair",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "added to GRAMMAR_CONFUSABLE"
+ },
+ {
+  "kind": "pair",
+  "id": "際に ⇄ に際して",
+  "field": "pair",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "added to GRAMMAR_CONFUSABLE"
+ },
+ {
+  "kind": "pair",
+  "id": "に際して ⇄ にあたり-にあたって",
+  "field": "pair",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "added to GRAMMAR_CONFUSABLE"
+ },
+ {
+  "kind": "pair",
+  "id": "なにやら ⇄ 何といっても",
+  "field": "pair",
+  "severity": "weak",
+  "status": "applied",
+  "note": "removed from GRAMMAR_CONFUSABLE"
+ },
+ {
+  "kind": "pair",
+  "id": "を中心に ⇄ 中を",
+  "field": "pair",
+  "severity": "weak",
+  "status": "applied",
+  "note": "removed from GRAMMAR_CONFUSABLE"
+ },
+ {
+  "kind": "pair",
+  "id": "につけ ⇄ に値する",
+  "field": "pair",
+  "severity": "weak",
+  "status": "applied",
+  "note": "removed from GRAMMAR_CONFUSABLE"
+ },
+ {
+  "kind": "pair",
+  "id": "としては ⇄ 上は",
+  "field": "pair",
+  "severity": "weak",
+  "status": "applied",
+  "note": "removed from GRAMMAR_CONFUSABLE"
+ },
+ {
+  "kind": "pair",
+  "id": "かねない ⇄ というわけではない",
+  "field": "pair",
+  "severity": "weak",
+  "status": "applied",
+  "note": "removed from GRAMMAR_CONFUSABLE"
+ },
+ {
+  "kind": "pair",
+  "id": "というものだ ⇄ ところだった2",
+  "field": "pair",
+  "severity": "weak",
+  "status": "applied",
+  "note": "removed from GRAMMAR_CONFUSABLE"
+ },
+ {
+  "kind": "pair",
+  "id": "何から何まで ⇄ 何しろ",
+  "field": "pair",
+  "severity": "weak",
+  "status": "applied",
+  "note": "removed from GRAMMAR_CONFUSABLE"
+ },
+ {
+  "kind": "pair",
+  "id": "にしたら ⇄ にすぎない",
+  "field": "pair",
+  "severity": "weak",
+  "status": "applied",
+  "note": "removed from GRAMMAR_CONFUSABLE"
+ },
+ {
+  "kind": "pair",
+  "id": "かのようだ ⇄ ようでは-ようじゃ",
+  "field": "pair",
+  "severity": "weak",
+  "status": "applied",
+  "note": "removed from GRAMMAR_CONFUSABLE"
+ },
+ {
+  "kind": "general",
+  "id": "polarity-in-hints",
+  "field": "gloss",
+  "severity": "note",
+  "status": "applied",
+  "note": "hints are now per part and say what the form shown does, negation included; the rule against sharing the answer’s words was removed"
+ },
+ {
+  "kind": "general",
+  "id": "transparency-calibration",
+  "field": "transparency",
+  "severity": "note",
+  "status": "not applied",
+  "note": "needs a card that asks for a paraphrase before the choices; the cards stay unscored practice"
+ },
+ {
+  "kind": "general",
+  "id": "basic-in-context",
+  "field": "gloss",
+  "severity": "note",
+  "status": "partly",
+  "note": "basic particles carry a per-pattern hint where the reviewer named a construction; not everywhere"
+ },
+ {
+  "kind": "general",
+  "id": "example-alignment",
+  "field": "example",
+  "severity": "note",
+  "status": "partly",
+  "note": "か, 下, しょうがない, 抜く and 得る now have sense-matched examples; the others were not re-checked one by one"
+ },
+ {
+  "kind": "general",
+  "id": "pair-policy",
+  "field": "pair",
+  "severity": "note",
+  "status": "partly",
+  "note": "18 pairs added, 9 released, and the list now also guards the scored cards; no frozen answer per example"
+ }
+]

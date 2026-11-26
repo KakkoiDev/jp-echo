@@ -1,0 +1,1882 @@
+[
+  {
+    "kind": "block",
+    "id": "zaru",
+    "field": "gloss",
+    "severity": "misleading",
+    "problem": "The gloss treats all forms as archaic. The attributive ざる and literary ぬ are marked, but ず is productive in present-day written and spoken constructions.",
+    "evidence": "ずに済んだ is ordinary modern Japanese; 見えざる is literary.",
+    "suggestion": "negative: without doing; literary forms",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "naku",
+    "field": "forms",
+    "severity": "misleading",
+    "problem": "The separate entries naku and nai both claim the same plain negative ない, with no distinction between their uses.",
+    "evidence": "なく is a continuative form of ない; ようがない uses the ordinary existence negative.",
+    "suggestion": "Merge with nai, with distinct notes for inflected なく and existential versus predicate negation.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "eru",
+    "field": "gloss",
+    "severity": "wrong",
+    "problem": "The tested suffix expresses possibility, and the shared gloss reverses the polarity of 得ない. The example does not test lexical get or attain.",
+    "evidence": "生じ得る is can occur; あり得ない is cannot happen. Neither requires obtaining anything.",
+    "suggestion": "Split: can happen or be done; cannot happen or be done. Teach ざるを得ない as a construction.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "ni",
+    "field": "gloss",
+    "severity": "weak",
+    "problem": "Endpoint or link says too little about which relation に contributes. The arrival example only demonstrates a destination.",
+    "evidence": "駅に着く vs 三日間にわたる vs 雨にかかわらず.",
+    "suggestion": "Use construction-specific cues such as destination, recipient, timeframe, reference, and adverbial marker.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "no",
+    "field": "gloss",
+    "severity": "misleading",
+    "problem": "A noun modifier gloss does not account for nominalizing の in several uses.",
+    "evidence": "のではないだろうか and のも当然だ can follow a full clause.",
+    "suggestion": "Separate noun-linking の from nominalizing の, with a cue such as treats the clause as a fact.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "mo",
+    "field": "gloss",
+    "severity": "misleading",
+    "problem": "The gloss covers additive too and misses scalar even or concession.",
+    "evidence": "にもかかわらず, としても and 何といっても use even in the tested constructions.",
+    "suggestion": "Split additive too from scalar even.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "ka",
+    "field": "gloss",
+    "severity": "wrong",
+    "problem": "The shared gloss conflates interrogative, alternative, and indefinite か. The example's actual question is marked by かな, whereas 誰か means someone.",
+    "evidence": "か何か, いつの間にか, か〜ないか, and ものか require different cues.",
+    "suggestion": "Separate question marker, alternative or, and indefiniteness; use 本当ですか for the question example.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "te",
+    "field": "forms",
+    "severity": "wrong",
+    "problem": "The で after ない in ないではいられない belongs to the negative connective ないで. Labeling it as the voiced form of て teaches the wrong conjugation.",
+    "evidence": "食べないで vs 読んで. Negative て-form 食べなくて is different.",
+    "suggestion": "Treat ないで as one negative connective: without doing; reserve で as a て allomorph for forms like 読んで.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "ta",
+    "field": "gloss",
+    "severity": "misleading",
+    "problem": "Completed action is too narrow for copular だった and suggests the action in ところだった had already happened.",
+    "evidence": "出かけるところだった means was about to go out.",
+    "suggestion": "past or completed form",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "koto",
+    "field": "gloss",
+    "severity": "misleading",
+    "problem": "Abstract fact implies the action happened. Nominalization can refer to an action, planned arrangement, or obligation, and the idioms have distinct uses.",
+    "evidence": "読むことが好きだ; ことになっている; に越したことはない.",
+    "suggestion": "turns an action or clause into a noun",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "uchi",
+    "field": "gloss",
+    "severity": "misleading",
+    "problem": "The example shows a time window, while ～のうち selects from a group. A single spatial metaphor leaves both common readings implicit.",
+    "evidence": "四季のうちで秋 vs 若いうちに vs 鳴るか鳴らないかのうちに.",
+    "suggestion": "within a group or time window",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "ue",
+    "field": "gloss",
+    "severity": "wrong",
+    "problem": "The physical layer does not teach the prerequisite or commitment in 上は. The physical example also misses the additive construction.",
+    "evidence": "安い上に adds a fact; 引き受けた上は sets a settled premise; 教育上 has a different reading and function.",
+    "suggestion": "Split additive 上 and premise 上は. Keep suffix 上 (jou) separate.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "ijou",
+    "field": "gloss",
+    "severity": "wrong",
+    "problem": "A numerical floor explains the example, but promised-now-that does not contain a quantity or comparison.",
+    "evidence": "三人以上 and 約束した以上 are different jobs.",
+    "suggestion": "Keep threshold for 以上に and teach clause-final 以上 as given that.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "tsutsu",
+    "field": "gloss",
+    "severity": "wrong",
+    "problem": "Parallel actions explains only one use. Concessive つつ(も) contrasts facts, and つつある marks a single process.",
+    "evidence": "知りつつも食べる contrasts facts; 上昇しつつある has only one action.",
+    "suggestion": "Separate simultaneous while, concessive although, and progressive in progress.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "suru-do",
+    "field": "gloss",
+    "severity": "misleading",
+    "problem": "The meaning of lexical する is being transferred directly to the established expression に際して, where して does not mean carrying out the occasion.",
+    "evidence": "入学に際して means on entering, not on doing an occasion.",
+    "suggestion": "Use 際する as an inflected verb meaning face an occasion, or teach に際して as a unit.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "nuku",
+    "field": "gloss",
+    "severity": "wrong",
+    "problem": "Pulling out weeds only shows lexical 抜く. The tested suffix after a verb means do through to completion.",
+    "evidence": "走り抜いた means ran all the way; 抜きで means omitting or without.",
+    "suggestion": "Split the completive suffix from omission and use an example of each.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "sou",
+    "field": "gloss",
+    "severity": "misleading",
+    "problem": "Stays beside a path fails for abstract adherence and can suggest physical adjacency in all uses.",
+    "evidence": "川に沿う vs 方針に沿う.",
+    "suggestion": "follows a line, plan, or policy",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "meguru",
+    "field": "gloss",
+    "severity": "misleading",
+    "problem": "The example means traveling around islands, unlike the theme of a dispute in ～を巡って.",
+    "evidence": "空港の建設を巡って意見が分かれる.",
+    "suggestion": "centers on a topic or issue",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "douse",
+    "field": "gloss",
+    "severity": "weak",
+    "problem": "After all and anyway alone do not convey the speaker treating the outcome as settled, often with resignation.",
+    "evidence": "どうせ間に合わない implies we won't make it whatever we do.",
+    "suggestion": "anyway; the outcome is assumed fixed",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "gake",
+    "field": "gloss",
+    "severity": "wrong",
+    "problem": "The block does not imply departure only. Its own example is returning home.",
+    "evidence": "帰りがけに牛乳を買う.",
+    "suggestion": "on the way, especially when leaving",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "得る-得る",
+    "field": "meaning",
+    "severity": "misleading",
+    "problem": "Is able to reads as a person's skill. Verb-stem 得る here is possibility under the circumstances.",
+    "evidence": "失敗し得る is failure may happen.",
+    "suggestion": "It can happen or be done; is possible.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "ざるを得ない",
+    "field": "meaning",
+    "severity": "misleading",
+    "problem": "Can't help doing readily suggests an involuntary response or desire, unlike being forced by circumstances.",
+    "evidence": "中止せざるを得ない means circumstances leave no choice, not an urge to cancel.",
+    "suggestion": "have no choice but to; be forced to",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "どうやら",
+    "field": "transparency",
+    "severity": "misleading",
+    "problem": "The provided parts suggest something indefinite, not the evidential inference apparently. A hidden-Japanese solve with distant alternatives does not demonstrate this leap.",
+    "evidence": "どう and やら do not tell the learner to infer a likely conclusion from clues.",
+    "suggestion": "Mark partial or teach as a fixed evidential adverb.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "万が一",
+    "field": "transparency",
+    "severity": "weak",
+    "problem": "A literal one in ten thousand signals rarity, but does not fully yield the precautionary if or in case function.",
+    "evidence": "万が一地震が起きたら introduces a contingency; it does not assert a probability estimate.",
+    "suggestion": "Partial. Gloss the whole as in the unlikely event that.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "にほかならない",
+    "field": "literal",
+    "severity": "wrong",
+    "problem": "It cannot turn out to be suggests a future outcome or inability. The construction makes an exclusive identification now.",
+    "evidence": "成功は努力の結果にほかならない = 努力の結果以外の何ものでもない.",
+    "suggestion": "is nothing other than that; mark partial pending a copular split",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "ものなら①",
+    "field": "transparency",
+    "severity": "misleading",
+    "problem": "A thing plus if does not signal the potential-form construction and its doubtful or counterfactual feasibility.",
+    "evidence": "できるものなら学生時代に戻りたい vs 雨なら家にいる.",
+    "suggestion": "Mark partial; teach if it were possible, typically despite the difficulty.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "おおよそ",
+    "field": "meaning",
+    "severity": "misleading",
+    "problem": "Outline and gist belong to a different nominal use. Only the approximation sense fits the displayed sentence.",
+    "evidence": "おおよそ十分かかります.",
+    "suggestion": "approximately; roughly",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "中を",
+    "field": "meaning",
+    "severity": "wrong",
+    "problem": "Static in/on and directional into are unsuitable as equivalents. を marks the traversed setting or path.",
+    "evidence": "激しい雨の中を駅まで走った: ran through the heavy rain.",
+    "suggestion": "through the midst of; passing through",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "上は",
+    "field": "literal",
+    "severity": "wrong",
+    "problem": "Upper layer gives a spatial/additive reading and omits the consequential premise.",
+    "evidence": "引き受けた上は最後までやり抜く = now that I have accepted it, I intend to follow through.",
+    "suggestion": "given that this is already settled; mark partial or teach 上は as a unit",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "にしたがって",
+    "field": "literal",
+    "severity": "wrong",
+    "problem": "The example is obeying instructions, with no changing state. The gloss introduces the other use of にしたがって.",
+    "evidence": "係員の指示にしたがって避難する vs 気温が上がるにしたがって冷房需要が増える.",
+    "suggestion": "in accordance with the instructions; show as X changes separately",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "につき",
+    "field": "transparency",
+    "severity": "misleading",
+    "problem": "Attached circumstance does not distinguish formal reason from a per-unit rate. The deck exposes only the reason usage.",
+    "evidence": "定休日につき vs 一人につき一枚.",
+    "suggestion": "Mark partial and split the two answerable uses.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "につけ",
+    "field": "transparency",
+    "severity": "misleading",
+    "problem": "Attaching a reaction is a mnemonic, not a productive derivation of recurring occasions.",
+    "evidence": "見るにつけ故郷を思い出す: whenever I see it, I recall home.",
+    "suggestion": "Learn the construction as a unit, or mark partial with a recurring-occasion cue.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "かねない",
+    "field": "meaning",
+    "severity": "wrong",
+    "problem": "The unrestricted English options license neutral or welcome possibilities and obscure the typical unwelcome risk.",
+    "evidence": "事故を起こしかねない: might well cause an accident.",
+    "suggestion": "there is a risk that something bad may happen",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "次第だ-次第で",
+    "field": "meaning",
+    "severity": "wrong",
+    "problem": "Bare So is not a meaning of the dependence sense shown. It appears to mix in explanatory ～という次第だ.",
+    "evidence": "天気次第で出発時間を決める.",
+    "suggestion": "depends on; depending on",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "-てこそ",
+    "field": "meaning",
+    "severity": "wrong",
+    "problem": "Because, unless, and until are not equivalent simply because some translations can be rephrased that way. The focus is a necessary or decisive condition.",
+    "evidence": "自分でやってみてこそ分かる conveys only by trying it yourself.",
+    "suggestion": "only by doing; only when or if that happens",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "を除いて",
+    "field": "meaning",
+    "severity": "wrong",
+    "problem": "Unless introduces a condition; this example excludes a member from a set.",
+    "evidence": "日曜日を除いて毎日営業する.",
+    "suggestion": "except for; excluding",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "wo",
+    "field": "gloss",
+    "severity": "misleading",
+    "problem": "The direct-object label excludes route marking in one use explicitly taught by the deck.",
+    "evidence": "激しい雨の中を走る; を marks the setting traversed rather than a patient of running.",
+    "suggestion": "marks an object or a route",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "wa",
+    "field": "gloss",
+    "severity": "misleading",
+    "problem": "Topic alone misses contrast and the conditional force of constructions that contain は. It also obscures the partial concession of XことはXが.",
+    "evidence": "買えなくはない; てはならない; やるだけはやった.",
+    "suggestion": "marks topic or contrast. Teach the conditional constructions as units.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "da",
+    "field": "forms",
+    "severity": "misleading",
+    "problem": "The forms list includes では and じゃ as if they were plain alternatives of だ. They contain or contract で plus は. Another block also claims them with an incompatible purpose.",
+    "evidence": "病気だ asserts; 病気ではない denies; 病気じゃ帰れない sets a condition.",
+    "suggestion": "Keep だ, です, and copular で here. Represent では or じゃ per construction.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "dewa",
+    "field": "gloss",
+    "severity": "wrong",
+    "problem": "The example shows circumstantial if, but several target uses contain the negative copula instead. Framing a situation for comment does not explain that boundary.",
+    "evidence": "雨では無理 has conditional で+は. というわけではない has ではない. ようでは uses a conditional frame.",
+    "suggestion": "Separate the circumstantial conditional from copular で+は; use ではない as the negative for the latter.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "naru",
+    "field": "gloss",
+    "severity": "wrong",
+    "problem": "The same clue is used for change of state, a copular construction, norms, and uncontrollable feelings. It also omits the negative in every ならない and ならず hint.",
+    "evidence": "ことになっている vs にほかならない and のみならず vs ねばならない / てはならない vs 悔しくてならない.",
+    "suggestion": "Keep change of state; add cannot count as for ことにはならない; teach copular ならず and the normative and feeling constructions separately.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "suru-assume",
+    "field": "gloss",
+    "severity": "wrong",
+    "problem": "A hypothetical premise works for としても, but the other contexts use a viewpoint, role, evidence, or disposition of a topic. The example cannot validate those senses.",
+    "evidence": "親にしたら is as seen by a parent; 入口からして starts from the first sign; 好き嫌いは別として sets preference aside.",
+    "suggestion": "Separate hypothetical assume, role treat as, and viewpoint/evidence constructions. Use one natural example per sense.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "to-quote",
+    "field": "gloss",
+    "severity": "misleading",
+    "problem": "Quoting a statement is too narrow for the predicative or role-marking と in として and 別として.",
+    "evidence": "明日行くと言った quotes; 私としては and 好き嫌いは別として do not quote a statement.",
+    "suggestion": "Separate quotation or content と from role or treatment as.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "to-when",
+    "field": "gloss",
+    "severity": "misleading",
+    "problem": "Temporal sequel is not what the viewpoint and inferential と in these patterns means.",
+    "evidence": "窓を開けると風が入った is temporal; 外国人から見ると is from a foreigner's viewpoint.",
+    "suggestion": "Use a second cue such as when judged from that perspective for the viewpoint construction.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "omou",
+    "field": "forms",
+    "severity": "misleading",
+    "problem": "思ったら and 思うと include the very conditional endings responsible for the sequencing in the example, but the gloss omits them.",
+    "evidence": "思っ+たら and 思う+と are not simply alternative bare stems; 思い is a stem.",
+    "suggestion": "Keep 思う and inflected stems; represent たら and conditional と as parts when they drive the pattern.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "miru",
+    "field": "gloss",
+    "severity": "wrong",
+    "problem": "One pattern is literally seeing an observed scene; the other takes a point of view with no visual examination.",
+    "evidence": "笑っているところを見ると vs 外国人から見ると.",
+    "suggestion": "Split into sees or observes and considers from a standpoint.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "neba",
+    "field": "gloss",
+    "severity": "misleading",
+    "problem": "Undone suggests reversing an action. ねば expresses a negative condition, including states that are not the case.",
+    "evidence": "急がねば間に合わない means if we do not hurry.",
+    "suggestion": "if not; unless one does",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "iru",
+    "field": "gloss",
+    "severity": "wrong",
+    "problem": "The same gloss translates いて and いられない without acknowledging the latter is negative potential.",
+    "evidence": "座っている is is sitting; のんびりしてはいられない is cannot keep taking it easy.",
+    "suggestion": "Keep is in a state; add cannot remain in that state for いられない.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "dake",
+    "field": "gloss",
+    "severity": "misleading",
+    "problem": "Sets a boundary misses that だけ is a limiter in the example and a degree or proportional cue in だけに and だけあって.",
+    "evidence": "私だけ残った vs 期待していただけに vs 十年住んでいただけあって.",
+    "suggestion": "Separate only/at least that much from degree-to-reason constructions.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "sugi",
+    "field": "forms",
+    "severity": "misleading",
+    "problem": "The example demonstrates elapsed time with positive 過ぎた. The target only uses negative すぎない with an abstract limit.",
+    "evidence": "十時を過ぎた vs 個人的な意見にすぎない.",
+    "suggestion": "Keep the base and negative in related records or show the negative hint as does not go beyond.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "wake",
+    "field": "gloss",
+    "severity": "wrong",
+    "problem": "The example demonstrates why, but neither construction asks for a reason. というわけではない denies an interpretation and わけにはいかない evaluates whether an option is acceptable.",
+    "evidence": "急ぐわけを教えて vs 嫌いというわけではない vs 行かないわけにはいかない.",
+    "suggestion": "Keep reason for lexical わけ. Teach implication in というわけではない and treat わけにはいかない as a construction.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "mono-thing",
+    "field": "gloss",
+    "severity": "misleading",
+    "problem": "One shared gloss misses the evaluative stance of というものだ and the difficult hypothetical of ものなら. The deck for ものがある does show an aspect or quality.",
+    "evidence": "本当の友情というものだ vs できるものなら vs 心を動かすものがある.",
+    "suggestion": "Keep thing or aspect for ものがある; teach the evaluative and hypothetical constructions with separate cues.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "mono-explanation",
+    "field": "gloss",
+    "severity": "weak",
+    "problem": "Frames a personal circumstance is abstract and suggests the circumstance itself must be personal, rather than the explanation being speaker-framed.",
+    "evidence": "電車が止まっていたもので is an explanation for lateness.",
+    "suggestion": "sets up an explanation or excuse",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "mono-refusal",
+    "field": "gloss",
+    "severity": "weak",
+    "problem": "Proposition never points toward refusal by itself. The block has one use and the shared card example already contains the whole rhetorical construction.",
+    "evidence": "二度と頼むものか relies on rhetorical ものか.",
+    "suggestion": "Teach ものか together as emphatic refusal or denial.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "tokoro-point",
+    "field": "gloss",
+    "severity": "misleading",
+    "problem": "Point reached suggests completion, and it fails to cover an observed scene that serves as evidence.",
+    "evidence": "出かけようとしているところ is about to go out; 笑っているところを見た is saw them smiling.",
+    "suggestion": "phase of an action; observed scene",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "tokoro-degree",
+    "field": "gloss",
+    "severity": "misleading",
+    "problem": "Extent is only a useful mnemonic for degree comparisons. The lone example rules out even considering an activity given the situation.",
+    "evidence": "休むどころではない = this is no time to rest.",
+    "suggestion": "Teach どころではない together: out of the question in this situation.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "iku-acceptable",
+    "field": "gloss",
+    "severity": "misleading",
+    "problem": "The block presents plain working or feasibility. わけにはいかない often means an action is socially or practically unacceptable despite being physically possible.",
+    "evidence": "会議があるから行かないわけにはいかない vs その方法ではうまくいかない.",
+    "suggestion": "Treat わけにはいかない as cannot reasonably do that.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "koso",
+    "field": "type",
+    "severity": "weak",
+    "problem": "This is a focus particle, rather than a conjugational ending.",
+    "evidence": "今こそ and やってみてこそ attach to different constituent types.",
+    "suggestion": "particle",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "mukau",
+    "field": "forms",
+    "severity": "wrong",
+    "problem": "向けて is not a conjugation of 向かう. It is the て-form of transitive 向ける.",
+    "evidence": "駅に向かう to head toward the station; 試験に向けて in preparation for the exam.",
+    "suggestion": "Remove 向けて from mukau and give 向ける its own block.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "kamau",
+    "field": "gloss",
+    "severity": "wrong",
+    "problem": "The only target uses the negative 構わず. Its displayed hint says the learner should take heed, the opposite of the pattern.",
+    "evidence": "人目も構わず泣く means cry without regard to how it looks.",
+    "suggestion": "For 構わず use without caring or paying heed.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "temae",
+    "field": "gloss",
+    "severity": "wrong",
+    "problem": "The example requires an obligation created by what the speaker already did or said. Spatial side is not a usable answer to that example.",
+    "evidence": "約束した手前、今さら断れない.",
+    "suggestion": "given what one has said or done",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "shitagau",
+    "field": "gloss",
+    "severity": "wrong",
+    "problem": "A time-linked change only covers one construction. The block is also used for obeying instructions and for a sentence connective expressing a conclusion.",
+    "evidence": "指示にしたがって; 気温が上がるにしたがって; 道が狭い、したがって通れない.",
+    "suggestion": "Split follows instructions, changes in step with, and the connective therefore.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "tsuki",
+    "field": "gloss",
+    "severity": "misleading",
+    "problem": "Attached circumstance or unit describes neither a formal reason nor a per-unit rate clearly. The example illustrates only the reason.",
+    "evidence": "定休日につき vs 一人につき一枚.",
+    "suggestion": "Teach につき as two senses: due to (formal), and per / for each.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "tsukeru",
+    "field": "gloss",
+    "severity": "wrong",
+    "problem": "The phrase に気をつける uses directs one's attention; lexical attach cannot account for につけ meaning whenever.",
+    "evidence": "足元に気をつけて; 写真を見るにつけ故郷を思い出す.",
+    "suggestion": "Teach 気をつける as pay attention or watch out. Treat ～につけ separately.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "kagiru",
+    "field": "gloss",
+    "severity": "wrong",
+    "problem": "The affirmative hint reverses the meaning of the listed negative 限らず.",
+    "evidence": "学生に限る is restricted to students; 若者に限らず is not limited to young people.",
+    "suggestion": "Use restricts to for affirmative forms and not restricted to for 限らず.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "kakawaru",
+    "field": "gloss",
+    "severity": "wrong",
+    "problem": "The hint omits nondependence in かかわらず. Takes part is too narrow for matters affecting life.",
+    "evidence": "命にかかわる relates to or affects life; 経験にかかわらず means regardless of experience.",
+    "suggestion": "Separate relates to or affects and without regard to.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "tou",
+    "field": "gloss",
+    "severity": "wrong",
+    "problem": "The only target uses negative 問わず. The learner sees the positive raises a criterion, and the example provides no affirmative usage.",
+    "evidence": "年齢を問わず means regardless of age.",
+    "suggestion": "For 問わず: without regard to that criterion.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "kaneru",
+    "field": "gloss",
+    "severity": "misleading",
+    "problem": "Polite inability or refusal and an undesirable possibility are different constructions. Reluctance is not a usable direct hint in the risk construction.",
+    "evidence": "同意しかねます vs 事故を起こしかねない.",
+    "suggestion": "Keep polite inability or refusal; treat かねない as a separate risk construction.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "tsuujiru",
+    "field": "forms",
+    "severity": "wrong",
+    "problem": "通して comes from 通す, not 通じる. The patterns can overlap, but the conjugation should not be taught as one verb.",
+    "evidence": "通じる → 通じて; 通す → 通して.",
+    "suggestion": "Keep both patterns linked as alternatives, with separate verb forms.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "sugi",
+    "field": "gloss",
+    "severity": "misleading",
+    "problem": "The affirmative gloss in the display omits the negation signaling the upper bound.",
+    "evidence": "意見にすぎない means no more than an opinion.",
+    "suggestion": "For すぎない use does not go beyond.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "choudai",
+    "field": "type",
+    "severity": "wrong",
+    "problem": "頂戴 is a verbal noun with する or できる in the block example. After Vて it functions as a request, not a standalone receiving verb.",
+    "evidence": "お水を頂戴できますか; 塩を取って頂戴.",
+    "suggestion": "Use noun for the lexical example; use request ending with a Vて example for the target.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "shiyou",
+    "field": "example",
+    "severity": "misleading",
+    "problem": "The example shows the distinct independent sense there is no way to deal with it. It never shows the degree construction under review.",
+    "evidence": "いくら考えてもしょうがない vs 眠くてしょうがない.",
+    "suggestion": "Teach てしょうがない as very or cannot help feeling; demonstrate it with 眠くてしょうがない。",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "tamaranai",
+    "field": "forms",
+    "severity": "misleading",
+    "problem": "The bare kana form たまる can be read as 溜まる or 貯まる without a kanji or sense cue. The tested negative has the meaning unbearable.",
+    "evidence": "痛くてたまらない means unbearably painful, not that pain cannot accumulate.",
+    "suggestion": "Label the relevant source 堪る and use cannot bear the feeling for たまらない.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "shiro",
+    "field": "gloss",
+    "severity": "wrong",
+    "problem": "Positing an alternative accounts for にせよ or にしろ, but it has no standalone role in the lexicalized adverb 何しろ.",
+    "evidence": "賛成にしろ反対にしろ vs 何しろ初めてなので.",
+    "suggestion": "Keep the concessive endings; remove 何しろ from the shared block.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "yara",
+    "field": "gloss",
+    "severity": "misleading",
+    "problem": "The repeated construction gives illustrative examples rather than leaving a choice undecided. The indefinite uses in なにやら are more defensible than the predictive use in どうやら.",
+    "evidence": "準備やら仕事やら lists things like preparation and work.",
+    "suggestion": "Separate non-exhaustive listing from the uncertainty cue; teach どうやら as a unit.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "demo",
+    "field": "gloss",
+    "severity": "misleading",
+    "problem": "The exact extreme-means use follows Vて and is not represented by knowledge of basic N4 でも alone.",
+    "evidence": "借金をしてでも続けたい vs お茶でも飲もう.",
+    "suggestion": "Teach てでも as a unit or mark this sense as needing instruction.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "ikinari",
+    "field": "gloss",
+    "severity": "wrong",
+    "problem": "For no reason asserts absence of a cause. A sudden act can have a cause unknown to the speaker.",
+    "evidence": "いきなり立ち止まった could be because the person saw traffic.",
+    "suggestion": "suddenly; without warning",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "man",
+    "field": "type",
+    "severity": "weak",
+    "problem": "This is a numeral. Noun is an acceptable broad bucket but does not communicate its function; tagging numerical kanji N2 suggests a lexical difficulty it lacks.",
+    "evidence": "一万円 and 万が一 use numeral 万.",
+    "suggestion": "Mark as basic numeral in review notes while keeping the closest available schema type.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "sai",
+    "field": "gloss",
+    "severity": "weak",
+    "problem": "Specific moment suggests a clock point. The example and uses are formal occasion markers.",
+    "evidence": "お帰りの際 and 入学に際して.",
+    "suggestion": "occasion; time of an event",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "shita",
+    "field": "example",
+    "severity": "misleading",
+    "problem": "The block's sentence demonstrates した as spatial underneath, but its only target sentence uses もと under supervision.",
+    "evidence": "橋の下【した】 vs 新しい監督の下【もと】で.",
+    "suggestion": "Use 監督の下【もと】で練習した。 and gloss under someone's charge or guidance.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "ki",
+    "field": "gloss",
+    "severity": "weak",
+    "problem": "The gloss is a metaphor that covers neither intention nor attention cleanly enough to be a useful block answer.",
+    "evidence": "帰る気はない expresses intention; 車に気をつける expresses attention.",
+    "suggestion": "Use intention or inclination for the former and attention or concern for the latter.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "atari",
+    "field": "gloss",
+    "severity": "misleading",
+    "problem": "Meets an event face to face implies confrontation. The idiom marks the occasion of undertaking something.",
+    "evidence": "開店にあたって準備をした.",
+    "suggestion": "on undertaking or preparing for an event",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "you-volition",
+    "field": "gloss",
+    "severity": "misleading",
+    "problem": "Joint action is the use in this example and invitation pattern, but is not an invariant meaning of the listed forms.",
+    "evidence": "一人で行こう is a personal resolution, not joint action.",
+    "suggestion": "volitional: let's do it or I will",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "hatashite",
+    "field": "gloss",
+    "severity": "weak",
+    "problem": "The two glosses represent different discourse uses. This question uses the doubt or curiosity reading.",
+    "evidence": "はたして予想は当たるだろうか is will that really happen, not as expected.",
+    "suggestion": "For the question use really?; teach as expected with an affirmative example.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "yagate",
+    "field": "gloss",
+    "severity": "wrong",
+    "problem": "All too soon adds the speaker's regret or disapproval, which the word itself does not express.",
+    "evidence": "雨はやがて雪に変わった neutrally places the change later.",
+    "suggestion": "before long; eventually",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "imadani",
+    "field": "gloss",
+    "severity": "misleading",
+    "problem": "Not yet is only a possible translation with a negative predicate, not an inherent meaning. This example is affirmative.",
+    "evidence": "未だに覚えている = still remember.",
+    "suggestion": "still; even now",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "shidai-step",
+    "field": "gloss",
+    "severity": "misleading",
+    "problem": "The noun sequence is a useful association, but the block example only shows the adverb gradually. Using it as a noun gloss in this sentence is a poor card.",
+    "evidence": "風が次第に強くなる says the wind grows stronger gradually.",
+    "suggestion": "Teach 次第に as gradually; by degrees.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "hanmen",
+    "field": "gloss",
+    "severity": "weak",
+    "problem": "On the other hand allows a new unrelated topic. In the tested construction both sides describe the same thing.",
+    "evidence": "都会の生活 is convenient but has high prices.",
+    "suggestion": "another, contrasting side of the same thing",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "kangaeru",
+    "field": "gloss",
+    "severity": "misleading",
+    "problem": "The block's example uses an impersonal passive or inferential reading. Works through an idea omits this distinction from the active form.",
+    "evidence": "原因は不注意と考えられる is it is thought or can be inferred, not the cause thinks.",
+    "suggestion": "Reserve considers for 考える; use is thought or can be inferred for 考えられる.",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "komeru",
+    "field": "gloss",
+    "severity": "misleading",
+    "problem": "Fills something with emotion reverses what the を marks and restricts the object to emotion.",
+    "evidence": "心を込めて puts one's heart into an action. 力を込める can refer to physical effort.",
+    "suggestion": "puts emotion or effort into something",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "mottomo",
+    "field": "gloss",
+    "severity": "misleading",
+    "problem": "The predicate evaluates the anger as understandable. A reaction with good grounds describes an entity and does not directly gloss the judgment.",
+    "evidence": "怒るのももっともだ.",
+    "suggestion": "reasonable; understandable",
+    "confidence": "high"
+  },
+  {
+    "kind": "block",
+    "id": "tatte",
+    "field": "forms",
+    "severity": "weak",
+    "problem": "The example marks ったって, but the standalone list omits the voiced counterpart needed with many stems.",
+    "evidence": "走ったって vs 読んだって are the same concessive pattern.",
+    "suggestion": "Document stem alternation, including だって, with one voiced example.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "つもりで",
+    "field": "literal",
+    "severity": "weak",
+    "problem": "The gloss is difficult to match to the contrast between an intention and pretending an already completed event took place.",
+    "evidence": "行ったつもりで貯金した is saved the amount as if I had gone.",
+    "suggestion": "acting as if it happened; with the intention of doing it for nonpast contexts",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "にかかわる",
+    "field": "meaning",
+    "severity": "misleading",
+    "problem": "Depends on is often translated with による or 次第. The displayed sentence is about a threat or impact, not a dependency.",
+    "evidence": "命にかかわる問題 means a matter affecting life or death.",
+    "suggestion": "concern; be related to; affect",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "にもかかわらず",
+    "field": "meaning",
+    "severity": "misleading",
+    "problem": "Regardless lacks the counterexpectation signaled by this construction and blurs the distinction from にかかわらず.",
+    "evidence": "大雨にもかかわらず contrasts the rain with the match going ahead.",
+    "suggestion": "despite; even though; nevertheless",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "に限って",
+    "field": "meaning",
+    "severity": "wrong",
+    "problem": "Those who is not a standalone meaning. It belongs only in an English rendering of the construction applied to a person category.",
+    "evidence": "傘を持っていない日に限って雨が降る emphasizes exactly those inconvenient days.",
+    "suggestion": "precisely on that occasion; of all people or times; sometimes restricted to that case",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "てからでないと",
+    "field": "literal",
+    "severity": "misleading",
+    "problem": "Once done, if the condition does not hold suggests a conditional after the action, while the whole denies availability before it.",
+    "evidence": "部長に相談してからでないと返事できない.",
+    "suggestion": "unless and until that has been done",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "なくはない",
+    "field": "meaning",
+    "severity": "misleading",
+    "problem": "The construction is not inherently about possibility. A potential predicate provides that sense here.",
+    "evidence": "買えなくはない = I could buy it; 分からなくはない = I can see your point to a degree.",
+    "suggestion": "not entirely untrue or impossible; a qualified yes",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "ないことには-ない",
+    "field": "meaning",
+    "severity": "weak",
+    "problem": "The English answer leaves out the negative consequence required by the supplied construction.",
+    "evidence": "会ってみないことには、どんな人かわからない.",
+    "suggestion": "unless X happens, Y cannot happen or be determined",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "たまえ",
+    "field": "sentence",
+    "severity": "misleading",
+    "problem": "君 used vocatively with a comma plus くれたまえ sounds deliberately theatrical and overdone as an unlabelled example. The form is valid in a marked register.",
+    "evidence": "君、この書類をすぐにコピーしてくれたまえ。",
+    "suggestion": "Mark the example old-fashioned and hierarchical, or use この書類をすぐコピーしたまえ。",
+    "confidence": "medium"
+  },
+  {
+    "kind": "pattern",
+    "id": "つつ-も",
+    "field": "parts",
+    "severity": "wrong",
+    "problem": "The example contains the key concessive も, but the single-part display leaves it out. Running in parallel alone cannot be the hint for this item.",
+    "evidence": "知りつつも食べる: even though they know it is bad.",
+    "suggestion": "Teach concessive つつ(も) separately and show も when it occurs.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "に際して",
+    "field": "literal",
+    "severity": "wrong",
+    "problem": "On carrying out the occasion has no ordinary interpretation and falsely assigns a productive meaning to して here.",
+    "evidence": "入学に際して means on the occasion of starting school or upon enrollment.",
+    "suggestion": "on the occasion of; in connection with undertaking it",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "つつある",
+    "field": "meaning",
+    "severity": "misleading",
+    "problem": "An undifferentiated -ing can represent any progressive or simultaneous activity. This formal construction commonly emphasizes a process underway or developing.",
+    "evidence": "年々上昇しつつある describes ongoing change.",
+    "suggestion": "in the process of; gradually becoming or doing",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "～ところに・～ところへ",
+    "field": "meaning",
+    "severity": "weak",
+    "problem": "When or while is too broad for the item. The new occurrence arriving at a particular stage is the useful distinction.",
+    "evidence": "出かけようとしているところに友達から電話がかかってきた.",
+    "suggestion": "just as; at that point something occurs",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "ところだった2",
+    "field": "parts",
+    "severity": "misleading",
+    "problem": "The standalone っ is presented as glue. Here it is the sound change in the past copula rather than a meaningful independent part.",
+    "evidence": "だった is the past of だ; it modifies the situation represented by ところ.",
+    "suggestion": "Split ところ + だった, or annotate the inflected copula as a whole.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "ては",
+    "field": "meaning",
+    "severity": "misleading",
+    "problem": "The broad menu hides the tested negative-consequence conditional and risks collision with genuine reason patterns.",
+    "evidence": "こんなに寒くては、外で遊べない.",
+    "suggestion": "if things are like this, a negative result follows",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "ては-ては",
+    "field": "meaning",
+    "severity": "wrong",
+    "problem": "If and since are senses of other constructions, not of the repeated alternating pattern shown.",
+    "evidence": "書いては消し、書いては消して.",
+    "suggestion": "repeatedly do one thing and then another",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "に先立ち",
+    "field": "meaning",
+    "severity": "wrong",
+    "problem": "In preference over introduces preference rather than temporal precedence.",
+    "evidence": "開会に先立ち、市長が挨拶をした.",
+    "suggestion": "before; prior to",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "あげく",
+    "field": "meaning",
+    "severity": "misleading",
+    "problem": "After all can be a discourse marker for an explanation, and generic after omits the extended process and often unwelcome result.",
+    "evidence": "一時間も迷ったあげく、何も買わずに帰った.",
+    "suggestion": "after a long process, ended up (often negatively)",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "いつの間にか",
+    "field": "meaning",
+    "severity": "wrong",
+    "problem": "Suddenly and too soon express timing or speed. This expression is about lack of awareness and can describe gradual change.",
+    "evidence": "本を読んでいたら、いつの間にか夜が明けていた.",
+    "suggestion": "before one knew it; without one noticing",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "からには",
+    "field": "transparency",
+    "severity": "misleading",
+    "problem": "Source plus generic particles cannot yield an accepted premise and its consequent obligation or resolve. As long as also invites a continuing-duration reading.",
+    "evidence": "試合に出るからには、絶対に勝ちたい.",
+    "suggestion": "Mark partial. Teach now that or given that X, Y follows as a commitment.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "抜きで",
+    "field": "meaning",
+    "severity": "wrong",
+    "problem": "Unless states a condition. This form excludes an ingredient, element, or topic.",
+    "evidence": "堅い話は抜きで飲みましょう.",
+    "suggestion": "without; leaving out",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "を通じて-を通して",
+    "field": "literal",
+    "severity": "misleading",
+    "problem": "Use the object as a channel is the intermediary sense, but the example describes duration over the entire year.",
+    "evidence": "一年を通じて暖かい contrasts with 友人を通じて知り合った.",
+    "suggestion": "For this sentence: throughout the whole period. Teach via with its own example.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "にしたら",
+    "field": "transparency",
+    "severity": "misleading",
+    "problem": "The parts show considering a premise, but the tested answer requires identifying whose viewpoint it is.",
+    "evidence": "親にしたら子どもの一人暮らしは心配だ.",
+    "suggestion": "Mark partial or teach 人にしたら as from that person's point of view.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "としても",
+    "field": "meaning",
+    "severity": "misleading",
+    "problem": "Also as may be defensible for a different syntactic case, but does not paraphrase the conditional concession tested here.",
+    "evidence": "たとえ反対されたとしても is even supposing that they oppose it.",
+    "suggestion": "even if we suppose that",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "にて",
+    "field": "parts",
+    "severity": "wrong",
+    "problem": "The て in formal にて is not the predicate-linking Vて suffix represented by the block.",
+    "evidence": "会議室にて begins with a noun; 窓を開けて has a verb connective.",
+    "suggestion": "Treat にて as one formal case particle; gloss at or by means of, per sentence.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "かと思ったら-かと思うと",
+    "field": "meaning",
+    "severity": "misleading",
+    "problem": "Then again often introduces a reconsideration in English. Japanese here has rapid succession or contrast between observed events.",
+    "evidence": "晴れたかと思ったら急に雨が降り出した.",
+    "suggestion": "just when it seemed that X, Y immediately followed",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "～ばと思います",
+    "field": "literal",
+    "severity": "wrong",
+    "problem": "My thought is that this condition would hold reports a belief. The construction expresses a hope or softened wish, with an understood favorable result.",
+    "evidence": "お役に立てばと思います = I hope it helps.",
+    "suggestion": "I think it would be good if X; I hope X. Mark partial.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "というものでもない",
+    "field": "meaning",
+    "severity": "weak",
+    "problem": "Not necessarily a matter of suggests the issue is unrelated. The Japanese rejects a blanket rule or inference.",
+    "evidence": "値段が高ければ品質がいいというものでもない.",
+    "suggestion": "it is not necessarily true that; X does not always imply Y",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "からして",
+    "field": "transparency",
+    "severity": "misleading",
+    "problem": "The sentence uses the first diagnostic example, but source plus assume does not explain emphatic even the entrance or distinguish it from judging from.",
+    "evidence": "入口からして高級な雰囲気がある.",
+    "suggestion": "Mark partial; teach starts with or even in the first case, and separate the inference use if wanted.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "そういえば",
+    "field": "transparency",
+    "severity": "misleading",
+    "problem": "If one puts it that way is only a literal prompt. It does not imply a newly remembered related fact.",
+    "evidence": "そういえば、駅前に新しいカフェができたらしいよ.",
+    "suggestion": "Mark partial or teach as a discourse chunk: speaking of which; that reminds me.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "お-願う",
+    "field": "parts",
+    "severity": "misleading",
+    "problem": "The learner needs to know what goes between the pieces. The preposed お in お名前 is not the one that participates in the request construction.",
+    "evidence": "お名前をお書き願います shows お + 書き + 願います.",
+    "suggestion": "Show お + verb stem + 願う, with 願います as the polite form; mark お書き願います only.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "て頂戴",
+    "field": "meaning",
+    "severity": "weak",
+    "problem": "A bare Please do misses register. Vてちょうだい is familiar and direct, sometimes spoken down to someone, rather than a formal request.",
+    "evidence": "ちょっと、その塩を取って頂戴。",
+    "suggestion": "please do (familiar request)",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "ようではないか",
+    "field": "literal",
+    "severity": "misleading",
+    "problem": "Is there not a joint proposal asks about the existence of a proposal rather than showing the rhetorical invitation.",
+    "evidence": "皆で助けようではないか calls for action.",
+    "suggestion": "why don't we do it together?; formal or rhetorical invitation",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "のではないだろうか",
+    "field": "literal",
+    "severity": "misleading",
+    "problem": "Asks whether the supposition is true is too neutral and hides the indirect affirmative suggestion licensed by a negative question.",
+    "evidence": "無理があるのではないだろうか tentatively advances that it might be unrealistic.",
+    "suggestion": "could it be that X?; gently suggests X",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "に決まっている",
+    "field": "literal",
+    "severity": "wrong",
+    "problem": "The matter has been settled suggests an actual decision. The construction conveys speaker certainty.",
+    "evidence": "高い物は売れないに決まっている asserts obvious unsalability; nobody decided it.",
+    "suggestion": "it is a foregone conclusion that X; surely X",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "ことになっている",
+    "field": "meaning",
+    "severity": "weak",
+    "problem": "Expected to can mean a mere prediction. The example is about a standing arrangement.",
+    "evidence": "毎週月曜日に開くことになっている.",
+    "suggestion": "is arranged, scheduled, or prescribed to",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "ことだから",
+    "field": "meaning",
+    "severity": "wrong",
+    "problem": "It is exactly because does not specify the established personal trait or behavior that licenses a prediction, and can be read as generic cause.",
+    "evidence": "真面目な彼のことだから、きっと時間通りに来るだろう。",
+    "suggestion": "knowing what this person is like, one can expect that",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "ものがある",
+    "field": "meaning",
+    "severity": "misleading",
+    "problem": "Strong judgment and feel strongly that invite an assertion of belief. The sentence instead attributes an indefinable quality to the performance.",
+    "evidence": "演奏には人の心を動かすものがある.",
+    "suggestion": "there is something about it that; it has a noticeable quality",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "てしょうがない",
+    "field": "meaning",
+    "severity": "misleading",
+    "problem": "It can't be helped is a sense of standalone しょうがない. In the example it intensifies a sensation rather than making a judgment about remedies.",
+    "evidence": "眠くてしょうがない = terribly sleepy.",
+    "suggestion": "extremely; so much that one cannot help feeling it",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "だけに",
+    "field": "transparency",
+    "severity": "misleading",
+    "problem": "Extent plus generic に does not yield a reason for a proportionate or especially strong result.",
+    "evidence": "期待していただけにショックは大きかった.",
+    "suggestion": "Mark partial. Teach precisely because X, the result is especially Y.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "だけあって",
+    "field": "transparency",
+    "severity": "misleading",
+    "problem": "Having a degree does not give the expected-result judgment. The related だけに can present a bad outcome of the same background.",
+    "evidence": "十年住んでいただけあって詳しい; 期待していただけにショックだった.",
+    "suggestion": "Mark partial. Teach as one would expect given X.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "手前",
+    "field": "meaning",
+    "severity": "misleading",
+    "problem": "The bundled in front of sense belongs to a different physical use. The deck tests a social constraint created by prior words or action.",
+    "evidence": "約束した手前、今さら断れない。",
+    "suggestion": "given what one has said or done, one feels obliged to follow through",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "はもとより",
+    "field": "meaning",
+    "severity": "misleading",
+    "problem": "Let alone can reverse the ordering and implies a scalar relation that this straightforward additive sentence does not require.",
+    "evidence": "味はもとより、サービスも素晴らしい。",
+    "suggestion": "not only X, but also Y; with X taken as a given",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "っこない",
+    "field": "meaning",
+    "severity": "weak",
+    "problem": "Impossible captures the core but strips the form's emphatic colloquial prediction.",
+    "evidence": "一日で終わりっこない is more emphatic and colloquial than 終わらない.",
+    "suggestion": "there's no way it will happen (emphatic, casual)",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "それとも",
+    "field": "meaning",
+    "severity": "wrong",
+    "problem": "Standalone rather does not mean the alternative-question conjunction それとも.",
+    "evidence": "コーヒーにしますか、それとも紅茶にしますか。",
+    "suggestion": "or (introducing the alternative in a question)",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "ようでは-ようじゃ",
+    "field": "meaning",
+    "severity": "misleading",
+    "problem": "Generic if discards the characteristic assessment that a state of affairs makes the consequence undesirable or doubtful.",
+    "evidence": "こんな簡単な問題ができないようでは、合格は難しい。",
+    "suggestion": "if things are such that X, the outlook is poor",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "だけましだ",
+    "field": "meaning",
+    "severity": "misleading",
+    "problem": "One should feel grateful introduces an obligation to feel gratitude. The expression explicitly compares this case with a worse alternative.",
+    "evidence": "給料は安いが、仕事があるだけましだ。",
+    "suggestion": "at least X; that makes it better than it could be",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "に値する",
+    "field": "meaning",
+    "severity": "misleading",
+    "problem": "Amounts to suggests identity or equivalence. The sentence evaluates whether the effort merits respect.",
+    "evidence": "尊敬に値する means deserves respect.",
+    "suggestion": "is worthy of; merits",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "おそらく",
+    "field": "meaning",
+    "severity": "misleading",
+    "problem": "I fear that adds the speaker's anxiety. The adverb itself expresses a probability judgment.",
+    "evidence": "おそらく来ないだろう can be a neutral prediction.",
+    "suggestion": "probably; most likely",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "といった",
+    "field": "meaning",
+    "severity": "wrong",
+    "problem": "So much as is rarely equivalent to the exemplifying といった in this pattern and can introduce a scalar minimum.",
+    "evidence": "京都や奈良といった町 = towns such as Kyoto and Nara.",
+    "suggestion": "such as; of the kind exemplified by",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "何から何まで",
+    "field": "literal",
+    "severity": "misleading",
+    "problem": "From one thing to another can refer to two unspecified endpoints without covering everything. Here the paired indefinites sweep the whole range.",
+    "evidence": "何から何までお世話になりました means you helped with everything.",
+    "suggestion": "from whatever starting point to whatever endpoint; absolutely everything",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "何といっても",
+    "field": "meaning",
+    "severity": "wrong",
+    "problem": "All the same is a concession and by any account is an unreliable paraphrase. Here the speaker singles out the standout point.",
+    "evidence": "夏の楽しみは何といっても花火だ puts fireworks above the rest.",
+    "suggestion": "above all; the standout point is",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "てならない",
+    "field": "literal",
+    "severity": "wrong",
+    "problem": "The linked feeling will not settle confuses the construction with a lexical meaning of 成る. It explicitly denotes a feeling the speaker cannot help having.",
+    "evidence": "悔しくてならない means unbearably frustrated or cannot help feeling frustrated.",
+    "suggestion": "cannot help feeling; extremely. Teach together with an emotion or sensation.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "のみならず",
+    "field": "literal",
+    "severity": "wrong",
+    "problem": "Does not come to suggests a change of state. The expression says the scope is not exclusively X.",
+    "evidence": "日本のみならず世界中で = not only in Japan, but worldwide.",
+    "suggestion": "is not only X; includes Y too",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "それなのに",
+    "field": "sentence",
+    "severity": "weak",
+    "problem": "The comma joins two complete sentences awkwardly in a teaching example for a sentence-initial connector.",
+    "evidence": "毎日練習してきた、それなのに一度も勝てない。",
+    "suggestion": "毎日【まいにち】練習【れんしゅう】してきた。それなのに、一度【いちど】も勝【か】てない。",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "いわゆる",
+    "field": "sentence",
+    "severity": "weak",
+    "problem": "The discourse boundary is clearer with a full stop. The description is independently grammatical.",
+    "evidence": "彼は三歳で字が読めた、いわゆる天才だ。",
+    "suggestion": "彼【かれ】は三歳【さんさい】で字【じ】が読【よ】めた。いわゆる天才【てんさい】だ。",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "も-ば-も",
+    "field": "literal",
+    "severity": "misleading",
+    "problem": "Given that suggests a conditional or causal link. The two abilities are parallel additions.",
+    "evidence": "英語も話せば、中国語も話せる。 The second ability does not depend on the first.",
+    "suggestion": "X as well as Y; both X and Y",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "何しろ",
+    "field": "parts",
+    "severity": "wrong",
+    "problem": "The imperative-looking しろ does not perform the same concessive function as the learner's block shiro. The analysis cannot yield this explanatory connective.",
+    "evidence": "何しろ初めての海外旅行なので contrasts with 賛成にしろ反対にしろ.",
+    "suggestion": "Treat 何しろ as a fixed adverb meaning after all or the main reason is.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "ならともかく",
+    "field": "literal",
+    "severity": "misleading",
+    "problem": "Puts that alternative aside hides the central contrast that the first case might be acceptable and the actual case is not.",
+    "evidence": "子どもならともかく、大人がそんなことをするなんて。",
+    "suggestion": "if it were X, that would be one thing; but Y",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "だけのことはある",
+    "field": "meaning",
+    "severity": "misleading",
+    "problem": "No wonder obscures which fact justifies the other. The quality deserves or lives up to the price or effort cited.",
+    "evidence": "値段が高いだけのことはある: the food lives up to the high price.",
+    "suggestion": "lives up to X; proves worth the price, effort, or reputation",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "てはならない",
+    "field": "transparency",
+    "severity": "misleading",
+    "problem": "Even if a learner understands conditional ては, becomes a new state cannot lead reliably to prohibition, especially with the negative omitted from the displayed hint.",
+    "evidence": "話してはならない = must not talk.",
+    "suggestion": "Mark partial until the learner is given a clue for normative ならない; otherwise teach the whole frame.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "ねばならない",
+    "field": "transparency",
+    "severity": "misleading",
+    "problem": "The negative condition is visible, but the current becomes clue does not tell a new learner that ならない expresses unacceptable failure to act.",
+    "evidence": "仕上げねばならない means must finish, not will become unfinished.",
+    "suggestion": "Mark partial and explicitly teach if not done, it won't do.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "てでも",
+    "field": "meaning",
+    "severity": "misleading",
+    "problem": "By any means and no matter what imply unrestricted means. The construction selects one specific extreme measure the speaker would take.",
+    "evidence": "借金をしてでも店を続けたい: even if I have to borrow.",
+    "suggestion": "even if it means doing X; even by resorting to X",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "ないわけにはいかない",
+    "field": "meaning",
+    "severity": "misleading",
+    "problem": "No way to avoid can suggest physical inevitability. The speaker often could refrain physically but cannot reasonably do so.",
+    "evidence": "会議があるので、行かないわけにはいかない。",
+    "suggestion": "cannot reasonably refrain from doing; have to do",
+    "confidence": "high"
+  },
+  {
+    "kind": "pattern",
+    "id": "たって",
+    "field": "meaning",
+    "severity": "weak",
+    "problem": "The tested concession is colloquial. No matter how is appropriate for certain degree constructions, not the default translation of this example.",
+    "evidence": "今から走ったって間に合わないよ。",
+    "suggestion": "even if (colloquial)",
+    "confidence": "high"
+  },
+  {
+    "kind": "pair",
+    "id": "ざるを得ない ⇄ よりほかない",
+    "field": "pair",
+    "severity": "wrong",
+    "problem": "Missing exclusion. The displayed answer options both say there is no choice.",
+    "evidence": "中止せざるを得ない and 帰るよりほかない both license have no choice but.",
+    "suggestion": "Exclude in both directions.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pair",
+    "id": "ざるを得ない ⇄ よりしかたがない",
+    "field": "pair",
+    "severity": "wrong",
+    "problem": "Missing exclusion. The English keys overlap directly.",
+    "evidence": "中止せざるを得ない and タクシーで行くよりしかたがない both allow there is no choice but.",
+    "suggestion": "Exclude in both directions.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pair",
+    "id": "よりほかない ⇄ よりしかたがない",
+    "field": "pair",
+    "severity": "wrong",
+    "problem": "Missing exclusion. Both express the lack of another course of action.",
+    "evidence": "歩いて帰るよりほかない and タクシーで行くよりしかたがない are both there is no alternative.",
+    "suggestion": "Exclude in both directions.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pair",
+    "id": "ざるを得ない ⇄ ないわけにはいかない",
+    "field": "pair",
+    "severity": "wrong",
+    "problem": "Missing exclusion. Contextual compulsion and social or practical necessity can both answer the game using have no choice but.",
+    "evidence": "行かないわけにはいかない can also be rendered have no choice but to go.",
+    "suggestion": "Exclude or write carefully distinguished options for one context at a time.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pair",
+    "id": "ないではいられない ⇄ てならない",
+    "field": "pair",
+    "severity": "wrong",
+    "problem": "Missing exclusion. The current options share can't help doing or feeling.",
+    "evidence": "助けないではいられない and 悔しくてならない both express an uncontrollable response, despite distinct attachment and typical predicates.",
+    "suggestion": "Exclude in both directions until options distinguish involuntary action and feeling.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pair",
+    "id": "てならない ⇄ てしょうがない",
+    "field": "pair",
+    "severity": "wrong",
+    "problem": "Missing exclusion. Both answer options explicitly allow extreme feeling and the sentence can be glossed with either.",
+    "evidence": "悔しくてならない and 眠くてしょうがない both license extremely or can't help feeling.",
+    "suggestion": "Exclude in both directions.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pair",
+    "id": "てならない ⇄ てたまらない",
+    "field": "pair",
+    "severity": "wrong",
+    "problem": "Missing exclusion. Both answer options allow very or extremely.",
+    "evidence": "悔しくてならない and 遊びに行きたくてたまらない express intense experiences.",
+    "suggestion": "Exclude in both directions.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pair",
+    "id": "てしょうがない ⇄ てたまらない",
+    "field": "pair",
+    "severity": "wrong",
+    "problem": "Missing exclusion. Both answer options allow very or extremely.",
+    "evidence": "眠くてしょうがない and 眠くてたまらない differ in strength or register, not core meaning.",
+    "suggestion": "Exclude in both directions.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pair",
+    "id": "にかかわらず ⇄ を問わず",
+    "field": "pair",
+    "severity": "wrong",
+    "problem": "Missing exclusion. The current options explicitly overlap on regardless and whether or not.",
+    "evidence": "経験の有無にかかわらず and 年齢を問わず both make the criterion irrelevant.",
+    "suggestion": "Exclude in both directions.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pair",
+    "id": "にもかかわらず ⇄ ものの",
+    "field": "pair",
+    "severity": "wrong",
+    "problem": "Missing exclusion when the current options include even though and although. A contrast in register or attachment won't save an English-only choice.",
+    "evidence": "大雨にもかかわらず試合は行われた; 免許を取ったものの運転していない.",
+    "suggestion": "Exclude until the options distinguish the precise construction rather than generic concession.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pair",
+    "id": "上に ⇄ その上",
+    "field": "pair",
+    "severity": "wrong",
+    "problem": "Missing exclusion. Both entries use the same English answer words.",
+    "evidence": "安い上に and 広くて明るく、その上 both permit on top of that in English.",
+    "suggestion": "Exclude both ways. Teach clause attachment vs sentence connector separately.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pair",
+    "id": "おまけに ⇄ しかも",
+    "field": "pair",
+    "severity": "wrong",
+    "problem": "Missing exclusion. What's more and on top of that both fit the current examples.",
+    "evidence": "迷い、おまけに雨まで降った; 軽くて、しかも丈夫だ.",
+    "suggestion": "Exclude in both directions when the options give only additive meanings.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pair",
+    "id": "て当然だ ⇄ のも当然だ",
+    "field": "pair",
+    "severity": "wrong",
+    "problem": "Missing exclusion. Both carry the same judgment of natural consequence.",
+    "evidence": "勝って当然だ and 疲れるのも当然だ both mean it is only natural that.",
+    "suggestion": "Exclude in both directions.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pair",
+    "id": "にすぎない ⇄ でしかない",
+    "field": "pair",
+    "severity": "wrong",
+    "problem": "Missing exclusion. The two answers literally share merely and no more than.",
+    "evidence": "意見にすぎない; ただの父親でしかない.",
+    "suggestion": "Exclude in both directions.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pair",
+    "id": "に相違ない ⇄ に決まっている",
+    "field": "pair",
+    "severity": "wrong",
+    "problem": "Missing exclusion for an English glossary choice. Both can mean surely or certainly regardless of register.",
+    "evidence": "合格するに相違ない; 売れないに決まっている.",
+    "suggestion": "Exclude unless the choice explicitly tests degree or register.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pair",
+    "id": "ないことには-ない ⇄ てからでないと",
+    "field": "pair",
+    "severity": "wrong",
+    "problem": "Missing exclusion. The current English glosses both license an unless-and-until reading where a prerequisite must be completed.",
+    "evidence": "会ってみないことには分からない; 相談してからでないと返事できない.",
+    "suggestion": "Exclude broad conditional translations or make the explicit temporal prerequisite the tested distinction.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pair",
+    "id": "際に ⇄ に際して",
+    "field": "pair",
+    "severity": "wrong",
+    "problem": "Missing exclusion. Both current keys say at the time of or on the occasion of.",
+    "evidence": "お降りの際には and 入学に際して overlap in English despite different typical uses.",
+    "suggestion": "Exclude general occasion glosses in both directions.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pair",
+    "id": "に際して ⇄ にあたり-にあたって",
+    "field": "pair",
+    "severity": "wrong",
+    "problem": "Missing exclusion. Both give on the occasion of in the current keys and fit starting a school or business activity.",
+    "evidence": "入学に際して提出する; 新事業を始めるにあたって調査した.",
+    "suggestion": "Exclude both ways for the current choices.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pair",
+    "id": "なにやら ⇄ 何といっても",
+    "field": "pair",
+    "severity": "weak",
+    "problem": "Listed exclusion has no evident semantic collision. Sharing an interrogative-looking element does not make the answers confusable.",
+    "evidence": "Some kind of strange noise vs above all, fireworks.",
+    "suggestion": "Remove the exclusion if it is meant to indicate answer overlap.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pair",
+    "id": "を中心に ⇄ 中を",
+    "field": "pair",
+    "severity": "weak",
+    "problem": "Listed exclusion conflates a center of focus with a path through a setting.",
+    "evidence": "若者を中心に人気 spreads mainly among young people; 雨の中を走る runs through rain.",
+    "suggestion": "Remove after narrowing 中を to a route meaning.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pair",
+    "id": "につけ ⇄ に値する",
+    "field": "pair",
+    "severity": "weak",
+    "problem": "Listed exclusion has no evident semantic collision.",
+    "evidence": "Every time I see the photo vs deserving of respect.",
+    "suggestion": "Allow as contrasting answers if such distant distractors are useful.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pair",
+    "id": "としては ⇄ 上は",
+    "field": "pair",
+    "severity": "weak",
+    "problem": "Listed exclusion has no direct overlap in the target sentences.",
+    "evidence": "私としては is as for me; 引き受けた上は is now that I have accepted it.",
+    "suggestion": "Remove as an overlap pair after clarifying 上は.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pair",
+    "id": "かねない ⇄ というわけではない",
+    "field": "pair",
+    "severity": "weak",
+    "problem": "Listed exclusion pits risk against denial of an inference. Neither is a defensible answer to the other's current sentence.",
+    "evidence": "事故を起こしかねない vs 嫌いというわけではない.",
+    "suggestion": "Remove as meaning overlap after rewriting the risk gloss.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pair",
+    "id": "というものだ ⇄ ところだった2",
+    "field": "pair",
+    "severity": "weak",
+    "problem": "Listed exclusion conflates an evaluative judgment with temporal imminence.",
+    "evidence": "本当の友情というものだ vs 出かけるところだった.",
+    "suggestion": "Remove as an overlap pair.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pair",
+    "id": "何から何まで ⇄ 何しろ",
+    "field": "pair",
+    "severity": "weak",
+    "problem": "Listed exclusion ties an exhaustive expression to an explanatory connective with no matching answer.",
+    "evidence": "Absolutely everything vs after all, it's my first trip.",
+    "suggestion": "Remove as an overlap pair.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pair",
+    "id": "にしたら ⇄ にすぎない",
+    "field": "pair",
+    "severity": "weak",
+    "problem": "Listed exclusion has no direct overlap.",
+    "evidence": "From a parent's point of view vs merely a personal opinion.",
+    "suggestion": "Remove as an overlap pair.",
+    "confidence": "high"
+  },
+  {
+    "kind": "pair",
+    "id": "かのようだ ⇄ ようでは-ようじゃ",
+    "field": "pair",
+    "severity": "weak",
+    "problem": "Listed exclusion confuses apparent resemblance with an unfavorable conditional.",
+    "evidence": "冬に戻ったかのようだ vs この問題ができないようでは難しい.",
+    "suggestion": "Remove as an overlap pair after sharpening ようでは.",
+    "confidence": "high"
+  },
+  {
+    "kind": "general",
+    "id": "polarity-in-hints",
+    "field": "gloss",
+    "severity": "note",
+    "problem": "The display asks the learner to infer from a part whose base gloss often silently drops a bound negative, potential, or conditional. The correct literal in a hidden field cannot repair the visible hint.",
+    "evidence": "得ない as get or attain, いられない as stays in a state, 限らず as restricts the scope, and 問わず as raises a criterion.",
+    "suggestion": "Show the meaning of the actual surface form, or display the negative, potential, and conditional as separate meaningful parts.",
+    "confidence": "high"
+  },
+  {
+    "kind": "general",
+    "id": "transparency-calibration",
+    "field": "transparency",
+    "severity": "note",
+    "problem": "Selecting one of four far-apart English meanings with Japanese hidden measures forced-choice recognition. It does not establish that a learner can derive the construction from the parts or distinguish it from neighboring patterns.",
+    "evidence": "The given glosses for どうやら, そういえば, からには, and ～ばと思います do not yield their discourse meanings.",
+    "suggestion": "Test with an open paraphrase first and close distractors second. Treat recognition, productive composition, and usefulness as a mnemonic as separate outcomes.",
+    "confidence": "high"
+  },
+  {
+    "kind": "general",
+    "id": "basic-in-context",
+    "field": "gloss",
+    "severity": "note",
+    "problem": "Common forms do not imply that the particular function is already known. Advanced uses are missing from some glosses counted as familiar.",
+    "evidence": "Basic で does not teach conditional では; basic か does not automatically teach rhetorical ものか; basic でも does not teach Vてでも.",
+    "suggestion": "Mark familiarity by sense and construction. Keep basic lexical components assumed known while explicitly introducing the construction-specific use.",
+    "confidence": "high"
+  },
+  {
+    "kind": "general",
+    "id": "example-alignment",
+    "field": "example",
+    "severity": "note",
+    "problem": "A natural example can still be a poor test when it demonstrates a different sense from the target or contains multiple plausible spans.",
+    "evidence": "下【した】 versus 下【もと】; お名前 versus お書き; lexical 抜く versus completive 走り抜く.",
+    "suggestion": "Require a sense-matched example and an unambiguous target before reviewing the choice.",
+    "confidence": "high"
+  },
+  {
+    "kind": "general",
+    "id": "pair-policy",
+    "field": "pair",
+    "severity": "note",
+    "problem": "Several current exclusions match form or general topic rather than a competing answer. Several near-equivalent English answers remain missing from the list.",
+    "evidence": "The listed につけ and に値する are distinct, while にすぎない and でしかない are both merely.",
+    "suggestion": "Freeze a precise tested answer for each example and verify all offered distractors against it. A short pair list is a supplement to that review.",
+    "confidence": "high"
+  }
+]

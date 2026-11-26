@@ -48,7 +48,7 @@ test("validator rejects malformed parts, readings, senses, metadata, and solve e
   for (const message of [
     "invalid block id", "forms must be distinct and include form", "level does not match inventory",
     "example must be one annotated sentence", "parts do not reconstruct", "non-kana or long glue",
-    "unknown block: not-a-block", "form を is not listed", "overlaps the answer",
+    "unknown block: not-a-block", "form を is not listed",
     "shared block cannot be marked single", "shared surface form needs a distinct literal",
     "a one-block pattern is learned whole (opaque)", "missing successful blocks+sentence solve", "missing literal",
   ]) assert.ok(errors.some(e => e.includes(message)), message);
@@ -70,7 +70,7 @@ test("index adds three practice kinds while preserving the existing cards", () =
   assert.ok(block && build && infer);
   // Infer cards exist only for patterns with a recorded solve (clear or partial).
   for (const q of cards.filter(q => q.kind === "infer" && q !== infer)) assert.ok(["clear", "partial"].includes(draft.patterns[q.patternKey].transparency) && draft.patterns[q.patternKey].solved.right, q.id);
-  assert.deepEqual(build.blocks, ["zaru", "wo", "eru"]);
+  assert.deepEqual(build.blocks, ["zaru", "wo", "enai"]);
   assert.equal(build.parts.map(p => p.text).join(""), "ざるを得ない");
   assert.deepEqual(infer.parts, build.parts, "the infer card carries the parts for the review of a miss; the play card never shows them");
   const conjugated = cards.find(q => q.id === "gb:甲斐がある");
@@ -180,8 +180,9 @@ test("audit: patterns a blind solver could not tell apart are never each other's
 
 test("audit: the solves on record; the index passes release validation", () => {
   const t = {}; for (const p of Object.values(draft.patterns)) t[p.transparency] = (t[p.transparency] || 0) + 1;
-  assert.deepEqual(t, {clear: 157, partial: 3, opaque: 61});
+  assert.deepEqual(t, {clear: 138, partial: 20, opaque: 63}, "after the content review of 27 Nov: 17 lowered to partial, two more learned whole");
   for (const [key, p] of Object.entries(draft.patterns)) if (p.transparency === "clear") assert.deepEqual(p.solved, {by: "blocks-only", right: true}, key);
+  assert.equal(Object.values(draft.patterns).filter(p => p.solved?.by === "review").length, 17, "lowered by the reviewer, not by a failed solve");
   const release = validateGrammarBlocks(draft);
   assert.deepEqual(release.errors, []);
   assert.ok(release.counts.singleShare > 40, "reported, not capped: " + release.counts.singleShare);
@@ -192,7 +193,7 @@ test("audit: the solves on record; the index passes release validation", () => {
 
 test("a pattern that is one block is learned by its block card: opaque, plain gloss, no build or infer card", () => {
   const one = Object.entries(draft.patterns).filter(([, p]) => p.parts.length === 1);
-  assert.equal(one.length, 61);
+  assert.equal(one.length, 63);
   for (const [key, p] of one) assert.equal(p.transparency, "opaque", key);
   const full = gamePool({...options, grammarBlocks: draft});
   for (const [key] of one) assert.ok(!full.some(q => q.id === "gb:" + key || q.id === "gi:" + key), key);
@@ -233,7 +234,7 @@ test("the released index is the validated draft, part of the app, and its cards 
 
 test("the review data handed to a reviewer is the released index, whole", () => {
   const review = read("../tools/grammar-blocks/review-data.json"), released = read("../n2-grammar-blocks.json");
-  assert.deepEqual(review.counts, {blocks: 188, basicBlocks: 26, patterns: 221, oneBlockPatterns: 61});
+  assert.deepEqual(review.counts, {blocks: 191, basicBlocks: 26, patterns: 221, oneBlockPatterns: 63});
   for (const b of review.blocks) assert.equal(b.gloss, released.blocks[b.id].gloss, b.id + ": run tools/grammar-blocks/make-review.mjs");
   for (const p of review.patterns) assert.deepEqual(p.parts.map(x => x.text), released.patterns[p.key].parts.map(x => x.text), p.key);
   assert.ok(review.patterns.every(p => p.meaning && p.sentence?.ja));
@@ -258,11 +259,11 @@ test("board 13: the parts are a ruled list in sentence order; repeats merge, a p
 
 test("board 13: 得ない is hinted with its negative on the card (designer's note)", () => {
   const card = gamePool({...options, grammarBlocks: draft}).find(q => q.id === "gb:ざるを得ない");
-  assert.deepEqual(card.parts.map(p => p.gloss), ["an old negative ending", "marks the direct object", "cannot get or attain"]);
+  assert.deepEqual(card.parts.map(p => p.gloss), ["negative: without doing; literary forms", "marks an object or a route", "cannot manage to"]);
   assert.equal(card.literal, "cannot succeed in not doing it");
-  assert.equal(draft.blocks.eru.gloss, "get or attain", "the block keeps its own meaning");
-  const bad = structuredClone(draft); bad.patterns["ざるを得ない"].parts[2].gloss = "have no choice";
-  assert.ok(validateGrammarBlocks(bad).errors.some(e => /gloss of part 得ない/.test(e)), "a part's gloss may not give the answer away");
+  assert.equal(draft.blocks.eru.gloss, "can happen or be done"); assert.equal(draft.blocks.enai.gloss, "cannot happen or be done", "得る and 得ない are two things to learn (review, 27 Nov)");
+  const bad = structuredClone(draft); bad.patterns["ざるを得ない"].parts[2].gloss = "得られない";
+  assert.ok(validateGrammarBlocks(bad).errors.some(e => /gloss of part 得ない must be short English/.test(e)));
 });
 
 test("board 13: the underline is cut into one segment per part, or left whole when the parts do not fit it", () => {
@@ -296,4 +297,36 @@ test("board 13: the literal line, the review card, the proved beat and Home's Kn
   assert.match(js, /\$\("game-known"\)\.hidden = !grammar\.known;/);
   // Short screens: the say line goes first on a build card.
   assert.match(css, /body\[data-view=game\] \.qr-card\[data-kind=build\] \.qr-say\{display:none\}/);
+});
+
+// ---- The content review of 27 Nov 2026 ----
+test("review: a hint says what the form shown does, negation included; the rule against sharing the answer's words is gone", () => {
+  const card = key => gamePool({...options, grammarBlocks: draft}).find(q => q.id === "gb:" + key);
+  const hint = (key, text) => card(key).parts.find(p => p.text === text).gloss;
+  assert.equal(hint("てはいられない", "いられない"), "cannot stay as one is");
+  assert.equal(hint("ねばならない", "ならない"), "it will not do");
+  assert.equal(hint("にほかならない", "ならない"), "is not (negative of the copula)");
+  assert.equal(hint("にもかかわらず", "かかわらず"), "without regard to");
+  assert.equal(hint("いつの間にか", "か"), "some- (indefinite)");
+  assert.equal(hint("抜きで", "抜き"), "leaving something out", "a plain hint may share the answer's words: the infer card is the test");
+  assert.deepEqual(validateGrammarBlocks(draft).errors, []);
+  assert.ok(!readFileSync(new URL("../tools/validate-grammar-blocks.mjs", import.meta.url), "utf8").includes("overlaps the answer\`"));
+});
+
+test("review: corrected meanings, pairs kept apart on scored cards too, and nothing silently dropped", async () => {
+  const {GLOSS_FIX, GRAMMAR_CONFUSABLE} = await import("../n2-game-review.js");
+  assert.equal(GLOSS_FIX["g:中を"], "through the midst of, passing through");
+  assert.equal(GLOSS_FIX["g:かねない"], "there is a risk that something bad may happen");
+  const pool = gamePool(options), answer = new Map(pool.filter(q => q.kind === "grammar").map(q => [q.id.slice(2), q.answer]));
+  assert.equal(answer.get("を除いて"), "except for, excluding");
+  const pair = (a, b) => GRAMMAR_CONFUSABLE.some(([x, y]) => (x === a && y === b) || (x === b && y === a));
+  assert.ok(pair("ざるを得ない", "よりほかない") && pair("てならない", "てたまらない") && pair("にすぎない", "でしかない"));
+  assert.ok(!pair("なにやら", "何といっても") && !pair("にしたら", "にすぎない"), "pairs the reviewer found easy to tell apart are released");
+  for (const [a, b] of GRAMMAR_CONFUSABLE) for (const [x, y] of [[a, b], [b, a]]) {
+    const card = pool.find(q => q.id === "g:" + x);
+    if (card && answer.has(y)) assert.ok(!card.wrong.includes(answer.get(y)), "g:" + x + " offers " + y);
+  }
+  const review = read("../tools/grammar-blocks/reviews/2026-11-27.json"), ledger = read("../tools/grammar-blocks/reviews/2026-11-27-applied.json");
+  assert.equal(review.length, 188); assert.equal(ledger.length, 188, "every finding has a disposition");
+  for (const row of ledger) assert.ok(["applied", "partly", "not applied"].includes(row.status) && row.note, row.id);
 });
