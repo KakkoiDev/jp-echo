@@ -13,6 +13,7 @@ import {mkdtempSync, writeFileSync, mkdirSync} from "node:fs";
 import {tmpdir} from "node:os";
 import {pathToFileURL} from "node:url";
 import {TAG} from "../n2-comprehension.js";
+import {SETS_EDITION, realisticPaperId, realisticRows, setFile} from "../n2-forms.js";
 
 const read = p => JSON.parse(readFileSync(new URL(p, import.meta.url), "utf8"));
 const profiles = Object.fromEntries(read("../datasets/jlpt/exam-profiles.json").profiles.map(p => [p.level, p]));
@@ -264,6 +265,25 @@ test("the build is all or nothing and an edition never changes", () => {
   assert.ok(next.writes.every(([url]) => url.pathname.includes("/n3/next/")));
   writeFileSync(src + "/" + ids[0] + ".json", "{}"); 
   assert.ok(plan(src, root, "next").problems.length, "a new edition must bring every set");
+});
+
+test("the exam opens bundled N2 bosses without the downloaded levels, including on resume", async () => {
+  const screen = readFileSync(new URL("../n2-mock.js", import.meta.url), "utf8");
+  const route = screen.match(/^const isLevelSet = .*;$/m)[0];
+  const loader = screen.slice(screen.indexOf("async function getPaper("), screen.indexOf("/* ───────── Hub"));
+  const files = [], papers = new Map(), id = "n2-set-2";
+  const getPaper = vm.runInNewContext(route + "\n" + loader + "\ngetPaper", {
+    SET_LEVELS, setLevel, materials: async () => {},
+    access: async (_, op, value) => op === "get" ? papers.get(value) : papers.set(value.id, value),
+    realistic: book => book === id, realisticPaperId, realisticRows, setFile, SETS_EDITION,
+    titleOf: book => book, json: async file => { files.push(file); return read("../" + file); },
+    gameSets: {ready: () => assert.fail("a bundled N2 boss must not use the downloaded level loader")},
+  });
+  const paper = await getPaper(id);
+  assert.equal(paper.id, realisticPaperId(id));
+  assert.deepEqual(paper.questions, realisticRows(read("../n2-sets/" + id + ".json")));
+  assert.equal(await getPaper(id, paper.id), paper);
+  assert.deepEqual(files, [setFile(id)]);
 });
 
 test("the worker keeps a set once served, in its own cache, and never precaches sets", async () => {
