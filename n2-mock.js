@@ -1181,7 +1181,7 @@ async function game() {
   const bar = $("game-bar"), root = $("game");
   const sound = () => readGame().sound !== false;
   const difficulty = () => difficultyOf(settings.gameDifficulty);
-  const mode = m => { root.dataset.mode = m; if (m !== "done") { root.dataset.best = "false"; root.dataset.late = "false"; } if (m !== "review") root.dataset.held = "false"; for (const [id, on] of [["game-home", "home"], ["game-settings", "settings"], ["game-radio", "radio"], ["game-play", "play"], ["game-review", "review"], ["game-done", "done"]]) $(id).hidden = m !== on; };
+  const mode = m => { root.dataset.mode = m; $("game-rank").hidden = m !== "home"; if (m !== "done") { root.dataset.best = "false"; root.dataset.late = "false"; } if (m !== "review") root.dataset.held = "false"; for (const [id, on] of [["game-home", "home"], ["game-settings", "settings"], ["game-radio", "radio"], ["game-play", "play"], ["game-review", "review"], ["game-done", "done"]]) $(id).hidden = m !== on; };
   // The game's own settings, inside the game (owner, 26 Nov): leaving for
   // Echo's Settings pulled the player out of the app. They write the same
   // keys Echo's Settings does (jp-echo-settings), each on change.
@@ -1395,8 +1395,10 @@ async function game() {
         ...days.map(d => el("i", {class: d.answered >= DAILY_GOAL ? "full" : "", style: "height:" + Math.max(2, Math.round(d.answered / top * 36)) + "px", title: d.day + ": " + d.answered}))]));
     // The rank, then what it means today, then the difficulty when it isn't Normal.
     const rank = rankOf(st), own = !missing.includes(rank);
-    $("game-home-level").textContent = ["Rank " + rank, !own ? rank + " needs a connection once: playing N2" : pool.every(q => q.practice) ? "practice, not scored yet" : "", verdictLine((st.bossLog || []).at(-1)),
-      difficulty() === "normal" ? "" : DIFFICULTY[difficulty()].label].filter(Boolean).join(" · ") + (rank === "N2" && difficulty() === "normal" && !(st.bossLog || []).length ? "" : " · change in Settings");
+    // The rank is a seal chip beside the title; the line under the chart keeps the notes.
+    $("game-rank").textContent = rank; $("game-rank").setAttribute("aria-label", "Rank " + rank);
+    $("game-home-level").textContent = [!own ? rank + " needs a connection once: playing N2" : pool.every(q => q.practice) ? "practice, not scored yet" : "", verdictLine((st.bossLog || []).at(-1)),
+      difficulty() === "normal" ? "" : DIFFICULTY[difficulty()].label].filter(Boolean).join(" · ") + (own && !pool.every(q => q.practice) && difficulty() === "normal" && !(st.bossLog || []).length ? "" : " · change in Settings");
     // The dock: one big button, then the pair (boards 1 · A–D).
     $("game-home-boss").hidden = !open; $("game-home-radio").hidden = !rest || open; $("game-home-play").hidden = open || rest;
     $("game-home-play2").hidden = !open; $("game-home-play3").hidden = !rest || open;

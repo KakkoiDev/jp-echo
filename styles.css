@@ -2481,7 +2481,9 @@ body[data-view=game] .n2-game{position:fixed;inset:0;box-sizing:border-box;width
 #game-set-status{margin:12px 0 0;text-align:center}
 .qr-radiohead{display:flex;align-items:center;gap:12px}
 .qr-radiohead strong{display:block;font-size:17px;font-weight:900}.qr-radiohead span:not(.qr-glyph){display:block;font-size:12px;color:var(--ink-muted)}
-.qr-glyph{font-family:var(--display);font-size:26px;font-weight:800}.qr-glyph-day{color:var(--right)}.qr-glyph-night{color:var(--seal)}
+.qr-glyph{font-family:var(--display);font-size:26px;font-weight:800}
+/* A glyph inside a secondary button (音 Radio), at the size the line icons have. */
+.qr-btn2 .qr-glyph{font-size:19px;line-height:1}.qr-glyph-day{color:var(--right)}.qr-glyph-night{color:var(--seal)}
 .qr-pair .qr-btn2{flex:1;text-decoration:none}
 .qr-evening{display:flex;align-items:center;gap:10px;margin-top:14px;min-height:48px;padding:0 12px;border-radius:12px;background:var(--right-tint);color:var(--right);text-decoration:none;font-size:14px;font-weight:700}
 .qr-evening span{flex:1}.qr-evening svg{color:var(--right)}
