@@ -405,8 +405,22 @@ Before considering the change complete:
   another level's word cards only, ids carrying the level (`r:N3:就任`), no
   recall target, and `practice: true` until the level is in `REVIEWED_LEVELS`
   (n2-game-review.js): add a level there only after its pool is audited. N2
-  ids never change. Only N2 has a boss (`hasBoss`). How the rank is won and
-  lost is not decided: it is set by hand in the game's Settings until then.
+  ids never change. Only N2 has a boss (`hasBoss`).
+- **Questions build the record; only the boss moves the rank (owner, 26 Nov,
+  v289).** Every answer keeps the item record (`tried`, `missed`, with `lv`,
+  `seen`, `wins`; `itemRecord`). An unreviewed level's card (`record: true`)
+  moves the record and comes back after a miss, but pays no points and never
+  counts toward the day, the boss or the hidden level; connectives stay
+  exposure only. `applyBoss` gives each finished boss one verdict
+  (`bossVerdict`, `RANK_RULES`): pass total + 10 with every section at its
+  minimum moves the rank up; 150 or more also opens the next boss at once
+  (`bossReady`); the second fail in a row moves it down. A ladder, not Elo. A
+  rank moves only to a level that has a boss; otherwise the verdict is kept
+  (`waits`) and the rank stays. Runs from before the rules (no `rank` on them)
+  are never judged. Where a rank has no boss, Home's run card shows
+  `levelCoverage` (words known, at item level 3 or more). When 95% of the
+  rank's words have been met, the level above joins the review places
+  (`aheadLevel`, `isCovered`). The Settings segment still sets the rank by hand.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

@@ -9,7 +9,7 @@ import {recognitionFactory} from "./speech.js";
 import {speakOnce,speakAndWait,japaneseVoices,RadioPlayer,NoiseBed} from "./speech.js";
 import {RADIO_DEFAULTS,RADIO_PHASE_COPY,clockAt,radioPhase,radioPlan,radioSteps} from "./radio.js";
 import {readNights, nightComparison, comparisonLine, eveningRecall, EVENING_SOURCE, nightPlan, nightRecord, keepNight, NIGHT_KEY} from "./n2-night.js";
-import {rankOf, setRank, rankLevels, hasBoss, RANKS, inSlump, itemLevel, levelAfter, ITEM_LEVEL, gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, patternVoice, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
+import {levelCoverage, isCovered, aheadLevel, applyBoss, verdictLine, rankOf, setRank, rankLevels, hasBoss, RANKS, inSlump, itemLevel, levelAfter, ITEM_LEVEL, gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, patternVoice, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
 import {createLevels} from "./jlpt-levels.js";
 import {spokenWord,radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
 import {TAG,TAGS,HELD_OUT,CAUSES,comprehensionStats,weakestTag,tagDrill,drillExposure,attemptTags,tagsOf,sourceOf} from "./n2-comprehension.js";
@@ -1141,6 +1141,12 @@ async function game() {
     }));
     missing = wanted.filter((_, i) => !pools[i]);
     pool = pools[0] || n2Pool; lower = pools[0] ? pools.slice(1).filter(Boolean).flat() : [];
+    // The rank's words nearly all met: the level above joins the review places as a preview.
+    const ahead = aheadLevel(level);
+    if (pools[0] && ahead && isCovered(levelCoverage(pool, readGame()))) {
+      if (!levelPools.has(ahead)) { const inv = await gameLevels.inventory(ahead); if (inv) levelPools.set(ahead, gamePool({inventory: inv, level: ahead})); }
+      lower = [...lower, ...(levelPools.get(ahead) || [])];
+    }
   }
   await loadRank();
   let askToken = 0, practiced = 0, roundLevel = .5, rights = 0, flagged = 0, warmUp = false, beat = null, state = readGame(), round = [], index = 0, score = 0, streak = 0, bestCombo = 0, timer = null, ticker = null, shownAt = 0, current = null, locked = false, misses = [], marks = [];
@@ -1255,8 +1261,8 @@ async function game() {
   const paintClock = () => {
     const st = readGame(), clock = runClock(st.runStart), v = homeView;
     const waiting = v.rest || !clock.started;
-    $("game-run-clock").textContent = waiting ? "clock starts on your " + (v.first ? "first" : "next") + " answer" : v.stretch ? v.left + " to the boss" : clockText(st);
-    $("game-run-clock").dataset.tone = waiting ? "" : v.stretch ? "plain" : "seal";
+    if (!v.cover) $("game-run-clock").textContent = waiting ? "clock starts on your " + (v.first ? "first" : "next") + " answer" : v.stretch ? v.left + " to the boss" : clockText(st);
+    if (!v.cover) $("game-run-clock").dataset.tone = waiting ? "" : v.stretch ? "plain" : "seal";
     $("game-boss-clock2").textContent = clockText(st);
     const show = countShown(clock, v);
     if (show) {
@@ -1276,10 +1282,29 @@ async function game() {
     // Board 11 · A: back to Echo's last screen, or Echo's start when Echo opened straight here.
     $("game-back").href = "./"; $("game-back").setAttribute("aria-label", "Back to Echo"); $("game-back").dataset.end = "false"; $("game-title").textContent = "Quick round";
     $("game-back").onclick = e => { e.preventDefault(); if (history.length > 1 && document.referrer && new URL(document.referrer).origin === location.origin && !/n2-mock\.html\?view=game/.test(document.referrer)) history.back(); else location.href = "./"; };
-    const st = readGame(), b = bossProgress(st), boss = bossNow(), rest = resting(st, data.attempts), open = b.open && !!boss;
+    const papersById = new Map(data.papers.map(p => [p.id, p]));
+    const examOf = run => {
+      const a = (run.attemptId && data.attempts.find(x => x.id === run.attemptId && x.phase === "results"))
+        || data.attempts.filter(x => x.book === run.set && x.boss && x.phase === "results" && (x.startedAt || "") >= run.at).sort((x, y) => (x.startedAt || "").localeCompare(y.startedAt || ""))[0];
+      const paper = a && papersById.get(a.paper || a.book);
+      return paper ? {...estimate(paper, a), completedAt: a.completedAt} : null;
+    };
+    // The gate: each finished boss gives its verdict once, and may move the rank
+    // (applyBoss). Runs from before the rules (no rank on them) are left alone.
+    let st = readGame(), moved = false;
+    for (const run of st.runs || []) {
+      const exam = run.rank && !(st.bossLog || []).some(e => e.key === run.at) ? examOf(run) : null;
+      if (!exam?.complete) continue;
+      const next = applyBoss(st, {key: run.at, rank: run.rank, total: exam.total, sectionsOk: exam.sections.every(x => x.ok)});
+      if (next !== st) { moved = moved || rankOf(next) !== rankOf(st); st = next; writeGame(st); }
+    }
+    if (moved) { loadRank().then(home); return; }
+    const b = bossProgress(st), boss = bossNow(), rest = resting(st, data.attempts), open = b.open && !!boss;
     const all = st.runs || [], runNo = all.length + 1, clock = runClock(st.runStart);
     const stretch = b.done >= 950 && !open && !rest, first = !all.length && !clock.started && !b.done;
-    homeView = {open, rest, stretch, first, left: BOSS_EVERY - b.done};
+    // A rank with no boss yet: the run card shows how much of the level is known.
+    const cover = !hasBoss(rankOf(st)) && !missing.includes(rankOf(st)) ? levelCoverage(pool, st) : null;
+    homeView = {open, rest, stretch, first, left: BOSS_EVERY - b.done, cover: !!cover};
     const showCount = countShown(clock, homeView), mockNo = boss ? String(bookIds.indexOf(boss.id) + 1).padStart(2, "0") : "";
     // Run card (board 1 · Home A/D), the boss card (B) or the rest above a quiet card (C).
     $("game-runcard").hidden = open; $("game-bosscard").hidden = !open; $("game-rest").hidden = !rest; $("game-runcard").dataset.rest = String(rest); $("game-runcard").dataset.first = String(first);
@@ -1297,6 +1322,14 @@ async function game() {
     $("game-countdown").hidden = !showCount;
     $("game-run-line").textContent = stretch ? "About " + Math.ceil((BOSS_EVERY - b.done) / 10) + " rounds, then a " + (BOSS_MINUTES.written + BOSS_MINUTES.listening) + "-minute boss." + (st.runStart ? " Run " + runNo + " began " + began(st.runStart) + "." : "")
       : first && boss ? "At " + BOSS_EVERY.toLocaleString() + " the boss opens: Mock " + mockNo + ", written at half time." : "";
+    root.querySelector("#game-runcard .qr-oni").hidden = !!cover;
+    if (cover) {
+      $("game-run-name").textContent = rankOf(st) + " words"; $("game-run-clock").textContent = "practice · not scored"; $("game-run-clock").dataset.tone = "";
+      $("game-run-big").textContent = cover.known.toLocaleString(); $("game-run-of").textContent = "of " + cover.items.toLocaleString() + " known";
+      $("game-run-fill").style.width = cover.known / cover.items * 100 + "%";
+      $("game-run-row").hidden = false; $("game-run-points").textContent = cover.seen.toLocaleString() + " met"; $("game-run-points").dataset.neg = "false"; $("game-run-waits").textContent = "no " + rankOf(st) + " boss yet";
+      $("game-countdown").hidden = true; $("game-run-line").textContent = "";
+    }
     if (open) {
       $("game-boss-name").textContent = "Run " + runNo + " · boss open";
       $("game-boss-title").textContent = "Mock " + mockNo + " at half time";
@@ -1305,13 +1338,6 @@ async function game() {
       $("game-boss-note").textContent = clock.times > 1 ? "Beat it before the clock runs out and the whole run counts ×" + clock.times + "." : "";
     }
     // Best runs: the merged score ranks them; each keeps both parts.
-    const papersById = new Map(data.papers.map(p => [p.id, p]));
-    const examOf = run => {
-      const a = (run.attemptId && data.attempts.find(x => x.id === run.attemptId && x.phase === "results"))
-        || data.attempts.filter(x => x.book === run.set && x.boss && x.phase === "results" && (x.startedAt || "") >= run.at).sort((x, y) => (x.startedAt || "").localeCompare(y.startedAt || ""))[0];
-      const paper = a && papersById.get(a.paper || a.book);
-      return paper ? {...estimate(paper, a), completedAt: a.completedAt} : null;
-    };
     const runs = runTable(st, examOf), latest = all.at(-1);
     // Board 1 · C: the run that just closed, its time, score and place.
     const closed = rest && latest ? runs.findIndex(r => r.at === latest.at) : -1, closedRun = runs[closed];
@@ -1335,8 +1361,8 @@ async function game() {
         ...days.map(d => el("i", {class: d.answered >= DAILY_GOAL ? "full" : "", style: "height:" + Math.max(2, Math.round(d.answered / top * 36)) + "px", title: d.day + ": " + d.answered}))]));
     // The rank, then what it means today, then the difficulty when it isn't Normal.
     const rank = rankOf(st), own = !missing.includes(rank);
-    $("game-home-level").textContent = ["Rank " + rank, !own ? rank + " needs a connection once: playing N2" : pool.every(q => q.practice) ? "practice, not scored yet" : "",
-      difficulty() === "normal" ? "" : DIFFICULTY[difficulty()].label].filter(Boolean).join(" · ") + (rank === "N2" && difficulty() === "normal" ? "" : " · change in Settings");
+    $("game-home-level").textContent = ["Rank " + rank, !own ? rank + " needs a connection once: playing N2" : pool.every(q => q.practice) ? "practice, not scored yet" : "", verdictLine((st.bossLog || []).at(-1)),
+      difficulty() === "normal" ? "" : DIFFICULTY[difficulty()].label].filter(Boolean).join(" · ") + (rank === "N2" && difficulty() === "normal" && !(st.bossLog || []).length ? "" : " · change in Settings");
     // The dock: one big button, then the pair (boards 1 · A–D).
     $("game-home-boss").hidden = !open; $("game-home-radio").hidden = !rest || open; $("game-home-play").hidden = open || rest;
     $("game-home-play2").hidden = !open; $("game-home-play3").hidden = !rest || open;
@@ -1582,7 +1608,7 @@ async function game() {
     else if (outcome === "timeout") line.textContent = "Too slow this time. It comes back next round.";
     else if (outcome === "dontknow") line.textContent = "Fine. Keep going.";
     // Item strength: a fast right answer stamps a square in; a miss takes one away (boards 9, 2).
-    const lvFrom = q.practice ? 0 : itemLevel(readGame(), q.id), lvTo = q.practice ? 0 : levelAfter(readGame(), {id: q.id, outcome, fast: result.fast});
+    const lvFrom = q.practice && !q.record ? 0 : itemLevel(readGame(), q.id), lvTo = q.practice && !q.record ? 0 : levelAfter(readGame(), {id: q.id, outcome, fast: result.fast});
     if (lvTo > lvFrom) { ups.push({word: String(q.solution?.word || q.prompt).replace(/[〜～]/g, ""), from: lvFrom, to: lvTo}); if (!$("game-lv").hidden || !$("game-master").hidden) { paintLevel(lvTo, true); $("game-lvup").hidden = false; } }
     else if (lvTo < lvFrom && $("game-tag").hidden) { $("game-lv").hidden = true; $("game-master").hidden = true; $("game-tag").hidden = false; $("game-tag").textContent = "Lv " + lvFrom + " → " + lvTo; $("game-tag").dataset.tone = "seal"; }
     if (outcome !== "right") misses.push({q, picked: i >= 0 ? q.choices[i] : outcome === "timeout" ? "Time ran out" : "I don’t know", from: lvFrom, to: lvTo});

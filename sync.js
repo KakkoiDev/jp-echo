@@ -123,7 +123,9 @@ export function mergeGame(a, b) {
   // The rank (n2-game.js): the one set last wins, whichever save is newer, so a
   // save made on a device that never chose a rank cannot take it away.
   const ranked = [a, b].filter(g => g.rank).sort((p, q) => time(q.rankAt) - time(p.rankAt))[0];
-  return {...newer, ...(ranked ? {rank: ranked.rank, rankAt: ranked.rankAt} : {}), ...(runStart === undefined ? {} : {runStart}), ...(Object.keys(lv).length ? {lv, lvAt} : {}), seen: maxMap(a.seen, b.seen), wins: maxMap(a.wins, b.wins), days, history,
+  // The item record (tries, misses) grows on both; boss verdicts are kept once each.
+  const tried = maxMap(a.tried, b.tried), missed = maxMap(a.missed, b.missed), bossLog = [...new Map([...(older.bossLog || []), ...(newer.bossLog || [])].map(r => [r.key, r])).values()].sort((p, q) => String(p.at).localeCompare(String(q.at))).slice(-200);
+  return {...newer, ...(Object.keys(tried).length ? {tried, missed} : {}), ...(bossLog.length ? {bossLog} : {}), ...(ranked ? {rank: ranked.rank, rankAt: ranked.rankAt} : {}), ...(runStart === undefined ? {} : {runStart}), ...(Object.keys(lv).length ? {lv, lvAt} : {}), seen: maxMap(a.seen, b.seen), wins: maxMap(a.wins, b.wins), days, history,
     runs: unionBy(a.runs, b.runs, r => r.at).slice(-200), best: Math.max(a.best || 0, b.best || 0),
     rounds: Math.max(a.rounds || 0, b.rounds || 0, history.length), answered: Math.max(a.answered || 0, b.answered || 0), total: Math.max(a.total || 0, b.total || 0)};
 }

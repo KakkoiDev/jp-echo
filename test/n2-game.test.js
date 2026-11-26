@@ -2,7 +2,9 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
 import {payoutCap, sameSense, answerSpeech, runClock, RUN_CLOCK, DIFFICULTY, difficultyOf, pace, WAVE, HOOK, STRETCH, bossProgress, takeBoss, resting, runTable, BOSS_EVERY, EXAM_POINT, atBedtime, BEDTIME, FLOW, BONUS, flowStep, flowMix, flowSeconds, levelOf, bonusPoints, SECONDS, PAUSE, REVIEW_SECONDS, inSlump, nextRound, WARM_UP, gamePool, choicesFor, pickRound, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, nearMisses, gloss, today, lastDays, ranking, bossSet,
-  ROUND_SIZE, DAILY_GOAL, RANKS, DEFAULT_RANK, REVIEW_SHARE, rankOf, setRank, rankLevels, hasBoss, levelOfCard} from "../n2-game.js";
+  ROUND_SIZE, DAILY_GOAL, RANKS, DEFAULT_RANK, REVIEW_SHARE, rankOf, setRank, rankLevels, hasBoss, levelOfCard,
+  itemRecord, itemLevel, ITEM_LEVEL, levelCoverage, KNOWN_LEVEL, COVERED, isCovered, aheadLevel, EXAM_PASS, RANK_RULES, bossVerdict, applyBoss, verdictLine} from "../n2-game.js";
+const ITEM_GAP = ITEM_LEVEL.gapMs;
 import {FETCHED_LEVELS, levelFile} from "../jlpt-levels.js";
 import {REVIEWED_LEVELS} from "../n2-game-review.js";
 import {examplesFromDecks} from "../day-radio.js";
@@ -242,7 +244,7 @@ test("the boss comes every 1,000 questions, closes a run, and after it the game 
   const now = new Date("2026-11-27T20:00:00");
   st = takeBoss(st, {set: "n2-set-6", now: now.getTime()});
   assert.deepEqual(bossProgress(st), {done: 0, left: 1000, open: false}, "the count starts again");
-  assert.deepEqual(st.runs.at(-1), {set: "n2-set-6", at: now.toISOString(), attemptId: null, start: now.toISOString(), gamePoints: 250000, questions: 1000});
+  assert.deepEqual(st.runs.at(-1), {set: "n2-set-6", at: now.toISOString(), attemptId: null, start: now.toISOString(), gamePoints: 250000, rank: "N2", questions: 1000});
   const finished = [{book: "n2-set-6", boss: true, phase: "results", startedAt: now.toISOString(), completedAt: new Date(now.getTime() + 5400000).toISOString()}];
   assert.equal(resting(st, finished, new Date("2026-11-27T22:00:00")), true);
   assert.equal(resting(st, [], new Date("2026-11-27T22:00:00")), false, "not before the boss is finished");
@@ -753,13 +755,111 @@ test("another level gives word cards only, under ids no other level can have", (
   assert.ok(all.has("m:N3:明らか") && !n2.has("m:N3:明らか"));
 });
 
-test("a level that has not been reviewed is practice: exposure only, nothing scored", () => {
+test("a level that has not been reviewed is unscored: its item record moves, nothing is paid or counted", () => {
   assert.deepEqual([...REVIEWED_LEVELS], ["N2"], "add a level only after its pool has been audited");
-  for (const level of FETCHED_LEVELS) assert.ok(levelPool(level).every(q => q.practice === true), level);
-  const q = levelPool("N3")[0], before = {answered: 5, total: 900, level: .5, wins: {}, lv: {}, comeback: [], seen: {}};
-  const after = rememberAnswer(before, {q, outcome: "wrong", points: -200, now: 1000});
-  assert.equal(after.seen[q.id], 1000);
-  assert.deepEqual({...after, seen: {}, practiced: 0}, {...before, practiced: 0}, "no points, level, wins, misses or boss count");
+  for (const level of FETCHED_LEVELS) assert.ok(levelPool(level).every(q => q.practice === true && q.record === true), level);
+  const q = levelPool("N3")[0], before = {answered: 5, total: 900, level: .5, days: {}, bossFrom: 0};
+  const miss = rememberAnswer(before, {q, outcome: "wrong", points: -200, now: 1000});
+  for (const k of ["answered", "total", "level", "days", "bossFrom", "runStart"]) assert.deepEqual(miss[k], before[k], k + " is untouched");
+  assert.equal(miss.seen[q.id], 1000); assert.equal(miss.practiced, 1);
+  assert.deepEqual([miss.tried[q.id], miss.missed[q.id]], [1, 1]);
+  assert.deepEqual(miss.comeback, [q.id], "a miss comes back next round");
+  const win = rememberAnswer(miss, {q, outcome: "right", fast: true, now: 2000 + ITEM_GAP});
+  assert.deepEqual([win.tried[q.id], win.missed[q.id], win.wins[q.id], itemLevel(win, q.id)], [2, 1, 1, 1]);
+  assert.deepEqual(win.comeback, []);
+  assert.deepEqual(itemRecord(win, q.id), {level: 1, tried: 2, missed: 1, failRate: .5, seenAt: 2000 + ITEM_GAP, levelAt: 2000 + ITEM_GAP});
+  // Connectives stay exposure only.
+  const c = rememberAnswer({}, {q: {id: "c:x", practice: true}, outcome: "wrong", now: 5});
+  assert.deepEqual(c, {seen: {"c:x": 5}, practiced: 1});
+});
+
+test("every scored answer keeps the item record too: tries, misses, the fail rate", () => {
+  let st = {};
+  const q = {id: "m:就任", target: ["word", "就任", "しゅうにん"]};
+  for (const [i, outcome] of ["right", "wrong", "timeout", "right"].entries()) st = rememberAnswer(st, {q, outcome, now: 1000 + i});
+  assert.deepEqual([st.tried[q.id], st.missed[q.id]], [4, 2]);
+  assert.equal(itemRecord(st, q.id).failRate, .5);
+  assert.deepEqual(itemRecord({}, "m:nothing"), {level: 0, tried: 0, missed: 0, failRate: null, seenAt: 0, levelAt: 0});
+});
+
+test("coverage counts a level's words once each: met, and known from item level " + KNOWN_LEVEL, () => {
+  const pool = levelPool("N4"), words = new Set(pool.map(q => q.item)).size;
+  assert.deepEqual(levelCoverage(pool, {}), {items: words, seen: 0, known: 0});
+  const [a, b] = [pool.find(q => q.kind === "meaning"), pool.find(q => q.kind === "reading")], other = pool.find(q => q.item !== a.item && q.item !== b.item);
+  const sameWord = pool.filter(q => q.item === a.item);
+  const st = {seen: {[a.id]: 1, [sameWord.at(-1).id]: 2, [other.id]: 3}, lv: {[a.id]: KNOWN_LEVEL, [other.id]: KNOWN_LEVEL - 1}};
+  assert.deepEqual(levelCoverage(pool, st), {items: words, seen: 2, known: 1});
+  const n2 = gamePool({inventory, examples}), c = levelCoverage(n2, {seen: {"r:就任": 1, "m:就任": 1, "g:傾向がある": 1}});
+  assert.equal(c.seen, 1, "N2 words count by their target; grammar is not a word");
+  assert.equal(isCovered({items: 100, seen: 95}), true); assert.equal(isCovered({items: 100, seen: 94}), false); assert.equal(isCovered({items: 0, seen: 0}), false);
+  assert.equal(COVERED, .95); assert.equal(aheadLevel("N3"), "N2"); assert.equal(aheadLevel("N1"), null);
+});
+
+test("the gate: only a boss moves the rank: up with a margin, skip far above, down on the second fail in a row", () => {
+  assert.deepEqual({...EXAM_PASS}, {N5: 80, N4: 90, N3: 95, N2: 90, N1: 100});
+  assert.deepEqual({...RANK_RULES}, {margin: 10, skip: 150, fails: 2});
+  const v = (total, sectionsOk = true, rank = "N2") => bossVerdict({rank, total, sectionsOk});
+  assert.deepEqual([v(89), v(90), v(99), v(100), v(149), v(150), v(180)], ["fail", "hold", "hold", "up", "up", "skip", "skip"]);
+  assert.equal(v(160, false), "fail", "a section under its minimum fails whatever the total");
+  assert.deepEqual([v(104, true, "N3"), v(105, true, "N3"), v(94, true, "N3")], ["hold", "up", "fail"]);
+  assert.equal(bossVerdict({rank: "N2"}), null); assert.equal(bossVerdict({rank: "N0", total: 180}), null);
+});
+
+test("the rank only moves to a level that has a boss: until then the verdict waits and the rank stays", () => {
+  // Today only N2 has mocks, so a pass with margin is kept and N2 stays N2.
+  const up = applyBoss({}, {key: "run-1", rank: "N2", total: 120, now: Date.parse("2026-11-27T10:00:00Z")});
+  assert.equal(rankOf(up), "N2"); assert.ok(!("rank" in up));
+  assert.deepEqual(up.bossLog, [{key: "run-1", at: "2026-11-27T10:00:00.000Z", rank: "N2", total: 120, verdict: "up", waits: "N1"}]);
+  assert.equal(applyBoss(up, {key: "run-1", rank: "N2", total: 20}), up, "a boss is applied once");
+  let st = applyBoss({}, {key: "a", rank: "N2", total: 70, now: 1});
+  assert.equal(st.bossLog[0].verdict, "fail"); assert.ok(!st.bossLog[0].waits && !st.bossLog[0].to, "one fail moves nothing");
+  st = applyBoss(st, {key: "b", rank: "N2", total: 60, now: 2});
+  assert.equal(st.bossLog[1].waits, "N3", "the second fail in a row would go down, once N3 has a boss"); assert.equal(rankOf(st), "N2");
+  const broken = applyBoss(applyBoss(applyBoss({}, {key: "a", rank: "N2", total: 70, now: 1}), {key: "b", rank: "N2", total: 95, now: 2}), {key: "c", rank: "N2", total: 70, now: 3});
+  assert.ok(!broken.bossLog[2].waits, "a pass in between ends the streak");
+  const empty = {};
+  assert.equal(applyBoss(empty, {key: "x", rank: "N2"}), empty, "no score: nothing"); assert.equal(applyBoss(empty, {rank: "N2", total: 100}), empty, "no key: nothing");
+  // A boss of a rank the player no longer holds is logged and moves nothing.
+  const held = applyBoss(setRank({}, "N3", 1), {key: "old", rank: "N2", total: 170, now: 2});
+  assert.equal(rankOf(held), "N3"); assert.deepEqual([held.bossLog[0].verdict, held.bossLog[0].to, held.bossLog[0].waits], ["skip", undefined, undefined]);
+});
+
+test("where both levels have a boss the rank moves, and a skip opens the next boss at once", () => {
+  // N1 ⇄ N2 would move if N1 had mocks; the rule is checked on the pieces that decide it.
+  const src_ = src("../n2-game.js");
+  assert.match(src_, /if \(to && hasBoss\(to\)\) \{ next = \{\.\.\.setRank\(state, to, now\), \.\.\.\(verdict === "skip" \? \{bossReady: true\} : \{\}\)\}; entry\.to = to; \}/);
+  assert.deepEqual(bossProgress({bossReady: true, answered: 3}), {done: BOSS_EVERY, left: 0, open: true});
+  const taken = takeBoss({bossReady: true, rank: "N2", answered: 3, total: 10}, {set: "n2-set-6", now: Date.parse("2026-11-27T11:00:00Z")});
+  assert.equal(taken.bossReady, false); assert.equal(taken.runs[0].rank, "N2", "a run names the rank its boss was sat at");
+  assert.equal(bossProgress(taken).open, false);
+});
+
+test("the last verdict reads in words on Home", () => {
+  assert.equal(verdictLine(null), "");
+  assert.equal(verdictLine({rank: "N2", total: 120, verdict: "up", waits: "N1"}), "Last boss 120 of 180: N2 passed: N1 opens when its exams exist");
+  assert.equal(verdictLine({rank: "N3", total: 120, verdict: "up", to: "N2"}), "Last boss 120 of 180: N3 passed: now N2");
+  assert.equal(verdictLine({rank: "N2", total: 93, verdict: "hold"}), "Last boss 93 of 180: passed, 100 moves the rank up");
+  assert.equal(verdictLine({rank: "N2", total: 70, verdict: "fail"}), "Last boss 70 of 180, under the N2 line: one more like it moves the rank down");
+  assert.equal(verdictLine({rank: "N2", total: 70, verdict: "fail", to: "N3"}), "Last boss 70 of 180, under the N2 line: now N3");
+});
+
+test("the item record and the boss verdicts sync: counts take the larger, a verdict is kept once, in time order", async () => {
+  const {mergeGame} = await import("../sync.js");
+  const a = {updatedAt: "2026-11-27T10:00:00Z", tried: {x: 3, y: 1}, missed: {x: 1}, bossLog: [{key: "r1", at: "2026-11-27T09:00:00Z", verdict: "fail"}, {key: "r2", at: "2026-11-27T09:30:00Z", verdict: "hold"}]};
+  const b = {updatedAt: "2026-11-27T11:00:00Z", tried: {x: 2, z: 4}, missed: {x: 2, z: 1}, bossLog: [{key: "r1", at: "2026-11-27T09:05:00Z", verdict: "fail"}]};
+  const m = mergeGame(a, b);
+  assert.deepEqual(m.tried, {x: 3, y: 1, z: 4}); assert.deepEqual(m.missed, {x: 2, z: 1});
+  assert.deepEqual(m.bossLog.map(e => e.key), ["r1", "r2"], "the same boss from two devices is one verdict");
+  assert.ok(!("tried" in mergeGame({answered: 1}, {answered: 2})) && !("bossLog" in mergeGame({answered: 1}, {answered: 2})));
+});
+
+test("the game screen settles bosses on Home, shows coverage where there is no boss, and previews the level above", () => {
+  const js = src("../n2-mock.js");
+  assert.match(js, /const exam = run\.rank && !\(st\.bossLog \|\| \[\]\)\.some\(e => e\.key === run\.at\) \? examOf\(run\) : null;/, "runs from before the rules are left alone");
+  assert.match(js, /applyBoss\(st, \{key: run\.at, rank: run\.rank, total: exam\.total, sectionsOk: exam\.sections\.every\(x => x\.ok\)\}\)/);
+  assert.match(js, /const cover = !hasBoss\(rankOf\(st\)\) && !missing\.includes\(rankOf\(st\)\) \? levelCoverage\(pool, st\) : null;/);
+  assert.match(js, /if \(pools\[0\] && ahead && isCovered\(levelCoverage\(pool, readGame\(\)\)\)\)/);
+  assert.match(js, /const lvFrom = q\.practice && !q\.record \? 0 : itemLevel/);
 });
 
 test("the cards of another level hold the same bar: four distinct choices, the answer never among the wrong ones", () => {

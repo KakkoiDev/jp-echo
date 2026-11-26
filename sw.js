@@ -1,4 +1,4 @@
-const CACHE="jp-echo-v288";
+const CACHE="jp-echo-v289";
 const DICT_CACHE="jp-echo-dict";
 const LEVELS_CACHE="jp-echo-levels";
 const PREFS_CACHE="jp-echo-prefs",PREFS_KEY="./reminder",REMINDER_TAG="echo-due";

@@ -120,13 +120,20 @@ Built: inventories for N5, N4, N3 and N1 (`levels/`, fetched and kept), word
 cards for them (reading, meaning, which word, listen), the rank in the game
 state and the sync, a round at rank N3 = eight N3 cards and two from N5 and N4.
 
+Decided by the owner (26 Nov) and built in v289: questions build the item
+record, only the boss moves the rank. Promotion at the pass total plus 10
+with section minimums; 150 or more also opens the next boss at once; the
+second failed boss in a row moves the rank down. The rank moves only to a
+level that has a boss, so today every verdict waits (only N2 has mocks). The
+rank's level comes first in a round; lower levels take two places; the level
+above joins those places once 95% of the rank's words have been met.
+
 Waiting on the owner:
-- **Promotion.** Proposed: the rank's boss, sat on a paper never seen, with the
-  level's pass total plus 10 (N2: 100 of 180) and every section at its
-  minimum or better, moves the rank up one level.
-- **Demotion.** Proposed: two bosses in a row under the pass total move the
-  rank down one level; otherwise it never falls. Alternative: the rank never
-  falls, and lower levels only come back as review.
+- **The boss is the half-time sitting.** The plan spoke of a standard-time
+  mock for promotion; the gate today uses the boss as it is (written at half
+  time). To confirm, or to give promotion its own full-time sitting.
+- **Mock exams for N5, N4, N3 and N1**: in their own session. Add each level
+  to `BOSS_LEVELS` (n2-game.js) once its sets and its exam screen exist.
 - **Where a new player starts.** The plan says N5; today a state with no rank
   is N2, because only N2 is scored. To switch once N5 can score.
 - **Review at N2.** N2 rounds mix in no lower level while those cards are
@@ -143,10 +150,12 @@ For the designer (none of this is on a board):
   once promotion is decided, or stays as "test out of a level".
 - **The card tag**: "N3 practice · not scored" and "N5 review · not scored" on
   the existing practice tag.
-- **Home at a rank without a boss**: the run card still reads "0 of 1,000 to
-  the boss" though nothing counts and no boss comes. Needs a state.
-- **Review of a practice miss** still says "back next round"; practice misses
-  do not come back.
+- **Home's run card at a rank without a boss** now reads "N3 words · 1 of
+  2,055 known · 8 met · no N3 boss yet" in the run card's own pieces; "Best
+  runs" and the 14-day chart still show beneath, empty.
+- **The last boss verdict** is a clause in the tiny line under the chart.
+- **Item level on an unscored card**: the practice tag takes the corner the
+  squares use, so the level only shows in the review and the "Lv up" strip.
 
 Left for later (not started): example-sentence decks for N5, N4, N3 and N1;
 grammar, connective and exam cards for them; mock exams (bosses) for levels

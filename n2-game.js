@@ -107,6 +107,9 @@ export function nearMisses(reading = "") {
 // levels can collide and no N2 progress is touched. Until a level's cards
 // have been reviewed (REVIEWED_LEVELS) they are practice, not scored, and
 // have no recall target: a miss there never enters N2's recall evidence.
+// They still keep the item record (`record`: tries, misses, item level, wins,
+// the miss coming back), so what is known at a level is tracked from the
+// first card; only points, the day and the boss count wait for the review.
 // Grammar, connective and exam cards for other levels wait for their decks
 // and sets.
 export function gamePool({inventory, examples = new Map(), sets = [], sat = new Set(), level = "N2"}) {
@@ -211,7 +214,7 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
   const fit = pool.filter(q => !EXCLUDED[q.id] && (q.fixed ? new Set(q.fixed).size === 4 : new Set(q.wrong.filter(w => w !== q.answer)).size >= 3));
   if (!other) return fit;
   // item: what a round counts as one thing, where N2 cards use their target.
-  return fit.map(q => ({...q, level, item: level + ":" + q.target[1] + "/" + q.target[2], target: null, ...(REVIEWED_LEVELS.has(level) ? {} : {practice: true})}));
+  return fit.map(q => ({...q, level, item: level + ":" + q.target[1] + "/" + q.target[2], target: null, ...(REVIEWED_LEVELS.has(level) ? {} : {practice: true, record: true})}));
 }
 // The level a card belongs to: cards without one are N2's.
 export const levelOfCard = q => q?.level || "N2";
@@ -347,12 +350,46 @@ export function levelAfter(state = {}, {id, outcome, fast = false, now = Date.no
   if (outcome !== "right") return Math.max(0, before - 1);
   return fast && before < ITEM_LEVEL.max && now - (state.lvAt?.[id] || 0) >= ITEM_LEVEL.gapMs ? before + 1 : before;
 }
+// What the game knows about one card: its level, how often it was tried and
+// missed (the fail rate), when it was last seen and last levelled up.
+export function itemRecord(state = {}, id) {
+  const tried = state.tried?.[id] || 0, missed = Math.min(tried, state.missed?.[id] || 0);
+  return {level: itemLevel(state, id), tried, missed, failRate: tried ? missed / tried : null, seenAt: state.seen?.[id] || 0, levelAt: state.lvAt?.[id] || 0};
+}
+// A level's coverage: its words (a word is one thing, whatever card asks it),
+// how many have been met, and how many are known: some card of the word at
+// KNOWN_LEVEL or more, i.e. won fast on three separate occasions.
+export const KNOWN_LEVEL = 3;
+export function levelCoverage(pool = [], state = {}) {
+  const words = new Map();
+  for (const q of pool) {
+    const key = q.item || (q.target?.[0] === "word" ? keyOf(q.target) : null);
+    if (!key || q.kind === "exam") continue;
+    const w = words.get(key) || {seen: false, level: 0};
+    words.set(key, {seen: w.seen || !!state.seen?.[q.id], level: Math.max(w.level, itemLevel(state, q.id))});
+  }
+  const all = [...words.values()];
+  return {items: all.length, seen: all.filter(w => w.seen).length, known: all.filter(w => w.level >= KNOWN_LEVEL).length};
+}
 // After each answer: the question is seen; a miss waits for the next round.
 export function rememberAnswer(state = {}, {q, outcome, points = 0, fast = false, difficulty = "normal", now = Date.now()}) {
   const seen = {...(state.seen || {}), [q.id]: now};
   // Practice (connectives until reviewed) is exposure only: it never moves
   // accuracy, the level, the day or boss counts, the run clock, wins or repeats.
-  if (q.practice) return {...state, seen, practiced: (state.practiced || 0) + 1};
+  if (q.practice && !q.record) return {...state, seen, practiced: (state.practiced || 0) + 1};
+  // The item record (owner, 26 Nov): how often each card was tried and missed.
+  const tried = {...(state.tried || {}), [q.id]: (state.tried?.[q.id] || 0) + 1};
+  const missed = outcome === "right" ? state.missed || {} : {...(state.missed || {}), [q.id]: (state.missed?.[q.id] || 0) + 1};
+  // An unreviewed level's card (record): the item record moves, the miss
+  // comes back, and nothing is paid or counted toward the day or the boss.
+  if (q.practice) {
+    const wins = fast ? {...(state.wins || {}), [q.id]: (state.wins?.[q.id] || 0) + 1} : state.wins || {};
+    const was = itemLevel(state, q.id), to = levelAfter(state, {id: q.id, outcome, fast, now});
+    const lv = {...(state.lv || {})}, lvAt = {...(state.lvAt || {})};
+    if (to !== was) { lv[q.id] = to; if (to > was) lvAt[q.id] = now; }
+    const comeback = [...(state.comeback || []).filter(id => id !== q.id), ...(outcome === "right" ? [] : [q.id])].slice(-ROUND_SIZE);
+    return {...state, seen, tried, missed, wins, lv, lvAt, comeback, practiced: (state.practiced || 0) + 1};
+  }
   const wins = {...(state.wins || {})};
   if (fast) wins[q.id] = (wins[q.id] || 0) + 1;
   const was = itemLevel(state, q.id), now_ = levelAfter(state, {id: q.id, outcome, fast, now});
@@ -365,7 +402,7 @@ export function rememberAnswer(state = {}, {q, outcome, points = 0, fast = false
   const total = (state.total || 0) + points, day = localDay(new Date(now));
   const days = {...(state.days || {})}, d = days[day] || {answered: 0, right: 0, points: 0, rounds: 0, best: 0};
   days[day] = {...d, answered: d.answered + 1, right: d.right + (outcome === "right" ? 1 : 0), points: d.points + points};
-  return {...state, seen, wins, lv, lvAt, level, runStart, comeback: comeback.slice(-ROUND_SIZE), total, answered: (state.answered || 0) + 1, days};
+  return {...state, seen, tried, missed, wins, lv, lvAt, level, runStart, comeback: comeback.slice(-ROUND_SIZE), total, answered: (state.answered || 0) + 1, days};
 }
 export function rememberRound(state = {}, {score, questions = [], misses, scored, now = Date.now()}) {
   const seen = {...(state.seen || {})};
@@ -467,6 +504,61 @@ export function rankLevels(rank = DEFAULT_RANK, reviewed = REVIEWED_LEVELS) {
 // The boss of a rank is a mock of its level. Only N2 has authored sets today.
 export const BOSS_LEVELS = Object.freeze(["N2"]);
 export const hasBoss = rank => BOSS_LEVELS.includes(rank);
+// The level above the rank: once the rank's own words have nearly all been
+// met (COVERED of them), its cards join the review places as a preview, so a
+// player who has run out of new questions at their level meets the next one.
+export const COVERED = .95;
+export const aheadLevel = rank => RANKS[RANKS.indexOf(rank) + 1] || null;
+export const isCovered = c => c.items > 0 && c.seen / c.items >= COVERED;
+
+// ---- The gate ----
+// Questions build the item record; only the boss moves the rank (owner,
+// 26 Nov). A finished boss of the player's rank gives one verdict:
+//   skip   total ≥ RANK_RULES.skip, every section at its minimum: up one
+//          level, and that level's boss opens at once;
+//   up     total ≥ the level's pass total + RANK_RULES.margin, every section
+//          at its minimum: up one level;
+//   fail   under the pass total, or a section under its minimum; the second
+//          fail in a row at a rank moves it down one level;
+//   hold   passed, without the margin: the rank stays.
+// A ladder, not Elo: bosses are too rare (one per 1,000 questions) for a
+// rating to mean anything. A rank only moves to a level that has a boss
+// (hasBoss): otherwise there would be no gate back, so the verdict is kept
+// (`waits`) and the rank stays until that level's exams exist.
+// Pass totals of 180 (jlpt.jp; docs/JLPT-LEVELS-PLAN.md).
+export const EXAM_PASS = Object.freeze({N5: 80, N4: 90, N3: 95, N2: 90, N1: 100});
+export const RANK_RULES = Object.freeze({margin: 10, skip: 150, fails: 2});
+export function bossVerdict({rank, total, sectionsOk = true}) {
+  const pass = EXAM_PASS[rank];
+  if (!pass || typeof total !== "number") return null;
+  if (total < pass || !sectionsOk) return "fail";
+  return total >= RANK_RULES.skip ? "skip" : total >= pass + RANK_RULES.margin ? "up" : "hold";
+}
+// key: the boss sitting (its run's `at`), so a result is applied once.
+// A boss of a rank the player no longer holds is logged and moves nothing.
+export function applyBoss(state = {}, {key, rank = rankOf(state), total, sectionsOk = true, now = Date.now()}) {
+  const log = state.bossLog || [];
+  const verdict = bossVerdict({rank, total, sectionsOk});
+  if (!key || !verdict || log.some(e => e.key === key)) return state;
+  const entry = {key, at: new Date(now).toISOString(), rank, total, verdict};
+  let next = state;
+  if (rank === rankOf(state)) {
+    let fails = verdict === "fail" ? 1 : 0;
+    if (verdict === "fail") for (const e of [...log].reverse()) { if (e.rank !== rank || e.verdict !== "fail") break; fails++; }
+    const to = verdict === "up" || verdict === "skip" ? aheadLevel(rank) : fails >= RANK_RULES.fails ? RANKS[RANKS.indexOf(rank) - 1] || null : null;
+    if (to && hasBoss(to)) { next = {...setRank(state, to, now), ...(verdict === "skip" ? {bossReady: true} : {})}; entry.to = to; }
+    else if (to) entry.waits = to;
+  }
+  return {...next, bossLog: [...log, entry].slice(-200)};
+}
+// The last verdict, in words, for Home.
+export function verdictLine(entry) {
+  if (!entry) return "";
+  const score = entry.total + " of 180", moved = entry.to ? ": now " + entry.to : entry.waits ? ": " + entry.waits + " opens when its exams exist" : "";
+  return entry.verdict === "fail" ? "Last boss " + score + ", under the " + entry.rank + " line" + (entry.to ? ": now " + entry.to : entry.waits ? "" : ": one more like it moves the rank down")
+    : entry.verdict === "hold" ? "Last boss " + score + ": passed, " + (EXAM_PASS[entry.rank] + RANK_RULES.margin) + " moves the rank up"
+    : "Last boss " + score + ": " + entry.rank + " passed" + moved;
+}
 
 // ---- Pacing ----
 // Games pace in waves of tension and release, not a flat line: Valve's
@@ -570,14 +662,15 @@ export const BOSS_EVERY = 1000;
 export const BOSS_MINUTES = Object.freeze({written: 53, listening: 50});
 export function bossProgress(state = {}) {
   const done = Math.max(0, (state.answered || 0) - (state.bossFrom || 0));
-  return {done: Math.min(done, BOSS_EVERY), left: Math.max(0, BOSS_EVERY - done), open: done >= BOSS_EVERY};
+  // bossReady: a boss passed far above the line opens the next one at once (applyBoss).
+  return state.bossReady ? {done: BOSS_EVERY, left: 0, open: true} : {done: Math.min(done, BOSS_EVERY), left: Math.max(0, BOSS_EVERY - done), open: done >= BOSS_EVERY};
 }
 export function takeBoss(state = {}, {set, attemptId = null, now = Date.now()}) {
   const at = new Date(now).toISOString();
   // A run: the 1,000 questions' points, closed when the boss is taken; its
   // exam score joins it once the boss is finished (runTable).
-  const run = {set, at, attemptId, start: state.runStart || at, gamePoints: (state.total || 0) - (state.runFrom || 0), questions: (state.answered || 0) - (state.bossFrom || 0)};
-  return {...state, bossFrom: state.answered || 0, runFrom: state.total || 0, runStart: null, bossTaken: {set, at}, runs: [...(state.runs || []), run].slice(-200)};
+  const run = {set, at, attemptId, rank: rankOf(state), start: state.runStart || at, gamePoints: (state.total || 0) - (state.runFrom || 0), questions: (state.answered || 0) - (state.bossFrom || 0)};
+  return {...state, bossFrom: state.answered || 0, runFrom: state.total || 0, runStart: null, bossReady: false, bossTaken: {set, at}, runs: [...(state.runs || []), run].slice(-200)};
 }
 // Runs, ranked by the merged score, each keeping its two parts for the
 // in-depth view. examOf(run) gives the finished boss sitting's estimate
