@@ -128,10 +128,10 @@ level that has a boss, so today every verdict waits (only N2 has mocks). The
 rank's level comes first in a round; lower levels take two places; the level
 above joins those places once 95% of the rank's words have been met.
 
+The gate judges the half-time boss as it is sat (owner, 26 Nov): promotion
+has no separate full-time sitting.
+
 Waiting on the owner:
-- **The boss is the half-time sitting.** The plan spoke of a standard-time
-  mock for promotion; the gate today uses the boss as it is (written at half
-  time). To confirm, or to give promotion its own full-time sitting.
 - **Mock exams for N5, N4, N3 and N1**: in their own session. Add each level
   to `BOSS_LEVELS` (n2-game.js) once its sets and its exam screen exist.
 - **Where a new player starts.** The plan says N5; today a state with no rank

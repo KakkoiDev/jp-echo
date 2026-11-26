@@ -521,6 +521,7 @@ export const isCovered = c => c.items > 0 && c.seen / c.items >= COVERED;
 //   fail   under the pass total, or a section under its minimum; the second
 //          fail in a row at a rank moves it down one level;
 //   hold   passed, without the margin: the rank stays.
+// The boss is judged as it is sat, written part at half time (owner, 26 Nov).
 // A ladder, not Elo: bosses are too rare (one per 1,000 questions) for a
 // rating to mean anything. A rank only moves to a level that has a boss
 // (hasBoss): otherwise there would be no gate back, so the verdict is kept
