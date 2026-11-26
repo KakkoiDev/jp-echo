@@ -504,7 +504,11 @@ Before considering the change complete:
   `BOSS_REVIEW` seconds a card (5, or 8 for reading and listening) with the
   hold button, a "Full paper" link and its own back button to Home
   (`#game-review-back`: the review hides the head); the run row says
-  "Boss review" (v304). It is not an exercise: it writes no
+  "Boss review" (v304). A vocabulary or grammar card there reads like a
+  round's review card: the word, its reading and its meaning large (from the
+  pool card of the question's `target`), the paper's sentence in the example
+  card, then the why; a question with no pool card keeps the question-and-
+  answer layout. It is not an exercise: it writes no
   state and counts toward nothing. A reading or listening card shows the
   question's deciding lines (`n2-sets/keys.json`, precached), built by
   `tools/n2-build-keys.mjs` from `tools/boss-keys/<set>.json`: word for word

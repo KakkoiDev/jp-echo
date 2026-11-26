@@ -175,3 +175,17 @@ test("rest is for the night of the boss: it ends at five, or once the Night Radi
   assert.deepEqual(endRest({}), {});
   assert.ok(src("../n2-mock.js").includes('$("game-home-radio").onclick = () => { writeGame(endRest(readGame())); radioPanel(); };'));
 });
+
+test("a vocabulary or grammar review card shows the word, its reading and its meaning large, as a round's review does", () => {
+  const answers = set.questions.map(q => q.key); answers[0] = 4; answers[30] = 2;
+  const [word, pattern] = bossReview({paper: set, attempt: {answers}});
+  assert.deepEqual(word.target, ["word", "険しい", "けわしい"]); assert.deepEqual(pattern.target, ["grammar", "ところを見ると"]);
+  // The game has the meaning of both: the cards of the pool.
+  const sol = t => pool.find(c => c.kind !== "exam" && c.solution?.meaning && c.target?.[0] === t[0] && c.target[1] === t[1])?.solution;
+  assert.equal(sol(word.target).word, "険しい"); assert.equal(sol(word.target).reading, "けわしい"); assert.match(sol(word.target).meaning, /steep|precipitous/i);
+  assert.ok(sol(pattern.target).meaning);
+  const js = src("../n2-mock.js");
+  assert.ok(js.includes("solution: {word: sol.word, reading: sol.reading || \"\", meaning: sol.meaning,"), "the hero is the word, the reading and the meaning");
+  assert.ok(js.includes('if (q.paperLine) { $("game-review-ja").replaceChildren(...paperText(q.paperLine, q.answer));'), "the paper's sentence sits in the example card");
+  assert.ok(js.includes('"Answer: " + it.answer'), "a synonym question still shows the paper's answer");
+});

@@ -634,7 +634,7 @@ export function bossReview({paper, attempt, keys = {}, source = ""}) {
     // A stored paper numbers its skills (0 vocabulary … 3 listening); a set file names them.
     const long = [2, 3, "Reading", "Listening"].includes(q.skill);
     const key = source ? keys[source + "#" + i] : null, heard = q.skill === "Listening" || q.skill === 3;
-    return [{index: i, mondai: q.mondai, long, heard, ask: q.prompt || "", answer: q.choices[q.key - 1],
+    return [{index: i, mondai: q.mondai, long, heard, target: q.target || null, ask: q.prompt || "", answer: q.choices[q.key - 1],
       picked: given === q.key ? "" : given ? q.choices[given - 1] || "" : null, unsure: given === q.key,
       lines: key?.lines || (heard && (q.choices.length === 3) ? [String(q.context || "").replace(/^[男女][０-９0-9１２]?[：:]/, "")] : []), en: key?.en || "", why: q.why || "",
       seconds: long ? BOSS_REVIEW.long : BOSS_REVIEW.short}];

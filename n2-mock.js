@@ -1741,9 +1741,21 @@ async function game() {
     if (!items.length) return false;
     clearTimeout(timer); window.speechSynthesis?.cancel();
     paperReview = {href: "?book=" + encodeURIComponent(sitting.book) + "&attempt=" + encodeURIComponent(sitting.id)};
-    misses = items.map(it => ({picked: it.picked === null ? "No answer" : it.unsure ? "Right, but marked unsure" : it.picked,
-      q: {kind: "paper", id: "paper:" + sitting.book + "#" + it.index, ask: it.ask, prompt: it.ask, mondai: it.mondai, answer: it.answer, seconds: it.seconds, ...(it.heard && it.lines.length ? {say: it.lines.join("　")} : {}),
-        solution: {word: it.answer, meaning: "", ja: it.lines.join(""), en: it.en, why: it.why, source: sitting.book + "#" + it.index}}}));
+    // A vocabulary or grammar question reads like a round's review card (owner, 27 Nov): the word, its reading and
+    // its meaning large, at a glance (険しい · けわしい · steep); the paper's sentence under them, then the why.
+    const known = t => t && n2Cards.find(c => c.kind !== "exam" && c.solution?.meaning && c.target?.[0] === t[0] && c.target[1] === t[1] && (t[2] === undefined || c.target[2] === t[2]))?.solution;
+    misses = items.map(it => {
+      const sol = known(it.target), id = "paper:" + sitting.book + "#" + it.index, source = sitting.book + "#" + it.index;
+      const picked = it.picked === null ? "No answer" : it.unsure ? "Right, but marked unsure" : it.picked;
+      const base = {kind: "paper", id, prompt: it.ask, mondai: it.mondai, answer: it.answer, seconds: it.seconds};
+      // A usage question (問題6) asks with the bare word and answers with a sentence: that sentence is the line.
+      const usage = sol && !/【|（\s*）/.test(it.ask) && it.answer.length > it.ask.length;
+      if (sol) return {picked, q: {...base, paperLine: usage ? it.answer.replace(it.ask, "【" + it.ask + "】") : it.ask, target: it.target,
+        // The paper's answer, where the sentence does not already hold it (a synonym question).
+        solution: {word: sol.word, reading: sol.reading || "", meaning: sol.meaning, ja: "", en: usage || /（\s*）/.test(it.ask) || [sol.word, sol.reading].includes(it.answer) ? "" : "Answer: " + it.answer, why: it.why, source}}};
+      return {picked, q: {...base, ask: it.ask, ...(it.heard && it.lines.length ? {say: it.lines.join("　")} : {}),
+        solution: {word: it.answer, meaning: "", ja: it.lines.join(""), en: it.en, why: it.why, source}}};
+    });
     $("game-back").href = "?view=game"; $("game-back").setAttribute("aria-label", "Back to home"); $("game-back").dataset.end = "false";
     // The review hides the head, so it carries its own way out: back to Home at any card.
     $("game-review-back").onclick = () => { clearTimeout(timer); clearInterval(ticker); window.speechSynthesis?.cancel(); paperReview = null; root.dataset.paper = "false"; $("game-review-back").hidden = true; home(); };
@@ -1779,9 +1791,10 @@ async function game() {
     $("game-next").textContent = n === misses.length - 1 ? (paperReview ? "Done" : "Round end") : "Next";
     // A boss review card (bossReview): the question, the right choice, the pick; then the deciding lines and the why.
     const ask = $("game-review-ask"); ask.hidden = !q.ask; ask.replaceChildren(...(q.ask ? paperText(q.ask, q.answer) : []));
-    $("game-review-word").classList.toggle("line", !!paperReview && word.length > 10);
+    $("game-review-word").classList.toggle("line", !!paperReview && !q.paperLine && word.length > 10);
     if (paperReview) $("game-sub-right").replaceChildren(el("a", {class: "qr-chip", href: paperReview.href, text: "Full paper"}));
-    $("game-review-sentence").hidden = !sol.ja;
+    $("game-review-sentence").hidden = !sol.ja && !q.paperLine;
+    if (q.paperLine) { $("game-review-ja").replaceChildren(...paperText(q.paperLine, q.answer)); $("game-review-en").textContent = sol.en || ""; }
     if (sol.ja) { $("game-review-ja").replaceChildren(...exampleNodes(sol.ja, [q.kind === "homophone" || q.kind === "connective" ? word : q.needle || "", word.replace(/[〜～]/g, "").replace(/（[^）]*）/g, "")].filter(Boolean))); $("game-review-en").textContent = sol.en || ""; }
     $("game-review-why").hidden = !sol.why; $("game-review-why").textContent = sol.why || "";
     // Same-sound words sit inside the example card, as its third line (review C15).
