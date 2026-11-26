@@ -247,7 +247,13 @@ function addGrammarBlocks(pool, {blocks = {}, patterns = {}}) {
   const keysOf = parts => [...new Set(parts.flatMap(p => Object.hasOwn(blocks, p.block) ? [p.block] : []))];
   const byKey = new Map(grammar.map(q => [q.id.slice(2), keysOf(patterns[q.id.slice(2)]?.parts || [])]));
 
+  // The particles and endings of N5 and N4 (に, は, を, て, だ…) are taken as
+  // known: an N2 learner's first grammar cards were two dozen of these, with
+  // glosses too abstract to tell apart (audit, 27 Nov). They have no card of
+  // their own, count as met in every pattern, and are left out of the count.
+  const basic = new Set(entries.filter(([, b]) => BASIC_BLOCK.levels.includes(b.level) && BASIC_BLOCK.types.includes(b.type)).map(([id]) => id));
   for (const [id, block] of entries) {
+    if (basic.has(id)) continue;
     const sentence = plain(block.ja);
     const needle = [...block.forms].sort((a, b) => b.length - a.length).find(form => sentence.includes(form));
     if (!needle) continue;
@@ -261,6 +267,8 @@ function addGrammarBlocks(pool, {blocks = {}, patterns = {}}) {
     const key = q.id.slice(2), pattern = patterns[key], ids = byKey.get(key);
     if (!ids.length) continue;
     q.blocks = ids;
+    // A pattern that is one block is learned by its block card: nothing to build or infer.
+    if (pattern.parts.length === 1) continue;
     // Use the deck's reviewed span when available, including split spans.
     // Otherwise require the actual ordered pieces, never a guessed stem.
     const variants = pattern.parts.map(({text, block}) => {
@@ -276,7 +284,9 @@ function addGrammarBlocks(pool, {blocks = {}, patterns = {}}) {
     const others = grammar.filter(other => other !== q && !confusable.has(key + "\n" + other.id.slice(2)));
     const wrong = fair(q.answer, others.map(other => other.answer));
     const near = fair(q.answer, others.filter(other => byKey.get(other.id.slice(2)).some(id => ids.includes(id))).map(other => other.answer));
-    const card = {...base, item: keyOf(q.target), patternKey: key, blocks: ids, prompt: q.prompt,
+    const basics = ids.filter(id => basic.has(id));
+    if (basics.length) q.basics = basics;
+    const card = {...base, item: keyOf(q.target), patternKey: key, blocks: ids, ...(basics.length ? {basics} : {}), prompt: q.prompt,
       sentence: q.sentence, needle, answer: q.answer, wrong, near, solution: pattern.transparency === "opaque"
         ? {...q.solution, why: "Learn this pattern as a whole."} : q.solution};
     pool.push({...card, id: "gb:" + key, kind: "build",
@@ -675,7 +685,8 @@ export const GRAMMAR_BLOCK_KNOWN = Object.freeze({transfer: 1, right: 3});
 const blockKnown = ([, right = 0, , transfer = 0] = []) => transfer >= GRAMMAR_BLOCK_KNOWN.transfer || right >= GRAMMAR_BLOCK_KNOWN.right;
 const patternPrefixes = ["g:", "gb:", "gi:"];
 const newPattern = (state, key) => key && patternPrefixes.every(prefix => !Object.hasOwn(state.seen || {}, prefix + key));
-const allMet = (state, q, except) => q.blocks.every(id => id === except || state.gb?.[id]?.[0]);
+export const BASIC_BLOCK = Object.freeze({levels: ["N5", "N4"], types: ["particle", "ending", "negative"]});
+const allMet = (state, q, except) => q.blocks.every(id => id === except || q.basics?.includes(id) || state.gb?.[id]?.[0]);
 export const grammarBlockCard = q => q.kind === "block" || q.kind === "build" || q.kind === "infer";
 
 export function grammarAfter(state, {q, outcome, now}) {
@@ -692,7 +703,8 @@ export function grammarAfter(state, {q, outcome, now}) {
 }
 
 export function grammarCoverage(cards, state = {}) {
-  const ids = new Set(cards.flatMap(q => q.blocks || []));
+  const basic = new Set(cards.flatMap(q => q.basics || []));
+  const ids = new Set(cards.flatMap(q => q.blocks || []).filter(id => !basic.has(id)));
   return {items: ids.size, known: [...ids].filter(id => blockKnown(state.gb?.[id])).length};
 }
 
@@ -706,7 +718,8 @@ export function grammarPick({pool, state, slots, skip, comeback = [], now}) {
     if (!byBlock.has(id)) byBlock.set(id, []);
     byBlock.get(id).push(q);
   }
-  const ids = [...byBlock.keys()];
+  const basic = new Set(pool.flatMap(q => q.basics || []));
+  const ids = [...byBlock.keys()].filter(id => !basic.has(id));
   const record = id => state.gb?.[id] || [];
   const order = (a, b) => (record(a)[4] || 0) - (record(b)[4] || 0);
   // A block is assembled once it has been shown inside a pattern with its

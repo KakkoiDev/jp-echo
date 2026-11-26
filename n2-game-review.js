@@ -92,6 +92,7 @@ export const REVIEWED_GRAMMAR_BLOCKS = false;
 // cards (`gb:`, `gi:`) neither is ever offered as the other's wrong choice.
 // The scored `g:` cards are not changed here: their pool is audited as it is.
 export const GRAMMAR_CONFUSABLE = Object.freeze([
+  ["からすると-からすれば", "から見ると"],
   ["なにやら", "何といっても"],
   ["からすると-からすれば", "にしたら"],
   ["からすると-からすれば", "からには"],

@@ -71,14 +71,14 @@ export function validateGrammarBlocks(index, {draft = false} = {}) {
       if (!object(b)) { add(key, `unknown block: ${part.block}`); continue; }
       users.get(part.block).add(key);
       if (!Array.isArray(b.forms) || !b.forms.includes(part.text)) add(key, `form ${part.text} is not listed for ${part.block}`);
-      if (text(b.gloss) && sameSense(b.gloss, point.meaning)) add(key, `gloss of ${part.block} overlaps the answer`);
+      // A pattern that is one block has nothing to build: its gloss is its meaning, plainly (owner, 27 Nov).
+      if (parts.length > 1 && text(b.gloss) && sameSense(b.gloss, point.meaning)) add(key, `gloss of ${part.block} overlaps the answer`);
     }
     if (!parts.some(p => Object.hasOwn(p, "block"))) add(key, "pattern has no blocks");
     if (t !== "opaque" && !text(literal)) add(key, "missing literal");
     if (literal !== undefined && (!text(literal) || JP.test(literal))) add(key, "literal must be English");
-    if (parts.length === 1 && Object.hasOwn(blocks, parts[0].block) && blocks[parts[0].block]?.type === "word" && t !== "opaque") {
-      add(key, "a whole word is opaque");
-    }
+    // One block is the whole pattern: learned whole, by its block card. No solve, no build or infer card.
+    if (parts.length === 1 && Object.hasOwn(blocks, parts[0].block) && t !== "opaque") add(key, "a one-block pattern is learned whole (opaque)");
     const solves = {clear: ["blocks-only", true], partial: ["blocks+sentence", true]};
     if (Object.hasOwn(solves, t)) {
       const [by, right] = solves[t];
@@ -106,11 +106,13 @@ export function validateGrammarBlocks(index, {draft = false} = {}) {
       if (b.single !== true) add(id, "single-use block needs single: true");
     } else if (b.single !== undefined) add(id, "shared block cannot be marked single");
   }
+  // No cap on single-use blocks (owner, 27 Nov: "arbitrary percentage is no
+  // problem" if the product teaches). The share is reported, not enforced: the
+  // N2 list uses many ordinary words in one pattern only (沿う, 契機, 傾向).
   const share = single.length / (users.size || 1);
-  if (!draft && share > .4) add("blocks", `${(100 * share).toFixed(1)}% are single-use (maximum 40%)`);
   const shared = new Set([...users.values()].filter(keys => keys.size > 1).flatMap(keys => [...keys]));
   return {errors, counts: {patterns: Object.keys(patterns).length, blocks: users.size, types, transparency,
-    sharedPatterns: shared.size, single, opaque: Object.entries(patterns).filter(([, p]) => p?.transparency === "opaque").map(([key]) => key)}};
+    sharedPatterns: shared.size, singleShare: Math.round(share * 1000) / 10, single, opaque: Object.entries(patterns).filter(([, p]) => p?.transparency === "opaque").map(([key]) => key)}};
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

@@ -9,7 +9,7 @@
         "ず"
       ],
       "type": "negative",
-      "gloss": "actions that do not happen",
+      "gloss": "an old negative ending",
       "ja": "雨【あめ】がひどいので、旅行【りょこう】は中止【ちゅうし】せざるを得【え】ない。",
       "en": "The rain is so heavy that we have no choice but to cancel the trip.",
       "level": "N2"
@@ -432,7 +432,7 @@
         "せめて"
       ],
       "type": "word",
-      "gloss": "a minimal concession",
+      "gloss": "At least",
       "ja": "せめて一日【いちにち】だけでも休【やす】みが欲【ほ】しい。",
       "en": "I want at least one day off.",
       "level": "N2",
@@ -444,7 +444,7 @@
         "どうせ"
       ],
       "type": "word",
-      "gloss": "an outcome treated as fixed",
+      "gloss": "anyway, after all",
       "ja": "どうせ間【ま】に合【あ】わないから、ゆっくり行【い】こう。",
       "en": "We won't make it anyway, so let's go slowly.",
       "level": "N2",
@@ -456,7 +456,7 @@
         "確かに"
       ],
       "type": "word",
-      "gloss": "grants the point at hand",
+      "gloss": "Surely, Certainly",
       "ja": "鍵【かぎ】は確【たし】かにここに置【お】いたはずだ。",
       "en": "I'm sure I left the key right here.",
       "level": "N2",
@@ -468,7 +468,7 @@
         "一応"
       ],
       "type": "word",
-      "gloss": "a provisional precaution",
+      "gloss": "Just in case, Just to be sure",
       "ja": "雨【あめ】は降【ふ】らないと思【おも】うが、一応【いちおう】傘【かさ】を持【も】っていこう。",
       "en": "I don't think it'll rain, but let's take an umbrella just in case.",
       "level": "N2",
@@ -480,7 +480,7 @@
         "一応"
       ],
       "type": "word",
-      "gloss": "a provisional minimum",
+      "gloss": "more or less, for the time being",
       "ja": "報告書【ほうこくしょ】は一応【いちおう】できたが、まだ見直【みなお】しが必要【ひつよう】だ。",
       "en": "The report is more or less done, but it still needs a review.",
       "level": "N2",
@@ -492,7 +492,7 @@
         "なお"
       ],
       "type": "word",
-      "gloss": "something remains in force",
+      "gloss": "Still, Even",
       "ja": "薬【くすり】を飲【の】んだが、熱【ねつ】はなお下【さ】がらない。",
       "en": "I took medicine, but my fever still won't go down.",
       "level": "N2",
@@ -504,7 +504,7 @@
         "なお"
       ],
       "type": "word",
-      "gloss": "appends a note",
+      "gloss": "In addition, Incidentally",
       "ja": "なお、詳【くわ】しい日程【にってい】は後日【ごじつ】お知【し】らせします。",
       "en": "In addition, we will announce the detailed schedule at a later date.",
       "level": "N2",
@@ -516,7 +516,7 @@
         "きっかけ"
       ],
       "type": "noun",
-      "gloss": "the opening that prompts action",
+      "gloss": "an opportunity or trigger",
       "ja": "一冊【いっさつ】の本【ほん】がきっかけで、医者【いしゃ】を目指【めざ】すようになった。",
       "en": "A single book was what made me start aiming to become a doctor.",
       "level": "N2",
@@ -672,7 +672,7 @@
         "まい"
       ],
       "type": "negative",
-      "gloss": "rules out a plan or likelihood",
+      "gloss": "Won't, Intend not to",
       "ja": "二【に】度【ど】と行【い】くまい。",
       "en": "I resolve never to go again.",
       "level": "N2",
@@ -793,7 +793,7 @@
         "とも"
       ],
       "type": "particle",
-      "gloss": "grants a case for argument",
+      "gloss": "Even if, No matter",
       "ja": "雨【あめ】が降【ふ】ろうとも出【で】かける。",
       "en": "I will go out even if it rains.",
       "level": "N2",
@@ -864,7 +864,7 @@
         "げ"
       ],
       "type": "ending",
-      "gloss": "visible outward appearance",
+      "gloss": "showing signs of an emotion",
       "ja": "彼女【かのじょ】は寂【さび】しげな顔【かお】をした。",
       "en": "She looked lonely.",
       "level": "N2",
@@ -1050,7 +1050,7 @@
         "後"
       ],
       "type": "noun",
-      "gloss": "the remainder or position beyond",
+      "gloss": "remaining or subsequent",
       "ja": "残【のこ】りは後【あと】で返【かえ】す。",
       "en": "I will return the rest later.",
       "level": "N2",
@@ -1103,7 +1103,7 @@
         "っこない"
       ],
       "type": "negative",
-      "gloss": "rejects a possibility emphatically",
+      "gloss": "There is no chance of",
       "ja": "今日【きょう】中【じゅう】には終【お】わりっこない。",
       "en": "There's no way it will be finished today.",
       "level": "N2",
@@ -1115,7 +1115,7 @@
         "おそらく"
       ],
       "type": "word",
-      "gloss": "marks a reasoned prediction",
+      "gloss": "Probably, Perhaps",
       "ja": "おそらく、彼【かれ】は今日【きょう】の会議【かいぎ】には来【こ】ないだろう。",
       "en": "He probably won't come to today's meeting.",
       "level": "N2",
@@ -1127,7 +1127,7 @@
         "未だに"
       ],
       "type": "word",
-      "gloss": "a persistent state",
+      "gloss": "Still, Not yet",
       "ja": "三年前【さんねんまえ】のことを、未【いま】だに覚【おぼ】えている。",
       "en": "I still remember what happened three years ago.",
       "level": "N2",
@@ -1139,7 +1139,7 @@
         "とっくに"
       ],
       "type": "word",
-      "gloss": "far back relative to now",
+      "gloss": "Already, A long time ago",
       "ja": "駅【えき】に着【つ】いたときには、電車【でんしゃ】はとっくに出【で】ていた。",
       "en": "By the time I got to the station, the train had long since left.",
       "level": "N2",
@@ -1151,7 +1151,7 @@
         "一旦"
       ],
       "type": "word",
-      "gloss": "a first step before reassessment",
+      "gloss": "once, for the time being",
       "ja": "一旦【いったん】家【いえ】に帰【かえ】ってから、また出【で】かけます。",
       "en": "I'll go home once, then head out again.",
       "level": "N2",
@@ -1163,7 +1163,7 @@
         "やがて"
       ],
       "type": "word",
-      "gloss": "a later stage will arrive",
+      "gloss": "Before long, All too soon",
       "ja": "夜【よる】になると、雨【あめ】はやがて雪【ゆき】に変【か】わった。",
       "en": "When night fell, the rain eventually turned to snow.",
       "level": "N2",
@@ -1175,7 +1175,7 @@
         "いよいよ"
       ],
       "type": "word",
-      "gloss": "signals a culmination",
+      "gloss": "At last, Finally",
       "ja": "いよいよ明日【あした】から夏休【なつやす】みだ。",
       "en": "Summer vacation finally starts tomorrow.",
       "level": "N2",
@@ -1187,7 +1187,7 @@
         "はたして"
       ],
       "type": "word",
-      "gloss": "calls a prediction into question",
+      "gloss": "really, as expected",
       "ja": "はたして、彼【かれ】の予想【よそう】は当【あ】たるだろうか。",
       "en": "I wonder whether his prediction will really come true.",
       "level": "N2",
@@ -1310,7 +1310,7 @@
         "活かせる"
       ],
       "type": "verb",
-      "gloss": "lets an existing ability do work",
+      "gloss": "put a skill or experience to use",
       "ja": "留学【りゅうがく】の経験【けいけん】を仕事【しごと】に活【い】かしたい。",
       "en": "I want to put my experience studying abroad to use in my work.",
       "level": "N2",
@@ -1407,7 +1407,7 @@
         "限り"
       ],
       "type": "noun",
-      "gloss": "the outer boundary of a situation",
+      "gloss": "as long as, to the extent that",
       "ja": "体【からだ】が動【うご】く限【かぎ】り、この仕事【しごと】を続【つづ】けたい。",
       "en": "As long as my body can move, I want to continue this work.",
       "level": "N2",
@@ -1468,7 +1468,7 @@
         "たまえ"
       ],
       "type": "ending",
-      "gloss": "request from a higher position",
+      "gloss": "command directed at a subordinate",
       "ja": "君【きみ】、この書類【しょるい】をすぐにコピーしてくれたまえ。",
       "en": "You there, copy these documents right away.",
       "level": "N2",
@@ -1517,7 +1517,7 @@
         "以来"
       ],
       "type": "noun",
-      "gloss": "the period starting at a reference",
+      "gloss": "Since, Henceforth",
       "ja": "日本【にほん】に来【き】て以来【いらい】、毎朝【まいあさ】納豆【なっとう】を食【た】べている。",
       "en": "Ever since I came to Japan, I've eaten natto every morning.",
       "level": "N2",
@@ -1554,7 +1554,7 @@
         "あげく"
       ],
       "type": "noun",
-      "gloss": "an endpoint reached with difficulty",
+      "gloss": "After, In the end",
       "ja": "一時間【いちじかん】も迷【まよ】ったあげく、何【なに】も買【か】わずに帰【かえ】った。",
       "en": "After dithering for a whole hour, I ended up going home without buying anything.",
       "level": "N2",
@@ -1615,7 +1615,7 @@
         "反面"
       ],
       "type": "noun",
-      "gloss": "the reverse face of the situation",
+      "gloss": "on the other hand",
       "ja": "都会【とかい】の生活【せいかつ】は便利【べんり】な反面【はんめん】、物価【ぶっか】が高【たか】い。",
       "en": "City life is convenient, but on the other hand prices are high.",
       "level": "N2",
@@ -1677,7 +1677,7 @@
         "ものの"
       ],
       "type": "word",
-      "gloss": "acknowledges a fact before a reversal",
+      "gloss": "Although, But",
       "ja": "免許【めんきょ】は取【と】ったものの、まだ一度【いちど】も運転【うんてん】していない。",
       "en": "Although I got my license, I haven't driven even once.",
       "level": "N2",
@@ -1726,7 +1726,7 @@
         "とか"
       ],
       "type": "particle",
-      "gloss": "puts forward a tentative example",
+      "gloss": "reportedly, or among other examples",
       "ja": "来月【らいげつ】、駅前【えきまえ】に大【おお】きな本屋【ほんや】ができるとか。",
       "en": "I hear a big bookstore is opening in front of the station next month.",
       "level": "N2",
@@ -1761,7 +1761,7 @@
         "たった"
       ],
       "type": "word",
-      "gloss": "emphasizes a small quantity",
+      "gloss": "Only, Just",
       "ja": "たった五分【ごふん】で、宿題【しゅくだい】を終【お】わらせた。",
       "en": "I finished my homework in just five minutes.",
       "level": "N2",
@@ -1834,7 +1834,7 @@
         "幸い"
       ],
       "type": "noun",
-      "gloss": "a favorable turn of events",
+      "gloss": "Luckily, Fortunately",
       "ja": "幸【さいわ】い、けがをした人【ひと】はいなかった。",
       "en": "Fortunately, nobody was injured.",
       "level": "N2",
@@ -1870,7 +1870,7 @@
         "弱"
       ],
       "type": "ending",
-      "gloss": "on the low side of a quantity",
+      "gloss": "Just less than",
       "ja": "会場【かいじょう】には百人弱【ひゃくにんじゃく】の人【ひと】が集【あつ】まった。",
       "en": "Just under a hundred people gathered at the venue.",
       "level": "N2",
@@ -1882,7 +1882,7 @@
         "強"
       ],
       "type": "ending",
-      "gloss": "on the high side of a quantity",
+      "gloss": "Just more than",
       "ja": "駅【えき】から家【いえ】まで、歩【ある】いて二十分強【にじゅっぷんきょう】かかる。",
       "en": "It takes just over twenty minutes on foot from the station to my house.",
       "level": "N2",
@@ -1968,7 +1968,7 @@
         "さらに"
       ],
       "type": "word",
-      "gloss": "goes past the point already reached",
+      "gloss": "Even more or further, Again",
       "ja": "駅【えき】から更【さら】に十分【じっぷん】ほど歩【ある】くと、海【うみ】が見【み】えます。",
       "en": "If you walk a further ten minutes from the station, you'll see the sea.",
       "level": "N2",
@@ -1981,7 +1981,7 @@
         "せいぜい"
       ],
       "type": "word",
-      "gloss": "gives an approximate upper limit",
+      "gloss": "(At) most, (At) best",
       "ja": "頑張【がんば】っても、精々【せいぜい】三十点【さんじゅってん】しか取【と】れないだろう。",
       "en": "Even if I try hard, I'll probably get thirty points at most.",
       "level": "N2",
@@ -1994,7 +1994,7 @@
         "及び"
       ],
       "type": "word",
-      "gloss": "joins items in formal enumeration",
+      "gloss": "And, As well as",
       "ja": "氏名【しめい】および住所【じゅうしょ】を、こちらにご記入【きにゅう】ください。",
       "en": "Please fill in your name and address here.",
       "level": "N2",
@@ -2006,7 +2006,7 @@
         "たちまち"
       ],
       "type": "word",
-      "gloss": "a change unfolds very fast",
+      "gloss": "Immediately, Quickly",
       "ja": "新【あたら】しいゲームは、発売【はつばい】されるとたちまち売【う】り切【き】れた。",
       "en": "The new game sold out the moment it was released.",
       "level": "N2",
@@ -2018,7 +2018,7 @@
         "いきなり"
       ],
       "type": "word",
-      "gloss": "an action with no lead-in",
+      "gloss": "For no reason, Suddenly",
       "ja": "前【まえ】を歩【ある】いていた人【ひと】が、いきなり立【た】ち止【ど】まった。",
       "en": "The person walking in front of me suddenly stopped.",
       "level": "N2",
@@ -2055,7 +2055,7 @@
         "たって"
       ],
       "type": "ending",
-      "gloss": "grants the premise provisionally",
+      "gloss": "Even if, Even though",
       "ja": "今【いま】から走【はし】ったって、もう間【ま】に合【あ】わないよ。",
       "en": "Even if you run now, you won't make it in time.",
       "level": "N2",
@@ -2079,7 +2079,7 @@
         "おおよそ"
       ],
       "type": "word",
-      "gloss": "an estimate without fine precision",
+      "gloss": "Approximately, Roughly",
       "ja": "駅【えき】から会場【かいじょう】まで、おおよそ十分【じっぷん】かかります。",
       "en": "It takes roughly ten minutes from the station to the venue.",
       "level": "N2",
@@ -2091,7 +2091,7 @@
         "要するに"
       ],
       "type": "word",
-      "gloss": "reduces the point to its essentials",
+      "gloss": "To sum up, In summary",
       "ja": "要【よう】するに、予算【よさん】が足【た】りないということですね。",
       "en": "In short, what you're saying is that the budget isn't enough.",
       "level": "N2",
@@ -2103,7 +2103,7 @@
         "それとも"
       ],
       "type": "word",
-      "gloss": "invites a choice between two options",
+      "gloss": "Or, Or else",
       "ja": "コーヒーにしますか、それとも紅茶【こうちゃ】にしますか。",
       "en": "Would you like coffee, or would you prefer tea?",
       "level": "N2",
@@ -2115,7 +2115,7 @@
         "おまけに"
       ],
       "type": "word",
-      "gloss": "adds an extra circumstance",
+      "gloss": "on top of that",
       "ja": "道【みち】に迷【まよ】い、おまけに雨【あめ】まで降【ふ】ってきた。",
       "en": "I got lost, and on top of that it started raining.",
       "level": "N2",
@@ -2127,7 +2127,7 @@
         "さすが"
       ],
       "type": "word",
-      "gloss": "acknowledges a fitting result",
+      "gloss": "as one would expect",
       "ja": "さすがはベテランの先生【せんせい】、説明【せつめい】がとてもわかりやすい。",
       "en": "As you'd expect of a veteran teacher, the explanation is very easy to follow.",
       "level": "N2",
@@ -2139,7 +2139,7 @@
         "それなのに"
       ],
       "type": "word",
-      "gloss": "signals an unexpected mismatch",
+      "gloss": "And yet, Despite this",
       "ja": "毎日【まいにち】練習【れんしゅう】してきた、それなのに一度【いちど】も勝【か】てない。",
       "en": "I've practiced every day, and yet I can't win even once.",
       "level": "N2",
@@ -2151,7 +2151,7 @@
         "いわゆる"
       ],
       "type": "word",
-      "gloss": "introduces a familiar label",
+      "gloss": "What is called, So-called",
       "ja": "彼【かれ】は三歳【さんさい】で字【じ】が読【よ】めた、いわゆる天才【てんさい】だ。",
       "en": "He could read at three; he is what people call a genius.",
       "level": "N2",
@@ -2163,7 +2163,7 @@
         "しかしながら"
       ],
       "type": "word",
-      "gloss": "moves the argument in a new direction",
+      "gloss": "However, Nevertheless",
       "ja": "しかしながら、問題【もんだい】はまだ残【のこ】っている。",
       "en": "However, a problem still remains.",
       "level": "N2",
@@ -2175,7 +2175,7 @@
         "しかも"
       ],
       "type": "word",
-      "gloss": "adds a stronger detail",
+      "gloss": "Moreover, Furthermore",
       "ja": "このかばんは軽【かる】くて、しかも丈夫【じょうぶ】だ。",
       "en": "This bag is light, and what's more, it's sturdy.",
       "level": "N2",
@@ -2213,7 +2213,7 @@
         "上"
       ],
       "type": "ending",
-      "gloss": "seen from that field or angle",
+      "gloss": "From the standpoint of",
       "ja": "教育上【きょういくじょう】、子【こ】どもにこの映画【えいが】は見【み】せたくない。",
       "en": "From an educational standpoint, I don't want children to see this film.",
       "level": "N2",
@@ -2289,7 +2289,7 @@
         }
       ],
       "literal": "attain the action",
-      "transparency": "pending"
+      "transparency": "opaque"
     },
     "得ない": {
       "parts": [
@@ -2299,7 +2299,7 @@
         }
       ],
       "literal": "not attain the action",
-      "transparency": "pending"
+      "transparency": "opaque"
     },
     "ざるを得ない": {
       "parts": [
@@ -2331,7 +2331,7 @@
         }
       ],
       "literal": "the action is negated",
-      "transparency": "pending"
+      "transparency": "opaque"
     },
     "どうせ": {
       "parts": [
@@ -2363,7 +2363,11 @@
         }
       ],
       "literal": "in some way not yet settled",
-      "transparency": "pending"
+      "transparency": "clear",
+      "solved": {
+        "by": "blocks-only",
+        "right": true
+      }
     },
     "なにやら": {
       "parts": [
@@ -2482,7 +2486,7 @@
         }
       ],
       "literal": "having reached the threshold",
-      "transparency": "pending"
+      "transparency": "opaque"
     },
     "以上に": {
       "parts": [
@@ -2630,7 +2634,11 @@
         }
       ],
       "literal": "at the end of a completed process",
-      "transparency": "pending"
+      "transparency": "clear",
+      "solved": {
+        "by": "blocks-only",
+        "right": true
+      }
     },
     "に伴って-に伴い": {
       "parts": [
@@ -2754,7 +2762,7 @@
         }
       ],
       "literal": "two actions run in parallel",
-      "transparency": "pending"
+      "transparency": "opaque"
     },
     "つつ-も": {
       "parts": [
@@ -2764,7 +2772,7 @@
         }
       ],
       "literal": "two states hold in parallel",
-      "transparency": "pending"
+      "transparency": "opaque"
     },
     "に際して": {
       "parts": [
@@ -2832,7 +2840,7 @@
         }
       ],
       "literal": "carries the action through to an exit",
-      "transparency": "pending"
+      "transparency": "opaque"
     },
     "抜きで": {
       "parts": [
@@ -2860,7 +2868,7 @@
         }
       ],
       "literal": "the action is negated",
-      "transparency": "pending"
+      "transparency": "opaque"
     },
     "ことなく": {
       "parts": [
@@ -3008,7 +3016,7 @@
         }
       ],
       "literal": "rules out a predicted or intended action",
-      "transparency": "pending"
+      "transparency": "opaque"
     },
     "途中に・途中で": {
       "parts": [
@@ -3467,7 +3475,11 @@
         }
       ],
       "literal": "when looked at from that starting point",
-      "transparency": "pending"
+      "transparency": "clear",
+      "solved": {
+        "by": "blocks-only",
+        "right": true
+      }
     },
     "ところを見ると": {
       "parts": [
@@ -3511,7 +3523,11 @@
         }
       ],
       "literal": "when judged from that source",
-      "transparency": "pending"
+      "transparency": "clear",
+      "solved": {
+        "by": "blocks-only",
+        "right": true
+      }
     },
     "ものか": {
       "parts": [
@@ -3565,7 +3581,7 @@
         }
       ],
       "literal": "the direction of the mind",
-      "transparency": "pending"
+      "transparency": "opaque"
     },
     "げ": {
       "parts": [
@@ -3575,7 +3591,7 @@
         }
       ],
       "literal": "how it looks on the outside",
-      "transparency": "pending"
+      "transparency": "opaque"
     },
     "だけましだ": {
       "parts": [
@@ -3705,7 +3721,7 @@
         }
       ],
       "literal": "confines the scope to this case",
-      "transparency": "pending"
+      "transparency": "opaque"
     },
     "のみならず": {
       "parts": [
@@ -3795,7 +3811,11 @@
         }
       ],
       "literal": "puts that alternative aside if it is the case",
-      "transparency": "pending"
+      "transparency": "clear",
+      "solved": {
+        "by": "blocks-only",
+        "right": true
+      }
     },
     "ことにはならない": {
       "parts": [
@@ -3875,7 +3895,7 @@
         }
       ],
       "literal": "grants the case for argument",
-      "transparency": "pending"
+      "transparency": "opaque"
     },
     "ないわけにはいかない": {
       "parts": [
@@ -3941,7 +3961,7 @@
         }
       ],
       "literal": "a possibility is flatly rejected",
-      "transparency": "pending"
+      "transparency": "opaque"
     },
     "後-のnoun": {
       "parts": [
@@ -3951,7 +3971,7 @@
         }
       ],
       "literal": "what lies after or remains",
-      "transparency": "pending"
+      "transparency": "opaque"
     },
     "に向かって-に向けて": {
       "parts": [
@@ -3997,7 +4017,7 @@
         }
       ],
       "literal": "the speaker hesitates at the action",
-      "transparency": "pending"
+      "transparency": "opaque"
     },
     "かねない": {
       "parts": [
@@ -4131,7 +4151,7 @@
         }
       ],
       "literal": "following on from that",
-      "transparency": "pending"
+      "transparency": "opaque"
     },
     "とっくに": {
       "parts": [
@@ -4771,7 +4791,7 @@
         }
       ],
       "literal": "let this resource do useful work",
-      "transparency": "pending"
+      "transparency": "opaque"
     },
     "上": {
       "parts": [
@@ -4781,7 +4801,7 @@
         }
       ],
       "literal": "seen from within that field",
-      "transparency": "pending"
+      "transparency": "opaque"
     },
     "中を": {
       "parts": [
@@ -4813,7 +4833,11 @@
         }
       ],
       "literal": "on an upper layer of the stated case",
-      "transparency": "pending"
+      "transparency": "clear",
+      "solved": {
+        "by": "blocks-only",
+        "right": true
+      }
     },
     "手前": {
       "parts": [
@@ -4823,7 +4847,7 @@
         }
       ],
       "literal": "from the position on one's side",
-      "transparency": "pending"
+      "transparency": "opaque"
     },
     "にしたがって": {
       "parts": [
@@ -4963,7 +4987,7 @@
         }
       ],
       "literal": "within the boundary set by the case",
-      "transparency": "pending"
+      "transparency": "opaque"
     },
     "次第だ-次第で": {
       "parts": [
@@ -5113,7 +5137,7 @@
         }
       ],
       "literal": "a request issued from above",
-      "transparency": "pending"
+      "transparency": "opaque"
     },
     "がけに": {
       "parts": [
@@ -5177,7 +5201,7 @@
         }
       ],
       "literal": "the period from that point forward",
-      "transparency": "pending"
+      "transparency": "opaque"
     },
     "に先立ち": {
       "parts": [
@@ -5227,7 +5251,7 @@
         }
       ],
       "literal": "at the unhappy endpoint of a process",
-      "transparency": "pending"
+      "transparency": "opaque"
     },
     "きっかけ": {
       "parts": [
@@ -5237,7 +5261,7 @@
         }
       ],
       "literal": "the opening from which the action starts",
-      "transparency": "pending"
+      "transparency": "opaque"
     },
     "にかけては": {
       "parts": [
@@ -5317,7 +5341,7 @@
         }
       ],
       "literal": "on the other face of the same situation",
-      "transparency": "pending"
+      "transparency": "opaque"
     },
     "を通じて-を通して": {
       "parts": [
@@ -5516,7 +5540,11 @@
         }
       ],
       "literal": "expresses a request with respectful phrasing",
-      "transparency": "pending"
+      "transparency": "clear",
+      "solved": {
+        "by": "blocks-only",
+        "right": true
+      }
     },
     "て頂戴": {
       "parts": [
@@ -5544,7 +5572,7 @@
         }
       ],
       "literal": "presents one tentative case or account",
-      "transparency": "pending"
+      "transparency": "opaque"
     },
     "のではないだろうか": {
       "parts": [
@@ -5773,7 +5801,7 @@
         }
       ],
       "literal": "the favorable course of events",
-      "transparency": "pending"
+      "transparency": "opaque"
     },
     "ことは-が": {
       "parts": [
@@ -5841,7 +5869,7 @@
         }
       ],
       "literal": "on the low side of that measure",
-      "transparency": "pending"
+      "transparency": "opaque"
     },
     "強": {
       "parts": [
@@ -5851,7 +5879,7 @@
         }
       ],
       "literal": "on the high side of that measure",
-      "transparency": "pending"
+      "transparency": "opaque"
     },
     "および": {
       "parts": [
@@ -6100,7 +6128,11 @@
         }
       ],
       "literal": "take one tentative example and then another",
-      "transparency": "pending"
+      "transparency": "clear",
+      "solved": {
+        "by": "blocks-only",
+        "right": true
+      }
     },
     "だけのことはある": {
       "parts": [
@@ -6206,7 +6238,7 @@
         }
       ],
       "literal": "grants the case provisionally",
-      "transparency": "pending"
+      "transparency": "opaque"
     }
   }
 }

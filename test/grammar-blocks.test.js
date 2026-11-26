@@ -21,11 +21,12 @@ test("draft structure is valid; the release validator rejects an unfinished inve
   assert.equal(counts.patterns, inventory.grammar.length);
   const incomplete = structuredClone(draft);
   delete incomplete.patterns["まい"];
+  incomplete.patterns["よりほかない"].transparency = "pending"; delete incomplete.patterns["よりほかない"].solved;
   const release = validateGrammarBlocks(incomplete);
   assert.ok(release.errors.includes("まい: missing pattern"));
-  assert.ok(release.errors.includes("得ない: invalid transparency"), "a pattern still waiting for its solve");
+  assert.ok(release.errors.includes("よりほかない: invalid transparency"), "a pattern still waiting for its solve");
   assert.ok(!release.errors.includes("ざるを得ない: invalid transparency"), "solved on 27 Nov");
-  assert.ok(release.errors.some(e => /maximum 40%/.test(e)));
+  assert.ok(!release.errors.some(e => /single-use/.test(e)), "no cap on single-use blocks (owner, 27 Nov)");
 });
 
 test("validator rejects malformed parts, readings, senses, metadata, and solve evidence", () => {
@@ -49,7 +50,7 @@ test("validator rejects malformed parts, readings, senses, metadata, and solve e
     "example must be one annotated sentence", "parts do not reconstruct", "non-kana or long glue",
     "unknown block: not-a-block", "form を is not listed", "overlaps the answer",
     "shared block cannot be marked single", "shared surface form needs a distinct literal",
-    "a whole word is opaque", "missing successful blocks+sentence solve", "missing literal",
+    "a one-block pattern is learned whole (opaque)", "missing successful blocks+sentence solve", "missing literal",
   ]) assert.ok(errors.some(e => e.includes(message)), message);
 });
 
@@ -65,7 +66,7 @@ const build = cards.find(c => c.id === "gb:ざるを得ない");
 test("index adds three practice kinds while preserving the existing cards", () => {
   const baseline = gamePool(options);
   assert.deepEqual(gamePool({...options, grammarBlocks: null}), baseline);
-  assert.deepEqual(pool.filter(q => !grammarBlockCard(q)).map(({blocks, ...q}) => q), baseline);
+  assert.deepEqual(pool.filter(q => !grammarBlockCard(q)).map(({blocks, basics, ...q}) => q), baseline);
   assert.ok(block && build && infer);
   // Infer cards exist only for patterns with a recorded solve (clear or partial).
   for (const q of cards.filter(q => q.kind === "infer" && q !== infer)) assert.ok(["clear", "partial"].includes(draft.patterns[q.patternKey].transparency) && draft.patterns[q.patternKey].solved.right, q.id);
@@ -104,7 +105,8 @@ test("pattern exposures update met; transfer requires a new pattern and every bl
   }
   const proved = right(met, infer);
   for (const id of infer.blocks) assert.deepEqual(proved.gb[id], [2, 1, 0, 1, now, 0]);
-  assert.equal(grammarCoverage([infer], proved).known, 3);
+  assert.equal(grammarCoverage([infer], proved).known, 2, "ざる and 得ない; を is a basic particle, taken as known and not counted");
+  assert.deepEqual(infer.basics, ["wo"]);
   assert.equal(right(proved, infer).gb.zaru[3], 1);
 });
 
@@ -154,7 +156,7 @@ const play = (index, rounds) => {
 
 test("audit: a build card is shown after its block is met (it was never picked), and proofs are not used up", () => {
   const draftRun = play(draft, 150);
-  assert.ok(draftRun.kinds.build > 20, "build cards appear: " + JSON.stringify(draftRun.kinds));
+  assert.ok(draftRun.kinds.build > 10, "build cards appear: " + JSON.stringify(draftRun.kinds));
   const run = play(solved(), 300);
   assert.ok(run.kinds.block > 0 && run.kinds.build > 0 && run.kinds.infer > 0, JSON.stringify(run.kinds));
   const transfers = Object.values(run.state.gb).reduce((sum, r) => sum + r[3], 0);
@@ -176,14 +178,45 @@ test("audit: patterns a blind solver could not tell apart are never each other's
   assert.deepEqual(gamePool(options).filter(q => q.kind === "grammar").map(q => q.wrong), full.filter(q => q.kind === "grammar").map(q => q.wrong));
 });
 
-test("audit: the solves on record, and what still blocks a release", () => {
+test("audit: the solves on record; the index passes release validation", () => {
   const t = {}; for (const p of Object.values(draft.patterns)) t[p.transparency] = (t[p.transparency] || 0) + 1;
-  assert.deepEqual(t, {clear: 149, partial: 3, opaque: 30, pending: 39});
+  assert.deepEqual(t, {clear: 157, partial: 3, opaque: 61});
   for (const [key, p] of Object.entries(draft.patterns)) if (p.transparency === "clear") assert.deepEqual(p.solved, {by: "blocks-only", right: true}, key);
   const release = validateGrammarBlocks(draft);
-  assert.equal(release.errors.filter(e => /invalid transparency/.test(e)).length, 39);
-  assert.ok(release.errors.some(e => /single-use \(maximum 40%\)/.test(e)), "the cap is the owner's to decide");
+  assert.deepEqual(release.errors, []);
+  assert.ok(release.counts.singleShare > 40, "reported, not capped: " + release.counts.singleShare);
   // 応じる and 応える are two verbs; 〜上 (じょう) is not うえ.
   assert.equal(draft.patterns["に応じて"].parts[1].block, "ojiru"); assert.equal(draft.patterns["に応えて"].parts[1].block, "kotaeru");
   assert.equal(draft.patterns["上"].parts[0].block, "jou");
+});
+
+test("a pattern that is one block is learned by its block card: opaque, plain gloss, no build or infer card", () => {
+  const one = Object.entries(draft.patterns).filter(([, p]) => p.parts.length === 1);
+  assert.equal(one.length, 61);
+  for (const [key, p] of one) assert.equal(p.transparency, "opaque", key);
+  const full = gamePool({...options, grammarBlocks: draft});
+  for (const [key] of one) assert.ok(!full.some(q => q.id === "gb:" + key || q.id === "gi:" + key), key);
+  assert.equal(draft.blocks.semete.gloss, "At least"); assert.equal(draft.blocks.douse.gloss, "anyway, after all");
+  assert.ok(full.some(q => q.id === "b:semete" && q.answer === "At least"));
+  const wrong = structuredClone(draft); wrong.patterns["まい"].transparency = "clear"; wrong.patterns["まい"].solved = {by: "blocks-only", right: true};
+  assert.ok(validateGrammarBlocks(wrong).errors.includes("まい: a one-block pattern is learned whole (opaque)"));
+});
+
+test("N5 and N4 particles and endings are taken as known: no card of their own, met in every pattern, out of the count", () => {
+  const full = gamePool({...options, grammarBlocks: draft}), cards = full.filter(grammarBlockCard);
+  for (const id of ["ni", "wa", "wo", "te", "da"]) assert.ok(!cards.some(q => q.id === "b:" + id), id + " has no block card");
+  assert.ok(cards.some(q => q.id === "b:zaru") && cards.some(q => q.id === "b:wake"));
+  const coverage = grammarCoverage(full, {});
+  assert.ok(coverage.items > 140 && coverage.items < 170, "blocks to learn: " + coverage.items);
+  // A new player's first grammar cards are N2 material, not に and は.
+  const pool = full.filter(q => !grammarBlockCard(q));
+  let n = 3; const random = () => { n = (n * 16807) % 2147483647; return n / 2147483647; };
+  const first = [];
+  for (let i = 0; i < 40; i++) first.push(...nextRound({pool, grammarCards: cards, state: {}, random, now}).round.filter(grammarBlockCard));
+  assert.ok(first.length > 20 && first.every(q => !["ni", "wa", "wo", "ga", "no", "mo"].includes(q.blocks[0]) || q.kind !== "block"));
+  // Transfer on にしろ-にしろ needs しろ met, not に.
+  const infer = cards.find(q => q.kind === "infer" && q.basics?.length && q.blocks.length - q.basics.length === 1);
+  const only = infer.blocks.find(id => !infer.basics.includes(id));
+  assert.equal(rememberAnswer({gb: {[only]: [1, 0, 0, 0, 1, 0]}}, {q: infer, outcome: "right", now}).gb[only][3], 1, infer.id);
+  assert.equal(rememberAnswer({gb: {}}, {q: infer, outcome: "right", now}).gb[only][3], 0, "the content block itself must be met");
 });
