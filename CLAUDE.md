@@ -228,6 +228,17 @@ Before considering the change complete:
   (n2-forms.js: the real 問題 layout) and pass `tools/n2-validate-set.mjs`;
   they load as edition `SETS_EDITION`, so older attempts keep their papers.
   Revise a set → bump `SETS_EDITION`. Rebuild with `tools/n2-build-content.mjs`.
+- **Mock exams for the other levels are fetched, never precached.**
+  `jlpt-sets.js` holds each level's 問題 blueprint (`SET_LEVELS`; N3 so far)
+  and the loader; sets live in `sets/<level>/<edition>/<id>.json` with
+  `sets/<level>/index.json`, kept by the worker in `jp-echo-sets` once served.
+  Every set passes `tools/validate-level-set.mjs` (layout, targets in the
+  level's inventories, at most 1% of kanji outside the level, tags and a
+  deciding line on every reading and listening question) and enters only
+  through `tools/build-level-sets.mjs`, after a blind solve and a review
+  (docs/JLPT-LEVEL-SETS.md). Official papers are referenced, never copied.
+  A boss must not need the network when it arrives: `keep(level)` early.
+  N2's `n2-sets/` stays as it is. Revise a sat set → a new edition folder.
 - **The N2 decks are offered, never imported.** `decks/n2-grammar.json` and
   `decks/n2-words.json` (one sentence per inventory item, ids
   `n2-grammar-<i>` / `n2-word-<i>`) reach the library only when the learner
