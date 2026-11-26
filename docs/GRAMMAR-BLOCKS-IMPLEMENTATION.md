@@ -45,3 +45,51 @@ Review semantic distinctions that a shared English word can hide. For example, t
 1. Review shared meanings and the 37 deferred items, then run the independent solves using the [solver brief](../tools/grammar-blocks/SOLVER.md). Reconcile the 40% cap with genuine linguistic reuse before final validation.
 2. Add a passing `n2-grammar-blocks.json` at the root and precache it in `sw.js` with a new cache version. The game already loads that path when present. Keep the grammar-specific score switch off until the cards themselves are reviewed.
 3. Check the 375 px preview in both themes, capture the designer screenshots, and play ten live rounds for the audit.
+
+## Audit, 27 Nov 2026 (by the author of the guide)
+
+Audited at `3effd15` against `docs/GRAMMAR-BLOCKS.md`; fixes are in the commit that adds this section. The root index is **not** promoted and not precached: release validation still fails (39 pending, single-use share 67.6%). The cards stay practice.
+
+### Fixed
+
+- **A build card was never picked.** In 600 simulated rounds the picker showed 0 `build` cards: the block card always took the "new" place and nothing asked for a build afterwards. `grammarPick` now has an `assemble` stage (block met → a build card), which builds only with a pattern that could not be a proof anyway (no infer card, or already shown) or whose blocks each keep another unseen pattern, and a last stage that asks a block's own card again when nothing is left to prove it on. Simulation with every pending pattern treated as solved, 600 rounds: block 205, build 87, infer 134, 178 transfers, 104 of 188 blocks known.
+- **Two verbs under one block.** `に応じて` (応じる) and `に応えて` (応える) shared `answer-respond`; now `ojiru` and `kotaeru`.
+- **〜上 (じょう) was うえ.** Pattern `上` ("from the standpoint of") used the block of 上に / その上; now `jou`.
+- **`ようでは-ようじゃ`** used the "method" よう; now the "appearance" よう.
+- **Seven entries marked opaque do split**, reusing blocks: `それにしても`, `そういえば`, `したがって` (the verb of `にしたがって`), `万が一`, `何しろ`, `なにやら`, `どうやら`. Opaque went from 37 to 30.
+- **Duplicates merged:** ある / あって, つける (two entries). `足す` removed from 加える's forms (no pattern uses it).
+- **57 block ids renamed** to the romaji of their form before anything is saved under them (`tada` was せめて, `yasasi` いよいよ, `jijitsu` はたして, `naritai` なる, `jyuu` 中心…).
+- **Confusable pairs.** 32 pairs of patterns the solvers could not separate by meaning (`GRAMMAR_CONFUSABLE`, n2-game-review.js) are never each other's wrong choice on `gb:` / `gi:` cards. The scored `g:` cards are unchanged.
+
+One of my own changes was wrong and is reverted: merging the two 思う blocks made `思うように` unsolvable ("reaches a judgment" does not give "as one hopes"); it is `omou-expect` again.
+
+### The solves (Sonnet, fresh sessions, five packets of about 31)
+
+| Pass | What the solver saw | Right |
+|---|---|---|
+| A, per `SOLVER.md` | parts in Japanese + glosses | 154 of 154 |
+| B, stricter | glosses only, no Japanese | 149 of 154 |
+| Second pass on B's 5 misses | parts, glosses, the Japanese sentence | 5 of 5, two flagged as two meanings fitting |
+
+Pass A proves little: a model that knows Japanese recognises the pattern whatever it is told, and the wrong choices (any pattern sharing a block, usually に) are far from the answer. Pass B is the one recorded. Result: **149 clear, 3 partial** (`ものか`, `というものだ`, `思うように`), **2 held** as ambiguous even with the sentence (`からすると-からすれば`, `から見ると`: both read as "from the point of view of / judging from"), **37 deferred** by the packet maker for want of three distinct wrong choices (mostly one-block patterns: `ざる`, `ぬ`, `まい`, `のみ`, `とも`, `気`, `げ`, `弱`, `強`…), 30 opaque. Ledgers: `.grammar-blocks/solve/` (ignored).
+
+The guide's audit sample (a random 30, another model than the writer): packet 1, 31 of 31 in pass A and 30 of 31 in pass B. It passes the guide's bar, and the bar is too easy for the reason above.
+
+### Verified
+
+- `npm run check`; `npm test`: 907 pass (904 before, 3 added).
+- No index → `gamePool` equals `main` (`ee4b69e`), 6,323 cards, field for field. With the index the old cards differ only by `blocks` on `g:` cards.
+- 188 block, 215 build, 148 infer cards: four distinct choices, no wrong choice sharing the answer's sense, all practice, no recall target. No build card shows a gloss that shares a word with its answer.
+- Transfer: only an `infer` card, right, pattern never shown as `g:` / `gb:` / `gi:`, every block met; practice pays no points.
+- `mergeGame`: larger counts, later weakness, no block lost.
+- 300 rounds with and without the index: only ordinary grammar places change, 1.25 a round before and after; the recovery round is identical.
+- Browser, 375 px, light and dark, `?view=game&grammar-preview=1`: Home's "N2 grammar · 0 of 188 blocks known", block cards, one-, three- and four-part build cards (chips wrap, nothing clipped). Screenshots: `docs/design/game/shots/grammar-build-375-light.png`, `-dark.png`. Well over ten rounds were played by script; the grammar cards met were read, not every card of every round.
+
+### Open, and who decides
+
+1. **The 40% single-use cap cannot be met honestly** (owner). 127 of 188 blocks (67.6%) are used once; inside multi-part patterns 55.8%. The single ones are ordinary words that the N2 grammar list uses in exactly one pattern (沿う, 巡る, 契機, 相違, 傾向, 恐れ, 結果, 中心…) or adverbs with no parts. The cap in the guide was wrong. Proposed instead: of the multi-part patterns, at least 60% share a non-particle block with another pattern (today 98 of 154, 63.6%).
+2. **Rule 5 of the guide forces evasive glosses** (owner). A gloss may not share a word with the meaning of any pattern containing the block, so ざる is "actions that do not happen" and 得る "get or attain". For a pattern that is one block the gloss *is* the meaning. Proposed: exempt one-block patterns, give them no build or infer card, and let their gloss be plain.
+3. **39 patterns have no solve.** 37 need wrong choices the packet maker cannot find; if item 2 is accepted most of them become plain block cards and need none.
+4. **The first cards are N5 particles.** A new player's grammar places open with に, は, を… (ordered by level, then use). For an N2 learner that is some 25 cards of things already known, with abstract glosses that are hard to tell apart. Proposed: treat N5 and N4 particle blocks as met from the start.
+5. **`main` has moved** to `ee4b69e` (v296); this branch is cut from `7f7f3ff` and also names its cache v296. Merge and renumber before shipping.
+6. Not done: a native or second-model read of all 188 glosses and 191 literals; the designer's review of the parts row.

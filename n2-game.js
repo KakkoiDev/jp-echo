@@ -23,7 +23,7 @@
 import {recallItems, localDay} from "./n2-study.js";
 import {HELD_OUT} from "./n2-comprehension.js";
 import {connectiveSites, jobOf, glossOf, JOBS, OVERLAP, CHOICE_FOR_JOB} from "./n2-connectives.js";
-import {ACCEPTED_READINGS, READING_KEY, EXCLUDED, GLOSS_FIX, GRAMMAR_SPANS, REVIEWED_LEVELS, REVIEWED_GRAMMAR_BLOCKS} from "./n2-game-review.js";
+import {ACCEPTED_READINGS, READING_KEY, EXCLUDED, GLOSS_FIX, GRAMMAR_SPANS, REVIEWED_LEVELS, REVIEWED_GRAMMAR_BLOCKS, GRAMMAR_CONFUSABLE} from "./n2-game-review.js";
 import {exampleSegments} from "./n2-delayed.js";
 import {LEVELS} from "./jlpt-levels.js";
 
@@ -243,6 +243,7 @@ function addGrammarBlocks(pool, {blocks = {}, patterns = {}}) {
   const base = {target: null, dimension: null, seconds: SECONDS.grammar, ...practice};
 
   const grammar = pool.filter(q => q.kind === "grammar" && !EXCLUDED[q.id]);
+  const confusable = new Set(GRAMMAR_CONFUSABLE.flatMap(([a, b]) => [a + "\n" + b, b + "\n" + a]));
   const keysOf = parts => [...new Set(parts.flatMap(p => Object.hasOwn(blocks, p.block) ? [p.block] : []))];
   const byKey = new Map(grammar.map(q => [q.id.slice(2), keysOf(patterns[q.id.slice(2)]?.parts || [])]));
 
@@ -271,7 +272,8 @@ function addGrammarBlocks(pool, {blocks = {}, patterns = {}}) {
     const surface = q.sentence.match(new RegExp(variants.join("")));
     const needle = GRAMMAR_SPANS[q.id] || piecesNeedle(q.sentence, q.prompt) || surface?.[0];
     if (!needle || !exampleSegments(q.sentence, [needle]).some(part => part.mark)) continue;
-    const others = grammar.filter(other => other !== q);
+    // Patterns the blind solvers could not tell apart by meaning are never each other's wrong choice.
+    const others = grammar.filter(other => other !== q && !confusable.has(key + "\n" + other.id.slice(2)));
     const wrong = fair(q.answer, others.map(other => other.answer));
     const near = fair(q.answer, others.filter(other => byKey.get(other.id.slice(2)).some(id => ids.includes(id))).map(other => other.answer));
     const card = {...base, item: keyOf(q.target), patternKey: key, blocks: ids, prompt: q.prompt,
@@ -707,8 +709,14 @@ export function grammarPick({pool, state, slots, skip, comeback = [], now}) {
   const ids = [...byBlock.keys()];
   const record = id => state.gb?.[id] || [];
   const order = (a, b) => (record(a)[4] || 0) - (record(b)[4] || 0);
+  // A block is assembled once it has been shown inside a pattern with its
+  // parts (a build card). Audit, 27 Nov: without this stage a build card was
+  // never picked (0 in 600 simulated rounds): the block card always won the
+  // "new" place and nothing asked for a build afterwards.
+  const assembled = id => byBlock.get(id).some(q => q.kind === "build" && Object.hasOwn(state.seen || {}, q.id));
   const groups = {
     weak: ids.filter(id => record(id)[5]).sort(order),
+    assemble: ids.filter(id => record(id)[0] && !blockKnown(record(id)) && !assembled(id)).sort(order),
     fresh: ids.filter(id => !record(id)[0]).sort((a, b) => {
       const level = id => byBlock.get(id).find(q => q.kind === "block")?.blockLevel || "N2";
       return LEVELS.indexOf(level(a)) - LEVELS.indexOf(level(b)) || (usage.get(b) || 0) - (usage.get(a) || 0);
@@ -716,7 +724,7 @@ export function grammarPick({pool, state, slots, skip, comeback = [], now}) {
     prove: ids.filter(id => record(id)[0] && !blockKnown(record(id))).sort(order),
   };
   const last = q => state.seen?.[q.id] || 0;
-  const byId = new Map(pool.map(q => [q.id, q]));
+  const byId = new Map(pool.map(q => [q.id, q])), inferable = new Set(pool.filter(q => q.kind === "infer").map(q => q.patternKey));
   const returning = comeback.map(id => byId.get(id)).filter(Boolean);
   return slots.map((fallback, index) => {
     const reserved = new Set(slots.slice(index + 1).map(cardItem));
@@ -734,11 +742,25 @@ export function grammarPick({pool, state, slots, skip, comeback = [], now}) {
     const leastRecent = (a, b) => last(a) - last(b);
     const weakOrder = (a, b) => Number(!newPattern(state, a.patternKey)) - Number(!newPattern(state, b.patternKey)) || leastRecent(a, b);
     const fresh = (q, id) => q.kind === "block" || (q.kind === "build" && allMet(state, q, id));
+    // Build with a pattern already shown when there is one: the unseen ones are kept for the proof.
+    // A pattern shown with its parts can no longer prove anything (transfer
+    // needs a pattern never shown), and most blocks sit in one pattern only.
+    // So a pattern is built when it could not be a proof anyway (no infer
+    // card, or already shown), or when each of its blocks keeps another
+    // unseen pattern to be proved on.
+    const spare = id => byBlock.get(id).filter(c => c.kind === "infer" && newPattern(state, c.patternKey)).length;
+    const assemble = q => q.kind === "build" && allMet(state, q)
+      && (!inferable.has(q.patternKey) || !newPattern(state, q.patternKey) || q.blocks.every(id => spare(id) >= 2));
+    // A block with nothing left to prove it on is asked again by its own card, until it is known.
+    const rehearse = q => q.kind === "block" && (!last(q) || now - last(q) >= RECENT_MS);
+    const keepUnseen = (a, b) => Number(newPattern(state, a.patternKey)) - Number(newPattern(state, b.patternKey)) || leastRecent(a, b);
     const blockFirst = (a, b) => Number(a.kind !== "block") - Number(b.kind !== "block") || leastRecent(a, b);
     const back = returning.find(available);
     const chosen = back ? {q: {...back, comeback: true}, id: back.blocks[0]} : find("weak", q => weak(q) && (!last(q) || now - last(q) >= RECENT_MS), weakOrder)
+      || find("assemble", assemble, keepUnseen)
       || find("prove", prove, leastRecent)
       || find("fresh", fresh, blockFirst)
+      || find("prove", rehearse, leastRecent)
       || find("weak", weak, weakOrder);
     if (chosen) focused.add(chosen.id);
     const q = chosen?.q || fallback;

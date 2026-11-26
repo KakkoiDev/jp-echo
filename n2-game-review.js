@@ -85,3 +85,43 @@ export const REVIEWED_LEVELS = new Set(["N2"]);
 
 // Grammar blocks have a separate review gate from rank-level word cards.
 export const REVIEWED_GRAMMAR_BLOCKS = false;
+
+// Pairs of N2 patterns whose meanings a blind solver could not separate
+// (two independent Sonnet solves of the block index, 27 Nov 2026: one with
+// the Japanese parts, one with their glosses alone). On the grammar-block
+// cards (`gb:`, `gi:`) neither is ever offered as the other's wrong choice.
+// The scored `g:` cards are not changed here: their pool is audited as it is.
+export const GRAMMAR_CONFUSABLE = Object.freeze([
+  ["なにやら", "何といっても"],
+  ["からすると-からすれば", "にしたら"],
+  ["からすると-からすれば", "からには"],
+  ["を中心に", "中を"],
+  ["につけ", "に値する"],
+  ["としては", "上は"],
+  ["からして", "にしたら"],
+  ["からして", "という点から考えると"],
+  ["だけあって", "だけに"],
+  ["それなら", "ならともかく"],
+  ["て当然だ", "のももっともだ"],
+  ["というものだ", "のももっともだ"],
+  ["つつ", "つつある"],
+  ["かねない", "というわけではない"],
+  ["から見ると", "という点から考えると"],
+  ["から見ると", "ところを見ると"],
+  ["というものだ", "ところだった2"],
+  ["何から何まで", "何しろ"],
+  ["としても", "と考えられる"],
+  ["ことにはならない", "だけのことはある"],
+  ["も-ば-も", "も又"],
+  ["ては", "に越したことはない"],
+  ["ことだから", "だけのことはある"],
+  ["ことだから", "のももっともだ"],
+  ["ならともかく", "ものなら①"],
+  ["ていては", "て当然だ"],
+  ["ということは", "というものだ"],
+  ["にしたら", "にすぎない"],
+  ["ないことには-ない", "ないではいられない"],
+  ["かのようだ", "ようでは-ようじゃ"],
+  ["には", "際に"],
+  ["にしたら", "には"],
+]);
