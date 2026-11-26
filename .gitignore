@@ -6,3 +6,6 @@ data/wanikani/
 data/jmdict/
 # Papers being written and audited (tools/paper-pipeline). Shipped papers are in sets/.
 .papers/
+
+# Working drafts and private blind-solve ledgers.
+.grammar-blocks/

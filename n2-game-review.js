@@ -82,3 +82,6 @@ export const EXCLUDED = Object.freeze({
 // level here only after its pool has passed the same audit as N2's
 // (four distinct choices, no wrong choice that is also right; docs/REPORTS.md).
 export const REVIEWED_LEVELS = new Set(["N2"]);
+
+// Grammar blocks have a separate review gate from rank-level word cards.
+export const REVIEWED_GRAMMAR_BLOCKS = false;

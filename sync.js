@@ -125,11 +125,19 @@ export function mergeGame(a, b) {
   const ranked = [a, b].filter(g => g.rank).sort((p, q) => time(q.rankAt) - time(p.rankAt))[0];
   // The item record (tries, misses) grows on both; boss verdicts are kept once each.
   const tried = maxMap(a.tried, b.tried), missed = maxMap(a.missed, b.missed), bossLog = [...new Map([...(older.bossLog || []), ...(newer.bossLog || [])].map(r => [r.key, r])).values()].sort((p, q) => String(p.at).localeCompare(String(q.at))).slice(-200);
-  // The kanji record (n2-game.js `kj`): counts take the larger; last seen and
-  // weak come from whichever saw the kanji last.
-  const kj = {...(a.kj || {})};
-  for (const [key, y] of Object.entries(b.kj || {})) { const x = kj[key]; kj[key] = x ? [0, 1, 2, 3].map(i => Math.max(x[i] || 0, y[i] || 0)).concat((y[4] || 0) >= (x[4] || 0) ? [y[4] || 0, y[5] || 0] : [x[4] || 0, x[5] || 0]) : y; }
-  return {...newer, ...(Object.keys(kj).length ? {kj} : {}), ...(Object.keys(tried).length ? {tried, missed} : {}), ...(bossLog.length ? {bossLog} : {}), ...(ranked ? {rank: ranked.rank, rankAt: ranked.rankAt} : {}), ...(runStart === undefined ? {} : {runStart}), ...(Object.keys(lv).length ? {lv, lvAt} : {}), seen: maxMap(a.seen, b.seen), wins: maxMap(a.wins, b.wins), days, history,
+  // Kanji and grammar blocks use the same six-field record.
+  const learningRecord = (left, right) => {
+    const out = {...left};
+    for (const [key, y] of Object.entries(right || {})) {
+      const x = out[key];
+      if (!x) { out[key] = y; continue; }
+      const latest = (y[4] || 0) >= (x[4] || 0) ? y : x;
+      out[key] = [0, 1, 2, 3].map(i => Math.max(x[i] || 0, y[i] || 0)).concat(latest[4] || 0, latest[5] || 0);
+    }
+    return out;
+  };
+  const kj = learningRecord(a.kj, b.kj), gb = learningRecord(a.gb, b.gb);
+  return {...newer, ...(Object.keys(kj).length ? {kj} : {}), ...(Object.keys(gb).length ? {gb} : {}), ...(Object.keys(tried).length ? {tried, missed} : {}), ...(bossLog.length ? {bossLog} : {}), ...(ranked ? {rank: ranked.rank, rankAt: ranked.rankAt} : {}), ...(runStart === undefined ? {} : {runStart}), ...(Object.keys(lv).length ? {lv, lvAt} : {}), seen: maxMap(a.seen, b.seen), wins: maxMap(a.wins, b.wins), days, history,
     runs: unionBy(a.runs, b.runs, r => r.at).slice(-200), best: Math.max(a.best || 0, b.best || 0),
     rounds: Math.max(a.rounds || 0, b.rounds || 0, history.length), answered: Math.max(a.answered || 0, b.answered || 0), total: Math.max(a.total || 0, b.total || 0)};
 }

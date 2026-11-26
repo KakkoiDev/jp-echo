@@ -9,7 +9,7 @@ import {recognitionFactory} from "./speech.js";
 import {speakOnce,speakAndWait,japaneseVoices,RadioPlayer,NoiseBed} from "./speech.js";
 import {RADIO_DEFAULTS,RADIO_PHASE_COPY,clockAt,radioPhase,radioPlan,radioSteps} from "./radio.js";
 import {readNights, nightComparison, comparisonLine, eveningRecall, EVENING_SOURCE, nightPlan, nightRecord, keepNight, NIGHT_KEY} from "./n2-night.js";
-import {kanjiCoverage, levelCoverage, isCovered, aheadLevel, applyBoss, verdictLine, rankOf, setRank, rankLevels, hasBoss, RANKS, inSlump, itemLevel, levelAfter, ITEM_LEVEL, gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, patternVoice, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
+import {grammarBlockCard, grammarCoverage, kanjiCoverage, levelCoverage, isCovered, aheadLevel, applyBoss, verdictLine, rankOf, setRank, rankLevels, hasBoss, RANKS, inSlump, itemLevel, levelAfter, ITEM_LEVEL, gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, patternVoice, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
 import {createLevels} from "./jlpt-levels.js";
 import {createSets, levelRows, SET_ID, setLevel, heldOut} from "./jlpt-sets.js";
 import {spokenWord,radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
@@ -1149,7 +1149,15 @@ async function game() {
   // N2 is built from the app's own files; another level's inventory is fetched
   // once and kept (jlpt-levels.js). A level that cannot be had (offline and
   // never fetched) is left out, and if it is the rank's own, N2 is played.
-  const n2Pool = gamePool({inventory, examples: await deckExamples(), sets, sat, parts: await json("./n2-kanji-parts.json").catch(() => null)});
+  const previewGrammar = ["localhost", "127.0.0.1", ""].includes(location.hostname) && params.get("grammar-preview") === "1";
+  const [examples, parts, grammarIndex] = await Promise.all([
+    deckExamples(), json("./n2-kanji-parts.json").catch(() => null),
+    json(previewGrammar ? "./tools/grammar-blocks/draft.json" : "./n2-grammar-blocks.json").catch(() => null),
+  ]);
+  const activeGrammar = grammarIndex?.version === 1 && (previewGrammar
+    || inventory.grammar.every(([key]) => ["clear", "partial", "opaque"].includes(grammarIndex.patterns?.[key]?.transparency)));
+  const n2Cards = gamePool({inventory, examples, sets, sat, parts, grammarBlocks: activeGrammar ? grammarIndex : null});
+  const grammarCards = n2Cards.filter(grammarBlockCard), n2Pool = n2Cards.filter(q => !grammarBlockCard(q));
   const levelPools = new Map([["N2", n2Pool]]);
   // kanjiFirst: the rank's kanji in order and, as examples, the cards of the other levels at hand.
   let pool = n2Pool, lower = [], missing = [], kanjiFirst = null, rankKanji = "", bossIds = [];
@@ -1364,6 +1372,8 @@ async function game() {
       $("game-run-row").hidden = false; $("game-run-points").textContent = cover.seen.toLocaleString() + " met"; $("game-run-points").dataset.neg = "false"; $("game-run-waits").textContent = "no " + rankOf(st) + " boss yet";
       $("game-countdown").hidden = true; $("game-run-line").textContent = "";
     }
+    const grammar = rankOf(st) === "N2" ? grammarCoverage(n2Cards, st) : {items: 0};
+    $("game-grammar-count").textContent = grammar.items ? "N2 grammar · " + grammar.known + " of " + grammar.items + " blocks known" : "";
     if (open) {
       $("game-boss-name").textContent = "Run " + runNo + " · boss open";
       $("game-boss-title").textContent = mockNo + " at half time";
@@ -1466,11 +1476,17 @@ async function game() {
     }, 100);
   };
   const stopBar = state => { clearInterval(ticker); const w = getComputedStyle(bar).width; bar.style.transition = "none"; bar.style.width = w; if (state) $("game-clock").dataset.state = state; };
+  const rememberOpenPattern = () => {
+    if (!current?.blocks?.length || locked || $("game-play").hidden || current.kind === "block") return;
+    const st = readGame();
+    if (!Object.hasOwn(st.seen || {}, current.id)) writeGame({...st, seen: {...st.seen, [current.id]: Date.now()}});
+  };
+  window.addEventListener("pagehide", rememberOpenPattern);
   function start() {
     sfx.unlock();
     // During a round the top-left chevron goes back to Home (board 2 · "Back to home").
     $("game-back").href = "?view=game"; $("game-back").setAttribute("aria-label", "Back to home"); $("game-back").dataset.end = "false";
-    $("game-back").onclick = e => { e.preventDefault(); window.speechSynthesis?.cancel(); home(); };
+    $("game-back").onclick = e => { e.preventDefault(); rememberOpenPattern(); window.speechSynthesis?.cancel(); home(); };
     state = readGame();
     // An interrupted round goes on where it stopped (board 12 · B): no choice offered.
     const kept = readRound();
@@ -1482,7 +1498,7 @@ async function game() {
     // phone has no Japanese voice, or the voice failed twice this session.
     const playable = hears() ? pool : pool.filter(q => q.kind !== "listen");
     const review = hears() ? lower : lower.filter(q => q.kind !== "listen");
-    const next = nextRound({pool: playable, review, kanji: kanjiFirst && {...kanjiFirst, examples: hears() ? kanjiFirst.examples : kanjiFirst.examples.filter(q => q.kind !== "listen")}, recall: data.recall, state, difficulty: difficulty()});
+    const next = nextRound({pool: playable, review, kanji: kanjiFirst && {...kanjiFirst, examples: hears() ? kanjiFirst.examples : kanjiFirst.examples.filter(q => q.kind !== "listen")}, recall: data.recall, state, difficulty: difficulty(), grammarCards: pool === n2Pool && grammarCards.length ? grammarCards : null});
     round = next.round; roundLevel = next.level; warmUp = next.warmUp; beat = next.beat || null; rights = 0; flagged = 0; practiced = 0; bestCombo = 0;
     index = 0; score = 0; streak = 0; misses = []; marks = []; ups = [];
     mode("play");
@@ -1501,7 +1517,7 @@ async function game() {
     try {
       const s = JSON.parse(localStorage.getItem(ROUND_KEY) || "null");
       if (!s || Date.now() - s.at > ROUND_KEEP_MS || !(s.index >= 1 && s.index < s.items.length)) { if (s) clearRound(); return null; }
-      const byId = new Map([...n2Pool, ...lower, ...pool].map(q => [q.id, q])), items = s.items.map(it => byId.has(it.id) ? {...byId.get(it.id), ...it} : null);
+      const byId = new Map([...n2Cards, ...lower, ...pool].map(q => [q.id, q])), items = s.items.map(it => byId.has(it.id) ? {...byId.get(it.id), ...it} : null);
       if (items.includes(null)) { clearRound(); return null; }
       return {...s, round: items, ups: s.ups || [], misses: (s.misses || []).map(m => ({q: items.find(q => q.id === m.id), picked: m.picked, from: m.from, to: m.to})).filter(m => m.q)};
     } catch { return null; }
@@ -1541,7 +1557,7 @@ async function game() {
     stretchStrip();
     // Card layout per kind (board 3a): sentence kinds show the sentence alone;
     // word kinds the big word; listen a round play button; exam its question.
-    const listen = q.kind === "listen", sentenceKind = !!q.sentence && ["reading", "homophone", "grammar", "connective", "meaning"].includes(q.kind);
+    const listen = q.kind === "listen", sentenceKind = !!q.sentence && (["reading", "homophone", "grammar", "connective", "meaning"].includes(q.kind) || grammarBlockCard(q));
     const prompt = $("game-prompt");
     prompt.hidden = listen || sentenceKind;
     prompt.textContent = q.prompt;
@@ -1557,11 +1573,15 @@ async function game() {
     if (q.kind === "connective") { const [a, b] = q.sentence.split("（　）"); $("game-sentence").replaceChildren(a, el("span", {class: "qr-blank", id: "game-blank"}), b || ""); }
     else if (sentenceKind) $("game-sentence").replaceChildren(...exampleNodes(q.sentence, [q.needle]));
     else if (inContext) $("game-sentence").replaceChildren(...heard.flatMap((s, n) => !s.mark ? [s.text] : heard[n - 1]?.mark ? [] : [el("span", {class: "qr-blank", id: "game-blank"})]));
+    const parts = $("game-grammar-parts");
+    parts.hidden = q.kind !== "build";
+    parts.replaceChildren(...(q.parts || []).map(part => el("span", {class: "qr-chip"},
+      el("span", {text: part.text, lang: "ja"}), ...(part.gloss ? [el("span", {text: part.gloss, lang: "en"})] : []))));
     // Board 11 · E: a practice card reads as practice: dashed card, dim clock, ring pip.
     card.dataset.practice = String(!!q.practice); root.dataset.practice = String(!!q.practice);
     $("game-say").hidden = !listen; $("game-say-hint").hidden = !listen;
     card.dataset.centered = String(!sentenceKind && q.kind !== "exam");
-    $("game-aloud").lastChild.textContent = q.kind === "reading" && !sentenceKind ? ALOUD.meaning : ALOUD[q.kind] || "";
+    $("game-aloud").lastChild.textContent = q.kind === "reading" && !sentenceKind ? ALOUD.meaning : ALOUD[grammarBlockCard(q) ? "grammar" : q.kind] || "";
     // A lone line is centred; a sentence that wraps reads from the left, and from three lines drops to 19 px (review C7).
     const sent = $("game-sentence"); sent.dataset.lines = "1";
     if ((sentenceKind || inContext) && q.kind !== "connective") { const lines = Math.round(sent.getBoundingClientRect().height / parseFloat(getComputedStyle(sent).lineHeight)); sent.dataset.lines = lines >= 3 ? "3" : String(lines); }
@@ -1676,7 +1696,7 @@ async function game() {
     const word = sol.word || q.answer;
     $("game-review-word").textContent = word;
     $("game-review-word").classList.toggle("long", word.length > 6);
-    const pattern = q.kind === "grammar" ? grammarVoice(q, sol) : null;
+    const pattern = q.kind === "grammar" || grammarBlockCard(q) ? grammarVoice(q, sol) : null;
     $("game-review-reading").textContent = pattern ? pattern.reading : sol.reading && sol.reading !== sol.word ? sol.reading : "";
     $("game-review-meaning").textContent = sol.meaning || (q.kind === "exam" ? "Answer: " + q.answer : "");
     // A long pick stacks: the label on its own line, the struck text under it (review C13).

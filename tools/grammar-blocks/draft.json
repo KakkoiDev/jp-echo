@@ -1,0 +1,5595 @@
+{
+  "version": 1,
+  "blocks": {
+    "zaru": {
+      "form": "ざる",
+      "forms": [
+        "ざる",
+        "ぬ",
+        "ず"
+      ],
+      "type": "negative",
+      "gloss": "actions that do not happen",
+      "ja": "雨【あめ】がひどいので、旅行【りょこう】は中止【ちゅうし】せざるを得【え】ない。",
+      "en": "The rain is so heavy that we have no choice but to cancel the trip.",
+      "level": "N2"
+    },
+    "naku": {
+      "form": "なく",
+      "forms": [
+        "なく",
+        "ない"
+      ],
+      "type": "negative",
+      "gloss": "negative marker",
+      "ja": "彼【かれ】は一日【いちにち】も休【やす】むことなく、練習【れんしゅう】を続【つづ】けた。",
+      "en": "He kept practicing without taking a single day off.",
+      "level": "N1"
+    },
+    "dekiru-e": {
+      "form": "得る",
+      "forms": [
+        "得る",
+        "得ない"
+      ],
+      "type": "verb",
+      "gloss": "get or attain",
+      "ja": "雨【あめ】がひどいので、旅行【りょこう】は中止【ちゅうし】せざるを得【え】ない。",
+      "en": "The rain is so heavy that we have no choice but to cancel the trip.",
+      "level": "N2"
+    },
+    "wo": {
+      "form": "を",
+      "forms": [
+        "を"
+      ],
+      "type": "particle",
+      "gloss": "marks the direct object",
+      "ja": "本【ほん】を読【よ】みます。",
+      "en": "I read a book.",
+      "level": "N5"
+    },
+    "ni": {
+      "form": "に",
+      "forms": [
+        "に"
+      ],
+      "type": "particle",
+      "gloss": "marks an endpoint or link",
+      "ja": "駅【えき】に着【つ】いた。",
+      "en": "I arrived at the station.",
+      "level": "N5"
+    },
+    "de": {
+      "form": "で",
+      "forms": [
+        "で"
+      ],
+      "type": "particle",
+      "gloss": "marks the means or setting",
+      "ja": "電車【でんしゃ】で来【き】た。",
+      "en": "I came by train.",
+      "level": "N5"
+    },
+    "no": {
+      "form": "の",
+      "forms": [
+        "の"
+      ],
+      "type": "particle",
+      "gloss": "links a noun to a modifier",
+      "ja": "父【ちち】の車【くるま】です。",
+      "en": "It is my father's car.",
+      "level": "N5"
+    },
+    "wa": {
+      "form": "は",
+      "forms": [
+        "は"
+      ],
+      "type": "particle",
+      "gloss": "sets the topic",
+      "ja": "弟【おとうと】は学生【がくせい】です。",
+      "en": "My younger brother is a student.",
+      "level": "N5"
+    },
+    "mo": {
+      "form": "も",
+      "forms": [
+        "も"
+      ],
+      "type": "particle",
+      "gloss": "includes an additional case",
+      "ja": "私【わたし】も行【い】く。",
+      "en": "I am going too.",
+      "level": "N5"
+    },
+    "ga": {
+      "form": "が",
+      "forms": [
+        "が"
+      ],
+      "type": "particle",
+      "gloss": "marks the subject",
+      "ja": "猫【ねこ】がいる。",
+      "en": "There is a cat.",
+      "level": "N5"
+    },
+    "ka": {
+      "form": "か",
+      "forms": [
+        "か"
+      ],
+      "type": "particle",
+      "gloss": "marks an open question",
+      "ja": "誰【だれ】か来【き】たかな。",
+      "en": "I wonder if someone came.",
+      "level": "N5"
+    },
+    "kara": {
+      "form": "から",
+      "forms": [
+        "から"
+      ],
+      "type": "particle",
+      "gloss": "introduces the source",
+      "ja": "駅【えき】から歩【ある】いた。",
+      "en": "I walked from the station.",
+      "level": "N5"
+    },
+    "yori": {
+      "form": "より",
+      "forms": [
+        "より"
+      ],
+      "type": "particle",
+      "gloss": "marks a reference for comparison",
+      "ja": "前【まえ】より静【しず】かだ。",
+      "en": "It is quieter than before.",
+      "level": "N5"
+    },
+    "te": {
+      "form": "て",
+      "forms": [
+        "て",
+        "で"
+      ],
+      "type": "ending",
+      "gloss": "links a predicate to what follows",
+      "ja": "窓【まど】を開【あ】けて寝【ね】た。",
+      "en": "I opened the window and went to sleep.",
+      "level": "N5"
+    },
+    "conditional-ba": {
+      "form": "ば",
+      "forms": [
+        "ば"
+      ],
+      "type": "ending",
+      "gloss": "sets a condition",
+      "ja": "読【よ】めば分【わ】かる。",
+      "en": "If you read it, you will understand.",
+      "level": "N4"
+    },
+    "past-ta": {
+      "form": "た",
+      "forms": [
+        "た"
+      ],
+      "type": "ending",
+      "gloss": "marks a completed action",
+      "ja": "駅【えき】に着【つ】いた。",
+      "en": "I arrived at the station.",
+      "level": "N2"
+    },
+    "assert-da": {
+      "form": "だ",
+      "forms": [
+        "だ",
+        "です",
+        "で",
+        "では",
+        "じゃ"
+      ],
+      "type": "ending",
+      "gloss": "asserts an identity or state",
+      "ja": "明日【あした】は休【やす】みだ。",
+      "en": "Tomorrow is a day off.",
+      "level": "N5"
+    },
+    "koto": {
+      "form": "こと",
+      "forms": [
+        "こと"
+      ],
+      "type": "noun",
+      "gloss": "makes a situation an abstract fact",
+      "ja": "読【よ】むことが好【す】きだ。",
+      "en": "I like reading.",
+      "level": "N4"
+    },
+    "uchi": {
+      "form": "うち",
+      "forms": [
+        "うち"
+      ],
+      "type": "noun",
+      "gloss": "the inside of a boundary",
+      "ja": "若【わか】いうちに旅【たび】をしたい。",
+      "en": "I want to travel while I am young.",
+      "level": "N2"
+    },
+    "ue": {
+      "form": "上",
+      "forms": [
+        "上"
+      ],
+      "type": "noun",
+      "gloss": "an upper layer",
+      "ja": "棚【たな】の上【うえ】に置【お】いた。",
+      "en": "I put it on top of the shelf.",
+      "level": "N2"
+    },
+    "ijou": {
+      "form": "以上",
+      "forms": [
+        "以上"
+      ],
+      "type": "noun",
+      "gloss": "a floor or threshold",
+      "ja": "三【さん】人【にん】以上【いじょう】で申【もう】し込【こ】める。",
+      "en": "Groups of three or more can apply.",
+      "level": "N4"
+    },
+    "tutu": {
+      "form": "つつ",
+      "forms": [
+        "つつ"
+      ],
+      "type": "ending",
+      "gloss": "holds two actions in parallel",
+      "ja": "音楽【おんがく】を聞【き】きつつ歩【ある】いた。",
+      "en": "I walked while listening to music.",
+      "level": "N2"
+    },
+    "aru": {
+      "form": "ある",
+      "forms": [
+        "ある"
+      ],
+      "type": "verb",
+      "gloss": "exists or is present",
+      "ja": "机【つくえ】の上【うえ】に本【ほん】がある。",
+      "en": "There is a book on the desk.",
+      "level": "N2"
+    },
+    "sei": {
+      "form": "際",
+      "forms": [
+        "際"
+      ],
+      "type": "noun",
+      "gloss": "a specific moment",
+      "ja": "お帰【かえ】りの際【さい】は一声【ひとこえ】かけてください。",
+      "en": "Please let me know when you leave.",
+      "level": "N2"
+    },
+    "yoo": {
+      "form": "よう",
+      "forms": [
+        "よう"
+      ],
+      "type": "noun",
+      "gloss": "a manner or available method",
+      "ja": "言【い】いようが見【み】つからない。",
+      "en": "I cannot find a way to say it.",
+      "level": "N1"
+    },
+    "mono-explanation": {
+      "form": "もの",
+      "forms": [
+        "もの"
+      ],
+      "type": "noun",
+      "gloss": "frames a personal circumstance",
+      "ja": "寒【さむ】いものだから、窓【まど】を閉【し】めた。",
+      "en": "I shut the window because it was cold.",
+      "level": "N3"
+    },
+    "kagiru": {
+      "form": "限る",
+      "forms": [
+        "限る",
+        "限って",
+        "限らず"
+      ],
+      "type": "verb",
+      "gloss": "restricts the scope",
+      "ja": "参加【さんか】は学生【がくせい】に限【かぎ】る。",
+      "en": "Participation is restricted to students.",
+      "level": "N2"
+    },
+    "sue": {
+      "form": "末",
+      "forms": [
+        "末"
+      ],
+      "type": "noun",
+      "gloss": "the endpoint of a process",
+      "ja": "話【はな】し合【あ】った末【すえ】、計画【けいかく】を変【か】えた。",
+      "en": "After discussing it, we changed the plan.",
+      "level": "N2",
+      "single": true
+    },
+    "nuku": {
+      "form": "抜く",
+      "forms": [
+        "抜く",
+        "抜き",
+        "抜いた"
+      ],
+      "type": "verb",
+      "gloss": "pulls something out",
+      "ja": "雑草【ざっそう】を抜【ぬ】く。",
+      "en": "I pull out the weeds.",
+      "level": "N2"
+    },
+    "sai-suru": {
+      "form": "する",
+      "forms": [
+        "する",
+        "して"
+      ],
+      "type": "verb",
+      "gloss": "carries out an action",
+      "ja": "検査【けんさ】をして帰【かえ】った。",
+      "en": "I went home after having the check.",
+      "level": "N5",
+      "single": true
+    },
+    "sou": {
+      "form": "沿う",
+      "forms": [
+        "沿う",
+        "沿って"
+      ],
+      "type": "verb",
+      "gloss": "stays beside a path",
+      "ja": "川【かわ】に沿【そ】って歩【ある】いた。",
+      "en": "I walked along the river.",
+      "level": "N2",
+      "single": true
+    },
+    "meguru": {
+      "form": "巡る",
+      "forms": [
+        "巡る",
+        "巡って"
+      ],
+      "type": "verb",
+      "gloss": "circles or goes around",
+      "ja": "島【しま】を巡【めぐ】る旅【たび】に出【で】た。",
+      "en": "I went on a trip around the islands.",
+      "level": "N2",
+      "single": true
+    },
+    "tomonau": {
+      "form": "伴う",
+      "forms": [
+        "伴う",
+        "伴って",
+        "伴い"
+      ],
+      "type": "verb",
+      "gloss": "comes together with another thing",
+      "ja": "危険【きけん】を伴【ともな】う仕事【しごと】だ。",
+      "en": "It is a job that involves danger.",
+      "level": "N2",
+      "single": true
+    },
+    "jyuu": {
+      "form": "中心",
+      "forms": [
+        "中心"
+      ],
+      "type": "noun",
+      "gloss": "the hub",
+      "ja": "駅【えき】を中心【ちゅうしん】に町【まち】が広【ひろ】がる。",
+      "en": "The town spreads out around the station.",
+      "level": "N2",
+      "single": true
+    },
+    "shita": {
+      "form": "下",
+      "forms": [
+        "下"
+      ],
+      "type": "noun",
+      "gloss": "a lower position",
+      "ja": "橋【はし】の下【した】で休【やす】んだ。",
+      "en": "I rested beneath the bridge.",
+      "level": "N2",
+      "single": true
+    },
+    "watari": {
+      "form": "わたる",
+      "forms": [
+        "わたる",
+        "わたって",
+        "わたった"
+      ],
+      "type": "verb",
+      "gloss": "crosses from end to end",
+      "ja": "調査【ちょうさ】は三【さん】年【ねん】にわたった。",
+      "en": "The survey extended over three years.",
+      "level": "N2",
+      "single": true
+    },
+    "tada": {
+      "form": "せめて",
+      "forms": [
+        "せめて"
+      ],
+      "type": "word",
+      "gloss": "a minimal concession",
+      "ja": "せめて一日【いちにち】だけでも休【やす】みが欲【ほ】しい。",
+      "en": "I want at least one day off.",
+      "level": "N2",
+      "single": true
+    },
+    "doose": {
+      "form": "どうせ",
+      "forms": [
+        "どうせ"
+      ],
+      "type": "word",
+      "gloss": "an outcome treated as fixed",
+      "ja": "どうせ間【ま】に合【あ】わないから、ゆっくり行【い】こう。",
+      "en": "We won't make it anyway, so let's go slowly.",
+      "level": "N2",
+      "single": true
+    },
+    "doo-yara": {
+      "form": "どうやら",
+      "forms": [
+        "どうやら"
+      ],
+      "type": "word",
+      "gloss": "a conclusion drawn from clues",
+      "ja": "どうやら明日【あした】は雨【あめ】になりそうだ。",
+      "en": "It looks like it's going to rain tomorrow.",
+      "level": "N2",
+      "single": true
+    },
+    "nani-yara": {
+      "form": "なにやら",
+      "forms": [
+        "なにやら"
+      ],
+      "type": "word",
+      "gloss": "an unidentified presence",
+      "ja": "なにやら音【おと】がする。",
+      "en": "There is some kind of sound.",
+      "level": "N2",
+      "single": true
+    },
+    "tashika": {
+      "form": "確かに",
+      "forms": [
+        "確かに"
+      ],
+      "type": "word",
+      "gloss": "grants the point at hand",
+      "ja": "鍵【かぎ】は確【たし】かにここに置【お】いたはずだ。",
+      "en": "I'm sure I left the key right here.",
+      "level": "N2",
+      "single": true
+    },
+    "ichiou-check": {
+      "form": "一応",
+      "forms": [
+        "一応"
+      ],
+      "type": "word",
+      "gloss": "a provisional precaution",
+      "ja": "雨【あめ】は降【ふ】らないと思【おも】うが、一応【いちおう】傘【かさ】を持【も】っていこう。",
+      "en": "I don't think it'll rain, but let's take an umbrella just in case.",
+      "level": "N2",
+      "single": true
+    },
+    "ichiou-minimum": {
+      "form": "一応",
+      "forms": [
+        "一応"
+      ],
+      "type": "word",
+      "gloss": "a provisional minimum",
+      "ja": "報告書【ほうこくしょ】は一応【いちおう】できたが、まだ見直【みなお】しが必要【ひつよう】だ。",
+      "en": "The report is more or less done, but it still needs a review.",
+      "level": "N2",
+      "single": true
+    },
+    "man-ga-ichi": {
+      "form": "万が一",
+      "forms": [
+        "万が一"
+      ],
+      "type": "word",
+      "gloss": "a remote contingency",
+      "ja": "万【まん】が一【いち】地震【じしん】が起【お】きたら、この公園【こうえん】に集【あつ】まってください。",
+      "en": "In the unlikely event of an earthquake, please gather in this park.",
+      "level": "N2",
+      "single": true
+    },
+    "nao-continuing": {
+      "form": "なお",
+      "forms": [
+        "なお"
+      ],
+      "type": "word",
+      "gloss": "something remains in force",
+      "ja": "薬【くすり】を飲【の】んだが、熱【ねつ】はなお下【さ】がらない。",
+      "en": "I took medicine, but my fever still won't go down.",
+      "level": "N2",
+      "single": true
+    },
+    "nao-addition": {
+      "form": "なお",
+      "forms": [
+        "なお"
+      ],
+      "type": "word",
+      "gloss": "appends a note",
+      "ja": "なお、詳【くわ】しい日程【にってい】は後日【ごじつ】お知【し】らせします。",
+      "en": "In addition, we will announce the detailed schedule at a later date.",
+      "level": "N2",
+      "single": true
+    },
+    "kikkake": {
+      "form": "きっかけ",
+      "forms": [
+        "きっかけ"
+      ],
+      "type": "noun",
+      "gloss": "the opening that prompts action",
+      "ja": "一冊【いっさつ】の本【ほん】がきっかけで、医者【いしゃ】を目指【めざ】すようになった。",
+      "en": "A single book was what made me start aiming to become a doctor.",
+      "level": "N2",
+      "single": true
+    },
+    "toiu": {
+      "form": "という",
+      "forms": [
+        "という"
+      ],
+      "type": "particle",
+      "gloss": "introduces the content or label",
+      "ja": "海【うみ】が青【あお】いという話【はなし】だ。",
+      "en": "The story says that the sea is blue.",
+      "level": "N3"
+    },
+    "mono-thing": {
+      "form": "もの",
+      "forms": [
+        "もの"
+      ],
+      "type": "noun",
+      "gloss": "treats an idea as a thing",
+      "ja": "約束【やくそく】は大切【たいせつ】なものだ。",
+      "en": "A promise is an important thing.",
+      "level": "N3"
+    },
+    "inessive-tokoro": {
+      "form": "ところ",
+      "forms": [
+        "ところ"
+      ],
+      "type": "noun",
+      "gloss": "the point reached in an action",
+      "ja": "今【いま】は休【やす】んでいるところです。",
+      "en": "I am taking a break right now.",
+      "level": "N2"
+    },
+    "tokoro-degree": {
+      "form": "どころ",
+      "forms": [
+        "どころ"
+      ],
+      "type": "noun",
+      "gloss": "the extent at issue",
+      "ja": "休【やす】むどころではない。",
+      "en": "This is no time to rest.",
+      "level": "N2",
+      "single": true
+    },
+    "to-quote": {
+      "form": "と",
+      "forms": [
+        "と"
+      ],
+      "type": "particle",
+      "gloss": "cites the content of a statement",
+      "ja": "明日【あした】行【い】くと言【い】った。",
+      "en": "They said they would go tomorrow.",
+      "level": "N5"
+    },
+    "to-when": {
+      "form": "と",
+      "forms": [
+        "と"
+      ],
+      "type": "particle",
+      "gloss": "links an action to its sequel",
+      "ja": "窓【まど】を開【あ】けると風【かぜ】が入【はい】った。",
+      "en": "When I opened the window, a breeze came in.",
+      "level": "N5"
+    },
+    "omou": {
+      "form": "思う",
+      "forms": [
+        "思う",
+        "思ったら",
+        "思い",
+        "思うと"
+      ],
+      "type": "verb",
+      "gloss": "reaches a judgment",
+      "ja": "無理【むり】だと思【おも】ったら、やめていい。",
+      "en": "If you think it is too much, you can stop.",
+      "level": "N1"
+    },
+    "masu": {
+      "form": "ます",
+      "forms": [
+        "ます"
+      ],
+      "type": "ending",
+      "gloss": "polite predicate ending",
+      "ja": "毎朝【まいあさ】走【はし】ります。",
+      "en": "I run every morning.",
+      "level": "N5",
+      "single": true
+    },
+    "miru": {
+      "form": "見る",
+      "forms": [
+        "見る"
+      ],
+      "type": "verb",
+      "gloss": "uses the eyes to examine something",
+      "ja": "毎晩【まいばん】星【ほし】を見【み】る。",
+      "en": "I look at the stars every night.",
+      "level": "N2"
+    },
+    "suru-assume": {
+      "form": "する",
+      "forms": [
+        "する",
+        "すれ",
+        "し",
+        "して",
+        "したら"
+      ],
+      "type": "verb",
+      "gloss": "takes something as a premise",
+      "ja": "雨【あめ】だとしたら、どうする？",
+      "en": "Suppose it rains. What will you do?",
+      "level": "N5"
+    },
+    "naritai": {
+      "form": "なる",
+      "forms": [
+        "なる",
+        "ならない",
+        "なって",
+        "ならず"
+      ],
+      "type": "verb",
+      "gloss": "becomes a new state",
+      "ja": "氷【こおり】が水【みず】になる。",
+      "en": "Ice turns into water.",
+      "level": "N2"
+    },
+    "nara": {
+      "form": "なら",
+      "forms": [
+        "なら"
+      ],
+      "type": "ending",
+      "gloss": "takes a premise as given",
+      "ja": "明日【あした】なら空【あ】いています。",
+      "en": "If you mean tomorrow, I am free.",
+      "level": "N4"
+    },
+    "mai": {
+      "form": "まい",
+      "forms": [
+        "まい"
+      ],
+      "type": "negative",
+      "gloss": "rules out a plan or likelihood",
+      "ja": "二【に】度【ど】と行【い】くまい。",
+      "en": "I resolve never to go again.",
+      "level": "N2",
+      "single": true
+    },
+    "neba": {
+      "form": "ねば",
+      "forms": [
+        "ねば"
+      ],
+      "type": "negative",
+      "gloss": "tests a case where it is undone",
+      "ja": "急【いそ】がねば間【ま】に合【あ】わない。",
+      "en": "We won't make it unless we hurry.",
+      "level": "N2",
+      "single": true
+    },
+    "nai": {
+      "form": "ない",
+      "forms": [
+        "ない"
+      ],
+      "type": "negative",
+      "gloss": "marks absence or denial",
+      "ja": "まだ返事【へんじ】がない。",
+      "en": "There is no reply yet.",
+      "level": "N1"
+    },
+    "iru": {
+      "form": "いる",
+      "forms": [
+        "いる",
+        "いられない",
+        "いて"
+      ],
+      "type": "verb",
+      "gloss": "stays in a state",
+      "ja": "電車【でんしゃ】で座【すわ】っている。",
+      "en": "I am sitting on the train.",
+      "level": "N2"
+    },
+    "dake": {
+      "form": "だけ",
+      "forms": [
+        "だけ"
+      ],
+      "type": "particle",
+      "gloss": "sets the extent or boundary",
+      "ja": "私【わたし】だけ残【のこ】った。",
+      "en": "I was the only one who stayed.",
+      "level": "N5"
+    },
+    "nomi": {
+      "form": "のみ",
+      "forms": [
+        "のみ"
+      ],
+      "type": "particle",
+      "gloss": "confines the scope to one case",
+      "ja": "会員【かいいん】のみ入【はい】れます。",
+      "en": "Only members may enter.",
+      "level": "N2"
+    },
+    "tada-yori": {
+      "form": "足す",
+      "forms": [
+        "足す",
+        "加える",
+        "加えて"
+      ],
+      "type": "verb",
+      "gloss": "puts something in with the rest",
+      "ja": "水【みず】を加【くわ】えて混【ま】ぜた。",
+      "en": "I added water and stirred.",
+      "level": "N2",
+      "single": true
+    },
+    "sugi": {
+      "form": "過ぎる",
+      "forms": [
+        "過ぎる",
+        "過ぎた",
+        "すぎない"
+      ],
+      "type": "verb",
+      "gloss": "goes beyond a threshold",
+      "ja": "もう十【じゅう】時【じ】を過【す】ぎた。",
+      "en": "It is already past ten.",
+      "level": "N2",
+      "single": true
+    },
+    "mashi": {
+      "form": "まし",
+      "forms": [
+        "まし"
+      ],
+      "type": "noun",
+      "gloss": "the less undesirable case",
+      "ja": "これでも前【まえ】よりましだ。",
+      "en": "Even this is better than before.",
+      "level": "N2",
+      "single": true
+    },
+    "beki-setsu": {
+      "form": "別",
+      "forms": [
+        "別"
+      ],
+      "type": "noun",
+      "gloss": "another category",
+      "ja": "それは別【べつ】の問題【もんだい】だ。",
+      "en": "That is a different problem.",
+      "level": "N2",
+      "single": true
+    },
+    "tomo": {
+      "form": "とも",
+      "forms": [
+        "とも"
+      ],
+      "type": "particle",
+      "gloss": "grants a case for argument",
+      "ja": "雨【あめ】が降【ふ】ろうとも出【で】かける。",
+      "en": "I will go out even if it rains.",
+      "level": "N2",
+      "single": true
+    },
+    "tomo-set-aside": {
+      "form": "ともかく",
+      "forms": [
+        "ともかく"
+      ],
+      "type": "word",
+      "gloss": "moves discussion to another point",
+      "ja": "詳【くわ】しくはともかく、結論【けつろん】を聞【き】こう。",
+      "en": "Leaving the details aside, let's hear the conclusion.",
+      "level": "N2"
+    },
+    "dewa": {
+      "form": "では",
+      "forms": [
+        "では",
+        "じゃ"
+      ],
+      "type": "particle",
+      "gloss": "frames a situation for comment",
+      "ja": "雨【あめ】では試合【しあい】は無理【むり】だ。",
+      "en": "A game would be impossible in this rain.",
+      "level": "N3"
+    },
+    "wake": {
+      "form": "わけ",
+      "forms": [
+        "わけ"
+      ],
+      "type": "noun",
+      "gloss": "grounds for drawing a conclusion",
+      "ja": "急【いそ】ぐわけを教【おし】えて。",
+      "en": "Tell me why you're in a hurry.",
+      "level": "N2"
+    },
+    "iku-acceptable": {
+      "form": "いく",
+      "forms": [
+        "いく",
+        "いかない"
+      ],
+      "type": "verb",
+      "gloss": "works as a course of action",
+      "ja": "その方法【ほうほう】ではうまくいかない。",
+      "en": "That method won't work.",
+      "level": "N2",
+      "single": true
+    },
+    "mono-refusal": {
+      "form": "もの",
+      "forms": [
+        "もの"
+      ],
+      "type": "noun",
+      "gloss": "frames the action as a proposition",
+      "ja": "二【に】度【ど】と頼【たの】むものか。",
+      "en": "I'll never ask again.",
+      "level": "N3",
+      "single": true
+    },
+    "adjective-ge": {
+      "form": "げ",
+      "forms": [
+        "げ"
+      ],
+      "type": "ending",
+      "gloss": "visible outward appearance",
+      "ja": "彼女【かのじょ】は寂【さび】しげな顔【かお】をした。",
+      "en": "She looked lonely.",
+      "level": "N2",
+      "single": true
+    },
+    "kara-cause": {
+      "form": "から",
+      "forms": [
+        "から"
+      ],
+      "type": "particle",
+      "gloss": "gives the cause of a situation",
+      "ja": "寒【さむ】いから帰【かえ】ろう。",
+      "en": "Let's go home because it is cold.",
+      "level": "N5"
+    },
+    "atari": {
+      "form": "あたる",
+      "forms": [
+        "あたる",
+        "あたり",
+        "あたって"
+      ],
+      "type": "verb",
+      "gloss": "meets an event face to face",
+      "ja": "開店【かいてん】にあたって準備【じゅんび】をした。",
+      "en": "We made preparations for the opening.",
+      "level": "N2",
+      "single": true
+    },
+    "ki": {
+      "form": "気",
+      "forms": [
+        "気"
+      ],
+      "type": "noun",
+      "gloss": "where the mind or intent is aimed",
+      "ja": "帰【かえ】る気【き】はない。",
+      "en": "I have no intention of going home.",
+      "level": "N2"
+    },
+    "tukeru": {
+      "form": "つける",
+      "forms": [
+        "つける",
+        "つけて"
+      ],
+      "type": "verb",
+      "gloss": "directs something onto a point",
+      "ja": "足元【あしもと】に気【き】をつけて。",
+      "en": "Watch your step.",
+      "level": "N2",
+      "single": true
+    },
+    "hansuru": {
+      "form": "反する",
+      "forms": [
+        "反する",
+        "反して"
+      ],
+      "type": "verb",
+      "gloss": "runs in the opposite direction",
+      "ja": "予想【よそう】に反【はん】して売【う】れた。",
+      "en": "It sold contrary to expectations.",
+      "level": "N2",
+      "single": true
+    },
+    "motoni": {
+      "form": "もと",
+      "forms": [
+        "もと"
+      ],
+      "type": "noun",
+      "gloss": "a source or foundation",
+      "ja": "記録【きろく】をもとに調【しら】べた。",
+      "en": "I investigated using the records as a basis.",
+      "level": "N2",
+      "single": true
+    },
+    "ayumi": {
+      "form": "途中",
+      "forms": [
+        "途中"
+      ],
+      "type": "noun",
+      "gloss": "an intermediate point",
+      "ja": "途中【とちゅう】で雨【あめ】が降【ふ】った。",
+      "en": "It rained partway through.",
+      "level": "N2",
+      "single": true
+    },
+    "youka": {
+      "form": "よう",
+      "forms": [
+        "よう",
+        "う"
+      ],
+      "type": "ending",
+      "gloss": "suggests taking an action together",
+      "ja": "一緒【いっしょ】に食【た】べよう。",
+      "en": "Let's eat together.",
+      "level": "N1",
+      "single": true
+    },
+    "yo-like": {
+      "form": "よう",
+      "forms": [
+        "よう"
+      ],
+      "type": "noun",
+      "gloss": "the shape or appearance of a case",
+      "ja": "夢【ゆめ】のような話【はなし】だ。",
+      "en": "It sounds like a dream.",
+      "level": "N1",
+      "single": true
+    },
+    "so-likely": {
+      "form": "そう",
+      "forms": [
+        "そう"
+      ],
+      "type": "ending",
+      "gloss": "indicates an apparent prospect",
+      "ja": "雨【あめ】が降【ふ】りそうだ。",
+      "en": "It looks like it is about to rain.",
+      "level": "N4",
+      "single": true
+    },
+    "iuno": {
+      "form": "言う",
+      "forms": [
+        "言う",
+        "いって",
+        "いった",
+        "言った"
+      ],
+      "type": "verb",
+      "gloss": "puts something into words",
+      "ja": "自分【じぶん】で決【き】めると言【い】った。",
+      "en": "I said I would decide for myself.",
+      "level": "N2"
+    },
+    "sumu": {
+      "form": "済む",
+      "forms": [
+        "済む",
+        "済んだ"
+      ],
+      "type": "verb",
+      "gloss": "comes to a satisfactory end",
+      "ja": "修理【しゅうり】が済【す】んだ。",
+      "en": "The repairs are finished.",
+      "level": "N2",
+      "single": true
+    },
+    "koto-pivot": {
+      "form": "こそ",
+      "forms": [
+        "こそ"
+      ],
+      "type": "ending",
+      "gloss": "singles out the focus",
+      "ja": "今【いま】こそ始【はじ】めよう。",
+      "en": "Now is the time to start.",
+      "level": "N3",
+      "single": true
+    },
+    "limited-shika": {
+      "form": "しか",
+      "forms": [
+        "しか"
+      ],
+      "type": "particle",
+      "gloss": "leaves no alternatives in scope",
+      "ja": "水【みず】しか飲【の】めない。",
+      "en": "I can drink only water.",
+      "level": "N2",
+      "single": true
+    },
+    "ordinary-ato": {
+      "form": "後",
+      "forms": [
+        "後"
+      ],
+      "type": "noun",
+      "gloss": "the remainder or position beyond",
+      "ja": "残【のこ】りは後【あと】で返【かえ】す。",
+      "en": "I will return the rest later.",
+      "level": "N2",
+      "single": true
+    },
+    "mukau": {
+      "form": "向かう",
+      "forms": [
+        "向かう",
+        "向かって",
+        "向けて"
+      ],
+      "type": "verb",
+      "gloss": "faces a destination",
+      "ja": "駅【えき】に向【む】かって歩【ある】いた。",
+      "en": "I walked toward the station.",
+      "level": "N2",
+      "single": true
+    },
+    "care-kamawazu": {
+      "form": "構う",
+      "forms": [
+        "構う",
+        "構わ",
+        "構わず"
+      ],
+      "type": "verb",
+      "gloss": "takes heed of something",
+      "ja": "失敗【しっぱい】しても構【かま】わない。",
+      "en": "I don't mind if we fail.",
+      "level": "N2",
+      "single": true
+    },
+    "kaneru": {
+      "form": "かねる",
+      "forms": [
+        "かねる",
+        "かね"
+      ],
+      "type": "ending",
+      "gloss": "signals reluctance or difficulty",
+      "ja": "その点【てん】には同意【どうい】しかねます。",
+      "en": "I am afraid I cannot agree on that point.",
+      "level": "N2"
+    },
+    "maisetu": {
+      "form": "っこない",
+      "forms": [
+        "っこない"
+      ],
+      "type": "negative",
+      "gloss": "rejects a possibility emphatically",
+      "ja": "今日【きょう】中【じゅう】には終【お】わりっこない。",
+      "en": "There's no way it will be finished today.",
+      "level": "N2",
+      "single": true
+    },
+    "dakara": {
+      "form": "したがって",
+      "forms": [
+        "したがって"
+      ],
+      "type": "word",
+      "gloss": "draws an implication",
+      "ja": "この道【みち】は狭【せま】く、したがって大型車【おおがたしゃ】は通【とお】れない。",
+      "en": "This road is narrow, and therefore large vehicles can't pass.",
+      "level": "N2",
+      "single": true
+    },
+    "isooraku": {
+      "form": "おそらく",
+      "forms": [
+        "おそらく"
+      ],
+      "type": "word",
+      "gloss": "marks a reasoned prediction",
+      "ja": "おそらく、彼【かれ】は今日【きょう】の会議【かいぎ】には来【こ】ないだろう。",
+      "en": "He probably won't come to today's meeting.",
+      "level": "N2",
+      "single": true
+    },
+    "mada": {
+      "form": "未だに",
+      "forms": [
+        "未だに"
+      ],
+      "type": "word",
+      "gloss": "a persistent state",
+      "ja": "三年前【さんねんまえ】のことを、未【いま】だに覚【おぼ】えている。",
+      "en": "I still remember what happened three years ago.",
+      "level": "N2",
+      "single": true
+    },
+    "tokkuni": {
+      "form": "とっくに",
+      "forms": [
+        "とっくに"
+      ],
+      "type": "word",
+      "gloss": "far back relative to now",
+      "ja": "駅【えき】に着【つ】いたときには、電車【でんしゃ】はとっくに出【で】ていた。",
+      "en": "By the time I got to the station, the train had long since left.",
+      "level": "N2",
+      "single": true
+    },
+    "ittan": {
+      "form": "一旦",
+      "forms": [
+        "一旦"
+      ],
+      "type": "word",
+      "gloss": "a first step before reassessment",
+      "ja": "一旦【いったん】家【いえ】に帰【かえ】ってから、また出【で】かけます。",
+      "en": "I'll go home once, then head out again.",
+      "level": "N2",
+      "single": true
+    },
+    "yagate": {
+      "form": "やがて",
+      "forms": [
+        "やがて"
+      ],
+      "type": "word",
+      "gloss": "a later stage will arrive",
+      "ja": "夜【よる】になると、雨【あめ】はやがて雪【ゆき】に変【か】わった。",
+      "en": "When night fell, the rain eventually turned to snow.",
+      "level": "N2",
+      "single": true
+    },
+    "yasasi": {
+      "form": "いよいよ",
+      "forms": [
+        "いよいよ"
+      ],
+      "type": "word",
+      "gloss": "signals a culmination",
+      "ja": "いよいよ明日【あした】から夏休【なつやす】みだ。",
+      "en": "Summer vacation finally starts tomorrow.",
+      "level": "N2",
+      "single": true
+    },
+    "jijitsu": {
+      "form": "はたして",
+      "forms": [
+        "はたして"
+      ],
+      "type": "word",
+      "gloss": "calls a prediction into question",
+      "ja": "はたして、彼【かれ】の予想【よそう】は当【あ】たるだろうか。",
+      "en": "I wonder whether his prediction will really come true.",
+      "level": "N2",
+      "single": true
+    },
+    "motoyori": {
+      "form": "もとより",
+      "forms": [
+        "もとより"
+      ],
+      "type": "particle",
+      "gloss": "assumes the first case as a given",
+      "ja": "味【あじ】はもとより、値段【ねだん】も大事【だいじ】だ。",
+      "en": "Price matters as well as taste.",
+      "level": "N2",
+      "single": true
+    },
+    "exchange-kah": {
+      "form": "越す",
+      "forms": [
+        "越す",
+        "越した"
+      ],
+      "type": "verb",
+      "gloss": "goes above a benchmark",
+      "ja": "気温【きおん】が三十【さんじゅう】度【ど】を越【こ】した。",
+      "en": "The temperature exceeded thirty degrees.",
+      "level": "N2",
+      "single": true
+    },
+    "answer-respond": {
+      "form": "応える",
+      "forms": [
+        "応える",
+        "応えて",
+        "応じて"
+      ],
+      "type": "verb",
+      "gloss": "supplies a matching action",
+      "ja": "期待【きたい】に応【こた】えて優勝【ゆうしょう】した。",
+      "en": "She lived up to expectations and won.",
+      "level": "N2"
+    },
+    "direct-result": {
+      "form": "結果",
+      "forms": [
+        "結果"
+      ],
+      "type": "noun",
+      "gloss": "the outcome of a process",
+      "ja": "検査【けんさ】の結果【けっか】を知【し】らせます。",
+      "en": "I will let you know the test outcome.",
+      "level": "N2",
+      "single": true
+    },
+    "trigger-keiki": {
+      "form": "契機",
+      "forms": [
+        "契機"
+      ],
+      "type": "noun",
+      "gloss": "a moment that prompts a shift",
+      "ja": "留学【りゅうがく】を契機【けいき】に進路【しんろ】を変【か】えた。",
+      "en": "Studying abroad prompted me to change course.",
+      "level": "N2",
+      "single": true
+    },
+    "tsumori": {
+      "form": "つもり",
+      "forms": [
+        "つもり"
+      ],
+      "type": "noun",
+      "gloss": "a plan or mental stance",
+      "ja": "旅行【りょこう】に行【い】ったつもりで、そのお金【かね】を貯金【ちょきん】した。",
+      "en": "I saved that money, telling myself I'd been on the trip.",
+      "level": "N2",
+      "single": true
+    },
+    "hoka": {
+      "form": "ほか",
+      "forms": [
+        "ほか"
+      ],
+      "type": "noun",
+      "gloss": "an alternative outside the set",
+      "ja": "終電【しゅうでん】を逃【のが】したので、歩【ある】いて帰【かえ】るよりほかない。",
+      "en": "I missed the last train, so I have no choice but to walk home.",
+      "level": "N2"
+    },
+    "sooi": {
+      "form": "相違",
+      "forms": [
+        "相違"
+      ],
+      "type": "noun",
+      "gloss": "a discrepancy between two accounts",
+      "ja": "毎日【まいにち】あれほど練習【れんしゅう】したのだから、彼【かれ】は合格【ごうかく】するに相違【そうい】ない。",
+      "en": "He practiced that much every day, so he will pass without a doubt.",
+      "level": "N2",
+      "single": true
+    },
+    "sore": {
+      "form": "それ",
+      "forms": [
+        "それ"
+      ],
+      "type": "noun",
+      "gloss": "the situation already mentioned",
+      "ja": "それを先【さき】に聞【き】いた。",
+      "en": "I heard that first.",
+      "level": "N5",
+      "single": true
+    },
+    "makaseru": {
+      "form": "任せる",
+      "forms": [
+        "任せる",
+        "任せ",
+        "任せた"
+      ],
+      "type": "verb",
+      "gloss": "hands responsibility to another",
+      "ja": "この仕事【しごと】を新人【しんじん】に任【まか】せてみることにした。",
+      "en": "I decided to try entrusting this job to the new employee.",
+      "level": "N2",
+      "single": true
+    },
+    "ikasu": {
+      "form": "活かす",
+      "forms": [
+        "活かす",
+        "活かし",
+        "活かせる"
+      ],
+      "type": "verb",
+      "gloss": "lets an existing ability do work",
+      "ja": "留学【りゅうがく】の経験【けいけん】を仕事【しごと】に活【い】かしたい。",
+      "en": "I want to put my experience studying abroad to use in my work.",
+      "level": "N2",
+      "single": true
+    },
+    "naka": {
+      "form": "中",
+      "forms": [
+        "中"
+      ],
+      "type": "noun",
+      "gloss": "an interior or ongoing interval",
+      "ja": "激【はげ】しい雨【あめ】の中【なか】を、彼【かれ】は駅【えき】まで走【はし】った。",
+      "en": "He ran to the station through the heavy rain.",
+      "level": "N3",
+      "single": true
+    },
+    "sono": {
+      "form": "その",
+      "forms": [
+        "その"
+      ],
+      "type": "particle",
+      "gloss": "points to the case just named",
+      "ja": "その本【ほん】を貸【か】してください。",
+      "en": "Please lend me that book.",
+      "level": "N5",
+      "single": true
+    },
+    "temae": {
+      "form": "手前",
+      "forms": [
+        "手前"
+      ],
+      "type": "noun",
+      "gloss": "one's own side or position",
+      "ja": "約束【やくそく】した手前【てまえ】、今【いま】さら断【ことわ】れない。",
+      "en": "Having made a promise, I can't turn it down now.",
+      "level": "N2",
+      "single": true
+    },
+    "follow": {
+      "form": "したがう",
+      "forms": [
+        "したがう",
+        "したがって"
+      ],
+      "type": "verb",
+      "gloss": "keeps step as something changes",
+      "ja": "係員【かかりいん】の指示【しじ】にしたがって、順番【じゅんばん】に避難【ひなん】してください。",
+      "en": "Please follow the staff's instructions and evacuate in order.",
+      "level": "N2",
+      "single": true
+    },
+    "tsuki": {
+      "form": "つき",
+      "forms": [
+        "つき"
+      ],
+      "type": "noun",
+      "gloss": "an attached circumstance or unit",
+      "ja": "本日【ほんじつ】は定休日【ていきゅうび】につき、お休【やす】みさせていただきます。",
+      "en": "Because today is our regular holiday, we are closed.",
+      "level": "N2",
+      "single": true
+    },
+    "tsuke": {
+      "form": "つける",
+      "forms": [
+        "つける",
+        "つけ"
+      ],
+      "type": "verb",
+      "gloss": "attaches something to an occasion",
+      "ja": "この写真【しゃしん】を見【み】るにつけ、故郷【こきょう】を思【おも】い出【だ】す。",
+      "en": "Every time I see this photo, I think of my hometown.",
+      "level": "N2",
+      "single": true
+    },
+    "kakawaru": {
+      "form": "かかわる",
+      "forms": [
+        "かかわる",
+        "かかわらず"
+      ],
+      "type": "verb",
+      "gloss": "takes part in a relation",
+      "ja": "これは命【いのち】にかかわる問題【もんだい】だから、すぐに対応【たいおう】すべきだ。",
+      "en": "This is a matter of life and death, so it should be dealt with at once.",
+      "level": "N2"
+    },
+    "nozoku": {
+      "form": "除く",
+      "forms": [
+        "除く",
+        "除いて"
+      ],
+      "type": "verb",
+      "gloss": "takes a case out of a group",
+      "ja": "日曜日【にちようび】を除【のぞ】いて、毎日【まいにち】営業【えいぎょう】しています。",
+      "en": "We are open every day except Sunday.",
+      "level": "N2",
+      "single": true
+    },
+    "kagiri": {
+      "form": "限り",
+      "forms": [
+        "限り"
+      ],
+      "type": "noun",
+      "gloss": "the outer boundary of a situation",
+      "ja": "体【からだ】が動【うご】く限【かぎ】り、この仕事【しごと】を続【つづ】けたい。",
+      "en": "As long as my body can move, I want to continue this work.",
+      "level": "N2",
+      "single": true
+    },
+    "shidai": {
+      "form": "次第",
+      "forms": [
+        "次第"
+      ],
+      "type": "noun",
+      "gloss": "the course set by a circumstance",
+      "ja": "明日【あした】の天気次第【てんきしだい】で、出発【しゅっぱつ】の時間【じかん】を決【き】めます。",
+      "en": "We'll decide the departure time depending on tomorrow's weather.",
+      "level": "N3",
+      "single": true
+    },
+    "shidai-step": {
+      "form": "次第",
+      "forms": [
+        "次第"
+      ],
+      "type": "noun",
+      "gloss": "the sequence of successive steps",
+      "ja": "夕方【ゆうがた】になって、風【かぜ】が次第【しだい】に強【つよ】くなってきた。",
+      "en": "As evening came, the wind gradually grew stronger.",
+      "level": "N3",
+      "single": true
+    },
+    "tou": {
+      "form": "問う",
+      "forms": [
+        "問う",
+        "問わず"
+      ],
+      "type": "verb",
+      "gloss": "raises a criterion for consideration",
+      "ja": "この大会【たいかい】には、年齢【ねんれい】を問【と】わず誰【だれ】でも参加【さんか】できる。",
+      "en": "Anyone can enter this competition, regardless of age.",
+      "level": "N2",
+      "single": true
+    },
+    "shikata": {
+      "form": "しかた",
+      "forms": [
+        "しかた"
+      ],
+      "type": "noun",
+      "gloss": "a method at one's disposal",
+      "ja": "バスが来【こ】ないので、タクシーで行【い】くよりしかたがない。",
+      "en": "The bus isn't coming, so there's no choice but to go by taxi.",
+      "level": "N2",
+      "single": true
+    },
+    "dai-tamae": {
+      "form": "たまえ",
+      "forms": [
+        "たまえ"
+      ],
+      "type": "ending",
+      "gloss": "request from a higher position",
+      "ja": "君【きみ】、この書類【しょるい】をすぐにコピーしてくれたまえ。",
+      "en": "You there, copy these documents right away.",
+      "level": "N2",
+      "single": true
+    },
+    "gake": {
+      "form": "がけ",
+      "forms": [
+        "がけ"
+      ],
+      "type": "ending",
+      "gloss": "the stage of setting out",
+      "ja": "帰【かえ】りがけに、スーパーで牛乳【ぎゅうにゅう】を買【か】ってきてくれる？",
+      "en": "Could you pick up some milk at the supermarket on your way home?",
+      "level": "N2",
+      "single": true
+    },
+    "buri": {
+      "form": "ぶり",
+      "forms": [
+        "ぶり"
+      ],
+      "type": "ending",
+      "gloss": "a gap measured from the last occasion",
+      "ja": "十年【じゅうねん】ぶりに、高校【こうこう】の同級生【どうきゅうせい】に会【あ】った。",
+      "en": "I met a high school classmate for the first time in ten years.",
+      "level": "N2",
+      "single": true
+    },
+    "mata": {
+      "form": "又",
+      "forms": [
+        "又",
+        "また"
+      ],
+      "type": "particle",
+      "gloss": "adds another instance",
+      "ja": "失敗【しっぱい】も又【また】、大切【たいせつ】な経験【けいけん】の一【ひと】つだ。",
+      "en": "Failure, too, is one of our important experiences.",
+      "level": "N4",
+      "single": true
+    },
+    "irai": {
+      "form": "以来",
+      "forms": [
+        "以来"
+      ],
+      "type": "noun",
+      "gloss": "the period starting at a reference",
+      "ja": "日本【にほん】に来【き】て以来【いらい】、毎朝【まいあさ】納豆【なっとう】を食【た】べている。",
+      "en": "Ever since I came to Japan, I've eaten natto every morning.",
+      "level": "N2",
+      "single": true
+    },
+    "sakidatsu": {
+      "form": "先立つ",
+      "forms": [
+        "先立つ",
+        "先立ち"
+      ],
+      "type": "verb",
+      "gloss": "takes the leading place in an order",
+      "ja": "開会【かいかい】に先立【さきだ】ち、市長【しちょう】が挨拶【あいさつ】をした。",
+      "en": "Prior to the opening, the mayor gave a speech.",
+      "level": "N2",
+      "single": true
+    },
+    "kai-effort": {
+      "form": "甲斐",
+      "forms": [
+        "甲斐"
+      ],
+      "type": "noun",
+      "gloss": "the return from an effort",
+      "ja": "苦労【くろう】した甲斐【かい】があって、試験【しけん】に合格【ごうかく】できた。",
+      "en": "My hard work paid off, and I passed the exam.",
+      "level": "N2",
+      "single": true
+    },
+    "ageku": {
+      "form": "あげく",
+      "forms": [
+        "あげく"
+      ],
+      "type": "noun",
+      "gloss": "an endpoint reached with difficulty",
+      "ja": "一時間【いちじかん】も迷【まよ】ったあげく、何【なに】も買【か】わずに帰【かえ】った。",
+      "en": "After dithering for a whole hour, I ended up going home without buying anything.",
+      "level": "N2",
+      "single": true
+    },
+    "kakete": {
+      "form": "かける",
+      "forms": [
+        "かける",
+        "かけて"
+      ],
+      "type": "verb",
+      "gloss": "extends into a particular domain",
+      "ja": "料理【りょうり】にかけては、彼【かれ】はクラスの誰【だれ】にも負【ま】けない。",
+      "en": "When it comes to cooking, he is second to no one in the class.",
+      "level": "N2",
+      "single": true
+    },
+    "itu": {
+      "form": "いつ",
+      "forms": [
+        "いつ"
+      ],
+      "type": "noun",
+      "gloss": "an unspecified time",
+      "ja": "本【ほん】を読【よ】んでいたら、いつの間【ま】にか夜【よ】が明【あ】けていた。",
+      "en": "I was reading a book, and before I knew it, dawn had broken.",
+      "level": "N2",
+      "single": true
+    },
+    "ma": {
+      "form": "間",
+      "forms": [
+        "間"
+      ],
+      "type": "noun",
+      "gloss": "a gap or interval",
+      "ja": "本【ほん】を読【よ】んでいたら、いつの間【ま】にか夜【よ】が明【あ】けていた。",
+      "en": "I was reading a book, and before I knew it, dawn had broken.",
+      "level": "N2",
+      "single": true
+    },
+    "gyaku": {
+      "form": "逆",
+      "forms": [
+        "逆"
+      ],
+      "type": "noun",
+      "gloss": "the reversed orientation",
+      "ja": "薬【くすり】を飲【の】んだら、逆【ぎゃく】に具合【ぐあい】が悪【わる】くなった。",
+      "en": "When I took the medicine, I actually felt worse.",
+      "level": "N2",
+      "single": true
+    },
+    "hanmen": {
+      "form": "反面",
+      "forms": [
+        "反面"
+      ],
+      "type": "noun",
+      "gloss": "the reverse face of the situation",
+      "ja": "都会【とかい】の生活【せいかつ】は便利【べんり】な反面【はんめん】、物価【ぶっか】が高【たか】い。",
+      "en": "City life is convenient, but on the other hand prices are high.",
+      "level": "N2",
+      "single": true
+    },
+    "tsuujiru": {
+      "form": "通じる",
+      "forms": [
+        "通じる",
+        "通じて",
+        "通して"
+      ],
+      "type": "verb",
+      "gloss": "provides a channel or continuous span",
+      "ja": "この島【しま】は一年【いちねん】を通【つう】じて暖【あたた】かい。",
+      "en": "This island is warm throughout the year.",
+      "level": "N2",
+      "single": true
+    },
+    "expect-omou": {
+      "form": "思う",
+      "forms": [
+        "思う"
+      ],
+      "type": "verb",
+      "gloss": "holds an expectation",
+      "ja": "雨【あめ】のせいで、工事【こうじ】が思【おも】うように進【すす】まない。",
+      "en": "Because of the rain, the construction isn't progressing as hoped.",
+      "level": "N1",
+      "single": true
+    },
+    "kangaeru": {
+      "form": "考える",
+      "forms": [
+        "考える",
+        "考えられる"
+      ],
+      "type": "verb",
+      "gloss": "works through an idea",
+      "ja": "事故【じこ】の原因【げんいん】は、運転手【うんてんしゅ】の不注意【ふちゅうい】と考【かんが】えられる。",
+      "en": "The cause of the accident is thought to be the driver's carelessness.",
+      "level": "N2"
+    },
+    "ten": {
+      "form": "点",
+      "forms": [
+        "点"
+      ],
+      "type": "noun",
+      "gloss": "a feature singled out for discussion",
+      "ja": "安全【あんぜん】という点【てん】から考【かんが】えると、この計画【けいかく】には問題【もんだい】がある。",
+      "en": "Considering it from a safety standpoint, this plan has problems.",
+      "level": "N3",
+      "single": true
+    },
+    "fuu": {
+      "form": "風",
+      "forms": [
+        "風",
+        "ふう"
+      ],
+      "type": "noun",
+      "gloss": "the manner in which it is done",
+      "ja": "月曜【げつよう】は英語【えいご】、火曜【かよう】は数学【すうがく】という風【ふう】に、毎日【まいにち】違【ちが】う科目【かもく】を勉強【べんきょう】する。",
+      "en": "I study a different subject each day, in such a way that Monday is English and Tuesday is maths.",
+      "level": "N4"
+    },
+    "mono-no": {
+      "form": "ものの",
+      "forms": [
+        "ものの"
+      ],
+      "type": "word",
+      "gloss": "acknowledges a fact before a reversal",
+      "ja": "免許【めんきょ】は取【と】ったものの、まだ一度【いちど】も運転【うんてん】していない。",
+      "en": "Although I got my license, I haven't driven even once.",
+      "level": "N2",
+      "single": true
+    },
+    "o-polite": {
+      "form": "お",
+      "forms": [
+        "お"
+      ],
+      "type": "ending",
+      "gloss": "marks respectful phrasing",
+      "ja": "お名前【なまえ】を教【おし】えてください。",
+      "en": "Please tell me your name.",
+      "level": "N1",
+      "single": true
+    },
+    "negau": {
+      "form": "願う",
+      "forms": [
+        "願う",
+        "願います"
+      ],
+      "type": "verb",
+      "gloss": "expresses a request or wish",
+      "ja": "こちらの用紙【ようし】にお名前【なまえ】をお書【か】き願【ねが】います。",
+      "en": "Please write your name on this form.",
+      "level": "N2",
+      "single": true
+    },
+    "cho-dai": {
+      "form": "頂戴",
+      "forms": [
+        "頂戴"
+      ],
+      "type": "verb",
+      "gloss": "verb for receiving from another",
+      "ja": "お水【みず】を頂戴【ちょうだい】できますか。",
+      "en": "Could I have some water?",
+      "level": "N2",
+      "single": true
+    },
+    "toka": {
+      "form": "とか",
+      "forms": [
+        "とか"
+      ],
+      "type": "particle",
+      "gloss": "puts forward a tentative example",
+      "ja": "来月【らいげつ】、駅前【えきまえ】に大【おお】きな本屋【ほんや】ができるとか。",
+      "en": "I hear a big bookstore is opening in front of the station next month.",
+      "level": "N2",
+      "single": true
+    },
+    "darou": {
+      "form": "だろう",
+      "forms": [
+        "だろう"
+      ],
+      "type": "ending",
+      "gloss": "presents a supposition",
+      "ja": "この計画【けいかく】は、少【すこ】し無理【むり】があるのではないだろうか。",
+      "en": "Might this plan be a little unrealistic?",
+      "level": "N5",
+      "single": true
+    },
+    "touzen": {
+      "form": "当然",
+      "forms": [
+        "当然"
+      ],
+      "type": "noun",
+      "gloss": "what the premises already imply",
+      "ja": "あれだけ練習【れんしゅう】したのだから、勝【か】って当然【とうぜん】だ。",
+      "en": "After practicing that much, it's only natural that they won.",
+      "level": "N2"
+    },
+    "tatta": {
+      "form": "たった",
+      "forms": [
+        "たった"
+      ],
+      "type": "word",
+      "gloss": "emphasizes a small quantity",
+      "ja": "たった五分【ごふん】で、宿題【しゅくだい】を終【お】わらせた。",
+      "en": "I finished my homework in just five minutes.",
+      "level": "N2",
+      "single": true
+    },
+    "osore": {
+      "form": "恐れ",
+      "forms": [
+        "恐れ"
+      ],
+      "type": "noun",
+      "gloss": "a feared possibility",
+      "ja": "台風【たいふう】が近【ちか】づいているので、電車【でんしゃ】が止【と】まる恐【おそ】れがある。",
+      "en": "A typhoon is approaching, so there is a risk the trains will stop.",
+      "level": "N2",
+      "single": true
+    },
+    "kimaru": {
+      "form": "決まる",
+      "forms": [
+        "決まる",
+        "決まって"
+      ],
+      "type": "verb",
+      "gloss": "settles a matter conclusively",
+      "ja": "そんな高【たか】い物【もの】、売【う】れないに決【き】まっている。",
+      "en": "Something that expensive is bound not to sell.",
+      "level": "N2",
+      "single": true
+    },
+    "keikou": {
+      "form": "傾向",
+      "forms": [
+        "傾向"
+      ],
+      "type": "noun",
+      "gloss": "a recurring direction in the evidence",
+      "ja": "最近【さいきん】の若者【わかもの】は、車【くるま】を買【か】わない傾向【けいこう】がある。",
+      "en": "Young people these days tend not to buy cars.",
+      "level": "N2",
+      "single": true
+    },
+    "atai": {
+      "form": "値する",
+      "forms": [
+        "値する"
+      ],
+      "type": "verb",
+      "gloss": "meets the standard for a response",
+      "ja": "彼【かれ】の努力【どりょく】は、尊敬【そんけい】に値【あたい】する。",
+      "en": "His effort is worthy of respect.",
+      "level": "N2",
+      "single": true
+    },
+    "shou": {
+      "form": "しょう",
+      "forms": [
+        "しょう"
+      ],
+      "type": "noun",
+      "gloss": "a way forward",
+      "ja": "いくら考【かんが】えても、しょうがない。",
+      "en": "Thinking about it further will get us nowhere.",
+      "level": "N2",
+      "single": true
+    },
+    "saiwai": {
+      "form": "幸い",
+      "forms": [
+        "幸い"
+      ],
+      "type": "noun",
+      "gloss": "a favorable turn of events",
+      "ja": "幸【さいわ】い、けがをした人【ひと】はいなかった。",
+      "en": "Fortunately, nobody was injured.",
+      "level": "N2",
+      "single": true
+    },
+    "ga-concede": {
+      "form": "が",
+      "forms": [
+        "が"
+      ],
+      "type": "particle",
+      "gloss": "introduces a reservation",
+      "ja": "このスープは辛【から】いことは辛【から】いが、とてもおいしい。",
+      "en": "This soup is spicy, sure, but it's very tasty.",
+      "level": "N5",
+      "single": true
+    },
+    "wazuka": {
+      "form": "僅か",
+      "forms": [
+        "僅か"
+      ],
+      "type": "noun",
+      "gloss": "a small amount",
+      "ja": "試験【しけん】では、合格点【ごうかくてん】に僅【わず】かに届【とど】かなかった。",
+      "en": "In the exam, I fell just slightly short of the passing mark.",
+      "level": "N2",
+      "single": true
+    },
+    "jaku": {
+      "form": "弱",
+      "forms": [
+        "弱"
+      ],
+      "type": "ending",
+      "gloss": "on the low side of a quantity",
+      "ja": "会場【かいじょう】には百人弱【ひゃくにんじゃく】の人【ひと】が集【あつ】まった。",
+      "en": "Just under a hundred people gathered at the venue.",
+      "level": "N2",
+      "single": true
+    },
+    "kyou": {
+      "form": "強",
+      "forms": [
+        "強"
+      ],
+      "type": "ending",
+      "gloss": "on the high side of a quantity",
+      "ja": "駅【えき】から家【いえ】まで、歩【ある】いて二十分強【にじゅっぷんきょう】かかる。",
+      "en": "It takes just over twenty minutes on foot from the station to my house.",
+      "level": "N2",
+      "single": true
+    },
+    "komeru": {
+      "form": "込める",
+      "forms": [
+        "込める",
+        "込めて"
+      ],
+      "type": "verb",
+      "gloss": "fills something with emotion",
+      "ja": "母【はは】のために、心【こころ】を込【こ】めてケーキを焼【や】いた。",
+      "en": "I put my heart into baking a cake for my mother.",
+      "level": "N2",
+      "single": true
+    },
+    "nani": {
+      "form": "何",
+      "forms": [
+        "何"
+      ],
+      "type": "noun",
+      "gloss": "an unspecified thing",
+      "ja": "引【ひ】っ越【こ】しでは、何【なに】から何【なに】までお世話【せわ】になりました。",
+      "en": "You helped me with absolutely everything during the move.",
+      "level": "N2"
+    },
+    "made": {
+      "form": "まで",
+      "forms": [
+        "まで"
+      ],
+      "type": "particle",
+      "gloss": "marks an inclusive endpoint",
+      "ja": "引【ひ】っ越【こ】しでは、何【なに】から何【なに】までお世話【せわ】になりました。",
+      "en": "You helped me with absolutely everything during the move.",
+      "level": "N5",
+      "single": true
+    },
+    "atte": {
+      "form": "ある",
+      "forms": [
+        "ある",
+        "あって"
+      ],
+      "type": "verb",
+      "gloss": "exists as an enabling circumstance",
+      "ja": "経験【けいけん】があって助【たす】かった。",
+      "en": "Having experience helped.",
+      "level": "N2",
+      "single": true
+    },
+    "tamaranai": {
+      "form": "たまる",
+      "forms": [
+        "たまる",
+        "たまらない"
+      ],
+      "type": "verb",
+      "gloss": "cannot contain a sensation",
+      "ja": "試験【しけん】が終【お】わって、早【はや】く遊【あそ】びに行【い】きたくてたまらない。",
+      "en": "The exam is over, and I'm dying to go out and have fun.",
+      "level": "N2",
+      "single": true
+    },
+    "shiro": {
+      "form": "しろ",
+      "forms": [
+        "しろ",
+        "せよ"
+      ],
+      "type": "ending",
+      "gloss": "posits a case by imperative",
+      "ja": "どんな理由【りゆう】があるにせよ、暴力【ぼうりょく】は許【ゆる】されない。",
+      "en": "Whatever the reason may be, violence cannot be tolerated.",
+      "level": "N2"
+    },
+    "yara-list": {
+      "form": "やら",
+      "forms": [
+        "やら"
+      ],
+      "type": "particle",
+      "gloss": "introduces an unsettled example",
+      "ja": "引【ひ】っ越【こ】しの準備【じゅんび】やら仕事【しごと】やらで、毎日【まいにち】忙【いそが】しい。",
+      "en": "What with preparing for the move and work and so on, I'm busy every day.",
+      "level": "N2",
+      "single": true
+    },
+    "sarani": {
+      "form": "更に",
+      "forms": [
+        "更に",
+        "さらに"
+      ],
+      "type": "word",
+      "gloss": "goes past the point already reached",
+      "ja": "駅【えき】から更【さら】に十分【じっぷん】ほど歩【ある】くと、海【うみ】が見【み】えます。",
+      "en": "If you walk a further ten minutes from the station, you'll see the sea.",
+      "level": "N2",
+      "single": true
+    },
+    "seizei": {
+      "form": "精々",
+      "forms": [
+        "精々",
+        "せいぜい"
+      ],
+      "type": "word",
+      "gloss": "gives an approximate upper limit",
+      "ja": "頑張【がんば】っても、精々【せいぜい】三十点【さんじゅってん】しか取【と】れないだろう。",
+      "en": "Even if I try hard, I'll probably get thirty points at most.",
+      "level": "N2",
+      "single": true
+    },
+    "oyobi": {
+      "form": "および",
+      "forms": [
+        "および",
+        "及び"
+      ],
+      "type": "word",
+      "gloss": "joins items in formal enumeration",
+      "ja": "氏名【しめい】および住所【じゅうしょ】を、こちらにご記入【きにゅう】ください。",
+      "en": "Please fill in your name and address here.",
+      "level": "N2",
+      "single": true
+    },
+    "tachimachi": {
+      "form": "たちまち",
+      "forms": [
+        "たちまち"
+      ],
+      "type": "word",
+      "gloss": "a change unfolds very fast",
+      "ja": "新【あたら】しいゲームは、発売【はつばい】されるとたちまち売【う】り切【き】れた。",
+      "en": "The new game sold out the moment it was released.",
+      "level": "N2",
+      "single": true
+    },
+    "ikinari": {
+      "form": "いきなり",
+      "forms": [
+        "いきなり"
+      ],
+      "type": "word",
+      "gloss": "an action with no lead-in",
+      "ja": "前【まえ】を歩【ある】いていた人【ひと】が、いきなり立【た】ち止【ど】まった。",
+      "en": "The person walking in front of me suddenly stopped.",
+      "level": "N2",
+      "single": true
+    },
+    "matomo": {
+      "form": "陸",
+      "forms": [
+        "陸",
+        "ろく"
+      ],
+      "type": "noun",
+      "gloss": "a satisfactory degree or quality",
+      "ja": "忙【いそが】しくて、陸【ろく】にご飯【はん】も食【た】べていない。",
+      "en": "I'm so busy I've hardly even eaten properly.",
+      "level": "N2",
+      "single": true
+    },
+    "mottomo": {
+      "form": "もっとも",
+      "forms": [
+        "もっとも"
+      ],
+      "type": "noun",
+      "gloss": "a reaction with good grounds",
+      "ja": "あんなにひどいことを言【い】われたら、彼【かれ】が怒【おこ】るのももっともだ。",
+      "en": "After being told something that awful, it's understandable that he's angry.",
+      "level": "N3",
+      "single": true
+    },
+    "tatte": {
+      "form": "たって",
+      "forms": [
+        "たって"
+      ],
+      "type": "ending",
+      "gloss": "grants the premise provisionally",
+      "ja": "今【いま】から走【はし】ったって、もう間【ま】に合【あ】わないよ。",
+      "en": "Even if you run now, you won't make it in time.",
+      "level": "N2",
+      "single": true
+    },
+    "itate": {
+      "form": "でも",
+      "forms": [
+        "でも"
+      ],
+      "type": "particle",
+      "gloss": "concedes an extreme measure",
+      "ja": "借金【しゃっきん】をしてでも、この店【みせ】を続【つづ】けたい。",
+      "en": "I want to keep this shop going, even if I have to borrow money.",
+      "level": "N4",
+      "single": true
+    },
+    "approx": {
+      "form": "おおよそ",
+      "forms": [
+        "おおよそ"
+      ],
+      "type": "word",
+      "gloss": "an estimate without fine precision",
+      "ja": "駅【えき】から会場【かいじょう】まで、おおよそ十分【じっぷん】かかります。",
+      "en": "It takes roughly ten minutes from the station to the venue.",
+      "level": "N2",
+      "single": true
+    },
+    "summary": {
+      "form": "要するに",
+      "forms": [
+        "要するに"
+      ],
+      "type": "word",
+      "gloss": "reduces the point to its essentials",
+      "ja": "要【よう】するに、予算【よさん】が足【た】りないということですね。",
+      "en": "In short, what you're saying is that the budget isn't enough.",
+      "level": "N2",
+      "single": true
+    },
+    "or-alt": {
+      "form": "それとも",
+      "forms": [
+        "それとも"
+      ],
+      "type": "word",
+      "gloss": "invites a choice between two options",
+      "ja": "コーヒーにしますか、それとも紅茶【こうちゃ】にしますか。",
+      "en": "Would you like coffee, or would you prefer tea?",
+      "level": "N2",
+      "single": true
+    },
+    "even-so": {
+      "form": "それにしても",
+      "forms": [
+        "それにしても"
+      ],
+      "type": "word",
+      "gloss": "returns to a surprising qualification",
+      "ja": "道【みち】が混【こ】んでいたそうだが、それにしても遅【おそ】すぎる。",
+      "en": "I hear the roads were crowded, but even so, he is far too late.",
+      "level": "N2",
+      "single": true
+    },
+    "speaking-of": {
+      "form": "そういえば",
+      "forms": [
+        "そういえば"
+      ],
+      "type": "word",
+      "gloss": "picks up a related detail",
+      "ja": "そういえば、駅前【えきまえ】に新【あたら】しいカフェができたらしいよ。",
+      "en": "Come to think of it, I heard a new café opened in front of the station.",
+      "level": "N2",
+      "single": true
+    },
+    "bonus-add": {
+      "form": "おまけに",
+      "forms": [
+        "おまけに"
+      ],
+      "type": "word",
+      "gloss": "adds an extra circumstance",
+      "ja": "道【みち】に迷【まよ】い、おまけに雨【あめ】まで降【ふ】ってきた。",
+      "en": "I got lost, and on top of that it started raining.",
+      "level": "N2",
+      "single": true
+    },
+    "as-expected": {
+      "form": "さすが",
+      "forms": [
+        "さすが"
+      ],
+      "type": "word",
+      "gloss": "acknowledges a fitting result",
+      "ja": "さすがはベテランの先生【せんせい】、説明【せつめい】がとてもわかりやすい。",
+      "en": "As you'd expect of a veteran teacher, the explanation is very easy to follow.",
+      "level": "N2",
+      "single": true
+    },
+    "yet-so": {
+      "form": "それなのに",
+      "forms": [
+        "それなのに"
+      ],
+      "type": "word",
+      "gloss": "signals an unexpected mismatch",
+      "ja": "毎日【まいにち】練習【れんしゅう】してきた、それなのに一度【いちど】も勝【か】てない。",
+      "en": "I've practiced every day, and yet I can't win even once.",
+      "level": "N2",
+      "single": true
+    },
+    "so-called": {
+      "form": "いわゆる",
+      "forms": [
+        "いわゆる"
+      ],
+      "type": "word",
+      "gloss": "introduces a familiar label",
+      "ja": "彼【かれ】は三歳【さんさい】で字【じ】が読【よ】めた、いわゆる天才【てんさい】だ。",
+      "en": "He could read at three; he is what people call a genius.",
+      "level": "N2",
+      "single": true
+    },
+    "nanisiro": {
+      "form": "何しろ",
+      "forms": [
+        "何しろ"
+      ],
+      "type": "word",
+      "gloss": "introduces the salient reason",
+      "ja": "何【なに】しろ初【はじ】めての海外旅行【かいがいりょこう】なので、緊張【きんちょう】している。",
+      "en": "After all, it's my first trip abroad, so I'm nervous.",
+      "level": "N2",
+      "single": true
+    },
+    "contrast": {
+      "form": "しかしながら",
+      "forms": [
+        "しかしながら"
+      ],
+      "type": "word",
+      "gloss": "moves the argument in a new direction",
+      "ja": "しかしながら、問題【もんだい】はまだ残【のこ】っている。",
+      "en": "However, a problem still remains.",
+      "level": "N2",
+      "single": true
+    },
+    "and-more": {
+      "form": "しかも",
+      "forms": [
+        "しかも"
+      ],
+      "type": "word",
+      "gloss": "adds a stronger detail",
+      "ja": "このかばんは軽【かる】くて、しかも丈夫【じょうぶ】だ。",
+      "en": "This bag is light, and what's more, it's sturdy.",
+      "level": "N2",
+      "single": true
+    }
+  },
+  "patterns": {
+    "得る-得る": {
+      "parts": [
+        {
+          "text": "得る",
+          "block": "dekiru-e"
+        }
+      ],
+      "literal": "attain the action",
+      "transparency": "pending"
+    },
+    "得ない": {
+      "parts": [
+        {
+          "text": "得ない",
+          "block": "dekiru-e"
+        }
+      ],
+      "literal": "not attain the action",
+      "transparency": "pending"
+    },
+    "ざるを得ない": {
+      "parts": [
+        {
+          "text": "ざる",
+          "block": "zaru"
+        },
+        {
+          "text": "を",
+          "block": "wo"
+        },
+        {
+          "text": "得ない",
+          "block": "dekiru-e"
+        }
+      ],
+      "literal": "cannot succeed in not doing it",
+      "transparency": "pending"
+    },
+    "ざる": {
+      "parts": [
+        {
+          "text": "ざる",
+          "block": "zaru"
+        }
+      ],
+      "literal": "the action is negated",
+      "transparency": "pending"
+    },
+    "どうせ": {
+      "parts": [
+        {
+          "text": "どうせ",
+          "block": "doose"
+        }
+      ],
+      "transparency": "opaque"
+    },
+    "せめて": {
+      "parts": [
+        {
+          "text": "せめて",
+          "block": "tada"
+        }
+      ],
+      "transparency": "opaque"
+    },
+    "どうやら": {
+      "parts": [
+        {
+          "text": "どうやら",
+          "block": "doo-yara"
+        }
+      ],
+      "transparency": "opaque"
+    },
+    "なにやら": {
+      "parts": [
+        {
+          "text": "なにやら",
+          "block": "nani-yara"
+        }
+      ],
+      "transparency": "opaque"
+    },
+    "確かに": {
+      "parts": [
+        {
+          "text": "確かに",
+          "block": "tashika"
+        }
+      ],
+      "transparency": "opaque"
+    },
+    "一応1": {
+      "parts": [
+        {
+          "text": "一応",
+          "block": "ichiou-check"
+        }
+      ],
+      "literal": "take a precaution",
+      "transparency": "opaque"
+    },
+    "一応2": {
+      "parts": [
+        {
+          "text": "一応",
+          "block": "ichiou-minimum"
+        }
+      ],
+      "literal": "meet a provisional minimum",
+      "transparency": "opaque"
+    },
+    "万が一": {
+      "parts": [
+        {
+          "text": "万が一",
+          "block": "man-ga-ichi"
+        }
+      ],
+      "transparency": "opaque"
+    },
+    "ようがない・ようもない": {
+      "parts": [
+        {
+          "text": "よう",
+          "block": "yoo"
+        },
+        {
+          "text": "が",
+          "block": "ga"
+        },
+        {
+          "text": "ない",
+          "block": "naku"
+        }
+      ],
+      "literal": "there is no available method",
+      "transparency": "pending"
+    },
+    "上に": {
+      "parts": [
+        {
+          "text": "上",
+          "block": "ue"
+        },
+        {
+          "text": "に",
+          "block": "ni"
+        }
+      ],
+      "literal": "adds an upper layer",
+      "transparency": "pending"
+    },
+    "以上2": {
+      "parts": [
+        {
+          "text": "以上",
+          "block": "ijou"
+        }
+      ],
+      "literal": "having reached the threshold",
+      "transparency": "pending"
+    },
+    "以上に": {
+      "parts": [
+        {
+          "text": "以上",
+          "block": "ijou"
+        },
+        {
+          "text": "に",
+          "block": "ni"
+        }
+      ],
+      "literal": "at or beyond the threshold",
+      "transparency": "pending"
+    },
+    "を中心に": {
+      "parts": [
+        {
+          "text": "を",
+          "block": "wo"
+        },
+        {
+          "text": "中心",
+          "block": "jyuu"
+        },
+        {
+          "text": "に",
+          "block": "ni"
+        }
+      ],
+      "literal": "takes an object as the hub",
+      "transparency": "pending"
+    },
+    "上は": {
+      "parts": [
+        {
+          "text": "上",
+          "block": "ue"
+        },
+        {
+          "text": "は",
+          "block": "wa"
+        }
+      ],
+      "literal": "sets the upper layer as the topic",
+      "transparency": "pending"
+    },
+    "の下で": {
+      "parts": [
+        {
+          "text": "の",
+          "block": "no"
+        },
+        {
+          "text": "下",
+          "block": "shita"
+        },
+        {
+          "text": "で",
+          "block": "de"
+        }
+      ],
+      "literal": "in the setting below something",
+      "transparency": "pending"
+    },
+    "を巡って": {
+      "parts": [
+        {
+          "text": "を",
+          "block": "wo"
+        },
+        {
+          "text": "巡って",
+          "block": "meguru"
+        }
+      ],
+      "literal": "circles the object",
+      "transparency": "pending"
+    },
+    "にわたって": {
+      "parts": [
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "わたって",
+          "block": "watari"
+        }
+      ],
+      "literal": "stretches across a span",
+      "transparency": "pending"
+    },
+    "に沿って": {
+      "parts": [
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "沿って",
+          "block": "sou"
+        }
+      ],
+      "literal": "keeps to a given course",
+      "transparency": "pending"
+    },
+    "た末-の末": {
+      "parts": [
+        {
+          "text": "た",
+          "block": "past-ta"
+        },
+        {
+          "text": "末",
+          "block": "sue"
+        }
+      ],
+      "literal": "at the end of a completed process",
+      "transparency": "pending"
+    },
+    "に伴って-に伴い": {
+      "parts": [
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "伴って",
+          "block": "tomonau"
+        }
+      ],
+      "literal": "comes together with a related event",
+      "transparency": "pending"
+    },
+    "に限って": {
+      "parts": [
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "限って",
+          "block": "kagiru"
+        }
+      ],
+      "literal": "restricts the case to this one",
+      "transparency": "pending"
+    },
+    "に限らず": {
+      "parts": [
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "限らず",
+          "block": "kagiru"
+        }
+      ],
+      "literal": "does not restrict the case to this one",
+      "transparency": "pending"
+    },
+    "なお1": {
+      "parts": [
+        {
+          "text": "なお",
+          "block": "nao-continuing"
+        }
+      ],
+      "literal": "the existing situation continues",
+      "transparency": "opaque"
+    },
+    "なお2": {
+      "parts": [
+        {
+          "text": "なお",
+          "block": "nao-addition"
+        }
+      ],
+      "literal": "append a further note",
+      "transparency": "opaque"
+    },
+    "なくはない": {
+      "parts": [
+        {
+          "text": "なく",
+          "block": "naku"
+        },
+        {
+          "text": "は",
+          "block": "wa"
+        },
+        {
+          "text": "ない",
+          "block": "naku"
+        }
+      ],
+      "literal": "a negative condition is denied",
+      "transparency": "pending"
+    },
+    "-のうち-で": {
+      "parts": [
+        {
+          "text": "の",
+          "block": "no"
+        },
+        {
+          "text": "うち",
+          "block": "uchi"
+        }
+      ],
+      "literal": "within the boundary of the group",
+      "transparency": "pending"
+    },
+    "つつ": {
+      "parts": [
+        {
+          "text": "つつ",
+          "block": "tutu"
+        }
+      ],
+      "literal": "two actions run in parallel",
+      "transparency": "pending"
+    },
+    "つつ-も": {
+      "parts": [
+        {
+          "text": "つつ",
+          "block": "tutu"
+        }
+      ],
+      "literal": "two states hold in parallel",
+      "transparency": "pending"
+    },
+    "に際して": {
+      "parts": [
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "際",
+          "block": "sei"
+        },
+        {
+          "text": "して",
+          "block": "sai-suru"
+        }
+      ],
+      "literal": "on carrying out the occasion",
+      "transparency": "pending"
+    },
+    "際に": {
+      "parts": [
+        {
+          "text": "際",
+          "block": "sei"
+        },
+        {
+          "text": "に",
+          "block": "ni"
+        }
+      ],
+      "literal": "at a specific moment",
+      "transparency": "pending"
+    },
+    "つつある": {
+      "parts": [
+        {
+          "text": "つつ",
+          "block": "tutu"
+        },
+        {
+          "text": "ある",
+          "block": "aru"
+        }
+      ],
+      "literal": "exists as an ongoing action",
+      "transparency": "pending"
+    },
+    "抜く": {
+      "parts": [
+        {
+          "text": "抜く",
+          "block": "nuku"
+        }
+      ],
+      "literal": "carries the action through to an exit",
+      "transparency": "pending"
+    },
+    "抜きで": {
+      "parts": [
+        {
+          "text": "抜き",
+          "block": "nuku"
+        },
+        {
+          "text": "で",
+          "block": "de"
+        }
+      ],
+      "literal": "with a thing taken out",
+      "transparency": "pending"
+    },
+    "ぬ": {
+      "parts": [
+        {
+          "text": "ぬ",
+          "block": "zaru"
+        }
+      ],
+      "literal": "the action is negated",
+      "transparency": "pending"
+    },
+    "ことなく": {
+      "parts": [
+        {
+          "text": "こと",
+          "block": "koto"
+        },
+        {
+          "text": "なく",
+          "block": "naku"
+        }
+      ],
+      "literal": "with the fact absent",
+      "transparency": "pending"
+    },
+    "にて": {
+      "parts": [
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "て",
+          "block": "te"
+        }
+      ],
+      "literal": "marks the setting of the action",
+      "transparency": "pending"
+    },
+    "には": {
+      "parts": [
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "は",
+          "block": "wa"
+        }
+      ],
+      "literal": "sets this relation as the topic",
+      "transparency": "pending"
+    },
+    "ということは": {
+      "parts": [
+        {
+          "text": "という",
+          "block": "toiu"
+        },
+        {
+          "text": "こと",
+          "block": "koto"
+        },
+        {
+          "text": "は",
+          "block": "wa"
+        }
+      ],
+      "literal": "sets the stated fact as the topic",
+      "transparency": "pending"
+    },
+    "ことだから": {
+      "parts": [
+        {
+          "text": "こと",
+          "block": "koto"
+        },
+        {
+          "text": "だ",
+          "block": "assert-da"
+        },
+        {
+          "text": "から",
+          "block": "kara-cause"
+        }
+      ],
+      "literal": "gives the fact as a source",
+      "transparency": "pending"
+    },
+    "ものだから": {
+      "parts": [
+        {
+          "text": "もの",
+          "block": "mono-explanation"
+        },
+        {
+          "text": "だ",
+          "block": "assert-da"
+        },
+        {
+          "text": "から",
+          "block": "kara-cause"
+        }
+      ],
+      "literal": "uses a personal circumstance as a reason",
+      "transparency": "pending"
+    },
+    "ものですから-もので": {
+      "parts": [
+        {
+          "text": "もの",
+          "block": "mono-explanation"
+        },
+        {
+          "text": "で",
+          "block": "assert-da"
+        }
+      ],
+      "literal": "uses a personal circumstance as a reason",
+      "transparency": "pending"
+    },
+    "まい": {
+      "parts": [
+        {
+          "text": "まい",
+          "block": "mai"
+        }
+      ],
+      "literal": "rules out a predicted or intended action",
+      "transparency": "pending"
+    },
+    "途中に・途中で": {
+      "parts": [
+        {
+          "text": "途中",
+          "block": "ayumi"
+        },
+        {
+          "text": "で",
+          "block": "de"
+        }
+      ],
+      "literal": "at an intermediate point",
+      "transparency": "pending"
+    },
+    "が気になる": {
+      "parts": [
+        {
+          "text": "が",
+          "block": "ga"
+        },
+        {
+          "text": "気",
+          "block": "ki"
+        },
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "なる",
+          "block": "naritai"
+        }
+      ],
+      "literal": "attention turns toward something",
+      "transparency": "pending"
+    },
+    "に気をつける": {
+      "parts": [
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "気",
+          "block": "ki"
+        },
+        {
+          "text": "を",
+          "block": "wo"
+        },
+        {
+          "text": "つける",
+          "block": "tukeru"
+        }
+      ],
+      "literal": "direct attention onto a point",
+      "transparency": "pending"
+    },
+    "ないではいられない": {
+      "parts": [
+        {
+          "text": "ない",
+          "block": "nai"
+        },
+        {
+          "text": "で",
+          "block": "te"
+        },
+        {
+          "text": "は",
+          "block": "wa"
+        },
+        {
+          "text": "いられない",
+          "block": "iru"
+        }
+      ],
+      "literal": "cannot stay in the state of not doing it",
+      "transparency": "pending"
+    },
+    "ねばならない": {
+      "parts": [
+        {
+          "text": "ねば",
+          "block": "neba"
+        },
+        {
+          "text": "ならない",
+          "block": "naritai"
+        }
+      ],
+      "literal": "if not done, it will not do",
+      "transparency": "pending"
+    },
+    "にあたり-にあたって": {
+      "parts": [
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "あたって",
+          "block": "atari"
+        }
+      ],
+      "literal": "at the point of meeting an event",
+      "transparency": "pending"
+    },
+    "～ところに・～ところへ": {
+      "parts": [
+        {
+          "text": "ところ",
+          "block": "inessive-tokoro"
+        },
+        {
+          "text": "に",
+          "block": "ni"
+        }
+      ],
+      "literal": "at the point the action reaches",
+      "transparency": "pending"
+    },
+    "か-ないかのうちに": {
+      "parts": [
+        {
+          "text": "か",
+          "block": "ka"
+        },
+        {
+          "text": "ない",
+          "block": "nai"
+        },
+        {
+          "text": "か",
+          "block": "ka"
+        },
+        {
+          "text": "の",
+          "block": "no"
+        },
+        {
+          "text": "うち",
+          "block": "uchi"
+        },
+        {
+          "text": "に",
+          "block": "ni"
+        }
+      ],
+      "literal": "within the gap between doing and not doing",
+      "transparency": "pending"
+    },
+    "ていては": {
+      "parts": [
+        {
+          "text": "て",
+          "block": "te"
+        },
+        {
+          "text": "いて",
+          "block": "iru"
+        },
+        {
+          "text": "は",
+          "block": "wa"
+        }
+      ],
+      "literal": "given that the state continues",
+      "transparency": "pending"
+    },
+    "ところだった2": {
+      "parts": [
+        {
+          "text": "ところ",
+          "block": "inessive-tokoro"
+        },
+        {
+          "text": "だ",
+          "block": "assert-da"
+        },
+        {
+          "text": "っ"
+        },
+        {
+          "text": "た",
+          "block": "past-ta"
+        }
+      ],
+      "literal": "was at the point of doing it",
+      "transparency": "pending"
+    },
+    "どころではない": {
+      "parts": [
+        {
+          "text": "どころ",
+          "block": "tokoro-degree"
+        },
+        {
+          "text": "では",
+          "block": "dewa"
+        },
+        {
+          "text": "ない",
+          "block": "nai"
+        }
+      ],
+      "literal": "it is outside the degree at issue",
+      "transparency": "pending"
+    },
+    "ては": {
+      "parts": [
+        {
+          "text": "て",
+          "block": "te"
+        },
+        {
+          "text": "は",
+          "block": "wa"
+        }
+      ],
+      "literal": "takes the connected action as the topic",
+      "transparency": "pending"
+    },
+    "ては-ては": {
+      "parts": [
+        {
+          "text": "て",
+          "block": "te"
+        },
+        {
+          "text": "は",
+          "block": "wa"
+        },
+        {
+          "text": "て",
+          "block": "te"
+        },
+        {
+          "text": "は",
+          "block": "wa"
+        }
+      ],
+      "literal": "takes up each action in turn",
+      "transparency": "pending"
+    },
+    "をもとに": {
+      "parts": [
+        {
+          "text": "を",
+          "block": "wo"
+        },
+        {
+          "text": "もと",
+          "block": "motoni"
+        },
+        {
+          "text": "に",
+          "block": "ni"
+        }
+      ],
+      "literal": "takes an object as the foundation",
+      "transparency": "pending"
+    },
+    "に反して": {
+      "parts": [
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "反して",
+          "block": "hansuru"
+        }
+      ],
+      "literal": "runs in the opposite direction to it",
+      "transparency": "pending"
+    },
+    "にしても-にしても": {
+      "parts": [
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "して",
+          "block": "suru-assume"
+        },
+        {
+          "text": "も",
+          "block": "mo"
+        },
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "して",
+          "block": "suru-assume"
+        },
+        {
+          "text": "も",
+          "block": "mo"
+        }
+      ],
+      "literal": "even granting each of the premises",
+      "transparency": "pending"
+    },
+    "かと思ったら-かと思うと": {
+      "parts": [
+        {
+          "text": "か",
+          "block": "ka"
+        },
+        {
+          "text": "と",
+          "block": "to-quote"
+        },
+        {
+          "text": "思ったら",
+          "block": "omou"
+        }
+      ],
+      "literal": "after thinking that might be so",
+      "transparency": "pending"
+    },
+    "～ばと思います": {
+      "parts": [
+        {
+          "text": "ば",
+          "block": "conditional-ba"
+        },
+        {
+          "text": "と",
+          "block": "to-quote"
+        },
+        {
+          "text": "思い",
+          "block": "omou"
+        },
+        {
+          "text": "ます",
+          "block": "masu"
+        }
+      ],
+      "literal": "my thought is that this condition would hold",
+      "transparency": "pending"
+    },
+    "というものだ": {
+      "parts": [
+        {
+          "text": "という",
+          "block": "toiu"
+        },
+        {
+          "text": "もの",
+          "block": "mono-thing"
+        },
+        {
+          "text": "だ",
+          "block": "assert-da"
+        }
+      ],
+      "literal": "asserts that it is such a thing",
+      "transparency": "pending"
+    },
+    "から見ると": {
+      "parts": [
+        {
+          "text": "から",
+          "block": "kara"
+        },
+        {
+          "text": "見る",
+          "block": "miru"
+        },
+        {
+          "text": "と",
+          "block": "to-when"
+        }
+      ],
+      "literal": "when looked at from that starting point",
+      "transparency": "pending"
+    },
+    "ところを見ると": {
+      "parts": [
+        {
+          "text": "ところ",
+          "block": "inessive-tokoro"
+        },
+        {
+          "text": "を",
+          "block": "wo"
+        },
+        {
+          "text": "見る",
+          "block": "miru"
+        },
+        {
+          "text": "と",
+          "block": "to-when"
+        }
+      ],
+      "literal": "when one looks at the present point",
+      "transparency": "pending"
+    },
+    "からすると-からすれば": {
+      "parts": [
+        {
+          "text": "から",
+          "block": "kara"
+        },
+        {
+          "text": "すれ",
+          "block": "suru-assume"
+        },
+        {
+          "text": "ば",
+          "block": "conditional-ba"
+        }
+      ],
+      "literal": "if taken from that starting point",
+      "transparency": "pending"
+    },
+    "ものか": {
+      "parts": [
+        {
+          "text": "もの",
+          "block": "mono-refusal"
+        },
+        {
+          "text": "か",
+          "block": "ka"
+        }
+      ],
+      "literal": "challenges whether one would do such a thing",
+      "transparency": "pending"
+    },
+    "ことになっている": {
+      "parts": [
+        {
+          "text": "こと",
+          "block": "koto"
+        },
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "なって",
+          "block": "naritai"
+        },
+        {
+          "text": "いる",
+          "block": "iru"
+        }
+      ],
+      "literal": "the resulting state is established",
+      "transparency": "pending"
+    },
+    "気": {
+      "parts": [
+        {
+          "text": "気",
+          "block": "ki"
+        }
+      ],
+      "literal": "the direction of the mind",
+      "transparency": "pending"
+    },
+    "げ": {
+      "parts": [
+        {
+          "text": "げ",
+          "block": "adjective-ge"
+        }
+      ],
+      "literal": "how it looks on the outside",
+      "transparency": "pending"
+    },
+    "だけましだ": {
+      "parts": [
+        {
+          "text": "だけ",
+          "block": "dake"
+        },
+        {
+          "text": "まし",
+          "block": "mashi"
+        },
+        {
+          "text": "だ",
+          "block": "assert-da"
+        }
+      ],
+      "literal": "to that extent it is the less undesirable case",
+      "transparency": "pending"
+    },
+    "ようでは-ようじゃ": {
+      "parts": [
+        {
+          "text": "よう",
+          "block": "yoo"
+        },
+        {
+          "text": "では",
+          "block": "dewa"
+        }
+      ],
+      "literal": "with a situation of this sort as the premise",
+      "transparency": "pending"
+    },
+    "に加えて": {
+      "parts": [
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "加えて",
+          "block": "tada-yori"
+        }
+      ],
+      "literal": "adds another thing beside it",
+      "transparency": "pending"
+    },
+    "は別として": {
+      "parts": [
+        {
+          "text": "は",
+          "block": "wa"
+        },
+        {
+          "text": "別",
+          "block": "beki-setsu"
+        },
+        {
+          "text": "と",
+          "block": "to-quote"
+        },
+        {
+          "text": "して",
+          "block": "suru-assume"
+        }
+      ],
+      "literal": "takes the topic as a separate category",
+      "transparency": "pending"
+    },
+    "だけに": {
+      "parts": [
+        {
+          "text": "だけ",
+          "block": "dake"
+        },
+        {
+          "text": "に",
+          "block": "ni"
+        }
+      ],
+      "literal": "because of exactly that extent",
+      "transparency": "pending"
+    },
+    "だけは": {
+      "parts": [
+        {
+          "text": "だけ",
+          "block": "dake"
+        },
+        {
+          "text": "は",
+          "block": "wa"
+        }
+      ],
+      "literal": "sets at least that scope as the topic",
+      "transparency": "pending"
+    },
+    "のみ": {
+      "parts": [
+        {
+          "text": "のみ",
+          "block": "nomi"
+        }
+      ],
+      "literal": "confines the scope to this case",
+      "transparency": "pending"
+    },
+    "のみならず": {
+      "parts": [
+        {
+          "text": "のみ",
+          "block": "nomi"
+        },
+        {
+          "text": "ならず",
+          "block": "naritai"
+        }
+      ],
+      "literal": "does not come to this case alone",
+      "transparency": "pending"
+    },
+    "にすぎない": {
+      "parts": [
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "すぎない",
+          "block": "sugi"
+        }
+      ],
+      "literal": "does not go beyond that point",
+      "transparency": "pending"
+    },
+    "も-ば-も": {
+      "parts": [
+        {
+          "text": "も",
+          "block": "mo"
+        },
+        {
+          "text": "ば",
+          "block": "conditional-ba"
+        },
+        {
+          "text": "も",
+          "block": "mo"
+        }
+      ],
+      "literal": "include this and, given that, include the other",
+      "transparency": "pending"
+    },
+    "はともかく": {
+      "parts": [
+        {
+          "text": "は",
+          "block": "wa"
+        },
+        {
+          "text": "ともかく",
+          "block": "tomo-set-aside"
+        }
+      ],
+      "literal": "puts that topic aside",
+      "transparency": "pending"
+    },
+    "ならともかく": {
+      "parts": [
+        {
+          "text": "なら",
+          "block": "nara"
+        },
+        {
+          "text": "ともかく",
+          "block": "tomo-set-aside"
+        }
+      ],
+      "literal": "puts that alternative aside if it is the case",
+      "transparency": "pending"
+    },
+    "ことにはならない": {
+      "parts": [
+        {
+          "text": "こと",
+          "block": "koto"
+        },
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "は",
+          "block": "wa"
+        },
+        {
+          "text": "ならない",
+          "block": "naritai"
+        }
+      ],
+      "literal": "does not become that fact",
+      "transparency": "pending"
+    },
+    "てはならない": {
+      "parts": [
+        {
+          "text": "て",
+          "block": "te"
+        },
+        {
+          "text": "は",
+          "block": "wa"
+        },
+        {
+          "text": "ならない",
+          "block": "naritai"
+        }
+      ],
+      "literal": "it will not do if that is done",
+      "transparency": "pending"
+    },
+    "てはいられない": {
+      "parts": [
+        {
+          "text": "て",
+          "block": "te"
+        },
+        {
+          "text": "は",
+          "block": "wa"
+        },
+        {
+          "text": "いられない",
+          "block": "iru"
+        }
+      ],
+      "literal": "cannot stay in the state of doing it",
+      "transparency": "pending"
+    },
+    "とも": {
+      "parts": [
+        {
+          "text": "とも",
+          "block": "tomo"
+        }
+      ],
+      "literal": "grants the case for argument",
+      "transparency": "pending"
+    },
+    "ないわけにはいかない": {
+      "parts": [
+        {
+          "text": "ない",
+          "block": "nai"
+        },
+        {
+          "text": "わけ",
+          "block": "wake"
+        },
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "は",
+          "block": "wa"
+        },
+        {
+          "text": "いかない",
+          "block": "iku-acceptable"
+        }
+      ],
+      "literal": "the option of not doing it will not work",
+      "transparency": "pending"
+    },
+    "というわけではない": {
+      "parts": [
+        {
+          "text": "という",
+          "block": "toiu"
+        },
+        {
+          "text": "わけ",
+          "block": "wake"
+        },
+        {
+          "text": "では",
+          "block": "dewa"
+        },
+        {
+          "text": "ない",
+          "block": "nai"
+        }
+      ],
+      "literal": "the stated conclusion does not follow",
+      "transparency": "pending"
+    },
+    "っこない": {
+      "parts": [
+        {
+          "text": "っこない",
+          "block": "maisetu"
+        }
+      ],
+      "literal": "a possibility is flatly rejected",
+      "transparency": "pending"
+    },
+    "後-のnoun": {
+      "parts": [
+        {
+          "text": "後",
+          "block": "ordinary-ato"
+        }
+      ],
+      "literal": "what lies after or remains",
+      "transparency": "pending"
+    },
+    "に向かって-に向けて": {
+      "parts": [
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "向かって",
+          "block": "mukau"
+        }
+      ],
+      "literal": "orient the action toward a point",
+      "transparency": "pending"
+    },
+    "もかまわず": {
+      "parts": [
+        {
+          "text": "も",
+          "block": "mo"
+        },
+        {
+          "text": "構わず",
+          "block": "care-kamawazu"
+        }
+      ],
+      "literal": "even when it occurs, pay it no heed",
+      "transparency": "pending"
+    },
+    "かねる": {
+      "parts": [
+        {
+          "text": "かねる",
+          "block": "kaneru"
+        }
+      ],
+      "literal": "the speaker hesitates at the action",
+      "transparency": "pending"
+    },
+    "かねない": {
+      "parts": [
+        {
+          "text": "かね",
+          "block": "kaneru"
+        },
+        {
+          "text": "ない",
+          "block": "nai"
+        }
+      ],
+      "literal": "there is no obstacle to that result",
+      "transparency": "pending"
+    },
+    "-てこそ": {
+      "parts": [
+        {
+          "text": "て",
+          "block": "te"
+        },
+        {
+          "text": "こそ",
+          "block": "koto-pivot"
+        }
+      ],
+      "literal": "singles out this linked action",
+      "transparency": "pending"
+    },
+    "に越したことはない": {
+      "parts": [
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "越した",
+          "block": "exchange-kah"
+        },
+        {
+          "text": "こと",
+          "block": "koto"
+        },
+        {
+          "text": "は",
+          "block": "wa"
+        },
+        {
+          "text": "ない",
+          "block": "nai"
+        }
+      ],
+      "literal": "there is no case above that benchmark",
+      "transparency": "pending"
+    },
+    "を契機に": {
+      "parts": [
+        {
+          "text": "を",
+          "block": "wo"
+        },
+        {
+          "text": "契機",
+          "block": "trigger-keiki"
+        },
+        {
+          "text": "に",
+          "block": "ni"
+        }
+      ],
+      "literal": "take it as the moment of a shift",
+      "transparency": "pending"
+    },
+    "結果・の結果": {
+      "parts": [
+        {
+          "text": "の",
+          "block": "no"
+        },
+        {
+          "text": "結果",
+          "block": "direct-result"
+        }
+      ],
+      "literal": "from the outcome of the process",
+      "transparency": "pending"
+    },
+    "はたして": {
+      "parts": [
+        {
+          "text": "はたして",
+          "block": "jijitsu"
+        }
+      ],
+      "transparency": "opaque"
+    },
+    "やがて": {
+      "parts": [
+        {
+          "text": "やがて",
+          "block": "yagate"
+        }
+      ],
+      "transparency": "opaque"
+    },
+    "したがって": {
+      "parts": [
+        {
+          "text": "したがって",
+          "block": "dakara"
+        }
+      ],
+      "transparency": "opaque"
+    },
+    "とっくに": {
+      "parts": [
+        {
+          "text": "とっくに",
+          "block": "tokkuni"
+        }
+      ],
+      "transparency": "opaque"
+    },
+    "未だに": {
+      "parts": [
+        {
+          "text": "未だに",
+          "block": "mada"
+        }
+      ],
+      "transparency": "opaque"
+    },
+    "からには": {
+      "parts": [
+        {
+          "text": "から",
+          "block": "kara"
+        },
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "は",
+          "block": "wa"
+        }
+      ],
+      "literal": "takes that starting relation as given",
+      "transparency": "pending"
+    },
+    "一旦": {
+      "parts": [
+        {
+          "text": "一旦",
+          "block": "ittan"
+        }
+      ],
+      "transparency": "opaque"
+    },
+    "はもとより": {
+      "parts": [
+        {
+          "text": "は",
+          "block": "wa"
+        },
+        {
+          "text": "もとより",
+          "block": "motoyori"
+        }
+      ],
+      "literal": "treat the first case as a given",
+      "transparency": "pending"
+    },
+    "そうにない": {
+      "parts": [
+        {
+          "text": "そう",
+          "block": "so-likely"
+        },
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "ない",
+          "block": "nai"
+        }
+      ],
+      "literal": "the signs do not point to that result",
+      "transparency": "pending"
+    },
+    "いよいよ": {
+      "parts": [
+        {
+          "text": "いよいよ",
+          "block": "yasasi"
+        }
+      ],
+      "transparency": "opaque"
+    },
+    "ずに済む": {
+      "parts": [
+        {
+          "text": "ず",
+          "block": "zaru"
+        },
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "済む",
+          "block": "sumu"
+        }
+      ],
+      "literal": "reach the end without doing that",
+      "transparency": "pending"
+    },
+    "に応じて": {
+      "parts": [
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "応じて",
+          "block": "answer-respond"
+        }
+      ],
+      "literal": "act to match what arises",
+      "transparency": "pending"
+    },
+    "に応えて": {
+      "parts": [
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "応えて",
+          "block": "answer-respond"
+        }
+      ],
+      "literal": "act to match what is asked",
+      "transparency": "pending"
+    },
+    "にしたら": {
+      "parts": [
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "したら",
+          "block": "suru-assume"
+        }
+      ],
+      "literal": "if you stood in that relation",
+      "transparency": "pending"
+    },
+    "としては": {
+      "parts": [
+        {
+          "text": "と",
+          "block": "to-quote"
+        },
+        {
+          "text": "して",
+          "block": "suru-assume"
+        },
+        {
+          "text": "は",
+          "block": "wa"
+        }
+      ],
+      "literal": "take it as the stated role or case",
+      "transparency": "pending"
+    },
+    "としても": {
+      "parts": [
+        {
+          "text": "と",
+          "block": "to-quote"
+        },
+        {
+          "text": "して",
+          "block": "suru-assume"
+        },
+        {
+          "text": "も",
+          "block": "mo"
+        }
+      ],
+      "literal": "grant it as the stated role or case",
+      "transparency": "pending"
+    },
+    "からといって": {
+      "parts": [
+        {
+          "text": "から",
+          "block": "kara"
+        },
+        {
+          "text": "と",
+          "block": "to-quote"
+        },
+        {
+          "text": "いって",
+          "block": "iuno"
+        }
+      ],
+      "literal": "quote that starting point as a reason",
+      "transparency": "pending"
+    },
+    "ようではないか": {
+      "parts": [
+        {
+          "text": "よう",
+          "block": "youka"
+        },
+        {
+          "text": "では",
+          "block": "dewa"
+        },
+        {
+          "text": "ない",
+          "block": "nai"
+        },
+        {
+          "text": "か",
+          "block": "ka"
+        }
+      ],
+      "literal": "is there not a joint proposal to do it",
+      "transparency": "pending"
+    },
+    "かのようだ": {
+      "parts": [
+        {
+          "text": "か",
+          "block": "ka"
+        },
+        {
+          "text": "の",
+          "block": "no"
+        },
+        {
+          "text": "よう",
+          "block": "yo-like"
+        },
+        {
+          "text": "だ",
+          "block": "assert-da"
+        }
+      ],
+      "literal": "resembles the supposed case",
+      "transparency": "pending"
+    },
+    "おそらく": {
+      "parts": [
+        {
+          "text": "おそらく",
+          "block": "isooraku"
+        }
+      ],
+      "transparency": "opaque"
+    },
+    "といった": {
+      "parts": [
+        {
+          "text": "と",
+          "block": "to-quote"
+        },
+        {
+          "text": "いった",
+          "block": "iuno"
+        }
+      ],
+      "literal": "cites the stated case",
+      "transparency": "pending"
+    },
+    "でしかない": {
+      "parts": [
+        {
+          "text": "で",
+          "block": "assert-da"
+        },
+        {
+          "text": "しか",
+          "block": "limited-shika"
+        },
+        {
+          "text": "ない",
+          "block": "nai"
+        }
+      ],
+      "literal": "there is no alternative identity",
+      "transparency": "pending"
+    },
+    "おおよそ": {
+      "parts": [
+        {
+          "text": "おおよそ",
+          "block": "approx"
+        }
+      ],
+      "transparency": "opaque"
+    },
+    "要するに": {
+      "parts": [
+        {
+          "text": "要するに",
+          "block": "summary"
+        }
+      ],
+      "transparency": "opaque"
+    },
+    "それとも": {
+      "parts": [
+        {
+          "text": "それとも",
+          "block": "or-alt"
+        }
+      ],
+      "transparency": "opaque"
+    },
+    "それにしても": {
+      "parts": [
+        {
+          "text": "それにしても",
+          "block": "even-so"
+        }
+      ],
+      "transparency": "opaque"
+    },
+    "そういえば": {
+      "parts": [
+        {
+          "text": "そういえば",
+          "block": "speaking-of"
+        }
+      ],
+      "transparency": "opaque"
+    },
+    "おまけに": {
+      "parts": [
+        {
+          "text": "おまけに",
+          "block": "bonus-add"
+        }
+      ],
+      "transparency": "opaque"
+    },
+    "さすが": {
+      "parts": [
+        {
+          "text": "さすが",
+          "block": "as-expected"
+        }
+      ],
+      "transparency": "opaque"
+    },
+    "それなのに": {
+      "parts": [
+        {
+          "text": "それなのに",
+          "block": "yet-so"
+        }
+      ],
+      "transparency": "opaque"
+    },
+    "いわゆる": {
+      "parts": [
+        {
+          "text": "いわゆる",
+          "block": "so-called"
+        }
+      ],
+      "transparency": "opaque"
+    },
+    "何しろ": {
+      "parts": [
+        {
+          "text": "何しろ",
+          "block": "nanisiro"
+        }
+      ],
+      "transparency": "opaque"
+    },
+    "しかしながら": {
+      "parts": [
+        {
+          "text": "しかしながら",
+          "block": "contrast"
+        }
+      ],
+      "transparency": "opaque"
+    },
+    "しかも": {
+      "parts": [
+        {
+          "text": "しかも",
+          "block": "and-more"
+        }
+      ],
+      "transparency": "opaque"
+    },
+    "つもりで": {
+      "parts": [
+        {
+          "text": "つもり",
+          "block": "tsumori"
+        },
+        {
+          "text": "で",
+          "block": "de"
+        }
+      ],
+      "literal": "in the setting of that mental stance",
+      "transparency": "pending"
+    },
+    "よりほかない": {
+      "parts": [
+        {
+          "text": "より",
+          "block": "yori"
+        },
+        {
+          "text": "ほか",
+          "block": "hoka"
+        },
+        {
+          "text": "ない",
+          "block": "nai"
+        }
+      ],
+      "literal": "there is nothing outside that alternative",
+      "transparency": "pending"
+    },
+    "に相違ない": {
+      "parts": [
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "相違",
+          "block": "sooi"
+        },
+        {
+          "text": "ない",
+          "block": "nai"
+        }
+      ],
+      "literal": "there is no discrepancy in that case",
+      "transparency": "pending"
+    },
+    "にほかならない": {
+      "parts": [
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "ほか",
+          "block": "hoka"
+        },
+        {
+          "text": "ならない",
+          "block": "naritai"
+        }
+      ],
+      "literal": "it cannot turn out to be an alternative",
+      "transparency": "pending"
+    },
+    "それなら": {
+      "parts": [
+        {
+          "text": "それ",
+          "block": "sore"
+        },
+        {
+          "text": "なら",
+          "block": "nara"
+        }
+      ],
+      "literal": "assuming the situation just given",
+      "transparency": "pending"
+    },
+    "ものなら①": {
+      "parts": [
+        {
+          "text": "もの",
+          "block": "mono-thing"
+        },
+        {
+          "text": "なら",
+          "block": "nara"
+        }
+      ],
+      "literal": "supposing such a thing could happen",
+      "transparency": "pending"
+    },
+    "を-に任せる": {
+      "parts": [
+        {
+          "text": "を",
+          "block": "wo"
+        },
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "任せる",
+          "block": "makaseru"
+        }
+      ],
+      "literal": "hand the object over in that relation",
+      "transparency": "pending"
+    },
+    "活かす": {
+      "parts": [
+        {
+          "text": "活かす",
+          "block": "ikasu"
+        }
+      ],
+      "literal": "let this resource do useful work",
+      "transparency": "pending"
+    },
+    "上": {
+      "parts": [
+        {
+          "text": "上",
+          "block": "ue"
+        }
+      ],
+      "literal": "from an upper position",
+      "transparency": "pending"
+    },
+    "中を": {
+      "parts": [
+        {
+          "text": "中",
+          "block": "naka"
+        },
+        {
+          "text": "を",
+          "block": "wo"
+        }
+      ],
+      "literal": "pass through the interior as a route",
+      "transparency": "pending"
+    },
+    "その上": {
+      "parts": [
+        {
+          "text": "その",
+          "block": "sono"
+        },
+        {
+          "text": "上",
+          "block": "ue"
+        }
+      ],
+      "literal": "on an upper layer of the stated case",
+      "transparency": "pending"
+    },
+    "手前": {
+      "parts": [
+        {
+          "text": "手前",
+          "block": "temae"
+        }
+      ],
+      "literal": "from the position on one's side",
+      "transparency": "pending"
+    },
+    "にしたがって": {
+      "parts": [
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "したがって",
+          "block": "follow"
+        }
+      ],
+      "literal": "keep in step with the changing state",
+      "transparency": "pending"
+    },
+    "につき": {
+      "parts": [
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "つき",
+          "block": "tsuki"
+        }
+      ],
+      "literal": "records what attaches to the unit or circumstance",
+      "transparency": "pending"
+    },
+    "につけ": {
+      "parts": [
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "つけ",
+          "block": "tsuke"
+        }
+      ],
+      "literal": "attach a reaction to that occasion",
+      "transparency": "pending"
+    },
+    "にかかわる": {
+      "parts": [
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "かかわる",
+          "block": "kakawaru"
+        }
+      ],
+      "literal": "enter into a relation with the point",
+      "transparency": "pending"
+    },
+    "を除いて": {
+      "parts": [
+        {
+          "text": "を",
+          "block": "wo"
+        },
+        {
+          "text": "除いて",
+          "block": "nozoku"
+        }
+      ],
+      "literal": "with that object taken out",
+      "transparency": "pending"
+    },
+    "にかかわらず": {
+      "parts": [
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "かかわらず",
+          "block": "kakawaru"
+        }
+      ],
+      "literal": "without taking the circumstance into account",
+      "transparency": "pending"
+    },
+    "にもかかわらず": {
+      "parts": [
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "も",
+          "block": "mo"
+        },
+        {
+          "text": "かかわらず",
+          "block": "kakawaru"
+        }
+      ],
+      "literal": "even with the circumstance left unheeded",
+      "transparency": "pending"
+    },
+    "限り": {
+      "parts": [
+        {
+          "text": "限り",
+          "block": "kagiri"
+        }
+      ],
+      "literal": "within the boundary set by the case",
+      "transparency": "pending"
+    },
+    "次第だ-次第で": {
+      "parts": [
+        {
+          "text": "次第",
+          "block": "shidai"
+        },
+        {
+          "text": "で",
+          "block": "de"
+        }
+      ],
+      "literal": "in the setting governed by the development",
+      "transparency": "pending"
+    },
+    "次第に": {
+      "parts": [
+        {
+          "text": "次第",
+          "block": "shidai-step"
+        },
+        {
+          "text": "に",
+          "block": "ni"
+        }
+      ],
+      "literal": "in a sequence of steps",
+      "transparency": "pending"
+    },
+    "を問わず": {
+      "parts": [
+        {
+          "text": "を",
+          "block": "wo"
+        },
+        {
+          "text": "問わず",
+          "block": "tou"
+        }
+      ],
+      "literal": "without raising it as a criterion",
+      "transparency": "pending"
+    },
+    "よりしかたがない": {
+      "parts": [
+        {
+          "text": "より",
+          "block": "yori"
+        },
+        {
+          "text": "しかた",
+          "block": "shikata"
+        },
+        {
+          "text": "が",
+          "block": "ga"
+        },
+        {
+          "text": "ない",
+          "block": "nai"
+        }
+      ],
+      "literal": "there is no method other than this",
+      "transparency": "pending"
+    },
+    "てからでないと": {
+      "parts": [
+        {
+          "text": "て",
+          "block": "te"
+        },
+        {
+          "text": "から",
+          "block": "kara"
+        },
+        {
+          "text": "で",
+          "block": "assert-da"
+        },
+        {
+          "text": "ない",
+          "block": "nai"
+        },
+        {
+          "text": "と",
+          "block": "to-when"
+        }
+      ],
+      "literal": "once done, if the condition does not hold",
+      "transparency": "pending"
+    },
+    "ないことには-ない": {
+      "parts": [
+        {
+          "text": "ない",
+          "block": "nai"
+        },
+        {
+          "text": "こと",
+          "block": "koto"
+        },
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "は",
+          "block": "wa"
+        },
+        {
+          "text": "ない",
+          "block": "nai"
+        }
+      ],
+      "literal": "if the action is absent, the result fails too",
+      "transparency": "pending"
+    },
+    "たまえ": {
+      "parts": [
+        {
+          "text": "たまえ",
+          "block": "dai-tamae"
+        }
+      ],
+      "literal": "a request issued from above",
+      "transparency": "pending"
+    },
+    "がけに": {
+      "parts": [
+        {
+          "text": "がけ",
+          "block": "gake"
+        },
+        {
+          "text": "に",
+          "block": "ni"
+        }
+      ],
+      "literal": "at the stage of setting out",
+      "transparency": "pending"
+    },
+    "ぶりに": {
+      "parts": [
+        {
+          "text": "ぶり",
+          "block": "buri"
+        },
+        {
+          "text": "に",
+          "block": "ni"
+        }
+      ],
+      "literal": "at the endpoint of the elapsed gap",
+      "transparency": "pending"
+    },
+    "も又": {
+      "parts": [
+        {
+          "text": "も",
+          "block": "mo"
+        },
+        {
+          "text": "又",
+          "block": "mata"
+        }
+      ],
+      "literal": "include another case in the same way",
+      "transparency": "pending"
+    },
+    "以来": {
+      "parts": [
+        {
+          "text": "以来",
+          "block": "irai"
+        }
+      ],
+      "literal": "the period from that point forward",
+      "transparency": "pending"
+    },
+    "に先立ち": {
+      "parts": [
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "先立ち",
+          "block": "sakidatsu"
+        }
+      ],
+      "literal": "take the preceding place in the order",
+      "transparency": "pending"
+    },
+    "甲斐がある": {
+      "parts": [
+        {
+          "text": "甲斐",
+          "block": "kai-effort"
+        },
+        {
+          "text": "が",
+          "block": "ga"
+        },
+        {
+          "text": "ある",
+          "block": "aru"
+        }
+      ],
+      "literal": "the effort's return is present",
+      "transparency": "pending"
+    },
+    "あげく": {
+      "parts": [
+        {
+          "text": "あげく",
+          "block": "ageku"
+        }
+      ],
+      "literal": "at the unhappy endpoint of a process",
+      "transparency": "pending"
+    },
+    "きっかけ": {
+      "parts": [
+        {
+          "text": "きっかけ",
+          "block": "kikkake"
+        }
+      ],
+      "literal": "the opening from which the action starts",
+      "transparency": "pending"
+    },
+    "にかけては": {
+      "parts": [
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "かけて",
+          "block": "kakete"
+        },
+        {
+          "text": "は",
+          "block": "wa"
+        }
+      ],
+      "literal": "takes the span of that domain as the topic",
+      "transparency": "pending"
+    },
+    "いつの間にか": {
+      "parts": [
+        {
+          "text": "いつ",
+          "block": "itu"
+        },
+        {
+          "text": "の",
+          "block": "no"
+        },
+        {
+          "text": "間",
+          "block": "ma"
+        },
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "か",
+          "block": "ka"
+        }
+      ],
+      "literal": "somewhere in an unspecified interval",
+      "transparency": "pending"
+    },
+    "逆に": {
+      "parts": [
+        {
+          "text": "逆",
+          "block": "gyaku"
+        },
+        {
+          "text": "に",
+          "block": "ni"
+        }
+      ],
+      "literal": "in a reversed orientation",
+      "transparency": "pending"
+    },
+    "反面": {
+      "parts": [
+        {
+          "text": "反面",
+          "block": "hanmen"
+        }
+      ],
+      "literal": "on the other face of the same situation",
+      "transparency": "pending"
+    },
+    "を通じて-を通して": {
+      "parts": [
+        {
+          "text": "を",
+          "block": "wo"
+        },
+        {
+          "text": "通じて",
+          "block": "tsuujiru"
+        }
+      ],
+      "literal": "use the object as a channel",
+      "transparency": "pending"
+    },
+    "思うように": {
+      "parts": [
+        {
+          "text": "思う",
+          "block": "expect-omou"
+        },
+        {
+          "text": "よう",
+          "block": "yoo"
+        },
+        {
+          "text": "に",
+          "block": "ni"
+        }
+      ],
+      "literal": "in the manner one imagines",
+      "transparency": "pending"
+    },
+    "というものでもない": {
+      "parts": [
+        {
+          "text": "という",
+          "block": "toiu"
+        },
+        {
+          "text": "もの",
+          "block": "mono-thing"
+        },
+        {
+          "text": "で",
+          "block": "assert-da"
+        },
+        {
+          "text": "も",
+          "block": "mo"
+        },
+        {
+          "text": "ない",
+          "block": "nai"
+        }
+      ],
+      "literal": "it does not amount to the stated kind of thing",
+      "transparency": "pending"
+    },
+    "と考えられる": {
+      "parts": [
+        {
+          "text": "と",
+          "block": "to-quote"
+        },
+        {
+          "text": "考えられる",
+          "block": "kangaeru"
+        }
+      ],
+      "literal": "it is possible to reason to that content",
+      "transparency": "pending"
+    },
+    "という点から考えると": {
+      "parts": [
+        {
+          "text": "という",
+          "block": "toiu"
+        },
+        {
+          "text": "点",
+          "block": "ten"
+        },
+        {
+          "text": "から",
+          "block": "kara"
+        },
+        {
+          "text": "考える",
+          "block": "kangaeru"
+        },
+        {
+          "text": "と",
+          "block": "to-when"
+        }
+      ],
+      "literal": "reason from the stated feature",
+      "transparency": "pending"
+    },
+    "ふうに": {
+      "parts": [
+        {
+          "text": "ふう",
+          "block": "fuu"
+        },
+        {
+          "text": "に",
+          "block": "ni"
+        }
+      ],
+      "literal": "in that manner",
+      "transparency": "pending"
+    },
+    "という風に": {
+      "parts": [
+        {
+          "text": "という",
+          "block": "toiu"
+        },
+        {
+          "text": "風",
+          "block": "fuu"
+        },
+        {
+          "text": "に",
+          "block": "ni"
+        }
+      ],
+      "literal": "in the stated manner",
+      "transparency": "pending"
+    },
+    "ものの": {
+      "parts": [
+        {
+          "text": "ものの",
+          "block": "mono-no"
+        }
+      ],
+      "transparency": "opaque"
+    },
+    "からして": {
+      "parts": [
+        {
+          "text": "から",
+          "block": "kara"
+        },
+        {
+          "text": "して",
+          "block": "suru-assume"
+        }
+      ],
+      "literal": "take that starting point as the first case",
+      "transparency": "pending"
+    },
+    "お-願う": {
+      "parts": [
+        {
+          "text": "お",
+          "block": "o-polite"
+        },
+        {
+          "text": "願う",
+          "block": "negau"
+        }
+      ],
+      "literal": "expresses a request with respectful phrasing",
+      "transparency": "pending"
+    },
+    "て頂戴": {
+      "parts": [
+        {
+          "text": "て",
+          "block": "te"
+        },
+        {
+          "text": "頂戴",
+          "block": "cho-dai"
+        }
+      ],
+      "literal": "ask to receive the linked action",
+      "transparency": "pending"
+    },
+    "とか": {
+      "parts": [
+        {
+          "text": "とか",
+          "block": "toka"
+        }
+      ],
+      "literal": "presents one tentative case or account",
+      "transparency": "pending"
+    },
+    "のではないだろうか": {
+      "parts": [
+        {
+          "text": "の",
+          "block": "no"
+        },
+        {
+          "text": "では",
+          "block": "dewa"
+        },
+        {
+          "text": "ない",
+          "block": "nai"
+        },
+        {
+          "text": "だろう",
+          "block": "darou"
+        },
+        {
+          "text": "か",
+          "block": "ka"
+        }
+      ],
+      "literal": "asks whether the supposition is true",
+      "transparency": "pending"
+    },
+    "て当然だ": {
+      "parts": [
+        {
+          "text": "て",
+          "block": "te"
+        },
+        {
+          "text": "当然",
+          "block": "touzen"
+        },
+        {
+          "text": "だ",
+          "block": "assert-da"
+        }
+      ],
+      "literal": "the linked outcome follows from the premises",
+      "transparency": "pending"
+    },
+    "のも当然だ": {
+      "parts": [
+        {
+          "text": "の",
+          "block": "no"
+        },
+        {
+          "text": "も",
+          "block": "mo"
+        },
+        {
+          "text": "当然",
+          "block": "touzen"
+        },
+        {
+          "text": "だ",
+          "block": "assert-da"
+        }
+      ],
+      "literal": "that case also follows from the premises",
+      "transparency": "pending"
+    },
+    "たった-の": {
+      "parts": [
+        {
+          "text": "たった",
+          "block": "tatta"
+        }
+      ],
+      "transparency": "opaque"
+    },
+    "恐れがある": {
+      "parts": [
+        {
+          "text": "恐れ",
+          "block": "osore"
+        },
+        {
+          "text": "が",
+          "block": "ga"
+        },
+        {
+          "text": "ある",
+          "block": "aru"
+        }
+      ],
+      "literal": "the feared possibility exists",
+      "transparency": "pending"
+    },
+    "に決まっている": {
+      "parts": [
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "決まって",
+          "block": "kimaru"
+        },
+        {
+          "text": "いる",
+          "block": "iru"
+        }
+      ],
+      "literal": "the matter has been settled",
+      "transparency": "pending"
+    },
+    "ものがある": {
+      "parts": [
+        {
+          "text": "もの",
+          "block": "mono-thing"
+        },
+        {
+          "text": "が",
+          "block": "ga"
+        },
+        {
+          "text": "ある",
+          "block": "aru"
+        }
+      ],
+      "literal": "there is an aspect or quality of that kind",
+      "transparency": "pending"
+    },
+    "傾向がある": {
+      "parts": [
+        {
+          "text": "傾向",
+          "block": "keikou"
+        },
+        {
+          "text": "が",
+          "block": "ga"
+        },
+        {
+          "text": "ある",
+          "block": "aru"
+        }
+      ],
+      "literal": "a recurring direction exists",
+      "transparency": "pending"
+    },
+    "に値する": {
+      "parts": [
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "値する",
+          "block": "atai"
+        }
+      ],
+      "literal": "meets the standard for that treatment",
+      "transparency": "pending"
+    },
+    "てしょうがない": {
+      "parts": [
+        {
+          "text": "て",
+          "block": "te"
+        },
+        {
+          "text": "しょう",
+          "block": "shou"
+        },
+        {
+          "text": "が",
+          "block": "ga"
+        },
+        {
+          "text": "ない",
+          "block": "nai"
+        }
+      ],
+      "literal": "a response to the linked state is unavailable",
+      "transparency": "pending"
+    },
+    "幸い-幸いなことに": {
+      "parts": [
+        {
+          "text": "幸い",
+          "block": "saiwai"
+        }
+      ],
+      "literal": "the favorable course of events",
+      "transparency": "pending"
+    },
+    "ことは-が": {
+      "parts": [
+        {
+          "text": "こと",
+          "block": "koto"
+        },
+        {
+          "text": "は",
+          "block": "wa"
+        },
+        {
+          "text": "が",
+          "block": "ga-concede"
+        }
+      ],
+      "literal": "take the fact as given, then add a reservation",
+      "transparency": "pending"
+    },
+    "さらに": {
+      "parts": [
+        {
+          "text": "更に",
+          "block": "sarani"
+        }
+      ],
+      "transparency": "opaque"
+    },
+    "精々": {
+      "parts": [
+        {
+          "text": "精々",
+          "block": "seizei"
+        }
+      ],
+      "transparency": "opaque"
+    },
+    "僅かに": {
+      "parts": [
+        {
+          "text": "僅か",
+          "block": "wazuka"
+        },
+        {
+          "text": "に",
+          "block": "ni"
+        }
+      ],
+      "literal": "to a small degree",
+      "transparency": "pending"
+    },
+    "弱": {
+      "parts": [
+        {
+          "text": "弱",
+          "block": "jaku"
+        }
+      ],
+      "literal": "on the low side of that measure",
+      "transparency": "pending"
+    },
+    "強": {
+      "parts": [
+        {
+          "text": "強",
+          "block": "kyou"
+        }
+      ],
+      "literal": "on the high side of that measure",
+      "transparency": "pending"
+    },
+    "および": {
+      "parts": [
+        {
+          "text": "および",
+          "block": "oyobi"
+        }
+      ],
+      "transparency": "opaque"
+    },
+    "たちまち": {
+      "parts": [
+        {
+          "text": "たちまち",
+          "block": "tachimachi"
+        }
+      ],
+      "transparency": "opaque"
+    },
+    "いきなり": {
+      "parts": [
+        {
+          "text": "いきなり",
+          "block": "ikinari"
+        }
+      ],
+      "transparency": "opaque"
+    },
+    "を込めて": {
+      "parts": [
+        {
+          "text": "を",
+          "block": "wo"
+        },
+        {
+          "text": "込めて",
+          "block": "komeru"
+        }
+      ],
+      "literal": "put this object or feeling into the action",
+      "transparency": "pending"
+    },
+    "何から何まで": {
+      "parts": [
+        {
+          "text": "何",
+          "block": "nani"
+        },
+        {
+          "text": "から",
+          "block": "kara"
+        },
+        {
+          "text": "何",
+          "block": "nani"
+        },
+        {
+          "text": "まで",
+          "block": "made"
+        }
+      ],
+      "literal": "from one thing all the way to another",
+      "transparency": "pending"
+    },
+    "だけあって": {
+      "parts": [
+        {
+          "text": "だけ",
+          "block": "dake"
+        },
+        {
+          "text": "あって",
+          "block": "atte"
+        }
+      ],
+      "literal": "linked to having precisely that extent",
+      "transparency": "pending"
+    },
+    "何より": {
+      "parts": [
+        {
+          "text": "何",
+          "block": "nani"
+        },
+        {
+          "text": "より",
+          "block": "yori"
+        }
+      ],
+      "literal": "compared with any other thing",
+      "transparency": "pending"
+    },
+    "何といっても": {
+      "parts": [
+        {
+          "text": "何",
+          "block": "nani"
+        },
+        {
+          "text": "と",
+          "block": "to-quote"
+        },
+        {
+          "text": "いって",
+          "block": "iuno"
+        },
+        {
+          "text": "も",
+          "block": "mo"
+        }
+      ],
+      "literal": "no matter which case one mentions",
+      "transparency": "pending"
+    },
+    "か何か": {
+      "parts": [
+        {
+          "text": "か",
+          "block": "ka"
+        },
+        {
+          "text": "何",
+          "block": "nani"
+        },
+        {
+          "text": "か",
+          "block": "ka"
+        }
+      ],
+      "literal": "an unspecified thing as another possibility",
+      "transparency": "pending"
+    },
+    "てならない": {
+      "parts": [
+        {
+          "text": "て",
+          "block": "te"
+        },
+        {
+          "text": "ならない",
+          "block": "naritai"
+        }
+      ],
+      "literal": "the linked feeling will not settle",
+      "transparency": "pending"
+    },
+    "てたまらない": {
+      "parts": [
+        {
+          "text": "て",
+          "block": "te"
+        },
+        {
+          "text": "たまらない",
+          "block": "tamaranai"
+        }
+      ],
+      "literal": "the linked sensation cannot be contained",
+      "transparency": "pending"
+    },
+    "にせよ-にしろ": {
+      "parts": [
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "せよ",
+          "block": "shiro"
+        }
+      ],
+      "literal": "grant that case as a premise",
+      "transparency": "pending"
+    },
+    "にしろ-にしろ": {
+      "parts": [
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "しろ",
+          "block": "shiro"
+        },
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "しろ",
+          "block": "shiro"
+        }
+      ],
+      "literal": "admit each of the cases under consideration",
+      "transparency": "pending"
+    },
+    "やら-やら": {
+      "parts": [
+        {
+          "text": "やら",
+          "block": "yara-list"
+        },
+        {
+          "text": "やら",
+          "block": "yara-list"
+        }
+      ],
+      "literal": "take one tentative example and then another",
+      "transparency": "pending"
+    },
+    "だけのことはある": {
+      "parts": [
+        {
+          "text": "だけ",
+          "block": "dake"
+        },
+        {
+          "text": "の",
+          "block": "no"
+        },
+        {
+          "text": "こと",
+          "block": "koto"
+        },
+        {
+          "text": "は",
+          "block": "wa"
+        },
+        {
+          "text": "ある",
+          "block": "aru"
+        }
+      ],
+      "literal": "there is an outcome of precisely that extent",
+      "transparency": "pending"
+    },
+    "陸に-ない": {
+      "parts": [
+        {
+          "text": "陸",
+          "block": "matomo"
+        },
+        {
+          "text": "に",
+          "block": "ni"
+        },
+        {
+          "text": "ない",
+          "block": "nai"
+        }
+      ],
+      "literal": "fails to attain an adequate degree",
+      "transparency": "pending"
+    },
+    "てでも": {
+      "parts": [
+        {
+          "text": "て",
+          "block": "te"
+        },
+        {
+          "text": "でも",
+          "block": "itate"
+        }
+      ],
+      "literal": "allow this linked action as the extreme case",
+      "transparency": "pending"
+    },
+    "のももっともだ": {
+      "parts": [
+        {
+          "text": "の",
+          "block": "no"
+        },
+        {
+          "text": "も",
+          "block": "mo"
+        },
+        {
+          "text": "もっとも",
+          "block": "mottomo"
+        },
+        {
+          "text": "だ",
+          "block": "assert-da"
+        }
+      ],
+      "literal": "that reaction also has grounds",
+      "transparency": "pending"
+    },
+    "たって": {
+      "parts": [
+        {
+          "text": "たって",
+          "block": "tatte"
+        }
+      ],
+      "literal": "grants the case provisionally",
+      "transparency": "pending"
+    }
+  }
+}

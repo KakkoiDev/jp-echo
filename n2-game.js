@@ -23,7 +23,8 @@
 import {recallItems, localDay} from "./n2-study.js";
 import {HELD_OUT} from "./n2-comprehension.js";
 import {connectiveSites, jobOf, glossOf, JOBS, OVERLAP, CHOICE_FOR_JOB} from "./n2-connectives.js";
-import {ACCEPTED_READINGS, READING_KEY, EXCLUDED, GLOSS_FIX, GRAMMAR_SPANS, REVIEWED_LEVELS} from "./n2-game-review.js";
+import {ACCEPTED_READINGS, READING_KEY, EXCLUDED, GLOSS_FIX, GRAMMAR_SPANS, REVIEWED_LEVELS, REVIEWED_GRAMMAR_BLOCKS} from "./n2-game-review.js";
+import {exampleSegments} from "./n2-delayed.js";
 import {LEVELS} from "./jlpt-levels.js";
 
 const keyOf = target => JSON.stringify(target);
@@ -36,13 +37,13 @@ export const ROUND_SIZE = 10, REVIEW_SECONDS = 5, DAILY_GOAL = 1000, RECENT_MS =
 export const SECONDS = Object.freeze({reading: 3, meaning: 3, definition: 4, listen: 5, homophone: 5, grammar: 6, connective: 7, exam: {1: 4, 2: 5, 3: 5, 4: 7, 5: 6, 7: 8}});
 // The pause after an answer before the next question, in milliseconds.
 export const PAUSE = Object.freeze({right: 250, miss: 800});
-export const KIND_LABEL = Object.freeze({reading: "Reading", meaning: "Meaning", definition: "Which word", listen: "Listen", connective: "Connective · 問題9", homophone: "Which kanji", grammar: "Grammar", exam: "Exam question"});
+export const KIND_LABEL = Object.freeze({reading: "Reading", meaning: "Meaning", definition: "Which word", listen: "Listen", connective: "Connective · 問題9", homophone: "Which kanji", grammar: "Grammar", block: "Grammar block", build: "Build grammar", infer: "Infer grammar", exam: "Exam question"});
 const EXAM_MONDAI = new Set([1, 2, 3, 4, 5, 7]), WRITTEN = new Set(["Vocabulary", "Grammar"]);
 const KANJI = /[一-鿿々]/g;
 const plain = s => String(s || "").replace(/【[^】]*】/g, "");
 // A short English gloss with no Japanese in it: JMdict's "(same as 親戚 (しんせき))"
 // would give the answer away.
-const JP = /[ぁ-んァ-ヶ一-龯々]/;
+export const JP = /[ぁ-んァ-ヶ一-龯々]/;
 export const gloss = s => {
   const text = String(s || "").replace(/\((?:[^()]|\([^()]*\))*\)/g, m => JP.test(m) ? "" : m);
   const parts = []; let depth = 0, cur = "";
@@ -117,7 +118,7 @@ export function nearMisses(reading = "") {
 // base reading where the word splits cleanly (就しゅう, 任にん), the bare kanji
 // otherwise. The readings are an inventory row's fourth field, or `parts`
 // for N2 (n2-kanji-parts.json: "就任/しゅうにん" → "しゅう|にん").
-export function gamePool({inventory, examples = new Map(), sets = [], sat = new Set(), level = "N2", parts = null}) {
+export function gamePool({inventory, examples = new Map(), sets = [], sat = new Set(), level = "N2", parts = null, grammarBlocks = null}) {
   const other = level !== "N2", tag = other ? level + ":" : "";
   const split = new Map(inventory.words.map(([w, r, , p]) => [w + "/" + r, p || parts?.[w + "/" + r] || ""]));
   const kanjiOf = w => { const ks = (w.text.match(KANJI) || []).filter(k => k !== "々"), bases = (split.get(w.target[1] + "/" + w.target[2]) || "").split("|");
@@ -198,6 +199,7 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
       sentence: plain(ex.ja), needle: GRAMMAR_SPANS["g:" + g.target[1]] || piecesNeedle(plain(ex.ja), g.prompt) || surfaceNeedle(plain(ex.ja), g.prompt) || g.prompt.replace(/[〜～]/g, ""), answer: gAnswer, wrong: [...new Set(wrong)], seconds: SECONDS.grammar,
       solution: {word: g.prompt, meaning: gAnswer, ja: ex.ja, en: ex.en || ""}});
   }
+  if (!other && grammarBlocks) addGrammarBlocks(pool, grammarBlocks);
   // Connectives (問題9): from reading passages of sets already sat. The
   // excerpt is up to two sentences before the blank and the blank's sentence.
   // Practice only, not scored, until the excerpts are reviewed (audit P2).
@@ -234,6 +236,51 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
   // item: what a round counts as one thing, where N2 cards use their target.
   return fit.map(q => ({...q, level, item: level + ":" + q.target[1] + "/" + q.target[2], target: null, ...(REVIEWED_LEVELS.has(level) ? {} : {practice: true, record: true})}));
 }
+function addGrammarBlocks(pool, {blocks = {}, patterns = {}}) {
+  const entries = Object.entries(blocks);
+  const practice = REVIEWED_GRAMMAR_BLOCKS ? {} : {practice: true, record: true};
+  const fair = (answer, options) => [...new Set(options)].filter(o => o && !sameSense(answer, o));
+  const base = {target: null, dimension: null, seconds: SECONDS.grammar, ...practice};
+
+  const grammar = pool.filter(q => q.kind === "grammar" && !EXCLUDED[q.id]);
+  const keysOf = parts => [...new Set(parts.flatMap(p => Object.hasOwn(blocks, p.block) ? [p.block] : []))];
+  const byKey = new Map(grammar.map(q => [q.id.slice(2), keysOf(patterns[q.id.slice(2)]?.parts || [])]));
+
+  for (const [id, block] of entries) {
+    const sentence = plain(block.ja);
+    const needle = [...block.forms].sort((a, b) => b.length - a.length).find(form => sentence.includes(form));
+    if (!needle) continue;
+    const wrong = fair(block.gloss, entries.filter(([other, b]) => id !== other && b.type === block.type && !b.forms.some(form => block.forms.includes(form))).map(([, b]) => b.gloss));
+    pool.push({...base, id: "b:" + id, kind: "block", item: "block:" + id, blockLevel: block.level, blocks: [id],
+      prompt: block.form, sentence, needle, answer: block.gloss, wrong,
+      solution: {word: block.form, meaning: block.gloss, ja: block.ja, en: block.en}});
+  }
+
+  for (const q of grammar) {
+    const key = q.id.slice(2), pattern = patterns[key], ids = byKey.get(key);
+    if (!ids.length) continue;
+    q.blocks = ids;
+    // Use the deck's reviewed span when available, including split spans.
+    // Otherwise require the actual ordered pieces, never a guessed stem.
+    const pieces = pattern.parts.map(p => p.text);
+    const written = pieces.join("");
+    const variants = pieces.length === 1 && ids.length === 1 ? blocks[ids[0]].forms : [];
+    const needle = GRAMMAR_SPANS[q.id] || piecesNeedle(q.sentence, q.prompt) || [written, ...variants].find(form => q.sentence.includes(form));
+    if (!needle || !exampleSegments(q.sentence, [needle]).some(part => part.mark)) continue;
+    const others = grammar.filter(other => other !== q);
+    const wrong = fair(q.answer, others.map(other => other.answer));
+    const near = fair(q.answer, others.filter(other => byKey.get(other.id.slice(2)).some(id => ids.includes(id))).map(other => other.answer));
+    const card = {...base, item: keyOf(q.target), patternKey: key, blocks: ids, prompt: q.prompt,
+      sentence: q.sentence, needle, answer: q.answer, wrong, near, solution: pattern.transparency === "opaque"
+        ? {...q.solution, why: "Learn this pattern as a whole."} : q.solution};
+    pool.push({...card, id: "gb:" + key, kind: "build",
+      parts: pattern.parts.map(p => ({text: p.text, gloss: blocks[p.block]?.gloss || ""}))});
+    if (["clear", "partial"].includes(pattern.transparency) && pattern.solved?.right) {
+      pool.push({...card, id: "gi:" + key, kind: "infer"});
+    }
+  }
+}
+
 // The level a card belongs to: cards without one are N2's.
 export const levelOfCard = q => q?.level || "N2";
 
@@ -304,7 +351,9 @@ export function choicesFor(q, random = Math.random, level = .5) {
 // taken even if it was seen minutes ago (in a session everything won is
 // recent, and the four-hour rest used to leave the round to new cards: owner's
 // report, 27 Nov), and the places left go to the familiar before the new.
+const cardItem = q => q.target ? keyOf(q.target) : q.item || q.id;
 export function pickRound({pool, recall = [], seen = {}, wins = {}, lv = {}, size = ROUND_SIZE, random = Math.random, mix = {weak: 4, fresh: 4, known: 2}, comeback = [], now = Date.now(), calm = false}) {
+
   const last = new Map();
   for (const r of recall) last.set(r.dimension + keyOf(r.target), r.last);
   const state = q => { const g = q.target && last.get(q.dimension + keyOf(q.target)); return g && g !== "instant" ? "weak" : g === "instant" || wins[q.id] ? "known" : "fresh"; };
@@ -318,7 +367,7 @@ export function pickRound({pool, recall = [], seen = {}, wins = {}, lv = {}, siz
   // readings and exam questions are not drowned by the many word questions.
   for (const [name, g] of Object.entries(groups)) groups[name] = byKindInTurn(g.sort((a, b) => (seen[a.id] || 0) - (seen[b.id] || 0)), random);
   const out = [], used = new Set(), targets = new Set();
-  const take = (list, n) => { for (const q of list) { if (n <= 0) break; const t = q.target ? keyOf(q.target) : q.item || q.id; if (used.has(q.id) || targets.has(t)) continue; used.add(q.id); targets.add(t); out.push(q); n--; } };
+  const take = (list, n) => { for (const q of list) { if (n <= 0) break; const t = cardItem(q); if (used.has(q.id) || targets.has(t)) continue; used.add(q.id); targets.add(t); out.push(q); n--; } };
   const byId = new Map(pool.map(q => [q.id, q]));
   const back = shuffle(comeback.map(id => byId.get(id)).filter(Boolean), random).slice(0, size);
   take(back, back.length);
@@ -412,6 +461,7 @@ export function rememberAnswer(state = {}, {q, outcome, points = 0, fast = false
   // accuracy, the level, the day or boss counts, the run clock, wins or repeats.
   if (q.practice && !q.record) return {...state, seen, practiced: (state.practiced || 0) + 1};
   const kj = kanjiAfter(state, {q, outcome, now});
+  const gb = grammarAfter(state, {q, outcome, now});
   // The item record (owner, 26 Nov): how often each card was tried and missed.
   const tried = {...(state.tried || {}), [q.id]: (state.tried?.[q.id] || 0) + 1};
   const missed = outcome === "right" ? state.missed || {} : {...(state.missed || {}), [q.id]: (state.missed?.[q.id] || 0) + 1};
@@ -433,7 +483,7 @@ export function rememberAnswer(state = {}, {q, outcome, points = 0, fast = false
   const total = (state.total || 0) + points, day = localDay(new Date(now));
   const days = {...(state.days || {})}, d = days[day] || {answered: 0, right: 0, points: 0, rounds: 0, best: 0};
   days[day] = {...d, answered: d.answered + 1, right: d.right + (outcome === "right" ? 1 : 0), points: d.points + points};
-  return {...state, seen, tried, missed, kj, wins, lv, lvAt, ...(level === undefined ? {} : {level}), ...(q.practice ? {practiced: (state.practiced || 0) + 1} : {}), runStart, comeback: comeback.slice(-ROUND_SIZE), total, answered: (state.answered || 0) + 1, days};
+  return {...state, seen, tried, missed, kj, ...(gb ? {gb} : {}), wins, lv, lvAt, ...(level === undefined ? {} : {level}), ...(q.practice ? {practiced: (state.practiced || 0) + 1} : {}), runStart, comeback: comeback.slice(-ROUND_SIZE), total, answered: (state.answered || 0) + 1, days};
 }
 export function rememberRound(state = {}, {score, questions = [], misses, scored, now = Date.now()}) {
   const seen = {...(state.seen || {})};
@@ -496,7 +546,7 @@ export function inSlump(state = {}) {
 // picked exactly as it always was.
 // kanji: {order, examples} picks the rank's places by kanji (kanjiPick)
 // instead of by card: the way of every level whose cards are word cards only.
-export function nextRound({pool, review = [], kanji = null, recall = [], state = {}, difficulty = "normal", random = Math.random, now = Date.now()}) {
+export function nextRound({pool, review = [], kanji = null, grammarCards = null, recall = [], state = {}, difficulty = "normal", random = Math.random, now = Date.now()}) {
   const slump = inSlump(state), beat = pace(state, now);
   const level = Math.min(1, Math.max(0, levelOf(state) + beat.offset + (DIFFICULTY[difficulty] || DIFFICULTY.normal).offset));
   const share = review.length && pool.length ? REVIEW_SHARE : 0, memory = {recall, seen: state.seen || {}, wins: state.wins || {}, lv: state.lv || {}, random, now};
@@ -510,6 +560,14 @@ export function nextRound({pool, review = [], kanji = null, recall = [], state =
     // Kanji with nothing left to ask: the places left are picked by card, so a round is always full.
     if (picked.length < places) { const words = new Set(picked.map(q => q.item)); picked.push(...pickRound({...memory, pool: pool.filter(q => !words.has(q.item)), size: places - picked.length, mix: flowMix(level)})); }
   } else picked = pickRound({...memory, pool, size: ROUND_SIZE - share, comeback, mix: slump ? WARM_UP.mix : flowMix(level), calm: slump});
+
+  if (grammarCards && !slump) {
+    const slots = picked.filter(q => q.kind === "grammar" && !q.comeback);
+    const replacements = grammarPick({pool: grammarCards, state, slots, skip: picked.filter(q => !slots.includes(q)), comeback, now});
+    let n = 0;
+    picked = picked.map(q => slots.includes(q) ? replacements[n++] : q);
+  }
+
   if (share) {
     // The comeback cards stay first; the review cards are spread among the rest.
     const words = new Set(picked.map(q => q.item).filter(Boolean));
@@ -604,6 +662,85 @@ export function kanjiPick({pool = [], examples = [], order = "", state = {}, siz
   // Places left over go to proving before anything new: consolidate, then move on.
   for (const group of ["prove", "fresh", "weak", "known"]) fill(group, size - out.length);
   return shuffle(out, random);
+}
+
+// ---- Grammar blocks ----
+export const GRAMMAR_BLOCK_KNOWN = Object.freeze({transfer: 1, right: 3});
+const blockKnown = ([, right = 0, , transfer = 0] = []) => transfer >= GRAMMAR_BLOCK_KNOWN.transfer || right >= GRAMMAR_BLOCK_KNOWN.right;
+const patternPrefixes = ["g:", "gb:", "gi:"];
+const newPattern = (state, key) => key && patternPrefixes.every(prefix => !Object.hasOwn(state.seen || {}, prefix + key));
+const allMet = (state, q, except) => q.blocks.every(id => id === except || state.gb?.[id]?.[0]);
+export const grammarBlockCard = q => q.kind === "block" || q.kind === "build" || q.kind === "infer";
+
+export function grammarAfter(state, {q, outcome, now}) {
+  if (!q.blocks?.length) return state.gb;
+  const gb = {...state.gb};
+  const test = q.kind === "block" || q.kind === "infer", right = outcome === "right";
+  const transfer = q.kind === "infer" && right && newPattern(state, q.patternKey) && allMet(state, q);
+  for (const id of q.blocks) {
+    const [met = 0, got = 0, missed = 0, proved = 0, , weak = 0] = gb[id] || [];
+    gb[id] = [met + 1, got + Number(test && right), missed + Number(test && !right),
+      proved + Number(!!transfer), now, test ? Number(!right) : weak];
+  }
+  return gb;
+}
+
+export function grammarCoverage(cards, state = {}) {
+  const ids = new Set(cards.flatMap(q => q.blocks || []));
+  return {items: ids.size, known: [...ids].filter(id => blockKnown(state.gb?.[id])).length};
+}
+
+// Replace only ordinary grammar slots. Reserve the other original targets so
+// an exam/comeback or a later fallback cannot repeat the same pattern.
+export function grammarPick({pool, state, slots, skip, comeback = [], now}) {
+  const used = new Set(skip.map(cardItem)), focused = new Set(), usage = new Map();
+  const byBlock = new Map();
+  for (const q of pool) for (const id of q.blocks) {
+    if (q.kind === "build") usage.set(id, (usage.get(id) || 0) + 1);
+    if (!byBlock.has(id)) byBlock.set(id, []);
+    byBlock.get(id).push(q);
+  }
+  const ids = [...byBlock.keys()];
+  const record = id => state.gb?.[id] || [];
+  const order = (a, b) => (record(a)[4] || 0) - (record(b)[4] || 0);
+  const groups = {
+    weak: ids.filter(id => record(id)[5]).sort(order),
+    fresh: ids.filter(id => !record(id)[0]).sort((a, b) => {
+      const level = id => byBlock.get(id).find(q => q.kind === "block")?.blockLevel || "N2";
+      return LEVELS.indexOf(level(a)) - LEVELS.indexOf(level(b)) || (usage.get(b) || 0) - (usage.get(a) || 0);
+    }),
+    prove: ids.filter(id => record(id)[0] && !blockKnown(record(id))).sort(order),
+  };
+  const last = q => state.seen?.[q.id] || 0;
+  const byId = new Map(pool.map(q => [q.id, q]));
+  const returning = comeback.map(id => byId.get(id)).filter(Boolean);
+  return slots.map((fallback, index) => {
+    const reserved = new Set(slots.slice(index + 1).map(cardItem));
+    const available = q => !used.has(cardItem(q)) && !reserved.has(cardItem(q));
+    const find = (group, test, sort) => {
+      for (const id of groups[group]) {
+        if (focused.has(id)) continue;
+        const q = byBlock.get(id).filter(q => available(q) && test(q, id)).sort(sort)[0];
+        if (q) return {q, id};
+      }
+      return null;
+    };
+    const weak = q => q.kind === "block" || (q.kind === "infer" && allMet(state, q));
+    const prove = q => q.kind === "infer" && newPattern(state, q.patternKey) && allMet(state, q);
+    const leastRecent = (a, b) => last(a) - last(b);
+    const weakOrder = (a, b) => Number(!newPattern(state, a.patternKey)) - Number(!newPattern(state, b.patternKey)) || leastRecent(a, b);
+    const fresh = (q, id) => q.kind === "block" || (q.kind === "build" && allMet(state, q, id));
+    const blockFirst = (a, b) => Number(a.kind !== "block") - Number(b.kind !== "block") || leastRecent(a, b);
+    const back = returning.find(available);
+    const chosen = back ? {q: {...back, comeback: true}, id: back.blocks[0]} : find("weak", q => weak(q) && (!last(q) || now - last(q) >= RECENT_MS), weakOrder)
+      || find("prove", prove, leastRecent)
+      || find("fresh", fresh, blockFirst)
+      || find("weak", weak, weakOrder);
+    if (chosen) focused.add(chosen.id);
+    const q = chosen?.q || fallback;
+    used.add(cardItem(q));
+    return q;
+  });
 }
 
 // ---- The rank ----
@@ -862,7 +999,7 @@ export function answerSpeech(q) {
   const word = (text, reading) => text && reading && text !== reading ? text + "【" + reading + "】" : text || reading || "";
   const pattern = text => String(text || "").replace(/[〜～]/g, "").replace(/（[^）]*）|\([^)]*\)/g, "").trim();
   if (["reading", "meaning", "definition", "listen", "homophone"].includes(q.kind)) return word(q.solution?.word, q.solution?.reading) || null;
-  if (q.kind === "grammar") return pattern(q.solution?.word || q.prompt) || null;
+  if (q.kind === "grammar" || grammarBlockCard(q)) return pattern(q.solution?.word || q.prompt) || null;
   if (q.kind === "connective") return q.answer;
   if (q.kind === "exam" && q.target) return q.target[0] === "grammar" ? pattern(q.target[1]) || null : word(q.target[1], q.target[2]).replace(/[〜～]/g, "") || null;
   return null;

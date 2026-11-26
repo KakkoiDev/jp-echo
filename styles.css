@@ -2249,6 +2249,8 @@ body[data-view=game] .n2-game{position:fixed;inset:0;box-sizing:border-box;width
 .qr-small{font-size:13px;color:var(--ink-muted)}
 .qr-center{text-align:center}
 .qr-chip{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:none;background:var(--track);color:var(--sumi);white-space:nowrap}
+.qr-grammar-parts:not([hidden]){display:flex;flex-wrap:wrap;justify-content:center;gap:4px;margin-top:8px}
+.qr-grammar-parts .qr-chip{height:auto;min-height:24px;white-space:normal}
 .qr-chip[data-tone=gold]{background:var(--gold-tint);color:var(--gold)}.qr-chip[data-tone=goldfill]{background:var(--gold);color:var(--panel)}.qr-chip[data-tone=seal]{background:var(--seal-tint);color:var(--seal)}.qr-chip[data-tone=right]{background:var(--right-tint);color:var(--right)}
 /* Home */
 .qr-notice{display:flex;align-items:center;gap:10px;min-height:44px;margin-top:6px;padding:8px 8px 8px 14px;border-radius:14px;background:var(--panel);border:1px solid var(--hairline);font-size:13px;line-height:1.35}

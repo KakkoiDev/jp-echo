@@ -492,7 +492,7 @@ test("the game has its own settings, and switching Open Echo on Quick round on g
 test("a round can be left at any time: the chevron goes back to Home (board 2)", () => {
   const mock = src("../n2-mock.js");
   assert.match(mock, /\$\("game-back"\)\.setAttribute\("aria-label", "Back to home"\);/);
-  assert.match(mock, /\$\("game-back"\)\.onclick = e => \{ e\.preventDefault\(\); window\.speechSynthesis\?\.cancel\(\); home\(\); \};/);
+  assert.match(mock, /\$\("game-back"\)\.onclick = e => \{ e\.preventDefault\(\); rememberOpenPattern\(\); window\.speechSynthesis\?\.cancel\(\); home\(\); \};/);
 });
 
 test("Radio stays inside the game: Day Radio and Evening recall come back, the Night Radio runs here", () => {
