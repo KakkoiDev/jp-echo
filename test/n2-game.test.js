@@ -659,8 +659,14 @@ test("every grammar card underlines what it asks about, even a pattern that sits
   const {GRAMMAR_SPANS} = await import("../n2-game-review.js");
   const grammar = gamePool({inventory, examples, sets: []}).filter(q => q.kind === "grammar");
   for (const q of grammar) assert.ok(exampleSegments(q.sentence, [q.needle]).some(s => s.mark), q.id + " has an underline");
-  const split = grammar.find(q => q.id === "g:ていては");
-  assert.equal(exampleSegments(split.sentence, [split.needle]).map(s => s.mark ? "[" + s.text + "]" : s.text).join(""), "そんなに休ん[で]ばかり[いては]、仕事が終わらないよ。");
+  // A pattern in pieces by nature keeps its pieces; ていては now has a sentence that shows it whole (deck audit, v287).
+  const split = grammar.find(q => q.id === "g:も-ば-も");
+  assert.equal(exampleSegments(split.sentence, [split.needle]).map(s => s.mark ? "[" + s.text + "]" : s.text).join(""), "彼女は英語[も]話せ[ば]、中国語[も]話せる。");
+  const whole = grammar.find(q => q.id === "g:ていては");
+  assert.equal(exampleSegments(whole.sentence, [whole.needle]).map(s => s.mark ? "[" + s.text + "]" : s.text).join(""), "文句ばかり言っ[ていては]、何も変わらないよ。");
+  // Deck audit: where a natural sentence can show the named form, it does (no voiced or split stand-in).
+  for (const [id, form] of [["g:た末-の末", "た末"], ["g:たって", "たって"], ["g:てならない", "てならない"], ["g:ようではないか", "ようではないか"], ["g:かのようだ", "かのようだ"]])
+    assert.ok(grammar.find(q => q.id === id).sentence.includes(form), id + " shows " + form);
   assert.ok(exampleSegments(split.solution.ja, [split.needle]).some(s => s.mark), "and in the review, with furigana");
   for (const id of Object.keys(GRAMMAR_SPANS)) assert.ok(grammar.some(q => q.id === id), id + " is a grammar card");
   // One piece that is missing means no underline from that needle, never a partial one.

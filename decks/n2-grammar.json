@@ -1,7 +1,7 @@
 {
  "schemaVersion": 2,
  "title": "JLPT N2 grammar — one sentence per point",
- "description": "221 N2 grammar points, each in one natural example sentence with readings. Made for Echo's N2 study.",
+ "description": "221 N2 grammar points, each in one example sentence, chosen so the pattern can be inferred from it, with readings. Made for Echo's N2 study.",
  "sentences": [
   {
    "id": "n2-grammar-0",
@@ -98,8 +98,8 @@
    "id": "n2-grammar-13",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "This letter was without a doubt written by him.",
-   "target": "これは彼【かれ】が書【か】いた手紙【てがみ】に相違【そうい】ない。"
+   "source": "He practiced that much every day, so he will pass without a doubt.",
+   "target": "毎日【まいにち】あれほど練習【れんしゅう】したのだから、彼【かれ】は合格【ごうかく】するに相違【そうい】ない。"
   },
   {
    "id": "n2-grammar-14",
@@ -133,8 +133,8 @@
    "id": "n2-grammar-18",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "In that case, let's postpone the meeting to next week.",
-   "target": "それなら、会議【かいぎ】は来週【らいしゅう】に延期【えんき】しましょう。"
+   "source": "It's raining? In that case, let's watch a film at home today.",
+   "target": "雨【あめ】が降【ふ】っているの？それなら、今日【きょう】は家【いえ】で映画【えいが】を見【み】よう。"
   },
   {
    "id": "n2-grammar-19",
@@ -280,8 +280,8 @@
    "id": "n2-grammar-39",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "After agonizing for a long time, I decided to change jobs.",
-   "target": "長【なが】い間【あいだ】悩【なや】んだ末【すえ】、転職【てんしょく】することに決【き】めた。"
+   "source": "After discussing it many times, we decided to cancel the plan.",
+   "target": "何度【なんど】も話【はな】し合【あ】った末【すえ】、計画【けいかく】を中止【ちゅうし】することにした。"
   },
   {
    "id": "n2-grammar-40",
@@ -371,8 +371,8 @@
    "id": "n2-grammar-52",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "Anyone can apply, with or without experience.",
-   "target": "経験【けいけん】の有無【うむ】にかかわらず、誰【だれ】でも応募【おうぼ】できます。"
+   "source": "Anyone can apply, whether or not they have experience.",
+   "target": "経験【けいけん】があるかないかにかかわらず、誰【だれ】でも応募【おうぼ】できます。"
   },
   {
    "id": "n2-grammar-53",
@@ -588,15 +588,15 @@
    "id": "n2-grammar-83",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "If you keep taking breaks like that, the work won't get done.",
-   "target": "そんなに休【やす】んでばかりいては、仕事【しごと】が終【お】わらないよ。"
+   "source": "If you keep doing nothing but complain, nothing will change.",
+   "target": "文句【もんく】ばかり言【い】っていては、何【なに】も変【か】わらないよ。"
   },
   {
    "id": "n2-grammar-84",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "I very nearly ended up late for an important meeting.",
-   "target": "もう少【すこ】しで、大事【だいじ】な会議【かいぎ】に遅【おく】れるところだった。"
+   "source": "I was just about to go out, so I couldn't answer the phone.",
+   "target": "ちょうど出【で】かけるところだったので、電話【でんわ】に出【で】られなかった。"
   },
   {
    "id": "n2-grammar-85",
@@ -686,8 +686,8 @@
    "id": "n2-grammar-97",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "After dithering for ages, I ended up going home without buying anything.",
-   "target": "さんざん迷【まよ】ったあげく、何【なに】も買【か】わずに帰【かえ】った。"
+   "source": "After dithering for a whole hour, I ended up going home without buying anything.",
+   "target": "一時間【いちじかん】も迷【まよ】ったあげく、何【なに】も買【か】わずに帰【かえ】った。"
   },
   {
    "id": "n2-grammar-98",
@@ -700,8 +700,8 @@
    "id": "n2-grammar-99",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "When it comes to cooking, nobody can beat him.",
-   "target": "料理【りょうり】にかけては、彼【かれ】の右【みぎ】に出【で】る者【もの】はいない。"
+   "source": "When it comes to cooking, he is second to no one in the class.",
+   "target": "料理【りょうり】にかけては、彼【かれ】はクラスの誰【だれ】にも負【ま】けない。"
   },
   {
    "id": "n2-grammar-100",
@@ -868,8 +868,8 @@
    "id": "n2-grammar-123",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "Even so, it's really hot today, isn't it?",
-   "target": "それにしても、今日【きょう】は本当【ほんとう】に暑【あつ】いですね。"
+   "source": "I hear the roads were crowded, but even so, he is far too late.",
+   "target": "道【みち】が混【こ】んでいたそうだが、それにしても遅【おそ】すぎる。"
   },
   {
    "id": "n2-grammar-124",
@@ -959,8 +959,8 @@
    "id": "n2-grammar-136",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "I planned my schedule so that mornings are meetings and afternoons are client visits.",
-   "target": "午前【ごぜん】は会議【かいぎ】、午後【ごご】は外回【そとまわ】りという風【ふう】に予定【よてい】を組【く】んだ。"
+   "source": "I study a different subject each day, in such a way that Monday is English and Tuesday is maths.",
+   "target": "月曜【げつよう】は英語【えいご】、火曜【かよう】は数学【すうがく】という風【ふう】に、毎日【まいにち】違【ちが】う科目【かもく】を勉強【べんきょう】する。"
   },
   {
    "id": "n2-grammar-137",
@@ -1043,15 +1043,15 @@
    "id": "n2-grammar-148",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "Let us all protect our local environment together.",
-   "target": "地域【ちいき】の環境【かんきょう】を、皆【みな】で守【まも】ろうではないか。"
+   "source": "If there are people in trouble, let us all help them.",
+   "target": "困【こま】っている人【ひと】がいるなら、皆【みな】で助【たす】けようではないか。"
   },
   {
    "id": "n2-grammar-149",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "He's wearing a look as if he knows nothing.",
-   "target": "彼【かれ】は何【なに】も知【し】らないかのような顔【かお】をしている。"
+   "source": "It's April, yet it is just as if winter had come back.",
+   "target": "四月【しがつ】なのに、まるで冬【ふゆ】に戻【もど】ったかのようだ。"
   },
   {
    "id": "n2-grammar-150",
@@ -1085,8 +1085,8 @@
    "id": "n2-grammar-154",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "With heavy rain tomorrow, there is a risk the river will flood.",
-   "target": "明日【あした】は大雨【おおあめ】で、川【かわ】が氾濫【はんらん】する恐【おそ】れがある。"
+   "source": "A typhoon is approaching, so there is a risk the trains will stop.",
+   "target": "台風【たいふう】が近【ちか】づいているので、電車【でんしゃ】が止【と】まる恐【おそ】れがある。"
   },
   {
    "id": "n2-grammar-155",
@@ -1358,8 +1358,8 @@
    "id": "n2-grammar-193",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "I can't help worrying about my child's future.",
-   "target": "子【こ】どもの将来【しょうらい】が心配【しんぱい】でならない。"
+   "source": "We lost by a single point, and I can't help feeling bitter about it.",
+   "target": "あと一点【いってん】で負【ま】けてしまい、悔【くや】しくてならない。"
   },
   {
    "id": "n2-grammar-194",
@@ -1386,8 +1386,8 @@
    "id": "n2-grammar-197",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "He's the type of person people call a so-called genius.",
-   "target": "彼【かれ】は、いわゆる天才【てんさい】と呼【よ】ばれるタイプの人【ひと】だ。"
+   "source": "He could read at three; he is what people call a genius.",
+   "target": "彼【かれ】は三歳【さんさい】で字【じ】が読【よ】めた、いわゆる天才【てんさい】だ。"
   },
   {
    "id": "n2-grammar-198",
@@ -1463,8 +1463,8 @@
    "id": "n2-grammar-208",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "However, the budget problem has not yet been resolved.",
-   "target": "しかしながら、予算【よさん】の問題【もんだい】はまだ解決【かいけつ】していない。"
+   "source": "This plan is interesting. However, it costs too much money.",
+   "target": "この計画【けいかく】は面白【おもしろ】い。しかしながら、お金【かね】がかかりすぎる。"
   },
   {
    "id": "n2-grammar-209",
@@ -1477,8 +1477,8 @@
    "id": "n2-grammar-210",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "The taste of this dish makes the high price no surprise.",
-   "target": "この料理【りょうり】の味【あじ】は、値段【ねだん】が高【たか】いだけのことはある。"
+   "source": "This dish is really delicious. No wonder the price is high.",
+   "target": "この料理【りょうり】は本当【ほんとう】においしい。値段【ねだん】が高【たか】いだけのことはある。"
   },
   {
    "id": "n2-grammar-211",
@@ -1547,8 +1547,8 @@
    "id": "n2-grammar-220",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "Even if you hurry now, you won't make it in time.",
-   "target": "今【いま】から急【いそ】いだって、もう間【ま】に合【あ】わないよ。"
+   "source": "Even if you run now, you won't make it in time.",
+   "target": "今【いま】から走【はし】ったって、もう間【ま】に合【あ】わないよ。"
   }
  ]
 }
