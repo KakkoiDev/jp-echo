@@ -1097,7 +1097,7 @@ test("the boss of a level is one of its own papers: an unsat one first, its held
 
 test("the exam screen sits a paper of any level, and the game opens each rank's boss", () => {
   const js = src("../n2-mock.js"), sw = src("../sw.js");
-  assert.match(js, /const levelSet = SET_ID\.test\(year \|\| ""\);\s*const native = bookIds\.includes\(year\) \|\| adaptive \|\| levelSet;/);
+  assert.match(js, /const levelSet = isLevelSet\(year\);\s*const native = bookIds\.includes\(year\) \|\| adaptive \|\| levelSet;/);
   assert.match(js, /const paper = \{id: key, book: id, level, title: [^;]+, edition, minutes: LEVEL_EXAM\[level\]\.minutes, questions: levelRows\(set\)\};/, "the paper names its level and its clocks");
   assert.match(js, /params\.get\("boss"\) === "1" && \(realistic\(year\) \|\| levelSet\)\) state\.boss = true;/);
   assert.match(js, /else \{ bossIds = Object\.keys\(\(await gameSets\.index\(level\)\)\?\.sets \|\| gameSets\.ready\(level\)\?\.sets \|\| \{\}\); gameSets\.keep\(level\)\.catch\(\(\) => \{\}\); \}/, "the papers are kept on the device ahead of the boss");

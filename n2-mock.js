@@ -11,7 +11,7 @@ import {RADIO_DEFAULTS,RADIO_PHASE_COPY,clockAt,radioPhase,radioPlan,radioSteps}
 import {readNights, nightComparison, comparisonLine, eveningRecall, EVENING_SOURCE, nightPlan, nightRecord, keepNight, NIGHT_KEY} from "./n2-night.js";
 import {heardGap, grammarBlockCard, grammarCoverage, kanjiCoverage, levelCoverage, isCovered, aheadLevel, applyBoss, verdictLine, rankOf, setRank, rankLevels, hasBoss, RANKS, inSlump, itemLevel, levelAfter, ITEM_LEVEL, gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, patternVoice, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
 import {createLevels} from "./jlpt-levels.js";
-import {createSets, levelRows, SET_ID, setLevel, heldOut} from "./jlpt-sets.js";
+import {createSets, levelRows, SET_LEVELS, setLevel, heldOut} from "./jlpt-sets.js";
 import {spokenWord,radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
 import {TAG,TAGS,HELD_OUT,CAUSES,comprehensionStats,weakestTag,tagDrill,drillExposure,attemptTags,tagsOf,sourceOf} from "./n2-comprehension.js";
 import {exampleSegments,patternNeedles,delayedChecks,checkItems,checkAsk,contextNote,sentenceParts,checkDetail,audioGrade,delayedAccuracy,CHECK_SOURCE,WHY_LINE,evidenceFor,evidenceLine} from "./n2-delayed.js";
@@ -27,8 +27,10 @@ const $ = id => document.getElementById(id);
 const params = new URLSearchParams(location.search);
 const year = params.get("book");
 const adaptive = /^adaptive-[a-f0-9-]{36}$/.test(year || "");
-// A paper of another level (jlpt-sets.js: n3-set-4): sat on this same screen.
-const levelSet = SET_ID.test(year || "");
+// Only levels served by createSets use the downloaded paper path. N2 has
+// similarly named papers bundled under n2-sets/.
+const isLevelSet = id => Object.hasOwn(SET_LEVELS, setLevel(id));
+const levelSet = isLevelSet(year);
 const native = bookIds.includes(year) || adaptive || levelSet;
 const gameSets = createSets();
 const settings = (() => { try { return JSON.parse(localStorage.getItem("jp-echo-settings") || "{}"); } catch { return {}; } })();
@@ -313,7 +315,7 @@ function officialRows(id) {
 async function getPaper(id, version) {
   // Another level's paper: fetched once and kept (jlpt-sets.js), saved as
   // "<set>@<edition>" so an old attempt always reopens the paper it sat.
-  if (SET_ID.test(id)) {
+  if (isLevelSet(id)) {
     const level = setLevel(id), kept = version && await access("papers", "get", version);
     if (kept) return kept;
     const edition = version?.split("@")[1] || gameSets.ready(level)?.edition || (await gameSets.index(level))?.edition;
