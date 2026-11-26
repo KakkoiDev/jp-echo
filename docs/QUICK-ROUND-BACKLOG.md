@@ -114,6 +114,21 @@ pieces; the designer should correct any of this:
   not a count, so there is no honest "of 136".
 - Not done: the game's Sound switch does not apply on those two screens.
 
+## The boss exam in Quick round's look (owner, 27 Nov 2026)
+
+The boss is sat on the N2 page's exam screen (intro, questions, break,
+listening, results), which wears Echo's Washi look: paper texture, Mincho
+titles, outlined rows. Coming from the game it reads as another app. Remake
+it to match Quick round ("Blitz on washi"): the game's head and chevron, flat
+surfaces, the 14 px clock bar, choices in the UI sans in the thumb zone, the
+game's buttons, and results that read as a round end with the verdict and the
+rank change. One skin over the same screens and logic, as Day Radio and
+Evening recall have (`body[data-from=game]`); never a second exam player.
+Needs boards from the designer first: intro, a written question, a reading
+passage with its questions, a listening question, the break, pause, the
+question grid, results (three sections and two sections), and the rank moving
+up or down. Not started.
+
 ## Grammar from its blocks
 
 The local preview uses existing Quick round grammar cards and adds a row of

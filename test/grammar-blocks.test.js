@@ -220,3 +220,13 @@ test("N5 and N4 particles and endings are taken as known: no card of their own, 
   assert.equal(rememberAnswer({gb: {[only]: [1, 0, 0, 0, 1, 0]}}, {q: infer, outcome: "right", now}).gb[only][3], 1, infer.id);
   assert.equal(rememberAnswer({gb: {}}, {q: infer, outcome: "right", now}).gb[only][3], 0, "the content block itself must be met");
 });
+
+test("the released index is the validated draft, part of the app, and its cards stay practice", async () => {
+  const released = read("../n2-grammar-blocks.json");
+  assert.deepEqual(released, draft, "copy tools/grammar-blocks/draft.json after it passes release validation");
+  assert.deepEqual(validateGrammarBlocks(released).errors, []);
+  assert.ok(readFileSync(new URL("../sw.js", import.meta.url), "utf8").includes('"./n2-grammar-blocks.json"'), "precached");
+  const {REVIEWED_GRAMMAR_BLOCKS} = await import("../n2-game-review.js");
+  assert.equal(REVIEWED_GRAMMAR_BLOCKS, false, "not scored until the cards themselves are reviewed");
+  assert.ok(gamePool({...options, grammarBlocks: released}).filter(grammarBlockCard).every(q => q.practice && q.record));
+});

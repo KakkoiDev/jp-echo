@@ -4,7 +4,7 @@ import {readFileSync} from "node:fs";
 import {payoutCap, sameSense, answerSpeech, runClock, RUN_CLOCK, DIFFICULTY, difficultyOf, pace, WAVE, HOOK, STRETCH, bossProgress, takeBoss, resting, runTable, BOSS_EVERY, EXAM_POINT, atBedtime, BEDTIME, FLOW, BONUS, flowStep, flowMix, flowSeconds, levelOf, bonusPoints, SECONDS, PAUSE, REVIEW_SECONDS, inSlump, nextRound, WARM_UP, gamePool, choicesFor, pickRound, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, nearMisses, gloss, today, lastDays, ranking, bossSet,
   ROUND_SIZE, DAILY_GOAL, RANKS, DEFAULT_RANK, REVIEW_SHARE, rankOf, setRank, rankLevels, hasBoss, levelOfCard,
   itemRecord, itemLevel, ITEM_LEVEL, levelCoverage, KNOWN_LEVEL, COVERED, isCovered, aheadLevel, EXAM_PASS, RANK_RULES, bossVerdict, applyBoss, verdictLine,
-  piecesNeedle, KANJI_KNOWN, KANJI_MIX, newWord, kanjiAfter, kanjiStates, kanjiCoverage, kanjiPick} from "../n2-game.js";
+  heardGap, piecesNeedle, KANJI_KNOWN, KANJI_MIX, newWord, kanjiAfter, kanjiStates, kanjiCoverage, kanjiPick} from "../n2-game.js";
 const ITEM_GAP = ITEM_LEVEL.gapMs;
 import {FETCHED_LEVELS, levelFile} from "../jlpt-levels.js";
 import {REVIEWED_LEVELS} from "../n2-game-review.js";
@@ -1172,4 +1172,27 @@ test("a pattern written in pieces is underlined in every piece", async () => {
     if (pieces.length < 2 || name.includes("・") || !q) continue;
     assert.ok(exampleSegments(q.sentence, [q.needle]).filter(x => x.mark).length >= 2 || key === "お-願う", key + ": " + q.sentence);
   }
+});
+
+// Owner's report, 27 Nov: "there is one sentence, I get the audio, but not the example sentence."
+test("a listen card keeps its sentence when the word is written there in another form", () => {
+  assert.equal(heardGap("夕方【ゆうがた】、縁側【えんがわ】で涼【すず】んでいた。", "涼む"), "涼");
+  assert.equal(heardGap("隣【となり】の部屋【へや】が騒々【そうぞう】しくて眠【ねむ】れない。", "騒々しい"), "騒々し");
+  assert.equal(heardGap("東西【とうざい】に延【の】びる大通【おおどお】り。", "東西"), "東西", "as written when it is there");
+  assert.equal(heardGap("今日【きょう】は暑【あつ】い。", "涼む"), "", "not in the sentence: the sound alone");
+  assert.equal(heardGap("", "涼む"), ""); assert.equal(heardGap("涼む", ""), "");
+  const listen = gamePool({inventory, examples}).filter(q => q.kind === "listen");
+  const alone = listen.filter(q => !heardGap(q.solution.ja, q.prompt));
+  assert.ok(alone.length < listen.length * .02, alone.length + " of " + listen.length + " listen cards are the sound alone: " + alone.slice(0, 8).map(q => q.prompt).join(" "));
+  const mock = src("../n2-mock.js");
+  assert.match(mock, /const gap = listen && q\.solution\?\.ja \? heardGap\(q\.solution\.ja, q\.prompt\) : "";/);
+  assert.match(mock, /\$\("game-blank"\)\.textContent = q\.kind === "listen" \? q\.gap \|\| q\.prompt : q\.answer;/, "the gap fills with what the sentence holds, not the dictionary form");
+});
+
+// Owner, 27 Nov: "a link to the run on Home so that I can look at my mistakes anytime".
+test("a finished run on Home links to its boss results", () => {
+  const js = src("../n2-mock.js");
+  assert.match(js, /el\(sitting \? "a" : "div", \{class: "qr-rk", href: sitting \? "\?book=" \+ encodeURIComponent\(sitting\.book\) \+ "&attempt=" \+ encodeURIComponent\(sitting\.id\) : undefined,/);
+  assert.match(js, /const no = all\.findIndex\(x => x\.at === r\.at\) \+ 1, sitting = r\.exam && bossSitting\(r\);/, "only a run whose boss is finished");
+  assert.match(src("../styles.css"), /\.n2-game a\.qr-rk:hover\{color:var\(--sumi\)\}/);
 });

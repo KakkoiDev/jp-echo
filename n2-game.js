@@ -339,6 +339,16 @@ export function surfaceNeedle(sentence = "", name = "") {
   return "";
 }
 
+// What a listen card leaves out of its sentence: the heard word as written,
+// or, when the sentence has it in another form (涼む heard, 涼んでいた written),
+// the part of it that is there (涼). "" when the sentence does not hold it:
+// the card is then the sound alone. (Owner's report, 27 Nov: a card gave the
+// audio and no sentence; 219 of N2's 1,581 listen cards did.)
+export function heardGap(ja = "", word = "") {
+  const sentence = plain(ja);
+  return !word ? "" : sentence.includes(word) ? word : surfaceNeedle(sentence, word);
+}
+
 // The four choices, in a fixed order per question for exam items (as
 // authored), shuffled otherwise. Near misses come first when there are any.
 // level (0 easy … 1 hard, see flowLevel) decides how many of the confusable

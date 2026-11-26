@@ -9,7 +9,7 @@ import {recognitionFactory} from "./speech.js";
 import {speakOnce,speakAndWait,japaneseVoices,RadioPlayer,NoiseBed} from "./speech.js";
 import {RADIO_DEFAULTS,RADIO_PHASE_COPY,clockAt,radioPhase,radioPlan,radioSteps} from "./radio.js";
 import {readNights, nightComparison, comparisonLine, eveningRecall, EVENING_SOURCE, nightPlan, nightRecord, keepNight, NIGHT_KEY} from "./n2-night.js";
-import {grammarBlockCard, grammarCoverage, kanjiCoverage, levelCoverage, isCovered, aheadLevel, applyBoss, verdictLine, rankOf, setRank, rankLevels, hasBoss, RANKS, inSlump, itemLevel, levelAfter, ITEM_LEVEL, gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, patternVoice, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
+import {heardGap, grammarBlockCard, grammarCoverage, kanjiCoverage, levelCoverage, isCovered, aheadLevel, applyBoss, verdictLine, rankOf, setRank, rankLevels, hasBoss, RANKS, inSlump, itemLevel, levelAfter, ITEM_LEVEL, gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, patternVoice, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
 import {createLevels} from "./jlpt-levels.js";
 import {createSets, levelRows, SET_ID, setLevel, heldOut} from "./jlpt-sets.js";
 import {spokenWord,radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
@@ -1138,6 +1138,7 @@ function readGame() { try { return JSON.parse(localStorage.getItem(GAME_KEY) || 
 // Every save is stamped and marked for the gist sync (the N2 file carries it).
 function writeGame(state) { try { localStorage.setItem(GAME_KEY, JSON.stringify({...state, updatedAt: new Date().toISOString()})); markDirty("n2"); } catch {} }
 const gameLevels = createLevels();
+const RUN_CHEVRON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
 async function game() {
   show("game");
   if (params.get("view") !== "game") history.replaceState(history.state, "", "?view=game");
@@ -1323,9 +1324,10 @@ async function game() {
     $("game-back").href = "./"; $("game-back").setAttribute("aria-label", "Back to Echo"); $("game-back").dataset.end = "false"; $("game-title").textContent = "Quick round";
     $("game-back").onclick = e => { e.preventDefault(); if (history.length > 1 && document.referrer && new URL(document.referrer).origin === location.origin && !/n2-mock\.html\?view=game/.test(document.referrer)) history.back(); else location.href = "./"; };
     const papersById = new Map(data.papers.map(p => [p.id, p]));
-    const examOf = run => {
-      const a = (run.attemptId && data.attempts.find(x => x.id === run.attemptId && x.phase === "results"))
+    const bossSitting = run => (run.attemptId && data.attempts.find(x => x.id === run.attemptId && x.phase === "results"))
         || data.attempts.filter(x => x.book === run.set && x.boss && x.phase === "results" && (x.startedAt || "") >= run.at).sort((x, y) => (x.startedAt || "").localeCompare(y.startedAt || ""))[0];
+    const examOf = run => {
+      const a = bossSitting(run);
       const paper = a && papersById.get(a.paper || a.book);
       return paper ? {...estimate(paper, a), completedAt: a.completedAt} : null;
     };
@@ -1390,10 +1392,15 @@ async function game() {
     // Boards 1 · D has the run card alone; B and C keep two runs and no chart.
     const focus = showCount || stretch;
     $("game-runs-wrap").hidden = focus; $("game-runs-note").hidden = open || rest || !runs.length; $("game-runs-wrap").dataset.empty = String(!runs.length);
-    $("game-runs").replaceChildren(...(runs.length ? runs.slice(0, open || rest ? 2 : 3).map((r, i) => el("div", {class: "qr-rk"},
-      el("span", {class: "p", text: String(i + 1)}), el("span", {text: "Run " + (all.findIndex(x => x.at === r.at) + 1)}),
-      ...(r.exam ? [rest && r.at === latest?.at ? el("span", {class: "qr-chip", "data-tone": "gold", text: "new"}) : el("span", {class: "qr-chip", "data-tone": r.times > 1 ? "seal" : "", text: "×" + r.times})] : [el("span", {class: "qr-tiny", text: "boss not finished"})]),
-      el("span", {class: "v", text: num(r.total)})))
+    // A run whose boss is finished opens that sitting's results: every question, the answer and why (owner, 27 Nov).
+    $("game-runs").replaceChildren(...(runs.length ? runs.slice(0, open || rest ? 2 : 3).map((r, i) => {
+      const no = all.findIndex(x => x.at === r.at) + 1, sitting = r.exam && bossSitting(r);
+      const row = el(sitting ? "a" : "div", {class: "qr-rk", href: sitting ? "?book=" + encodeURIComponent(sitting.book) + "&attempt=" + encodeURIComponent(sitting.id) : undefined, "aria-label": sitting ? "Run " + no + ": review the boss, " + num(r.total) + " points" : undefined},
+        el("span", {class: "p", text: String(i + 1)}), el("span", {text: "Run " + no}),
+        ...(r.exam ? [rest && r.at === latest?.at ? el("span", {class: "qr-chip", "data-tone": "gold", text: "new"}) : el("span", {class: "qr-chip", "data-tone": r.times > 1 ? "seal" : "", text: "×" + r.times})] : [el("span", {class: "qr-tiny", text: "boss not finished"})]),
+        el("span", {class: "v", text: num(r.total)}));
+      if (sitting) row.insertAdjacentHTML("beforeend", RUN_CHEVRON);
+      return row; })
       : [el("div", {class: "qr-rkempty", text: "Your first run lands here once its boss falls."})]));
     // The last 14 days, as bars against the 1,000 line; dashed outlines before the first day (board 12 · D).
     const days = lastDays(st, 14), top = Math.max(DAILY_GOAL * 1.2, ...days.map(d => d.answered)), none = days.every(d => !d.answered);
@@ -1567,7 +1574,10 @@ async function game() {
     if (q.kind === "exam" && /（\s*）/.test(q.prompt)) prompt.replaceChildren(...q.prompt.split(/（\s*）/).flatMap((part, n) => n ? [el("span", {class: "qr-blank"}), part] : [part]));
     // A listen card sits in its sentence, the heard word left as a gap: many
     // words sound alike, and the sentence says which one (report 7bd670be).
-    const heard = listen && q.solution?.ja ? exampleSegments(q.solution.ja, [q.prompt]) : [], inContext = heard.some(s => s.mark);
+    // A word heard in its dictionary form may be written in another (涼む, 涼んでいた): the gap is the part that is there.
+    const gap = listen && q.solution?.ja ? heardGap(q.solution.ja, q.prompt) : "";
+    const heard = gap ? exampleSegments(q.solution.ja, [gap]) : [], inContext = heard.some(s => s.mark);
+    q.gap = inContext ? heard.filter(s => s.mark).map(s => s.text).join("") : "";
     $("game-sentence").hidden = !sentenceKind && !inContext; $("game-sentence").classList.toggle("heard", inContext);
     $("game-sentence").classList.toggle("passage", q.kind === "connective");
     if (q.kind === "connective") { const [a, b] = q.sentence.split("（　）"); $("game-sentence").replaceChildren(a, el("span", {class: "qr-blank", id: "game-blank"}), b || ""); }
@@ -1635,7 +1645,7 @@ async function game() {
     else floatPoints(paid.points, paid.points > 0 ? (q.bonus ? "gold" : "right") : paid.points < 0 ? "wrong" : "zero");
     if (q.practice && streak >= 2) $("game-combo-chip").textContent += " · kept";
     // Board 11 · F: the blank fills with the answer, and its job shows under the card.
-    if ((q.kind === "connective" || q.kind === "listen") && $("game-blank")) { $("game-blank").textContent = q.kind === "listen" ? q.prompt : q.answer; $("game-blank").classList.add("filled"); }
+    if ((q.kind === "connective" || q.kind === "listen") && $("game-blank")) { $("game-blank").textContent = q.kind === "listen" ? q.gap || q.prompt : q.answer; $("game-blank").classList.add("filled"); }
     ribbon(null); stretchStrip();
     // Answer states (fix 7): right tinted with ✓, a wrong pick struck, the rest fade.
     const card = $("game-card"); card.dataset.state = outcome === "right" ? "right" : outcome === "wrong" ? "wrong" : outcome === "timeout" ? "timeout" : "";

@@ -1,6 +1,6 @@
 # Grammar from its blocks — design and build guide
 
-Status: **local preview built**. See the [implementation report](GRAMMAR-BLOCKS-IMPLEMENTATION.md) for the content and browser checks still open. This guide defines the release requirements.
+Status: **built and released as practice cards** (27 Nov 2026). See the [implementation report](GRAMMAR-BLOCKS-IMPLEMENTATION.md): the 40% cap of rule 9 and the gloss rule for one-block patterns were dropped by the owner after the audit.
 The author of this page audits the result against "How the work is audited"
 at the end. If something here is wrong or cannot be done, say so in your
 report; do not quietly do something else.

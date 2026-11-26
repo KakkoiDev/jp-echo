@@ -93,3 +93,14 @@ The guide's audit sample (a random 30, another model than the writer): packet 1,
 4. **The first cards are N5 particles.** A new player's grammar places open with に, は, を… (ordered by level, then use). For an N2 learner that is some 25 cards of things already known, with abstract glosses that are hard to tell apart. Proposed: treat N5 and N4 particle blocks as met from the start.
 5. **`main` has moved** to `ee4b69e` (v296); this branch is cut from `7f7f3ff` and also names its cache v296. Merge and renumber before shipping.
 6. Not done: a native or second-model read of all 188 glosses and 191 literals; the designer's review of the parts row.
+
+## After the owner's decisions (27 Nov 2026, later the same day)
+
+- **No cap on single-use blocks.** The share is reported (`singleShare`, 67.6%), not enforced.
+- **A pattern that is one block** (61 of 221) is learned by its block card: `opaque`, a plain gloss (せめて "At least"), no build or infer card. The gloss rule no longer applies to it.
+- **The last eight multi-part patterns were solved** by glosses alone, 8 of 8. On record: 157 clear, 3 partial, 61 learned whole, none pending. `からすると-からすれば` and `から見ると` are kept apart as a confusable pair (33 pairs).
+- **N5 and N4 particles and endings** (26 blocks: に, は, を, て, だ…) are taken as known (`BASIC_BLOCK`): no card of their own, met in every pattern, left out of the count. 162 blocks remain to learn.
+- **Released.** The draft passes `node tools/validate-grammar-blocks.mjs` with no flags and is copied to `n2-grammar-blocks.json`, precached. The cards are practice (`REVIEWED_GRAMMAR_BLOCKS` is false).
+- Merged with `feat/quick-round-levels` at `6ce7df9` (the run link, v297); this branch is v298, `styles.css?v=215`.
+
+Still open: a native or second-model read of every gloss and literal; the designer's review of the parts row; whether the cards may score.
