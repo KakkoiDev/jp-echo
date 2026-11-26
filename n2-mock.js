@@ -9,7 +9,7 @@ import {recognitionFactory} from "./speech.js";
 import {speakOnce,speakAndWait,japaneseVoices,RadioPlayer,NoiseBed} from "./speech.js";
 import {RADIO_DEFAULTS,RADIO_PHASE_COPY,clockAt,radioPhase,radioPlan,radioSteps} from "./radio.js";
 import {readNights, nightComparison, comparisonLine, eveningRecall, EVENING_SOURCE, nightPlan, nightRecord, keepNight, NIGHT_KEY} from "./n2-night.js";
-import {kanjiCoverage, levelCoverage, isCovered, aheadLevel, applyBoss, verdictLine, rankOf, setRank, rankLevels, hasBoss, RANKS, inSlump, itemLevel, levelAfter, ITEM_LEVEL, gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, patternVoice, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
+import {heardGap, kanjiCoverage, levelCoverage, isCovered, aheadLevel, applyBoss, verdictLine, rankOf, setRank, rankLevels, hasBoss, RANKS, inSlump, itemLevel, levelAfter, ITEM_LEVEL, gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, patternVoice, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
 import {createLevels} from "./jlpt-levels.js";
 import {createSets, levelRows, SET_ID, setLevel, heldOut} from "./jlpt-sets.js";
 import {spokenWord,radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
@@ -1551,7 +1551,10 @@ async function game() {
     if (q.kind === "exam" && /（\s*）/.test(q.prompt)) prompt.replaceChildren(...q.prompt.split(/（\s*）/).flatMap((part, n) => n ? [el("span", {class: "qr-blank"}), part] : [part]));
     // A listen card sits in its sentence, the heard word left as a gap: many
     // words sound alike, and the sentence says which one (report 7bd670be).
-    const heard = listen && q.solution?.ja ? exampleSegments(q.solution.ja, [q.prompt]) : [], inContext = heard.some(s => s.mark);
+    // A word heard in its dictionary form may be written in another (涼む, 涼んでいた): the gap is the part that is there.
+    const gap = listen && q.solution?.ja ? heardGap(q.solution.ja, q.prompt) : "";
+    const heard = gap ? exampleSegments(q.solution.ja, [gap]) : [], inContext = heard.some(s => s.mark);
+    q.gap = inContext ? heard.filter(s => s.mark).map(s => s.text).join("") : "";
     $("game-sentence").hidden = !sentenceKind && !inContext; $("game-sentence").classList.toggle("heard", inContext);
     $("game-sentence").classList.toggle("passage", q.kind === "connective");
     if (q.kind === "connective") { const [a, b] = q.sentence.split("（　）"); $("game-sentence").replaceChildren(a, el("span", {class: "qr-blank", id: "game-blank"}), b || ""); }
@@ -1615,7 +1618,7 @@ async function game() {
     else floatPoints(paid.points, paid.points > 0 ? (q.bonus ? "gold" : "right") : paid.points < 0 ? "wrong" : "zero");
     if (q.practice && streak >= 2) $("game-combo-chip").textContent += " · kept";
     // Board 11 · F: the blank fills with the answer, and its job shows under the card.
-    if ((q.kind === "connective" || q.kind === "listen") && $("game-blank")) { $("game-blank").textContent = q.kind === "listen" ? q.prompt : q.answer; $("game-blank").classList.add("filled"); }
+    if ((q.kind === "connective" || q.kind === "listen") && $("game-blank")) { $("game-blank").textContent = q.kind === "listen" ? q.gap || q.prompt : q.answer; $("game-blank").classList.add("filled"); }
     ribbon(null); stretchStrip();
     // Answer states (fix 7): right tinted with ✓, a wrong pick struck, the rest fade.
     const card = $("game-card"); card.dataset.state = outcome === "right" ? "right" : outcome === "wrong" ? "wrong" : outcome === "timeout" ? "timeout" : "";
