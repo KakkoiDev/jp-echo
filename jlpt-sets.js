@@ -204,6 +204,38 @@ export function createSets({fetchImpl = (...args) => fetch(...args), base = "./s
   return {index, refresh, set, keep, ready};
 }
 
+// A mixed paper: the level's 問題 in order, each block taken from one of the
+// written papers. A block is one question, or one text with all its
+// questions: a text never loses or gains a question. No writing happens
+// here, so a mixed paper costs nothing and needs no network: ten written
+// papers give thousands of different sittings. It is variation, not new
+// material: the questions are ones the level already has, so `seen` (source
+// → how many times this player met it, "n3-set-4#57") lets the least met
+// come first. Held-out papers are never mixed in; they stay whole and unseen.
+//   mixPaper("N3", sets, {seed: 7, seen})
+//   → {id: "n3-mix-7", level, form: "boss", mixed: true, questions, sources}
+// Each question keeps `source`, the paper and index it came from.
+export function mixPaper(level, sets, {seed = 1, form = "boss", seen = {}} = {}) {
+  const blueprint = blueprintOf(level, form), pool = sets.filter(s => s && setLevel(s.id) === level && setForm(s.id) === form && !heldOut(level).includes(s.id));
+  if (!blueprint || !pool.length) return null;
+  let h = (seed * 2654435761) >>> 0; const random = () => { h ^= h << 13; h >>>= 0; h ^= h >>> 17; h ^= h << 5; h >>>= 0; return h / 4294967296; };
+  const questions = [], sources = [], targets = new Set();
+  for (const b of blueprint) {
+    // Every block of this 問題 in every paper: {set, at, size}.
+    const blocks = [];
+    for (const set of pool) { let at = set.questions.findIndex(q => q.skill === b.skill && q.mondai === b.mondai); if (at < 0) continue; for (const size of groupsOf(b)) { blocks.push({set, at, size}); at += size; } }
+    const met = block => { let n = 0; for (let i = 0; i < block.size; i++) n += seen[block.set.id + "#" + (block.at + i)] || 0; return n / block.size; };
+    const order = blocks.map(block => ({block, key: met(block) + random() * 0.999})).sort((x, y) => x.key - y.key).map(x => x.block);
+    for (const size of groupsOf(b)) {
+      const fits = block => block.size === size && !block.used && !Array.from({length: size}, (_, i) => block.set.questions[block.at + i]).some(q => q.target && targets.has(JSON.stringify(q.target)));
+      const block = order.find(fits) || order.find(x => x.size === size && !x.used); if (!block) return null;
+      block.used = true;
+      for (let i = 0; i < size; i++) { const q = block.set.questions[block.at + i], source = block.set.id + "#" + (block.at + i); if (q.target) targets.add(JSON.stringify(q.target)); questions.push({...q, source}); sources.push(source); }
+    }
+  }
+  return {id: level.toLowerCase() + "-mix-" + seed, level, form, mixed: true, theme: "", questions, sources};
+}
+
 // A set as exam rows, as realisticRows (n2-forms.js) makes for N2: each
 // question carries its 問題 number, kind and instruction; skill is 0–3.
 export function levelRows(set) {
@@ -211,7 +243,7 @@ export function levelRows(set) {
   return set.questions.map((q, index) => {
     const b = blueprint.find(b => b.skill === q.skill && b.mondai === q.mondai);
     return {...q, index, skill: skills.indexOf(q.skill), kind: b?.kind, instruction: b?.instruction, block: b?.block,
-      label: (q.skill === L ? "聴解 " : "") + "問題" + q.mondai + " · " + (b?.kind || ""), options: q.choices.length, source: set.id + "#" + index,
+      label: (q.skill === L ? "聴解 " : "") + "問題" + q.mondai + " · " + (b?.kind || ""), options: q.choices.length, source: q.source || set.id + "#" + index,
       ...(q.cue == null ? {} : {cues: Array.isArray(q.cue) ? q.cue : [q.cue]}), ...(q.skill === L && b ? {listening: LISTENING[b.kind]} : {})};
   });
 }

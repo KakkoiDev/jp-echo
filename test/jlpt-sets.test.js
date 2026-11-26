@@ -4,7 +4,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import vm from "node:vm";
 import {readFileSync, existsSync, readdirSync} from "node:fs";
-import {SET_LEVELS, LISTENING, READY_KEY, FORMS, blueprintOf, expectedRows, groupsOf, bossMinutes, heldOut, setLevel, setForm, setPath, createSets, levelRows} from "../jlpt-sets.js";
+import {SET_LEVELS, LISTENING, READY_KEY, FORMS, blueprintOf, expectedRows, groupsOf, bossMinutes, heldOut, setLevel, setForm, setPath, createSets, levelRows, mixPaper} from "../jlpt-sets.js";
 import {validateLevelSet, validatePlan, levelProfile, cuesOf, OUTSIDE_KANJI} from "../tools/validate-level-set.mjs";
 import {execFileSync} from "node:child_process";
 import {alike, likeness, LIMIT} from "../tools/compare-level-sets.mjs";
@@ -139,6 +139,33 @@ test("no two papers of a level ask nearly the same question", () => {
     const sets = Object.keys(index.sets).map(id => read("../" + setPath(level, index.edition, id).slice(2)));
     assert.deepEqual(alike(sets).map(p => p.a.set + "#" + p.a.n + " ~ " + p.b.set + "#" + p.b.n), [], level);
   }
+});
+
+test("a mixed paper takes each block from a written paper and never splits a text", () => {
+  for (const level of Object.keys(SET_LEVELS)) {
+    const index = shipped(level); if (!index || Object.keys(index.sets).length < 3) continue;
+    const sets = Object.keys(index.sets).map(id => read("../" + setPath(level, index.edition, id).slice(2)));
+    const byId = Object.fromEntries(sets.map(s => [s.id, s])), a = mixPaper(level, sets, {seed: 3});
+    assert.equal(a.id, level.toLowerCase() + "-mix-3"); assert.equal(a.questions.length, expectedRows(level).length, level);
+    assert.deepEqual(mixPaper(level, sets, {seed: 3}).sources, a.sources, "the same seed is the same paper");
+    assert.notDeepEqual(mixPaper(level, sets, {seed: 4}).sources, a.sources);
+    assert.ok(new Set(a.sources.map(s => s.split("#")[0])).size > 1, level + ": drawn from more than one paper");
+    assert.ok(a.sources.every(s => !heldOut(level).includes(s.split("#")[0])), "held-out papers are never mixed in");
+    expectedRows(level).forEach((b, i) => { const q = a.questions[i]; assert.ok(q.skill === b.skill && q.mondai === b.mondai, level + " #" + (i + 1)); });
+    // Every question sits with exactly the questions that share its text in its own paper.
+    for (const q of a.questions.filter(q => q.context)) {
+      const [id] = q.source.split("#"), mates = byId[id].questions.map((x, i) => (x.context === q.context ? id + "#" + i : "")).filter(Boolean);
+      assert.ok(mates.every(m => a.sources.includes(m)), level + ": a text keeps all its questions");
+    }
+    assert.equal(new Set(a.sources).size, a.sources.length);
+    const targets = a.questions.filter(q => q.target).map(q => JSON.stringify(q.target));
+    assert.equal(new Set(targets).size, targets.length, level + ": no item is asked twice in one sitting");
+    const rows = levelRows(a); assert.ok(rows.every((r, i) => r.source === a.sources[i] && r.instruction));
+    // What the player met most comes last: a block seen ten times is not picked while fresh ones remain.
+    const first = a.sources[0], again = mixPaper(level, sets, {seed: 3, seen: {[first]: 10}});
+    assert.notEqual(again.sources[0], first);
+  }
+  assert.equal(mixPaper("N3", []), null);
 });
 
 test("the validator refuses what would make a paper unfair or off-level", () => {
