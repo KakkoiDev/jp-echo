@@ -502,7 +502,9 @@ Before considering the change complete:
   boss review (`bossReview`, `startPaperReview`): every wrong or unsure
   answer on the round's own review screen, read and never answered,
   `BOSS_REVIEW` seconds a card (5, or 8 for reading and listening) with the
-  hold button and a "Full paper" link. It is not an exercise: it writes no
+  hold button, a "Full paper" link and its own back button to Home
+  (`#game-review-back`: the review hides the head); the run row says
+  "Boss review" (v304). It is not an exercise: it writes no
   state and counts toward nothing. A reading or listening card shows the
   question's deciding lines (`n2-sets/keys.json`, precached), built by
   `tools/n2-build-keys.mjs` from `tools/boss-keys/<set>.json`: word for word

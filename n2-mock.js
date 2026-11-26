@@ -1416,6 +1416,8 @@ async function game() {
       const row = el(sitting ? "a" : "div", {class: "qr-rk", href: sitting ? "?book=" + encodeURIComponent(sitting.book) + "&attempt=" + encodeURIComponent(sitting.id) : undefined, "aria-label": sitting ? "Run " + no + ": review the boss, " + num(r.total) + " points" : undefined},
         el("span", {class: "p", text: String(i + 1)}), el("span", {text: "Run " + no}),
         ...(r.exam ? [rest && r.at === latest?.at ? el("span", {class: "qr-chip", "data-tone": "gold", text: "new"}) : el("span", {class: "qr-chip", "data-tone": r.times > 1 ? "seal" : "", text: "×" + r.times})] : [el("span", {class: "qr-tiny", text: "boss not finished"})]),
+        // The row says what a tap does (owner, 27 Nov): it opens the boss review.
+        ...(sitting ? [el("span", {class: "qr-tiny qr-rkgo", text: "Boss review"})] : []),
         el("span", {class: "v", text: num(r.total)}));
       if (sitting) row.insertAdjacentHTML("beforeend", RUN_CHEVRON);
       // The run opens its boss review; with nothing missed, or no paper at hand, the link's own results page.
@@ -1742,18 +1744,20 @@ async function game() {
       q: {kind: "paper", id: "paper:" + sitting.book + "#" + it.index, ask: it.ask, prompt: it.ask, mondai: it.mondai, answer: it.answer, seconds: it.seconds, ...(it.heard && it.lines.length ? {say: it.lines.join("　")} : {}),
         solution: {word: it.answer, meaning: "", ja: it.lines.join(""), en: it.en, why: it.why, source: sitting.book + "#" + it.index}}}));
     $("game-back").href = "?view=game"; $("game-back").setAttribute("aria-label", "Back to home"); $("game-back").dataset.end = "false";
-    $("game-back").onclick = e => { e.preventDefault(); clearTimeout(timer); window.speechSynthesis?.cancel(); paperReview = null; root.dataset.paper = "false"; home(); };
+    // The review hides the head, so it carries its own way out: back to Home at any card.
+    $("game-review-back").onclick = () => { clearTimeout(timer); clearInterval(ticker); window.speechSynthesis?.cancel(); paperReview = null; root.dataset.paper = "false"; $("game-review-back").hidden = true; home(); };
     review(0);
     return true;
   }
   function review(n) {
     clearTimeout(timer);
     reviewAt = n;
-    if (!misses[n]) { if (paperReview) { paperReview = null; root.dataset.paper = "false"; window.speechSynthesis?.cancel(); home(); } else done(); return; }
+    if (!misses[n]) { if (paperReview) { paperReview = null; root.dataset.paper = "false"; $("game-review-back").hidden = true; window.speechSynthesis?.cancel(); home(); } else done(); return; }
     const {q, picked} = misses[n], sol = q.solution || {};
     mode("review");
     if (!paperReview) clearRound();
     root.dataset.paper = String(!!paperReview);
+    $("game-review-back").hidden = !paperReview;
     $("game-sub").textContent = (paperReview ? "Boss review · " : "Review · ") + (n + 1) + " of " + misses.length;
     $("game-sub-right").replaceChildren(...(misses[n].from > misses[n].to ? [el("span", {class: "qr-chip", "data-tone": "seal", text: "Lv " + misses[n].from + " → " + misses[n].to})] : []));
     $("game-review-kind").textContent = KIND_LABEL[q.kind];

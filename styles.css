@@ -2551,6 +2551,8 @@ body[data-view=game] .n2-game{position:fixed;inset:0;box-sizing:border-box;width
 .qr-hero .qr-ask u{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:6px;text-decoration-color:var(--seal);color:var(--sumi)}
 .qr-word.line{font-family:var(--ui);font-size:19px;line-height:1.5;text-align:left}
 [data-paper=true] .qr-reviewsay{display:none}
+/* The boss review can be left at any card: the head's back button, in the top line. */
+.qr-topline #game-review-back{margin-right:10px;flex:none}.qr-topline #game-review-back[hidden]{display:none}.qr-topline #game-review-back+#game-sub{margin-right:auto}
 /* A passage line is longer than an example sentence: set smaller so the card and its buttons stay on one screen. */
 [data-paper=true] .qr-exs{font-size:16px;line-height:1.7}[data-paper=true] .qr-ex{padding:12px 14px;margin-top:12px}[data-paper=true] .qr-hero .qr-ask{font-size:15px;margin-bottom:8px}[data-paper=true] .qr-word.line{font-size:17px}[data-paper=true] .qr-pick{margin-top:10px}
 @keyframes n2g-square{from{transform:scale(1.5);background:var(--seal);border-color:var(--seal)}to{transform:none}}

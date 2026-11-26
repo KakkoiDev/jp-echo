@@ -148,4 +148,10 @@ test("the rounds do not say where these cards come from; the review opens from t
   assert.ok(body.includes("review(0);")); assert.ok(!/writeGame|rememberAnswer|rememberRound|access\(/.test(body));
   assert.ok(js.includes("if (!paperReview) clearRound();"), "a round in progress is kept");
   assert.ok(html.includes('id="game-review-ask"') && html.includes('id="game-hold"'));
+  // The row names what a tap opens.
+  assert.ok(js.includes('...(sitting ? [el("span", {class: "qr-tiny qr-rkgo", text: "Boss review"})] : []),'));
+  // The review hides the head, so it has its own back button to Home, at any card (owner, 27 Nov).
+  assert.ok(/<button[^>]*id="game-review-back"[^>]*aria-label="Back to home"[^>]*hidden>/.test(html));
+  assert.ok(js.includes('$("game-review-back").hidden = !paperReview;'), "never on a round's own review");
+  assert.ok(/\$\("game-review-back"\)\.onclick = \(\) => \{ clearTimeout\(timer\);[^\n]*paperReview = null;[^\n]*home\(\); \};/.test(js));
 });
