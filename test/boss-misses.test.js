@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
-import {gamePool, bossCards, bossQueue, bossReview, BOSS_REVIEW, nextRound, rememberAnswer, BOSS_PLACES, BOSS_WORDS, ROUND_SIZE} from "../n2-game.js";
+import {gamePool, bossCards, bossQueue, bossReview, BOSS_REVIEW, resting, endRest, REST_ENDS, nextRound, rememberAnswer, BOSS_PLACES, BOSS_WORDS, ROUND_SIZE} from "../n2-game.js";
 import {examplesFromDecks} from "../day-radio.js";
 import {mergeGame} from "../sync.js";
 import {checkKey, LIMITS} from "../tools/n2-build-keys.mjs";
@@ -154,4 +154,24 @@ test("the rounds do not say where these cards come from; the review opens from t
   assert.ok(/<button[^>]*id="game-review-back"[^>]*aria-label="Back to home"[^>]*hidden>/.test(html));
   assert.ok(js.includes('$("game-review-back").hidden = !paperReview;'), "never on a round's own review");
   assert.ok(/\$\("game-review-back"\)\.onclick = \(\) => \{ clearTimeout\(timer\);[^\n]*paperReview = null;[^\n]*home\(\); \};/.test(js));
+});
+
+test("rest is for the night of the boss: it ends at five, or once the Night Radio has been started", () => {
+  const st = {bossTaken: {set: "n2-set-2", at: "2026-11-26T23:00:00"}, runs: [{at: "2026-11-26T23:00:00", attemptId: "a1"}]};
+  const late = [{id: "a1", book: "n2-set-2", phase: "results", completedAt: new Date("2026-11-27T01:13:00").toISOString()}];
+  assert.equal(REST_ENDS, 5);
+  assert.equal(resting(st, late, new Date("2026-11-27T01:30:00")), true);
+  assert.equal(resting(st, late, new Date("2026-11-27T04:59:00")), true);
+  assert.equal(resting(st, late, new Date("2026-11-27T09:00:00")), false, "the next morning is a new day, though the date is the same");
+  // A boss finished in the afternoon rests through that evening and past midnight, until five.
+  const day = [{...late[0], completedAt: new Date("2026-11-27T15:00:00").toISOString()}];
+  assert.equal(resting(st, day, new Date("2026-11-27T23:50:00")), true);
+  assert.equal(resting(st, day, new Date("2026-11-28T02:00:00")), true);
+  assert.equal(resting(st, day, new Date("2026-11-28T05:01:00")), false);
+  // The Night Radio started: no more Rest screen for this boss; the next boss rests again.
+  const over = endRest(st);
+  assert.equal(over.restOver, st.bossTaken.at); assert.equal(resting(over, late, new Date("2026-11-27T01:30:00")), false);
+  assert.equal(resting({...over, bossTaken: {set: "n2-set-3", at: "2026-11-28T20:00:00"}, runs: [{at: "x", attemptId: "b2"}]}, [{id: "b2", book: "n2-set-3", phase: "results", completedAt: new Date("2026-11-28T21:00:00").toISOString()}], new Date("2026-11-28T22:00:00")), true);
+  assert.deepEqual(endRest({}), {});
+  assert.ok(src("../n2-mock.js").includes('$("game-home-radio").onclick = () => { writeGame(endRest(readGame())); radioPanel(); };'));
 });

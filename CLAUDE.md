@@ -511,6 +511,10 @@ Before considering the change complete:
   from the paper, kept only where a blind solver picked the key from the
   lines alone (`solved`). Sets 2 and 3 so far; without lines the card shows
   the question, the answer and the why.
+- **Rest is the night of the boss (owner, 27 Nov, v304).** `resting`
+  (n2-game.js) holds from the boss's finish until `REST_ENDS` (5 am), and
+  ends at once when the Night Radio is started from Home (`endRest`,
+  `restOver` in the game state). Never the whole calendar day.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

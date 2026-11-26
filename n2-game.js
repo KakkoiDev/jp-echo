@@ -1146,14 +1146,21 @@ export function runClock(start, now = Date.now()) {
   for (const tier of RUN_CLOCK) if (elapsed < tier.hours * 3600_000) return {times: tier.times, leftMs: tier.hours * 3600_000 - elapsed, started: true};
   return {times: 1, leftMs: 0, started: true};
 }
-// Rest is decided by when the boss was finished (today), matched to the exact
+// Rest is decided by when the boss was finished (that night), matched to the exact
 // sitting when the run knows it, so a boss finished after midnight still rests.
 export function resting(state = {}, attempts = [], now = new Date()) {
   const t = state.bossTaken, run = (state.runs || []).at(-1);
   if (!t?.at) return false;
   const done = attempts.find(a => a.phase === "results" && a.completedAt && (run?.attemptId ? a.id === run.attemptId : a.book === t.set && a.completedAt >= t.at));
-  return !!done && localDay(new Date(done.completedAt)) === localDay(now);
+  // Rest is for the evening of the boss, not the day after (owner, 27 Nov): it
+  // ends once the Night Radio has been started (restOver), and at REST_ENDS in
+  // the morning, so a boss finished at 1 am does not rest through the next day.
+  if (!done || state.restOver === t.at) return false;
+  const night = d => localDay(new Date(new Date(d).getTime() - REST_ENDS * 3600_000));
+  return night(done.completedAt) === night(now);
 }
+export const REST_ENDS = 5;
+export const endRest = (state = {}) => state.bossTaken?.at ? {...state, restOver: state.bossTaken.at} : state;
 
 // ---- The answer, spoken ----
 // After each answer the right word or pattern is spoken once (the device's
