@@ -54,7 +54,7 @@ self.addEventListener("fetch",event=>{
   // levels/<version>/n5.json … n1.json, each kept once fetched, in their own cache.
   // The other levels' mock exams (jlpt-sets.js) too: sets/<level>/<edition>/<id>.json
   // never changes and is kept once fetched; sets/<level>/index.json is asked for fresh.
-  const kept=[["./dict/",DICT_CACHE,/\/dict\/[^/]+\/\d{3}\.json$/],["./levels/",LEVELS_CACHE,/\/levels\/[^/]+\/n[1-5]\.json$/],["./sets/",SETS_CACHE,/\/sets\/n[1-5]\/[^/]+\/n[1-5]-set-\d+\.json$/]]
+  const kept=[["./dict/",DICT_CACHE,/\/dict\/[^/]+\/\d{3}\.json$/],["./levels/",LEVELS_CACHE,/\/levels\/[^/]+\/n[1-5]\.json$/],["./sets/",SETS_CACHE,/\/sets\/n[1-5]\/[^/]+\/n[1-5]-(?:set|mini)-\d+\.json$/]]
     .find(([dir])=>url.pathname.startsWith(new URL(dir,self.registration.scope).pathname));
   if(kept){event.respondWith((async()=>{
     const cache=await caches.open(kept[1]),piece=kept[2].test(url.pathname);

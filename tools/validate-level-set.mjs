@@ -3,7 +3,7 @@
 // Usage: node tools/validate-level-set.mjs path/to/n3-set-N.json [--profile]
 //   exit 1 on problems; --profile also prints the level profile (kanji and lengths).
 import {readFileSync} from "node:fs";
-import {SET_LEVELS, expectedRows, setLevel} from "../jlpt-sets.js";
+import {SET_LEVELS, expectedRows, groupsOf, setLevel, setForm} from "../jlpt-sets.js";
 import {TAG} from "../n2-comprehension.js";
 
 const root = new URL("../", import.meta.url);
@@ -58,9 +58,10 @@ export function validateLevelSet(set) {
   const problems = [], level = set.level;
   if (!SET_LEVELS[level]) return ["unknown level " + JSON.stringify(level)];
   const {words, grammar} = knownFor(level), prefix = level.toLowerCase();
-  if (!new RegExp("^" + prefix + "-set-\\d+$").test(set.id || "")) problems.push(`id must be ${prefix}-set-<N>`);
+  if (setLevel(set.id) !== level) problems.push(`id must be ${prefix}-set-<N> or ${prefix}-mini-<N>`);
+  const form = setForm(set.id) || "boss";
   if (!set.theme) problems.push("missing theme");
-  const qs = set.questions || [], expected = expectedRows(level);
+  const qs = set.questions || [], expected = expectedRows(level, form);
   if (qs.length !== expected.length) problems.push(`expected ${expected.length} questions, got ${qs.length}`);
   const seenTargets = new Set(), seenPrompts = new Set(), keys = {3: [0, 0, 0], 4: [0, 0, 0, 0]}, groups = new Map();
   let own = 0, targets = 0;
@@ -128,8 +129,8 @@ export function validateLevelSet(set) {
   const all = new Set();
   for (const [group, contexts] of groups) {
     const b = expected.find(b => b.skill + b.mondai === group);
-    for (let i = 0; i < contexts.length; i += b.group) {
-      const run = contexts.slice(i, i + b.group);
+    for (let i = 0, sizes = groupsOf(b), g = 0; i < contexts.length; i += sizes[g++] || 1) {
+      const run = contexts.slice(i, i + (sizes[g] || 1));
       if (new Set(run).size !== 1) problems.push(`${b.skill} 問題${b.mondai}: questions ${i + 1}–${i + run.length} must share one context`);
       if (all.has(plain(run[0]))) problems.push(`${b.skill} 問題${b.mondai}: a context is used twice`);
       all.add(plain(run[0]));
@@ -142,8 +143,8 @@ export function validateLevelSet(set) {
   }
   if (qs.length === expected.length) {
     const four = expected.filter(b => b.options === 4).length, three = expected.length - four;
-    if (Math.min(...keys[4]) < Math.floor(four / 4 * 0.75)) problems.push(`four-choice keys are unbalanced: ${keys[4].join("/")}`);
-    if (three && Math.min(...keys[3]) < Math.floor(three / 3 * 0.6)) problems.push(`three-choice keys are unbalanced: ${keys[3].join("/")}`);
+    if (four >= 16 && Math.min(...keys[4]) < Math.floor(four / 4 * 0.75)) problems.push(`four-choice keys are unbalanced: ${keys[4].join("/")}`);
+    if (three >= 6 && Math.min(...keys[3]) < Math.floor(three / 3 * 0.6)) problems.push(`three-choice keys are unbalanced: ${keys[3].join("/")}`);
     if (targets && own / targets < OWN_LEVEL_TARGETS) problems.push(`only ${own} of ${targets} targets are ${level} items; at least ${Math.ceil(targets * OWN_LEVEL_TARGETS)} must be`);
     const profile = levelProfile(set);
     if (profile.share > OUTSIDE_KANJI) problems.push(`${(profile.share * 100).toFixed(1)}% of the kanji are outside the ${SET_LEVELS[level].draws.join("/")} inventories (limit ${OUTSIDE_KANJI * 100}%): ${profile.list.slice(0, 40).join(" ")}`);
@@ -151,8 +152,22 @@ export function validateLevelSet(set) {
   return problems;
 }
 
+// A set against its plan (tools/plan-level-set.mjs): the theme, every key
+// where the plan put it, and every target taken from that 問題's candidates.
+export function validatePlan(set, plan) {
+  const problems = [];
+  if (set.id !== plan.id || set.theme !== plan.theme) problems.push(`id and theme must be the plan's: ${plan.id}, ${plan.theme}`);
+  (set.questions || []).forEach((q, i) => {
+    if (q.key !== plan.keys[i]) problems.push(`#${i + 1}: the plan puts the right answer at ${plan.keys[i]}, not ${q.key}`);
+    const pool = plan.pools[q.skill + " 問題" + q.mondai];
+    if (q.target && pool && !pool.some(t => JSON.stringify(t) === JSON.stringify(q.target))) problems.push(`#${i + 1}: target ${JSON.stringify(q.target)} is not one of the plan's candidates for ${q.skill} 問題${q.mondai}`);
+  });
+  return problems;
+}
+
 if (process.argv[1]?.endsWith("validate-level-set.mjs")) {
   const set = JSON.parse(readFileSync(process.argv[2], "utf8")), problems = validateLevelSet(set);
+  if (process.argv.includes("--plan")) problems.push(...validatePlan(set, JSON.parse(readFileSync(process.argv[process.argv.indexOf("--plan") + 1], "utf8"))));
   console.log(problems.length ? problems.join("\n") : "OK");
   if (process.argv.includes("--profile") && SET_LEVELS[set.level]) { const p = levelProfile(set); console.log(`kanji outside ${set.level} and below: ${p.outside} of ${p.kanji} (${(p.share * 100).toFixed(1)}%) ${p.list.join(" ")}`); }
   process.exit(problems.length ? 1 : 0);

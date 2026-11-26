@@ -4,8 +4,9 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import vm from "node:vm";
 import {readFileSync, existsSync, readdirSync} from "node:fs";
-import {SET_LEVELS, LISTENING, READY_KEY, blueprintOf, expectedRows, heldOut, setLevel, setPath, createSets, levelRows} from "../jlpt-sets.js";
-import {validateLevelSet, levelProfile, cuesOf, OUTSIDE_KANJI} from "../tools/validate-level-set.mjs";
+import {SET_LEVELS, LISTENING, READY_KEY, FORMS, blueprintOf, expectedRows, groupsOf, bossMinutes, heldOut, setLevel, setForm, setPath, createSets, levelRows} from "../jlpt-sets.js";
+import {validateLevelSet, validatePlan, levelProfile, cuesOf, OUTSIDE_KANJI} from "../tools/validate-level-set.mjs";
+import {execFileSync} from "node:child_process";
 import {plan} from "../tools/build-level-sets.mjs";
 import {mkdtempSync, writeFileSync, mkdirSync} from "node:fs";
 import {tmpdir} from "node:os";
@@ -37,8 +38,60 @@ test("every level's blueprint fits its exam profile: each 問題 sits under one 
     assert.deepEqual([...new Set(blueprint.map(b => b.block))], blocks, level + " uses every clock, in order");
     assert.equal(draws.at(-1), level); assert.equal(held.length, 2, level + " holds two sets out");
     assert.ok(held.every(id => setLevel(id) === level));
-    assert.ok(blueprint.filter(b => b.needsContext).every(b => b.group >= 1 && b.count % b.group === 0 && b.chars[0] < b.chars[1]), level);
+    assert.ok(blueprint.filter(b => b.needsContext).every(b => groupsOf(b).reduce((a, n) => a + n, 0) === b.count && b.chars[0] < b.chars[1]), level + ": groups add up to the 問題");
+    assert.ok(blueprint.filter(b => b.skill === "Listening").every(b => LISTENING[b.kind]), level);
+    assert.equal(new Set(blueprint.map(b => b.skill + b.mondai)).size, blueprint.length, level + ": 問題 numbers are not repeated");
   }
+});
+
+test("the other levels: N5 and N4 have no 概要理解, N4 adds 用法, N1 has no 表記 and adds 統合理解", () => {
+  const kinds = level => blueprintOf(level).map(b => b.kind), total = (level, form) => expectedRows(level, form).length;
+  assert.deepEqual(["N5", "N4", "N3", "N1"].map(l => total(l)), [67, 85, 102, 100]);
+  assert.ok(!kinds("N5").includes("概要理解") && !kinds("N5").includes("用法") && kinds("N4").includes("用法") && !kinds("N4").includes("概要理解"));
+  assert.ok(!kinds("N1").includes("表記") && kinds("N1").filter(k => k === "統合理解").length === 2);
+  assert.deepEqual(groupsOf(blueprintOf("N1").at(-1)), [1, 2], "N1's last listening 問題: one question, then two on one talk");
+  assert.deepEqual(Object.keys(SET_LEVELS).filter(l => !SET_LEVELS[l].confirmed), ["N5", "N4", "N1"], "only N3's layout has been read against the official paper");
+  assert.deepEqual(SET_LEVELS.N1.draws, ["N5", "N4", "N3", "N2", "N1"]);
+});
+
+test("a mini-boss is the same paper at about a third of the length, with every kind of question", () => {
+  assert.deepEqual(FORMS, ["boss", "mini"]);
+  for (const level of Object.keys(SET_LEVELS)) {
+    const boss = blueprintOf(level), mini = blueprintOf(level, "mini");
+    assert.deepEqual(mini.map(b => b.kind), boss.map(b => b.kind), level);
+    const share = expectedRows(level, "mini").length / expectedRows(level).length;
+    assert.ok(share > 0.3 && share < 0.5, level + " " + share);
+    assert.ok(mini.every(b => b.count >= 1 && groupsOf(b).reduce((a, n) => a + n, 0) === b.count), level);
+  }
+  assert.equal(setForm("n4-mini-3"), "mini"); assert.equal(setForm("n4-set-3"), "boss"); assert.equal(setLevel("n4-mini-3"), "N4"); assert.equal(setLevel("n2-set-3"), "N2"); assert.equal(setLevel("x"), "");
+  // Half the standard time (owner, 26 Nov 2026): N3 sits 30/70/40, so its boss sits 15/35/20.
+  assert.deepEqual(bossMinutes(profiles.N3, "N3"), {vocabulary: 15, grammar_reading: 35, listening: 20});
+  assert.deepEqual(bossMinutes(profiles.N1, "N1"), {knowledge_reading: 55, listening: 28});
+  const mini = bossMinutes(profiles.N5, "N5", "mini");
+  assert.ok(Object.values(mini).every(m => m >= 3) && mini.listening < bossMinutes(profiles.N5, "N5").listening);
+});
+
+test("a plan gives each paper its own candidates, a theme and balanced answer positions", () => {
+  const dir = mkdtempSync(tmpdir() + "/echo-plan-");
+  execFileSync("node", ["tools/plan-level-set.mjs", "N4", "boss", "1-3", dir], {cwd: new URL("../", import.meta.url)});
+  execFileSync("node", ["tools/plan-level-set.mjs", "N4", "mini", "1-1", dir], {cwd: new URL("../", import.meta.url)});
+  const plans = [1, 2, 3].map(n => JSON.parse(readFileSync(dir + "/n4-set-" + n + ".plan.json", "utf8"))), seen = new Set();
+  for (const plan of plans) {
+    assert.equal(plan.keys.length, 85);
+    const four = plan.keys.filter((k, i) => expectedRows("N4")[i].options === 4), counts = [1, 2, 3, 4].map(k => four.filter(x => x === k).length);
+    assert.ok(Math.max(...counts) - Math.min(...counts) <= 1, "each position equally often");
+    for (const b of blueprintOf("N4").filter(b => b.targeted)) assert.equal(plan.pools[b.skill + " 問題" + b.mondai].length, b.count * 3);
+    for (const t of Object.values(plan.pools).flat().filter(t => t[0] === "word")) { const k = JSON.stringify(t); assert.ok(!seen.has(k), "no word is offered to two papers planned together: " + k); seen.add(k); }
+    assert.match(readFileSync(dir + "/" + plan.id + ".brief.md", "utf8"), /Where each right answer goes/);
+  }
+  assert.equal(new Set(plans.map(p => p.theme)).size, 3);
+  assert.equal(JSON.parse(readFileSync(dir + "/n4-mini-1.plan.json", "utf8")).keys.length, expectedRows("N4", "mini").length);
+  // A set is held to its plan.
+  const index = shipped("N3"), set = read("../" + setPath("N3", index.edition, "n3-set-1").slice(2));
+  const plan = {id: set.id, theme: set.theme, keys: set.questions.map(q => q.key), pools: {"Vocabulary 問題1": [set.questions[0].target]}};
+  assert.match(validatePlan(set, plan).join("\n"), /#2: target .* is not one of the plan's candidates/);
+  assert.equal(validatePlan(set, {...plan, pools: {}}).length, 0);
+  assert.match(validatePlan(set, {...plan, pools: {}, keys: plan.keys.map(k => k % 3 + 1)}).join(), /the plan puts the right answer/);
 });
 
 test("every shipped set passes its level's validator, sits within its level and becomes exam rows", () => {
@@ -49,6 +102,7 @@ test("every shipped set passes its level's validator, sits within its level and 
     const dir = "../sets/" + level.toLowerCase() + "/" + index.edition + "/";
     const files = readdirSync(new URL(dir, import.meta.url)).filter(f => f.endsWith(".json"));
     assert.ok(files.length >= 2, level);
+    assert.ok(files.every(f => setLevel(f.slice(0, -5)) === level), level);
     assert.deepEqual(readdirSync(new URL("../sets/" + level.toLowerCase() + "/", import.meta.url)).sort(), [index.edition, "index.json"].sort(), level + " ships one edition");
     assert.deepEqual(Object.keys(index.sets).sort(), files.map(f => f.slice(0, -5)).sort(), level + " index names exactly the files");
     const passages = new Set(), targets = new Map();
@@ -58,7 +112,7 @@ test("every shipped set passes its level's validator, sits within its level and 
       assert.deepEqual(validateLevelSet(set), [], f);
       assert.ok(levelProfile(set).share <= OUTSIDE_KANJI, f);
       const rows = levelRows(set);
-      assert.equal(rows.length, expectedRows(level).length, f);
+      assert.equal(rows.length, expectedRows(level, setForm(set.id)).length, f);
       assert.ok(rows.every(r => r.instruction && r.label.includes("問題") && r.skill >= 0 && r.source === set.id + "#" + r.index), f);
       assert.ok(rows.filter(r => r.skill === 3).every(r => r.listening && r.cues.length), f + ": listening rows carry their presentation and cues");
       const own = new Set();

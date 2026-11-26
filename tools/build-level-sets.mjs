@@ -12,11 +12,11 @@ import {validateLevelSet} from "./validate-level-set.mjs";
 import {setLevel} from "../jlpt-sets.js";
 
 export const EDITION = "2026-11-r2";
-const read = p => JSON.parse(readFileSync(p, "utf8")), number = id => parseInt(id.split("-set-")[1]);
+const read = p => JSON.parse(readFileSync(p, "utf8")), number = id => (id.includes("-mini-") ? 1000 : 0) + parseInt(id.split("-").at(-1));
 // plan(dir, root, asked) → {problems, writes: [[url, text]], indexes: [[url, text]]}; writes nothing.
 export function plan(dir, root, asked = "") {
   const problems = [], writes = [], indexes = new Map();
-  for (const f of readdirSync(dir).filter(f => /^n[1345]-set-\d+\.json$/.test(f)).sort()) {
+  for (const f of readdirSync(dir).filter(f => /^n[1345]-(set|mini)-\d+\.json$/.test(f)).sort()) {
     const set = read(dir + "/" + f), id = f.slice(0, -5), level = setLevel(id), home = new URL(level.toLowerCase() + "/", root);
     const found = set.id === id && set.level === level ? validateLevelSet(set) : ["file name, id and level disagree"];
     if (found.length) { problems.push(f + ": " + found.length + " problems, e.g. " + found[0]); continue; }

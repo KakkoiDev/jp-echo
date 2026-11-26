@@ -52,6 +52,43 @@ const N3 = [
   {skill: L, mondai: 5, kind: "即時応答", count: 9, options: 3, needsContext: true, group: 1, chars: [8, 70], block: "listening", instruction: "まず文を聞いてください。それから、そのへんじを聞いて、1から3の中から、最もよいものを一つえらんでください。"},
 ];
 
+// The other levels, built from the same rows. `I` holds the instruction of
+// each kind; N5 and N4 papers print theirs with fewer kanji, which the exam
+// screen can restyle. Counts are the published composition as known on 26
+// Nov 2026 (after the December 2020 shortening of N4 and N5 and the December
+// 2022 shortening of N1 listening); jlpt.jp was closed that day, so these
+// three are `confirmed: false` until read against the page and the workbooks.
+const I = Object.fromEntries(N3.map(b => [b.kind, b.instruction]));
+I["統合理解R"] = "つぎのＡとＢの文章を読んで、後の問いに対する答えとして最もよいものを、1・2・3・4から一つ選びなさい。";
+I["主張理解（長文）"] = I["内容理解（長文）"];
+I["統合理解"] = "長めの話を聞きます。まず話を聞いてください。それから、質問とせんたくしを聞いて、1から4の中から、最もよいものを一つえらんでください。";
+const TARGET = {"漢字読み": "reading", "表記": "spelling", "文脈規定": "meaning", "言い換え類義": "meaning", "用法": "meaning", "文法形式の判断": "meaning"};
+const BLOCK = (level, skill) => (skill === L ? "listening" : level === "N1" ? "knowledge_reading" : skill === V ? "vocabulary" : "grammar_reading");
+const paper = (level, spec) => { const seen = {}; return spec.map(([skill, kind, count, extra = {}]) => { const mondai = seen[skill] = (seen[skill] || 0) + 1; const context = !(kind in TARGET) && kind !== "文の組み立て";
+  return Object.freeze({skill, mondai, kind, count, options: kind === "発話表現" || kind === "即時応答" ? 3 : 4, ...(TARGET[kind] ? {targeted: TARGET[kind]} : {}), ...(kind === "文の組み立て" ? {star: true} : {}),
+    ...(context ? {needsContext: true, group: 1} : {}), ...extra, block: BLOCK(level, skill), instruction: I[kind === "統合理解" && skill === R ? "統合理解R" : kind]}); }); };
+const N5 = paper("N5", [
+  [V, "漢字読み", 7], [V, "表記", 5], [V, "文脈規定", 6], [V, "言い換え類義", 3],
+  [G, "文法形式の判断", 9], [G, "文の組み立て", 4], [G, "文章の文法", 4, {group: 4, chars: [180, 420]}],
+  [R, "内容理解（短文）", 2, {chars: [70, 220]}], [R, "内容理解（中文）", 2, {group: 2, chars: [200, 400]}], [R, "情報検索", 1, {chars: [150, 520]}],
+  [L, "課題理解", 7, {chars: [80, 320]}], [L, "ポイント理解", 6, {chars: [80, 320]}], [L, "発話表現", 5, {chars: [12, 90]}], [L, "即時応答", 6, {chars: [6, 60]}],
+]);
+const N4 = paper("N4", [
+  [V, "漢字読み", 7], [V, "表記", 5], [V, "文脈規定", 8], [V, "言い換え類義", 4], [V, "用法", 4],
+  [G, "文法形式の判断", 13], [G, "文の組み立て", 4], [G, "文章の文法", 4, {group: 4, chars: [250, 560]}],
+  [R, "内容理解（短文）", 3, {chars: [100, 270]}], [R, "内容理解（中文）", 3, {group: 3, chars: [330, 580]}], [R, "情報検索", 2, {group: 2, chars: [250, 720]}],
+  [L, "課題理解", 8, {chars: [110, 420]}], [L, "ポイント理解", 7, {chars: [110, 420]}], [L, "発話表現", 5, {chars: [12, 90]}], [L, "即時応答", 8, {chars: [6, 65]}],
+]);
+// N1 has no 表記. Its last listening 問題 is two talks: one question, then two
+// on one talk (group [1, 2]).
+const N1 = paper("N1", [
+  [V, "漢字読み", 6], [V, "文脈規定", 7], [V, "言い換え類義", 6], [V, "用法", 6],
+  [G, "文法形式の判断", 10], [G, "文の組み立て", 5], [G, "文章の文法", 5, {group: 5, chars: [550, 1150]}],
+  [R, "内容理解（短文）", 4, {chars: [170, 340]}], [R, "内容理解（中文）", 9, {group: 3, chars: [430, 780]}], [R, "内容理解（長文）", 4, {group: 4, chars: [850, 1450]}],
+  [R, "統合理解", 2, {group: 2, chars: [500, 950]}], [R, "主張理解（長文）", 4, {group: 4, chars: [900, 1550]}], [R, "情報検索", 2, {group: 2, chars: [450, 1250]}],
+  [L, "課題理解", 5, {chars: [250, 680]}], [L, "ポイント理解", 6, {chars: [250, 720]}], [L, "概要理解", 5, {chars: [250, 620]}], [L, "即時応答", 11, {chars: [10, 95]}], [L, "統合理解", 3, {group: [1, 2], chars: [450, 1150]}],
+]);
+
 // How each listening 問題 is presented on the real paper, which a scored
 // sitting must follow (one play, no transcript): `printed` is what the paper
 // shows ("choices", "picture" or nothing), `preview` whether there is time to
@@ -75,13 +112,31 @@ export const LISTENING = Object.freeze({
 // 2026 (docs/JLPT-LEVEL-SETS.md). The 2012 workbook is three questions
 // shorter: 9 文脈規定 and 8 即時応答, 99 in all. The counts are a guide
 // (目安): a real sitting can differ by a question or two.
+const level = (blueprint, draws, n, extra) => Object.freeze({blueprint: Object.freeze(blueprint.map(Object.freeze)), draws: Object.freeze(draws), heldOut: Object.freeze([n + "-set-9", n + "-set-10"]), ...extra});
 export const SET_LEVELS = Object.freeze({
-  N3: Object.freeze({blueprint: Object.freeze(N3.map(Object.freeze)), draws: Object.freeze(["N5", "N4", "N3"]), heldOut: Object.freeze(["n3-set-9", "n3-set-10"]), layout: "2018 workbook and published composition", confirmed: true}),
+  N5: level(N5, ["N5"], "n5", {layout: "published composition as known (after December 2020)", confirmed: false}),
+  N4: level(N4, ["N5", "N4"], "n4", {layout: "published composition as known (after December 2020)", confirmed: false}),
+  N3: level(N3, ["N5", "N4", "N3"], "n3", {layout: "2018 workbook and published composition", confirmed: true}),
+  N1: level(N1, ["N5", "N4", "N3", "N2", "N1"], "n1", {layout: "published composition as known (listening after December 2022)", confirmed: false}),
 });
-export const blueprintOf = level => SET_LEVELS[level]?.blueprint || null;
-export const expectedRows = level => (blueprintOf(level) || []).flatMap(b => Array(b.count).fill(b));
+// The sizes of the groups of a 問題 that share one context, in order.
+export const groupsOf = b => (Array.isArray(b.group) ? b.group : Array(Math.ceil(b.count / (b.group || 1))).fill(b.group || 1));
+// Two forms of paper. "boss" is the whole exam. "mini" is the mini-boss: the
+// same 問題 in the same order at about a third of the length, never fewer than
+// one whole group of a 問題, so every kind of question still appears.
+export const FORMS = Object.freeze(["boss", "mini"]);
+const miniCount = b => { const g = Array.isArray(b.group) ? b.group.at(-1) : b.group || 1; return Math.max(g, Math.round(b.count / 3 / g) * g); };
+const miniRow = b => Object.freeze({...b, count: miniCount(b), ...(Array.isArray(b.group) ? {group: b.group.at(-1)} : {})});
+export const blueprintOf = (level, form = "boss") => { const full = SET_LEVELS[level]?.blueprint; return !full ? null : form === "mini" ? full.map(miniRow) : full; };
+export const expectedRows = (level, form = "boss") => (blueprintOf(level, form) || []).flatMap(b => Array(b.count).fill(b));
 export const heldOut = level => SET_LEVELS[level]?.heldOut || [];
-export const setLevel = id => { const m = /^n([1-5])-set-\d+$/.exec(String(id || "")); return m ? "N" + m[1] : ""; };
+// A set's id says its level and form: n3-set-4 is a boss, n3-mini-2 a mini-boss.
+export const SET_ID = /^n([1-5])-(set|mini)-(\d+)$/;
+export const setLevel = id => { const m = SET_ID.exec(String(id || "")); return m ? "N" + m[1] : ""; };
+export const setForm = id => { const m = SET_ID.exec(String(id || "")); return !m ? "" : m[2] === "mini" ? "mini" : "boss"; };
+// Half the standard time, as the owner set on 26 Nov 2026: the boss is sat
+// and graded under time pressure. Minutes per clock for a level and form.
+export const bossMinutes = (profile, level, form = "boss") => Object.fromEntries(profile.timedBlocks.map(b => [b.id, Math.max(3, Math.ceil(b.minutes / 2 * (form === "mini" ? expectedRows(level, "mini").filter(r => r.block === b.id).length / Math.max(1, expectedRows(level).filter(r => r.block === b.id).length) : 1)))]));
 export const setsDir = level => "./sets/" + String(level).toLowerCase() + "/";
 export const setPath = (level, edition, id) => setsDir(level) + edition + "/" + id + ".json";
 
@@ -108,7 +163,7 @@ export const setPath = (level, edition, id) => setsDir(level) + edition + "/" + 
 export const READY_KEY = "echo-jlpt-sets-ready";
 const memory = () => { const m = new Map(); return {getItem: k => (m.has(k) ? m.get(k) : null), setItem: (k, v) => { m.set(k, v); }}; };
 const deviceStore = () => { try { if (globalThis.localStorage) return globalThis.localStorage; } catch { /* private mode */ } return memory(); };
-const whole = i => !!i && typeof i.edition === "string" && /^[\w.-]+$/.test(i.edition) && !!i.sets && typeof i.sets === "object" && Object.keys(i.sets).every(id => /^n[1-5]-set-\d+$/.test(id));
+const whole = i => !!i && typeof i.edition === "string" && /^[\w.-]+$/.test(i.edition) && !!i.sets && typeof i.sets === "object" && Object.keys(i.sets).every(id => SET_ID.test(id));
 export function createSets({fetchImpl = (...args) => fetch(...args), base = "./sets/", store = deviceStore()} = {}) {
   const indexes = new Map(), kept = new Map();
   const dir = level => base + String(level).toLowerCase() + "/";
@@ -126,7 +181,7 @@ export function createSets({fetchImpl = (...args) => fetch(...args), base = "./s
   function file(level, id, edition) {
     const key = level + "/" + edition + "/" + id;
     if (!kept.has(key)) kept.set(key, json(dir(level) + edition + "/" + id + ".json")
-      .then(s => (s && s.id === id && s.level === level && Array.isArray(s.questions) && s.questions.length === expectedRows(level).length ? s : null))
+      .then(s => (s && s.id === id && s.level === level && Array.isArray(s.questions) && s.questions.length === expectedRows(level, setForm(id)).length ? s : null))
       .then(s => { if (!s) kept.delete(key); return s; }));
     return kept.get(key);
   }
@@ -152,7 +207,7 @@ export function createSets({fetchImpl = (...args) => fetch(...args), base = "./s
 // A set as exam rows, as realisticRows (n2-forms.js) makes for N2: each
 // question carries its 問題 number, kind and instruction; skill is 0–3.
 export function levelRows(set) {
-  const skills = [V, G, R, L], blueprint = blueprintOf(set.level || setLevel(set.id)) || [];
+  const skills = [V, G, R, L], blueprint = blueprintOf(set.level || setLevel(set.id), setForm(set.id)) || [];
   return set.questions.map((q, index) => {
     const b = blueprint.find(b => b.skill === q.skill && b.mondai === q.mondai);
     return {...q, index, skill: skills.indexOf(q.skill), kind: b?.kind, instruction: b?.instruction, block: b?.block,
