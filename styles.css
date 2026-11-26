@@ -2531,7 +2531,7 @@ body[data-from=game] .drill-bar span{height:8px;border-radius:4px;background:var
 body[data-from=game] .segmented{gap:4px;margin-top:14px;padding:4px;border:0;border-radius:14px;background:var(--rule);overflow:visible}
 body[data-from=game] .segmented [role=tab]{border:0;border-radius:10px;color:var(--sumi);font-size:14px;font-weight:700;letter-spacing:normal;box-shadow:none}
 body[data-from=game] .segmented [role=tab][aria-selected=true]{background:var(--panel);color:var(--sumi);box-shadow:0 1px 2px rgba(0,0,0,.12)}
-body[data-from=game] .n2-day-howto{margin-top:12px;padding:0 16px;border:1px solid var(--hairline);border-radius:18px;background:var(--panel)}
+body[data-from=game] #day-howto{margin-top:12px;padding:0 16px;border:1px solid var(--hairline);border-radius:18px;background:var(--panel)}
 body[data-from=game] .n2-day-howto .collapse-title{font-family:var(--ui);font-size:15px;font-weight:700}
 body[data-from=game] .chips{gap:6px;margin-top:12px}
 body[data-from=game] .chips button{height:32px;min-height:32px;padding:0 12px;border:0;border-radius:16px;background:var(--rule);color:var(--sumi);font-size:12px;font-weight:700}

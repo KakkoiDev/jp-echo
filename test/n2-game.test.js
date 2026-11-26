@@ -649,6 +649,7 @@ test("Radio from the game: Day and Night start alike, and Day Radio and Evening 
   assert.match(mock, /if \(FROM_GAME\) \{ document\.body\.dataset\.from = "game";/);
   assert.match(css, /body\[data-from=game\]\{background-image:none;background:var\(--washi\);font-family:var\(--ui\)\}/);
   assert.match(css, /body\[data-from=game\] \.drill-title\{font-family:var\(--ui\);font-size:20px;font-weight:900/);
+  assert.match(css, /body\[data-from=game\] #day-howto\{margin-top:12px;padding:0 16px;border:1px solid var\(--hairline\)/, "the how-to card keeps its gap and top edge (Echo's first-row rule zeroed both)");
   assert.doesNotMatch(css.slice(css.indexOf("body[data-from=game]{"), css.indexOf("/* Day Radio */")), /#[0-9A-Fa-f]{6}\b/, "tokens only in the skin");
   assert.match(mock, /\$\("day-done-back"\)\.href = "\?view=game&panel=radio"/, "the end of Day Radio leads back to the game's Radio");
 });
