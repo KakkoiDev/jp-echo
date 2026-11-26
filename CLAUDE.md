@@ -553,6 +553,12 @@ Before considering the change complete:
   until the answer was known by the look of the card. Every boss review card
   is spoken once (`say`): the word, the pattern, a listening line, or else
   the answer.
+- **A connective excerpt is one sentence before the gap (owner, 27 Nov,
+  v307).** At most `CONNECTIVE_PREV` (60) characters before （　）, cut at a
+  comma with an ellipsis when longer: a long excerpt was known by its shape.
+  A missed connective's review is the word and its short meaning large
+  (`solution.meaning`), its job as the why (`solution.why`), and the gap's
+  own sentence. This replaces "up to two sentences before the blank" above.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

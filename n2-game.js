@@ -345,18 +345,24 @@ function addGrammarBlocks(pool, {blocks = {}, patterns = {}}) {
 // The level a card belongs to: cards without one are N2's.
 export const levelOfCard = q => q?.level || "N2";
 
+export const CONNECTIVE_PREV = 60;
 function connectiveQuestion(source, text, site) {
   const job = jobOf(site.word);
   if (!job) return [];
   const before = text.slice(0, site.at).replace(/\n/g, ""), after = text.slice(site.at + site.word.length);
-  const prev = (before.match(/(?:[^。」]*[。」]){1,2}\s*$/) || [""])[0].trim();
+  // One sentence before the gap, no more (owner, 27 Nov): a long excerpt is known by its shape, not read. A
+  // sentence over CONNECTIVE_PREV characters is cut at a comma, and the cut shown with an ellipsis.
+  let prev = (before.match(/[^。」]*[。」]\s*$/) || [""])[0].trim();
+  if (prev.length > CONNECTIVE_PREV) { const tail = prev.slice(-CONNECTIVE_PREV), cut = tail.indexOf("、"); prev = "…" + (cut >= 0 && cut < tail.length - 12 ? tail.slice(cut + 1) : tail); }
   const rest = (after.match(/^、[^。\n]*[。」]?/) || [""])[0];
   if (!prev || rest.length < 6) return [];
   const blocked = new Set(OVERLAP[job] || [job]);
   const wrong = Object.entries(CHOICE_FOR_JOB).filter(([j]) => !blocked.has(j)).map(([, w]) => w);
   return [{id: "c:" + source + "@" + site.at, kind: "connective", ...(SCORE_ALL ? {} : {practice: true}), target: null, dimension: null, prompt: "（　）に入るのは？",
     sentence: prev + "（　）" + rest, needle: "（　）", answer: site.word, wrong, seconds: SECONDS.connective,
-    solution: {word: site.word, meaning: glossOf(site.word) + " · " + JOBS[job], ja: prev + site.word + rest, source, job}}];
+    // The review of a miss is the word and its meaning at a glance, like any word: the connective, its short
+    // meaning large, its job as the why, and the gap's own sentence.
+    solution: {word: site.word, meaning: glossOf(site.word), why: JOBS[job], ja: site.word + rest, source, job}}];
 }
 
 // A pattern written in pieces (にしろ～にしろ, ことは〜が, ないことには～ない) is

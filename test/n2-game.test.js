@@ -567,7 +567,8 @@ test("re-audit P2: the audit export shows the underline, practice and the filter
   const reading = src("../audit/quick-round/questions/reading.jsonl").split("\n").find(l => l.includes('"r:的確"'));
   if (reading) assert.ok(!JSON.parse(reading).wrongCandidates.includes("てっかく"));
   assert.doesNotMatch(src("../audit/quick-round/data/readings.tsv").split("\n").find(l => l.startsWith("的確\t")) || "", /てっかく/);
-  assert.match(src("../audit/quick-round/questions/connective.jsonl"), /"practice":true/);
+  // Every card is scored since SCORE_ALL (owner, 27 Nov): the export no longer marks connectives as practice.
+  assert.doesNotMatch(src("../audit/quick-round/questions/connective.jsonl"), /"practice":true/);
   assert.match(src("../audit/quick-round/questions/grammar.jsonl"), /"underline":/);
 });
 
