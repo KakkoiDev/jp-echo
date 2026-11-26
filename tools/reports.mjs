@@ -35,6 +35,6 @@ for (const r of reports) {
   if (r.reasons?.length) console.log("  reasons: " + r.reasons.join(", "));
   if (r.note) console.log("  note: " + r.note);
   if (r.subject?.extra && Object.keys(r.subject.extra).length) console.log("  context: " + JSON.stringify(r.subject.extra));
-  if (r.snapshot) console.log("  snapshot: " + r.snapshot.width + "×" + r.snapshot.height + " · theme " + r.snapshot.theme + " · motion " + r.snapshot.motion + " · " + (r.snapshot.html.length / 1000).toFixed(1) + " kB (--html " + r.id.slice(0, 8) + ")");
+  if (r.snapshot) console.log("  snapshot: " + r.snapshot.width + "×" + r.snapshot.height + " (page " + (r.snapshot.page || "?") + ", scrolled " + r.snapshot.scroll + ") · theme " + r.snapshot.theme + " · motion " + r.snapshot.motion + " · " + (r.snapshot.html.length / 1000).toFixed(1) + " kB (--html " + r.id.slice(0, 8) + ")");
   console.log("  id: " + r.id);
 }

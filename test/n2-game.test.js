@@ -634,3 +634,9 @@ test("the game says which version is running and offers a waiting update itself,
   handlers.message({data: "echo:version", ports: [{postMessage: v => { told = v; }}]});
   assert.match(told, /^jp-echo-v\d+$/);
 });
+
+test("the game is pinned to the screen: nothing above it and no viewport unit can push Radio and Settings below the fold", () => {
+  const css = src("../styles.css");
+  assert.match(css, /body\[data-view=game\] \.n2-game\{position:fixed;inset:0;box-sizing:border-box;width:100%;min-height:0;padding:0 16px;overflow-y:auto;/);
+  assert.match(css, /body\[data-view=game\] #n2-main\{padding:0\}/, "the 16 px gutter moved onto the game itself");
+});

@@ -74,7 +74,7 @@ export function screenSnapshot(host) {
     for (const node of copy.querySelectorAll("[data-drop]")) node.remove();
     for (const node of copy.querySelectorAll("input,textarea")) node.removeAttribute("value");
     const root = document.documentElement, sheet = document.querySelector('link[rel=stylesheet][href*="styles.css"]')?.getAttribute("href") || "";
-    return {html: copy.outerHTML, width: innerWidth, height: innerHeight, dpr: devicePixelRatio || 1, scroll: Math.round(scrollY),
+    return {html: copy.outerHTML, width: innerWidth, height: innerHeight, dpr: devicePixelRatio || 1, scroll: Math.round(scrollY || host.scrollTop || 0), page: Math.max(root.scrollHeight, host.scrollHeight),
       theme: (root.dataset.theme || "system") + "/" + (matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light"),
       motion: (matchMedia?.("(prefers-reduced-motion: reduce)").matches ? "reduce" : "full") + (root.classList.contains("motion-off") ? "/off" : root.classList.contains("motion-on") ? "/on" : ""),
       view: document.body.dataset.view || "", css: sheet};
@@ -82,7 +82,7 @@ export function screenSnapshot(host) {
 }
 function cleanSnapshot(s) {
   if (!s || typeof s !== "object" || !s.html) return null;
-  return {html: String(s.html).slice(0, SNAPSHOT_MAX), width: Number(s.width) || 0, height: Number(s.height) || 0, dpr: Number(s.dpr) || 1, scroll: Number(s.scroll) || 0,
+  return {html: String(s.html).slice(0, SNAPSHOT_MAX), width: Number(s.width) || 0, height: Number(s.height) || 0, dpr: Number(s.dpr) || 1, scroll: Number(s.scroll) || 0, page: Number(s.page) || 0,
     theme: clip(s.theme, 20), motion: clip(s.motion, 20), view: clip(s.view, 20), css: clip(s.css, 60)};
 }
 export function createReport({kind = "bug", reasons = [], note = "", subject = null, screen = {}, version = "", device = {}, snapshot = null, now = new Date()} = {}) {

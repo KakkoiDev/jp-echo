@@ -2173,7 +2173,13 @@ html.motion-off .n2-breath span{transition:none}
    new token. Flat surfaces: no paper texture in the game. */
 .n2-game{--right:var(--chip-learn-fg);--right-tint:var(--chip-learn-bg);--track:var(--rule);display:flex;flex-direction:column;min-height:100dvh;position:relative;font-family:var(--ui);color:var(--sumi);max-width:480px;margin:0 auto}
 body[data-view=game]{background-image:none;background:var(--washi)}
-body[data-view=game] #n2-main{padding:0 16px}
+/* The game is pinned to the screen itself, not sized with 100dvh inside the
+   page: on the phone the page sometimes came out about a nav bar taller than
+   the screen after a reload, and Radio and Settings fell below the fold (owner,
+   26 Nov). Pinned, nothing above it and no viewport unit can push it down; if
+   a small screen can't hold a state, the game scrolls inside itself. */
+body[data-view=game] #n2-main{padding:0}
+body[data-view=game] .n2-game{position:fixed;inset:0;box-sizing:border-box;width:100%;min-height:0;padding:0 16px;overflow-y:auto;overscroll-behavior:contain;background:var(--washi)}
 .qr-hd{display:flex;align-items:center;gap:10px;padding:12px 0 10px;min-height:66px}
 /* The game starts from zero: Echo's base element styles (button, label,
    input, select, link colour) are reset inside it, so only the boards' rules
