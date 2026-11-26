@@ -51,6 +51,8 @@ export function scored(data) {
   for(const a of data.attempts){
     const paper=papers.get(a.paper||a.book);
     if(!paper) continue;
+    // A paper of another level (jlpt-sets.js) is not N2 evidence: it never moves N2's weak targets or plan.
+    if(paper.level&&paper.level!=="N2") continue;
     paper.questions.forEach((q,index)=>{
       if(a.phase!=="results" && (a.phase==="written" || q.skill===3)) return;
       rows.push({book:a.book,attemptId:a.id,at:a.completedAt||a.startedAt||"",paper:paper.id,index,source:q.source,skill:q.skill,target:q.target,dimension:q.dimension,context:q.context,

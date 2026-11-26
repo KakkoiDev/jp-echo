@@ -452,6 +452,20 @@ Before considering the change complete:
   (`kanjiCoverage`). Outside N2 every kanji word has a reading card: where a
   reading has no trap of its own, readings of words sharing a kanji are the
   wrong choices. N2's reading cards are not widened.
+- **Every rank has a boss (owner, 27 Nov, v291).** The exam screen sits a
+  paper of any level: `?book=n3-set-4` opens `sets/<level>/` through
+  `createSets()` / `levelRows` (jlpt-sets.js), saved as `<set>@<edition>` with
+  `level` on the paper. `LEVEL_EXAM` (n2-study.js) holds each level's
+  sections, minimums, pass mark and clocks; `estimate` follows the paper's
+  level (N4 and N5: two sections, 120 and 60). The written part is one clock
+  on this screen; on the real N3, N4 and N5 papers vocabulary has its own.
+  A level paper is never N2 evidence (`scored`, n2-progress.js). In the game
+  `BOSS_LEVELS` is every rank, so `applyBoss` moves the rank freely; the boss
+  of a rank is one of its own papers (`bossIds`, `bossSet` with the level's
+  held-out sets), kept on the device by `keep(level)` when the rank is
+  loaded. A rank whose papers are not there (N1 until they are written) shows
+  kanji coverage and has no boss. Unreviewed level cards still pay no points,
+  but their answers count toward the day and the 1,000 that open the boss.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

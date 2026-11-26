@@ -399,16 +399,12 @@ export function rememberAnswer(state = {}, {q, outcome, points = 0, fast = false
   // The item record (owner, 26 Nov): how often each card was tried and missed.
   const tried = {...(state.tried || {}), [q.id]: (state.tried?.[q.id] || 0) + 1};
   const missed = outcome === "right" ? state.missed || {} : {...(state.missed || {}), [q.id]: (state.missed?.[q.id] || 0) + 1};
-  // An unreviewed level's card (record): the item record moves, the miss
-  // comes back, and nothing is paid or counted toward the day or the boss.
-  if (q.practice) {
-    const wins = fast ? {...(state.wins || {}), [q.id]: (state.wins?.[q.id] || 0) + 1} : state.wins || {};
-    const was = itemLevel(state, q.id), to = levelAfter(state, {id: q.id, outcome, fast, now});
-    const lv = {...(state.lv || {})}, lvAt = {...(state.lvAt || {})};
-    if (to !== was) { lv[q.id] = to; if (to > was) lvAt[q.id] = now; }
-    const comeback = [...(state.comeback || []).filter(id => id !== q.id), ...(outcome === "right" ? [] : [q.id])].slice(-ROUND_SIZE);
-    return {...state, seen, tried, missed, kj, wins, lv, lvAt, comeback, practiced: (state.practiced || 0) + 1};
-  }
+  // An unreviewed level's card (record) is an answer like any other: the item
+  // record moves, the miss comes back, and it counts toward the day and the
+  // 1,000 that open the boss (owner, 27 Nov: the levels must be playable
+  // now). Only its points wait for the review (the screen pays it nothing),
+  // and it leaves the hidden level alone.
+  if (q.practice) points = 0;
   const wins = {...(state.wins || {})};
   if (fast) wins[q.id] = (wins[q.id] || 0) + 1;
   const was = itemLevel(state, q.id), now_ = levelAfter(state, {id: q.id, outcome, fast, now});
@@ -416,12 +412,12 @@ export function rememberAnswer(state = {}, {q, outcome, points = 0, fast = false
   if (now_ !== was) { lv[q.id] = now_; if (now_ > was) lvAt[q.id] = now; }
   const comeback = (state.comeback || []).filter(id => id !== q.id);
   if (outcome !== "right") comeback.push(q.id); // missed again: it comes back again
-  const level = flowStep(state.level, outcome === "right", difficulty);
+  const level = q.practice ? state.level : flowStep(state.level, outcome === "right", difficulty);
   const runStart = state.runStart || new Date(now).toISOString(); // the run clock starts on its first answer
   const total = (state.total || 0) + points, day = localDay(new Date(now));
   const days = {...(state.days || {})}, d = days[day] || {answered: 0, right: 0, points: 0, rounds: 0, best: 0};
   days[day] = {...d, answered: d.answered + 1, right: d.right + (outcome === "right" ? 1 : 0), points: d.points + points};
-  return {...state, seen, tried, missed, kj, wins, lv, lvAt, level, runStart, comeback: comeback.slice(-ROUND_SIZE), total, answered: (state.answered || 0) + 1, days};
+  return {...state, seen, tried, missed, kj, wins, lv, lvAt, ...(level === undefined ? {} : {level}), ...(q.practice ? {practiced: (state.practiced || 0) + 1} : {}), runStart, comeback: comeback.slice(-ROUND_SIZE), total, answered: (state.answered || 0) + 1, days};
 }
 export function rememberRound(state = {}, {score, questions = [], misses, scored, now = Date.now()}) {
   const seen = {...(state.seen || {})};
@@ -455,14 +451,15 @@ export function ranking(state = {}, top = 5) {
 
 // The day's boss: the first authored set not sat yet (sets 19–20, kept for
 // unseen-passage mocks, come last), else the one sat longest ago.
-export function bossSet({sets = [], attempts = [], now = new Date()}) {
+// held: the level's held-out sets (N2's by default); prefix: what its set ids start with.
+export function bossSet({sets = [], attempts = [], now = new Date(), held = HELD_OUT, prefix = "n2-set-"}) {
   const lastAt = new Map();
   for (const a of attempts) { const at = a.completedAt || a.startedAt || ""; if (a.book && at > (lastAt.get(a.book) || "")) lastAt.set(a.book, at); }
-  const order = [...sets.filter(id => !HELD_OUT.includes(id)), ...sets.filter(id => HELD_OUT.includes(id))];
+  const order = [...sets.filter(id => !held.includes(id)), ...sets.filter(id => held.includes(id))];
   if (!order.length) return null;
   const fresh = order.find(id => !lastAt.has(id));
   const id = fresh || [...order].sort((a, b) => lastAt.get(a).localeCompare(lastAt.get(b)))[0];
-  const day = localDay(now), beatenToday = attempts.some(a => a.phase === "results" && a.completedAt && localDay(new Date(a.completedAt)) === day && (a.book || "").startsWith("n2-set-"));
+  const day = localDay(now), beatenToday = attempts.some(a => a.phase === "results" && a.completedAt && localDay(new Date(a.completedAt)) === day && (a.book || "").startsWith(prefix));
   return {id, fresh: !!fresh, beatenToday};
 }
 
@@ -613,8 +610,12 @@ export function rankLevels(rank = DEFAULT_RANK, reviewed = REVIEWED_LEVELS) {
   const at = RANKS.indexOf(RANKS.includes(rank) ? rank : DEFAULT_RANK), under = RANKS.slice(0, at);
   return {level: RANKS[at], review: RANKS[at] === "N2" ? under.filter(l => reviewed.has(l)) : under};
 }
-// The boss of a rank is a mock of its level. Only N2 has authored sets today.
-export const BOSS_LEVELS = Object.freeze(["N2"]);
+// The boss of a rank is a mock of its level: N2's ship with the app, the
+// others are sets/<level>/ (jlpt-sets.js), fetched and kept. Every level
+// counts as having one (owner, 27 Nov: "do as if the N1 files were already
+// there"), so the rank moves freely; whether a boss can be opened today is
+// the screen's to check (the sets may not be on the device, or not written).
+export const BOSS_LEVELS = RANKS;
 export const hasBoss = rank => BOSS_LEVELS.includes(rank);
 // The level above the rank: once the rank's own words have nearly all been
 // met (COVERED of them), its cards join the review places as a preview, so a

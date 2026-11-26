@@ -153,6 +153,18 @@ Open after v290:
   the second unit: grammar outside N2 still has no cards (no decks).
 - **Home's kanji count** ("N3 kanji · 1 of 638 known · 11 met") is not on a board.
 
+A boss at every rank (v291, owner 27 Nov: "I want the app to be functional
+asap, do as if the N1 files were already there"). N5, N4 and N3 open their
+own papers from the game; the rank moves on the result. Known gaps:
+- **N1 has no papers yet** (two finished drafts, none shipped): at N1 there
+  is no boss and the rank cannot move from there until they ship in `sets/n1/`.
+- **One written clock.** The real N3, N4 and N5 papers time vocabulary apart.
+- **Listening** plays as on the N2 screen (replay allowed, choices shown), not
+  the one-play sequence of the real paper; no pictures.
+- **Results of a level paper** still offer N2 practice (a timed N2 section).
+- **Level papers are reachable only as bosses**: there is no list to sit one freely.
+- **Level cards pay no points**, so a run at N5 to N3 scores only its boss.
+
 Waiting on the owner:
 - **Mock exams for N5, N4, N3 and N1**: in their own session. Add each level
   to `BOSS_LEVELS` (n2-game.js) once its sets and its exam screen exist.

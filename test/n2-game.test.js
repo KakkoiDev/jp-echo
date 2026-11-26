@@ -259,7 +259,7 @@ test("the boss comes every 1,000 questions, closes a run, and after it the game 
 
 test("the boss is the real paper at half the time and never counts as a standard sitting", () => {
   const mock = src("../n2-mock.js"), study = src("../n2-study.js");
-  assert.match(mock, /if \(state\.phase === "ready" && params\.get\("boss"\) === "1" && realistic\(year\)\) state\.boss = true;/);
+  assert.match(mock, /if \(state\.phase === "ready" && params\.get\("boss"\) === "1" && \(realistic\(year\) \|\| levelSet\)\) state\.boss = true;/);
   assert.match(mock, /const half = \(m, phase\) => state\.boss && phase === "written" \? Math\.ceil\(m \/ 2\) : m;/, "only the written clock halves; audio can't");
   assert.match(mock, /const minutes = phase => half\(/);
   assert.match(mock, /location\.href = "\?book=" \+ boss\.id \+ "&boss=1";/);
@@ -756,12 +756,15 @@ test("another level gives word cards only, under ids no other level can have", (
   assert.ok(all.has("m:N3:明らか") && !n2.has("m:N3:明らか"));
 });
 
-test("a level that has not been reviewed is unscored: its item record moves, nothing is paid or counted", () => {
+test("a level that has not been reviewed pays no points: its answers still count, and its item record moves", () => {
   assert.deepEqual([...REVIEWED_LEVELS], ["N2"], "add a level only after its pool has been audited");
   for (const level of FETCHED_LEVELS) assert.ok(levelPool(level).every(q => q.practice === true && q.record === true), level);
   const q = levelPool("N3")[0], before = {answered: 5, total: 900, level: .5, days: {}, bossFrom: 0};
   const miss = rememberAnswer(before, {q, outcome: "wrong", points: -200, now: 1000});
-  for (const k of ["answered", "total", "level", "days", "bossFrom", "runStart"]) assert.deepEqual(miss[k], before[k], k + " is untouched");
+  for (const k of ["total", "level", "bossFrom"]) assert.deepEqual(miss[k], before[k], k + " is untouched: no points, and the hidden level stays");
+  // It is an answer all the same: it counts toward the day and the 1,000 that open the boss.
+  assert.equal(miss.answered, 6); assert.equal(Object.values(miss.days)[0].answered, 1); assert.ok(miss.runStart);
+  assert.equal(bossProgress({...miss, answered: 1000}).open, true);
   assert.equal(miss.seen[q.id], 1000); assert.equal(miss.practiced, 1);
   assert.deepEqual([miss.tried[q.id], miss.missed[q.id]], [1, 1]);
   assert.deepEqual(miss.comeback, [q.id], "a miss comes back next round");
@@ -806,18 +809,21 @@ test("the gate: only a boss moves the rank: up with a margin, skip far above, do
   assert.equal(bossVerdict({rank: "N2"}), null); assert.equal(bossVerdict({rank: "N0", total: 180}), null);
 });
 
-test("the rank only moves to a level that has a boss: until then the verdict waits and the rank stays", () => {
-  // Today only N2 has mocks, so a pass with margin is kept and N2 stays N2.
+test("the boss moves the rank: up on a pass with margin, down on the second fail in a row, once per boss", () => {
   const up = applyBoss({}, {key: "run-1", rank: "N2", total: 120, now: Date.parse("2026-11-27T10:00:00Z")});
-  assert.equal(rankOf(up), "N2"); assert.ok(!("rank" in up));
-  assert.deepEqual(up.bossLog, [{key: "run-1", at: "2026-11-27T10:00:00.000Z", rank: "N2", total: 120, verdict: "up", waits: "N1"}]);
+  assert.equal(rankOf(up), "N1"); assert.equal(up.rankAt, "2026-11-27T10:00:00.000Z"); assert.ok(!up.bossReady);
+  assert.deepEqual(up.bossLog, [{key: "run-1", at: "2026-11-27T10:00:00.000Z", rank: "N2", total: 120, verdict: "up", to: "N1"}]);
   assert.equal(applyBoss(up, {key: "run-1", rank: "N2", total: 20}), up, "a boss is applied once");
+  const skip = applyBoss(setRank({}, "N4", 1), {key: "s", rank: "N4", total: 160, now: 2});
+  assert.equal(rankOf(skip), "N3"); assert.equal(skip.bossReady, true, "far above the line: the next boss opens at once");
   let st = applyBoss({}, {key: "a", rank: "N2", total: 70, now: 1});
-  assert.equal(st.bossLog[0].verdict, "fail"); assert.ok(!st.bossLog[0].waits && !st.bossLog[0].to, "one fail moves nothing");
+  assert.equal(st.bossLog[0].verdict, "fail"); assert.equal(rankOf(st), "N2", "one fail moves nothing");
   st = applyBoss(st, {key: "b", rank: "N2", total: 60, now: 2});
-  assert.equal(st.bossLog[1].waits, "N3", "the second fail in a row would go down, once N3 has a boss"); assert.equal(rankOf(st), "N2");
+  assert.equal(rankOf(st), "N3", "the second fail in a row goes down one level"); assert.equal(st.bossLog[1].to, "N3");
   const broken = applyBoss(applyBoss(applyBoss({}, {key: "a", rank: "N2", total: 70, now: 1}), {key: "b", rank: "N2", total: 95, now: 2}), {key: "c", rank: "N2", total: 70, now: 3});
-  assert.ok(!broken.bossLog[2].waits, "a pass in between ends the streak");
+  assert.equal(rankOf(broken), "N2", "a pass in between ends the streak");
+  assert.equal(rankOf(applyBoss(setRank({}, "N1", 1), {key: "top", rank: "N1", total: 170, now: 2})), "N1", "nothing above N1 yet");
+  assert.equal(rankOf(applyBoss(applyBoss(setRank({}, "N5", 1), {key: "x", rank: "N5", total: 10, now: 2}), {key: "y", rank: "N5", total: 10, now: 3})), "N5", "nothing below N5");
   const empty = {};
   assert.equal(applyBoss(empty, {key: "x", rank: "N2"}), empty, "no score: nothing"); assert.equal(applyBoss(empty, {rank: "N2", total: 100}), empty, "no key: nothing");
   // A boss of a rank the player no longer holds is logged and moves nothing.
@@ -858,7 +864,7 @@ test("the game screen settles bosses on Home, shows coverage where there is no b
   const js = src("../n2-mock.js");
   assert.match(js, /const exam = run\.rank && !\(st\.bossLog \|\| \[\]\)\.some\(e => e\.key === run\.at\) \? examOf\(run\) : null;/, "runs from before the rules are left alone");
   assert.match(js, /applyBoss\(st, \{key: run\.at, rank: run\.rank, total: exam\.total, sectionsOk: exam\.sections\.every\(x => x\.ok\)\}\)/);
-  assert.match(js, /const byKanji = !hasBoss\(rankOf\(st\)\) && !missing\.includes\(rankOf\(st\)\) && rankKanji \? kanjiCoverage\(rankKanji, st\) : null;/, "Home counts kanji, not words");
+  assert.match(js, /const byKanji = !boss && !missing\.includes\(rankOf\(st\)\) && rankKanji \? kanjiCoverage\(rankKanji, st\) : null;/, "with no boss to open, Home counts kanji, not words");
   assert.match(js, /kanjiFirst = pools\[0\] && level !== "N2" && rankKanji \? \{order: rankKanji, examples: \[\.\.\.lower, \.\.\.n2Pool\.filter\(q => q\.kanji\)\]\} : null;/, "N2 is picked as it always was");
   assert.match(js, /nextRound\(\{pool: playable, review, kanji: kanjiFirst && /);
   assert.match(js, /if \(pools\[0\] && ahead && isCovered\(levelCoverage\(pool, readGame\(\)\)\)\)/);
@@ -894,8 +900,7 @@ test("the rank picks its level, and the levels under it come back as review", ()
   assert.deepEqual(rankLevels("N2"), {level: "N2", review: []});
   assert.deepEqual(rankLevels(), {level: "N2", review: []});
   assert.deepEqual(rankLevels("N2", new Set(["N2", "N4"])), {level: "N2", review: ["N4"]});
-  assert.equal(hasBoss("N2"), true);
-  for (const r of FETCHED_LEVELS) assert.equal(hasBoss(r), false, r + " has no mock yet");
+  for (const r of RANKS) assert.equal(hasBoss(r), true, r + " is a level with a boss (N1's papers are still being written)");
 });
 
 test("a round at rank N3 is N3 cards with a share of N4 and N5 review, one card a word", () => {
@@ -941,7 +946,7 @@ test("the game screen loads the rank's levels, shows the rank on Home and sets i
   assert.match(js, /const review = hears\(\) \? lower : lower\.filter\(q => q\.kind !== "listen"\);\s*const next = nextRound\(\{pool: playable, review, /);
   assert.match(js, /"Rank " \+ rank/);
   assert.match(js, /writeGame\(setRank\(readGame\(\), v\)\); await loadRank\(\)/);
-  assert.match(js, /hasBoss\(rankOf\(readGame\(\)\)\) \? bossSet/, "no boss is promised for a level without mocks");
+  assert.match(js, /const bossNow = \(\) => hasBoss\(bossRank\(\)\) && bossIds\.length \? bossSet\(\{sets: bossIds, attempts: data\.attempts, /, "no boss is promised while a level has no papers on the device");
   for (const r of RANKS) assert.ok(html.includes('role="radio" data-value="' + r + '">' + r + "</button>"), r);
   assert.match(html, /id="game-set-rank" role="radiogroup" aria-label="Rank"/);
 });
@@ -1053,4 +1058,48 @@ test("every kanji of a level can be asked: each has a reading card, with wrong r
   assert.equal(q.answer, "いいん"); assert.ok(q.wrong.includes("かいいん"));
   // N2's reading cards are not widened: its pool is audited as it is.
   assert.equal(gamePool({inventory, examples}).filter(q => q.kind === "reading").length, gamePool({inventory, examples, parts: n2Parts}).filter(q => q.kind === "reading").length);
+});
+
+// ---- A boss at every level ----
+test("each level's exam: its sections, minimums, pass mark and clocks", async () => {
+  const {LEVEL_EXAM, estimate, examOf, PASS_TOTAL} = await import("../n2-study.js");
+  assert.deepEqual(Object.fromEntries(Object.entries(LEVEL_EXAM).map(([l, e]) => [l, [e.pass, e.sections.length, e.minutes.written, e.minutes.listening]])),
+    {N5: [80, 2, 60, 30], N4: [90, 2, 80, 35], N3: [95, 3, 100, 40], N2: [90, 3, 105, 50], N1: [100, 3, 110, 55]});
+  for (const l of RANKS) assert.equal(LEVEL_EXAM[l].pass, EXAM_PASS[l], l + ": the gate and the exam agree");
+  assert.equal(examOf({}).pass, PASS_TOTAL); assert.equal(examOf({level: "N4"}).pass, 90);
+  // N4: two sections, 120 and 60. 30 written questions (10 a skill) and 10 listening.
+  const questions = Array.from({length: 40}, (_, i) => ({index: i, skill: Math.floor(i / 10), key: 1}));
+  const answers = questions.map((q, i) => (i < 20 || i >= 30 && i < 36 ? 1 : 2)); // 20 of 30 written, 6 of 10 listening
+  const e = estimate({level: "N4", questions}, {phase: "results", answers});
+  assert.deepEqual(e.sections.map(s => [s.key, s.scaled, s.ok, s.max]), [["knowledge-reading", 80, true, 120], ["listening", 36, true, 60]]);
+  assert.deepEqual([e.total, e.complete, e.pass, e.passTotal, e.level], [116, true, true, 90, "N4"]);
+  const low = estimate({level: "N4", questions}, {phase: "results", answers: questions.map((q, i) => (i < 30 ? 1 : i < 33 ? 1 : 2))});
+  assert.deepEqual([low.total, low.sections[1].scaled, low.sections[1].ok, low.pass], [138, 18, false, false], "a section under its minimum fails whatever the total");
+  // The same answers on an N2 paper score as they always did: three sections of 60.
+  const n2 = estimate({questions}, {phase: "results", answers});
+  assert.deepEqual(n2.sections.map(s => s.scaled), [60, 0, 36]); assert.ok(!("passTotal" in n2) && !("max" in n2.sections[0]));
+  // N3 passes at 95, not 90.
+  const n3 = estimate({level: "N3", questions}, {phase: "results", answers: questions.map((q, i) => (i % 2 ? 1 : 2))});
+  assert.deepEqual([n3.total, n3.pass], [90, false]);
+});
+
+test("the boss of a level is one of its own papers: an unsat one first, its held-out papers last", () => {
+  const ids = Array.from({length: 10}, (_, i) => "n3-set-" + (i + 1)), held = ["n3-set-9", "n3-set-10"];
+  assert.deepEqual(bossSet({sets: ids, attempts: [], held, prefix: "n3-set-"}), {id: "n3-set-1", fresh: true, beatenToday: false});
+  const sat = ids.slice(0, 8).map((book, i) => ({book, phase: "results", completedAt: "2026-11-0" + (i + 1) + "T10:00:00Z"}));
+  assert.equal(bossSet({sets: ids, attempts: sat, held, prefix: "n3-set-"}).id, "n3-set-9", "the held-out papers come once the others are sat");
+  const all = [...sat, {book: "n3-set-9", phase: "results", completedAt: "2026-11-10T10:00:00Z"}, {book: "n3-set-10", phase: "results", completedAt: "2026-11-11T10:00:00Z"}];
+  assert.deepEqual(bossSet({sets: ids, attempts: all, held, prefix: "n3-set-", now: new Date("2026-11-20T10:00:00")}), {id: "n3-set-1", fresh: false, beatenToday: false}, "then the one sat longest ago");
+  assert.equal(bossSet({sets: ids, attempts: [{book: "n2-set-5", phase: "results", completedAt: new Date().toISOString()}], held, prefix: "n3-set-"}).beatenToday, false, "an N2 sitting is not this level's boss");
+});
+
+test("the exam screen sits a paper of any level, and the game opens each rank's boss", () => {
+  const js = src("../n2-mock.js"), sw = src("../sw.js");
+  assert.match(js, /const levelSet = SET_ID\.test\(year \|\| ""\);\s*const native = bookIds\.includes\(year\) \|\| adaptive \|\| levelSet;/);
+  assert.match(js, /const paper = \{id: key, book: id, level, title: [^;]+, edition, minutes: LEVEL_EXAM\[level\]\.minutes, questions: levelRows\(set\)\};/, "the paper names its level and its clocks");
+  assert.match(js, /params\.get\("boss"\) === "1" && \(realistic\(year\) \|\| levelSet\)\) state\.boss = true;/);
+  assert.match(js, /else \{ bossIds = Object\.keys\(\(await gameSets\.index\(level\)\)\?\.sets \|\| gameSets\.ready\(level\)\?\.sets \|\| \{\}\); gameSets\.keep\(level\)\.catch\(\(\) => \{\}\); \}/, "the papers are kept on the device ahead of the boss");
+  assert.match(js, /el\("b", \{text: e\.passTotal \?\? PASS_TOTAL\}\)/, "results show the level's pass line");
+  assert.ok(sw.includes('"./jlpt-sets.js"'));
+  assert.match(src("../n2-progress.js"), /if\(paper\.level&&paper\.level!=="N2"\) continue;/, "another level's paper is never N2 evidence");
 });

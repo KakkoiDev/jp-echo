@@ -2,7 +2,7 @@ import {dateKey, parseGoalDate, firstPassEnd, goalKey, readGoal, writeGoal, shor
 import {bookIds,bookName,EDITION,SETS_EDITION,form,realisticRows,realisticPaperId,setFile,instructionFor,solutionOf,whyReadings} from "./n2-forms.js";
 import {access,currentAttempts,download,prefix,report,scored,n2Adapter} from "./n2-progress.js";
 import {startAutoSync,markDirty,gistSettings} from "./sync.js";
-import {SKILLS,SKILL_JA,SECTIONS,PASS_TOTAL,SECTION_MIN,SECTION_MAX,estimate,sprintCheckpoint,nextExamDate,daysUntil,recallQueue,recallRecord,recallId,dailyGoal,coverage,localDay,todayPlan,measuredPace,capMinutes,DAY_MINUTES,EXAM_CHECKLIST,goalDates,formatMinutes,shortenPlan,maintenancePlan,resultsMonth,doneToday,markDone,scoreSeries,scoreCaption,examHeadLine,nextKicker,checkpointLine,mockTileState,historyKind,answering,resultPractice} from "./n2-study.js";
+import {LEVEL_EXAM,examOf as examRules,SKILLS,SKILL_JA,SECTIONS,PASS_TOTAL,SECTION_MIN,SECTION_MAX,estimate,sprintCheckpoint,nextExamDate,daysUntil,recallQueue,recallRecord,recallId,dailyGoal,coverage,localDay,todayPlan,measuredPace,capMinutes,DAY_MINUTES,EXAM_CHECKLIST,goalDates,formatMinutes,shortenPlan,maintenancePlan,resultsMonth,doneToday,markDone,scoreSeries,scoreCaption,examHeadLine,nextKicker,checkpointLine,mockTileState,historyKind,answering,resultPractice} from "./n2-study.js";
 import {collapseRow,collapseChevronSvg,scoreChart,flagSvg,chevronLeftSvg,chevronRightSvg,replaySvg,planSteps,loadMeter,evidenceRow,pauseRing,openReportSheet,mountReportButtons} from "./components.js";
 import {screenSnapshot,REPORT_REASONS,createReport,fileReport,reportSyncLine,reportsAdapter,reportHistory,screenOf,appVersion,deviceInfo} from "./reports.js";
 import {recognitionFactory} from "./speech.js";
@@ -11,6 +11,7 @@ import {RADIO_DEFAULTS,RADIO_PHASE_COPY,clockAt,radioPhase,radioPlan,radioSteps}
 import {readNights, nightComparison, comparisonLine, eveningRecall, EVENING_SOURCE, nightPlan, nightRecord, keepNight, NIGHT_KEY} from "./n2-night.js";
 import {kanjiCoverage, levelCoverage, isCovered, aheadLevel, applyBoss, verdictLine, rankOf, setRank, rankLevels, hasBoss, RANKS, inSlump, itemLevel, levelAfter, ITEM_LEVEL, gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, patternVoice, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
 import {createLevels} from "./jlpt-levels.js";
+import {createSets, levelRows, SET_ID, setLevel, heldOut} from "./jlpt-sets.js";
 import {spokenWord,radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
 import {TAG,TAGS,HELD_OUT,CAUSES,comprehensionStats,weakestTag,tagDrill,drillExposure,attemptTags,tagsOf,sourceOf} from "./n2-comprehension.js";
 import {exampleSegments,patternNeedles,delayedChecks,checkItems,checkAsk,contextNote,sentenceParts,checkDetail,audioGrade,delayedAccuracy,CHECK_SOURCE,WHY_LINE,evidenceFor,evidenceLine} from "./n2-delayed.js";
@@ -26,7 +27,10 @@ const $ = id => document.getElementById(id);
 const params = new URLSearchParams(location.search);
 const year = params.get("book");
 const adaptive = /^adaptive-[a-f0-9-]{36}$/.test(year || "");
-const native = bookIds.includes(year) || adaptive;
+// A paper of another level (jlpt-sets.js: n3-set-4): sat on this same screen.
+const levelSet = SET_ID.test(year || "");
+const native = bookIds.includes(year) || adaptive || levelSet;
+const gameSets = createSets();
 const settings = (() => { try { return JSON.parse(localStorage.getItem("jp-echo-settings") || "{}"); } catch { return {}; } })();
 const chevron = `<svg width="8" height="13" viewBox="0 0 8 13" fill="none" aria-hidden="true"><path d="m1.5 1.5 5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 let inventory, original, themes = {};
@@ -307,6 +311,20 @@ function officialRows(id) {
   return rows;
 }
 async function getPaper(id, version) {
+  // Another level's paper: fetched once and kept (jlpt-sets.js), saved as
+  // "<set>@<edition>" so an old attempt always reopens the paper it sat.
+  if (SET_ID.test(id)) {
+    const level = setLevel(id), kept = version && await access("papers", "get", version);
+    if (kept) return kept;
+    const edition = version?.split("@")[1] || gameSets.ready(level)?.edition || (await gameSets.index(level))?.edition;
+    const set = edition && await gameSets.set(level, id, edition);
+    if (!set) throw new Error("This " + level + " paper is not on this device yet. Open Quick round once with a connection.");
+    const key = id + "@" + edition, saved = await access("papers", "get", key);
+    if (saved) return saved;
+    const paper = {id: key, book: id, level, title: level + " · " + String(Number(id.split("-").pop())).padStart(2, "0") + (set.theme ? " · " + set.theme : ""), edition, minutes: LEVEL_EXAM[level].minutes, questions: levelRows(set)};
+    await access("papers", "put", paper);
+    return paper;
+  }
   await materials();
   const key = version || (realistic(id) ? realisticPaperId(id) : id);
   const existing = await access("papers", "get", key);
@@ -804,19 +822,20 @@ function scoreCard(paper, attempt, compact = false) {
   const e = estimate(paper, attempt);
   const card = el("div", {class: "n2-score"});
   if (e.complete) {
-    card.append(el("div", {class: "stats-figure"}, el("strong", {text: e.total}), el("span", {}, "/ 180 estimated · pass line ", el("b", {text: PASS_TOTAL}))),
+    card.append(el("div", {class: "stats-figure"}, el("strong", {text: e.total}), el("span", {}, "/ 180 estimated · pass line ", el("b", {text: e.passTotal ?? PASS_TOTAL}))),
       el("span", {class: "status-chip " + (e.pass ? "" : "due"), text: e.pass ? "Above the pass line" : "Below the pass line"}));
   }
   for (const s of e.sections) {
     if (!s.total) continue;
-    const pct = s.scaled === null ? 0 : s.scaled / SECTION_MAX * 100;
+    const max = s.max ?? SECTION_MAX, min = s.min ?? SECTION_MIN;
+    const pct = s.scaled === null ? 0 : s.scaled / max * 100;
     card.append(el("div", {class: "n2-section" + (s.ok === false ? " low" : "")},
       el("span", {class: "n2-section-head"}, el("span", {lang: "ja", class: "n2-meter-ja", text: s.ja}), el("span", {text: s.en}),
-        el("span", {class: "n2-meter-n", text: s.scaled === null ? "after listening" : s.scaled + " / 60"})),
-      el("span", {class: "progress-track n2-section-track"}, el("span", {style: "width:" + pct + "%"}), el("i", {class: "n2-floor", style: "left:" + (SECTION_MIN / SECTION_MAX * 100) + "%", title: "Section minimum " + SECTION_MIN})),
-      el("span", {class: "hint", text: s.correct + " of " + s.total + " correct" + (s.ok === false ? " · under the " + SECTION_MIN + "-point minimum" : "")})));
+        el("span", {class: "n2-meter-n", text: s.scaled === null ? "after listening" : s.scaled + " / " + max})),
+      el("span", {class: "progress-track n2-section-track"}, el("span", {style: "width:" + pct + "%"}), el("i", {class: "n2-floor", style: "left:" + (min / max * 100) + "%", title: "Section minimum " + min})),
+      el("span", {class: "hint", text: s.correct + " of " + s.total + " correct" + (s.ok === false ? " · under the " + min + "-point minimum" : "")})));
   }
-  card.append(el("p", {class: "hint", text: (compact ? paper.title + " · " + dateLabel(attempt.completedAt) + ". " : "") + "Raw share × 60. The real test equates scores, so read this as direction, not a prediction."}));
+  card.append(el("p", {class: "hint", text: (compact ? paper.title + " · " + dateLabel(attempt.completedAt) + ". " : "") + (e.level ? "Raw share of each section. " : "Raw share × 60. ") + "The real test equates scores, so read this as direction, not a prediction."}));
   return card;
 }
 
@@ -1133,7 +1152,7 @@ async function game() {
   const n2Pool = gamePool({inventory, examples: await deckExamples(), sets, sat, parts: await json("./n2-kanji-parts.json").catch(() => null)});
   const levelPools = new Map([["N2", n2Pool]]);
   // kanjiFirst: the rank's kanji in order and, as examples, the cards of the other levels at hand.
-  let pool = n2Pool, lower = [], missing = [], kanjiFirst = null, rankKanji = "";
+  let pool = n2Pool, lower = [], missing = [], kanjiFirst = null, rankKanji = "", bossIds = [];
   async function loadRank() {
     const {level, review} = rankLevels(rankOf(readGame())), wanted = [level, ...review];
     const pools = await Promise.all(wanted.map(async l => {
@@ -1141,6 +1160,11 @@ async function game() {
       return levelPools.get(l) || null;
     }));
     missing = wanted.filter((_, i) => !pools[i]);
+    // The rank's boss papers: N2's are part of the app; another level's are
+    // listed now and fetched whole in the background, so the boss never needs
+    // the network when it arrives. A level with no papers yet has no boss.
+    if (level === "N2") bossIds = bookIds.filter(id => realistic(id));
+    else { bossIds = Object.keys((await gameSets.index(level))?.sets || gameSets.ready(level)?.sets || {}); gameSets.keep(level).catch(() => {}); }
     pool = pools[0] || n2Pool; lower = pools[0] ? pools.slice(1).filter(Boolean).flat() : [];
     // Levels of word cards are played kanji first; N2, with its grammar and exam cards, as it always was.
     rankKanji = (await gameLevels.ready())?.kanji?.[pools[0] ? level : "N2"] || "";
@@ -1252,7 +1276,11 @@ async function game() {
   const toast = (text, note = "") => { const t = $("game-toast"); $("game-toast-text").textContent = text; $("game-toast-note").textContent = note; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => { t.hidden = true; }, 1400); };
   // The boss: every 1,000 questions, a full mock on a set not sat yet.
   // The boss is a mock of the rank's level; only N2 has sets today (hasBoss).
-  const bossNow = () => hasBoss(rankOf(readGame())) ? bossSet({sets: bookIds.filter(id => realistic(id)), attempts: data.attempts}) : null;
+  const bossRank = () => rankOf(readGame());
+  const bossNow = () => hasBoss(bossRank()) && bossIds.length ? bossSet({sets: bossIds, attempts: data.attempts, ...(bossRank() === "N2" ? {} : {held: heldOut(bossRank()), prefix: bossRank().toLowerCase() + "-set-"})}) : null;
+  // The boss's name and clocks: N2's as they were; another level's from its own paper.
+  const mockName = boss => bossRank() === "N2" ? "Mock " + String(bookIds.indexOf(boss.id) + 1).padStart(2, "0") : bossRank() + " paper " + String(bossIds.indexOf(boss.id) + 1).padStart(2, "0");
+  const bossClock = () => bossRank() === "N2" ? BOSS_MINUTES : {written: Math.ceil(LEVEL_EXAM[bossRank()].minutes.written / 2), listening: LEVEL_EXAM[bossRank()].minutes.listening};
   // The run closes when the boss sitting actually starts (exam(), with its attempt id), not on this tap.
   const fightBoss = (e, boss) => { e.preventDefault(); location.href = "?book=" + boss.id + "&boss=1"; };
   // Numbers below zero carry a true minus (U+2212), never a hyphen (board 12 · E–F).
@@ -1308,10 +1336,10 @@ async function game() {
     const stretch = b.done >= 950 && !open && !rest, first = !all.length && !clock.started && !b.done;
     // A rank with no boss yet: the run card shows how much of the level is known.
     // The count is kanji, not words (owner, 26 Nov); words only if the kanji list could not be had.
-    const byKanji = !hasBoss(rankOf(st)) && !missing.includes(rankOf(st)) && rankKanji ? kanjiCoverage(rankKanji, st) : null;
-    const cover = byKanji ? {...byKanji, seen: byKanji.met, unit: "kanji"} : !hasBoss(rankOf(st)) && !missing.includes(rankOf(st)) ? {...levelCoverage(pool, st), unit: "words"} : null;
+    const byKanji = !boss && !missing.includes(rankOf(st)) && rankKanji ? kanjiCoverage(rankKanji, st) : null;
+    const cover = byKanji ? {...byKanji, seen: byKanji.met, unit: "kanji"} : !boss && !missing.includes(rankOf(st)) ? {...levelCoverage(pool, st), unit: "words"} : null;
     homeView = {open, rest, stretch, first, left: BOSS_EVERY - b.done, cover: !!cover};
-    const showCount = countShown(clock, homeView), mockNo = boss ? String(bookIds.indexOf(boss.id) + 1).padStart(2, "0") : "";
+    const showCount = countShown(clock, homeView), mockNo = boss ? mockName(boss) : "", clocks = bossClock();
     // Run card (board 1 · Home A/D), the boss card (B) or the rest above a quiet card (C).
     $("game-runcard").hidden = open; $("game-bosscard").hidden = !open; $("game-rest").hidden = !rest; $("game-runcard").dataset.rest = String(rest); $("game-runcard").dataset.first = String(first);
     $("game-run-name").textContent = "Run " + runNo + (stretch ? " · final stretch" : "");
@@ -1323,11 +1351,11 @@ async function game() {
     $("game-run-row").hidden = !rest && (stretch || showCount || first);
     $("game-run-points").textContent = rest ? b.done.toLocaleString() + " of " + BOSS_EVERY.toLocaleString() : num(points) + " points so far";
     $("game-run-points").dataset.neg = String(!rest && points < 0);
-    $("game-run-waits").textContent = boss && !rest ? "Mock " + mockNo + " waits" : "";
+    $("game-run-waits").textContent = boss && !rest ? mockNo + " waits" : "";
     // The run clock, live, in the last hours of a bonus (board 1 · D).
     $("game-countdown").hidden = !showCount;
-    $("game-run-line").textContent = stretch ? "About " + Math.ceil((BOSS_EVERY - b.done) / 10) + " rounds, then a " + (BOSS_MINUTES.written + BOSS_MINUTES.listening) + "-minute boss." + (st.runStart ? " Run " + runNo + " began " + began(st.runStart) + "." : "")
-      : first && boss ? "At " + BOSS_EVERY.toLocaleString() + " the boss opens: Mock " + mockNo + ", written at half time." : "";
+    $("game-run-line").textContent = stretch ? "About " + Math.ceil((BOSS_EVERY - b.done) / 10) + " rounds, then a " + (clocks.written + clocks.listening) + "-minute boss." + (st.runStart ? " Run " + runNo + " began " + began(st.runStart) + "." : "")
+      : first && boss ? "At " + BOSS_EVERY.toLocaleString() + " the boss opens: " + mockNo + ", written at half time." : "";
     root.querySelector("#game-runcard .qr-oni").hidden = !!cover;
     if (cover) {
       $("game-run-name").textContent = rankOf(st) + " " + cover.unit; $("game-run-clock").textContent = "practice · not scored"; $("game-run-clock").dataset.tone = "";
@@ -1338,8 +1366,8 @@ async function game() {
     }
     if (open) {
       $("game-boss-name").textContent = "Run " + runNo + " · boss open";
-      $("game-boss-title").textContent = "Mock " + mockNo + " at half time";
-      $("game-boss-mins").textContent = BOSS_MINUTES.written + " min written · " + BOSS_MINUTES.listening + " min listening";
+      $("game-boss-title").textContent = mockNo + " at half time";
+      $("game-boss-mins").textContent = clocks.written + " min written · " + clocks.listening + " min listening";
       $("game-boss-points").textContent = BOSS_EVERY.toLocaleString() + " / " + BOSS_EVERY.toLocaleString() + " · " + num(points) + " points";
       $("game-boss-note").textContent = clock.times > 1 ? "Beat it before the clock runs out and the whole run counts ×" + clock.times + "." : "";
     }
@@ -1700,7 +1728,7 @@ async function game() {
     $("game-boss-fill").style.width = Math.round(b.done / BOSS_EVERY * 100) + "%";
     $("game-boss-progress").textContent = b.done.toLocaleString() + " / " + BOSS_EVERY.toLocaleString();
     const c = runClock(state.runStart); $("game-boss-clock").textContent = c.started && c.times > 1 ? "×" + c.times : ""; $("game-boss-clock").hidden = !(c.started && c.times > 1);
-    if (boss && b.open) { $("game-boss").href = "?book=" + boss.id + "&boss=1"; $("game-boss-line").textContent = "The boss is open: Mock " + String(bookIds.indexOf(boss.id) + 1).padStart(2, "0") + ", " + BOSS_MINUTES.written + " + " + BOSS_MINUTES.listening + " min"; $("game-boss").onclick = e => fightBoss(e, boss); }
+    if (boss && b.open) { $("game-boss").href = "?book=" + boss.id + "&boss=1"; $("game-boss-line").textContent = "The boss is open: " + mockName(boss) + ", " + bossClock().written + " + " + bossClock().listening + " min"; $("game-boss").onclick = e => fightBoss(e, boss); }
     // Bedtime (board 6 · B) and the warm-up after a bad round (C).
     $("game-bedtime").hidden = !late; $("game-sleep").hidden = !late; $("game-warm").hidden = late || !warm;
     // Board 6 · A: what levelled up this round, three at most.
@@ -2109,7 +2137,8 @@ async function exam() {
   }
   const paper = await getPaper(year, saved?.paper);
   questions.push(...paper.questions);
-  document.title = paper.title + " · JLPT N2 · Echo";
+  document.title = paper.title + " · JLPT " + (paper.level || "N2") + " · Echo";
+  if (paper.level) $("exam-level").textContent = "JLPT " + paper.level + " · mock exam";
   written = questions.findIndex(q => q.skill === 3);
   if (written < 0) written = questions.length;
   const firstPhase = written ? "written" : "listening";
@@ -2125,7 +2154,7 @@ async function exam() {
   }
   // The boss (Quick round): the real paper at half the time. It stays a boss
   // once started, and never counts as a standard sitting (checkpoint, chart).
-  if (state.phase === "ready" && params.get("boss") === "1" && realistic(year)) state.boss = true;
+  if (state.phase === "ready" && params.get("boss") === "1" && (realistic(year) || levelSet)) state.boss = true;
   // Only the written clock halves: listening audio can't play faster.
   const half = (m, phase) => state.boss && phase === "written" ? Math.ceil(m / 2) : m;
 
@@ -2306,7 +2335,10 @@ async function exam() {
     $("scores").replaceChildren(short ? doneCard() : scoreCard(paper, state));
     $("results-more").replaceChildren(short ? el("span") : byMondai(), slowest());
     resultActions(short);
+    // A level paper carries its tags and deciding lines on its own rows.
+    const own = (field) => Object.fromEntries(paper.questions.filter(q => q[field]).map(q => [sourceOf(paper, q), q[field]]));
     Promise.all([tagMap(), cueMap()]).then(([map, cues]) => {
+      if (paper.level) { map = {...map, ...own("tags")}; cues = {...cues, ...own("cues")}; }
       results.cues = cues;
       const slips = attemptTags({paper, attempt: state, tagMap: map});
       if (!slips.length) { draw(); return; }

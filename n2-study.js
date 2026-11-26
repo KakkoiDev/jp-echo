@@ -106,19 +106,40 @@ export function closedSkills(phase) {
   if (phase === "rest" || phase === "listening") return [0, 1, 2];
   return [];
 }
+// The other levels (jlpt.jp; datasets/jlpt/exam-profiles.json). N3 and N1
+// report three sections of 60 like N2; N4 and N5 report two: 言語知識・読解
+// out of 120 (minimum 38) and 聴解 out of 60 (minimum 19). minutes: the
+// standard clocks, written (vocabulary, grammar and reading together) and
+// listening. Echo's exam screen sits the written part on one clock: on the
+// real N3, N4 and N5 papers vocabulary has a clock of its own.
+const TWO = [
+  {key: "knowledge-reading", ja: "言語知識・読解", en: "Vocabulary · grammar · reading", skills: [0, 1, 2], max: 120, min: 38},
+  {key: "listening", ja: "聴解", en: "Listening", skills: [3], max: 60, min: 19},
+];
+const THREE = SECTIONS.map(s => ({...s, max: SECTION_MAX, min: SECTION_MIN}));
+export const LEVEL_EXAM = Object.freeze({
+  N5: {pass: 80, sections: TWO, minutes: {written: 60, listening: 30}},
+  N4: {pass: 90, sections: TWO, minutes: {written: 80, listening: 35}},
+  N3: {pass: 95, sections: THREE, minutes: {written: 100, listening: 40}},
+  N2: {pass: PASS_TOTAL, sections: SECTIONS, minutes: {written: 105, listening: 50}},
+  N1: {pass: 100, sections: THREE, minutes: {written: 110, listening: 55}},
+});
+// A paper names its level; one without a level is N2, scored as it always was.
+export const examOf = paper => LEVEL_EXAM[paper?.level] || LEVEL_EXAM.N2;
 export function estimate(paper, attempt) {
-  const closed = closedSkills(attempt.phase);
-  const sections = SECTIONS.map(section => {
+  const closed = closedSkills(attempt.phase), exam = examOf(paper);
+  const sections = exam.sections.map(section => {
     const items = paper.questions.filter(q => section.skills.includes(q.skill));
     const correct = items.filter(q => attempt.answers[q.index] === q.key).length;
     const open = !items.length || !section.skills.every(s => closed.includes(s) || !items.some(q => q.skill === s));
-    const scaled = items.length ? Math.round(correct / items.length * SECTION_MAX) : null;
-    return {...section, correct, total: items.length, scaled: open ? null : scaled, ok: open ? null : scaled >= SECTION_MIN};
+    const max = section.max ?? SECTION_MAX, min = section.min ?? SECTION_MIN;
+    const scaled = items.length ? Math.round(correct / items.length * max) : null;
+    return {...section, correct, total: items.length, scaled: open ? null : scaled, ok: open ? null : scaled >= min};
   });
   const scoredSections = sections.filter(s => s.scaled !== null);
-  const complete = scoredSections.length === SECTIONS.length;
+  const complete = scoredSections.length === exam.sections.length;
   const total = scoredSections.reduce((sum, s) => sum + s.scaled, 0);
-  return {sections, total, complete, pass: complete ? total >= PASS_TOTAL && sections.every(s => s.ok) : null};
+  return {sections, total, complete, pass: complete ? total >= exam.pass && sections.every(s => s.ok) : null, ...(paper?.level && paper.level !== "N2" ? {passTotal: exam.pass, level: paper.level} : {})};
 }
 
 // Every finished full exam, oldest first, for the score chart: estimated
