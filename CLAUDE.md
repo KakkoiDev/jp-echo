@@ -472,6 +472,18 @@ Before considering the change complete:
   owner's report, 27 Nov), then the familiar, then the new; at most one new
   card and two misses. It comes first at a kanji-first rank too. `nextRound`
   only reports `warmUp` (the 復 ribbon) when half the round is familiar.
+- **Grammar from its parts follows board 13 (v301).** N2 grammar is also
+  learned from its blocks (`n2-grammar-blocks.json`, precached; design in
+  `docs/GRAMMAR-BLOCKS.md`): cards `b:` Grammar piece, `gb:` Grammar parts,
+  `gi:` New grammar, practice until `REVIEWED_GRAMMAR_BLOCKS`. On a build
+  card the parts are a ruled list (`partRows`: piece in the Mincho, gloss in
+  sans, repeats as ×2, no row without a gloss) and the underline is cut per
+  part (`cutUnderline`); after the answer the `literal` reading takes the
+  line's slot ("piece by piece"); the review of a miss shows the list; an
+  infer card that proves a piece shows the 証 strip and holds `PROVED_MS`;
+  Home has one "Known · Grammar pieces" strip under the run card, hidden
+  until a piece is proved. A part may carry its own `gloss` (得ない). N5 and
+  N4 particles and endings are taken as known (`BASIC_BLOCK`).
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

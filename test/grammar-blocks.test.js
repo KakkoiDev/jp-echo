@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
 import {examplesFromDecks} from "../day-radio.js";
-import {choicesFor, gamePool, grammarBlockCard, grammarCoverage, grammarPick, nextRound,
+import {partRows, cutUnderline, provedBy, PROVED_MS, PAUSE, KIND_LABEL, choicesFor, gamePool, grammarBlockCard, grammarCoverage, grammarPick, nextRound,
   recallsMiss, rememberAnswer, sameSense} from "../n2-game.js";
 import {exampleSegments} from "../n2-delayed.js";
 import {EXCLUDED} from "../n2-game-review.js";
@@ -72,7 +72,7 @@ test("index adds three practice kinds while preserving the existing cards", () =
   for (const q of cards.filter(q => q.kind === "infer" && q !== infer)) assert.ok(["clear", "partial"].includes(draft.patterns[q.patternKey].transparency) && draft.patterns[q.patternKey].solved.right, q.id);
   assert.deepEqual(build.blocks, ["zaru", "wo", "eru"]);
   assert.equal(build.parts.map(p => p.text).join(""), "ざるを得ない");
-  assert.equal(infer.parts, undefined);
+  assert.deepEqual(infer.parts, build.parts, "the infer card carries the parts for the review of a miss; the play card never shows them");
   const conjugated = cards.find(q => q.id === "gb:甲斐がある");
   assert.equal(conjugated.needle, "甲斐があって");
   assert.equal(conjugated.parts.at(-1).text, "あって");
@@ -237,4 +237,63 @@ test("the review data handed to a reviewer is the released index, whole", () => 
   for (const b of review.blocks) assert.equal(b.gloss, released.blocks[b.id].gloss, b.id + ": run tools/grammar-blocks/make-review.mjs");
   for (const p of review.patterns) assert.deepEqual(p.parts.map(x => x.text), released.patterns[p.key].parts.map(x => x.text), p.key);
   assert.ok(review.patterns.every(p => p.meaning && p.sentence?.ja));
+});
+
+// ---- Board 13: grammar from its parts on the screen ----
+const page = p => readFileSync(new URL(p, import.meta.url), "utf8");
+
+test("board 13: the parts are a ruled list in sentence order; repeats merge, a piece with no gloss gets no row", () => {
+  const cards = gamePool({...options, grammarBlocks: draft}), card = key => cards.find(q => q.id === "gb:" + key);
+  assert.deepEqual(partRows(card("にしても-にしても").parts).map(r => [r.text, r.times]), [["に", 2], ["して", 2], ["も", 2]], "six parts, three rows");
+  assert.deepEqual(partRows(card("に気をつける").parts).map(r => r.text), ["に", "気", "を", "つけて"]);
+  assert.ok(partRows(card("ところだった2").parts).every(r => r.gloss), "the っ of ところだった has no row");
+  const rows = cards.filter(q => q.kind === "build").map(q => partRows(q.parts).length);
+  assert.ok(Math.max(...rows) <= 5, "the worst real card is five rows: " + Math.max(...rows));
+  assert.deepEqual(KIND_LABEL.block + " / " + KIND_LABEL.build + " / " + KIND_LABEL.infer, "Grammar piece / Grammar parts / New grammar");
+  const css = page("../styles.css");
+  assert.match(css, /\.qr-grammar-parts:not\(\[hidden\]\)\{display:grid;grid-template-columns:max-content minmax\(0,1fr\);column-gap:14px;margin-top:14px;border-top:1px solid var\(--hairline\)/);
+  assert.match(css, /\.qr-grammar-parts b\{gap:6px;font-family:var\(--display\);font-size:17px;font-weight:700/);
+  assert.ok(!/qr-grammar-parts \.qr-chip/.test(css), "no chips left in the row");
+});
+
+test("board 13: 得ない is hinted with its negative on the card (designer's note)", () => {
+  const card = gamePool({...options, grammarBlocks: draft}).find(q => q.id === "gb:ざるを得ない");
+  assert.deepEqual(card.parts.map(p => p.gloss), ["an old negative ending", "marks the direct object", "cannot get or attain"]);
+  assert.equal(card.literal, "cannot succeed in not doing it");
+  assert.equal(draft.blocks.eru.gloss, "get or attain", "the block keeps its own meaning");
+  const bad = structuredClone(draft); bad.patterns["ざるを得ない"].parts[2].gloss = "have no choice";
+  assert.ok(validateGrammarBlocks(bad).errors.some(e => /gloss of part 得ない/.test(e)), "a part's gloss may not give the answer away");
+});
+
+test("board 13: the underline is cut into one segment per part, or left whole when the parts do not fit it", () => {
+  const cards = gamePool({...options, grammarBlocks: draft}).filter(q => q.kind === "build");
+  const cut = cutUnderline("行くにしても行かないにしても、早めに連絡してください。", ["にしても", "にしても"], [{text: "に"}, {text: "して"}, {text: "も"}, {text: "に"}, {text: "して"}, {text: "も"}]);
+  assert.deepEqual(cut.filter(s => s.part).map(s => s.text + (s.cut ? "+" : "")), ["に", "して+", "も+", "に", "して+", "も+"], "3 px only between neighbours, not across the gap");
+  assert.equal(cut.map(s => s.text).join(""), "行くにしても行かないにしても、早めに連絡してください。");
+  assert.equal(cutUnderline("車に気をつけて歩く", "に気をつけて", [{text: "に"}, {text: "気"}, {text: "を"}, {text: "つける"}]), null);
+  let whole = 0;
+  for (const q of cards) { const c = cutUnderline(q.sentence, q.needle, q.parts); if (!c) { whole++; continue; } assert.equal(c.map(s => s.text).join(""), q.sentence, q.id); assert.equal(c.filter(s => s.part).length, q.parts.length, q.id); }
+  assert.ok(whole < cards.length * .1, whole + " of " + cards.length + " build cards keep one underline");
+});
+
+test("board 13: the literal line, the review card, the proved beat and Home's Known strip", () => {
+  const js = page("../n2-mock.js"), html = page("../n2-mock.html"), css = page("../styles.css");
+  assert.match(js, /if \(q\.kind === "build" && q\.literal\) \{ line\.replaceChildren\(el\("small", \{text: "piece by piece"\}\), q\.literal\); line\.className = "qr-line literal"; line\.dataset\.tone = outcome === "right" \? "right" : ""; \}/);
+  assert.match(html, /<div class="qr-ex qr-reviewparts" id="game-review-parts" hidden>[\s\S]*?<\/div>\s*<div class="qr-ex" id="game-review-sentence" hidden>/, "the parts sit between the pick and the sentence");
+  assert.match(js, /const rows = \(q\.kind === "build" \|\| q\.kind === "infer"\) && q\.parts \? partList\(q\.parts\) : \[\];/);
+  // Proved: only an infer card whose answer raised a block's transfer count.
+  const q = {kind: "infer", blocks: ["a", "b"]};
+  assert.deepEqual(provedBy({gb: {a: [1, 0, 0, 0]}}, {gb: {a: [2, 1, 0, 1], b: [1, 0, 0, 0]}}, q), ["a"]);
+  assert.deepEqual(provedBy({gb: {a: [1, 0, 0, 1]}}, {gb: {a: [2, 1, 0, 1]}}, q), []);
+  assert.ok(PROVED_MS === 600 && PROVED_MS > PAUSE.right, "the one answer that holds longer");
+  assert.match(js, /const proved = q\.kind === "infer" && provedBy\(beforeAnswer, state, q\)\.length > 0;/);
+  assert.match(js, /timer = setTimeout\(\(\) => \{ index\+\+; ask\(\); \}, proved \? PROVED_MS : /);
+  assert.match(html, /<span class="qr-stamp" lang="ja" aria-hidden="true">証<\/span><div><strong>Proved in a new pattern<\/strong>/);
+  assert.match(css, /@media\(prefers-reduced-motion:reduce\)\{\.qr-stamp\{animation:none\}\}/, "reduced motion: the stamp appears still");
+  // Home: under the run card, never inside it, and never "0 of 162".
+  assert.ok(!html.includes("game-grammar-count"));
+  assert.match(html, /<div class="qr-known" id="game-known" hidden><span class="qr-lbl">Known<\/span><span class="qr-knownname">Grammar pieces<\/span>/);
+  assert.match(js, /\$\("game-known"\)\.hidden = !grammar\.known;/);
+  // Short screens: the say line goes first on a build card.
+  assert.match(css, /body\[data-view=game\] \.qr-card\[data-kind=build\] \.qr-say\{display:none\}/);
 });

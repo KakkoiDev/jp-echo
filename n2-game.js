@@ -37,7 +37,7 @@ export const ROUND_SIZE = 10, REVIEW_SECONDS = 5, DAILY_GOAL = 1000, RECENT_MS =
 export const SECONDS = Object.freeze({reading: 3, meaning: 3, definition: 4, listen: 5, homophone: 5, grammar: 6, connective: 7, exam: {1: 4, 2: 5, 3: 5, 4: 7, 5: 6, 7: 8}});
 // The pause after an answer before the next question, in milliseconds.
 export const PAUSE = Object.freeze({right: 250, miss: 800});
-export const KIND_LABEL = Object.freeze({reading: "Reading", meaning: "Meaning", definition: "Which word", listen: "Listen", connective: "Connective · 問題9", homophone: "Which kanji", grammar: "Grammar", block: "Grammar block", build: "Build grammar", infer: "Infer grammar", exam: "Exam question"});
+export const KIND_LABEL = Object.freeze({reading: "Reading", meaning: "Meaning", definition: "Which word", listen: "Listen", connective: "Connective · 問題9", homophone: "Which kanji", grammar: "Grammar", block: "Grammar piece", build: "Grammar parts", infer: "New grammar", exam: "Exam question"});
 const EXAM_MONDAI = new Set([1, 2, 3, 4, 5, 7]), WRITTEN = new Set(["Vocabulary", "Grammar"]);
 const KANJI = /[一-鿿々]/g;
 const plain = s => String(s || "").replace(/【[^】]*】/g, "");
@@ -289,10 +289,15 @@ function addGrammarBlocks(pool, {blocks = {}, patterns = {}}) {
     const card = {...base, item: keyOf(q.target), patternKey: key, blocks: ids, ...(basics.length ? {basics} : {}), prompt: q.prompt,
       sentence: q.sentence, needle, answer: q.answer, wrong, near, solution: pattern.transparency === "opaque"
         ? {...q.solution, why: "Learn this pattern as a whole."} : q.solution};
-    pool.push({...card, id: "gb:" + key, kind: "build",
-      parts: pattern.parts.map((p, i) => ({text: surface?.[i + 1] || p.text, gloss: blocks[p.block]?.gloss || ""}))});
+    // The parts as the sentence writes them. A part may carry its own gloss
+    // where the block's would mislead beside this form (得ない under 得る).
+    // Both cards carry them: the build card shows the list, the infer card
+    // only in the review of a miss. `literal`: the parts read together.
+    const parts = pattern.parts.map((p, i) => ({text: surface?.[i + 1] || p.text, gloss: p.gloss || blocks[p.block]?.gloss || ""}));
+    const whole = {...card, parts, ...(pattern.literal ? {literal: pattern.literal} : {})};
+    pool.push({...whole, id: "gb:" + key, kind: "build"});
     if (["clear", "partial"].includes(pattern.transparency) && pattern.solved?.right) {
-      pool.push({...card, id: "gi:" + key, kind: "infer"});
+      pool.push({...whole, id: "gi:" + key, kind: "infer"});
     }
   }
 }
@@ -689,6 +694,42 @@ export function kanjiPick({pool = [], examples = [], order = "", state = {}, siz
   for (const group of ["prove", "fresh", "weak", "known"]) fill(group, size - out.length);
   return shuffle(out, random);
 }
+
+// ---- Grammar from its parts on the screen (board 13) ----
+// The list under a build card: one row a piece, in sentence order; a piece
+// that repeats is one row with its count (にしても～にしても is three rows, not
+// six); a piece with no gloss gets no row.
+export function partRows(parts = []) {
+  const rows = [];
+  for (const {text, gloss} of parts) {
+    if (!gloss) continue;
+    const same = rows.find(r => r.text === text && r.gloss === gloss);
+    if (same) same.times++; else rows.push({text, gloss, times: 1});
+  }
+  return rows;
+}
+// The underline cut into one segment per part, so the eye matches the list to
+// the sentence. needle: what the card underlines (a string, or the pieces of a
+// split pattern). null when the parts do not fill the underline exactly: the
+// card then keeps its one underline.
+export function cutUnderline(sentence = "", needle = "", parts = []) {
+  const ranges = []; let from = 0;
+  for (const piece of [].concat(needle)) { const at = piece ? sentence.indexOf(piece, from) : -1; if (at < 0) return null; ranges.push([at, at + piece.length]); from = at + piece.length; }
+  const out = [], queue = parts.map(p => p.text); let at = 0;
+  for (const [a, b] of ranges) {
+    if (a > at) out.push({text: sentence.slice(at, a)});
+    let i = a;
+    while (i < b) { const text = queue.shift(); if (!text || !sentence.startsWith(text, i) || i + text.length > b) return null; out.push({text, part: true, cut: i > a}); i += text.length; }
+    at = b;
+  }
+  if (queue.length) return null;
+  if (at < sentence.length) out.push({text: sentence.slice(at)});
+  return out;
+}
+// The blocks an answer has just proved: those whose transfer count rose.
+// The proved beat holds the card a little longer (board 13 · H).
+export const PROVED_MS = 600;
+export const provedBy = (before = {}, after = {}, q = {}) => (q.blocks || []).filter(id => (after.gb?.[id]?.[3] || 0) > (before.gb?.[id]?.[3] || 0));
 
 // ---- Grammar blocks ----
 export const GRAMMAR_BLOCK_KNOWN = Object.freeze({transfer: 1, right: 3});

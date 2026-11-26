@@ -136,8 +136,17 @@ Two handoffs wait on other people (27 Nov 2026):
   `docs/GRAMMAR-BLOCKS-REVIEW-HANDOFF.md`, with everything to read in
   `tools/grammar-blocks/review-data.json`. The cards stay unscored until it
   is done.
-- **Design** of the build card's row of parts and the rest of the feature:
-  `docs/design/game/GRAMMAR-PARTS-HANDOFF.md`.
+- **Design**: answered by board 13, "Grammar from its parts", and built in
+  v301 (all seven changes of its build list). Differences from the board,
+  for the designer:
+  - The review keeps one underline under the pattern; the board cuts it per
+    part there too (the review sentence carries furigana).
+  - On a 375 × 667 screen the five-row card with a two-line sentence and a
+    two-line choice overflowed by 11 px at the board's sizes. Five rows are
+    24 px there, not 26, and the sentence is 1.6 lines high.
+  - 2 of the 156 build cards keep one underline (を～に任せる, お～願う):
+    their parts do not fill the reviewed underline exactly.
+  - The stamp's sound is two short triangle tones, not a sampled wood block.
 
 The local preview uses existing Quick round grammar cards and adds a row of
 chips for the parts and their glosses. The designer still needs to review the

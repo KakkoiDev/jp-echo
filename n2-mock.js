@@ -9,7 +9,7 @@ import {recognitionFactory} from "./speech.js";
 import {speakOnce,speakAndWait,japaneseVoices,RadioPlayer,NoiseBed} from "./speech.js";
 import {RADIO_DEFAULTS,RADIO_PHASE_COPY,clockAt,radioPhase,radioPlan,radioSteps} from "./radio.js";
 import {readNights, nightComparison, comparisonLine, eveningRecall, EVENING_SOURCE, nightPlan, nightRecord, keepNight, NIGHT_KEY} from "./n2-night.js";
-import {heardGap, grammarBlockCard, grammarCoverage, kanjiCoverage, levelCoverage, isCovered, aheadLevel, applyBoss, verdictLine, rankOf, setRank, rankLevels, hasBoss, RANKS, inSlump, itemLevel, levelAfter, ITEM_LEVEL, gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, patternVoice, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
+import {partRows, cutUnderline, provedBy, PROVED_MS, heardGap, grammarBlockCard, grammarCoverage, kanjiCoverage, levelCoverage, isCovered, aheadLevel, applyBoss, verdictLine, rankOf, setRank, rankLevels, hasBoss, RANKS, inSlump, itemLevel, levelAfter, ITEM_LEVEL, gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, patternVoice, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
 import {createLevels} from "./jlpt-levels.js";
 import {createSets, levelRows, SET_LEVELS, setLevel, heldOut} from "./jlpt-sets.js";
 import {spokenWord,radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
@@ -1126,6 +1126,8 @@ const sfx = (() => {
     idk: () => tone(330, 0, .04, "sine", .05),
     flag: () => noise(.02),
     tick: () => tone(880, 0, .02, "sine", .035),
+    // The proved stamp (board 13 · H): a short wood-block click.
+    proved: () => { tone(990, 0, .03, "triangle"); tone(660, .035, .06, "triangle"); },
     bonus: () => { tone(1047, 0, .05); tone(1319, .06, .05); },
     jackpot5: () => [523, 659, 784].forEach((f, i) => tone(f, i * .06, .14, "square", .045)),
     jackpot10: () => { [523, 659, 784, 1047].forEach((f, i) => tone(f, i * .06, .16, "square", .045)); noise(.3, .02); },
@@ -1140,6 +1142,8 @@ function readGame() { try { return JSON.parse(localStorage.getItem(GAME_KEY) || 
 // Every save is stamped and marked for the gist sync (the N2 file carries it).
 function writeGame(state) { try { localStorage.setItem(GAME_KEY, JSON.stringify({...state, updatedAt: new Date().toISOString()})); markDirty("n2"); } catch {} }
 const gameLevels = createLevels();
+// Board 13: the parts as a ruled list, the piece in the Mincho, its gloss beside it; repeats as ×2.
+const partList = parts => partRows(parts).flatMap(r => [el("b", {lang: "ja"}, r.text, ...(r.times > 1 ? [el("small", {text: "×" + r.times})] : [])), el("span", {text: r.gloss})]);
 const RUN_CHEVRON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
 async function game() {
   show("game");
@@ -1378,8 +1382,11 @@ async function game() {
       $("game-run-row").hidden = false; $("game-run-points").textContent = cover.seen.toLocaleString() + " met"; $("game-run-points").dataset.neg = "false"; $("game-run-waits").textContent = "no " + rankOf(st) + " boss yet";
       $("game-countdown").hidden = true; $("game-run-line").textContent = "";
     }
-    const grammar = rankOf(st) === "N2" ? grammarCoverage(n2Cards, st) : {items: 0};
-    $("game-grammar-count").textContent = grammar.items ? "N2 grammar · " + grammar.known + " of " + grammar.items + " blocks known" : "";
+    // Board 13 · I: one "Known" strip under the run card, from the first proved piece (never "0 of 162").
+    const grammar = rankOf(st) === "N2" ? grammarCoverage(n2Cards, st) : {items: 0, known: 0};
+    $("game-known").hidden = !grammar.known;
+    $("game-known-fill").style.width = grammar.items ? grammar.known / grammar.items * 100 + "%" : "0";
+    $("game-known-count").replaceChildren(String(grammar.known), el("span", {text: " / " + grammar.items}));
     if (open) {
       $("game-boss-name").textContent = "Run " + runNo + " · boss open";
       $("game-boss-title").textContent = mockNo + " at half time";
@@ -1585,12 +1592,14 @@ async function game() {
     $("game-sentence").hidden = !sentenceKind && !inContext; $("game-sentence").classList.toggle("heard", inContext);
     $("game-sentence").classList.toggle("passage", q.kind === "connective");
     if (q.kind === "connective") { const [a, b] = q.sentence.split("（　）"); $("game-sentence").replaceChildren(a, el("span", {class: "qr-blank", id: "game-blank"}), b || ""); }
+    // Board 13: on a build card the underline is cut into one segment per part.
+    else if (sentenceKind && q.kind === "build" && cutUnderline(q.sentence, q.needle, q.parts)) $("game-sentence").replaceChildren(...cutUnderline(q.sentence, q.needle, q.parts).map(s => s.part ? el("u", {class: "n2-mark" + (s.cut ? " qr-cut" : ""), text: s.text}) : s.text));
     else if (sentenceKind) $("game-sentence").replaceChildren(...exampleNodes(q.sentence, [q.needle]));
     else if (inContext) $("game-sentence").replaceChildren(...heard.flatMap((s, n) => !s.mark ? [s.text] : heard[n - 1]?.mark ? [] : [el("span", {class: "qr-blank", id: "game-blank"})]));
     const parts = $("game-grammar-parts");
     parts.hidden = q.kind !== "build";
-    parts.replaceChildren(...(q.parts || []).map(part => el("span", {class: "qr-chip"},
-      el("span", {text: part.text, lang: "ja"}), ...(part.gloss ? [el("span", {text: part.gloss, lang: "en"})] : []))));
+    parts.replaceChildren(...partList(q.parts)); parts.dataset.rows = String(partRows(q.parts).length);
+    card.dataset.kind = q.kind; $("game-proved").hidden = true;
     // Board 11 · E: a practice card reads as practice: dashed card, dim clock, ring pip.
     card.dataset.practice = String(!!q.practice); root.dataset.practice = String(!!q.practice);
     $("game-say").hidden = !listen; $("game-say-hint").hidden = !listen;
@@ -1677,12 +1686,23 @@ async function game() {
     else if (outcome === "wrong") line.textContent = "Part of the game. Keep going.";
     else if (outcome === "timeout") line.textContent = "Too slow this time. It comes back next round.";
     else if (outcome === "dontknow") line.textContent = "Fine. Keep going.";
+    // Board 13 · D–E: after any answer on a build card, the parts read together, in the line's slot.
+    if (q.kind === "build" && q.literal) { line.replaceChildren(el("small", {text: "piece by piece"}), q.literal); line.className = "qr-line literal"; line.dataset.tone = outcome === "right" ? "right" : ""; }
     // Item strength: a fast right answer stamps a square in; a miss takes one away (boards 9, 2).
     const lvFrom = q.practice && !q.record ? 0 : itemLevel(readGame(), q.id), lvTo = q.practice && !q.record ? 0 : levelAfter(readGame(), {id: q.id, outcome, fast: result.fast});
     if (lvTo > lvFrom) { ups.push({word: String(q.solution?.word || q.prompt).replace(/[〜～]/g, ""), from: lvFrom, to: lvTo}); if (!$("game-lv").hidden || !$("game-master").hidden) { paintLevel(lvTo, true); $("game-lvup").hidden = false; } }
     else if (lvTo < lvFrom && $("game-tag").hidden) { $("game-lv").hidden = true; $("game-master").hidden = true; $("game-tag").hidden = false; $("game-tag").textContent = "Lv " + lvFrom + " → " + lvTo; $("game-tag").dataset.tone = "seal"; }
     if (outcome !== "right") misses.push({q, picked: i >= 0 ? q.choices[i] : outcome === "timeout" ? "Time ran out" : "I don’t know", from: lvFrom, to: lvTo});
+    const beforeAnswer = readGame();
     state = rememberAnswer(readGame(), {q, outcome, points: paid.points, fast: result.fast, difficulty: difficulty()}); writeGame(state);
+    // Board 13 · H: an infer card answered right on a pattern never shown proves its pieces. One beat: a 証 stamp, a click, and a little longer on the card.
+    const proved = q.kind === "infer" && provedBy(beforeAnswer, state, q).length > 0;
+    if (proved) {
+      const known = grammarCoverage(n2Cards, state);
+      $("game-proved-pieces").textContent = partRows(q.parts).map(r => r.text).join(" · "); $("game-proved-count").textContent = known.known + " of " + known.items;
+      $("game-proved").hidden = false; line.textContent = "";
+      if (sound()) { sfx.proved(); buzz(15); }
+    }
     if (recallsMiss(q, outcome)) {
       try {
         const id = recallId(q.dimension, q.target), previous = data.recall.find(r => r.id === id);
@@ -1693,7 +1713,7 @@ async function game() {
       } catch {}
     }
     index++; saveRound(); index--; // the next question is where a resume picks up
-    timer = setTimeout(() => { index++; ask(); }, outcome === "right" ? (paid.jackpot && streak >= 10 ? 700 : PAUSE.right) : outcome === "dontknow" ? 600 : PAUSE.miss);
+    timer = setTimeout(() => { index++; ask(); }, proved ? PROVED_MS : outcome === "right" ? (paid.jackpot && streak >= 10 ? 700 : PAUSE.right) : outcome === "dontknow" ? 600 : PAUSE.miss);
   }
   // The review (fix 9): 5 seconds a miss, read top to bottom in one glance.
   let reviewAt = 0, held = false;
@@ -1717,6 +1737,10 @@ async function game() {
     const chose = picked && !/^(Time ran out|I don’t know)$/.test(picked), long = chose && picked.length > 24;
     $("game-review-picked").dataset.long = String(!!long);
     $("game-review-picked").replaceChildren(...(long ? [el("small", {text: "You picked"}), el("s", {text: picked})] : chose ? ["You picked ", el("s", {text: picked})] : [picked || ""]));
+    // Board 13 · G: a missed build or infer card shows its parts and their literal reading, between the pick and the sentence.
+    const rows = (q.kind === "build" || q.kind === "infer") && q.parts ? partList(q.parts) : [];
+    $("game-review-parts").hidden = !rows.length; $("game-review-partlist").replaceChildren(...rows);
+    $("game-review-literal").hidden = !q.literal; $("game-review-literal").replaceChildren(...(q.literal ? [el("small", {text: "piece by piece"}), q.literal] : []));
     $("game-next").textContent = n === misses.length - 1 ? "Round end" : "Next";
     $("game-review-sentence").hidden = !sol.ja;
     if (sol.ja) { $("game-review-ja").replaceChildren(...exampleNodes(sol.ja, [q.kind === "homophone" || q.kind === "connective" ? word : q.needle || "", word.replace(/[〜～]/g, "").replace(/（[^）]*）/g, "")].filter(Boolean))); $("game-review-en").textContent = sol.en || ""; }

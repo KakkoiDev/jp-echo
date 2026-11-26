@@ -67,6 +67,8 @@ export function validateGrammarBlocks(index, {draft = false} = {}) {
         if (!/^[ぁ-ゖァ-ヺー]{1,2}$/.test(part.text)) add(key, `non-kana or long glue: ${part.text}`);
         continue;
       }
+      // A part may carry its own gloss, held to the same rules as a block's.
+      if (part.gloss !== undefined && (!text(part.gloss) || JP.test(part.gloss) || [...part.gloss].length > 40 || sameSense(part.gloss, point.meaning))) add(key, `gloss of part ${part.text} must be short English that does not give the answer`);
       const b = Object.hasOwn(blocks, part.block) && blocks[part.block];
       if (!object(b)) { add(key, `unknown block: ${part.block}`); continue; }
       users.get(part.block).add(key);

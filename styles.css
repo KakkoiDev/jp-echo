@@ -2249,8 +2249,34 @@ body[data-view=game] .n2-game{position:fixed;inset:0;box-sizing:border-box;width
 .qr-small{font-size:13px;color:var(--ink-muted)}
 .qr-center{text-align:center}
 .qr-chip{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:none;background:var(--track);color:var(--sumi);white-space:nowrap}
-.qr-grammar-parts:not([hidden]){display:flex;flex-wrap:wrap;justify-content:center;gap:4px;margin-top:8px}
-.qr-grammar-parts .qr-chip{height:auto;min-height:24px;white-space:normal}
+/* Grammar from its parts (board 13). The parts are a ruled list in sentence
+   order: the piece in the Mincho on the left, its gloss in quiet sans on the
+   right; a piece that repeats carries ×2. */
+.qr-grammar-parts:not([hidden]){display:grid;grid-template-columns:max-content minmax(0,1fr);column-gap:14px;margin-top:14px;border-top:1px solid var(--hairline);text-align:start}
+.qr-grammar-parts b,.qr-grammar-parts span{display:flex;align-items:center;min-height:30px;padding:5px 0;border-bottom:1px solid var(--hairline)}
+.qr-grammar-parts b{gap:6px;font-family:var(--display);font-size:17px;font-weight:700;color:var(--sumi)}
+.qr-grammar-parts b small{font-family:var(--ui);font-size:11px;font-weight:700;color:var(--ink-muted)}
+.qr-grammar-parts span{font-size:13px;font-weight:500;line-height:1.3;color:var(--ink-muted)}
+/* The underline is cut into the same pieces, 3 px apart; indigo once answered right. */
+.qr-sent u.qr-cut{margin-left:3px}.qr-card[data-state=right] .qr-sent u{text-decoration-color:var(--right)}
+/* After an answer on a build card: the parts read together, in the line's slot. */
+.qr-line.literal{display:flex;align-items:center;justify-content:center;gap:8px;height:auto;min-height:28px;font-weight:700;color:var(--sumi)}
+.qr-line.literal small,.qr-literal small{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-muted)}
+.qr-line.literal[data-tone=right],.qr-line.literal[data-tone=right] small{color:var(--right)}
+/* The review of a missed build or infer card: the list and the literal line in one card. */
+.qr-reviewparts{padding-top:4px}.qr-reviewparts .qr-grammar-parts{margin-top:0;border-top:0}
+.qr-literal{display:flex;gap:8px;align-items:baseline;margin:0;padding-top:10px;font-size:13px;font-weight:700}.qr-literal[hidden]{display:none}
+/* Proved (H): a 証 stamp strip under the card. */
+.qr-proved{display:flex;align-items:center;gap:12px;margin:12px 0 0;padding:10px 14px;border-radius:14px;background:var(--right-tint);color:var(--right)}.qr-proved[hidden]{display:none}
+.qr-proved div{flex:1;display:flex;flex-direction:column}.qr-proved strong{font-size:14px;font-weight:900}.qr-proved div span{margin-top:2px;font-family:var(--display);font-size:17px;font-weight:700}
+.qr-proved>.qr-n{font-size:12px;font-weight:700}
+.qr-stamp{flex:none;display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:8px;background:var(--right);color:var(--panel);font-family:var(--display);font-size:19px;font-weight:800;transform:rotate(-4deg);animation:qr-stamp .2s ease-out}
+@keyframes qr-stamp{from{transform:rotate(-4deg) scale(1.6)}to{transform:rotate(-4deg) scale(1)}}
+@media(prefers-reduced-motion:reduce){.qr-stamp{animation:none}}.motion-off .qr-stamp{animation:none}
+/* Home (I): one "Known" strip under the run card. */
+.qr-known{display:flex;align-items:center;gap:12px;min-height:44px;margin:10px 0 0;padding:0 14px;border-radius:14px;border:1px solid var(--hairline);font-size:13px}.qr-known[hidden]{display:none}
+.qr-knownname{flex:1}.qr-knownbar{position:relative;width:72px;height:4px;border-radius:2px;background:var(--track);overflow:hidden}.qr-knownbar i{position:absolute;left:0;top:0;bottom:0;background:var(--right)}
+.qr-known .qr-n{font-weight:700}.qr-known .qr-n span{font-weight:500;color:var(--ink-muted)}
 .qr-chip[data-tone=gold]{background:var(--gold-tint);color:var(--gold)}.qr-chip[data-tone=goldfill]{background:var(--gold);color:var(--panel)}.qr-chip[data-tone=seal]{background:var(--seal-tint);color:var(--seal)}.qr-chip[data-tone=right]{background:var(--right-tint);color:var(--right)}
 /* Home */
 .qr-notice{display:flex;align-items:center;gap:10px;min-height:44px;margin-top:6px;padding:8px 8px 8px 14px;border-radius:14px;background:var(--panel);border:1px solid var(--hairline);font-size:13px;line-height:1.35}
@@ -2540,6 +2566,13 @@ html.motion-off .n2-game *{animation:none !important}html.motion-off .n2-game *:
   body[data-view=game] .qr-sent{font-size:19px;margin-top:10px}body[data-view=game] .qr-sent.passage{font-size:16px;line-height:1.7}
   body[data-view=game] .qr-listen{width:76px;height:76px;margin-top:10px}body[data-view=game] .qr-hint{margin:6px 0 2px}
   body[data-view=game] .qr-say{margin-top:10px}
+  /* Board 13 · F: a build card gives up the "say it" line first, then its rows tighten. */
+  body[data-view=game] .qr-card[data-kind=build] .qr-say{display:none}
+  body[data-view=game] .qr-card[data-kind=build] .qr-sent{line-height:1.6;margin-top:8px}
+  /* Measured at 375 × 667: five rows, a two-line sentence and one two-line choice overflowed by 11 px; five rows take 24 px each. */
+  body[data-view=game] .qr-grammar-parts[data-rows="5"] b,body[data-view=game] .qr-grammar-parts[data-rows="5"] span{min-height:24px;padding:2px 0}
+  body[data-view=game] .qr-grammar-parts:not([hidden]){margin-top:10px}body[data-view=game] .qr-grammar-parts b,body[data-view=game] .qr-grammar-parts span{min-height:26px;padding:3px 0}
+  body[data-view=game] .qr-grammar-parts b{font-size:16px;line-height:1.2}body[data-view=game] .qr-grammar-parts span{font-size:12px}
   body[data-view=game] .qr-line{height:22px;padding-top:6px}
   body[data-view=game] .qr-ft{padding-top:8px}
   body[data-view=game] #game-play{padding-bottom:calc(12px + env(safe-area-inset-bottom))}
