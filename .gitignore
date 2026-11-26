@@ -4,3 +4,5 @@ data/wanikani/
 # Tokens and keys for the tools. Never committed.
 .env
 data/jmdict/
+# Papers being written and audited (tools/paper-pipeline). Shipped papers are in sets/.
+.papers/
