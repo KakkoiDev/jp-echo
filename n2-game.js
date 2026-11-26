@@ -23,7 +23,8 @@
 import {recallItems, localDay} from "./n2-study.js";
 import {HELD_OUT} from "./n2-comprehension.js";
 import {connectiveSites, jobOf, glossOf, JOBS, OVERLAP, CHOICE_FOR_JOB} from "./n2-connectives.js";
-import {ACCEPTED_READINGS, READING_KEY, EXCLUDED, GLOSS_FIX, GRAMMAR_SPANS} from "./n2-game-review.js";
+import {ACCEPTED_READINGS, READING_KEY, EXCLUDED, GLOSS_FIX, GRAMMAR_SPANS, REVIEWED_LEVELS} from "./n2-game-review.js";
+import {LEVELS} from "./jlpt-levels.js";
 
 const keyOf = target => JSON.stringify(target);
 export const GAME_KEY = "echo-n2-game";
@@ -98,14 +99,26 @@ export function nearMisses(reading = "") {
 // ---- The pool ----
 // examples: the deck sentences by target (examplesFromDecks). sets: authored
 // N2 sets; only those in `sat` give exam questions, never HELD_OUT.
-export function gamePool({inventory, examples = new Map(), sets = [], sat = new Set()}) {
+//
+// level: the JLPT level the inventory is (jlpt-levels.js). N2, the default,
+// is the pool as it has always been, ids and all. Any other level gives its
+// word cards only (reading, meaning, which word, listen; a sentence is
+// optional for them), each id carrying the level ("r:N3:就任") so no two
+// levels can collide and no N2 progress is touched. Until a level's cards
+// have been reviewed (REVIEWED_LEVELS) they are practice, not scored, and
+// have no recall target: a miss there never enters N2's recall evidence.
+// Grammar, connective and exam cards for other levels wait for their decks
+// and sets.
+export function gamePool({inventory, examples = new Map(), sets = [], sat = new Set(), level = "N2"}) {
+  const other = level !== "N2", tag = other ? level + ":" : "";
   const items = recallItems(inventory), pool = [];
   // Affixes such as ～発 are left out: they are not words to pick or read alone.
-  const words = items.meaning.map(it => { const text = it.target[1], reading = READING_KEY[text] || it.reading || it.target[2];
-    return {target: it.target, text, reading, answer: GLOSS_FIX[text + "/" + reading] || GLOSS_FIX[text] || it.answer}; }).filter(w => !/[〜～]/.test(w.text));
+  // READING_KEY and GLOSS_FIX correct the N2 list; they are not applied elsewhere.
+  const words = items.meaning.map(it => { const text = it.target[1], reading = (!other && READING_KEY[text]) || it.reading || it.target[2];
+    return {target: it.target, text, reading, answer: (!other && (GLOSS_FIX[text + "/" + reading] || GLOSS_FIX[text])) || it.answer}; }).filter(w => !/[〜～]/.test(w.text));
   // Stable ids: a word written the same way twice (紅葉 こうよう / もみじ) carries its reading.
   const spellings = new Map(); for (const w of words) spellings.set(w.text, (spellings.get(w.text) || 0) + 1);
-  const idOf = w => spellings.get(w.text) > 1 ? w.text + "/" + w.reading : w.text;
+  const idOf = w => tag + (spellings.get(w.text) > 1 ? w.text + "/" + w.reading : w.text);
   const byKanji = new Map();
   for (const w of words) for (const k of new Set(w.text.match(KANJI) || [])) byKanji.set(k, [...(byKanji.get(k) || []), w]);
   const byReading = new Map();
@@ -157,7 +170,7 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
         solution: {word: w.text, reading: w.reading, meaning: w.answer, ja: ex.ja, en: ex.en || "", others: same.map(o => o.text + " · " + gloss(o.answer))}});
     }
   }
-  const grammar = items.grammar;
+  const grammar = other ? [] : items.grammar;
   for (const [i, g] of grammar.entries()) {
     const ex = sentenceOf(g.target);
     if (!ex) continue;
@@ -170,6 +183,7 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
   // Connectives (問題9): from reading passages of sets already sat. The
   // excerpt is up to two sentences before the blank and the blank's sentence.
   // Practice only, not scored, until the excerpts are reviewed (audit P2).
+  if (other) sets = [];
   for (const set of sets) {
     if (!set?.id || HELD_OUT.includes(set.id) || !sat.has(set.id)) continue;
     const seen = new Set();
@@ -194,8 +208,13 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
     }
   }
   // The bar for every item: not excluded, and four distinct choices.
-  return pool.filter(q => !EXCLUDED[q.id] && (q.fixed ? new Set(q.fixed).size === 4 : new Set(q.wrong.filter(w => w !== q.answer)).size >= 3));
+  const fit = pool.filter(q => !EXCLUDED[q.id] && (q.fixed ? new Set(q.fixed).size === 4 : new Set(q.wrong.filter(w => w !== q.answer)).size >= 3));
+  if (!other) return fit;
+  // item: what a round counts as one thing, where N2 cards use their target.
+  return fit.map(q => ({...q, level, item: level + ":" + q.target[1] + "/" + q.target[2], target: null, ...(REVIEWED_LEVELS.has(level) ? {} : {practice: true})}));
 }
+// The level a card belongs to: cards without one are N2's.
+export const levelOfCard = q => q?.level || "N2";
 
 function connectiveQuestion(source, text, site) {
   const job = jobOf(site.word);
@@ -263,7 +282,7 @@ export function pickRound({pool, recall = [], seen = {}, wins = {}, lv = {}, siz
   // readings and exam questions are not drowned by the many word questions.
   for (const [name, g] of Object.entries(groups)) groups[name] = byKindInTurn(g.sort((a, b) => (seen[a.id] || 0) - (seen[b.id] || 0)), random);
   const out = [], used = new Set(), targets = new Set();
-  const take = (list, n) => { for (const q of list) { if (n <= 0) break; const t = q.target ? keyOf(q.target) : q.id; if (used.has(q.id) || targets.has(t)) continue; used.add(q.id); targets.add(t); out.push(q); n--; } };
+  const take = (list, n) => { for (const q of list) { if (n <= 0) break; const t = q.target ? keyOf(q.target) : q.item || q.id; if (used.has(q.id) || targets.has(t)) continue; used.add(q.id); targets.add(t); out.push(q); n--; } };
   const byId = new Map(pool.map(q => [q.id, q]));
   const back = shuffle(comeback.map(id => byId.get(id)).filter(Boolean), random).slice(0, size);
   take(back, back.length);
@@ -402,14 +421,52 @@ export function inSlump(state = {}) {
   // since a wrong answer on a streak costs up to 400 it fired nearly every round.
   return !!last && last.n > 0 && last.right / last.n < .5;
 }
-export function nextRound({pool, recall = [], state = {}, difficulty = "normal", random = Math.random, now = Date.now()}) {
+// review: the cards of the levels under the player's rank (rankLevels). When
+// there are any, REVIEW_SHARE of the round's places go to them, least recently
+// seen first, so a level passed keeps coming back. With none, the round is
+// picked exactly as it always was.
+export function nextRound({pool, review = [], recall = [], state = {}, difficulty = "normal", random = Math.random, now = Date.now()}) {
   const slump = inSlump(state), beat = pace(state, now);
   const level = Math.min(1, Math.max(0, levelOf(state) + beat.offset + (DIFFICULTY[difficulty] || DIFFICULTY.normal).offset));
-  const round = pickRound({pool, recall, seen: state.seen || {}, wins: state.wins || {}, lv: state.lv || {}, random, now,
-    comeback: slump ? (state.comeback || []).slice(-WARM_UP.comeback) : state.comeback || [], mix: slump ? WARM_UP.mix : flowMix(level)})
-    .map(q => ({...q, seconds: flowSeconds(q.seconds, level), bonus: !q.comeback && !q.practice && random() < BONUS.chance * beat.bonus}));
+  const share = review.length && pool.length ? REVIEW_SHARE : 0, memory = {recall, seen: state.seen || {}, wins: state.wins || {}, lv: state.lv || {}, random, now};
+  let picked = pickRound({...memory, pool, size: ROUND_SIZE - share,
+    comeback: slump ? (state.comeback || []).slice(-WARM_UP.comeback) : state.comeback || [], mix: slump ? WARM_UP.mix : flowMix(level)});
+  if (share) {
+    // The comeback cards stay first; the review cards are spread among the rest.
+    const back = picked.filter(q => q.comeback), old = pickRound({...memory, pool: review, size: Math.max(0, ROUND_SIZE - picked.length), mix: {weak: share, fresh: share, known: share}}).map(q => ({...q, review: true}));
+    picked = [...back, ...interleave(shuffle([...picked.filter(q => !q.comeback), ...old], random))];
+  }
+  const round = picked.map(q => ({...q, seconds: flowSeconds(q.seconds, level), bonus: !q.comeback && !q.practice && random() < BONUS.chance * beat.bonus}));
   return {round, warmUp: slump, level, beat};
 }
+
+// ---- The rank ----
+// The player's rank is a JLPT level, N5 to N1 (docs/JLPT-LEVELS-PLAN.md,
+// phase 4). It sets the level of the questions; the levels under it come back
+// as review. It is kept in the game state (`rank`, with `rankAt`, the moment
+// it was set, so a sync keeps the latest choice: mergeGame, sync.js).
+// A state with no rank is N2: every player before ranks existed played N2,
+// and their progress stays exactly where it was.
+// How the rank moves up and down is the owner's to decide (promotion is meant
+// to be the level's boss); until then it only changes by setRank.
+export const RANKS = LEVELS, DEFAULT_RANK = "N2";
+export const rankOf = (state = {}) => RANKS.includes(state?.rank) ? state.rank : DEFAULT_RANK;
+export function setRank(state = {}, rank, now = Date.now()) {
+  return RANKS.includes(rank) ? {...state, rank, rankAt: new Date(now).toISOString()} : state;
+}
+// Places in a round kept for the levels under the rank.
+export const REVIEW_SHARE = 2;
+// Which levels a round draws on: the rank's own, and those under it as review.
+// At N2 nothing is mixed in yet: the lower levels' cards are still practice
+// (REVIEWED_LEVELS), and an N2 round is all scored; unscored cards would only
+// slow its run to the boss. A lower level joins N2's rounds once it is reviewed.
+export function rankLevels(rank = DEFAULT_RANK, reviewed = REVIEWED_LEVELS) {
+  const at = RANKS.indexOf(RANKS.includes(rank) ? rank : DEFAULT_RANK), under = RANKS.slice(0, at);
+  return {level: RANKS[at], review: RANKS[at] === "N2" ? under.filter(l => reviewed.has(l)) : under};
+}
+// The boss of a rank is a mock of its level. Only N2 has authored sets today.
+export const BOSS_LEVELS = Object.freeze(["N2"]);
+export const hasBoss = rank => BOSS_LEVELS.includes(rank);
 
 // ---- Pacing ----
 // Games pace in waves of tension and release, not a flat line: Valve's

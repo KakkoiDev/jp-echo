@@ -76,3 +76,9 @@ export const EXCLUDED = Object.freeze({
   "e:n2-set-7#16": "re-audit: prompt to review", "e:n2-set-8#9": "re-audit: prompt to review",
   "e:n2-set-17#18": "re-audit: prompt to review", "e:n2-set-17#20": "re-audit: prompt to review",
 });
+
+// The levels whose Quick round cards have been audited and may score. Cards of
+// every other level are practice (exposure only) until theirs is done: add a
+// level here only after its pool has passed the same audit as N2's
+// (four distinct choices, no wrong choice that is also right; docs/REPORTS.md).
+export const REVIEWED_LEVELS = new Set(["N2"]);

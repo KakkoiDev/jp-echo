@@ -114,6 +114,45 @@ pieces; the designer should correct any of this:
   not a count, so there is no honest "of 136".
 - Not done: the game's Sound switch does not apply on those two screens.
 
+## Ranks N5 to N1 (v288, 26 Nov 2026): the first step, built without boards
+
+Built: inventories for N5, N4, N3 and N1 (`levels/`, fetched and kept), word
+cards for them (reading, meaning, which word, listen), the rank in the game
+state and the sync, a round at rank N3 = eight N3 cards and two from N5 and N4.
+
+Waiting on the owner:
+- **Promotion.** Proposed: the rank's boss, sat on a paper never seen, with the
+  level's pass total plus 10 (N2: 100 of 180) and every section at its
+  minimum or better, moves the rank up one level.
+- **Demotion.** Proposed: two bosses in a row under the pass total move the
+  rank down one level; otherwise it never falls. Alternative: the rank never
+  falls, and lower levels only come back as review.
+- **Where a new player starts.** The plan says N5; today a state with no rank
+  is N2, because only N2 is scored. To switch once N5 can score.
+- **Review at N2.** N2 rounds mix in no lower level while those cards are
+  unscored (they would slow the run to the boss). They join once reviewed.
+- **Reviewing the new levels' cards** so they can score (`REVIEWED_LEVELS`):
+  the same audit N2 had. Their meanings are JMdict's first sense, unedited
+  (e.g. 適度 "moderate" beside "appropriate, suitable"; long glosses on N5
+  particles and counters).
+
+For the designer (none of this is on a board):
+- **The rank on Home**: today the tiny line under the chart ("Rank N3 ·
+  practice, not scored yet · change in Settings").
+- **The rank in Settings**: a five-way segment (N5 … N1) with a hint; it goes
+  once promotion is decided, or stays as "test out of a level".
+- **The card tag**: "N3 practice · not scored" and "N5 review · not scored" on
+  the existing practice tag.
+- **Home at a rank without a boss**: the run card still reads "0 of 1,000 to
+  the boss" though nothing counts and no boss comes. Needs a state.
+- **Review of a practice miss** still says "back next round"; practice misses
+  do not come back.
+
+Left for later (not started): example-sentence decks for N5, N4, N3 and N1;
+grammar, connective and exam cards for them; mock exams (bosses) for levels
+other than N2; N0. Misses on another level's cards save no recall check, so
+they do not reach Today's checks, Evening recall or the Night Radio.
+
 ## After the exam: the rank becomes the level
 
 `docs/JLPT-LEVELS-PLAN.md`, phase 4: start at N5, move up a level by passing

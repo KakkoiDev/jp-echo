@@ -9,7 +9,8 @@ import {recognitionFactory} from "./speech.js";
 import {speakOnce,speakAndWait,japaneseVoices,RadioPlayer,NoiseBed} from "./speech.js";
 import {RADIO_DEFAULTS,RADIO_PHASE_COPY,clockAt,radioPhase,radioPlan,radioSteps} from "./radio.js";
 import {readNights, nightComparison, comparisonLine, eveningRecall, EVENING_SOURCE, nightPlan, nightRecord, keepNight, NIGHT_KEY} from "./n2-night.js";
-import {inSlump, itemLevel, levelAfter, ITEM_LEVEL, gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, patternVoice, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
+import {rankOf, setRank, rankLevels, hasBoss, RANKS, inSlump, itemLevel, levelAfter, ITEM_LEVEL, gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, patternVoice, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
+import {createLevels} from "./jlpt-levels.js";
 import {spokenWord,radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
 import {TAG,TAGS,HELD_OUT,CAUSES,comprehensionStats,weakestTag,tagDrill,drillExposure,attemptTags,tagsOf,sourceOf} from "./n2-comprehension.js";
 import {exampleSegments,patternNeedles,delayedChecks,checkItems,checkAsk,contextNote,sentenceParts,checkDetail,audioGrade,delayedAccuracy,CHECK_SOURCE,WHY_LINE,evidenceFor,evidenceLine} from "./n2-delayed.js";
@@ -1117,6 +1118,7 @@ const PLAY_SVG = '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentC
 function readGame() { try { return JSON.parse(localStorage.getItem(GAME_KEY) || "{}"); } catch { return {}; } }
 // Every save is stamped and marked for the gist sync (the N2 file carries it).
 function writeGame(state) { try { localStorage.setItem(GAME_KEY, JSON.stringify({...state, updatedAt: new Date().toISOString()})); markDirty("n2"); } catch {} }
+const gameLevels = createLevels();
 async function game() {
   show("game");
   if (params.get("view") !== "game") history.replaceState(history.state, "", "?view=game");
@@ -1124,7 +1126,23 @@ async function game() {
   const data = await report();
   const sat = new Set(data.attempts.map(a => a.book).filter(id => /^n2-set-\d+$/.test(id || "")));
   const sets = (await Promise.all([...sat].filter(id => themes[id]).map(id => json(setFile(id)).catch(() => null)))).filter(Boolean);
-  const pool = gamePool({inventory, examples: await deckExamples(), sets, sat});
+  // The rank's own cards and, under it, the review of lower levels (rankLevels).
+  // N2 is built from the app's own files; another level's inventory is fetched
+  // once and kept (jlpt-levels.js). A level that cannot be had (offline and
+  // never fetched) is left out, and if it is the rank's own, N2 is played.
+  const n2Pool = gamePool({inventory, examples: await deckExamples(), sets, sat});
+  const levelPools = new Map([["N2", n2Pool]]);
+  let pool = n2Pool, lower = [], missing = [];
+  async function loadRank() {
+    const {level, review} = rankLevels(rankOf(readGame())), wanted = [level, ...review];
+    const pools = await Promise.all(wanted.map(async l => {
+      if (!levelPools.has(l)) { const inv = await gameLevels.inventory(l); if (inv) levelPools.set(l, gamePool({inventory: inv, level: l})); }
+      return levelPools.get(l) || null;
+    }));
+    missing = wanted.filter((_, i) => !pools[i]);
+    pool = pools[0] || n2Pool; lower = pools[0] ? pools.slice(1).filter(Boolean).flat() : [];
+  }
+  await loadRank();
   let askToken = 0, practiced = 0, roundLevel = .5, rights = 0, flagged = 0, warmUp = false, beat = null, state = readGame(), round = [], index = 0, score = 0, streak = 0, bestCombo = 0, timer = null, ticker = null, shownAt = 0, current = null, locked = false, misses = [], marks = [];
   const bar = $("game-bar"), root = $("game");
   const sound = () => readGame().sound !== false;
@@ -1139,7 +1157,7 @@ async function game() {
   function gameSettings() {
     mode("settings"); $("game-title").textContent = "Settings";
     $("game-back").href = "?view=game"; $("game-back").setAttribute("aria-label", "Back to Quick round home"); $("game-back").onclick = e => { e.preventDefault(); home(); };
-    setSeg("game-set-difficulty", difficulty()); $("game-set-bedtime").value = settings.gameBedtime || "23:30";
+    setSeg("game-set-rank", rankOf(readGame())); setSeg("game-set-difficulty", difficulty()); $("game-set-bedtime").value = settings.gameBedtime || "23:30";
     setSwitch("game-set-sound", sound()); setSwitch("game-set-start", !!settings.startGame); $("game-set-status").textContent = "";
     checkUpdate();
   }
@@ -1198,6 +1216,8 @@ async function game() {
   switchClick("game-night-compare", on => { savePreference("radioCompare", on); radioPanel(); });
   document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && nightPlayer.running) navigator.wakeLock?.request("screen").then(w => { nightWake = w; }).catch(() => {}); });
   segClick("game-set-difficulty", v => savePreference("gameDifficulty", difficultyOf(v)));
+  // The rank, set by hand until the owner fixes how it is won and lost.
+  segClick("game-set-rank", async v => { writeGame(setRank(readGame(), v)); await loadRank(); $("game-set-status").textContent = missing.includes(v) ? v + " needs a connection once. Playing N2 until then." : ""; });
   $("game-set-bedtime").onchange = e => savePreference("gameBedtime", e.target.value || "23:30");
   switchClick("game-set-start", on => savePreference("startGame", on));
   switchClick("game-set-sound", on => setSound(on));
@@ -1221,7 +1241,8 @@ async function game() {
   const stretchStrip = () => { const left = bossProgress(readGame()).left, on = left > 0 && left <= 50; $("game-stretch").hidden = !on; if (on) { $("game-stretch-fill").style.width = (50 - left) / 50 * 100 + "%"; $("game-stretch-left").textContent = "in " + left; } };
   const toast = (text, note = "") => { const t = $("game-toast"); $("game-toast-text").textContent = text; $("game-toast-note").textContent = note; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => { t.hidden = true; }, 1400); };
   // The boss: every 1,000 questions, a full mock on a set not sat yet.
-  const bossNow = () => bossSet({sets: bookIds.filter(id => realistic(id)), attempts: data.attempts});
+  // The boss is a mock of the rank's level; only N2 has sets today (hasBoss).
+  const bossNow = () => hasBoss(rankOf(readGame())) ? bossSet({sets: bookIds.filter(id => realistic(id)), attempts: data.attempts}) : null;
   // The run closes when the boss sitting actually starts (exam(), with its attempt id), not on this tap.
   const fightBoss = (e, boss) => { e.preventDefault(); location.href = "?book=" + boss.id + "&boss=1"; };
   // Numbers below zero carry a true minus (U+2212), never a hyphen (board 12 · E–F).
@@ -1312,7 +1333,10 @@ async function game() {
     $("game-days").replaceChildren(...(none ? days.map((d, i) => el("i", {class: i === days.length - 1 ? "today" : ""}))
       : [el("u", {style: "bottom:" + Math.round(DAILY_GOAL / top * 36) + "px"}),
         ...days.map(d => el("i", {class: d.answered >= DAILY_GOAL ? "full" : "", style: "height:" + Math.max(2, Math.round(d.answered / top * 36)) + "px", title: d.day + ": " + d.answered}))]));
-    $("game-home-level").textContent = difficulty() === "normal" ? "" : DIFFICULTY[difficulty()].label + " · change in Settings";
+    // The rank, then what it means today, then the difficulty when it isn't Normal.
+    const rank = rankOf(st), own = !missing.includes(rank);
+    $("game-home-level").textContent = ["Rank " + rank, !own ? rank + " needs a connection once: playing N2" : pool.every(q => q.practice) ? "practice, not scored yet" : "",
+      difficulty() === "normal" ? "" : DIFFICULTY[difficulty()].label].filter(Boolean).join(" · ") + (rank === "N2" && difficulty() === "normal" ? "" : " · change in Settings");
     // The dock: one big button, then the pair (boards 1 · A–D).
     $("game-home-boss").hidden = !open; $("game-home-radio").hidden = !rest || open; $("game-home-play").hidden = open || rest;
     $("game-home-play2").hidden = !open; $("game-home-play3").hidden = !rest || open;
@@ -1395,7 +1419,8 @@ async function game() {
     // Listen cards leave the mix when nothing can be heard: the sound is off, the
     // phone has no Japanese voice, or the voice failed twice this session.
     const playable = hears() ? pool : pool.filter(q => q.kind !== "listen");
-    const next = nextRound({pool: playable, recall: data.recall, state, difficulty: difficulty()});
+    const review = hears() ? lower : lower.filter(q => q.kind !== "listen");
+    const next = nextRound({pool: playable, review, recall: data.recall, state, difficulty: difficulty()});
     round = next.round; roundLevel = next.level; warmUp = next.warmUp; beat = next.beat || null; rights = 0; flagged = 0; practiced = 0; bestCombo = 0;
     index = 0; score = 0; streak = 0; misses = []; marks = []; ups = [];
     mode("play");
@@ -1414,7 +1439,7 @@ async function game() {
     try {
       const s = JSON.parse(localStorage.getItem(ROUND_KEY) || "null");
       if (!s || Date.now() - s.at > ROUND_KEEP_MS || !(s.index >= 1 && s.index < s.items.length)) { if (s) clearRound(); return null; }
-      const byId = new Map(pool.map(q => [q.id, q])), items = s.items.map(it => byId.has(it.id) ? {...byId.get(it.id), ...it} : null);
+      const byId = new Map([...lower, ...pool].map(q => [q.id, q])), items = s.items.map(it => byId.has(it.id) ? {...byId.get(it.id), ...it} : null);
       if (items.includes(null)) { clearRound(); return null; }
       return {...s, round: items, ups: s.ups || [], misses: (s.misses || []).map(m => ({q: items.find(q => q.id === m.id), picked: m.picked, from: m.from, to: m.to})).filter(m => m.q)};
     } catch { return null; }
@@ -1437,7 +1462,7 @@ async function game() {
     card.dataset.bonus = String(!!q.bonus); card.dataset.state = ""; card.style.animation = "none"; void card.offsetWidth; card.style.animation = "";
     $("game-kind").textContent = q.kind === "exam" ? "Exam · 問題" + q.mondai : q.kind === "connective" ? "Connective" : KIND_LABEL[q.kind];
     const most = q.bonus ? bonusPoints({points: scoreAnswer({outcome: "right", ms: 0, seconds: q.seconds, streak}).points, bonus: true, streak: streak + 1, factor: DIFFICULTY[difficulty()].points, choices: choices.length}).points : 0;
-    const tag = q.bonus ? ["Bonus ×3 · up to " + most.toLocaleString(), "goldfill"] : q.practice ? ["Practice · not scored", "practice"] : q.kind === "exam" ? ["Mock " + String(bookIds.indexOf(String(q.solution?.source || "").split("#")[0]) + 1).padStart(2, "0"), ""] : null;
+    const tag = q.bonus ? ["Bonus ×3 · up to " + most.toLocaleString(), "goldfill"] : q.practice ? [(q.review ? q.level + " review" : q.level ? q.level + " practice" : "Practice") + " · not scored", "practice"] : q.kind === "exam" ? ["Mock " + String(bookIds.indexOf(String(q.solution?.source || "").split("#")[0]) + 1).padStart(2, "0"), ""] : null;
     $("game-tag").hidden = !tag; if (tag) { $("game-tag").textContent = tag[0]; $("game-tag").dataset.tone = tag[1]; }
     // Where no chip claims the corner, the item's level sits there (board 9).
     $("game-lvup").hidden = true;

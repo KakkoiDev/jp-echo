@@ -120,7 +120,10 @@ export function mergeGame(a, b) {
   const runStart = sameRun && starts.length ? starts[0] : newer.runStart;
   // Item levels: the newer save's word on an item it knows, the other's on the rest.
   const lv = {...(older.lv || {}), ...(newer.lv || {})}, lvAt = maxMap(a.lvAt, b.lvAt);
-  return {...newer, ...(runStart === undefined ? {} : {runStart}), ...(Object.keys(lv).length ? {lv, lvAt} : {}), seen: maxMap(a.seen, b.seen), wins: maxMap(a.wins, b.wins), days, history,
+  // The rank (n2-game.js): the one set last wins, whichever save is newer, so a
+  // save made on a device that never chose a rank cannot take it away.
+  const ranked = [a, b].filter(g => g.rank).sort((p, q) => time(q.rankAt) - time(p.rankAt))[0];
+  return {...newer, ...(ranked ? {rank: ranked.rank, rankAt: ranked.rankAt} : {}), ...(runStart === undefined ? {} : {runStart}), ...(Object.keys(lv).length ? {lv, lvAt} : {}), seen: maxMap(a.seen, b.seen), wins: maxMap(a.wins, b.wins), days, history,
     runs: unionBy(a.runs, b.runs, r => r.at).slice(-200), best: Math.max(a.best || 0, b.best || 0),
     rounds: Math.max(a.rounds || 0, b.rounds || 0, history.length), answered: Math.max(a.answered || 0, b.answered || 0), total: Math.max(a.total || 0, b.total || 0)};
 }

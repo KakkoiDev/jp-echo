@@ -136,6 +136,15 @@ Said while reviewing Quick round; they shape the content for every level.
 - **Timing.** Quick round is not tied to an exam date: it trains whenever.
   The work itself still starts after 6 Dec 2026.
 
+## Started, 26 Nov 2026 (Quick round only)
+
+The owner lifted the "after 6 Dec" timing for the game. Built in v288: the
+level inventories (`levels/`, `tools/build-level-inventories.mjs`,
+`jlpt-levels.js`), word cards for N5, N4, N3 and N1 (practice until reviewed),
+and the rank in the game state. What is proposed and what waits is in
+`docs/QUICK-ROUND-BACKLOG.md`, "Ranks N5 to N1". The inventory files are
+`levels/<version>/n5.json` …, not the `jlpt-inventory-N*.json` phase 2 names.
+
 ## Not changing
 
 - Pass probability is never shown; every score names its denominator.

@@ -393,6 +393,20 @@ Before considering the change complete:
   are still Echo's screens and logic; with `?from=game` they wear the game's
   look through one skin (`body[data-from=game]`, right after the Quick round block in styles.css)
   and lead back to the game's Radio. Never fork those players for the game.
+- **Quick round has a rank, a JLPT level (v288).** `rank` / `rankAt` in the
+  game state (`rankOf`, `setRank`, n2-game.js); a state without one is N2, so
+  earlier progress is untouched. `mergeGame` keeps the rank set last. The rank
+  picks the pool (`rankLevels`): its own level, and `REVIEW_SHARE` places a
+  round for the levels under it (`nextRound`'s `review`). N2 is
+  `n2-inventory.json`; N5, N4, N3 and N1 are `levels/<version>/n*.json`, built
+  by `tools/build-level-inventories.mjs` from `words-data.js` and
+  `grammar-data.js` (never by hand), fetched by `jlpt-levels.js` and kept by
+  the worker in `jp-echo-levels`, never precached. `gamePool({level})` gives
+  another level's word cards only, ids carrying the level (`r:N3:就任`), no
+  recall target, and `practice: true` until the level is in `REVIEWED_LEVELS`
+  (n2-game-review.js): add a level there only after its pool is audited. N2
+  ids never change. Only N2 has a boss (`hasBoss`). How the rank is won and
+  lost is not decided: it is set by hand in the game's Settings until then.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

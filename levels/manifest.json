@@ -1,0 +1,21 @@
+{
+ "version": "6b5d0f94fe",
+ "levels": {
+  "N5": {
+   "words": 707,
+   "grammar": 132
+  },
+  "N4": {
+   "words": 651,
+   "grammar": 185
+  },
+  "N3": {
+   "words": 2055,
+   "grammar": 220
+  },
+  "N1": {
+   "words": 2657,
+   "grammar": 221
+  }
+ }
+}

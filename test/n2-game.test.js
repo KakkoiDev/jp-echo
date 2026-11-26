@@ -2,7 +2,9 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
 import {payoutCap, sameSense, answerSpeech, runClock, RUN_CLOCK, DIFFICULTY, difficultyOf, pace, WAVE, HOOK, STRETCH, bossProgress, takeBoss, resting, runTable, BOSS_EVERY, EXAM_POINT, atBedtime, BEDTIME, FLOW, BONUS, flowStep, flowMix, flowSeconds, levelOf, bonusPoints, SECONDS, PAUSE, REVIEW_SECONDS, inSlump, nextRound, WARM_UP, gamePool, choicesFor, pickRound, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, nearMisses, gloss, today, lastDays, ranking, bossSet,
-  ROUND_SIZE, DAILY_GOAL} from "../n2-game.js";
+  ROUND_SIZE, DAILY_GOAL, RANKS, DEFAULT_RANK, REVIEW_SHARE, rankOf, setRank, rankLevels, hasBoss, levelOfCard} from "../n2-game.js";
+import {FETCHED_LEVELS, levelFile} from "../jlpt-levels.js";
+import {REVIEWED_LEVELS} from "../n2-game-review.js";
 import {examplesFromDecks} from "../day-radio.js";
 import {HELD_OUT} from "../n2-comprehension.js";
 
@@ -717,4 +719,126 @@ test("a round survives a closed app or a trip Home for 30 minutes; a recovery ro
   assert.match(mock, /const hears = \(\) => sound\(\) && japaneseVoices\("ja"\)\.length > 0 && listenFails < 2;/);
   assert.match(mock, /if \(!\$\("game-play"\)\.hidden && current && !locked && voiceWait\) return null;/, "nothing to pause while the voice plays");
   assert.match(css, /@media\(max-height:760px\)\{\n  body\[data-view=game\] \.qr-ch\{min-height:48px;padding:6px 12px\}/, "short screens keep the four choices on screen");
+});
+
+// ---- Levels and the rank ----
+const levelsManifest = read("../levels/manifest.json");
+const levelInventory = level => read("../levels/" + levelsManifest.version + "/" + levelFile(level));
+const levelPool = level => gamePool({inventory: levelInventory(level), level});
+
+test("the N2 pool is the same pool with or without a level named: ids, order and all", () => {
+  const sat = new Set(["n2-set-5"]);
+  assert.deepEqual(gamePool({inventory, examples, sets, sat, level: "N2"}), gamePool({inventory, examples, sets, sat}));
+  const pool = gamePool({inventory, examples});
+  assert.ok(pool.every(q => !("level" in q) && !("item" in q) && levelOfCard(q) === "N2"));
+  assert.ok(pool.some(q => q.id === "r:就任") && pool.some(q => q.id === "m:就任") && pool.some(q => q.kind === "grammar"), "today's ids are untouched");
+});
+
+test("another level gives word cards only, under ids no other level can have", () => {
+  const n2 = new Set(gamePool({inventory, examples, sets, sat: new Set(ids)}).map(q => q.id)), all = new Set(n2);
+  for (const level of FETCHED_LEVELS) {
+    const pool = gamePool({inventory: levelInventory(level), examples, sets, sat: new Set(ids), level});
+    assert.ok(pool.length > 2000, level + " has enough cards: " + pool.length);
+    assert.deepEqual([...new Set(pool.map(q => q.kind))].sort(), ["definition", "listen", "meaning", "reading"], level + ": no grammar, connective or exam cards yet");
+    for (const q of pool) {
+      assert.ok(q.id.startsWith(q.id[0] + ":" + level + ":"), q.id);
+      assert.ok(!all.has(q.id), "collides: " + q.id); all.add(q.id);
+      assert.equal(q.level, level); assert.equal(levelOfCard(q), level);
+      assert.ok(q.item.startsWith(level + ":"));
+      assert.equal(q.target, null, "a miss must not enter N2's recall evidence");
+      assert.equal(recallsMiss(q, "wrong"), false);
+    }
+  }
+  // 明らか is N3 in Echo's lists; an N2 word of the same spelling would keep its bare id.
+  assert.ok(all.has("m:N3:明らか") && !n2.has("m:N3:明らか"));
+});
+
+test("a level that has not been reviewed is practice: exposure only, nothing scored", () => {
+  assert.deepEqual([...REVIEWED_LEVELS], ["N2"], "add a level only after its pool has been audited");
+  for (const level of FETCHED_LEVELS) assert.ok(levelPool(level).every(q => q.practice === true), level);
+  const q = levelPool("N3")[0], before = {answered: 5, total: 900, level: .5, wins: {}, lv: {}, comeback: [], seen: {}};
+  const after = rememberAnswer(before, {q, outcome: "wrong", points: -200, now: 1000});
+  assert.equal(after.seen[q.id], 1000);
+  assert.deepEqual({...after, seen: {}, practiced: 0}, {...before, practiced: 0}, "no points, level, wins, misses or boss count");
+});
+
+test("the cards of another level hold the same bar: four distinct choices, the answer never among the wrong ones", () => {
+  for (const level of FETCHED_LEVELS) for (const [i, q] of levelPool(level).entries()) {
+    assert.ok(!q.wrong.includes(q.answer) || new Set(q.wrong.filter(w => w !== q.answer)).size >= 3, q.id);
+    if (i % 7) continue;
+    const {choices, key} = choicesFor(q, seeded(i + 1), (i % 3) / 2);
+    assert.equal(new Set(choices).size, 4, q.id); assert.equal(choices[key], q.answer, q.id);
+    if (q.kind === "meaning" || q.kind === "listen") for (const c of choices) if (c !== q.answer) assert.ok(!sameSense(c, q.answer), q.id + ": " + c);
+  }
+});
+
+test("the rank is a JLPT level; a state without one is N2, so nobody's progress moves", () => {
+  assert.deepEqual([...RANKS], ["N5", "N4", "N3", "N2", "N1"]);
+  assert.equal(DEFAULT_RANK, "N2");
+  assert.equal(rankOf({}), "N2"); assert.equal(rankOf(undefined), "N2"); assert.equal(rankOf({rank: "N9"}), "N2");
+  const old = {seen: {"r:就任": 1}, wins: {"r:就任": 2}, lv: {"r:就任": 3}, comeback: ["m:就任"], total: 10};
+  const set = setRank(old, "N3", Date.parse("2026-11-26T10:00:00Z"));
+  assert.equal(rankOf(set), "N3"); assert.equal(set.rankAt, "2026-11-26T10:00:00.000Z");
+  assert.deepEqual({...set, rank: undefined, rankAt: undefined}, {...old, rank: undefined, rankAt: undefined}, "setting a rank changes nothing else");
+  assert.equal(setRank(old, "N0"), old, "not a rank yet");
+});
+
+test("the rank picks its level, and the levels under it come back as review", () => {
+  assert.deepEqual(rankLevels("N5"), {level: "N5", review: []});
+  assert.deepEqual(rankLevels("N3"), {level: "N3", review: ["N5", "N4"]});
+  assert.deepEqual(rankLevels("N1"), {level: "N1", review: ["N5", "N4", "N3", "N2"]});
+  // N2's rounds are all scored today; unscored lower levels stay out until reviewed.
+  assert.deepEqual(rankLevels("N2"), {level: "N2", review: []});
+  assert.deepEqual(rankLevels(), {level: "N2", review: []});
+  assert.deepEqual(rankLevels("N2", new Set(["N2", "N4"])), {level: "N2", review: ["N4"]});
+  assert.equal(hasBoss("N2"), true);
+  for (const r of FETCHED_LEVELS) assert.equal(hasBoss(r), false, r + " has no mock yet");
+});
+
+test("a round at rank N3 is N3 cards with a share of N4 and N5 review, one card a word", () => {
+  const pool = levelPool("N3"), review = [...levelPool("N5"), ...levelPool("N4")];
+  for (const seed of [1, 2, 3, 4, 5]) {
+    const {round} = nextRound({pool, review, state: setRank({}, "N3"), random: seeded(seed), now: 1e12});
+    assert.equal(round.length, ROUND_SIZE);
+    const old = round.filter(q => q.review);
+    assert.equal(old.length, REVIEW_SHARE);
+    assert.ok(old.every(q => ["N5", "N4"].includes(q.level)) && round.filter(q => !q.review).every(q => q.level === "N3"));
+    assert.equal(new Set(round.map(q => q.item)).size, ROUND_SIZE, "no word twice in a round");
+    assert.ok(round.every(q => q.practice && !q.bonus), "practice cards never carry a bonus");
+    for (let i = 1; i < round.length; i++) assert.notEqual(round[i].kind, round[i - 1].kind, "no two of a kind in a row");
+  }
+  // Review cards rotate: the ones just seen give way to others.
+  const first = nextRound({pool, review, state: {}, random: seeded(9), now: 1e12}).round.filter(q => q.review);
+  const seen = Object.fromEntries(review.filter(q => first.some(f => f.item === q.item)).map(q => [q.id, 1e12]));
+  const second = nextRound({pool, review, state: {seen}, random: seeded(9), now: 1e12 + 1000}).round.filter(q => q.review);
+  assert.ok(second.every(q => !first.some(f => f.item === q.item)));
+});
+
+test("with nothing to review a round is picked exactly as before", () => {
+  const pool = gamePool({inventory, examples}), state = {seen: {"r:就任": 5}, comeback: ["m:就任"], level: .6};
+  const pick = extra => nextRound({pool, state, random: seeded(7), now: 1e12, ...extra}).round.map(q => q.id + "/" + q.seconds + "/" + q.bonus);
+  assert.deepEqual(pick({review: []}), pick({}));
+  assert.equal(nextRound({pool, state, random: seeded(7), now: 1e12}).round.some(q => q.review), false);
+});
+
+test("the rank syncs: the one set last wins, and a save that never chose one cannot take it away", async () => {
+  const {mergeGame} = await import("../sync.js");
+  const phone = {...setRank({answered: 10}, "N3", Date.parse("2026-11-26T10:00:00Z")), updatedAt: "2026-11-26T10:00:00Z"};
+  const laptop = {answered: 12, sound: false, updatedAt: "2026-11-26T11:00:00Z"};
+  for (const m of [mergeGame(phone, laptop), mergeGame(laptop, phone)]) { assert.equal(rankOf(m), "N3"); assert.equal(m.sound, false, "the rest still comes from the newer save"); }
+  const later = {...setRank(laptop, "N4", Date.parse("2026-11-26T12:00:00Z")), updatedAt: "2026-11-26T09:00:00Z"};
+  assert.equal(rankOf(mergeGame(phone, later)), "N4", "by when the rank was set, not when the save was made");
+  assert.equal(rankOf(mergeGame({answered: 1}, {answered: 2})), "N2");
+  assert.ok(!("rank" in mergeGame({answered: 1}, {answered: 2})));
+});
+
+test("the game screen loads the rank's levels, shows the rank on Home and sets it in Settings", () => {
+  const js = src("../n2-mock.js"), html = src("../n2-mock.html");
+  assert.match(js, /rankLevels\(rankOf\(readGame\(\)\)\)/);
+  assert.match(js, /const review = hears\(\) \? lower : lower\.filter\(q => q\.kind !== "listen"\);\s*const next = nextRound\(\{pool: playable, review, /);
+  assert.match(js, /"Rank " \+ rank/);
+  assert.match(js, /writeGame\(setRank\(readGame\(\), v\)\); await loadRank\(\)/);
+  assert.match(js, /hasBoss\(rankOf\(readGame\(\)\)\) \? bossSet/, "no boss is promised for a level without mocks");
+  for (const r of RANKS) assert.ok(html.includes('role="radio" data-value="' + r + '">' + r + "</button>"), r);
+  assert.match(html, /id="game-set-rank" role="radiogroup" aria-label="Rank"/);
 });
