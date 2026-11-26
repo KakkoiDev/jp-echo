@@ -34,10 +34,14 @@ function knownFor(level) {
 // lower ones uses, and the kanji themselves. Names of people and places count.
 export function levelProfile(set) {
   const level = set.level || setLevel(set.id), {kanji} = knownFor(level);
+  // The kanji of the paper's own theme are its subject (面接 in a paper about job interviews) and do not count.
+  const own = new Set(String(set.theme || "").match(KANJI) || []);
   const seen = new Set(), outside = new Map(); let total = 0, out = 0;
   for (const q of set.questions) {
-    const text = [seen.has(q.context) ? "" : q.context, q.prompt, ...(q.choices || [])].join("\n"); seen.add(q.context);
-    for (const k of text.match(KANJI) || []) { total++; if (!kanji.has(k)) { out++; outside.set(k, (outside.get(k) || 0) + 1); } }
+    // The fixed question of a spoken-reply item (最もよい返事はどれですか) is the paper's wording, not the writer's.
+    const fixed = q.skill === "Listening" && (q.choices || []).length === 3;
+    const text = [seen.has(q.context) ? "" : q.context, fixed ? "" : q.prompt, ...(q.choices || [])].join("\n"); seen.add(q.context);
+    for (const k of text.match(KANJI) || []) { total++; if (!kanji.has(k) && !own.has(k)) { out++; outside.set(k, (outside.get(k) || 0) + 1); } }
   }
   return {level, kanji: total, outside: out, share: total ? out / total : 0, list: [...outside].sort((a, b) => b[1] - a[1]).map(([k, n]) => k + (n > 1 ? "×" + n : ""))};
 }

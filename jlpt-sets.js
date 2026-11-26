@@ -66,7 +66,7 @@ const TARGET = {"漢字読み": "reading", "表記": "spelling", "文脈規定":
 const BLOCK = (level, skill) => (skill === L ? "listening" : level === "N1" ? "knowledge_reading" : skill === V ? "vocabulary" : "grammar_reading");
 const paper = (level, spec) => { const seen = {}; return spec.map(([skill, kind, count, extra = {}]) => { const mondai = seen[skill] = (seen[skill] || 0) + 1; const context = !(kind in TARGET) && kind !== "文の組み立て";
   return Object.freeze({skill, mondai, kind, count, options: kind === "発話表現" || kind === "即時応答" ? 3 : 4, ...(TARGET[kind] ? {targeted: TARGET[kind]} : {}), ...(kind === "文の組み立て" ? {star: true} : {}),
-    ...(context ? {needsContext: true, group: 1} : {}), ...extra, block: BLOCK(level, skill), instruction: I[kind === "統合理解" && skill === R ? "統合理解R" : kind]}); }); };
+    ...(context ? {needsContext: true, group: 1} : {}), ...extra, block: BLOCK(level, skill), instruction: I[kind === "統合理解" && skill === R ? "統合理解R" : kind].replace("（５）", "（" + "０１２３４５６"[count] + "）")}); }); };
 const N5 = paper("N5", [
   [V, "漢字読み", 7], [V, "表記", 5], [V, "文脈規定", 6], [V, "言い換え類義", 3],
   [G, "文法形式の判断", 9], [G, "文の組み立て", 4], [G, "文章の文法", 4, {group: 4, chars: [180, 420]}],

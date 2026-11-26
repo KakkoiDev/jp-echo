@@ -7,6 +7,7 @@ import {readFileSync, existsSync, readdirSync} from "node:fs";
 import {SET_LEVELS, LISTENING, READY_KEY, FORMS, blueprintOf, expectedRows, groupsOf, bossMinutes, heldOut, setLevel, setForm, setPath, createSets, levelRows} from "../jlpt-sets.js";
 import {validateLevelSet, validatePlan, levelProfile, cuesOf, OUTSIDE_KANJI} from "../tools/validate-level-set.mjs";
 import {execFileSync} from "node:child_process";
+import {alike, likeness, LIMIT} from "../tools/compare-level-sets.mjs";
 import {plan} from "../tools/build-level-sets.mjs";
 import {mkdtempSync, writeFileSync, mkdirSync} from "node:fs";
 import {tmpdir} from "node:os";
@@ -125,6 +126,18 @@ test("every shipped set passes its level's validator, sits within its level and 
     }
     // Across a level's sets one item is not asked again and again.
     assert.ok([...targets.values()].every(n => n <= Math.max(2, Math.ceil(files.length / 3))), level + " repeats a target across sets too often");
+  }
+});
+
+test("no two papers of a level ask nearly the same question", () => {
+  // Writers working apart reach for the same scenes; a player who meets one
+  // question in two bosses is tested on memory (tools/compare-level-sets.mjs).
+  assert.ok(likeness("あした、いっしょに山へ行きませんか。", "あした、いっしょにテニスをしませんか。") >= LIMIT);
+  assert.ok(likeness("すみません、駅はどこですか。", "きのうは何を食べましたか。") < 0.3);
+  for (const level of Object.keys(SET_LEVELS)) {
+    const index = shipped(level); if (!index) continue;
+    const sets = Object.keys(index.sets).map(id => read("../" + setPath(level, index.edition, id).slice(2)));
+    assert.deepEqual(alike(sets).map(p => p.a.set + "#" + p.a.n + " ~ " + p.b.set + "#" + p.b.n), [], level);
   }
 });
 
