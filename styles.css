@@ -2407,6 +2407,8 @@ body[data-view=game] .n2-game{position:fixed;inset:0;box-sizing:border-box;width
 .qr-ch .t{flex:1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .qr-ch .t:lang(ja){font-family:var(--ui);font-size:20px;font-weight:700}
 .qr-ch.m .t:lang(ja){font-family:var(--display);font-size:24px;font-weight:700}
+/* Sentence-long choices (a key card, a long exam choice): smaller, three lines, never cut at two. */
+.qr-ch.s .t:lang(ja){font-size:15px;font-weight:500;line-height:1.4;-webkit-line-clamp:3}
 .qr-ch[data-state=right]{border-color:var(--right);background:var(--right-tint)}.qr-ch[data-state=right] .k{background:var(--right);border-color:var(--right);color:var(--panel)}
 .qr-ch[data-state=wrong]{border-color:var(--seal);background:var(--seal-tint)}.qr-ch[data-state=wrong] .t{text-decoration:line-through;text-decoration-color:var(--seal)}.qr-ch[data-state=wrong] .k{background:var(--seal);border-color:var(--seal);color:var(--seal-on)}
 .qr-ch[data-state=dim]{opacity:.4}
@@ -2543,6 +2545,10 @@ body[data-view=game] .n2-game{position:fixed;inset:0;box-sizing:border-box;width
 .qr-sent.heard,.qr-sent.heard[data-lines]{font-size:19px;text-align:start}
 .qr-sent.heard[data-lines="1"]{text-align:center}
 .qr-sent.passage{font-size:17px;line-height:1.85;text-align:left;margin-top:12px}
+/* A key card: the paper's question under its deciding lines. */
+/* Nothing to say aloud on a key card: the line and its glyph leave. */
+.qr-card[data-kind=key] .qr-say,.qr-card[data-kind=keyline] .qr-say{display:none}
+.qr-sent .qr-ask{display:block;margin-top:10px;padding-top:8px;border-top:1px solid var(--hairline);font-family:var(--ui);font-size:14px;line-height:1.5;font-weight:700;color:var(--sumi)}
 @keyframes n2g-square{from{transform:scale(1.5);background:var(--seal);border-color:var(--seal)}to{transform:none}}
 @keyframes n2g-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 @keyframes n2g-float{0%{opacity:0;transform:translateY(4px)}20%,80%{opacity:1;transform:none}100%{opacity:0;transform:none}}
@@ -2568,6 +2574,7 @@ html.motion-off .n2-game *{animation:none !important}html.motion-off .n2-game *:
   body[data-view=game] .qr-say{margin-top:10px}
   /* Board 13 · F: a build card gives up the "say it" line first, then its rows tighten. */
   body[data-view=game] .qr-card[data-kind=build] .qr-say{display:none}
+  body[data-view=game] .qr-card[data-kind=key] .qr-sent.passage{font-size:15px;line-height:1.6;margin-top:8px}body[data-view=game] .qr-card[data-kind=key] .qr-ask{font-size:13px;margin-top:6px;padding-top:6px}
   body[data-view=game] .qr-card[data-kind=build] .qr-sent{line-height:1.6;margin-top:8px}
   /* Measured at 375 × 667: five rows, a two-line sentence and one two-line choice overflowed by 11 px; five rows take 24 px each. */
   body[data-view=game] .qr-grammar-parts[data-rows="5"] b,body[data-view=game] .qr-grammar-parts[data-rows="5"] span{min-height:24px;padding:2px 0}

@@ -37,7 +37,7 @@ export const ROUND_SIZE = 10, REVIEW_SECONDS = 5, DAILY_GOAL = 1000, RECENT_MS =
 export const SECONDS = Object.freeze({reading: 3, meaning: 3, definition: 4, listen: 5, homophone: 5, grammar: 6, connective: 7, exam: {1: 4, 2: 5, 3: 5, 4: 7, 5: 6, 7: 8}});
 // The pause after an answer before the next question, in milliseconds.
 export const PAUSE = Object.freeze({right: 250, miss: 800});
-export const KIND_LABEL = Object.freeze({reading: "Reading", meaning: "Meaning", definition: "Which word", listen: "Listen", connective: "Connective · 問題9", homophone: "Which kanji", grammar: "Grammar", block: "Grammar piece", build: "Grammar parts", infer: "New grammar", exam: "Exam question"});
+export const KIND_LABEL = Object.freeze({reading: "Reading", meaning: "Meaning", definition: "Which word", listen: "Listen", connective: "Connective · 問題9", homophone: "Which kanji", grammar: "Grammar", block: "Grammar piece", build: "Grammar parts", infer: "New grammar", exam: "Exam question", keyline: "Key sentence", key: "Key sentence"});
 const EXAM_MONDAI = new Set([1, 2, 3, 4, 5, 7]), WRITTEN = new Set(["Vocabulary", "Grammar"]);
 const KANJI = /[一-鿿々]/g;
 const plain = s => String(s || "").replace(/【[^】]*】/g, "");
@@ -388,7 +388,7 @@ export function choicesFor(q, random = Math.random, level = .5) {
 // recent, and the four-hour rest used to leave the round to new cards: owner's
 // report, 27 Nov), and the places left go to the familiar before the new.
 const cardItem = q => q.target ? keyOf(q.target) : q.item || q.id;
-export function pickRound({pool, recall = [], seen = {}, wins = {}, lv = {}, size = ROUND_SIZE, random = Math.random, mix = {weak: 4, fresh: 4, known: 2}, comeback = [], now = Date.now(), calm = false}) {
+export function pickRound({pool, recall = [], seen = {}, wins = {}, lv = {}, size = ROUND_SIZE, random = Math.random, mix = {weak: 4, fresh: 4, known: 2}, comeback = [], now = Date.now(), calm = false, first = [], places = 0}) {
 
   const last = new Map();
   for (const r of recall) last.set(r.dimension + keyOf(r.target), r.last);
@@ -408,6 +408,8 @@ export function pickRound({pool, recall = [], seen = {}, wins = {}, lv = {}, siz
   const back = shuffle(comeback.map(id => byId.get(id)).filter(Boolean), random).slice(0, size);
   take(back, back.length);
   const backCount = out.length;
+  // first: cards that go ahead of the mix whatever their rest (the boss's misses), `places` of them.
+  take(first, places);
   take(groups.weak, mix.weak); take(groups.fresh, mix.fresh); take(groups.known, mix.known);
   const seenFirst = recent.sort((a, b) => (seen[a.id] || 0) - (seen[b.id] || 0));
   take(calm ? [...groups.known, ...seenFirst, ...groups.weak, ...groups.fresh] : [...groups.fresh, ...groups.weak, ...groups.known, ...seenFirst], size - out.length);
@@ -514,12 +516,14 @@ export function rememberAnswer(state = {}, {q, outcome, points = 0, fast = false
   if (now_ !== was) { lv[q.id] = now_; if (now_ > was) lvAt[q.id] = now; }
   const comeback = (state.comeback || []).filter(id => id !== q.id);
   if (outcome !== "right") comeback.push(q.id); // missed again: it comes back again
+  // A boss's miss is done once its card is answered right (bossCards).
+  const bossDone = q.boss && outcome === "right" ? {key: q.boss, ids: {...(state.bossDone?.key === q.boss ? state.bossDone.ids : {}), [q.id]: 1}} : state.bossDone;
   const level = q.practice ? state.level : flowStep(state.level, outcome === "right", difficulty);
   const runStart = state.runStart || new Date(now).toISOString(); // the run clock starts on its first answer
   const total = (state.total || 0) + points, day = localDay(new Date(now));
   const days = {...(state.days || {})}, d = days[day] || {answered: 0, right: 0, points: 0, rounds: 0, best: 0};
   days[day] = {...d, answered: d.answered + 1, right: d.right + (outcome === "right" ? 1 : 0), points: d.points + points};
-  return {...state, seen, tried, missed, kj, ...(gb ? {gb} : {}), wins, lv, lvAt, ...(level === undefined ? {} : {level}), ...(q.practice ? {practiced: (state.practiced || 0) + 1} : {}), runStart, comeback: comeback.slice(-ROUND_SIZE), total, answered: (state.answered || 0) + 1, days};
+  return {...state, seen, tried, missed, kj, ...(gb ? {gb} : {}), wins, lv, lvAt, ...(level === undefined ? {} : {level}), ...(q.practice ? {practiced: (state.practiced || 0) + 1} : {}), runStart, comeback: comeback.slice(-ROUND_SIZE), ...(bossDone ? {bossDone} : {}), total, answered: (state.answered || 0) + 1, days};
 }
 export function rememberRound(state = {}, {score, questions = [], misses, scored, now = Date.now()}) {
   const seen = {...(state.seen || {})};
@@ -565,6 +569,65 @@ export function bossSet({sets = [], attempts = [], now = new Date(), held = HELD
   return {id, fresh: !!fresh, beatenToday};
 }
 
+// ---- The boss's misses ----
+// What was missed on the last boss comes back as blitz cards, without a word
+// about where it came from (owner, 27 Nov): a few places of each round, until
+// every card has been answered right once. The next boss stays a fresh paper.
+//   a vocabulary or grammar question   the question itself (the exam card) and
+//                                      the card of the word or pattern it tests;
+//   a reading or listening question    its deciding lines (n2-sets/keys.json)
+//                                      as two cards: what the lines mean, then
+//                                      the paper's own question on those lines
+//                                      alone; and the N2 words of the passage.
+// The key cards are practice until the lines are reviewed: no points, but
+// each answer counts toward the day and the next boss. A listening line is
+// heard, not read (`heard`), and shown once answered.
+export const BOSS_PLACES = 4, BOSS_WORDS = 3;
+export const KEY_SECONDS = Object.freeze({keyline: 8, key: 12});
+export function bossCards({set, missed = [], keys = {}, pool = []}) {
+  if (!set?.id) return [];
+  const byId = new Map(pool.map(q => [q.id, q])), byTarget = new Map();
+  for (const q of pool) if (q.target && q.kind !== "exam") byTarget.set(keyOf(q.target), [...(byTarget.get(keyOf(q.target)) || []), q]);
+  const words = pool.filter(q => q.kind === "meaning" && q.target?.[0] === "word" && q.prompt.length >= 2 && q.prompt.match(KANJI));
+  const out = [], seen = new Set();
+  const add = q => { if (q && !seen.has(q.id)) { seen.add(q.id); out.push(q); } };
+  for (const i of [...new Set(missed)].sort((a, b) => a - b)) {
+    const q = set.questions?.[i], source = set.id + "#" + i;
+    if (!q) continue;
+    if (WRITTEN.has(q.skill)) {
+      add(byId.get("e:" + source));
+      const cards = q.target ? byTarget.get(keyOf(q.target)) || [] : [];
+      const kind = q.target?.[0] === "grammar" ? "grammar" : q.dimension === "reading" ? "reading" : "meaning";
+      add(cards.find(c => c.kind === kind) || cards[0]);
+      continue;
+    }
+    const key = keys[source], heard = q.skill === "Listening";
+    if (key?.lines?.length && Array.isArray(q.choices) && q.key) {
+      const text = key.lines.join(key.lines.length > 1 && !/[。！？」]$/.test(key.lines[0]) ? "…" : ""), answer = q.choices[q.key - 1];
+      const base = {target: null, dimension: null, practice: true, record: true, item: "key:" + source, source, sentence: text, ...(heard ? {heard: true, say: key.lines.join("　")} : {})};
+      add({...base, id: "kl:" + source, kind: "keyline", prompt: text, answer: key.en, wrong: key.wrong, seconds: KEY_SECONDS.keyline,
+        solution: {word: key.en, meaning: "", ja: text, en: "", why: q.why || ""}});
+      add({...base, id: "kq:" + source, kind: "key", prompt: q.prompt, answer, wrong: q.choices.filter((_, j) => j !== q.key - 1), fixed: q.choices, seconds: KEY_SECONDS.key,
+        solution: {word: "", meaning: key.en, ja: text, en: "", why: q.why || ""}});
+    }
+    const passage = (q.context || "") + (q.choices || []).join("");
+    for (const w of words) if (passage.includes(w.prompt)) add({...w, passage: source});
+  }
+  return out;
+}
+// What is left of them: the cards not yet answered right since this boss.
+// Of a passage's words only those not known yet are kept, BOSS_WORDS a passage.
+export function bossQueue({cards = [], state = {}, key = ""}) {
+  const done = state.bossDone?.key === key ? state.bossDone.ids || {} : {}, perPassage = new Map();
+  return cards.filter(q => {
+    if (done[q.id]) return false;
+    if (!q.passage) return true;
+    if (itemLevel(state, q.id) >= KNOWN_LEVEL || state.wins?.[q.id]) return false;
+    const n = perPassage.get(q.passage) || 0; perPassage.set(q.passage, n + 1);
+    return n < BOSS_WORDS;
+  }).map(q => ({...q, boss: key}));
+}
+
 // A slump: the last round went badly (under half right, or points below
 // zero). The next round is a warm-up of things the player already wins at,
 // with at most two of the misses, to bring the motivation back (owner,
@@ -582,7 +645,7 @@ export function inSlump(state = {}) {
 // picked exactly as it always was.
 // kanji: {order, examples} picks the rank's places by kanji (kanjiPick)
 // instead of by card: the way of every level whose cards are word cards only.
-export function nextRound({pool, review = [], kanji = null, grammarCards = null, recall = [], state = {}, difficulty = "normal", random = Math.random, now = Date.now()}) {
+export function nextRound({pool, review = [], kanji = null, grammarCards = null, boss = [], recall = [], state = {}, difficulty = "normal", random = Math.random, now = Date.now()}) {
   const slump = inSlump(state), beat = pace(state, now);
   const level = Math.min(1, Math.max(0, levelOf(state) + beat.offset + (DIFFICULTY[difficulty] || DIFFICULTY.normal).offset));
   const share = review.length && pool.length ? REVIEW_SHARE : 0, memory = {recall, seen: state.seen || {}, wins: state.wins || {}, lv: state.lv || {}, random, now};
@@ -595,10 +658,12 @@ export function nextRound({pool, review = [], kanji = null, grammarCards = null,
     picked = [...back, ...kanjiPick({pool, examples: kanji.examples || [], order: kanji.order, state, size: places - back.length, skip: back, random, now})];
     // Kanji with nothing left to ask: the places left are picked by card, so a round is always full.
     if (picked.length < places) { const words = new Set(picked.map(q => q.item)); picked.push(...pickRound({...memory, pool: pool.filter(q => !words.has(q.item)), size: places - picked.length, mix: flowMix(level)})); }
-  } else picked = pickRound({...memory, pool, size: ROUND_SIZE - share, comeback, mix: slump ? WARM_UP.mix : flowMix(level), calm: slump});
+  } else picked = pickRound({...memory, pool, size: ROUND_SIZE - share, comeback, mix: slump ? WARM_UP.mix : flowMix(level), calm: slump,
+    // The last boss's misses take the first places after the comebacks; a recovery round leaves them out.
+    ...(slump ? {} : {first: boss, places: BOSS_PLACES})});
 
   if (grammarCards && !slump) {
-    const slots = picked.filter(q => q.kind === "grammar" && !q.comeback);
+    const slots = picked.filter(q => q.kind === "grammar" && !q.comeback && !q.boss);
     const replacements = grammarPick({pool: grammarCards, state, slots, skip: picked.filter(q => !slots.includes(q)), comeback, now});
     let n = 0;
     picked = picked.map(q => slots.includes(q) ? replacements[n++] : q);

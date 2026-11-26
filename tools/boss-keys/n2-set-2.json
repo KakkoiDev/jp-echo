@@ -1,0 +1,626 @@
+{
+ "52": {
+  "lines": [
+   "なお、図書館の本を汚したり破いたりしてしまった場合は、ご自分で直さず、そのまま貸出カウンターへお持ちください。"
+  ],
+  "en": "A damaged library book goes straight to the counter, not repaired by yourself",
+  "wrong": [
+   "Patrons should mend a torn library book themselves before returning it",
+   "A damaged library book must be left in the return box overnight",
+   "A damaged library book is repaired by the patron at the counter"
+  ],
+  "solved": true
+ },
+ "53": {
+  "lines": [
+   "木曜日の午後か金曜日の午前であれば、こちらはいつでも伺えます。ご都合のよい日時を、今週中にお知らせいただけますと幸いです。"
+  ],
+  "en": "Murata can come Thursday or Friday; please tell him your time this week",
+  "wrong": [
+   "Yamashita is asked to visit Murata's company on Thursday afternoon",
+   "Murata asks Yamashita to reply by next Tuesday with a time",
+   "Murata cannot meet before Friday morning, so Yamashita must wait"
+  ],
+  "solved": true
+ },
+ "54": {
+  "lines": [
+   "大切なのは、なぜうまくいかなかったのかを、自分の言葉で説明してみることだ。",
+   "失敗が役に立つのは、その後に考える時間があってこそなのである。"
+  ],
+  "en": "Failure helps only when you then think about why it went wrong",
+  "wrong": [
+   "Simply repeating failures is enough to build real skill",
+   "Failure should be avoided because it teaches nothing at all",
+   "Other people should explain to you why your attempt failed"
+  ],
+  "solved": true
+ },
+ "55": {
+  "lines": [
+   "夜勤などで朝出すのが難しい方には、管理室でふた付きの専用の箱がある場所をご案内しますので、事前にお申し出ください。"
+  ],
+  "en": "Those who cannot put trash out in the morning should tell the office beforehand",
+  "wrong": [
+   "Those people may put trash out the night before under a net",
+   "Those people must apply to the city for a special pickup",
+   "Those people may put trash out any time after eight in the morning"
+  ],
+  "solved": true
+ },
+ "56": {
+  "lines": [
+   "一方、素人がつい忘れがちなのは、撮る前に皿の周りを片付けることだ。"
+  ],
+  "en": "Amateurs often forget to clear things from around the plate before shooting",
+  "wrong": [
+   "Amateurs often forget to use several lights at once",
+   "Amateurs often forget to check which way the light comes from",
+   "Amateurs often forget to bring an expensive camera"
+  ],
+  "solved": true
+ },
+ "57": {
+  "lines": [
+   "ところが最近、若手社員から「仕事の進め方が分からないとき、誰に聞けばいいのか迷う」という声が出てきた。"
+  ],
+  "en": "Young staff say they hesitate over whom to ask when unsure how to proceed",
+  "wrong": [
+   "Young staff say long commutes leave them unable to concentrate",
+   "Young staff say seniors' phone calls are too loud to work near",
+   "Young staff say they lack the equipment to make documents at home"
+  ],
+  "solved": true
+ },
+ "58": {
+  "lines": [
+   "そうした、わざわざ教えられたわけではない情報から、若手は多くを学んでいたのだ。在宅勤務では、こうした「聞こえてくる学び」がほとんどなくなってしまう。"
+  ],
+  "en": "Juniors learned much from information nobody deliberately taught them",
+  "wrong": [
+   "Juniors learned mainly from formal lessons given by seniors",
+   "Juniors learned by taking recorded training sessions at home",
+   "Juniors learned mostly from instructions given in meetings"
+  ],
+  "solved": true
+ },
+ "59": {
+  "lines": [
+   "大切なのは、在宅か出社かのどちらかを選ぶことではない。それぞれの働き方で何が得られ、何が失われるのかを知ったうえで、うまく組み合わせることだろう。"
+  ],
+  "en": "Don't pick one; know what each way gains and loses, then combine them",
+  "wrong": [
+   "Everyone should return to the office every day instead of home",
+   "Working from home is best, so offices should be dropped entirely",
+   "Only the young staff need to come to the office from now on"
+  ],
+  "solved": true
+ },
+ "60": {
+  "lines": [
+   "写真そのものよりも、写真をきっかけに出てくる話のほうが、町の歴史を知るうえで貴重だったのだ。"
+  ],
+  "en": "The stories the photos prompted were worth more than the photos",
+  "wrong": [
+   "The photos were worth more than the stories people told",
+   "The photos had to be copied because they were fragile",
+   "Visitors cared more about the recordings than the photos"
+  ],
+  "solved": true
+ },
+ "61": {
+  "lines": [
+   "そこで今では、展示会の会場に録音機を置き、許可をいただいた方の話を記録している。"
+  ],
+  "en": "They now record visitors' stories at the exhibition, with their permission",
+  "wrong": [
+   "Visitors now decide where each old photo was taken",
+   "They check that each story is true before they record it",
+   "They now reenact the festivals that no longer exist"
+  ],
+  "solved": true
+ },
+ "62": {
+  "lines": [
+   "私たちは、どちらが正しいかをその場で決めず、両方の話をそのまま残すようにしている。"
+  ],
+  "en": "They don't judge which is right; they keep both accounts as told",
+  "wrong": [
+   "They keep only the version that most people agree on",
+   "They check old records and keep only the correct version",
+   "They drop conflicting accounts from the record entirely"
+  ],
+  "solved": true
+ },
+ "63": {
+  "lines": [
+   "読み手が声で場面を決めてしまうと、子どもが自分で想像する余地がなくなるのだという。"
+  ],
+  "en": "A voice that sets the scene leaves children no room to imagine it themselves",
+  "wrong": [
+   "A dramatic voice startles children and makes them afraid",
+   "Reading too well tires the reader before the story ends",
+   "Acting out every voice makes the story take far too long"
+  ],
+  "solved": true
+ },
+ "64": {
+  "lines": [
+   "しかし、子どもたちはその方が読み終えると、「あのおばあさん、本当は優しかったんじゃない？」などと、物語について自分から話し始めるのだった。"
+  ],
+  "en": "After the veteran finished, children began talking about the story on their own",
+  "wrong": [
+   "After the veteran finished, children begged to hear it again",
+   "After the veteran finished, children looked bored and unsatisfied",
+   "After the veteran finished, children imitated the characters' voices"
+  ],
+  "solved": true
+ },
+ "65": {
+  "lines": [
+   "それ以来、私は声を大げさに変えるのをやめ、ページをめくる前に少し間をとるようにしている。"
+  ],
+  "en": "The writer stopped exaggerating voices and now pauses before turning each page",
+  "wrong": [
+   "The writer now changes voice for every single character",
+   "The writer now asks the children for impressions after reading",
+   "The writer now reads with as much emotion as possible"
+  ],
+  "solved": true
+ },
+ "66": {
+  "skip": "the shared point (books getting dirty) is spread across both texts A and B and must be matched in both"
+ },
+ "67": {
+  "skip": "the answer needs the stances of both texts A and B compared as wholes"
+ },
+ "68": {
+  "lines": [
+   "毎日使っていたのに、中がどうなっているのか、私はまったく知らなかったのである。"
+  ],
+  "en": "Though used daily, the writer had no idea how the lamp worked inside",
+  "wrong": [
+   "The writer used it rarely and so knew little about it",
+   "The writer knew how it worked but not how to use it",
+   "The writer knew its inside well but had never fixed anything"
+  ],
+  "solved": true
+ },
+ "69": {
+  "lines": [
+   "私は講座に通うようになってから、買い物をするとき、値段や見た目だけでなく、「これは直せるだろうか」と考えるようになった。"
+  ],
+  "en": "Since the course, the writer also asks whether a thing can be repaired",
+  "wrong": [
+   "Since the course, the writer repairs every broken thing alone",
+   "Since the course, the writer chooses only the cheapest things",
+   "Since the course, the writer looks only at price and appearance"
+  ],
+  "solved": true
+ },
+ "70": {
+  "lines": [
+   "直すという経験は、ものを長持ちさせるだけでなく、私たちが何を選んで暮らしているのかを見直すきっかけにもなるのである。"
+  ],
+  "en": "Repairing makes things last and prompts us to rethink what we choose",
+  "wrong": [
+   "Repairing matters only because it makes things last longer",
+   "People should stop buying new things and only repair old ones",
+   "Repairing is a pastime that tells us nothing about how we live"
+  ],
+  "solved": true
+ },
+ "71": {
+  "lines": [
+   "対象：１８歳以上",
+   "・②③は、市外にお住まいの方も参加できます。"
+  ],
+  "en": "Courses 2 and 3 accept non-residents, but 3 is only for age 18 and up",
+  "wrong": [
+   "Courses 1 and 3 accept non-residents, and 3 is for under 18",
+   "All three courses accept non-residents of any age",
+   "Courses 2 and 3 accept non-residents, and 3 is open to age 17 up"
+  ],
+  "solved": false,
+  "unsolved": "not sure: Lines do not say which course the 18+ restriction belongs to; choice and meaning 2 assume it is course 3."
+ },
+ "72": {
+  "lines": [
+   "①②：１２月１０日（火）９:００から、電話または図書館カウンターで受け付けます。",
+   "③：１月１０日（金）必着で、往復はがきでお申し込みください。"
+  ],
+  "en": "2: phone or counter from Dec 10; 3: reply postcard arriving by Jan 10",
+  "wrong": [
+   "Both are taken by phone or at the counter from Dec 10",
+   "Both need a reply postcard that arrives by Jan 10",
+   "2 needs a postcard by Jan 10; 3 is taken by phone or counter"
+  ],
+  "solved": true
+ },
+ "73": {
+  "lines": [
+   "名簿ですね。じゃあ、それを作ってから和紙を数えます。"
+  ],
+  "en": "He will make the participant list first, then count the washi paper",
+  "wrong": [
+   "He will count the washi paper first, then make the list",
+   "He will order more washi paper from the usual shop",
+   "He will rearrange the venue's desks before anything else"
+  ],
+  "solved": true
+ },
+ "74": {
+  "lines": [
+   "じゃあ、明日会社で確認して、また電話します。"
+  ],
+  "en": "He will check the number at his office tomorrow and call again",
+  "wrong": [
+   "He will book the retest by phone now and check the number later",
+   "He will go back to the clinic to pick up his result sheet",
+   "He will stop eating from nine tonight and phone tomorrow"
+  ],
+  "solved": true
+ },
+ "75": {
+  "lines": [
+   "まず、もう少し広い言葉で調べ直してみてください。それでも見つからなければ、相談カウンターで司書の方に聞くといいですよ。"
+  ],
+  "en": "Search again with broader words first; ask a librarian only if that fails",
+  "wrong": [
+   "Ask the librarian first, and search again only if that fails",
+   "Search again with narrower words before asking anyone",
+   "Skip searching and ask the teacher for more time"
+  ],
+  "solved": true
+ },
+ "76": {
+  "lines": [
+   "それが、イタリアンは一人五千円を超えちゃうので、予約の前に部長に予算を確認しなきゃいけないんです。"
+  ],
+  "en": "The Italian place is pricey, so she asks the manager about budget before booking",
+  "wrong": [
+   "She books the Italian place provisionally and asks about budget later",
+   "She asks the Japanese restaurant about its private room for twenty",
+   "She recounts the number of guests before anything else"
+  ],
+  "solved": true
+ },
+ "77": {
+  "lines": [
+   "では、まずこちらの転入届に、新しいご住所とお名前をご記入ください。書き終わりましたら、三番の番号札を取ってお待ちください。"
+  ],
+  "en": "Write name and new address on the form first, then take a number ticket",
+  "wrong": [
+   "Take number ticket three first, then fill in the form",
+   "Go upstairs first to do the child's school procedures",
+   "Go to the old city office to get the move-out certificate"
+  ],
+  "solved": true
+ },
+ "78": {
+  "lines": [
+   "実は、膝を痛めちゃって。医者に、しばらく走るのはやめなさいって言われたの。"
+  ],
+  "en": "She hurt her knee and the doctor told her to stop running for a while",
+  "wrong": [
+   "Her doctor told her to keep running to strengthen the knee",
+   "She hurt her knee but quit on her own, with no advice from a doctor",
+   "She hurt her knee at the pool and can no longer swim"
+  ],
+  "solved": true
+ },
+ "79": {
+  "lines": [
+   "実は、夜九時以降に働けるスタッフが、なかなか見つからないんです。今いる皆さんに無理をしてもらうわけにはいきませんので、思い切って営業時間を短くすることにしました。"
+  ],
+  "en": "Too few staff can work after nine, so closing time moves earlier",
+  "wrong": [
+   "Evening customers have dropped, so closing time moves earlier",
+   "Sales fell from last year, so closing time moves earlier",
+   "Closing moves earlier so staff can work longer in the morning"
+  ],
+  "solved": true
+ },
+ "80": {
+  "lines": [
+   "一番困ったのはインターネット。新しい部屋の接続工事が、三週間先まで予約が取れなくてさ。"
+  ],
+  "en": "The hardest part was no internet; installation was booked three weeks out",
+  "wrong": [
+   "The hardest part was the city office paperwork, which took weeks",
+   "The hardest part was sorting belongings after the movers left",
+   "The hardest part was finding a cafe where he could work"
+  ],
+  "solved": true
+ },
+ "81": {
+  "lines": [
+   "それも少しはあると思いますが、一番は、お菓子を小さくしたことですね。"
+  ],
+  "en": "Online ads helped a little; the main reason was making the sweets smaller",
+  "wrong": [
+   "The main reason was starting to advertise on the internet",
+   "The main reason was changing the flavor for young tastes",
+   "The main reason was making the sweets twice as large"
+  ],
+  "solved": true
+ },
+ "82": {
+  "lines": [
+   "でも、発表の日が、アルバイトの面接と重なっちゃって。",
+   "頼んでみたんだけど、その日しか無理だって。"
+  ],
+  "en": "The presentation day clashes with a job interview that cannot be moved",
+  "wrong": [
+   "He is not ready for the presentation yet",
+   "He thinks next term is a better time to present",
+   "He cannot get time off from his part-time job"
+  ],
+  "solved": true
+ },
+ "83": {
+  "lines": [
+   "ほかのお客様のご迷惑になるということもございますが、それ以上に、強い光が繰り返し当たりますと、古い絵の色があせてしまうおそれがあるためです。"
+  ],
+  "en": "Flash may bother others, but the bigger reason is it may fade old paintings",
+  "wrong": [
+   "Flash is banned mainly because it annoys other visitors",
+   "Photography itself has been banned since this month",
+   "Flash is dangerous when it is used together with a tripod"
+  ],
+  "solved": true
+ },
+ "84": {
+  "lines": [
+   "大切なのは、寝る前の一時間をどう過ごすかです。"
+  ],
+  "en": "What matters is how you spend the hour before bed",
+  "wrong": [
+   "What matters is trying as hard as you can to fall asleep",
+   "Counting sheep is the best way to get to sleep",
+   "The hour before bed is best spent in a bright room"
+  ],
+  "solved": true
+ },
+ "85": {
+  "lines": [
+   "これまでは、それぞれの店が自分の車で商品を配達していましたが、今後は商店街の組合が一台のトラックで、まとめて配達します。"
+  ],
+  "en": "Shops used to deliver separately; now the union delivers for all by one truck",
+  "wrong": [
+   "Shops used to share one truck; now each shop delivers alone",
+   "The union now sends several trucks, one for each shop",
+   "The union has stopped deliveries, so shops use their own cars"
+  ],
+  "solved": true
+ },
+ "86": {
+  "lines": [
+   "そこで来月からは、一つの字を書く回数を減らし、その代わりに、その字を使った短い文を自分で作る宿題に変えます。"
+  ],
+  "en": "Next month, kanji homework switches to making short sentences with each kanji",
+  "wrong": [
+   "Homework will have more repetitions of each kanji, not fewer",
+   "The teacher keeps the homework unchanged, rejecting the complaint",
+   "Students will copy short model sentences every night instead"
+  ],
+  "solved": true
+ },
+ "87": {
+  "lines": [
+   "必要な方には必要な分だけ印刷できるようにしたいと思います。来週から、会議の前日までに申し出ていただければ、紙の資料もご用意します。"
+  ],
+  "en": "Paper copies will be prepared for those who ask by the day before",
+  "wrong": [
+   "All meeting documents will go back to paper from next week",
+   "Paper copies are banned, so attendees must take notes by PC",
+   "Paper copies can be requested on the morning of the meeting"
+  ],
+  "solved": true
+ },
+ "88": {
+  "lines": [
+   "古いものを守るには、ただ大切にしまっておくのではなく、生活の中で使っていくことが必要なのです。"
+  ],
+  "en": "To protect old things, use them in daily life rather than just storing them",
+  "wrong": [
+   "Old buildings cost too much, so they should be demolished",
+   "Old buildings are best kept untouched and stored away",
+   "Young people do not want to live in an old town"
+  ],
+  "solved": true
+ },
+ "89": {
+  "lines": [
+   "じゃあ、お先に失礼します。"
+  ],
+  "en": "The speaker is leaving work before the others",
+  "wrong": [
+   "The speaker is asking the other person to go first",
+   "The speaker is heading out on an errand and will return",
+   "The speaker is arriving and greeting the others"
+  ],
+  "solved": true
+ },
+ "90": {
+  "lines": [
+   "この資料、明日までに目を通しておいてもらえる？"
+  ],
+  "en": "She asks him to read through the document by tomorrow",
+  "wrong": [
+   "She asks him to send the document tomorrow",
+   "She offers to read the document for him by tomorrow",
+   "She asks whether he has already looked at the document"
+  ],
+  "solved": true
+ },
+ "91": {
+  "lines": [
+   "課長、今ちょっとよろしいでしょうか。"
+  ],
+  "en": "He asks the section chief whether he has a moment to talk now",
+  "wrong": [
+   "He asks the section chief to look after him from now on",
+   "He asks whether the section chief agrees with the plan so far",
+   "He thanks the section chief for the time just spent"
+  ],
+  "solved": true
+ },
+ "92": {
+  "lines": [
+   "せっかく来てくれたのに、何のおかまいもできなくて。"
+  ],
+  "en": "She apologizes for not being able to host the visitor properly",
+  "wrong": [
+   "She complains that the guest came without being invited",
+   "She thanks the guest for bringing a gift",
+   "She says it was a pity the guest could not come"
+  ],
+  "solved": true
+ },
+ "93": {
+  "lines": [
+   "駅に着いたら、いったん電話くれる？"
+  ],
+  "en": "He asks her to phone him once she reaches the station",
+  "wrong": [
+   "He says he will call her once he reaches the station",
+   "He asks her to give him the station's phone number",
+   "He asks whether she already called him from the station"
+  ],
+  "solved": true
+ },
+ "94": {
+  "lines": [
+   "雨、降りそうで降らないね。"
+  ],
+  "en": "It looks like rain but it has not started raining",
+  "wrong": [
+   "It is pouring rain right now",
+   "The sky was clear but suddenly it began to rain",
+   "It rained heavily even though it did not look like it"
+  ],
+  "solved": true
+ },
+ "95": {
+  "lines": [
+   "このパソコン、使わせていただいてもよろしいですか。"
+  ],
+  "en": "He asks for permission to use this computer",
+  "wrong": [
+   "He asks whether someone has already used this computer",
+   "He offers to let her use this computer",
+   "He asks her to lend him her own computer"
+  ],
+  "solved": true
+ },
+ "96": {
+  "lines": [
+   "田中さんって、怒りっぽいところさえなければ、いい人なんだけどね。"
+  ],
+  "en": "Tanaka would be a good person except for his short temper",
+  "wrong": [
+   "Tanaka is a good person because he never gets angry",
+   "Tanaka is leaving the company, which is a shame",
+   "Tanaka is a good person, and his temper is his best point"
+  ],
+  "solved": true
+ },
+ "97": {
+  "lines": [
+   "会議、予定より早く終わりそうもないね。"
+  ],
+  "en": "The meeting does not look like it will end earlier than planned",
+  "wrong": [
+   "The meeting looks like it will end earlier than planned",
+   "The meeting has already ended ahead of schedule",
+   "The meeting is expected to start later than planned"
+  ],
+  "solved": true
+ },
+ "98": {
+  "lines": [
+   "あの店のケーキ、並んででも食べる価値あるよ。"
+  ],
+  "en": "That shop's cake is worth eating even if you must queue",
+  "wrong": [
+   "That shop's cake is not worth queuing for",
+   "That shop's cake can be bought without queuing",
+   "That shop's cake is too expensive to buy often"
+  ],
+  "solved": true
+ },
+ "99": {
+  "lines": [
+   "もう少しで乗り遅れるところだったよ。"
+  ],
+  "en": "He nearly missed the train but made it in time",
+  "wrong": [
+   "He missed the train and had to wait for the next one",
+   "He got on early and had plenty of time to spare",
+   "He wants to apologize for making others miss the train"
+  ],
+  "solved": true
+ },
+ "100": {
+  "lines": [
+   "明日の打ち合わせ、私が出るまでもないですよね。"
+  ],
+  "en": "She thinks there is no need for her to attend tomorrow's meeting",
+  "wrong": [
+   "She wants very much to attend tomorrow's meeting",
+   "She asks whether tomorrow's meeting has already started",
+   "She plans to leave tomorrow's meeting early"
+  ],
+  "solved": true
+ },
+ "101": {
+  "lines": [
+   "それより、メールもまともに送れない父に、僕が教えてあげられるようになりたいんだよね。四つ目にしようかな。"
+  ],
+  "en": "He wants to teach his father email, so he leans toward the fourth course",
+  "wrong": [
+   "He wants to repair his father's old album, so he picks the first course",
+   "He will take the course together with his father on Saturday",
+   "He wants to fix his dark food photos, so he picks the third course"
+  ],
+  "solved": true
+ },
+ "102": {
+  "lines": [
+   "書道は道具をそろえるのが大変そうで。今回は写真にする。"
+  ],
+  "en": "Calligraphy needs too many tools, so this time she will take photography",
+  "wrong": [
+   "She will take calligraphy even though the tools are costly",
+   "She will take the book repair course for an old album",
+   "She will take the computer course to learn email"
+  ],
+  "solved": true
+ },
+ "103": {
+  "lines": [
+   "あの、会社の屋上はどうですか。",
+   "じゃあ、それでいこう。食事は業者に頼んで、運んでもらおう。"
+  ],
+  "en": "The company roof is proposed and the boss agrees to use it, with catering",
+  "wrong": [
+   "The boss decides on the meeting room because of possible rain",
+   "The boss picks the restaurant's private room instead",
+   "The boss agrees to the pub near the station"
+  ],
+  "solved": true
+ },
+ "104": {
+  "lines": [
+   "個室は二十人までのところが多いんですよ。今年は参加者が二十八人なので。"
+  ],
+  "en": "Private rooms usually seat up to twenty, but twenty-eight are coming",
+  "wrong": [
+   "Private rooms are usually too expensive for twenty-eight people",
+   "Private rooms usually seat thirty, so twenty-eight fit",
+   "Only twenty people are coming, so a private room is enough"
+  ],
+  "solved": true
+ }
+}

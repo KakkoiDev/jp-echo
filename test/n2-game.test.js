@@ -534,7 +534,7 @@ test("re-audit P0: sense cues and corrected glosses", () => {
 
 test("re-audit P0: the listen clock starts after playback, a failed playback is unscored, stale speech is dropped", () => {
   const mock = src("../n2-mock.js");
-  assert.match(mock, /speakAndWait\(spokenWord\(q\.prompt, q\.say\), \{voice: voice\(\), rate: Number\(settings\.rate\) \|\| 1\}\)\.then\(ok => \{\n      if \(token !== askToken \|\| current !== q \|\| locked\) return;\n[^\n]*\n      if \(ok\) \{ if \(document\.visibilityState === "hidden"\) hiddenResume = startClock; else startClock\(\); return; \}/);
+  assert.match(mock, /speakAndWait\(q\.heard \? q\.say : spokenWord\(q\.prompt, q\.say\), \{voice: voice\(\), rate: Number\(settings\.rate\) \|\| 1\}\)\.then\(ok => \{\n      if \(token !== askToken \|\| current !== q \|\| locked\) return;\n[^\n]*\n      if \(ok\) \{ if \(document\.visibilityState === "hidden"\) hiddenResume = startClock; else startClock\(\); return; \}/);
   assert.match(mock, /"The audio didn’t play: this one doesn’t count\."/);
   assert.match(mock, /if \(reviewToken === askToken && !\$\("game-review"\)\.hidden\) say\(/, "a review word isn't spoken after leaving it");
   assert.match(mock, /window\.speechSynthesis\?\.cancel\(\); askToken\+\+;/, "Home cancels pending speech and callbacks");
@@ -1185,7 +1185,7 @@ test("a listen card keeps its sentence when the word is written there in another
   const alone = listen.filter(q => !heardGap(q.solution.ja, q.prompt));
   assert.ok(alone.length < listen.length * .02, alone.length + " of " + listen.length + " listen cards are the sound alone: " + alone.slice(0, 8).map(q => q.prompt).join(" "));
   const mock = src("../n2-mock.js");
-  assert.match(mock, /const gap = listen && q\.solution\?\.ja \? heardGap\(q\.solution\.ja, q\.prompt\) : "";/);
+  assert.match(mock, /const gap = q\.kind === "listen" && q\.solution\?\.ja \? heardGap\(q\.solution\.ja, q\.prompt\) : "";/);
   assert.match(mock, /\$\("game-blank"\)\.textContent = q\.kind === "listen" \? q\.gap \|\| q\.prompt : q\.answer;/, "the gap fills with what the sentence holds, not the dictionary form");
 });
 

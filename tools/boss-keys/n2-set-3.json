@@ -1,0 +1,619 @@
+{
+ "52": {
+  "lines": [
+   "お買い上げ金額が三千円以上の場合は配送料無料、三千円未満の場合は一回三百円をいただきます。",
+   "複数の店でのお買い物も合計できますので、各店でお受け取りになったレシートを、最後に組合事務所へお持ちください。"
+  ],
+  "en": "Delivery is free from 3,000 yen, and several shops' receipts can be added up",
+  "wrong": [
+   "Delivery is free only if one shop's purchase reaches 3,000 yen",
+   "Delivery is free when you carry the goods home yourself",
+   "Delivery costs 300 yen however much you spend in total"
+  ],
+  "solved": true
+ },
+ "53": {
+  "lines": [
+   "なお、外線の番号は変わりませんので、取引先へのご連絡は不要です。"
+  ],
+  "en": "Outside line numbers stay the same, so clients need not be told",
+  "wrong": [
+   "Outside line numbers change too, so clients must be told",
+   "Clients must be told because only extensions change",
+   "Only clients with printed phone books need to be told"
+  ],
+  "solved": true
+ },
+ "54": {
+  "lines": [
+   "習慣にできることは習慣に任せ、その分の力を、本当に考えるべきことに使う。",
+   "日課とは、自由を奪うものではなく、むしろ自由に考える時間を生み出すものなのである。"
+  ],
+  "en": "A routine frees energy and time to think about what really matters",
+  "wrong": [
+   "A routine takes away freedom and makes life boring",
+   "A routine mainly helps decide what to eat for breakfast",
+   "A routine is tiring because it must be chosen every day"
+  ],
+  "solved": true
+ },
+ "55": {
+  "lines": [
+   "農薬を使用する場合は、事前に管理事務所へ届け出てください。"
+  ],
+  "en": "Anyone using pesticide must report to the office beforehand",
+  "wrong": [
+   "Anyone using pesticide must report to the office afterwards",
+   "Pesticide users must spray on windy days only",
+   "Pesticide users must go to the Saturday consultation first"
+  ],
+  "solved": true
+ },
+ "56": {
+  "lines": [
+   "どの席が良いかは、芝居の何を楽しみたいかによって変わるのである。"
+  ],
+  "en": "Which seat is best depends on what you want to enjoy in the play",
+  "wrong": [
+   "The seats nearest the stage are always the best",
+   "The seats at the back are always the best",
+   "The best seat depends on the price of the ticket"
+  ],
+  "solved": true
+ },
+ "57": {
+  "lines": [
+   "ほとんどの人が最初の数ページしか読んでいなかった。",
+   "厚すぎて、どこに何が書いてあるのか分からないというのだ。"
+  ],
+  "en": "It was too thick, so people could not find what was written where",
+  "wrong": [
+   "Explanations differed from person to person, which confused staff",
+   "There were too few photos, so it was hard to understand",
+   "Veteran staff refused to use it, so newcomers ignored it"
+  ],
+  "solved": true
+ },
+ "58": {
+  "lines": [
+   "そして、その紙を冊子にするのではなく、実際にその作業をする場所の近くに貼ることにした。"
+  ],
+  "en": "Each sheet was posted near the place where the task is done",
+  "wrong": [
+   "All the tasks were bound together into one booklet",
+   "The newcomers themselves wrote the new sheets",
+   "The new sheets gave longer, more detailed explanations"
+  ],
+  "solved": true
+ },
+ "59": {
+  "lines": [
+   "必要なときに、必要な人が、すぐに見られることが大切なのだと気づかされた。"
+  ],
+  "en": "Manuals matter when the right person can see them right away",
+  "wrong": [
+   "A manual should be written in as much detail as possible",
+   "Newcomers should be taught by word of mouth instead",
+   "Newcomers' mistakes can never be removed completely"
+  ],
+  "solved": true
+ },
+ "60": {
+  "lines": [
+   "しかし、プラスチック製品が普及し、竹を使う機会が減ると、竹林は放置されるようになった。"
+  ],
+  "en": "Plastic spread, bamboo was used less, so bamboo groves were left alone",
+  "wrong": [
+   "Bamboo grew faster than before, so no one could cut it",
+   "Cutting bamboo was banned, so groves were left alone",
+   "The owners of the groves disappeared, so no one tended them"
+  ],
+  "solved": true
+ },
+ "61": {
+  "skip": "the answer is what the text does not mention; it needs the whole list of problems (shade, slopes, spreading) to be checked"
+ },
+ "62": {
+  "lines": [
+   "竹を切ることがそのまま収入につながれば、手入れを続ける人も増えるはずだ。"
+  ],
+  "en": "If cutting bamboo brings income, more people will keep tending the groves",
+  "wrong": [
+   "Bamboo is a bad plant, so all of it should be cut down",
+   "Bamboo grove problems will fix themselves as time passes",
+   "Bamboo products should be sold abroad to earn income"
+  ],
+  "solved": true
+ },
+ "63": {
+  "lines": [
+   "最初に戸惑ったのは、言葉そのものより、会話の進め方だった。",
+   "こちらの同僚は、仕事の話の途中でも冗談を挟み、相手が笑うのを待ってから本題に戻る。"
+  ],
+  "en": "What puzzled him was colleagues joking in the middle of work talk",
+  "wrong": [
+   "What puzzled him was the meaning of the local words",
+   "What puzzled him was colleagues giving the conclusion first",
+   "What puzzled him was colleagues who hardly ever laughed"
+  ],
+  "solved": true
+ },
+ "64": {
+  "lines": [
+   "冗談や雑談は、話を遠回りさせるためのものではなく、相手が口を開きやすくするためのものだったのだ。"
+  ],
+  "en": "Small talk is there to make the other person feel free to speak",
+  "wrong": [
+   "His explanation had contained a mistake",
+   "He should have made the materials more detailed",
+   "Jokes should be avoided in business settings"
+  ],
+  "solved": true
+ },
+ "65": {
+  "lines": [
+   "それ以来、私は打ち合わせの最初に、相手の会社の近くにある店の話など、ちょっとした話題を出すようにしている。"
+  ],
+  "en": "He now opens meetings with a light topic such as a shop near the client",
+  "wrong": [
+   "He now tries to tell skilful jokes at meetings",
+   "He now explains only the main points, briefly",
+   "He now lets his senior colleague do the talking for him"
+  ],
+  "solved": true
+ },
+ "66": {
+  "lines": [
+   "地域の安心を支える仕組みとして、二十四時間営業は続ける価値がある。",
+   "地域の事情に合わせて、店ごとに営業時間を選べるようにすべきだ。"
+  ],
+  "en": "A says keep 24-hour opening; B says let each store choose its hours",
+  "wrong": [
+   "Both say 24-hour opening should continue in every store",
+   "Both say 24-hour opening should end immediately",
+   "A says to end 24-hour opening; B says to keep it"
+  ],
+  "solved": true
+ },
+ "67": {
+  "lines": [
+   "人手不足は深刻だが、無人のレジを導入するなど、技術によって店員の負担を減らす方法はある。",
+   "その時間に働く店員を確保できず、店のオーナーが自ら夜通し働いている例も少なくない。"
+  ],
+  "en": "A says technology can ease staff load; B says owners are overworking at night",
+  "wrong": [
+   "Both say machines would solve every problem at night",
+   "A says staff shortage is no problem; B says hire more staff",
+   "Both say few night customers is the biggest problem"
+  ],
+  "solved": true
+ },
+ "68": {
+  "lines": [
+   "ところが、半年ほどたつと、新しい企画がほとんど出てこなくなった。"
+  ],
+  "en": "After about six months, almost no new proposals came out",
+  "wrong": [
+   "The amount of work done in a day went down",
+   "Meetings became longer than before",
+   "Employees stopped taking their lunch break"
+  ],
+  "solved": true
+ },
+ "69": {
+  "lines": [
+   "それまで新しい企画の多くは、会議の後の立ち話や、昼食をとりながらの何気ない会話から生まれていたのだ。"
+  ],
+  "en": "Most ideas came from casual talk after meetings and over lunch",
+  "wrong": [
+   "Most ideas came from long, carefully held meetings",
+   "Most ideas came from time spent thinking alone",
+   "Most ideas came from direct requests by customers"
+  ],
+  "solved": true
+ },
+ "70": {
+  "lines": [
+   "無駄に見えた時間が、実はアイデアの生まれる場所になっていたのである。",
+   "大切なのは、どの時間が本当に無駄で、どの時間が一見無駄に見えて実は必要なのかを見分けることだ。"
+  ],
+  "en": "Time that looks wasted can be needed; we must tell which is which",
+  "wrong": [
+   "Chatting should be removed to raise efficiency",
+   "People, like machines, improve by cutting waste",
+   "The longer people work, the better the quality gets"
+  ],
+  "solved": true
+ },
+ "71": {
+  "skip": "the case needs age exemption, other-area surcharge and the 13:00 cut-off combined from three separate lines"
+ },
+ "72": {
+  "skip": "the case needs the frozen-food ban, receipt totals, the 3,000 yen line and the 13:00 cut-off combined"
+ },
+ "73": {
+  "lines": [
+   "レジのお釣りが足りないので、銀行に行ってきてもいいですか。",
+   "じゃあ、そっちを先にお願い。"
+  ],
+  "en": "He needs change and may go to the bank first; she says do that first",
+  "wrong": [
+   "He will first write the baking order on paper",
+   "He will first write the shop name on the boxes",
+   "He will first send the delivery list to the union"
+  ],
+  "solved": true
+ },
+ "74": {
+  "lines": [
+   "コピーはちょっと待って。その間に、会議室のプロジェクターが使えるかどうか見てきてもらえる？"
+  ],
+  "en": "Wait on copying; meanwhile go check the meeting room projector",
+  "wrong": [
+   "Copy twenty sets of the materials right away",
+   "Correct the number in the table on page three",
+   "Prepare tea for the meeting before anything else"
+  ],
+  "solved": true
+ },
+ "75": {
+  "lines": [
+   "まず、保証書に書いてある製品番号をお知らせいただけますか。",
+   "保証書ですね。ちょっと探してきます。"
+  ],
+  "en": "She asks for the product number on the warranty; he goes to find it",
+  "wrong": [
+   "He will unplug the plug and plug it in again",
+   "He will wait for the repair person to arrive",
+   "He will carry the washing machine to the shop"
+  ],
+  "solved": true
+ },
+ "76": {
+  "lines": [
+   "あ、でも、その前に学校に出す申込書があったよね。",
+   "え、今日？じゃあ、それが先だね。計算は明日でいいから。"
+  ],
+  "en": "The form is due today so it comes first; the cost calculation can wait",
+  "wrong": [
+   "He should check ingredient prices before anything else",
+   "He should start making the signboard first",
+   "He should ask the art club for help first"
+  ],
+  "solved": true
+ },
+ "77": {
+  "lines": [
+   "まず、こちらの電話番号か、インターネットで収集の予約をしていただきます。"
+  ],
+  "en": "First book a collection by phone or online",
+  "wrong": [
+   "First buy a disposal ticket at a convenience store",
+   "First stick the ticket on the sofa",
+   "First pay the fee at the service counter"
+  ],
+  "solved": true
+ },
+ "78": {
+  "lines": [
+   "前とほとんど同じ。部屋も、広々してるってほどじゃないし。",
+   "ベランダが南向きで、洗濯物がよく乾くの。"
+  ],
+  "en": "Rent and room size are unremarkable; the sunny balcony dries laundry well",
+  "wrong": [
+   "She chose it because the station is close",
+   "She chose it because the rent is cheaper",
+   "She chose it because the rooms are spacious"
+  ],
+  "solved": true
+ },
+ "79": {
+  "lines": [
+   "一番の目的は、お子さんの送り迎えや、ご家族の介護をしている社員が、仕事を続けやすくすることです。"
+  ],
+  "en": "The main aim is to help staff with children or elder care keep working",
+  "wrong": [
+   "The main aim is to let staff avoid crowded trains",
+   "The main aim is to make meetings shorter",
+   "The main aim is to attract new employees"
+  ],
+  "solved": true
+ },
+ "80": {
+  "lines": [
+   "それはいいんだけど、実はその日、父の誕生日なんだよ。七十歳だから、家族で食事することになってて。"
+  ],
+  "en": "It is his father's seventieth birthday and the family is dining together",
+  "wrong": [
+   "He has to work on the day of the reunion",
+   "The venue is too far for him to travel",
+   "His father is ill and he must look after him"
+  ],
+  "solved": true
+ },
+ "81": {
+  "lines": [
+   "よく、健康のためですかと聞かれるんですが、実はそうじゃないんです。",
+   "子どもたちが安心して畑に入れるようにしたかったんです。"
+  ],
+  "en": "Not for health; he wanted children to be able to enter the field safely",
+  "wrong": [
+   "He cut pesticide use to protect his own health",
+   "He cut pesticide use to reduce the work in his field",
+   "He cut pesticide use to sell his vegetables dearly"
+  ],
+  "solved": false,
+  "unsolved": "not sure: Choice 3 adds 'nearby elementary school', not in the lines; only children are mentioned. Other choices are clearly wrong."
+ },
+ "82": {
+  "lines": [
+   "天気じゃないんだ。",
+   "会場の広場の工事が予定より遅れてて、間に合わないんだって。"
+  ],
+  "en": "Not the weather; construction on the venue square is behind schedule",
+  "wrong": [
+   "The festival is postponed because bad weather is expected",
+   "The festival is postponed because too few stalls signed up",
+   "The festival is postponed because the budget ran short"
+  ],
+  "solved": true
+ },
+ "83": {
+  "lines": [
+   "それより、昼食の後は眠くなって、午後の授業に集中できない生徒が多かったからです。"
+  ],
+  "en": "More than anything, many students got sleepy after lunch and lost focus",
+  "wrong": [
+   "Mainly because late students spoil the quiet mornings",
+   "Mainly because the afternoon classes were too short",
+   "Mainly because students could not read quietly in the morning"
+  ],
+  "solved": true
+ },
+ "84": {
+  "lines": [
+   "駅の周りに止められた自転車が、歩く人の邪魔になっているという声が多く寄せられています。",
+   "そこで今年度は、駅から少し離れた場所に無料の駐輪場を三か所増やし、駅前の歩道には植木を置いて、自転車を止められないようにします。"
+  ],
+  "en": "The city adds free bike parks and plants to keep bikes off station paths",
+  "wrong": [
+   "The city will fight bicycle theft near the station",
+   "The city will raise the fees for bicycle parking",
+   "The city will explain why it plants trees by the station"
+  ],
+  "solved": true
+ },
+ "85": {
+  "lines": [
+   "ですから、言葉を覚えるときは、必ず例文と一緒に覚えましょう。"
+  ],
+  "en": "When learning words, always learn them together with example sentences",
+  "wrong": [
+   "Adverbs do not need to be learned at all",
+   "Vocabulary notebooks should hold only English meanings",
+   "One common adverb cannot be translated into English"
+  ],
+  "solved": true
+ },
+ "86": {
+  "lines": [
+   "そこで市では、今年から、有名な場所以外の魅力も知ってもらおうと、地元の人がすすめる散歩コースを紹介する地図を作りました。"
+  ],
+  "en": "A map of locals' walking routes spreads tourists beyond famous spots",
+  "wrong": [
+   "A guide to the best autumn-leaf spots in the city",
+   "A fine for tourists who drop litter",
+   "A higher entrance fee for the popular temple"
+  ],
+  "solved": true
+ },
+ "87": {
+  "lines": [
+   "そこで来週から、書類は種類ごとに置く棚を決め、使い終わったら必ず元の棚に戻すことにします。"
+  ],
+  "en": "From next week each document type gets a shelf and goes back after use",
+  "wrong": [
+   "A warning to the person who lost a document",
+   "How to throw away important documents",
+   "Why the office is buying new shelves"
+  ],
+  "solved": true
+ },
+ "88": {
+  "lines": [
+   "大切なのは、何時に起きるかではなく、自分の体に合った生活のリズムを見つけ、それを毎日続けることなのです。"
+  ],
+  "en": "What matters is finding and keeping a daily rhythm that suits your body",
+  "wrong": [
+   "Everyone should get up early in the morning",
+   "Night people are poor at working efficiently",
+   "Your body type can be changed by effort"
+  ],
+  "solved": true
+ },
+ "89": {
+  "lines": [
+   "このたびは、大変お世話になりました。"
+  ],
+  "en": "The speaker thanks the listener for their great help",
+  "wrong": [
+   "The speaker asks the listener to look after them from now on",
+   "The speaker apologizes for the trouble they caused",
+   "The speaker says they will look after the listener"
+  ],
+  "solved": true
+ },
+ "90": {
+  "lines": [
+   "もう少しで書類ができるんだけど、ちょっと見てもらえないかな。"
+  ],
+  "en": "He is nearly done with a document and asks the listener to check it",
+  "wrong": [
+   "He has finished the document and wants praise for it",
+   "He asks the listener to write the document for him",
+   "He says he has already shown the document to someone"
+  ],
+  "solved": true
+ },
+ "91": {
+  "lines": [
+   "部長、明日の会議の資料、お目通しいただけましたか。"
+  ],
+  "en": "She asks the boss whether he has looked over tomorrow's meeting papers",
+  "wrong": [
+   "She asks the boss to look over the papers by tomorrow",
+   "She says she has read the boss's meeting papers",
+   "She asks the boss who prepared the meeting papers"
+  ],
+  "solved": true
+ },
+ "92": {
+  "lines": [
+   "あれ、田中さん、まだ残ってたの？"
+  ],
+  "en": "He is surprised that Tanaka is still at work",
+  "wrong": [
+   "He says Tanaka has already gone home",
+   "He asks Tanaka to stay and finish the work",
+   "He scolds Tanaka for leaving the work unfinished"
+  ],
+  "solved": true
+ },
+ "93": {
+  "lines": [
+   "せっかく作ったのに、誰も食べてくれないなんて。"
+  ],
+  "en": "She is upset that nobody will eat the food she made",
+  "wrong": [
+   "She is glad that everyone ate the food she made",
+   "She regrets making too little food for everyone",
+   "She asks someone else to cook the food for her"
+  ],
+  "solved": true
+ },
+ "94": {
+  "lines": [
+   "このあたりに、コンビニってありませんでしたっけ。"
+  ],
+  "en": "He asks whether there was a convenience store around here",
+  "wrong": [
+   "He says he bought something at a convenience store",
+   "He asks someone to go shopping for him",
+   "He says he did not go to the convenience store"
+  ],
+  "solved": true
+ },
+ "95": {
+  "lines": [
+   "雨が降らないうちに、洗濯物、取り込んでおいてくれる？"
+  ],
+  "en": "She asks the listener to bring in the laundry before it rains",
+  "wrong": [
+   "She asks the listener to hang out laundry after the rain",
+   "She says the laundry got wet in the rain",
+   "She asks the listener to wash the laundry before rain"
+  ],
+  "solved": true
+ },
+ "96": {
+  "lines": [
+   "山田さんに頼んだところで、引き受けてくれっこないよ。"
+  ],
+  "en": "He thinks Yamada would never accept even if asked",
+  "wrong": [
+   "He is glad that Yamada accepted the request",
+   "He says Yamada was asked and has refused",
+   "He wants someone else to ask Yamada for him"
+  ],
+  "solved": true
+ },
+ "97": {
+  "lines": [
+   "お客様、お荷物、お預かりいたしましょうか。"
+  ],
+  "en": "The staff member offers to hold the customer's bags",
+  "wrong": [
+   "The staff member asks the customer to carry the bags",
+   "The staff member says the bags cannot be kept",
+   "The staff member asks whose bag was left behind"
+  ],
+  "solved": true
+ },
+ "98": {
+  "lines": [
+   "あの映画、見ればよかったなあ。"
+  ],
+  "en": "He regrets that he did not see that movie",
+  "wrong": [
+   "He is glad that he saw that movie",
+   "He invites someone to see the movie with him",
+   "He says the movie was not worth seeing"
+  ],
+  "solved": true
+ },
+ "99": {
+  "lines": [
+   "佐藤さん、来週の出張、代わりに行ってもらうわけにはいかないかな。"
+  ],
+  "en": "She asks whether Sato could go on next week's trip in her place",
+  "wrong": [
+   "She says she will go in Sato's place",
+   "She tells Sato he need not go next week",
+   "She says Sato cannot go and asks him why"
+  ],
+  "solved": true
+ },
+ "100": {
+  "lines": [
+   "今日は僕がごちそうするよ。"
+  ],
+  "en": "He is offering to treat the other person today",
+  "wrong": [
+   "He says someone treated him today",
+   "He asks the other person to pay today",
+   "He thanks the other person for a meal"
+  ],
+  "solved": true
+ },
+ "101": {
+  "skip": "the choice needs three facts combined: walking, the fish dislike, and which tour is low on movement"
+ },
+ "102": {
+  "lines": [
+   "この前膝を痛めたばかりだろう？果物狩りって、坂の多い畑を歩くんじゃないかな。",
+   "畑は山の斜面にございますので、少し歩いていただくことになります。"
+  ],
+  "en": "Her knee is hurt and the fruit field is on a slope, so it means walking",
+  "wrong": [
+   "She does not like hot springs so they skip it",
+   "She dislikes fruit, so the fruit picking is out",
+   "The tour costs too much for them"
+  ],
+  "solved": false,
+  "unsolved": "not sure: Lines never say whose knee is hurt; 'mother' (choice 2, meaning 4 'her') is inferred from the hidden passage."
+ },
+ "103": {
+  "lines": [
+   "では、来月から金曜日と土曜日だけ、午後の便を出すことにしましょう。配送料は今のままで。"
+  ],
+  "en": "From next month an afternoon run on Fridays and Saturdays only",
+  "wrong": [
+   "An afternoon run every day from next month",
+   "No afternoon run will be added",
+   "An afternoon run only when the fish shop orders"
+  ],
+  "solved": true
+ },
+ "104": {
+  "lines": [
+   "では、来月から金曜日と土曜日だけ、午後の便を出すことにしましょう。配送料は今のままで。"
+  ],
+  "en": "The delivery fee stays as it is now",
+  "wrong": [
+   "The delivery fee will double",
+   "The delivery fee will rise by thirty percent",
+   "The fee will rise only on Fridays and Saturdays"
+  ],
+  "solved": true
+ }
+}

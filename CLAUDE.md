@@ -489,6 +489,21 @@ Before considering the change complete:
   `tools/grammar-blocks/reviews/`, with a ledger of every finding). Reviewed
   grammar answers are `GLOSS_FIX["g:…"]`; `GRAMMAR_CONFUSABLE` keeps
   look-alike patterns apart on scored and practice cards alike.
+- **A boss's misses come back as blitz cards, unannounced (owner, 27 Nov,
+  v303).** `bossCards` (n2-game.js) turns the wrong and unsure answers of the
+  latest N2 boss into cards: a vocabulary or grammar question as its exam
+  card and the card of what it tests; a reading or listening question as its
+  deciding lines (`n2-sets/keys.json`, precached): `kl:` what the lines mean,
+  `kq:` the paper's own question on the lines alone, plus the passage's N2
+  words not known yet (`BOSS_WORDS`). `bossQueue` gives `BOSS_PLACES` places a
+  round to what is not yet answered right (`bossDone` in the game state,
+  synced by `mergeGame`); a recovery round has none. Nothing on any screen
+  says where these cards come from, and the next boss is always a fresh
+  paper. Key cards are practice (no points, counted toward the day and the
+  boss); a listening line is heard and shown once answered. The lines come
+  from `tools/boss-keys/<set>.json` through `tools/n2-build-keys.mjs`: word
+  for word from the paper, and only where a blind solver picked the key from
+  the lines alone (`solved`). Sets 2 and 3 so far.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 
