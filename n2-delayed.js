@@ -147,19 +147,21 @@ export function sentenceParts(check) {
 export function patternNeedles(name = "") {
   return String(name).replace(/[〜～]|[①-⑨]|（[^）]*）|\([^)]*\)/g, "").split(/[・／\s]+/).map(s => s.trim()).filter(s => s.length > 0);
 }
+// A needle is a string, or a list of strings for a pattern that sits in the
+// sentence in pieces (で…いては, も…ば…も): each piece is found in order after
+// the one before, and all are marked.
 export function exampleSegments(ja = "", needles = []) {
   const segments = rubySegments(ja), plain = segments.map(s => s.text).join("");
-  const needle = needles.find(n => n && plain.includes(n));
-  if (!needle) return segments;
-  const a = plain.indexOf(needle), b = a + needle.length, out = [];
+  const rangesOf = needle => { const out = []; let from = 0; for (const piece of [].concat(needle)) { const at = piece ? plain.indexOf(piece, from) : -1; if (at < 0) return null; out.push([at, at + piece.length]); from = at + piece.length; } return out.length ? out : null; };
+  let ranges = null;
+  for (const n of needles) if (n && (ranges = rangesOf(n))) break;
+  if (!ranges) return segments;
+  const marked = i => ranges.some(([a, b]) => i >= a && i < b), out = [];
   let at = 0;
   for (const seg of segments) {
     const s = at, e = at + seg.text.length; at = e;
-    if (seg.reading || e <= a || s >= b) { out.push(e > a && s < b ? {...seg, mark: true} : seg); continue; }
-    const cut = [Math.max(a, s), Math.min(b, e)];
-    if (cut[0] > s) out.push({text: seg.text.slice(0, cut[0] - s)});
-    out.push({text: seg.text.slice(cut[0] - s, cut[1] - s), mark: true});
-    if (cut[1] < e) out.push({text: seg.text.slice(cut[1] - s)});
+    if (seg.reading) { out.push(ranges.some(([a, b]) => e > a && s < b) ? {...seg, mark: true} : seg); continue; }
+    for (let i = s, run = s; i <= e; i++) if (i === e || marked(i) !== marked(run)) { if (i > run) out.push(marked(run) ? {text: seg.text.slice(run - s, i - s), mark: true} : {text: seg.text.slice(run - s, i - s)}); run = i; }
   }
   return out;
 }

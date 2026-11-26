@@ -30,6 +30,22 @@ export const GLOSS_FIX = Object.freeze({
 });
 
 // Items left out of the scored pool until their source is fixed.
+// Grammar patterns that sit in their example sentence in pieces or in another
+// form, so the name alone finds nothing to underline (owner's flags on
+// g:ていては, 26 Nov: "no underline and I don't know what I'm supposed to
+// answer"). Each entry is the piece or pieces to underline, in sentence order.
+export const GRAMMAR_SPANS = Object.freeze({
+  "g:を-に任せる": ["を", "に任せ"],
+  "g:た末-の末": ["だ末"],
+  "g:か-ないかのうちに": ["か", "ないかのうちに"],
+  "g:ていては": ["で", "いては"],
+  "g:にしても-にしても": ["にしても", "にしても"],
+  "g:お-願う": ["お書き願います"],
+  "g:ようではないか": ["ろうではないか"],
+  "g:てならない": ["でならない"],
+  "g:も-ば-も": ["も", "ば", "も"],
+  "g:たって": ["だって"],
+});
 export const EXCLUDED = Object.freeze({
   // Homophones whose sentence does not pick one spelling or sense.
   "h:煎る": "炒る is an accepted spelling",

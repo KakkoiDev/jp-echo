@@ -652,3 +652,17 @@ test("Radio from the game: Day and Night start alike, and Day Radio and Evening 
   assert.doesNotMatch(css.slice(css.indexOf("body[data-from=game]{"), css.indexOf("/* Day Radio */")), /#[0-9A-Fa-f]{6}\b/, "tokens only in the skin");
   assert.match(mock, /\$\("day-done-back"\)\.href = "\?view=game&panel=radio"/, "the end of Day Radio leads back to the game's Radio");
 });
+
+test("every grammar card underlines what it asks about, even a pattern that sits in the sentence in pieces (owner's flags on g:ていては)", async () => {
+  const {exampleSegments} = await import("../n2-delayed.js");
+  const {GRAMMAR_SPANS} = await import("../n2-game-review.js");
+  const grammar = gamePool({inventory, examples, sets: []}).filter(q => q.kind === "grammar");
+  for (const q of grammar) assert.ok(exampleSegments(q.sentence, [q.needle]).some(s => s.mark), q.id + " has an underline");
+  const split = grammar.find(q => q.id === "g:ていては");
+  assert.equal(exampleSegments(split.sentence, [split.needle]).map(s => s.mark ? "[" + s.text + "]" : s.text).join(""), "そんなに休ん[で]ばかり[いては]、仕事が終わらないよ。");
+  assert.ok(exampleSegments(split.solution.ja, [split.needle]).some(s => s.mark), "and in the review, with furigana");
+  for (const id of Object.keys(GRAMMAR_SPANS)) assert.ok(grammar.some(q => q.id === id), id + " is a grammar card");
+  // One piece that is missing means no underline from that needle, never a partial one.
+  assert.equal(exampleSegments("休んでいる。", [["で", "いては"]]).some(s => s.mark), false);
+  assert.equal(exampleSegments("雨が降る。", ["降る"]).filter(s => s.mark).map(s => s.text).join(""), "降る", "a plain needle works as before");
+});

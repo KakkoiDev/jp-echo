@@ -124,7 +124,7 @@ Still open from the re-audit:
 - **Resume a round after a reload**: needs a design (the boards have no resume state).
 - **Connective excerpts** (@461 ただし fits, @96 しかし fits, @197 starts mid-quote):
   still practice until reviewed.
-- **10 grammar highlights** that the stem match still misses.
+- ~~10 grammar highlights that the stem match still misses.~~ Done in v284: `GRAMMAR_SPANS` (n2-game-review.js) names the piece or pieces to underline, and `exampleSegments` marks a pattern that sits in the sentence in pieces.
 - **Legacy ids** (old wins and comebacks under bare ids) are dropped, not migrated.
 
 ## Done since the audit
