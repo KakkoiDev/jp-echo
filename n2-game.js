@@ -289,7 +289,11 @@ export function choicesFor(q, random = Math.random, level = .5) {
 // them), in a new order and with the choices shuffled again.
 // wins: question id → times answered right and fast in the game; a question
 // won before counts as known even if no recall record says so.
-export function pickRound({pool, recall = [], seen = {}, wins = {}, lv = {}, size = ROUND_SIZE, random = Math.random, mix = {weak: 4, fresh: 4, known: 2}, comeback = [], now = Date.now()}) {
+// calm: the recovery round after a hard one. What the player has won is
+// taken even if it was seen minutes ago (in a session everything won is
+// recent, and the four-hour rest used to leave the round to new cards: owner's
+// report, 27 Nov), and the places left go to the familiar before the new.
+export function pickRound({pool, recall = [], seen = {}, wins = {}, lv = {}, size = ROUND_SIZE, random = Math.random, mix = {weak: 4, fresh: 4, known: 2}, comeback = [], now = Date.now(), calm = false}) {
   const last = new Map();
   for (const r of recall) last.set(r.dimension + keyOf(r.target), r.last);
   const state = q => { const g = q.target && last.get(q.dimension + keyOf(q.target)); return g && g !== "instant" ? "weak" : g === "instant" || wins[q.id] ? "known" : "fresh"; };
@@ -298,7 +302,7 @@ export function pickRound({pool, recall = [], seen = {}, wins = {}, lv = {}, siz
   const groups = {weak: [], fresh: [], known: []}, recent = [];
   // A mastered item (極) rests three days between visits: it comes up less.
   const resting = q => now - (seen[q.id] || 0) < ((lv[q.id] || 0) >= ITEM_LEVEL.max ? ITEM_LEVEL.restMs : RECENT_MS);
-  for (const q of shuffle(pool, random)) (resting(q) ? recent : groups[state(q)]).push(q);
+  for (const q of shuffle(pool, random)) { const s = state(q); (calm && s === "known" ? groups.known : resting(q) ? recent : groups[s]).push(q); }
   // Least recently seen first, then the kinds taken in turn, so grammar,
   // readings and exam questions are not drowned by the many word questions.
   for (const [name, g] of Object.entries(groups)) groups[name] = byKindInTurn(g.sort((a, b) => (seen[a.id] || 0) - (seen[b.id] || 0)), random);
@@ -309,7 +313,8 @@ export function pickRound({pool, recall = [], seen = {}, wins = {}, lv = {}, siz
   take(back, back.length);
   const backCount = out.length;
   take(groups.weak, mix.weak); take(groups.fresh, mix.fresh); take(groups.known, mix.known);
-  take([...groups.fresh, ...groups.weak, ...groups.known, ...recent.sort((a, b) => (seen[a.id] || 0) - (seen[b.id] || 0))], size - out.length);
+  const seenFirst = recent.sort((a, b) => (seen[a.id] || 0) - (seen[b.id] || 0));
+  take(calm ? [...groups.known, ...seenFirst, ...groups.weak, ...groups.fresh] : [...groups.fresh, ...groups.weak, ...groups.known, ...seenFirst], size - out.length);
   const rest = interleave(shuffle(out.slice(backCount, size), random));
   return [...out.slice(0, backCount).map(q => ({...q, comeback: true})), ...rest].slice(0, Math.max(size, backCount));
 }
@@ -486,21 +491,25 @@ export function nextRound({pool, review = [], kanji = null, recall = [], state =
   const share = review.length && pool.length ? REVIEW_SHARE : 0, memory = {recall, seen: state.seen || {}, wins: state.wins || {}, lv: state.lv || {}, random, now};
   const comeback = slump ? (state.comeback || []).slice(-WARM_UP.comeback) : state.comeback || [];
   let picked;
-  if (kanji?.order) {
+  // After a hard round the recovery round comes first, at every rank: kanji-first picking waits a round.
+  if (kanji?.order && !slump) {
     const byId = new Map(pool.map(q => [q.id, q])), places = ROUND_SIZE - share;
     const back = shuffle(comeback.map(id => byId.get(id)).filter(Boolean), random).slice(0, places).map(q => ({...q, comeback: true}));
     picked = [...back, ...kanjiPick({pool, examples: kanji.examples || [], order: kanji.order, state, size: places - back.length, skip: back, random, now})];
     // Kanji with nothing left to ask: the places left are picked by card, so a round is always full.
     if (picked.length < places) { const words = new Set(picked.map(q => q.item)); picked.push(...pickRound({...memory, pool: pool.filter(q => !words.has(q.item)), size: places - picked.length, mix: flowMix(level)})); }
-  } else picked = pickRound({...memory, pool, size: ROUND_SIZE - share, comeback, mix: slump ? WARM_UP.mix : flowMix(level)});
+  } else picked = pickRound({...memory, pool, size: ROUND_SIZE - share, comeback, mix: slump ? WARM_UP.mix : flowMix(level), calm: slump});
   if (share) {
     // The comeback cards stay first; the review cards are spread among the rest.
     const words = new Set(picked.map(q => q.item).filter(Boolean));
-    const back = picked.filter(q => q.comeback), old = pickRound({...memory, pool: review.filter(q => !words.has(q.item)), size: Math.max(0, ROUND_SIZE - picked.length), mix: {weak: share, fresh: share, known: share}}).map(q => ({...q, review: true}));
+    const back = picked.filter(q => q.comeback), old = pickRound({...memory, pool: review.filter(q => !words.has(q.item)), size: Math.max(0, ROUND_SIZE - picked.length), mix: slump ? {weak: 0, fresh: 0, known: share} : {weak: share, fresh: share, known: share}, calm: slump}).map(q => ({...q, review: true}));
     picked = [...back, ...interleave(shuffle([...picked.filter(q => !q.comeback), ...old], random))];
   }
   const round = picked.map(q => ({...q, seconds: flowSeconds(q.seconds, level), bonus: !q.comeback && !q.practice && random() < BONUS.chance * beat.bonus}));
-  return {round, warmUp: slump, level, beat};
+  // The round is only called a recovery round when it is one: at least half of
+  // it is things already won or seen. A new player has nothing to recover with.
+  const familiar = round.filter(q => !q.comeback && (state.wins?.[q.id] || state.seen?.[q.id])).length;
+  return {round, warmUp: slump && familiar >= ROUND_SIZE / 2, level, beat};
 }
 
 // ---- Kanji first ----

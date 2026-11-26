@@ -1105,3 +1105,47 @@ test("the exam screen sits a paper of any level, and the game opens each rank's 
   assert.ok(sw.includes('"./jlpt-sets.js"'));
   assert.match(src("../n2-progress.js"), /if\(paper\.level&&paper\.level!=="N2"\) continue;/, "another level's paper is never N2 evidence");
 });
+
+// Owner's report, 27 Nov: "I was told the following round would be calm with
+// words I know, but the exact opposite happened. I got only new words."
+test("the recovery round after a hard one is made of cards already won, even ones seen minutes ago", () => {
+  const pool = gamePool({inventory, examples}), random = seeded(1), t0 = 1.8e12;
+  let st = {};
+  // Three good rounds and a bad one, two minutes apart: everything won is "recent".
+  for (let r = 0; r < 4; r++) {
+    const now = t0 + r * 120_000, {round} = nextRound({pool, state: st, random, now});
+    let miss = 0;
+    for (const q of round) { const outcome = r === 3 && miss < 7 ? (miss++, "wrong") : "right"; st = rememberAnswer(st, {q, outcome, fast: outcome === "right", now}); }
+    st = rememberRound(st, {score: 0, questions: round, misses: r === 3 ? 7 : 0, scored: 10, now});
+  }
+  assert.equal(inSlump(st), true);
+  const {round, warmUp} = nextRound({pool, state: st, random, now: t0 + 4 * 120_000});
+  assert.equal(warmUp, true); assert.equal(round.length, ROUND_SIZE);
+  const rest = round.filter(q => !q.comeback);
+  assert.equal(round.length - rest.length, WARM_UP.comeback, "two of the misses come back, no more");
+  assert.ok(rest.filter(q => st.wins[q.id]).length >= rest.length - WARM_UP.mix.fresh, "the rest are cards the player has won: " + rest.map(q => st.wins[q.id] ? "won" : "new").join(" "));
+  assert.ok(rest.filter(q => !st.seen[q.id]).length <= WARM_UP.mix.fresh, "at most one new card");
+  // Outside a recovery round the four-hour rest still holds: nothing just seen comes back.
+  const good = {...st, history: [...st.history, {at: "x", right: 9, n: 10}]};
+  assert.ok(nextRound({pool, state: {...good, comeback: []}, random, now: t0 + 5 * 120_000}).round.every(q => !st.seen[q.id]));
+});
+
+test("a round is only called a recovery round when it is one, and it comes first at a kanji-first rank too", () => {
+  const pool = gamePool({inventory, examples}), slumped = {history: [{at: "a", right: 2, n: 10}]};
+  const fresh = nextRound({pool, state: slumped, random: seeded(2), now: 1.8e12});
+  assert.equal(fresh.warmUp, false, "a new player has won nothing: the ribbon must not promise things they know");
+  assert.equal(fresh.round.length, ROUND_SIZE);
+  // Rank N3: after a hard round the won N3 cards come back, not new kanji.
+  const n3 = levelPool("N3"), review = [...levelPool("N5"), ...levelPool("N4")], order = levelsManifest.kanji.N3, random = seeded(3), t0 = 1.8e12;
+  let st = {};
+  for (let r = 0; r < 4; r++) {
+    const now = t0 + r * 120_000, {round} = nextRound({pool: n3, review, kanji: {order, examples: review}, state: st, random, now});
+    let miss = 0;
+    for (const q of round) { const outcome = r === 3 && miss < 7 ? (miss++, "wrong") : "right"; st = rememberAnswer(st, {q, outcome, fast: outcome === "right", now}); }
+    st = rememberRound(st, {score: 0, questions: round, misses: r === 3 ? 7 : 0, scored: 10, now});
+  }
+  const {round, warmUp} = nextRound({pool: n3, review, kanji: {order, examples: review}, state: st, random, now: t0 + 4 * 120_000});
+  assert.equal(warmUp, true);
+  assert.ok(round.every(q => !q.focus), "no kanji-first picking in the recovery round");
+  assert.ok(round.filter(q => !q.comeback && !st.seen[q.id]).length <= WARM_UP.mix.fresh, "at most one new card, the review places included");
+});

@@ -466,6 +466,12 @@ Before considering the change complete:
   loaded. A rank whose papers are not there (N1 until they are written) shows
   kanji coverage and has no boss. Unreviewed level cards still pay no points,
   but their answers count toward the day and the 1,000 that open the boss.
+- **A recovery round is made of what the player has won (v294).** In a
+  recovery round `pickRound` runs `calm`: won cards are taken even if seen
+  minutes ago (the four-hour rest used to leave the round to new cards:
+  owner's report, 27 Nov), then the familiar, then the new; at most one new
+  card and two misses. It comes first at a kanji-first rank too. `nextRound`
+  only reports `warmUp` (the 復 ribbon) when half the round is familiar.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 
