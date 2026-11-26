@@ -59,7 +59,8 @@ self.addEventListener("fetch",event=>{
   if(kept){event.respondWith((async()=>{
     const cache=await caches.open(kept[1]),piece=kept[2].test(url.pathname);
     if(piece){const hit=await cache.match(event.request);if(hit)return hit}
-    try{const response=await fetch(event.request);if(response.ok)await cache.put(event.request,response.clone());return response}
+    try{const response=await fetch(event.request);if(response.ok){await cache.put(event.request,response.clone());return response}
+      return await cache.match(event.request)||response}
     catch(error){const hit=await cache.match(event.request);if(hit)return hit;throw error}})());return}
   event.respondWith((async()=>{
     const cache=await caches.open(CACHE);

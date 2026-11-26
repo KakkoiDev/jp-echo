@@ -25,7 +25,7 @@ Layout (102 questions): Vocabulary 問題1 漢字読み 8 · 問題2 表記 6 ·
   - 文法形式の判断: prompt has `（　）`; target is a grammar id from the inventories; choices are four forms; exactly one is grammatical AND fits the meaning.
 - 文の組み立て: prompt has exactly three `＿＿` and one `★` (e.g. `この本は ＿＿ ＿＿ ★ ＿＿ おもしろい。`), four fragments as choices; exactly one order is grammatical; key = the fragment at ★; `why` gives the full sentence. No target.
 - 文章の文法: all five share one passage (`context`) containing （１）…（５）; each prompt is `（１）に入るのは？` etc. Test connectives, こ/そ words, sentence endings, particles in context — things only answerable from the passage flow.
-- Reading and Listening questions also carry `"tags"` (1–2 of: detail, exception, change, reason, intent, inference, reference, main, compare, next, response, numbers — meanings in `n2-comprehension.js` TAGS) and `"cue"`: the deciding line, 4–80 characters copied EXACTLY (character for character) from that question's context.
+- Reading and Listening questions also carry `"tags"` (1–2 of: detail, exception, change, reason, intent, inference, reference, main, compare, next, response, numbers — meanings in `n2-comprehension.js` TAGS) and `"cue"`: the deciding line, 4–80 characters copied EXACTLY (character for character) from that question's context. When the answer needs more than one place (a condition and its result, two facts to combine, a back-reference and what it points to, every number in a calculation), `"cue"` is an array of up to three such spans; together they must justify the whole answer.
 - Listening `context` is the script. EVERY line starts with a speaker label: `男：`, `女：`, or for three people `男１：` etc. Monologues (概要理解) are one speaker with a label. The `prompt` is the question (課題理解: 「男の人はこのあとまず何をしますか。」 style; ポイント理解: why/what/when; 概要理解: what is the talk about / what does the speaker think).
   - 発話表現: `context` is the spoken situation description on one labelled line, e.g. `女：友達の家でごはんを食べました。帰るとき、何と言いますか。`; `prompt` is `何と言いますか。`; three choices are utterances; tags `["response"]`; cue = a phrase from the situation.
   - 即時応答: `context` is one labelled utterance; `prompt` is `最もよい返事はどれですか。`; three choices are replies; tags `["response"]` (a second tag allowed); cue = the key phrase of the utterance (3+ characters).
@@ -44,6 +44,15 @@ Layout (102 questions): Vocabulary 問題1 漢字読み 8 · 問題2 表記 6 ·
 - Natural Japanese a native editor would accept. です/ます and plain style used consistently within a text. No English in Japanese fields.
 - ORIGINAL: write everything yourself. Never reproduce or adapt questions or passages from official JLPT papers, workbooks, textbooks or websites.
 - No passage or script reused inside the set; the theme (given in your task) colours roughly a third of the texts, the rest vary.
+
+## What the first two sets got wrong (audit, 26 Nov 2026): do better
+- **Distractors as close as the real paper's.** 表記: mostly real competing kanji and words, few invented compounds. 文法形式の判断: close variants of one form, and some two-line dialogues where the role or register decides, not four unrelated patterns. 文の組み立て: fragments that attach in two places locally, so only the whole sentence settles the order. 即時応答: stems of 20–35 characters, and wrong replies that reuse the right words in the wrong direction (who does it, tense, giving and receiving), never replies that fall on sight.
+- **Reading wrong choices borrow true facts** from the text and attach them to the wrong cause, person or conclusion. Each 中文 and the 長文 has at least one question that needs two paragraphs.
+- **用法**: every wrong sentence must be impossible, not merely worse. Check each against other senses of the word (無駄 can describe a pointless question).
+- **Every `why` must be true as a statement about Japanese**, not only about this sentence. Do not write "X is only for…" or "X always means…" unless it is so, and name the choices by what they say, never by number.
+- **If a wrong choice is ruled out only by an unstated assumption, state it in the sentence** (who did the action, whose duty it is).
+- **Nothing close to a published item.** Avoid stock scenes: a note to a child about dinner, a parcel and the laundry; a newcomer who learns to greet the neighbours.
+- **You will be given the targets and the scenes already used by the level's other sets. Use none of them.**
 
 ## Working method
 Write the JSON with a script or in pieces if that helps (e.g. several part files merged by a small node script in your scratch directory), but the final file must be one JSON as above. Check targets by looking them up in the inventory files (grep) BEFORE writing the question. Run the validator, fix, repeat until OK. Then do one full self-review pass as a solver, fix anything ambiguous, and re-run the validator.

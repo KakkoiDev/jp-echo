@@ -47,6 +47,13 @@ export const OUTSIDE_KANJI = 0.01;
 // At least this share of a set's word and grammar targets come from the level itself.
 export const OWN_LEVEL_TARGETS = 0.7;
 
+// A script line is spoken by 男 or 女, numbered when a talk has two of one.
+const SPEAKER = /^[男女][１２３]?：\S/;
+// A passage with spaces and punctuation taken out, so one comma does not make it new.
+const plain = text => String(text).replace(/[\s、。，．,.!?！？「」『』（）()・…〜~ー―-]/g, "");
+// The deciding line or lines of a question: `cue` is one span or up to three.
+export const cuesOf = q => (Array.isArray(q.cue) ? q.cue : q.cue == null ? [] : [q.cue]);
+
 export function validateLevelSet(set) {
   const problems = [], level = set.level;
   if (!SET_LEVELS[level]) return ["unknown level " + JSON.stringify(level)];
@@ -79,13 +86,13 @@ export function validateLevelSet(set) {
       if (b.chars && (length < b.chars[0] || length > b.chars[1])) problems.push(`${at}: ${b.kind} context is ${length} characters, wants ${b.chars[0]}–${b.chars[1]}`);
     } else if (seenPrompts.has(prompt)) problems.push(`${at}: prompt used twice`);
     seenPrompts.add(prompt);
-    if (b.skill === "Listening" && context && context.split("\n").some(line => line.trim() && !/^[^\n：]{1,6}：/.test(line))) problems.push(`${at}: every listening script line needs a speaker label like 女：`);
+    if (b.skill === "Listening" && context && context.split("\n").some(line => line.trim() && !SPEAKER.test(line))) problems.push(`${at}: every listening script line needs a speaker label: 男： 女： (男１： … for more than one)`);
     if (b.skill === "Reading" || b.skill === "Listening") {
       const tags = q.tags;
       if (!Array.isArray(tags) || tags.length < 1 || tags.length > 2 || new Set(tags).size !== tags.length || tags.some(t => !TAG[t])) problems.push(`${at}: needs 1–2 tags from TAGS (n2-comprehension.js)`);
       else if ((b.kind === "即時応答" || b.kind === "発話表現") && tags[0] !== "response") problems.push(`${at}: ${b.kind} is tagged "response" first`);
-      const cue = q.cue, min = b.chars && b.chars[0] < 100 ? 3 : 4;
-      if (typeof cue !== "string" || [...cue].length < min || [...cue].length > 80 || !context.includes(cue)) problems.push(`${at}: cue must be ${min}–80 characters copied exactly from the context`);
+      const spans = cuesOf(q), min = b.chars && b.chars[0] < 100 ? 3 : 4;
+      if (!spans.length || spans.length > 3 || new Set(spans).size !== spans.length || spans.some(cue => typeof cue !== "string" || [...cue].length < min || [...cue].length > 80 || !context.includes(cue))) problems.push(`${at}: cue must be one to three spans of ${min}–80 characters, each copied exactly from the context`);
     } else if (q.tags || q.cue) problems.push(`${at}: only reading and listening questions carry tags and a cue`);
     if (b.targeted) {
       const t = JSON.stringify(q.target), from = words.get(t) || grammar.get(t);
@@ -124,8 +131,12 @@ export function validateLevelSet(set) {
     for (let i = 0; i < contexts.length; i += b.group) {
       const run = contexts.slice(i, i + b.group);
       if (new Set(run).size !== 1) problems.push(`${b.skill} 問題${b.mondai}: questions ${i + 1}–${i + run.length} must share one context`);
-      if (all.has(run[0])) problems.push(`${b.skill} 問題${b.mondai}: a context is used twice`);
-      all.add(run[0]);
+      if (all.has(plain(run[0]))) problems.push(`${b.skill} 問題${b.mondai}: a context is used twice`);
+      all.add(plain(run[0]));
+    }
+    if (b.kind === "文章の文法") {
+      const asked = qs.filter(q => q.skill === b.skill && q.mondai === b.mondai).map(q => (/（[１-５]）/.exec(String(q.prompt)) || [""])[0]);
+      if (new Set(asked).size !== asked.length) problems.push("文章の文法: each blank is asked about once");
     }
     if (b.kind === "文章の文法") for (const mark of ["（１）", "（２）", "（３）", "（４）", "（５）"].slice(0, b.count)) if (!contexts[0].includes(mark)) problems.push(`文章の文法: the passage lacks ${mark}`);
   }
