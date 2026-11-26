@@ -131,6 +131,14 @@ up or down. Not started.
 
 ## Grammar from its blocks
 
+Two handoffs wait on other people (27 Nov 2026):
+- **Content review** by a reader of Japanese (person or model):
+  `docs/GRAMMAR-BLOCKS-REVIEW-HANDOFF.md`, with everything to read in
+  `tools/grammar-blocks/review-data.json`. The cards stay unscored until it
+  is done.
+- **Design** of the build card's row of parts and the rest of the feature:
+  `docs/design/game/GRAMMAR-PARTS-HANDOFF.md`.
+
 The local preview uses existing Quick round grammar cards and adds a row of
 chips for the parts and their glosses. The designer still needs to review the
 row at 375 px in both themes, including long glosses and narrow wrapping.

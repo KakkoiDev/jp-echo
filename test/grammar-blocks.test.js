@@ -230,3 +230,11 @@ test("the released index is the validated draft, part of the app, and its cards 
   assert.equal(REVIEWED_GRAMMAR_BLOCKS, false, "not scored until the cards themselves are reviewed");
   assert.ok(gamePool({...options, grammarBlocks: released}).filter(grammarBlockCard).every(q => q.practice && q.record));
 });
+
+test("the review data handed to a reviewer is the released index, whole", () => {
+  const review = read("../tools/grammar-blocks/review-data.json"), released = read("../n2-grammar-blocks.json");
+  assert.deepEqual(review.counts, {blocks: 188, basicBlocks: 26, patterns: 221, oneBlockPatterns: 61});
+  for (const b of review.blocks) assert.equal(b.gloss, released.blocks[b.id].gloss, b.id + ": run tools/grammar-blocks/make-review.mjs");
+  for (const p of review.patterns) assert.deepEqual(p.parts.map(x => x.text), released.patterns[p.key].parts.map(x => x.text), p.key);
+  assert.ok(review.patterns.every(p => p.meaning && p.sentence?.ja));
+});
