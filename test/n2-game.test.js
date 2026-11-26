@@ -226,7 +226,7 @@ test("bedtime: from the learner's hour until 5 am the round's end points to slee
   assert.equal(atBedtime(at(22, 15), "nonsense"), false, "a bad value falls back to 23:30");
   const mock = src("../n2-mock.js"), html = src("../n2-mock.html"), index = src("../index.html");
   assert.match(mock, /const late = atBedtime\(new Date\(\), settings\.gameBedtime\), warm = inSlumpNext\(\), crown = best && !late;/);
-  assert.match(mock, /\$\("game-again-label"\)\.textContent = late \? "One more round" : warm \? "Warm-up round" : "Next round";/);
+  assert.match(mock, /\$\("game-again-label"\)\.textContent = late \? "One more round" : warm \? "Recovery round" : "Next round";/);
   assert.match(mock, /\$\("game-sleep"\)\.href = left \? "\?view=evening&from=game" : "\?view=game&panel=radio";/);
   assert.match(html, /id="game-sleep" href="\?view=evening&amp;from=game" hidden>[\s\S]*?Evening recall, then sleep<\/span><\/a>/);
   assert.match(index, /id="settings-game-bedtime" type="time" value="23:30"/);
@@ -443,7 +443,7 @@ test("the game follows the boards (Blitz on washi): tokens, clock, head, cards, 
   assert.match(mock, /prompt\.hidden = listen \|\| sentenceKind;/, "sentence kinds show the sentence alone");
   assert.match(html, /id="game-days"/); assert.match(html, /id="game-countdown"/); assert.match(html, /id="game-bosscard"/);
   assert.equal(surfaceNeedle("この方法なら、問題は解決し得る。", "得る（える・うる）"), "得る");
-  assert.match(css, /@media\(prefers-reduced-motion:reduce\)\{\.n2-game \*\{animation:none !important/);
+  assert.match(css, /@media\(prefers-reduced-motion:reduce\)\{html:not\(\.motion-on\) \.n2-game \*\{animation:none !important/);
   assert.match(mock, /navigator\.vibrate/);
   assert.match(mock, /const playable = sound\(\) \? pool : pool\.filter\(q => q\.kind !== "listen"\);/);
 });
@@ -580,4 +580,57 @@ test("a guess on a streak: the streak-scaled penalty outweighs keeping the combo
     const guess = lucky / 4 + unlucky * 3 / 4;
     assert.ok(guess <= skip, `${difficulty} streak ${streak} bonus ${bonus}: guess ${guess} vs skip ${skip}`);
   }
+});
+
+test("reports 08e2c732, bc70f913: reduced motion never stops the clock bar, and a grammar miss is read with its reading", async () => {
+  const {patternVoice, answerSpeech} = await import("../n2-game.js");
+  const {exampleSegments} = await import("../n2-delayed.js");
+  const css = src("../styles.css"), mock = src("../n2-mock.js");
+  assert.match(css, /\.n2-game a\.qr-ib:hover,[^{]*\{color:var\(--sumi\)\}/, "a tapped link doesn't turn seal");
+  assert.match(css, /html:not\(\.motion-on\) \.n2-game \*:not\(#game-bar\)\{transition-duration:\.08s !important\}/, "the bar keeps its own transition");
+  assert.match(css, /html\.motion-off \.n2-game \*:not\(#game-bar\)\{transition-duration:\.08s !important\}/, "Echo's Motion: Off too");
+  assert.deepEqual(patternVoice("得る", [{text: "解決", reading: "かいけつ"}, {text: "得", reading: "う", mark: true}, {text: "る", mark: true}]), {speak: "得【う】る", reading: "うる"});
+  assert.deepEqual(patternVoice("ばかりに", []), {speak: "ばかりに", reading: ""}, "kana needs no reading line");
+  assert.deepEqual(patternVoice("末", [{text: "悩", reading: "なや", mark: true}, {text: "んだ", mark: true}]), {speak: "悩【なや】んだ", reading: "なやんだ"}, "else the underlined part of the sentence");
+  const pool = gamePool({inventory, examples, sets: []}).filter(q => q.kind === "grammar" && /[一-鿿]/.test(answerSpeech(q) || ""));
+  assert.ok(pool.length > 50);
+  for (const q of pool) { const text = answerSpeech(q); assert.ok(patternVoice(text, exampleSegments(q.solution.ja, [q.needle || "", text].filter(Boolean))).reading, text + " has a reading"); }
+  assert.match(mock, /const spoken = pattern \? pattern\.speak : sol\.word && sol\.reading \? spokenWord\(sol\.word, sol\.reading\) : "";/);
+});
+
+test("reports 9221d018, 7bd670be, 84ce79be: audible effects, a listen card in its sentence, a snapshot with every flag", async () => {
+  const {createReport, SNAPSHOT_MAX} = await import("../reports.js");
+  const {exampleSegments} = await import("../n2-delayed.js");
+  const mock = src("../n2-mock.js"), css = src("../styles.css");
+  // Effects a phone speaker can play: mixed up, resumed on every note, no note under 196 Hz.
+  assert.match(mock, /const LOUD = 3;/); assert.match(mock, /if \(ctx\.state !== "running"\) ctx\.resume/);
+  assert.match(mock, /wrong: \(\) => tone\(330, 0, \.2, "sawtooth", \.05, 196\)/);
+  // Most listen cards have a sentence that holds the word; it shows with the word as a gap, filled on the answer.
+  const listen = gamePool({inventory, examples, sets: []}).filter(q => q.kind === "listen");
+  const placed = listen.filter(q => q.solution.ja && exampleSegments(q.solution.ja, [q.prompt]).some(s => s.mark));
+  assert.ok(placed.length / listen.length > .6, placed.length + " of " + listen.length + " listen cards sit in a sentence");
+  assert.match(mock, /heard\.flatMap\(\(s, n\) => !s\.mark \? \[s\.text\] : heard\[n - 1\]\?\.mark \? \[\] : \[el\("span", \{class: "qr-blank", id: "game-blank"\}\)\]\)/, "no furigana, one gap");
+  assert.match(css, /\.qr-sent\.heard,/);
+  // A snapshot rides on the report, capped; a report without one is unchanged.
+  const shot = {html: "<section>" + "x".repeat(SNAPSHOT_MAX * 2) + "</section>", width: 393, height: 873, dpr: 2.75, theme: "system/light", motion: "reduce", view: "game", css: "./styles.css?v=208"};
+  const r = createReport({kind: "card", snapshot: shot});
+  assert.equal(r.snapshot.html.length, SNAPSHOT_MAX); assert.equal(r.snapshot.motion, "reduce"); assert.equal(r.snapshot.width, 393);
+  assert.equal("snapshot" in createReport({kind: "bug"}), false);
+  assert.match(mock, /const snapshot = screenSnapshot\(root\); \/\/ taken at the tap, before the game moves on/);
+  assert.match(mock, /warm \? "Recovery round" : "Next round"/, "after a hard round the next is named a recovery round; the effect is unchanged");
+});
+
+test("the game says which version is running and offers a waiting update itself, on a tap", async () => {
+  const mock = src("../n2-mock.js"), html = src("../n2-mock.html"), sw = src("../sw.js"), reports = src("../reports.js");
+  assert.match(sw, /if\(event\.data==="echo:version"\)event\.ports\?\.\[0\]\?\.postMessage\(CACHE\)/, "the worker in control names its own version");
+  assert.match(reports, /sort\(\(a, b\) => Number\(a\.match\(\/\\d\+\/\)\[0\]\) - Number\(b\.match\(\/\\d\+\/\)\[0\]\)\)\[0\]/, "else the lowest cache: a waiting update already has a higher one");
+  assert.match(html, /id="game-update" hidden>[\s\S]*?id="game-update-now" type="button">Update<\/button>/, "Home: one line when an update is ready");
+  assert.match(html, /id="game-set-version"[\s\S]*?id="game-version"/, "Settings: the version, tap to check");
+  assert.match(mock, /const applyUpdate = \(\) => \{ const waiting = registration\?\.waiting; if \(!waiting\) return false; navigator\.serviceWorker\.addEventListener\("controllerchange", \(\) => location\.reload\(\), \{once: true\}\); waiting\.postMessage\("echo:activate-update"\); return true; \};/, "applied only when asked");
+  assert.match(mock, /root\.dataset\.mode === "home"\) checkUpdate\(\)/, "never checked or offered during a round");
+  // The worker answers a version request on the port it is given.
+  const {default: vm} = await import("node:vm"); const handlers = {}; let told = "";
+  vm.runInNewContext(sw, {self: {addEventListener: (name, handler) => { handlers[name] = handler; }, skipWaiting() {}, registration: {scope: "https://echo.test/"}, clients: {claim: async () => {}}, location: {origin: "https://echo.test"}}, caches: {}, Request: class {}, Response: class {}, URL, fetch: async () => ({})});
+  handlers.message({data: "echo:version", ports: [{postMessage: v => { told = v; }}]});
+  assert.match(told, /^jp-echo-v\d+$/);
 });

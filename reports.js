@@ -59,7 +59,33 @@ function cleanSubject(subject) {
   return out;
 }
 
-export function createReport({kind = "bug", reasons = [], note = "", subject = null, screen = {}, version = "", device = {}, now = new Date()} = {}) {
+// What the screen looked like when it was reported (report 84ce79be): the
+// visible markup of one host element, the viewport and the settings that
+// change how it renders. A web page cannot take its own screenshot offline;
+// with this and styles.css at the report's version, the maintainer rebuilds
+// the screen (tools/reports.mjs --html <id>). Hidden parts are left out, the
+// markup is capped, and form values are never read.
+export const SNAPSHOT_MAX = 16000;
+export function screenSnapshot(host) {
+  try {
+    if (!host) return null;
+    const copy = host.cloneNode(true), live = [host, ...host.querySelectorAll("*")], twin = [copy, ...copy.querySelectorAll("*")];
+    live.forEach((node, i) => { if (i && (node.hidden || getComputedStyle(node).display === "none" || /^(SCRIPT|STYLE)$/.test(node.tagName))) twin[i].setAttribute("data-drop", ""); });
+    for (const node of copy.querySelectorAll("[data-drop]")) node.remove();
+    for (const node of copy.querySelectorAll("input,textarea")) node.removeAttribute("value");
+    const root = document.documentElement, sheet = document.querySelector('link[rel=stylesheet][href*="styles.css"]')?.getAttribute("href") || "";
+    return {html: copy.outerHTML, width: innerWidth, height: innerHeight, dpr: devicePixelRatio || 1, scroll: Math.round(scrollY),
+      theme: (root.dataset.theme || "system") + "/" + (matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light"),
+      motion: (matchMedia?.("(prefers-reduced-motion: reduce)").matches ? "reduce" : "full") + (root.classList.contains("motion-off") ? "/off" : root.classList.contains("motion-on") ? "/on" : ""),
+      view: document.body.dataset.view || "", css: sheet};
+  } catch { return null; }
+}
+function cleanSnapshot(s) {
+  if (!s || typeof s !== "object" || !s.html) return null;
+  return {html: String(s.html).slice(0, SNAPSHOT_MAX), width: Number(s.width) || 0, height: Number(s.height) || 0, dpr: Number(s.dpr) || 1, scroll: Number(s.scroll) || 0,
+    theme: clip(s.theme, 20), motion: clip(s.motion, 20), view: clip(s.view, 20), css: clip(s.css, 60)};
+}
+export function createReport({kind = "bug", reasons = [], note = "", subject = null, screen = {}, version = "", device = {}, snapshot = null, now = new Date()} = {}) {
   kind = kind === "card" ? "card" : "bug";
   const known = new Set(REPORT_REASONS[kind].map(r => r[0]));
   const at = now.toISOString();
@@ -71,6 +97,7 @@ export function createReport({kind = "bug", reasons = [], note = "", subject = n
     screen: {path: clip(screen.path, 300), title: clip(screen.title, 120)},
     version: clip(version, 40),
     device: {width: Number(device.width) || 0, theme: clip(device.theme, 10), ua: clip(device.ua, 160)},
+    ...(cleanSnapshot(snapshot) ? {snapshot: cleanSnapshot(snapshot)} : {}),
     at, updatedAt: at, status: "open",
   };
 }
@@ -144,9 +171,22 @@ export const putReport = report => tx("readwrite", store => store.put(report)).t
 export async function putReports(reports) { await tx("readwrite", store => { for (const r of reports) store.put(r); }); return reports; }
 
 // The build that made the report: the newest Echo cache name (jp-echo-vNNN).
+// The version that is serving this page. The worker in control says so
+// itself; an older worker that cannot answer is the lowest cache, because a
+// downloaded update waiting its turn already has a higher one. (Taking the
+// highest made a report, and the learner, believe an update had arrived.)
+const askWorker = () => new Promise(resolve => {
+  const worker = globalThis.navigator?.serviceWorker?.controller;
+  if (!worker || typeof MessageChannel === "undefined") return resolve("");
+  const channel = new MessageChannel(), timer = setTimeout(() => resolve(""), 800);
+  channel.port1.onmessage = event => { clearTimeout(timer); resolve(String(event.data || "")); };
+  try { worker.postMessage("echo:version", [channel.port2]); } catch { clearTimeout(timer); resolve(""); }
+});
 export async function appVersion() {
-  try { const keys = await caches.keys(); return keys.filter(k => /^jp-echo-v\d+/.test(k)).sort((a, b) => Number(b.match(/\d+/)[0]) - Number(a.match(/\d+/)[0]))[0] || ""; }
-  catch { return ""; }
+  try {
+    const told = await askWorker(); if (/^jp-echo-v\d+/.test(told)) return told;
+    const keys = await caches.keys(); return keys.filter(k => /^jp-echo-v\d+/.test(k)).sort((a, b) => Number(a.match(/\d+/)[0]) - Number(b.match(/\d+/)[0]))[0] || "";
+  } catch { return ""; }
 }
 export function deviceInfo() {
   const set = document.documentElement.dataset.theme;

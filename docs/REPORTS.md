@@ -19,6 +19,12 @@ reasons, the learner's note and, for a card, what it was: a sentence id and
 text, an N2 word target, a check with its example, or an exam question with
 its `source` (`n2-set-N#index`).
 
+Reports from the N2 page (Quick round included) also carry a `snapshot`: the
+visible markup of the screen, the viewport, theme and motion settings, taken
+at the tap. `node tools/reports.mjs --html <id> > report.html` (saved in the
+repo root, so `./styles.css` resolves) rebuilds that screen in a browser; check
+out the report's version first if the styles have moved on.
+
 ## Marking a fix
 
 Edit `echo-reports.json` in the gist: set `status` to `"fixed"`, add `fix`

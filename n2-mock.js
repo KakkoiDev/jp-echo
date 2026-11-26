@@ -4,12 +4,12 @@ import {access,currentAttempts,download,prefix,report,scored,n2Adapter} from "./
 import {startAutoSync,markDirty,gistSettings} from "./sync.js";
 import {SKILLS,SKILL_JA,SECTIONS,PASS_TOTAL,SECTION_MIN,SECTION_MAX,estimate,sprintCheckpoint,nextExamDate,daysUntil,recallQueue,recallRecord,recallId,dailyGoal,coverage,localDay,todayPlan,measuredPace,capMinutes,DAY_MINUTES,EXAM_CHECKLIST,goalDates,formatMinutes,shortenPlan,maintenancePlan,resultsMonth,doneToday,markDone,scoreSeries,scoreCaption,examHeadLine,nextKicker,checkpointLine,mockTileState,historyKind,answering,resultPractice} from "./n2-study.js";
 import {collapseRow,collapseChevronSvg,scoreChart,flagSvg,chevronLeftSvg,chevronRightSvg,replaySvg,planSteps,loadMeter,evidenceRow,pauseRing,openReportSheet,mountReportButtons} from "./components.js";
-import {REPORT_REASONS,createReport,fileReport,reportSyncLine,reportsAdapter,reportHistory,screenOf,appVersion,deviceInfo} from "./reports.js";
+import {screenSnapshot,REPORT_REASONS,createReport,fileReport,reportSyncLine,reportsAdapter,reportHistory,screenOf,appVersion,deviceInfo} from "./reports.js";
 import {recognitionFactory} from "./speech.js";
 import {speakOnce,speakAndWait,japaneseVoices,RadioPlayer,NoiseBed} from "./speech.js";
 import {RADIO_DEFAULTS,RADIO_PHASE_COPY,clockAt,radioPhase,radioPlan,radioSteps} from "./radio.js";
 import {readNights, nightComparison, comparisonLine, eveningRecall, EVENING_SOURCE, nightPlan, nightRecord, keepNight, NIGHT_KEY} from "./n2-night.js";
-import {gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
+import {gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, patternVoice, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
 import {spokenWord,radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
 import {TAG,TAGS,HELD_OUT,CAUSES,comprehensionStats,weakestTag,tagDrill,drillExposure,attemptTags,tagsOf,sourceOf} from "./n2-comprehension.js";
 import {exampleSegments,patternNeedles,delayedChecks,checkItems,checkAsk,contextNote,sentenceParts,checkDetail,audioGrade,delayedAccuracy,CHECK_SOURCE,WHY_LINE,evidenceFor,evidenceLine} from "./n2-delayed.js";
@@ -137,11 +137,12 @@ async function openReport() {
   try { await reportSheet(); } finally { resume?.(); }
 }
 async function reportSheet() {
-  const card = reportCard?.() || null, title = visibleTitle();
+  // The screen as it is now, before the sheet opens over it.
+  const card = reportCard?.() || null, title = visibleTitle(), snapshot = screenSnapshot(document.querySelector("main > section:not([hidden])"));
   const screen = {kind: "bug", label: "This screen", title: "Report a problem", quote: title, subject: {type: "screen", id: location.pathname + location.search, text: title, extra: card ? {card: card.id} : {}}};
   const subjects = card ? [{kind: "card", label: card.label || "This card", title: card.title || "Flag this card", quote: card.quote || card.text, lang: "ja", subject: card}, screen] : [screen];
   const result = await openReportSheet({subjects, reasons: REPORT_REASONS, syncLine: reportSyncLine, syncNow: gistSettings().on && autoSync ? () => autoSync.syncNow() : null, history: reportHistory, bindDictation: bindReportDictation, onSubmit: async value => {
-    await fileReport(createReport({...value, screen: screenOf(location, title), version: await appVersion(), device: deviceInfo()}));
+    await fileReport(createReport({...value, snapshot, screen: screenOf(location, title), version: await appVersion(), device: deviceInfo()}));
   }});
 }
 async function json(path) {
@@ -1065,31 +1066,36 @@ const ALOUD = {reading: "Say the sentence out loud", meaning: "Say the word out 
 // The beat ribbons (board 4): glyph, title, sub-line and colour per beat.
 const BEATS = {hook: ["始", "Welcome back", "An easy start", "right"], first: ["始", "First round", "An easy start", "right"], breather: ["息", "Breather", "", "track"],
   peak: ["峰", "Peak round · bonuses ×2", "The hardest of the wave. Go fast.", "gold"], stretch: ["鬼", "Final stretch", "Bonuses ×2 until the boss opens", "seal"],
-  warm: ["温", "Warm-up round: things you know", "After a round under half right", "right"], jackpot: ["五", "Jackpot", "Five in a row.", "gold"]};
+  warm: ["復", "Recovery round: things you know", "After a hard round", "right"], jackpot: ["五", "Jackpot", "Five in a row.", "gold"]};
 // Game sounds and haptics (docs/design/game, Motion board), made on the
 // device: WebAudio, no files, offline. One Sound switch silences them, the
 // spoken answer and the vibration.
 const sfx = (() => {
   let ctx = null;
-  const audio = () => (ctx ||= new (window.AudioContext || window.webkitAudioContext)());
+  // Report 9221d018: on a phone the effects were all but silent. They were mixed
+  // far under the voice, the wrong and timeout notes sat below what a phone
+  // speaker can play (110–196 Hz), and Android suspends the context after the
+  // voice speaks. So: louder, higher with harmonics, and resumed on every note.
+  const LOUD = 3;
+  const audio = () => { ctx ||= new (window.AudioContext || window.webkitAudioContext)(); if (ctx.state !== "running") ctx.resume?.().catch?.(() => {}); return ctx; };
   const tone = (freq, at, dur, type = "sine", vol = .07, slideTo = 0) => {
     try {
       const c = audio(), t = c.currentTime + at, o = c.createOscillator(), g = c.createGain();
       o.type = type; o.frequency.setValueAtTime(freq, t); if (slideTo) o.frequency.linearRampToValueAtTime(slideTo, t + dur);
-      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + .01); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(Math.min(.3, vol * LOUD), t + .01); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
       o.connect(g).connect(c.destination); o.start(t); o.stop(t + dur + .02);
     } catch {}
   };
   const noise = (dur = .02, vol = .05) => {
     try { const c = audio(), b = c.createBuffer(1, Math.ceil(c.sampleRate * dur), c.sampleRate), d = b.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / d.length);
-      const s = c.createBufferSource(), g = c.createGain(); g.gain.value = vol; s.buffer = b; s.connect(g).connect(c.destination); s.start(); } catch {}
+      const s = c.createBufferSource(), g = c.createGain(); g.gain.value = Math.min(.3, vol * LOUD); s.buffer = b; s.connect(g).connect(c.destination); s.start(); } catch {}
   };
   const C = [523, 587, 659, 698, 784, 880, 988, 1047, 1175, 1319, 1397, 1568, 1760];
   return {
     unlock: () => { try { audio().resume?.(); } catch {} },
     right: streak => tone(523 * 2 ** (Math.min(streak, 12) / 12), 0, .09),
-    wrong: () => tone(147, 0, .18, "triangle", .08, 110),
-    timeout: () => { tone(196, 0, .06, "triangle", .07); tone(196, .1, .06, "triangle", .07); },
+    wrong: () => tone(330, 0, .2, "sawtooth", .05, 196),
+    timeout: () => { tone(392, 0, .07, "square", .04); tone(392, .11, .07, "square", .04); },
     idk: () => tone(330, 0, .04, "sine", .05),
     flag: () => noise(.02),
     tick: () => tone(880, 0, .02, "sine", .035),
@@ -1130,6 +1136,7 @@ async function game() {
     $("game-back").href = "?view=game"; $("game-back").setAttribute("aria-label", "Back to Quick round home"); $("game-back").onclick = e => { e.preventDefault(); home(); };
     setSeg("game-set-difficulty", difficulty()); $("game-set-bedtime").value = settings.gameBedtime || "23:30";
     setSwitch("game-set-sound", sound()); setSwitch("game-set-start", !!settings.startGame); $("game-set-status").textContent = "";
+    checkUpdate();
   }
   const savePreference = (key, value) => {
     settings[key] = value;
@@ -1310,6 +1317,40 @@ async function game() {
     clearInterval(homeTick);
     homeTick = setInterval(() => { if (root.dataset.mode !== "home") { clearInterval(homeTick); return; } if (paintClock() !== key) home(); }, 1000);
   }
+  // Which version is running, and whether a newer one is waiting (owner, 26 Nov:
+  // "very hard to know if I got an update"). The N2 page never offered updates:
+  // Echo's "Update now" lives on its own screens, and "Open Echo on Quick round"
+  // skips them. Home shows one line when an update is ready, Settings shows the
+  // version; the update is applied only on a tap, never during a round.
+  const short = v => String(v || "").replace("jp-echo-", "");
+  let registration = null, updateState = "", checkedAt = 0, latest = "";
+  const paintVersion = async () => {
+    const running = await appVersion(), waiting = registration?.waiting, busy = registration?.installing;
+    $("game-version").textContent = short(running) || "not installed";
+    $("game-version-line").textContent = waiting ? (latest && latest !== running ? short(latest) + " is ready: tap to update" : "An update is ready: tap to update")
+      : busy ? "Downloading " + (short(latest) || "the update") + "…" : updateState === "checking" ? "Checking…" : updateState === "offline" ? "Couldn’t check: no connection"
+      : checkedAt ? "Up to date · checked at " + clockAt(checkedAt) : "Tap to check for an update";
+    $("game-update").hidden = !waiting; $("game-update-text").textContent = latest && latest !== running ? "Version " + short(latest).slice(1) + " is ready. You have " + short(running).slice(1) + "." : "A new version is ready.";
+  };
+  const applyUpdate = () => { const waiting = registration?.waiting; if (!waiting) return false; navigator.serviceWorker.addEventListener("controllerchange", () => location.reload(), {once: true}); waiting.postMessage("echo:activate-update"); return true; };
+  const checkUpdate = async (force = false) => {
+    if (!("serviceWorker" in navigator)) return;
+    try {
+      registration ||= await navigator.serviceWorker.getRegistration();
+      if (!registration) { paintVersion(); return; }
+      if (!registration.echoWatched) { registration.echoWatched = true; registration.addEventListener("updatefound", () => { registration.installing?.addEventListener("statechange", paintVersion); paintVersion(); }); }
+      if (force || Date.now() - checkedAt > 5 * 60_000) {
+        updateState = "checking"; paintVersion();
+        try { await registration.update(); latest = (await (await fetch("./sw.js", {cache: "no-store"})).text()).match(/CACHE="(jp-echo-v\d+)"/)?.[1] || ""; updateState = ""; checkedAt = Date.now(); }
+        catch { updateState = "offline"; }
+      }
+    } catch {}
+    paintVersion();
+  };
+  $("game-update-now").onclick = () => { $("game-update-now").disabled = true; applyUpdate(); };
+  $("game-set-version").onclick = () => { if (!applyUpdate()) checkUpdate(true); };
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && root.dataset.mode === "home") checkUpdate(); });
+  checkUpdate();
   // Board 11 · A: the one Sound switch, a quiet icon in Home's head; seal when off.
   const soundButton = () => { const on = sound(); $("game-sound").setAttribute("aria-pressed", String(on)); $("game-sound").setAttribute("aria-label", on ? "Sound on" : "Sound off"); };
   $("game-sound").onclick = () => setSound(!sound());
@@ -1376,10 +1417,14 @@ async function game() {
     prompt.className = "qr-big" + (q.kind === "exam" ? " exam" : q.prompt.length > 6 && q.kind !== "definition" ? " mid" : "");
     // An exam blank is drawn as a ruled gap, as on the paper (board 3a).
     if (q.kind === "exam" && /（\s*）/.test(q.prompt)) prompt.replaceChildren(...q.prompt.split(/（\s*）/).flatMap((part, n) => n ? [el("span", {class: "qr-blank"}), part] : [part]));
-    $("game-sentence").hidden = !sentenceKind;
+    // A listen card sits in its sentence, the heard word left as a gap: many
+    // words sound alike, and the sentence says which one (report 7bd670be).
+    const heard = listen && q.solution?.ja ? exampleSegments(q.solution.ja, [q.prompt]) : [], inContext = heard.some(s => s.mark);
+    $("game-sentence").hidden = !sentenceKind && !inContext; $("game-sentence").classList.toggle("heard", inContext);
     $("game-sentence").classList.toggle("passage", q.kind === "connective");
     if (q.kind === "connective") { const [a, b] = q.sentence.split("（　）"); $("game-sentence").replaceChildren(a, el("span", {class: "qr-blank", id: "game-blank"}), b || ""); }
     else if (sentenceKind) $("game-sentence").replaceChildren(...exampleNodes(q.sentence, [q.needle]));
+    else if (inContext) $("game-sentence").replaceChildren(...heard.flatMap((s, n) => !s.mark ? [s.text] : heard[n - 1]?.mark ? [] : [el("span", {class: "qr-blank", id: "game-blank"})]));
     // Board 11 · E: a practice card reads as practice: dashed card, dim clock, ring pip.
     card.dataset.practice = String(!!q.practice); root.dataset.practice = String(!!q.practice);
     $("game-say").hidden = !listen; $("game-say-hint").hidden = !listen;
@@ -1387,7 +1432,7 @@ async function game() {
     $("game-aloud").lastChild.textContent = q.kind === "reading" && !sentenceKind ? ALOUD.meaning : ALOUD[q.kind] || "";
     // A lone line is centred; a sentence that wraps reads from the left, and from three lines drops to 19 px (review C7).
     const sent = $("game-sentence"); sent.dataset.lines = "1";
-    if (sentenceKind && q.kind !== "connective") { const lines = Math.round(sent.getBoundingClientRect().height / parseFloat(getComputedStyle(sent).lineHeight)); sent.dataset.lines = lines >= 3 ? "3" : String(lines); }
+    if ((sentenceKind || inContext) && q.kind !== "connective") { const lines = Math.round(sent.getBoundingClientRect().height / parseFloat(getComputedStyle(sent).lineHeight)); sent.dataset.lines = lines >= 3 ? "3" : String(lines); }
     $("game-combo").textContent = ""; $("game-combo").className = "qr-line";
     $("game-flag").dataset.on = "false";
     $("game-choices").replaceChildren(...choices.map((c, i) => el("button", {type: "button", class: "qr-ch" + (["definition", "homophone"].includes(q.kind) ? " m" : ""), "data-ui": "button", onclick: () => answer(i)},
@@ -1433,7 +1478,7 @@ async function game() {
     else floatPoints(paid.points, paid.points > 0 ? (q.bonus ? "gold" : "right") : paid.points < 0 ? "wrong" : "zero");
     if (q.practice && streak >= 2) $("game-combo-chip").textContent += " · kept";
     // Board 11 · F: the blank fills with the answer, and its job shows under the card.
-    if (q.kind === "connective" && $("game-blank")) { $("game-blank").textContent = q.answer; $("game-blank").classList.add("filled"); }
+    if ((q.kind === "connective" || q.kind === "listen") && $("game-blank")) { $("game-blank").textContent = q.kind === "listen" ? q.prompt : q.answer; $("game-blank").classList.add("filled"); }
     ribbon(null); stretchStrip();
     // Answer states (fix 7): right tinted with ✓, a wrong pick struck, the rest fade.
     const card = $("game-card"); card.dataset.state = outcome === "right" ? "right" : outcome === "wrong" ? "wrong" : outcome === "timeout" ? "timeout" : "";
@@ -1487,7 +1532,8 @@ async function game() {
     const word = sol.word || q.answer;
     $("game-review-word").textContent = word;
     $("game-review-word").classList.toggle("long", word.length > 6);
-    $("game-review-reading").textContent = sol.reading && sol.reading !== sol.word ? sol.reading : "";
+    const pattern = q.kind === "grammar" ? grammarVoice(q, sol) : null;
+    $("game-review-reading").textContent = pattern ? pattern.reading : sol.reading && sol.reading !== sol.word ? sol.reading : "";
     $("game-review-meaning").textContent = sol.meaning || (q.kind === "exam" ? "Answer: " + q.answer : "");
     // A long pick stacks: the label on its own line, the struck text under it (review C13).
     const chose = picked && !/^(Time ran out|I don’t know)$/.test(picked), long = chose && picked.length > 24;
@@ -1502,12 +1548,15 @@ async function game() {
     $("game-review-same").hidden = !same; $("game-review-same").replaceChildren(...(same ? ["Same sound: ", el("span", {lang: "ja", text: same.join(" · ")})] : []));
     if (same) $("game-review-sentence").hidden = false;
     const reviewToken = ++askToken;
-    if (sound() && sol.word && sol.reading) setTimeout(() => { if (reviewToken === askToken && !$("game-review").hidden) say(spokenWord(sol.word, sol.reading)); }, 150);
+    const spoken = pattern ? pattern.speak : sol.word && sol.reading ? spokenWord(sol.word, sol.reading) : "";
+    if (sound() && spoken) setTimeout(() => { if (reviewToken === askToken && !$("game-review").hidden) say(spoken); }, 150);
     held = false; root.dataset.held = "false"; $("game-hold").setAttribute("aria-pressed", "false"); $("game-hold").setAttribute("aria-label", "Hold");
     $("game-hold").innerHTML = PAUSE_SVG;
     runBar(REVIEW_SECONDS, {review: true});
     timer = setTimeout(() => review(n + 1), REVIEW_SECONDS * 1000);
   }
+  // A grammar point is spoken and shown with its reading too (report bc70f913).
+  const grammarVoice = (q, sol) => { const text = answerSpeech(q) || ""; return patternVoice(text, sol.ja ? exampleSegments(sol.ja, [q.needle || "", text].filter(Boolean)) : []); };
   // Round end (fix 8): the number, the pips, one line, one big button.
   function done() {
     clearTimeout(timer); clearInterval(ticker);
@@ -1539,9 +1588,9 @@ async function game() {
     if (boss && b.open) { $("game-boss").href = "?book=" + boss.id + "&boss=1"; $("game-boss-line").textContent = "The boss is open: Mock " + String(bookIds.indexOf(boss.id) + 1).padStart(2, "0") + ", " + BOSS_MINUTES.written + " + " + BOSS_MINUTES.listening + " min"; $("game-boss").onclick = e => fightBoss(e, boss); }
     // Bedtime (board 6 · B) and the warm-up after a bad round (C).
     $("game-bedtime").hidden = !late; $("game-sleep").hidden = !late; $("game-warm").hidden = late || !warm;
-    $("game-warm-line").textContent = "Next: a warm-up of things you know, with " + Math.min(2, back) + " of these " + back + " back.";
+    $("game-warm-line").textContent = "Next: a recovery round of things you know, with " + Math.min(2, back) + " of these " + back + " back.";
     $("game-again").className = late ? "qr-lnk" : "qr-btn";
-    $("game-again-label").textContent = late ? "One more round" : warm ? "Warm-up round" : "Next round";
+    $("game-again-label").textContent = late ? "One more round" : warm ? "Recovery round" : "Next round";
     $("game-again").querySelector("svg").style.display = late ? "none" : "";
     $("game-home-btn").hidden = late;
     if (late) deckExamples().then(examples => {
@@ -1558,7 +1607,8 @@ async function game() {
   // One tap, no questions (owner, 26 Nov): the flag saves the question exactly
   // as shown and the game moves on. Working out why is the audit's job.
   const quickFlag = async card => {
-    try { await fileReport(createReport({kind: "card", reasons: [], note: "Flagged in Quick round with one tap; the reason is for the audit to find.", subject: card, screen: screenOf(location, "Quick round"), version: await appVersion(), device: deviceInfo()})); } catch {}
+    const snapshot = screenSnapshot(root); // taken at the tap, before the game moves on
+    try { await fileReport(createReport({kind: "card", reasons: [], note: "Flagged in Quick round with one tap; the reason is for the audit to find.", subject: card, snapshot, screen: screenOf(location, "Quick round"), version: await appVersion(), device: deviceInfo()})); } catch {}
   };
   $("game-flag").onclick = () => {
     if (locked || !current || $("game-play").hidden) return;

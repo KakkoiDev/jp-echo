@@ -542,6 +542,18 @@ export function resting(state = {}, attempts = [], now = new Date()) {
 // default Japanese voice), never a whole sentence: the sound, the reading and
 // the situation together. Words carry their reading (【】), so the voice
 // never guesses (重役 → おもやく).
+// A grammar pattern, for the voice and the review's reading line: each kanji
+// of the pattern takes the reading its example sentence gives it (segments
+// from exampleSegments); failing that, the underlined part of the sentence is
+// what is read; with neither, the bare pattern and no reading line.
+export function patternVoice(text = "", segments = []) {
+  const KANJI_RUN = /[一-鿿々]+/g, runs = text.match(KANJI_RUN) || [];
+  if (!runs.length) return {speak: text, reading: ""};
+  const known = new Map(segments.filter(s => s.reading).map(s => [s.text, s.reading]));
+  if (runs.every(run => known.has(run))) return {speak: text.replace(KANJI_RUN, run => run + "【" + known.get(run) + "】"), reading: text.replace(KANJI_RUN, run => known.get(run))};
+  const marked = segments.filter(s => s.mark);
+  return marked.some(s => s.reading) ? {speak: marked.map(s => s.reading ? s.text + "【" + s.reading + "】" : s.text).join(""), reading: marked.map(s => s.reading || s.text).join("")} : {speak: text, reading: ""};
+}
 export function answerSpeech(q) {
   const word = (text, reading) => text && reading && text !== reading ? text + "【" + reading + "】" : text || reading || "";
   const pattern = text => String(text || "").replace(/[〜～]/g, "").replace(/（[^）]*）|\([^)]*\)/g, "").trim();

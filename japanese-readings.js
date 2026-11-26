@@ -11,7 +11,25 @@ export const speechText=text=>rubySegments(text).map(part=>part.reading
 // guessed (重役 → おもやく). speechText then speaks the reading; the screen
 // shows the word. withReading annotates the first exact, unannotated
 // occurrence of a word in a sentence that came without readings.
-export const spokenWord=(text,reading)=>reading&&text&&text!==reading&&!text.includes('【')?text+'【'+reading+'】':(text||reading||'');
+// A reading only attaches to the kanji right before its bracket, so a word
+// with kana in it gets its reading spread over its kanji: 生け花 + いけばな →
+// 生【い】け花【ばな】, 間もなく + まもなく → 間【ま】もなく. Whole, it was spoken
+// 生け・イケバナ, and a word ending in kana lost its reading (reports 7c4b87c8,
+// 2577975b). Null when the kana of the word and the reading do not line up.
+// Marks such as ～ stay where they are: 女～ + じょ～ → 女【じょ】～ (reports 4fccd568, edc6d8c3).
+const isKana=char=>/[ぁ-ゖァ-ヺー]/.test(char),kindOf=char=>isKana(char)?'kana':KANJI.test(char)?'kanji':'mark';
+const toHiragana=s=>s.replace(/[ァ-ヶ]/g,char=>String.fromCharCode(char.charCodeAt(0)-0x60));
+export function spreadReading(text,reading){
+ const runs=[];
+ for(const char of String(text||'')){const kind=kindOf(char),last=runs.at(-1);if(last&&last.kind===kind)last.text+=char;else runs.push({kind,text:char});}
+ if(runs.length<2||!runs.some(run=>run.kind==='kanji'))return null;
+ const literal=s=>toHiragana(s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+ const match=toHiragana(String(reading||'')).match(new RegExp('^'+runs.map(run=>run.kind==='kanji'?'(.+?)':literal(run.text)).join('')+'$'));
+ if(!match)return null;
+ let group=0;
+ return runs.map(run=>run.kind==='kanji'?run.text+'【'+match[++group]+'】':run.text).join('');
+}
+export const spokenWord=(text,reading)=>reading&&text&&text!==reading&&!text.includes('【')?(spreadReading(text,reading)||text+'【'+reading+'】'):(text||reading||'');
 export function withReading(sentence,text,reading){
  if(!sentence||!text||!reading||text===reading||sentence.includes(text+'【'))return sentence||'';
  const at=sentence.indexOf(text);

@@ -2182,6 +2182,9 @@ body[data-view=game] #n2-main{padding:0 16px}
 .n2-game :where(button,a,input,select,label,p){margin:0;padding:0;border:0;border-radius:0;background:none;min-height:0;width:auto;gap:0;letter-spacing:normal;text-transform:none;text-decoration:none;color:inherit;font:inherit;box-shadow:none;appearance:none;-webkit-appearance:none;outline-offset:2px}
 .n2-game :where(button){display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
 .n2-game :where(label){display:block}
+/* Echo's a:hover (seal) outranks the reset, and on a phone a tapped link stays hovered: Home's back chevron went red. */
+.n2-game a.qr-ib:hover,.n2-game a.qr-btn2:hover,.n2-game a.qr-it:hover,.n2-game a.qr-strip:hover,.n2-game .qr-notice a:hover{color:var(--sumi)}
+.n2-game a.qr-play:hover,.n2-game a.qr-btn:hover{color:var(--seal-on)}.n2-game a.qr-btn-night:hover{color:var(--panel)}.n2-game a.qr-evening:hover{color:var(--right)}
 .n2-game label>span:first-child{font-size:inherit;color:inherit}
 .n2-game button:disabled{background:none;color:inherit;border-color:transparent;cursor:default}
 .n2-game .qr-btn:disabled{background:var(--seal);color:var(--seal-on);opacity:.45}
@@ -2244,7 +2247,7 @@ body[data-view=game] #n2-main{padding:0 16px}
 /* Home */
 .qr-notice{display:flex;align-items:center;gap:10px;min-height:44px;margin-top:6px;padding:8px 8px 8px 14px;border-radius:14px;background:var(--panel);border:1px solid var(--hairline);font-size:13px;line-height:1.35}
 .qr-notice[hidden]{display:none}
-.qr-notice a{margin-left:auto;display:flex;align-items:center;height:36px;padding:0 12px;border-radius:10px;background:var(--track);color:var(--sumi);font-weight:700;white-space:nowrap}
+.qr-notice a,.qr-notice button{margin-left:auto;display:flex;align-items:center;height:36px;padding:0 12px;border-radius:10px;background:var(--track);color:var(--sumi);font-weight:700;white-space:nowrap}
 .qr-run .qr-chip,.qr-rk .qr-chip{height:28px;padding:0 12px;border-radius:14px;font-size:12px;letter-spacing:normal}
 .qr-run .qr-chip[data-tone=plain]{height:auto;padding:0;border-radius:0;background:none;color:var(--seal);font-size:13px}
 .qr-run{margin-top:10px;padding:18px;border-radius:20px;background:var(--panel);border:1px solid var(--hairline)}
@@ -2443,6 +2446,7 @@ body[data-view=game] #n2-main{padding:0 16px}
 .qr-it:first-child{border-top:0}
 .qr-it-flat{padding:8px 0}
 .qr-seg+.qr-it-flat{margin-top:6px}
+.qr-vl{font-size:14px;font-weight:700;color:var(--ink-muted)}
 .qr-tx{flex:1;line-height:1.35}.qr-tx small{display:block;font-size:12px;color:var(--ink-muted);margin-top:2px}
 .qr-it svg{color:var(--ink-muted);flex:none}
 .qr-sw{width:52px;height:32px;border-radius:16px;background:var(--track);position:relative;flex:none;border:0;padding:0}
@@ -2483,6 +2487,8 @@ body[data-view=game] #n2-main{padding:0 16px}
 .qr-float.practice{color:var(--ink-muted);font-weight:700}
 .qr-sent .qr-blank{display:inline-block;min-width:64px;border-bottom:2px solid var(--seal);margin:0 4px;line-height:1.2}
 .qr-sent .qr-blank.filled{min-width:0;padding:0 4px;border-bottom-color:var(--right);color:var(--right);font-weight:700}
+.qr-sent.heard,.qr-sent.heard[data-lines]{font-size:19px;text-align:start}
+.qr-sent.heard[data-lines="1"]{text-align:center}
 .qr-sent.passage{font-size:17px;line-height:1.85;text-align:left;margin-top:12px}
 @keyframes n2g-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 @keyframes n2g-float{0%{opacity:0;transform:translateY(4px)}20%,80%{opacity:1;transform:none}100%{opacity:0;transform:none}}
@@ -2491,8 +2497,10 @@ body[data-view=game] #n2-main{padding:0 16px}
 @keyframes n2g-bump{50%{transform:scale(1.15)}}
 @keyframes n2g-drop{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
 @keyframes n2g-stamp{from{opacity:0;transform:scale(1.4) rotate(-4deg)}to{opacity:1;transform:scale(1) rotate(-4deg)}}
-@media(prefers-reduced-motion:reduce){.n2-game *{animation:none !important;transition-duration:.08s !important}.qr-float.go{opacity:1}}
-:root[data-motion=reduce] .n2-game *{animation:none !important}
+/* Reduced motion (the phone's setting, or Echo's Motion: Off) stills the juice, never the clock:
+   the bar is the time left, so it keeps running (report 08e2c732). */
+@media(prefers-reduced-motion:reduce){html:not(.motion-on) .n2-game *{animation:none !important}html:not(.motion-on) .n2-game *:not(#game-bar){transition-duration:.08s !important}html:not(.motion-on) .qr-float.go{opacity:1}}
+html.motion-off .n2-game *{animation:none !important}html.motion-off .n2-game *:not(#game-bar){transition-duration:.08s !important}html.motion-off .qr-float.go{opacity:1}
 /* Day Radio */
 .n2-day-lede{margin-top:12px}
 .n2-day-card{min-height:40dvh;cursor:default}

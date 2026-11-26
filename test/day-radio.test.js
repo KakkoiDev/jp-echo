@@ -120,6 +120,12 @@ test("a spoken word carries its reading, so the voice never guesses (重役 is �
   assert.equal(spokenWord("重役", "じゅうやく"), "重役【じゅうやく】");
   assert.equal(speechText(spokenWord("重役", "じゅうやく")), "ジュウヤク");
   assert.equal(spokenWord("ほぼ", "ほぼ"), "ほぼ");
+  // A word with kana in it spreads its reading over its kanji (reports 7c4b87c8 ike-ikebana, 2577975b あいだもなく).
+  assert.equal(spokenWord("生け花", "いけばな"), "生【い】け花【ばな】"); assert.equal(speechText(spokenWord("生け花", "いけばな")), "イけバナ");
+  assert.equal(speechText(spokenWord("間もなく", "まもなく")), "マもなく"); assert.equal(speechText(spokenWord("間も無く", "まもなく")), "マもナく");
+  assert.equal(speechText(spokenWord("引き出す", "ひきだす")), "ヒきダす"); assert.equal(speechText(spokenWord("お喋り", "おしゃべり")), "おシャベり");
+  assert.equal(spokenWord("女～", "じょ～"), "女【じょ】～", "a mark stays in place (reports 4fccd568, edc6d8c3: おんな, はつ)"); assert.equal(speechText(spokenWord("初～", "しょ～")), "ショ～");
+  assert.equal(spokenWord("～過ぎる", "～すぎる"), "～過【す】ぎる"); assert.equal(spokenWord("生け花", "はな"), "生け花【はな】", "what doesn't line up keeps the whole reading");
   assert.equal(withReading("重役が来た。", "重役", "じゅうやく"), "重役【じゅうやく】が来た。");
   assert.equal(withReading("重役【じゅうやく】が来た。", "重役", "じゅうやく"), "重役【じゅうやく】が来た。");
   const sets = [{id: "n2-set-9", questions: [{target: ["word", "重役", "じゅうやく"], prompt: "【重役】が会議に出た。"}]}];

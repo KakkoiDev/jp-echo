@@ -362,6 +362,19 @@ Before considering the change complete:
 - **The voice gets the reading.** Any word or sentence handed to a device
   voice carries its 【reading】 (`spokenWord` / `withReading`, day-radio.js;
   `speechText` speaks it) — a bare kanji word is guessed (重役 → おもやく).
+  A reading only binds to the kanji right before its bracket, so `spokenWord`
+  spreads a word's reading over its kanji (`spreadReading`, japanese-readings.js:
+  生【い】け花【ばな】, 間【ま】もなく, 女【じょ】～); grammar patterns take theirs
+  from the example sentence (`patternVoice`, n2-game.js).
+  Reduced motion stills the game's juice, never `#game-bar`: the bar is the clock.
+- **Quick round, from the owner's reports (v281).** The round after a hard one
+  (`inSlump`, `WARM_UP`) is shown as a "Recovery round" (復): the name changed,
+  the effect did not. A listen card sits in its example sentence with the heard
+  word as a gap, no furigana, when the sentence holds the word as written.
+  Effects are mixed for a phone speaker (`LOUD`, no note under 196 Hz, the
+  context resumed on every note). Every report from the N2 page carries a
+  `snapshot` (`screenSnapshot`, reports.js: visible markup, viewport, theme,
+  motion; capped at `SNAPSHOT_MAX`), rebuilt with `tools/reports.mjs --html`.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 
