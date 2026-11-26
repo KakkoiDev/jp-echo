@@ -249,14 +249,16 @@ export function choicesFor(q, random = Math.random, level = .5) {
 // them), in a new order and with the choices shuffled again.
 // wins: question id → times answered right and fast in the game; a question
 // won before counts as known even if no recall record says so.
-export function pickRound({pool, recall = [], seen = {}, wins = {}, size = ROUND_SIZE, random = Math.random, mix = {weak: 4, fresh: 4, known: 2}, comeback = [], now = Date.now()}) {
+export function pickRound({pool, recall = [], seen = {}, wins = {}, lv = {}, size = ROUND_SIZE, random = Math.random, mix = {weak: 4, fresh: 4, known: 2}, comeback = [], now = Date.now()}) {
   const last = new Map();
   for (const r of recall) last.set(r.dimension + keyOf(r.target), r.last);
   const state = q => { const g = q.target && last.get(q.dimension + keyOf(q.target)); return g && g !== "instant" ? "weak" : g === "instant" || wins[q.id] ? "known" : "fresh"; };
   // Seen in the last four hours: only if nothing else is left (a small kind
   // such as the homophones would otherwise come round several times a day).
   const groups = {weak: [], fresh: [], known: []}, recent = [];
-  for (const q of shuffle(pool, random)) (now - (seen[q.id] || 0) < RECENT_MS ? recent : groups[state(q)]).push(q);
+  // A mastered item (極) rests three days between visits: it comes up less.
+  const resting = q => now - (seen[q.id] || 0) < ((lv[q.id] || 0) >= ITEM_LEVEL.max ? ITEM_LEVEL.restMs : RECENT_MS);
+  for (const q of shuffle(pool, random)) (resting(q) ? recent : groups[state(q)]).push(q);
   // Least recently seen first, then the kinds taken in turn, so grammar,
   // readings and exam questions are not drowned by the many word questions.
   for (const [name, g] of Object.entries(groups)) groups[name] = byKindInTurn(g.sort((a, b) => (seen[a.id] || 0) - (seen[b.id] || 0)), random);
@@ -313,6 +315,19 @@ export const recallsMiss = (q, outcome) => outcome !== "right" && !!q.target;
 
 // The device's game memory: best score, rounds, when each question was last
 // seen. Kept small: the most recent 20 000 questions.
+// ---- Item strength (board 9) ----
+// Every question carries a level from 0 to 5. A fast right answer (under half
+// the clock) adds one, at most once every four hours, so a level means spaced
+// wins; a miss, a timeout or "I don't know" takes one away; a slow right
+// answer leaves it. Level 5 is 極, mastered: it rests for three days between
+// visits. Felt on the card, never browsed.
+export const ITEM_LEVEL = Object.freeze({max: 5, gapMs: 4 * 3600_000, restMs: 3 * 86400_000});
+export const itemLevel = (state = {}, id) => Math.min(ITEM_LEVEL.max, Math.max(0, Math.floor(Number(state.lv?.[id]) || 0)));
+export function levelAfter(state = {}, {id, outcome, fast = false, now = Date.now()}) {
+  const before = itemLevel(state, id);
+  if (outcome !== "right") return Math.max(0, before - 1);
+  return fast && before < ITEM_LEVEL.max && now - (state.lvAt?.[id] || 0) >= ITEM_LEVEL.gapMs ? before + 1 : before;
+}
 // After each answer: the question is seen; a miss waits for the next round.
 export function rememberAnswer(state = {}, {q, outcome, points = 0, fast = false, difficulty = "normal", now = Date.now()}) {
   const seen = {...(state.seen || {}), [q.id]: now};
@@ -321,6 +336,9 @@ export function rememberAnswer(state = {}, {q, outcome, points = 0, fast = false
   if (q.practice) return {...state, seen, practiced: (state.practiced || 0) + 1};
   const wins = {...(state.wins || {})};
   if (fast) wins[q.id] = (wins[q.id] || 0) + 1;
+  const was = itemLevel(state, q.id), now_ = levelAfter(state, {id: q.id, outcome, fast, now});
+  const lv = {...(state.lv || {})}, lvAt = {...(state.lvAt || {})};
+  if (now_ !== was) { lv[q.id] = now_; if (now_ > was) lvAt[q.id] = now; }
   const comeback = (state.comeback || []).filter(id => id !== q.id);
   if (outcome !== "right") comeback.push(q.id); // missed again: it comes back again
   const level = flowStep(state.level, outcome === "right", difficulty);
@@ -328,7 +346,7 @@ export function rememberAnswer(state = {}, {q, outcome, points = 0, fast = false
   const total = (state.total || 0) + points, day = localDay(new Date(now));
   const days = {...(state.days || {})}, d = days[day] || {answered: 0, right: 0, points: 0, rounds: 0, best: 0};
   days[day] = {...d, answered: d.answered + 1, right: d.right + (outcome === "right" ? 1 : 0), points: d.points + points};
-  return {...state, seen, wins, level, runStart, comeback: comeback.slice(-ROUND_SIZE), total, answered: (state.answered || 0) + 1, days};
+  return {...state, seen, wins, lv, lvAt, level, runStart, comeback: comeback.slice(-ROUND_SIZE), total, answered: (state.answered || 0) + 1, days};
 }
 export function rememberRound(state = {}, {score, questions = [], misses, scored, now = Date.now()}) {
   const seen = {...(state.seen || {})};
@@ -380,12 +398,14 @@ export function bossSet({sets = [], attempts = [], now = new Date()}) {
 export const WARM_UP = Object.freeze({mix: {weak: 1, fresh: 1, known: 8}, comeback: 2});
 export function inSlump(state = {}) {
   const last = (state.history || []).at(-1);
-  return !!last && (last.right / Math.max(1, last.n) < .5 || last.score < 0);
+  // Accuracy alone (owner, 26 Nov): a score below zero used to count too, and
+  // since a wrong answer on a streak costs up to 400 it fired nearly every round.
+  return !!last && last.n > 0 && last.right / last.n < .5;
 }
 export function nextRound({pool, recall = [], state = {}, difficulty = "normal", random = Math.random, now = Date.now()}) {
   const slump = inSlump(state), beat = pace(state, now);
   const level = Math.min(1, Math.max(0, levelOf(state) + beat.offset + (DIFFICULTY[difficulty] || DIFFICULTY.normal).offset));
-  const round = pickRound({pool, recall, seen: state.seen || {}, wins: state.wins || {}, random, now,
+  const round = pickRound({pool, recall, seen: state.seen || {}, wins: state.wins || {}, lv: state.lv || {}, random, now,
     comeback: slump ? (state.comeback || []).slice(-WARM_UP.comeback) : state.comeback || [], mix: slump ? WARM_UP.mix : flowMix(level)})
     .map(q => ({...q, seconds: flowSeconds(q.seconds, level), bonus: !q.comeback && !q.practice && random() < BONUS.chance * beat.bonus}));
   return {round, warmUp: slump, level, beat};

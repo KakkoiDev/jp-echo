@@ -375,6 +375,19 @@ Before considering the change complete:
   context resumed on every note). Every report from the N2 page carries a
   `snapshot` (`screenSnapshot`, reports.js: visible markup, viewport, theme,
   motion; capped at `SNAPSHOT_MAX`), rebuilt with `tools/reports.mjs --html`.
+- **Three files are shared with JP Core** (`japanese-readings.js`,
+  `japanese-words.js`, `grammar-spans.js`; JP Core's copies live in its
+  `browser/` and import `./jp-core.js`). Change one here, bring it to JP Core
+  with its test, and run `node tools/check-jp-core.mjs <jp-core checkout>`:
+  it fails on any other difference.
+- **Quick round v286.** Item strength (board 9): `itemLevel` / `levelAfter`
+  (n2-game.js), levels 0–5 in `state.lv`, five squares on the card, 極 at five
+  resting three days. A round in progress is kept in `echo-n2-round` on the
+  device for 30 minutes and resumed from Play (board 12 · B). A recovery
+  round follows accuracy only (`inSlump`). Listen cards leave the mix when
+  nothing can be heard (`hears`), and take no answer until the word has
+  played (`voiceWait`). Under 760 px of height the loop tightens so the four
+  choices stay on screen.
 - **Radio from Quick round (v283).** The game's Radio screen starts Day and
   Night the same way (one 60 px button per card). Day Radio and Evening recall
   are still Echo's screens and logic; with `?from=game` they wear the game's

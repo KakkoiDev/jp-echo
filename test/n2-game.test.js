@@ -445,7 +445,7 @@ test("the game follows the boards (Blitz on washi): tokens, clock, head, cards, 
   assert.equal(surfaceNeedle("この方法なら、問題は解決し得る。", "得る（える・うる）"), "得る");
   assert.match(css, /@media\(prefers-reduced-motion:reduce\)\{html:not\(\.motion-on\) \.n2-game \*\{animation:none !important/);
   assert.match(mock, /navigator\.vibrate/);
-  assert.match(mock, /const playable = sound\(\) \? pool : pool\.filter\(q => q\.kind !== "listen"\);/);
+  assert.match(mock, /const playable = hears\(\) \? pool : pool\.filter\(q => q\.kind !== "listen"\);/);
 });
 
 test("Quick round progress travels in the N2 gist file: rounds and runs union, maxima kept, the newer save decides the rest", async () => {
@@ -529,7 +529,7 @@ test("re-audit P0: sense cues and corrected glosses", () => {
 
 test("re-audit P0: the listen clock starts after playback, a failed playback is unscored, stale speech is dropped", () => {
   const mock = src("../n2-mock.js");
-  assert.match(mock, /speakAndWait\(spokenWord\(q\.prompt, q\.say\), \{voice: voice\(\), rate: Number\(settings\.rate\) \|\| 1\}\)\.then\(ok => \{\n      if \(token !== askToken \|\| current !== q \|\| locked\) return;\n      if \(ok\) \{ startClock\(\); return; \}/);
+  assert.match(mock, /speakAndWait\(spokenWord\(q\.prompt, q\.say\), \{voice: voice\(\), rate: Number\(settings\.rate\) \|\| 1\}\)\.then\(ok => \{\n      if \(token !== askToken \|\| current !== q \|\| locked\) return;\n[^\n]*\n      if \(ok\) \{ if \(document\.visibilityState === "hidden"\) hiddenResume = startClock; else startClock\(\); return; \}/);
   assert.match(mock, /"The audio didn’t play: this one doesn’t count\."/);
   assert.match(mock, /if \(reviewToken === askToken && !\$\("game-review"\)\.hidden\) say\(/, "a review word isn't spoken after leaving it");
   assert.match(mock, /window\.speechSynthesis\?\.cancel\(\); askToken\+\+;/, "Home cancels pending speech and callbacks");
@@ -666,4 +666,49 @@ test("every grammar card underlines what it asks about, even a pattern that sits
   // One piece that is missing means no underline from that needle, never a partial one.
   assert.equal(exampleSegments("休んでいる。", [["で", "いては"]]).some(s => s.mark), false);
   assert.equal(exampleSegments("雨が降る。", ["降る"]).filter(s => s.mark).map(s => s.text).join(""), "降る", "a plain needle works as before");
+});
+
+test("item strength: a fast right answer four hours apart adds a level, a miss takes one, 極 rests three days", async () => {
+  const {itemLevel, levelAfter, ITEM_LEVEL, pickRound} = await import("../n2-game.js");
+  const {mergeGame} = await import("../sync.js");
+  const q = {id: "m:x", kind: "meaning", target: ["word", "x", "x"], dimension: "meaning"}, t0 = Date.parse("2026-11-26T09:00:00Z");
+  let st = rememberAnswer({}, {q, outcome: "right", fast: true, now: t0});
+  assert.equal(itemLevel(st, q.id), 1, "a fast right answer");
+  st = rememberAnswer(st, {q, outcome: "right", fast: true, now: t0 + 3600_000});
+  assert.equal(itemLevel(st, q.id), 1, "not twice within four hours: a level means spaced wins");
+  st = rememberAnswer(st, {q, outcome: "right", fast: false, now: t0 + 5 * 3600_000});
+  assert.equal(itemLevel(st, q.id), 1, "a slow right answer leaves it");
+  st = rememberAnswer(st, {q, outcome: "right", fast: true, now: t0 + 6 * 3600_000});
+  assert.equal(itemLevel(st, q.id), 2);
+  for (const outcome of ["wrong", "timeout", "dontknow"]) assert.equal(levelAfter({lv: {[q.id]: 3}}, {id: q.id, outcome}), 2, outcome + " takes one away");
+  assert.equal(levelAfter({lv: {[q.id]: 0}}, {id: q.id, outcome: "wrong"}), 0); assert.equal(levelAfter({lv: {[q.id]: 5}}, {id: q.id, outcome: "right", fast: true, now: t0}), 5, "five is the top");
+  assert.equal(itemLevel(rememberAnswer({lv: {"c:p": 3}}, {q: {id: "c:p", practice: true}, outcome: "wrong"}), "c:p"), 3, "practice never moves a level");
+  // A mastered item seen yesterday is passed over while anything else is left; after three days it is back.
+  const pool = Array.from({length: 30}, (_, i) => ({id: "m:" + i, kind: "meaning", target: ["word", "w" + i, "r" + i], dimension: "meaning"}));
+  const day = 86400_000, now = t0 + 10 * day, seen = {"m:0": now - day}, lv = {"m:0": ITEM_LEVEL.max};
+  assert.equal(pickRound({pool, seen, lv, now}).some(x => x.id === "m:0"), false);
+  assert.equal(pickRound({pool: pool.slice(0, 10), seen: {"m:0": now - 4 * day}, lv, now}).some(x => x.id === "m:0"), true);
+  // Levels travel with the game's progress.
+  const m = mergeGame({updatedAt: "2026-11-26T10:00:00Z", lv: {a: 2, b: 1}, lvAt: {a: 5}}, {updatedAt: "2026-11-26T09:00:00Z", lv: {a: 4, c: 3}, lvAt: {a: 9, c: 2}});
+  assert.deepEqual(m.lv, {a: 2, b: 1, c: 3}); assert.deepEqual(m.lvAt, {a: 9, c: 2});
+  const html = src("../n2-mock.html"), mock = src("../n2-mock.js"), css = src("../styles.css");
+  assert.match(html, /id="game-lv" hidden><i><\/i><i><\/i><i><\/i><i><\/i><i><\/i><b id="game-lv-n"><\/b><\/span>/, "board 9: five squares");
+  assert.match(css, /\.qr-lv i\{width:10px;height:10px;border-radius:2px;border:1\.5px solid var\(--right\)/);
+  assert.doesNotMatch(mock, /\["Again", "seal"\]/, "the level takes the corner the off-board Again chip had");
+});
+
+test("a round survives a closed app or a trip Home for 30 minutes; a recovery round follows accuracy, not the score", () => {
+  const mock = src("../n2-mock.js"), html = src("../n2-mock.html"), css = src("../styles.css");
+  assert.match(mock, /const ROUND_KEY = "echo-n2-round", ROUND_KEEP_MS = 30 \* 60_000;/);
+  assert.match(mock, /if \(!s \|\| Date\.now\(\) - s\.at > ROUND_KEEP_MS \|\| !\(s\.index >= 1 && s\.index < s\.items\.length\)\)/, "1 to 9 answers, under 30 minutes");
+  assert.match(mock, /kept \? "Resume round" : "Play"/); assert.match(html, /id="game-play-pips" hidden>/, "board 12 · B: the pips sit inside Play");
+  assert.match(mock, /state = rememberRound\([^\n]*\n    clearRound\(\);/, "the round's end drops it");
+  assert.equal(inSlump({history: [{score: -800, right: 6, n: 10}]}), false, "a score below zero alone is not a slump");
+  assert.equal(inSlump({history: [{score: 300, right: 4, n: 10}]}), true);
+  assert.equal(inSlump({history: [{score: 0, right: 0, n: 0}]}), false, "a round with nothing scored is not a slump");
+  // Listening is honest: no answer before the word has been heard, no cards without a voice, one clock.
+  assert.match(mock, /if \(locked \|\| !current \|\| voiceWait\) return;/);
+  assert.match(mock, /const hears = \(\) => sound\(\) && japaneseVoices\("ja"\)\.length > 0 && listenFails < 2;/);
+  assert.match(mock, /if \(!\$\("game-play"\)\.hidden && current && !locked && voiceWait\) return null;/, "nothing to pause while the voice plays");
+  assert.match(css, /@media\(max-height:760px\)\{\n  body\[data-view=game\] \.qr-ch\{min-height:48px;padding:6px 12px\}/, "short screens keep the four choices on screen");
 });

@@ -118,7 +118,9 @@ export function mergeGame(a, b) {
   // device that had not answered yet (a Sound toggle) must not reset the clock.
   const sameRun = (a.bossFrom || 0) === (b.bossFrom || 0), starts = [a.runStart, b.runStart].filter(Boolean).sort();
   const runStart = sameRun && starts.length ? starts[0] : newer.runStart;
-  return {...newer, ...(runStart === undefined ? {} : {runStart}), seen: maxMap(a.seen, b.seen), wins: maxMap(a.wins, b.wins), days, history,
+  // Item levels: the newer save's word on an item it knows, the other's on the rest.
+  const lv = {...(older.lv || {}), ...(newer.lv || {})}, lvAt = maxMap(a.lvAt, b.lvAt);
+  return {...newer, ...(runStart === undefined ? {} : {runStart}), ...(Object.keys(lv).length ? {lv, lvAt} : {}), seen: maxMap(a.seen, b.seen), wins: maxMap(a.wins, b.wins), days, history,
     runs: unionBy(a.runs, b.runs, r => r.at).slice(-200), best: Math.max(a.best || 0, b.best || 0),
     rounds: Math.max(a.rounds || 0, b.rounds || 0, history.length), answered: Math.max(a.answered || 0, b.answered || 0), total: Math.max(a.total || 0, b.total || 0)};
 }

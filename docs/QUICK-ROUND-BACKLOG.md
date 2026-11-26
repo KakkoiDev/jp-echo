@@ -81,6 +81,19 @@ Still open (need logic, content or a designer answer):
 - `--right-on` (dark #141820) has no Echo token: `--panel` stands in.
 - Home B's "?" projection row, the night screen's "cue N of M", level chips.
 
+## v286 (26 Nov 2026): built from the owner's go-ahead
+
+- Item strength Lv 0–5 (board 9, fix 17): squares on the card, "Level up",
+  "Lv 2 → 1" on a miss and in the review, the "Lv up" strip at round end, 極
+  with a gold frame. Not on the board: the mastered line has no "Seen 61
+  times" (no count is kept), and the level takes the corner the "Again" chip
+  had.
+- Resume (board 12 · B, fix 12), listen cards out without a voice (fix 1),
+  no answer before the word is heard and one clock after a hidden tab
+  (re-audit), recovery on accuracy only.
+- Short screens: under 760 px of height the loop uses 48 px choice rows and
+  less air. Not on a board; for the designer to confirm.
+
 ## Radio in the game (v283, 26 Nov 2026): built without boards, for the designer
 
 Owner: "the radio screen and feature feels half baked": only the night looked

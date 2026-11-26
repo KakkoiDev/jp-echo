@@ -9,7 +9,7 @@ import {recognitionFactory} from "./speech.js";
 import {speakOnce,speakAndWait,japaneseVoices,RadioPlayer,NoiseBed} from "./speech.js";
 import {RADIO_DEFAULTS,RADIO_PHASE_COPY,clockAt,radioPhase,radioPlan,radioSteps} from "./radio.js";
 import {readNights, nightComparison, comparisonLine, eveningRecall, EVENING_SOURCE, nightPlan, nightRecord, keepNight, NIGHT_KEY} from "./n2-night.js";
-import {gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, patternVoice, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
+import {inSlump, itemLevel, levelAfter, ITEM_LEVEL, gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, patternVoice, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
 import {spokenWord,radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
 import {TAG,TAGS,HELD_OUT,CAUSES,comprehensionStats,weakestTag,tagDrill,drillExposure,attemptTags,tagsOf,sourceOf} from "./n2-comprehension.js";
 import {exampleSegments,patternNeedles,delayedChecks,checkItems,checkAsk,contextNote,sentenceParts,checkDetail,audioGrade,delayedAccuracy,CHECK_SOURCE,WHY_LINE,evidenceFor,evidenceLine} from "./n2-delayed.js";
@@ -1316,7 +1316,10 @@ async function game() {
     // The dock: one big button, then the pair (boards 1 · A–D).
     $("game-home-boss").hidden = !open; $("game-home-radio").hidden = !rest || open; $("game-home-play").hidden = open || rest;
     $("game-home-play2").hidden = !open; $("game-home-play3").hidden = !rest || open;
-    $("game-play-sub").textContent = stretch ? "Final stretch · bonuses doubled" : "10 questions · about a minute";
+    const kept = readRound();
+    $("game-home-play").querySelector("b").lastChild.textContent = kept ? "Resume round" : "Play";
+    $("game-play-pips").hidden = !kept; if (kept) $("game-play-pips").replaceChildren(...kept.round.map((_, i) => el("i", {class: i < kept.index ? "on" : ""})));
+    $("game-play-sub").textContent = kept ? kept.index + " of " + kept.round.length + " · " + num(kept.score) + " points" : stretch ? "Final stretch · bonuses doubled" : "10 questions · about a minute";
     if (open) $("game-home-boss").onclick = e => fightBoss(e, boss);
     $("game-radio-open").hidden = rest && !open;
     soundButton();
@@ -1383,14 +1386,46 @@ async function game() {
     $("game-back").href = "?view=game"; $("game-back").setAttribute("aria-label", "Back to home"); $("game-back").dataset.end = "false";
     $("game-back").onclick = e => { e.preventDefault(); window.speechSynthesis?.cancel(); home(); };
     state = readGame();
-    // With the sound off, listen cards leave the mix: nothing becomes unanswerable.
-    const playable = sound() ? pool : pool.filter(q => q.kind !== "listen");
+    // An interrupted round goes on where it stopped (board 12 · B): no choice offered.
+    const kept = readRound();
+    if (kept) {
+      ({round, index, score, streak, bestCombo, marks, rights, flagged, practiced, roundLevel, warmUp, beat, misses, ups} = kept);
+      mode("play"); ask(); return;
+    }
+    // Listen cards leave the mix when nothing can be heard: the sound is off, the
+    // phone has no Japanese voice, or the voice failed twice this session.
+    const playable = hears() ? pool : pool.filter(q => q.kind !== "listen");
     const next = nextRound({pool: playable, recall: data.recall, state, difficulty: difficulty()});
     round = next.round; roundLevel = next.level; warmUp = next.warmUp; beat = next.beat || null; rights = 0; flagged = 0; practiced = 0; bestCombo = 0;
-    index = 0; score = 0; streak = 0; misses = []; marks = [];
+    index = 0; score = 0; streak = 0; misses = []; marks = []; ups = [];
     mode("play");
     ask();
   }
+  let listenFails = 0, voiceWait = false, ups = [];
+  const hears = () => sound() && japaneseVoices("ja").length > 0 && listenFails < 2;
+  // The round in progress, kept on this device so a closed app or a trip Home
+  // doesn't lose it. Dropped after 30 minutes, at the round's end, or if a
+  // question has left the pool.
+  const ROUND_KEY = "echo-n2-round", ROUND_KEEP_MS = 30 * 60_000;
+  const saveRound = () => { try { localStorage.setItem(ROUND_KEY, JSON.stringify({at: Date.now(), index, score, streak, bestCombo, marks, rights, flagged, practiced, roundLevel, warmUp, beat, ups,
+    items: round.map(q => ({id: q.id, bonus: !!q.bonus, comeback: !!q.comeback, seconds: q.seconds})), misses: misses.map(m => ({id: m.q.id, picked: m.picked, from: m.from, to: m.to}))})); } catch {} };
+  const clearRound = () => { try { localStorage.removeItem(ROUND_KEY); } catch {} };
+  const readRound = () => {
+    try {
+      const s = JSON.parse(localStorage.getItem(ROUND_KEY) || "null");
+      if (!s || Date.now() - s.at > ROUND_KEEP_MS || !(s.index >= 1 && s.index < s.items.length)) { if (s) clearRound(); return null; }
+      const byId = new Map(pool.map(q => [q.id, q])), items = s.items.map(it => byId.has(it.id) ? {...byId.get(it.id), ...it} : null);
+      if (items.includes(null)) { clearRound(); return null; }
+      return {...s, round: items, ups: s.ups || [], misses: (s.misses || []).map(m => ({q: items.find(q => q.id === m.id), picked: m.picked, from: m.from, to: m.to})).filter(m => m.q)};
+    } catch { return null; }
+  };
+  // Item strength on the card (board 9): five squares and the level, or 極 at five.
+  const paintLevel = (n, up = false) => {
+    const master = n >= ITEM_LEVEL.max;
+    $("game-lv").hidden = master; $("game-master").hidden = !master; $("game-card").dataset.master = String(master);
+    [...$("game-lv").querySelectorAll("i")].forEach((sq, i) => { sq.className = i < n ? (up && i === n - 1 ? "f up" : "f") : ""; });
+    $("game-lv-n").textContent = "Lv " + n;
+  };
   function ask() {
     clearTimeout(timer); locked = false;
     current = round[index];
@@ -1402,8 +1437,11 @@ async function game() {
     card.dataset.bonus = String(!!q.bonus); card.dataset.state = ""; card.style.animation = "none"; void card.offsetWidth; card.style.animation = "";
     $("game-kind").textContent = q.kind === "exam" ? "Exam · 問題" + q.mondai : q.kind === "connective" ? "Connective" : KIND_LABEL[q.kind];
     const most = q.bonus ? bonusPoints({points: scoreAnswer({outcome: "right", ms: 0, seconds: q.seconds, streak}).points, bonus: true, streak: streak + 1, factor: DIFFICULTY[difficulty()].points, choices: choices.length}).points : 0;
-    const tag = q.bonus ? ["Bonus ×3 · up to " + most.toLocaleString(), "goldfill"] : q.practice ? ["Practice · not scored", "practice"] : q.comeback ? ["Again", "seal"] : q.kind === "exam" ? ["Mock " + String(bookIds.indexOf(String(q.solution?.source || "").split("#")[0]) + 1).padStart(2, "0"), ""] : null;
+    const tag = q.bonus ? ["Bonus ×3 · up to " + most.toLocaleString(), "goldfill"] : q.practice ? ["Practice · not scored", "practice"] : q.kind === "exam" ? ["Mock " + String(bookIds.indexOf(String(q.solution?.source || "").split("#")[0]) + 1).padStart(2, "0"), ""] : null;
     $("game-tag").hidden = !tag; if (tag) { $("game-tag").textContent = tag[0]; $("game-tag").dataset.tone = tag[1]; }
+    // Where no chip claims the corner, the item's level sits there (board 9).
+    $("game-lvup").hidden = true;
+    if (tag) { $("game-lv").hidden = true; $("game-master").hidden = true; card.dataset.master = "false"; } else paintLevel(itemLevel(readGame(), q.id));
     // A beat ribbon on question 1 (pace), or the warm-up; it leaves on the first answer.
     const left = bossProgress(state).left;
     if (index !== 0) ribbon(null);
@@ -1440,29 +1478,34 @@ async function game() {
     // A lone line is centred; a sentence that wraps reads from the left, and from three lines drops to 19 px (review C7).
     const sent = $("game-sentence"); sent.dataset.lines = "1";
     if ((sentenceKind || inContext) && q.kind !== "connective") { const lines = Math.round(sent.getBoundingClientRect().height / parseFloat(getComputedStyle(sent).lineHeight)); sent.dataset.lines = lines >= 3 ? "3" : String(lines); }
-    $("game-combo").textContent = ""; $("game-combo").className = "qr-line";
+    $("game-combo").textContent = card.dataset.master === "true" ? "Mastered. A miss here drops it to Lv 4 and it comes back more often." : ""; $("game-combo").className = "qr-line";
     $("game-flag").dataset.on = "false";
     $("game-choices").replaceChildren(...choices.map((c, i) => el("button", {type: "button", class: "qr-ch" + (["definition", "homophone"].includes(q.kind) ? " m" : ""), "data-ui": "button", onclick: () => answer(i)},
       el("span", {class: "k", text: String(i + 1)}), el("span", {class: "t", lang: /[ぁ-んァ-ン一-龯]/.test(c) ? "ja" : "en", text: c}))));
     head();
     if (q.bonus && sound()) sfx.bonus();
     const token = ++askToken;
-    const startClock = () => { shownAt = performance.now(); runBar(q.seconds, {gold: !!q.bonus}); timer = setTimeout(() => answer(-1, "timeout"), q.seconds * 1000); };
+    voiceWait = false;
+    const startClock = () => { voiceWait = false; shownAt = performance.now(); runBar(q.seconds, {gold: !!q.bonus}); timer = setTimeout(() => answer(-1, "timeout"), q.seconds * 1000); };
     if (!listen) { startClock(); return; }
     // Listen (re-audit): the clock starts once the word has played; if it can't
     // play, the card doesn't count and the game moves on.
     // The bar waits full until the voice ends (board 3a · Listen).
+    // Until it has, no answer is taken and Hear it again is inert (re-audit: a choice could score before the word was heard).
+    voiceWait = true;
     shownAt = performance.now(); clearInterval(ticker); bar.style.transition = "none"; bar.style.width = "100%"; $("game-clock").dataset.state = ""; $("game-sec").textContent = q.seconds.toFixed(1);
     speakAndWait(spokenWord(q.prompt, q.say), {voice: voice(), rate: Number(settings.rate) || 1}).then(ok => {
       if (token !== askToken || current !== q || locked) return;
-      if (ok) { startClock(); return; }
+      // The voice ended while the tab was hidden: the clock starts when it is seen again, once.
+      if (ok) { if (document.visibilityState === "hidden") hiddenResume = startClock; else startClock(); return; }
+      voiceWait = false; listenFails++;
       locked = true; marks[index] = "pr"; practiced++; head();
       $("game-combo").textContent = "The audio didn’t play: this one doesn’t count.";
-      timer = setTimeout(() => { index++; ask(); }, PAUSE.miss);
+      timer = setTimeout(() => { index++; saveRound(); ask(); }, PAUSE.miss);
     });
   }
   async function answer(i, why) {
-    if (locked || !current) return;
+    if (locked || !current || voiceWait) return;
     locked = true; clearTimeout(timer);
     const q = current, ms = performance.now() - shownAt;
     const outcome = why === "timeout" ? "timeout" : i < 0 ? "dontknow" : i === q.key ? "right" : "wrong";
@@ -1513,7 +1556,11 @@ async function game() {
     else if (outcome === "wrong") line.textContent = "Part of the game. Keep going.";
     else if (outcome === "timeout") line.textContent = "Too slow this time. It comes back next round.";
     else if (outcome === "dontknow") line.textContent = "Fine. Keep going.";
-    if (outcome !== "right") misses.push({q, picked: i >= 0 ? q.choices[i] : outcome === "timeout" ? "Time ran out" : "I don’t know"});
+    // Item strength: a fast right answer stamps a square in; a miss takes one away (boards 9, 2).
+    const lvFrom = q.practice ? 0 : itemLevel(readGame(), q.id), lvTo = q.practice ? 0 : levelAfter(readGame(), {id: q.id, outcome, fast: result.fast});
+    if (lvTo > lvFrom) { ups.push({word: String(q.solution?.word || q.prompt).replace(/[〜～]/g, ""), from: lvFrom, to: lvTo}); if (!$("game-lv").hidden || !$("game-master").hidden) { paintLevel(lvTo, true); $("game-lvup").hidden = false; } }
+    else if (lvTo < lvFrom && $("game-tag").hidden) { $("game-lv").hidden = true; $("game-master").hidden = true; $("game-tag").hidden = false; $("game-tag").textContent = "Lv " + lvFrom + " → " + lvTo; $("game-tag").dataset.tone = "seal"; }
+    if (outcome !== "right") misses.push({q, picked: i >= 0 ? q.choices[i] : outcome === "timeout" ? "Time ran out" : "I don’t know", from: lvFrom, to: lvTo});
     state = rememberAnswer(readGame(), {q, outcome, points: paid.points, fast: result.fast, difficulty: difficulty()}); writeGame(state);
     if (recallsMiss(q, outcome)) {
       try {
@@ -1524,6 +1571,7 @@ async function game() {
         data.recall = data.recall.filter(r => r.id !== id).concat(record);
       } catch {}
     }
+    index++; saveRound(); index--; // the next question is where a resume picks up
     timer = setTimeout(() => { index++; ask(); }, outcome === "right" ? (paid.jackpot && streak >= 10 ? 700 : PAUSE.right) : outcome === "dontknow" ? 600 : PAUSE.miss);
   }
   // The review (fix 9): 5 seconds a miss, read top to bottom in one glance.
@@ -1534,7 +1582,9 @@ async function game() {
     if (!misses[n]) { done(); return; }
     const {q, picked} = misses[n], sol = q.solution || {};
     mode("review");
-    $("game-sub").textContent = "Review · " + (n + 1) + " of " + misses.length; $("game-sub-right").textContent = "";
+    clearRound();
+    $("game-sub").textContent = "Review · " + (n + 1) + " of " + misses.length;
+    $("game-sub-right").replaceChildren(...(misses[n].from > misses[n].to ? [el("span", {class: "qr-chip", "data-tone": "seal", text: "Lv " + misses[n].from + " → " + misses[n].to})] : []));
     $("game-review-kind").textContent = KIND_LABEL[q.kind];
     const word = sol.word || q.answer;
     $("game-review-word").textContent = word;
@@ -1572,6 +1622,7 @@ async function game() {
     // Accuracy over scored answers only: flags and practice are not evidence.
     const scoredN = round.length - flagged - practiced;
     state = rememberRound(readGame(), {score, questions: round, misses: scoredN - rights, scored: scoredN}); writeGame(state);
+    clearRound();
     const best = score > before && score > 0;
     if (sound()) { best ? sfx.best() : sfx.round(); buzz(best ? [30, 50, 30] : 20); }
     mode("done");
@@ -1595,6 +1646,9 @@ async function game() {
     if (boss && b.open) { $("game-boss").href = "?book=" + boss.id + "&boss=1"; $("game-boss-line").textContent = "The boss is open: Mock " + String(bookIds.indexOf(boss.id) + 1).padStart(2, "0") + ", " + BOSS_MINUTES.written + " + " + BOSS_MINUTES.listening + " min"; $("game-boss").onclick = e => fightBoss(e, boss); }
     // Bedtime (board 6 · B) and the warm-up after a bad round (C).
     $("game-bedtime").hidden = !late; $("game-sleep").hidden = !late; $("game-warm").hidden = late || !warm;
+    // Board 6 · A: what levelled up this round, three at most.
+    $("game-lvstrip").hidden = late || warm || !ups.length;
+    $("game-lvups").replaceChildren(...ups.slice(0, 3).map(u => el("span", {lang: "ja", text: u.word + " " + u.from + "→" + u.to})));
     $("game-warm-line").textContent = "Next: a recovery round of things you know, with " + Math.min(2, back) + " of these " + back + " back.";
     $("game-again").className = late ? "qr-lnk" : "qr-btn";
     $("game-again-label").textContent = late ? "One more round" : warm ? "Recovery round" : "Next round";
@@ -1609,7 +1663,7 @@ async function game() {
       $("game-bedtime-line").textContent = left ? left + " items to recall, then the Night Radio plays them while you sleep." : "Nothing left to recall: the Night Radio plays today’s work while you sleep.";
     }).catch(() => {});
   }
-  const inSlumpNext = () => { const h = (readGame().history || []).at(-1); return !!h && (h.right / Math.max(1, h.n) < .5 || h.score < 0); };
+  const inSlumpNext = () => inSlump(readGame());
   $("game-skip").onclick = () => answer(-1);
   // One tap, no questions (owner, 26 Nov): the flag saves the question exactly
   // as shown and the game moves on. Working out why is the audit's job.
@@ -1629,6 +1683,7 @@ async function game() {
     $("game-tag").hidden = false; $("game-tag").textContent = "Flagged"; $("game-tag").dataset.tone = "";
     if (sound()) { sfx.flag(); buzz(10); }
     toast("Flagged, saved as shown", "no points");
+    index++; saveRound(); index--;
     timer = setTimeout(() => { index++; ask(); }, PAUSE.right);
   };
   $("game-review-flag").onclick = () => {
@@ -1638,6 +1693,7 @@ async function game() {
   };
   reportPause = () => {
     if ($("game").hidden) return null;
+    if (!$("game-play").hidden && current && !locked && voiceWait) return null;
     if (!$("game-play").hidden && current && !locked) {
       const left = Math.max(1000, current.seconds * 1000 - (performance.now() - shownAt));
       clearTimeout(timer); stopBar();
@@ -1647,7 +1703,7 @@ async function game() {
     if (!$("game-review").hidden && !held) { clearTimeout(timer); stopBar(); return () => { if (!$("game-review").hidden && !held) review(reviewAt); }; }
     return null;
   };
-  $("game-say").onclick = () => current && !locked && say(spokenWord(current.prompt, current.say));
+  $("game-say").onclick = () => current && !locked && !voiceWait && say(spokenWord(current.prompt, current.say));
   // A hidden tab pauses the card or the review (re-audit P1); coming back resumes it.
   let hiddenResume = null;
   document.addEventListener("visibilitychange", () => {
