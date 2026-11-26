@@ -408,9 +408,9 @@ test("audit P0: a flag earns nothing, ends the combo, and the round's right coun
   assert.match(mock, /choicesFor\(q, Math\.random, roundLevel\)/, "the round's level picks the choices");
 });
 
-test("audit P2: connective questions are practice: no points, combo untouched", () => {
+test("connective questions are scored like every card of a round; the practice path stays for unpaid cards", () => {
   const pool = allSat();
-  assert.ok(pool.filter(q => q.kind === "connective").every(q => q.practice === true));
+  assert.ok(pool.filter(q => q.kind === "connective").every(q => !q.practice), "owner, 27 Nov: every card pays and costs");
   assert.match(src("../n2-mock.js"), /const paid = q\.practice \? \{points: 0, jackpot: 0\}/);
 });
 
@@ -756,10 +756,11 @@ test("another level gives word cards only, under ids no other level can have", (
   assert.ok(all.has("m:N3:明らか") && !n2.has("m:N3:明らか"));
 });
 
-test("a level that has not been reviewed pays no points: its answers still count, and its item record moves", () => {
+test("no level has been reviewed, and its cards are scored all the same; an unpaid card still counts and moves its record", () => {
   assert.deepEqual([...REVIEWED_LEVELS], ["N2"], "add a level only after its pool has been audited");
-  for (const level of FETCHED_LEVELS) assert.ok(levelPool(level).every(q => q.practice === true && q.record === true), level);
-  const q = levelPool("N3")[0], before = {answered: 5, total: 900, level: .5, days: {}, bossFrom: 0};
+  for (const level of FETCHED_LEVELS) assert.ok(levelPool(level).every(q => !q.practice), level + ": scored (SCORE_ALL)");
+  // The unpaid path (SCORE_ALL off) is kept: a card marked practice and record.
+  const q = {...levelPool("N3")[0], practice: true, record: true}, before = {answered: 5, total: 900, level: .5, days: {}, bossFrom: 0};
   const miss = rememberAnswer(before, {q, outcome: "wrong", points: -200, now: 1000});
   for (const k of ["total", "level", "bossFrom"]) assert.deepEqual(miss[k], before[k], k + " is untouched: no points, and the hidden level stays");
   // It is an answer all the same: it counts toward the day and the 1,000 that open the boss.
@@ -912,7 +913,7 @@ test("a round at rank N3 is N3 cards with a share of N4 and N5 review, one card 
     assert.equal(old.length, REVIEW_SHARE);
     assert.ok(old.every(q => ["N5", "N4"].includes(q.level)) && round.filter(q => !q.review).every(q => q.level === "N3"));
     assert.equal(new Set(round.map(q => q.item)).size, ROUND_SIZE, "no word twice in a round");
-    assert.ok(round.every(q => q.practice && !q.bonus), "practice cards never carry a bonus");
+    assert.ok(round.every(q => !q.practice), "every card of the round is scored");
     for (let i = 1; i < round.length; i++) assert.notEqual(round[i].kind, round[i - 1].kind, "no two of a kind in a row");
   }
   // Review cards rotate: the ones just seen give way to others.

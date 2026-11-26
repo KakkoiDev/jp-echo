@@ -63,7 +63,7 @@ const infer = cards.find(c => c.id === "gi:ざるを得ない");
 const block = cards.find(c => c.kind === "block");
 const build = cards.find(c => c.id === "gb:ざるを得ない");
 
-test("index adds three practice kinds while preserving the existing cards", () => {
+test("index adds three kinds while preserving the existing cards", () => {
   const baseline = gamePool(options);
   assert.deepEqual(gamePool({...options, grammarBlocks: null}), baseline);
   assert.deepEqual(pool.filter(q => !grammarBlockCard(q)).map(({blocks, basics, ...q}) => q), baseline);
@@ -77,7 +77,7 @@ test("index adds three practice kinds while preserving the existing cards", () =
   assert.equal(conjugated.needle, "甲斐があって");
   assert.equal(conjugated.parts.at(-1).text, "あって");
   for (const q of cards) {
-    assert.ok(q.practice && q.record);
+    assert.ok(!q.practice, "every card of a round is scored (SCORE_ALL)");
     assert.ok(!EXCLUDED[q.id] && !EXCLUDED["g:" + q.patternKey]);
     assert.ok(exampleSegments(q.sentence, [q.needle]).some(s => s.mark), q.id);
     assert.ok(!recallsMiss(q, "wrong"), q.id);
@@ -94,9 +94,9 @@ test("pattern exposures update met; transfer requires a new pattern and every bl
   const original = pool.find(q => q.id === "g:ざるを得ない");
   const missing = right({}, infer);
   assert.deepEqual(missing.gb.zaru, [1, 1, 0, 0, now, 0]);
-  assert.equal(missing.total, 0);
+  assert.equal(missing.total, 100, "scored like any card");
   assert.equal(missing.answered, 1);
-  assert.equal(missing.practiced, 1);
+  assert.equal(missing.practiced, undefined);
   const exposed = right({}, original);
   assert.deepEqual(exposed.gb.zaru, [1, 0, 0, 0, now, 0]);
   const met = {...exposed, seen: {}};
@@ -222,14 +222,16 @@ test("N5 and N4 particles and endings are taken as known: no card of their own, 
   assert.equal(rememberAnswer({gb: {}}, {q: infer, outcome: "right", now}).gb[only][3], 0, "the content block itself must be met");
 });
 
-test("the released index is the validated draft, part of the app, and its cards stay practice", async () => {
+test("the released index is the validated draft, part of the app, and its cards are scored by the owner's rule, not by review", async () => {
   const released = read("../n2-grammar-blocks.json");
   assert.deepEqual(released, draft, "copy tools/grammar-blocks/draft.json after it passes release validation");
   assert.deepEqual(validateGrammarBlocks(released).errors, []);
   assert.ok(readFileSync(new URL("../sw.js", import.meta.url), "utf8").includes('"./n2-grammar-blocks.json"'), "precached");
   const {REVIEWED_GRAMMAR_BLOCKS} = await import("../n2-game-review.js");
-  assert.equal(REVIEWED_GRAMMAR_BLOCKS, false, "not scored until the cards themselves are reviewed");
-  assert.ok(gamePool({...options, grammarBlocks: released}).filter(grammarBlockCard).every(q => q.practice && q.record));
+  const {SCORE_ALL} = await import("../n2-game-review.js");
+  assert.equal(REVIEWED_GRAMMAR_BLOCKS, false, "the cards themselves are still unreviewed");
+  assert.equal(SCORE_ALL, true, "owner, 27 Nov: every card in a round pays and costs");
+  assert.ok(gamePool({...options, grammarBlocks: released}).filter(grammarBlockCard).every(q => !q.practice));
 });
 
 test("the review data handed to a reviewer is the released index, whole", () => {

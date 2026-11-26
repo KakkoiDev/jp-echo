@@ -206,16 +206,16 @@ test("prefixes and suffixes have a card: the part underlined in a sentence, its 
     assert.ok(q.wrong.length >= 3 && !q.wrong.includes(q.answer), q.id);
     assert.equal(new Set(choicesFor(q, seeded(7), .5).choices).size, 4, q.id);
     assert.deepEqual(q.target.slice(0, 2), ["word", q.prompt]);
-    // Unreviewed: no points and no recall evidence, but the answer is recorded and counts.
-    assert.equal(q.practice, !REVIEWED_AFFIXES); assert.equal(q.record, !REVIEWED_AFFIXES);
-    assert.equal(recallsMiss(q, "wrong"), REVIEWED_AFFIXES);
+    // Unreviewed, and scored all the same (owner, 27 Nov): points both ways, and a miss is recall evidence.
+    assert.equal(REVIEWED_AFFIXES, false); assert.ok(!q.practice);
+    assert.equal(recallsMiss(q, "wrong"), true); assert.equal(recallsMiss({...q, practice: true}, "wrong"), false);
   }
   assert.equal(new Set(cards.map(q => q.id)).size, cards.length, "～所 しょ and ～所 じょ keep apart");
   // No whole word is a wrong choice here, and no word card is made of a part.
   assert.ok(!pool.some(q => q.kind !== "affix" && q.kind !== "exam" && /[〜～]/.test(q.prompt) && q.target?.[0] === "word"));
   // The other levels' lists hold no parts yet: their pools are unchanged.
   const answered = rememberAnswer({}, {q: gimi, outcome: "right", points: 300});
-  assert.equal(answered.answered, 1); assert.equal(answered.total, 0);
+  assert.equal(answered.answered, 1); assert.equal(answered.total, 300);
   // A missed 問題3 question brings its part into the rounds, and the boss review finds its meaning.
   const q3 = set.questions.findIndex(q => q.target?.[1] === "～気味");
   assert.deepEqual(bossCards({set, missed: [q3], pool}).map(q => q.id), ["a:～気味"]);

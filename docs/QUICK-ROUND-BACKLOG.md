@@ -162,7 +162,7 @@ Open:
 
 Built as a grammar card in shape, head label "Word part" (working name).
 Open:
-- **Unreviewed, so unscored.** Several glosses of the list are poor for a
+- **Unreviewed, and scored since `SCORE_ALL`.** Several glosses of the list are poor for a
   part ("kind of field, ground" for ～場, "count for sisters" for ～女), and
   wrong choices are other parts' glosses, often far from the answer.
 - **18 of 167 have no card**: the part shows twice in its sentence, is
@@ -283,6 +283,18 @@ other than N2; N0. Misses on another level's cards save no recall check, so
 they do not reach Today's checks, Evening recall or the Night Radio.
 
 ## After the exam: the rank becomes the level
+
+**To reassess after 6 Dec 2026 (owner, 27 Nov):**
+- **Word parts for N5, N4, N3 and N1.** Prefixes and suffixes exist at every
+  level, but those lists (built from JMdict's word lists) hold none; only
+  N2's list has them (167). Decide where each level's parts come from, give
+  them sentences, and build their cards as N2's (`affixCards`).
+- **Unreviewed content is scored (`SCORE_ALL`, v305).** The owner chose
+  points on every card over waiting for reviews. Still unread by a reviewer:
+  the other levels' pools, the grammar pieces (3 "wrong" findings open), the
+  167 word parts (poor glosses such as ～場 "kind of field, ground"), the
+  connective excerpts. A wrong key now costs points; the flag button is the
+  remedy until each is reviewed.
 
 `docs/JLPT-LEVELS-PLAN.md`, phase 4: start at N5, move up a level by passing
 that level's boss, reach N0 once N1 is easy; lower levels keep coming back as

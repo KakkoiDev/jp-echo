@@ -524,12 +524,20 @@ Before considering the change complete:
   they are not words. `affixCards` (n2-game.js) gives each one written once
   in its deck sentence a card `a:<text>`, kind `affix`, label "Word part":
   the sentence with the part underlined, its meaning to pick among other
-  parts' meanings, the same side (prefix or suffix) first. Practice until
-  `REVIEWED_AFFIXES` (n2-game-review.js): the glosses are the list's and the
-  sentences the deck's, not reviewed as affix content. A practice card never
-  writes recall evidence (`recallsMiss`). A missed 問題3 question brings its
+  parts' meanings, the same side (prefix or suffix) first. `REVIEWED_AFFIXES`
+  (n2-game-review.js) is false: the glosses are the list's and the sentences
+  the deck's, not reviewed as affix content. A missed 問題3 question brings its
   part into the rounds, and the boss review shows it large. Only N2's list
   holds parts; the fetched levels have none.
+- **Every card in a round pays and costs (owner, 27 Nov, v305: `SCORE_ALL`,
+  n2-game-review.js).** "Plus when success, minus when fail": no card of a
+  round is practice any more: connectives, the other levels' words, grammar
+  pieces and word parts are scored like the rest. This overrides every
+  earlier line here that says a kind is "practice", "not scored" or "pays no
+  points" until reviewed. The `REVIEWED_*` flags stay as the record of what a
+  reviewer has read, and decide again only if `SCORE_ALL` is set to false; the
+  unpaid path (`practice`, `record`) is kept for that. A practice card never
+  writes recall evidence (`recallsMiss`).
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

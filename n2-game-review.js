@@ -127,6 +127,11 @@ export const EXCLUDED = Object.freeze({
 export const REVIEWED_LEVELS = new Set(["N2"]);
 
 // Grammar blocks have a separate review gate from rank-level word cards.
+// Owner, 27 Nov: "every card in a round counts for points, plus when success, minus when fail." Until then, content
+// no reviewer had read (the other levels' words, the grammar pieces, the word parts, the connectives) was practice and
+// paid nothing; a round with unpaid cards did not read as a game. The REVIEWED_ flags below are kept as the record of
+// what has been reviewed, and decide again if this is ever set to false.
+export const SCORE_ALL = true;
 // The word-part cards (前～, ～気味): their meanings are the word list's and their sentences the deck's, neither read by
 // a reviewer as affix content. False: practice, no points. True only after that review.
 export const REVIEWED_AFFIXES = false;

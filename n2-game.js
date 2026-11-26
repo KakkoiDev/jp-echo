@@ -23,7 +23,7 @@
 import {recallItems, localDay} from "./n2-study.js";
 import {HELD_OUT} from "./n2-comprehension.js";
 import {connectiveSites, jobOf, glossOf, JOBS, OVERLAP, CHOICE_FOR_JOB} from "./n2-connectives.js";
-import {ACCEPTED_READINGS, READING_KEY, EXCLUDED, GLOSS_FIX, GRAMMAR_SPANS, REVIEWED_LEVELS, REVIEWED_GRAMMAR_BLOCKS, REVIEWED_AFFIXES, GRAMMAR_CONFUSABLE} from "./n2-game-review.js";
+import {ACCEPTED_READINGS, READING_KEY, EXCLUDED, GLOSS_FIX, GRAMMAR_SPANS, REVIEWED_LEVELS, REVIEWED_GRAMMAR_BLOCKS, REVIEWED_AFFIXES, SCORE_ALL, GRAMMAR_CONFUSABLE} from "./n2-game-review.js";
 import {exampleSegments} from "./n2-delayed.js";
 import {LEVELS} from "./jlpt-levels.js";
 
@@ -118,6 +118,11 @@ export function nearMisses(reading = "") {
 // base reading where the word splits cleanly (就しゅう, 任にん), the bare kanji
 // otherwise. The readings are an inventory row's fourth field, or `parts`
 // for N2 (n2-kanji-parts.json: "就任/しゅうにん" → "しゅう|にん").
+// Every card of a round pays when it is right and costs when it is wrong
+// (owner, 27 Nov: SCORE_ALL). The REVIEWED_ flags still say what a reviewer
+// has read; with SCORE_ALL off, unread content goes back to practice: no
+// points, the answer recorded and counted.
+const unscored = reviewed => reviewed || SCORE_ALL ? {} : {practice: true, record: true};
 export function gamePool({inventory, examples = new Map(), sets = [], sat = new Set(), level = "N2", parts = null, grammarBlocks = null}) {
   const other = level !== "N2", tag = other ? level + ":" : "";
   const split = new Map(inventory.words.map(([w, r, , p]) => [w + "/" + r, p || parts?.[w + "/" + r] || ""]));
@@ -240,7 +245,7 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
   const fit = pool.filter(q => !EXCLUDED[q.id] && (q.fixed ? new Set(q.fixed).size === 4 : new Set(q.wrong.filter(w => w !== q.answer)).size >= 3));
   if (!other) return fit;
   // item: what a round counts as one thing, where N2 cards use their target.
-  return fit.map(q => ({...q, level, item: level + ":" + q.target[1] + "/" + q.target[2], target: null, ...(REVIEWED_LEVELS.has(level) ? {} : {practice: true, record: true})}));
+  return fit.map(q => ({...q, level, item: level + ":" + q.target[1] + "/" + q.target[2], target: null, ...unscored(REVIEWED_LEVELS.has(level))}));
 }
 // ---- Word parts ----
 // A prefix or a suffix (前～ former, ～気味 slightly) is a building block: it
@@ -255,7 +260,7 @@ export const affixSide = text => /^[〜～]/.test(text) ? "suffix" : "prefix";
 function affixCards(affixes, sentenceOf) {
   const clean = affixes.filter(w => /^[〜～]?[^〜～\s(（)）]+[〜～]?$/.test(w.text) && /^[〜～]/.test(w.text) !== /[〜～]$/.test(w.text) && gloss(w.answer));
   const spellings = new Map(); for (const w of clean) spellings.set(w.text, (spellings.get(w.text) || 0) + 1);
-  const practice = REVIEWED_AFFIXES ? {} : {practice: true, record: true};
+  const practice = unscored(REVIEWED_AFFIXES);
   return clean.flatMap(w => {
     const ex = sentenceOf(w.target), sentence = ex ? plain(ex.ja) : "", part = w.text.replace(/[〜～]/g, ""), own = gloss(w.answer);
     if (!sentence || sentence.split(part).length !== 2) return [];
@@ -271,7 +276,7 @@ function affixCards(affixes, sentenceOf) {
 
 function addGrammarBlocks(pool, {blocks = {}, patterns = {}}) {
   const entries = Object.entries(blocks);
-  const practice = REVIEWED_GRAMMAR_BLOCKS ? {} : {practice: true, record: true};
+  const practice = unscored(REVIEWED_GRAMMAR_BLOCKS);
   const fair = (answer, options) => [...new Set(options)].filter(o => o && !sameSense(answer, o));
   const base = {target: null, dimension: null, seconds: SECONDS.grammar, ...practice};
 
@@ -349,7 +354,7 @@ function connectiveQuestion(source, text, site) {
   if (!prev || rest.length < 6) return [];
   const blocked = new Set(OVERLAP[job] || [job]);
   const wrong = Object.entries(CHOICE_FOR_JOB).filter(([j]) => !blocked.has(j)).map(([, w]) => w);
-  return [{id: "c:" + source + "@" + site.at, kind: "connective", practice: true, target: null, dimension: null, prompt: "（　）に入るのは？",
+  return [{id: "c:" + source + "@" + site.at, kind: "connective", ...(SCORE_ALL ? {} : {practice: true}), target: null, dimension: null, prompt: "（　）に入るのは？",
     sentence: prev + "（　）" + rest, needle: "（　）", answer: site.word, wrong, seconds: SECONDS.connective,
     solution: {word: site.word, meaning: glossOf(site.word) + " · " + JOBS[job], ja: prev + site.word + rest, source, job}}];
 }
