@@ -4,7 +4,7 @@ import {readFileSync} from "node:fs";
 import {payoutCap, sameSense, answerSpeech, runClock, RUN_CLOCK, DIFFICULTY, difficultyOf, pace, WAVE, HOOK, STRETCH, bossProgress, takeBoss, resting, runTable, BOSS_EVERY, EXAM_POINT, atBedtime, BEDTIME, FLOW, BONUS, flowStep, flowMix, flowSeconds, levelOf, bonusPoints, SECONDS, PAUSE, REVIEW_SECONDS, inSlump, nextRound, WARM_UP, gamePool, choicesFor, pickRound, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, nearMisses, gloss, today, lastDays, ranking, bossSet,
   ROUND_SIZE, DAILY_GOAL, RANKS, DEFAULT_RANK, REVIEW_SHARE, rankOf, setRank, rankLevels, hasBoss, levelOfCard,
   itemRecord, itemLevel, ITEM_LEVEL, levelCoverage, KNOWN_LEVEL, COVERED, isCovered, aheadLevel, EXAM_PASS, RANK_RULES, bossVerdict, applyBoss, verdictLine,
-  KANJI_KNOWN, KANJI_MIX, newWord, kanjiAfter, kanjiStates, kanjiCoverage, kanjiPick} from "../n2-game.js";
+  piecesNeedle, KANJI_KNOWN, KANJI_MIX, newWord, kanjiAfter, kanjiStates, kanjiCoverage, kanjiPick} from "../n2-game.js";
 const ITEM_GAP = ITEM_LEVEL.gapMs;
 import {FETCHED_LEVELS, levelFile} from "../jlpt-levels.js";
 import {REVIEWED_LEVELS} from "../n2-game-review.js";
@@ -1148,4 +1148,28 @@ test("a round is only called a recovery round when it is one, and it comes first
   assert.equal(warmUp, true);
   assert.ok(round.every(q => !q.focus), "no kanji-first picking in the recovery round");
   assert.ok(round.filter(q => !q.comeback && !st.seen[q.id]).length <= WARM_UP.mix.fresh, "at most one new card, the review places included");
+});
+
+// Owner's report, 27 Nov: in …にしろ…にしろ only the first にしろ was underlined.
+test("a pattern written in pieces is underlined in every piece", async () => {
+  const {exampleSegments} = await import("../n2-delayed.js");
+  assert.deepEqual(piecesNeedle("賛成にしろ反対にしろ、理由をはっきり言ってください。", "にしろ～にしろ"), ["にしろ", "にしろ"]);
+  assert.deepEqual(piecesNeedle("このスープは辛いことは辛いが、とてもおいしい。", "ことは〜が"), ["ことは", "が"]);
+  assert.equal(piecesNeedle("彼は行かざるを得ない。", "ざるを得ない"), null, "one piece: the usual underline");
+  assert.equal(piecesNeedle("出かけようとしているところに、電話がかかってきた。", "～ところに・～ところへ"), null, "alternatives, not pieces");
+  assert.equal(piecesNeedle("賛成にしろ、言ってください。", "にしろ～にしろ"), null, "a piece missing: fall back");
+  const pool = gamePool({inventory, examples}), marks = id => { const q = pool.find(q => q.id === id); return exampleSegments(q.sentence, [q.needle]).filter(x => x.mark).map(x => x.text); };
+  assert.deepEqual(marks("g:にしろ-にしろ"), ["にしろ", "にしろ"]);
+  assert.deepEqual(marks("g:やら-やら"), ["やら", "やら"]);
+  assert.deepEqual(marks("g:ては-ては"), ["ては", "ては"]);
+  assert.deepEqual(marks("g:ことは-が"), ["ことは", "が"]);
+  assert.deepEqual(marks("g:ないことには-ない"), ["ないことには", "ない"]);
+  assert.deepEqual(marks("g:にしても-にしても"), ["にしても", "にしても"], "the reviewed spans still decide where they exist");
+  // Every N2 pattern written with ～ between pieces marks at least two places.
+  for (const [key, name] of inventory.grammar) {
+    const pieces = name.replace(/[①-⑨]|（[^）]*）|\([^)]*\)/g, "").split(/[〜～…]+/).filter(x => x.trim());
+    const q = pool.find(q => q.id === "g:" + key);
+    if (pieces.length < 2 || name.includes("・") || !q) continue;
+    assert.ok(exampleSegments(q.sentence, [q.needle]).filter(x => x.mark).length >= 2 || key === "お-願う", key + ": " + q.sentence);
+  }
 });

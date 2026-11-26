@@ -195,7 +195,7 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
     const wrong = distinct(GLOSS_FIX["g:" + g.target[1]] || g.answer, [1, 2, 3, 5, 8, 13, 21, 34].map(d => grammar[(i + d * 17) % grammar.length]).filter(o => o !== g).map(o => o.answer));
     const gAnswer = GLOSS_FIX["g:" + g.target[1]] || g.answer;
     pool.push({id: "g:" + g.target[1], kind: "grammar", target: g.target, dimension: "grammar", prompt: g.prompt,
-      sentence: plain(ex.ja), needle: GRAMMAR_SPANS["g:" + g.target[1]] || surfaceNeedle(plain(ex.ja), g.prompt) || g.prompt.replace(/[〜～]/g, ""), answer: gAnswer, wrong: [...new Set(wrong)], seconds: SECONDS.grammar,
+      sentence: plain(ex.ja), needle: GRAMMAR_SPANS["g:" + g.target[1]] || piecesNeedle(plain(ex.ja), g.prompt) || surfaceNeedle(plain(ex.ja), g.prompt) || g.prompt.replace(/[〜～]/g, ""), answer: gAnswer, wrong: [...new Set(wrong)], seconds: SECONDS.grammar,
       solution: {word: g.prompt, meaning: gAnswer, ja: ex.ja, en: ex.en || ""}});
   }
   // Connectives (問題9): from reading passages of sets already sat. The
@@ -251,6 +251,17 @@ function connectiveQuestion(source, text, site) {
     solution: {word: site.word, meaning: glossOf(site.word) + " · " + JOBS[job], ja: prev + site.word + rest, source, job}}];
 }
 
+// A pattern written in pieces (にしろ～にしろ, ことは〜が, ないことには～ない) is
+// underlined in every piece: each is found in order after the one before
+// (owner's report, 27 Nov: only the first にしろ was underlined). null when
+// the name is one piece, or a piece is not in the sentence as written.
+export function piecesNeedle(sentence = "", name = "") {
+  const pieces = String(name).replace(/[①-⑨]|（[^）]*）|\([^)]*\)/g, "").split(/[〜～…]+/).map(x => x.trim()).filter(Boolean);
+  if (pieces.length < 2) return null;
+  let from = 0;
+  for (const piece of pieces) { const at = sentence.indexOf(piece, from); if (at < 0) return null; from = at + piece.length; }
+  return pieces;
+}
 // The form to underline, as it appears in the sentence (design fix 6): a
 // grammar name like 得る（える・うる） or ～ないことには, and a word in a conjugated
 // form (生ずる written 生じた), are found by their stem. "" when not found.
