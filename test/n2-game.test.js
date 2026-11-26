@@ -1196,3 +1196,16 @@ test("a finished run on Home links to its boss results", () => {
   assert.match(js, /const no = all\.findIndex\(x => x\.at === r\.at\) \+ 1, sitting = r\.exam && bossSitting\(r\);/, "only a run whose boss is finished");
   assert.match(src("../styles.css"), /\.n2-game a\.qr-rk:hover\{color:var\(--sumi\)\}/);
 });
+
+// Owner, 27 Nov: N2 comes first until 6 Dec. Passing the N2 boss must not move the player to a level with no papers.
+test("the rank waits when the next level has no papers on the device", () => {
+  const passed = applyBoss({}, {key: "r1", rank: "N2", total: 130, now: 5, levels: ["N5", "N4", "N3", "N2"]});
+  assert.equal(rankOf(passed), "N2");
+  assert.deepEqual([passed.bossLog[0].verdict, passed.bossLog[0].waits, passed.bossLog[0].to], ["up", "N1", undefined]);
+  assert.equal(verdictLine(passed.bossLog[0]), "Last boss 130 of 180: N2 passed: N1 opens when its exams exist");
+  const down = applyBoss(applyBoss({}, {key: "a", rank: "N2", total: 60, now: 1, levels: ["N3", "N2"]}), {key: "b", rank: "N2", total: 60, now: 2, levels: ["N3", "N2"]});
+  assert.equal(rankOf(down), "N3", "a level with papers is reachable");
+  assert.equal(rankOf(applyBoss({}, {key: "r1", rank: "N2", total: 130, now: 5})), "N1", "with every level's papers there, it moves");
+  const js = src("../n2-mock.js");
+  assert.match(js, /sectionsOk: exam\.sections\.every\(x => x\.ok\), levels: bossLevels\}\)/);
+});

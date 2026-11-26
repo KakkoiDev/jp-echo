@@ -680,7 +680,11 @@ export function bossVerdict({rank, total, sectionsOk = true}) {
 }
 // key: the boss sitting (its run's `at`), so a result is applied once.
 // A boss of a rank the player no longer holds is logged and moves nothing.
-export function applyBoss(state = {}, {key, rank = rankOf(state), total, sectionsOk = true, now = Date.now()}) {
+// levels: the levels whose boss can be sat on this device today. The rank
+// only moves to one of them; otherwise the verdict is kept (`waits`) and the
+// rank stays, so nobody lands on a level with no paper to climb back from or
+// forward on (N1 until its papers ship: owner, 27 Nov, N2 comes first).
+export function applyBoss(state = {}, {key, rank = rankOf(state), total, sectionsOk = true, now = Date.now(), levels = BOSS_LEVELS}) {
   const log = state.bossLog || [];
   const verdict = bossVerdict({rank, total, sectionsOk});
   if (!key || !verdict || log.some(e => e.key === key)) return state;
@@ -690,7 +694,7 @@ export function applyBoss(state = {}, {key, rank = rankOf(state), total, section
     let fails = verdict === "fail" ? 1 : 0;
     if (verdict === "fail") for (const e of [...log].reverse()) { if (e.rank !== rank || e.verdict !== "fail") break; fails++; }
     const to = verdict === "up" || verdict === "skip" ? aheadLevel(rank) : fails >= RANK_RULES.fails ? RANKS[RANKS.indexOf(rank) - 1] || null : null;
-    if (to && hasBoss(to)) { next = {...setRank(state, to, now), ...(verdict === "skip" ? {bossReady: true} : {})}; entry.to = to; }
+    if (to && hasBoss(to) && levels.includes(to)) { next = {...setRank(state, to, now), ...(verdict === "skip" ? {bossReady: true} : {})}; entry.to = to; }
     else if (to) entry.waits = to;
   }
   return {...next, bossLog: [...log, entry].slice(-200)};
