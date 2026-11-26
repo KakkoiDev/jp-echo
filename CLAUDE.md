@@ -351,7 +351,7 @@ Before considering the change complete:
   Its look is "Blitz on washi" (designer canvas, 26 Nov; fixes 1–12 built):
   Echo's paper, ink and seal, plain surfaces in the loop, a 14 px clock bar
   with tenths, a one-line head (back, ten pips, score and combo), choices in
-  the UI sans in the thumb zone, "I don't know · 0" and a quiet flag icon,
+  the UI sans in the thumb zone, "I don't know" (no "· 0": owner, 27 Nov) and a quiet flag icon,
   right in `--chip-learn-*` (indigo), bonus in the one new token `--gold`.
   v280 was measured against every board at 375 px (docs/QUICK-ROUND-BACKLOG.md
   lists what is built and what waits): the points float lives in the combo

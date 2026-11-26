@@ -107,7 +107,7 @@ test("the game is a view of the N2 page, saved per answer, linked from the hub a
   assert.match(mock, /state = rememberAnswer\(readGame\(\), \{q, outcome, points: paid\.points, fast: result\.fast, difficulty: difficulty\(\)\}\); writeGame\(state\);/);
   assert.match(mock, /"missed", new Date\(\), \{source: GAME_SOURCE/);
   assert.match(html, /href="\?view=game"><span class="library-tool-glyph" lang="ja" aria-hidden="true">速<\/span>/);
-  assert.match(html, /id="game-skip" type="button">I don’t know <span>· 0<\/span><\/button>/, "I don’t know · 0, a real move");
+  assert.match(html, /id="game-skip" type="button">I don’t know<\/button>/, "I don’t know, a real move; no \"· 0\" beside it (owner, 27 Nov: confusing)");
   assert.ok(manifest.shortcuts.some(s => s.url === "./n2-mock.html?view=game"));
   assert.match(sw, /"\.\/n2-game\.js"/);
   assert.doesNotMatch(src("../n2-game.js"), /localStorage|document\.|indexedDB/, "pure");
