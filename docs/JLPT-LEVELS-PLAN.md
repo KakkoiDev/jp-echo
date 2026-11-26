@@ -108,6 +108,34 @@ gets the grade of N0."
 - To decide: the promotion and N0 bars, whether a player can test out of a
   level at once, and whether the rank can fall.
 
+## Owner decisions, 26 Nov 2026 (Quick round across levels)
+
+Said while reviewing Quick round; they shape the content for every level.
+
+- **What the example sentences are for.** Each word and grammar point gets a
+  sentence chosen to teach the gist of the pattern and how its kanji are
+  read, so the learner can rebuild the meaning of a grammar point, and the
+  reading and meaning of a kanji compound, even one never met before. A
+  sentence is judged by whether it makes the pattern or the reading
+  inferable, not only by being correct and natural. New decks (N5 to N1) and
+  any rewrite of the N2 decks are written to this.
+- **Ranks.** The player moves up and down between JLPT levels; the level
+  sets the questions and the bosses. Lower levels keep coming back as review.
+  The demotion rule is still to be chosen.
+- **Mocks: real exams are the standard.** Authored and generated sets are
+  measured against real past papers, then audited by several AIs before they
+  count. That is the trust step until a native review exists.
+- **Supply.** Start with 10 to 20 validated sets per level; the boss reuses
+  the set sat longest ago before more are added. A hundred per level is the
+  direction, not the start.
+- **Delivery.** Sets beyond the first are fetched when needed and kept on
+  the device (like the large dictionary), never shipped in the precache:
+  a hundred per level is about 45 MB.
+- **Not on the fly.** A boss must not need a network or a provider key at
+  the moment it arrives; generation happens ahead of time.
+- **Timing.** Quick round is not tied to an exam date: it trains whenever.
+  The work itself still starts after 6 Dec 2026.
+
 ## Not changing
 
 - Pass probability is never shown; every score names its denominator.
