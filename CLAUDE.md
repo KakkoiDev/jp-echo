@@ -228,6 +228,19 @@ Before considering the change complete:
   (n2-forms.js: the real 問題 layout) and pass `tools/n2-validate-set.mjs`;
   they load as edition `SETS_EDITION`, so older attempts keep their papers.
   Revise a set → bump `SETS_EDITION`. Rebuild with `tools/n2-build-content.mjs`.
+- **Mock exams for the other levels are fetched, never precached.**
+  `jlpt-sets.js` holds each level's 問題 blueprint (`SET_LEVELS`; N3 so far),
+  how each listening 問題 is presented (`LISTENING`) and the loader; sets live
+  in `sets/<level>/<edition>/<id>.json` with `sets/<level>/index.json`, kept
+  by the worker in `jp-echo-sets` once served. An edition never changes
+  (`tools/build-level-sets.mjs`: whole batch or nothing, index last). A boss
+  is gated on `ready(level)`, the edition the device holds whole after
+  `keep(level)`, never on the index alone. `tools/validate-level-set.mjs`
+  passing means well-formed, not correct: a set counts only after the blind
+  solve, the review with keys, the comparison with the official workbook and
+  with the level's other sets (docs/JLPT-LEVEL-SETS.md). Official papers are
+  referenced, never copied. N2's `n2-sets/` stays as it is. Nothing sits
+  these papers yet: the exam screen and the boss are N2's.
 - **The N2 decks are offered, never imported.** `decks/n2-grammar.json` and
   `decks/n2-words.json` (one sentence per inventory item, ids
   `n2-grammar-<i>` / `n2-word-<i>`) reach the library only when the learner
