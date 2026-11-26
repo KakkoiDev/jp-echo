@@ -655,6 +655,19 @@ export function bossQueue({cards = [], state = {}, key = ""}) {
   }).map(q => ({...q, boss: key}));
 }
 
+// ---- A flag ----
+// A flag says the card itself looks wrong. It is not an answer, and the card
+// must not come straight back: flagged while it was waiting as a miss, it
+// used to return every round (崩す, flagged sixteen times in 25 minutes:
+// reports of 26 Nov). A flag takes the card out of the misses and rests it
+// FLAG_REST_MS, time for the report to be read; then it may be asked again.
+export const FLAG_REST_MS = 7 * 86400_000;
+export const flagRests = (state = {}, id, now = Date.now()) => now - (state.flags?.[id] || 0) < FLAG_REST_MS;
+export function flagCard(state = {}, id, now = Date.now()) {
+  const flags = Object.fromEntries(Object.entries({...(state.flags || {}), [id]: now}).filter(([, at]) => now - at < FLAG_REST_MS));
+  return {...state, seen: {...(state.seen || {}), [id]: now}, comeback: (state.comeback || []).filter(x => x !== id), flags};
+}
+
 // The boss review: every wrong or unsure answer of one sitting as a card that
 // is read, not answered: the question, the right choice, the one picked, the
 // why, and for a reading or listening question its deciding lines. It runs
@@ -695,6 +708,9 @@ export function inSlump(state = {}) {
 // kanji: {order, examples} picks the rank's places by kanji (kanjiPick)
 // instead of by card: the way of every level whose cards are word cards only.
 export function nextRound({pool, review = [], kanji = null, grammarCards = null, boss = [], recall = [], state = {}, difficulty = "normal", random = Math.random, now = Date.now()}) {
+  // A flagged card rests (flagCard): it is in no round until the rest is over.
+  if (Object.keys(state.flags || {}).length) { const live = list => list && list.filter(q => !flagRests(state, q.id, now));
+    pool = live(pool); review = live(review); boss = live(boss); grammarCards = live(grammarCards); if (kanji?.examples) kanji = {...kanji, examples: live(kanji.examples)}; }
   const slump = inSlump(state), beat = pace(state, now);
   const level = Math.min(1, Math.max(0, levelOf(state) + beat.offset + (DIFFICULTY[difficulty] || DIFFICULTY.normal).offset));
   const share = review.length && pool.length ? REVIEW_SHARE : 0, memory = {recall, seen: state.seen || {}, wins: state.wins || {}, lv: state.lv || {}, random, now};

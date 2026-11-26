@@ -221,3 +221,24 @@ test("prefixes and suffixes have a card: the part underlined in a sentence, its 
   assert.deepEqual(bossCards({set, missed: [q3], pool}).map(q => q.id), ["a:～気味"]);
   assert.ok(src("../n2-mock.js").includes('"connective", "meaning", "affix"].includes(q.kind)'), "shown as a sentence card");
 });
+
+test("a flagged card leaves the misses and rests a week: it cannot come back round after round", async () => {
+  const {flagCard, flagRests, FLAG_REST_MS, heardGap} = await import("../n2-game.js");
+  const day = 86400_000, now = 100 * day, id = "l:崩す";
+  const st = flagCard({comeback: ["m:x", id], seen: {}}, id, now);
+  assert.deepEqual(st.comeback, ["m:x"], "a flag takes the card out of the cards asked again"); assert.equal(st.seen[id], now); assert.equal(st.flags[id], now);
+  assert.equal(FLAG_REST_MS, 7 * day); assert.equal(flagRests(st, id, now + 6 * day), true); assert.equal(flagRests(st, id, now + 7 * day), false); assert.equal(flagRests({}, id, now), false);
+  // No round holds it while it rests, whichever list it would come from; afterwards it may be asked again.
+  const card = pool.find(q => q.id === id), others = pool.filter(q => q.kind === "listen" && q.id !== id).slice(0, 30);
+  for (let n = 1; n <= 20; n++) assert.ok(!nextRound({pool: [card, ...others], boss: [{...card, boss: "a1"}], review: [card], state: {...st, comeback: [id]}, random: seeded(n), now: now + day}).round.some(q => q.id === id));
+  assert.ok(nextRound({pool: [card, ...others.slice(0, 9)], state: {...st, comeback: [id]}, random: seeded(1), now: now + 8 * day}).round.some(q => q.id === id));
+  // Old flags are dropped when a new one is made, and both devices' flags are kept.
+  assert.deepEqual(Object.keys(flagCard(st, "m:y", now + 8 * day).flags), ["m:y"]);
+  assert.deepEqual(mergeGame({updatedAt: "1", flags: {a: 5, b: 1}}, {updatedAt: "2", flags: {b: 9}}).flags, {a: 5, b: 9});
+  const js = src("../n2-mock.js");
+  assert.ok(js.includes("const q = current; writeGame(flagCard(readGame(), q.id));")); assert.ok(js.includes("if (!paperReview) writeGame(flagCard(readGame(), m.q.id));"));
+  // The cards those flags were about: an audio card whose sentence writes the word in another form now keeps its sentence.
+  const listen = pool.filter(q => q.kind === "listen");
+  for (const w of ["崩す", "組み立てる", "通ずる", "坊っちゃん"]) { const q = listen.find(c => c.prompt === w); assert.ok(q && heardGap(q.solution.ja, q.prompt), w); }
+  assert.equal(listen.filter(q => q.solution.ja && !heardGap(q.solution.ja, q.prompt)).length, 0, "every audio card with a sentence shows it");
+});

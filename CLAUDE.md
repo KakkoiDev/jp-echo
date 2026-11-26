@@ -538,6 +538,15 @@ Before considering the change complete:
   reviewer has read, and decide again only if `SCORE_ALL` is set to false; the
   unpaid path (`practice`, `record`) is kept for that. A practice card never
   writes recall evidence (`recallsMiss`).
+- **A flagged card rests (v306).** `flagCard` (n2-game.js) takes the card out
+  of the misses and keeps it out of every round for `FLAG_REST_MS` (a week;
+  `flags` in the game state, synced by `mergeGame`): flagged while waiting as
+  a miss, it used to come back every round. Flags do reach the gist
+  (`node tools/reports.mjs`) once the device has synced.
+- **Scored content no reviewer has read** is gathered for a reviewer by
+  `tools/scored-review/make-review.mjs` (word parts, connectives, the open
+  grammar findings, the deciding lines, a sample of each other level);
+  `docs/SCORED-CONTENT-REVIEW-HANDOFF.md` is the brief.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 
