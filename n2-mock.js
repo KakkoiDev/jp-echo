@@ -1524,14 +1524,11 @@ async function game() {
       ({round, index, score, streak, bestCombo, marks, rights, flagged, practiced, roundLevel, warmUp, beat, misses, ups} = kept);
       mode("play"); ask(); return;
     }
-    // No round asks a paper's own question again (`exams: false`; owner, 27 Nov, flags on e:n2-set-2#33 and #20):
-    // seen once on the paper, a second time it is known by sight. What it tested comes back as a word or pattern
-    // card (bossCards), and the question itself is read in the boss review.
     // Listen cards leave the mix when nothing can be heard: the sound is off, the
     // phone has no Japanese voice, or the voice failed twice this session.
     const playable = hears() ? pool : pool.filter(q => q.kind !== "listen");
     const review = hears() ? lower : lower.filter(q => q.kind !== "listen");
-    const next = nextRound({pool: playable, review, kanji: kanjiFirst && {...kanjiFirst, examples: hears() ? kanjiFirst.examples : kanjiFirst.examples.filter(q => q.kind !== "listen")}, recall: data.recall, state, difficulty: difficulty(), exams: false, grammarCards: pool === n2Pool && grammarCards.length ? grammarCards : null,
+    const next = nextRound({pool: playable, review, kanji: kanjiFirst && {...kanjiFirst, examples: hears() ? kanjiFirst.examples : kanjiFirst.examples.filter(q => q.kind !== "listen")}, recall: data.recall, state, difficulty: difficulty(), grammarCards: pool === n2Pool && grammarCards.length ? grammarCards : null,
       boss: pool === n2Pool ? bossQueue({cards: bossAll, state, key: lastBoss?.id || ""}).filter(q => hears() || q.kind !== "listen") : []});
     round = next.round; roundLevel = next.level; warmUp = next.warmUp; beat = next.beat || null; rights = 0; flagged = 0; practiced = 0; bestCombo = 0;
     index = 0; score = 0; streak = 0; misses = []; marks = []; ups = [];
@@ -1599,6 +1596,9 @@ async function game() {
     prompt.className = "qr-big" + (q.kind === "exam" ? " exam" : q.prompt.length > 6 && q.kind !== "definition" ? " mid" : "");
     // An exam blank is drawn as a ruled gap, as on the paper (board 3a).
     if (q.kind === "exam" && /（\s*）/.test(q.prompt)) prompt.replaceChildren(...q.prompt.split(/（\s*）/).flatMap((part, n) => n ? [el("span", {class: "qr-blank"}), part] : [part]));
+    // A paper marks the word it asks about as 【word】. Shown raw, the brackets read as a furigana reading left in the
+    // text (owner's report, 27 Nov): the word is underlined, as on the paper.
+    else if (q.kind === "exam" && /【[^】]*】/.test(q.prompt)) prompt.replaceChildren(...q.prompt.split(/(【[^】]*】)/).filter(Boolean).map(part => /^【/.test(part) ? el("u", {class: "n2-mark", text: part.slice(1, -1)}) : part));
     // A listen card sits in its sentence, the heard word left as a gap: many
     // words sound alike, and the sentence says which one (report 7bd670be).
     // A word heard in its dictionary form may be written in another (涼む, 涼んでいた): the gap is the part that is there.

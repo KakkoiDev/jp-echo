@@ -2382,6 +2382,8 @@ body[data-view=game] .n2-game{position:fixed;inset:0;box-sizing:border-box;width
 .qr-big{font-family:var(--display);font-weight:700;font-size:44px;line-height:1.2;margin:16px 0 6px;text-align:center;overflow-wrap:anywhere}
 .qr-big.mid{font-size:30px}.qr-big:lang(en){font-family:var(--ui);font-weight:700;font-size:24px;line-height:1.3;margin:18px 0 6px;overflow-wrap:break-word}
 .qr-big.exam{font-size:19px;line-height:1.75;text-align:left;font-weight:400;margin:14px 0 0}
+/* The word a paper asks about: underlined in seal, as the sentence cards underline theirs. */
+.qr-big.exam u{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:7px;text-decoration-color:var(--seal)}
 .qr-big .qr-blank{display:inline-block;min-width:72px;border-bottom:2px solid var(--seal);margin:0 4px;line-height:1.2}
 .qr-big[hidden]{display:none}
 .qr-sent{font-family:var(--display);font-size:21px;line-height:1.75;margin:14px 0 0;text-align:center;line-break:strict}

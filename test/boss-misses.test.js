@@ -389,15 +389,22 @@ test("the word parts the list lacked are in it, each with a sentence and a card"
   
 });
 
-test("no round asks a paper's own question again", () => {
+test("a round may still ask a sat paper's short question; the picker can leave them out", () => {
+  // Taken out for one build on a wrong reading of two flags (they were about the brackets), and put back.
   const js = src("../n2-mock.js");
-  assert.ok(js.includes("difficulty: difficulty(), exams: false, grammarCards:"));
+  assert.ok(!js.includes("exams: false"));
   const sat = gamePool({inventory, examples, sets: [set], sat: new Set([set.id])}), exams = sat.filter(q => q.kind === "exam");
   assert.ok(exams.length > 30);
-  for (let n = 1; n <= 30; n++) assert.ok(!nextRound({pool: sat, state: {comeback: [exams[0].id]}, random: seeded(n), exams: false}).round.some(q => q.kind === "exam"));
-  assert.ok([1, 2, 3, 4, 5, 6].some(n => nextRound({pool: sat, state: {}, random: seeded(n)}).round.some(q => q.kind === "exam")), "the picker itself still can");
-  // The cards still exist (the audit lists them, a round in progress may hold one); what a paper tested comes back another way.
-  assert.ok(pool.some(q => q.kind === "exam"));
-  const q = set.questions.findIndex(x => x.target?.[1] === "勝手");
-  if (q >= 0) assert.ok(bossCards({set, missed: [q], pool}).every(c => c.kind !== "exam"));
+  assert.ok([1, 2, 3, 4, 5, 6].some(n => nextRound({pool: sat, state: {}, random: seeded(n)}).round.some(q => q.kind === "exam")));
+  for (let n = 1; n <= 10; n++) assert.ok(!nextRound({pool: sat, state: {comeback: [exams[0].id]}, random: seeded(n), exams: false}).round.some(q => q.kind === "exam"));
+});
+
+test("a paper's 【word】 mark is never shown raw: it is an underline, not a reading left in the text", () => {
+  const js = src("../n2-mock.js");
+  assert.ok(js.includes('else if (q.kind === "exam" && /【[^】]*】/.test(q.prompt)) prompt.replaceChildren(...q.prompt.split(/(【[^】]*】)/).filter(Boolean).map(part => /^【/.test(part) ? el("u", {class: "n2-mark", text: part.slice(1, -1)}) : part));'));
+  // The cards concerned: every exam card whose question marks a word (問題1, 2, 5).
+  const marked = pool.filter(q => q.kind === "exam" && /【[^】]*】/.test(q.prompt));
+  assert.ok(marked.length >= 10); assert.ok(marked.some(q => q.id === "e:n2-set-2#20"), "the card that was flagged");
+  // No other kind of card carries a bracket in what it shows.
+  for (const q of pool.filter(q => q.kind !== "exam")) for (const f of [q.prompt, q.sentence, q.answer, ...(q.wrong || [])]) assert.ok(!/[【】]/.test(String(f || "")), q.id);
 });

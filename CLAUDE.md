@@ -589,12 +589,13 @@ Before considering the change complete:
   sentence (`n2-word-<i>`) written for Echo. They are N2 recall items like
   any other and have word-part cards. New entries are appended, never
   inserted: the deck ids are indexes. Unreviewed.
-- **No round asks a paper's own question (v310).** The exam cards (`e:`) are
-  still built (audit, a round in progress) but `start()` leaves them out of
-  every round: the owner flagged them the day same-question cards left the
-  boss queue. This replaces "short exam questions only from sets already
-  sat" above. 当てはめる is read あてはめる (は, not the particle): the voice
-  is right.
+- **A paper's 【word】 mark is an underline, never shown raw (v310).** An
+  exam card in a round showed 人の自転車を【勝手に】使って… with its
+  brackets, which reads as a furigana reading left in the text (owner's
+  flags, 27 Nov). `ask()` underlines it, as the boss review (`paperText`)
+  and the exam screen (`marked`) do. Exam cards stay in rounds;
+  `nextRound({exams: false})` can leave them out. 当てはめる is read
+  あてはめる (は, not the particle): the voice is right.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 
