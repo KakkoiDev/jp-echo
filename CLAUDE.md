@@ -646,6 +646,32 @@ Before considering the change complete:
   All written by the maintainer agent, unreviewed;
   `docs/PIECES-AUDIT-HANDOFF.md` and `tools/scored-review/make-pieces.mjs`
   hand the search for more to an auditor.
+- **Authored cards (owner's backlog run, 27 Nov, v316).** Three kinds whose
+  content is written for them, each in a precached file that holds only what
+  passed a blind test: `n2-ordering.json` (kind `order`, 問題8: four tiles,
+  the one on ★, always the third slot; kept where a second reader rebuilt
+  the same order and found no other), `n2-pairs.json` (kind `pair`: two short
+  clauses and a gap; kept where a reader with all 35 connectives found none
+  of another job that fits; wrong choices by `OVERLAP`), `n2-paraphrase.json`
+  (kind `para`: the sentence that says the same). `extraCards` (n2-game.js)
+  builds them from `gamePool({extras})`; no English on the card. Writers'
+  drafts and the checker are in `tools/content/`. A blind test must draw the
+  position of the right answer at random: one run with a predictable
+  position was answered by pattern and thrown away.
+- **Word pieces from the audit (v316).** `n2-word-pieces.json`: 614
+  dissections of N2 words (引き + 出す, 以 + 後) from an outside audit, each
+  kept after a blind solve; `gamePool({extras: {pieces}})` puts them on the
+  word's cards as `q.pieces`, with `WORD_PIECES` taking precedence. The
+  audit's 79 fixes are applied (`tools/scored-review/reviews/2026-11-27-pieces-audit*.json`):
+  ten of the maintainer's splits were retired as one piece.
+- **The papers' sentences have English (v316).** `n2-sets/en.json`: 798
+  translations of the vocabulary and grammar questions (answer in place),
+  shown under the sentence in a paper question's review. Unreviewed.
+- **A paper revised on its own has its own edition.** `SET_EDITIONS`
+  (n2-forms.js) and `editionOf`: sets 4, 5, 8, 9, 10, 14 and 20 are r4 after
+  eight questions with a second natural answer were fixed; the others keep
+  `SETS_EDITION`, so their sittings stay attached to their review lines.
+  This replaces "Revise a set → bump `SETS_EDITION`" above.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

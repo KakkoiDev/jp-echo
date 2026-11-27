@@ -174,6 +174,16 @@ Open:
 
 ## Toward N2 faster (owner's list, 27 Nov 2026)
 
+Built in v316 (27 Nov, the owner's "do the whole backlog" run): sentence
+ordering (119 items), clause pairs for connectives (155), the papers' English
+(798), 614 audited word pieces, the eight paper questions fixed with an
+edition per paper; paraphrase cards when their blind test is done. All
+unreviewed by a person, scored, for the designer to look at (the ★ slot, the
+pair card). **Not built in that run, still open:** kanji-first picking for N2
+rounds (needs the owner's decision), a reading sprint from Home, section
+scores on Home, a reason on a flag, authored wrong choices for the gap cards,
+relabelling six list entries, and everything under "After the exam".
+
 Built in v311: the mix that follows the last boss, grammar and word parts
 with a gap (both for the designer to look at: the English line under the
 sentence, `.qr-en`, is new). Still to build, in the order agreed:
