@@ -2542,6 +2542,10 @@ body[data-view=game] .n2-game{position:fixed;inset:0;box-sizing:border-box;width
 .qr-chip[data-tone=practice]{background:transparent;border:1.5px dashed var(--ink-muted);color:var(--ink-muted)}
 .qr-pips i.pr{background:transparent;box-shadow:inset 0 0 0 1.5px var(--ink-muted)}
 .qr-float.practice{color:var(--ink-muted);font-weight:700}
+/* The reading sprint: the passage scrolls inside the card, its question under it. */
+.qr-card[data-kind=sprint] .qr-sent{max-height:42vh;overflow:auto;font-size:16px;line-height:1.75}.qr-card[data-kind=sprint] .qr-say{display:none}
+@media(max-height:760px){.qr-card[data-kind=sprint] .qr-sent{max-height:25vh;font-size:15px;line-height:1.65}}
+.qr-sent .qr-ask{display:block;margin-top:10px;padding-top:8px;border-top:1px solid var(--hairline);font-family:var(--ui);font-size:14px;line-height:1.5;font-weight:700;color:var(--sumi)}
 /* Round end: one tap to say why a card was flagged. */
 .qr-flagwhy{flex-wrap:wrap;gap:6px}.qr-flagwhy .qr-flagword{font-family:var(--display);font-weight:700}.qr-flagchips{display:flex;flex-wrap:wrap;gap:6px;width:100%}.qr-flagchips .qr-chip{border:1px solid var(--hairline);background:var(--panel);min-height:32px;padding:0 12px}
 /* Sentence order: the ★ slot. */

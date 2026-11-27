@@ -9,7 +9,7 @@ import {recognitionFactory} from "./speech.js";
 import {speakOnce,speakAndWait,japaneseVoices,RadioPlayer,NoiseBed} from "./speech.js";
 import {RADIO_DEFAULTS,RADIO_PHASE_COPY,clockAt,radioPhase,radioPlan,radioSteps} from "./radio.js";
 import {readNights, nightComparison, comparisonLine, eveningRecall, EVENING_SOURCE, nightPlan, nightRecord, keepNight, NIGHT_KEY} from "./n2-night.js";
-import {kanjiOrderOf, skillWeights, kindWeights, flagCard, endRest, bossCards, bossQueue, bossReview, partRows, cutUnderline, provedBy, PROVED_MS, heardGap, grammarBlockCard, grammarCoverage, kanjiCoverage, levelCoverage, isCovered, aheadLevel, applyBoss, verdictLine, rankOf, setRank, rankLevels, hasBoss, RANKS, inSlump, itemLevel, levelAfter, ITEM_LEVEL, gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, patternVoice, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
+import {SPRINT, sprintCards, kanjiOrderOf, skillWeights, kindWeights, flagCard, endRest, bossCards, bossQueue, bossReview, partRows, cutUnderline, provedBy, PROVED_MS, heardGap, grammarBlockCard, grammarCoverage, kanjiCoverage, levelCoverage, isCovered, aheadLevel, applyBoss, verdictLine, rankOf, setRank, rankLevels, hasBoss, RANKS, inSlump, itemLevel, levelAfter, ITEM_LEVEL, gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, patternVoice, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
 import {createLevels} from "./jlpt-levels.js";
 import {createSets, levelRows, SET_LEVELS, setLevel, heldOut} from "./jlpt-sets.js";
 import {spokenWord,radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
@@ -1600,7 +1600,7 @@ async function game() {
     stretchStrip();
     // Card layout per kind (board 3a): sentence kinds show the sentence alone;
     // word kinds the big word; listen a round play button; exam its question.
-    const listen = q.kind === "listen", sentenceKind = !!q.sentence && (["reading", "homophone", "grammar", "connective", "meaning", "affix"].includes(q.kind) || grammarBlockCard(q) || gapCard(q) || ["para", "pair", "order"].includes(q.kind));
+    const listen = q.kind === "listen", sentenceKind = !!q.sentence && (["reading", "homophone", "grammar", "connective", "meaning", "affix"].includes(q.kind) || grammarBlockCard(q) || gapCard(q) || ["para", "pair", "order", "sprint"].includes(q.kind));
     const prompt = $("game-prompt");
     prompt.hidden = listen || sentenceKind;
     prompt.textContent = q.prompt;
@@ -1618,7 +1618,7 @@ async function game() {
     const heard = gap ? exampleSegments(q.solution.ja, [gap]) : [], inContext = heard.some(s => s.mark);
     q.gap = inContext ? heard.filter(s => s.mark).map(s => s.text).join("") : "";
     $("game-sentence").hidden = !sentenceKind && !inContext; $("game-sentence").classList.toggle("heard", inContext);
-    $("game-sentence").classList.toggle("passage", q.kind === "connective");
+    $("game-sentence").classList.toggle("passage", q.kind === "connective" || q.kind === "sprint");
     if (q.kind === "connective") { const [a, b] = q.sentence.split("（　）"); $("game-sentence").replaceChildren(a, el("span", {class: "qr-blank", id: "game-blank"}), b || ""); }
     // Board 13: on a build card the underline is cut into one segment per part.
     else if (sentenceKind && q.kind === "build" && cutUnderline(q.sentence, q.needle, q.parts)) $("game-sentence").replaceChildren(...cutUnderline(q.sentence, q.needle, q.parts).map(s => s.part ? el("u", {class: "n2-mark" + (s.cut ? " qr-cut" : ""), text: s.text}) : s.text));
@@ -1630,6 +1630,7 @@ async function game() {
     if (q.kind === "pair") { const [a, b] = q.sentence.split("（　）"); $("game-sentence").replaceChildren(a, el("span", {class: "qr-blank", id: "game-blank"}), b || ""); }
     if (q.kind === "order") $("game-sentence").replaceChildren(q.lead, ...[0, 1, 2, 3].flatMap(i => [el("span", {class: "qr-blank" + (i === 2 ? " star" : ""), ...(i === 2 ? {id: "game-blank"} : {}), text: i === 2 ? "★" : ""}), " "]), q.tail);
     if (q.kind === "para") $("game-sentence").replaceChildren(q.sentence);
+    if (q.kind === "sprint") $("game-sentence").replaceChildren(q.sentence, el("span", {class: "qr-ask", text: q.prompt}));
     const parts = $("game-grammar-parts");
     parts.hidden = !(q.kind === "build" || (q.kind === "link" && q.parts?.length));
     parts.replaceChildren(...partList(q.parts)); parts.dataset.rows = String(partRows(q.parts).length);
@@ -1836,7 +1837,7 @@ async function game() {
     $("game-next").textContent = n === misses.length - 1 ? (paperReview ? "Done" : "Round end") : "Next";
     // A boss review card (bossReview): the question, the right choice, the pick; then the deciding lines and the why.
     const ask = $("game-review-ask"); ask.hidden = !q.ask; ask.replaceChildren(...(q.ask ? paperText(q.ask, q.answer) : []));
-    $("game-review-word").classList.toggle("line", !q.paperLine && word.length > 10 && (!!paperReview || q.kind === "para"));
+    $("game-review-word").classList.toggle("line", !q.paperLine && word.length > 10 && (!!paperReview || q.kind === "para" || q.kind === "sprint"));
     if (paperReview) $("game-sub-right").replaceChildren(el("a", {class: "qr-chip", href: paperReview.href, text: "Full paper"}));
     $("game-review-sentence").hidden = !sol.ja && !q.paperLine;
     if (q.paperLine) { $("game-review-ja").replaceChildren(...paperText(q.paperLine, q.answer)); $("game-review-en").textContent = sol.en || ""; }
@@ -1984,6 +1985,20 @@ async function game() {
   $("game-home-play").onclick = start;
   $("game-home-play2").onclick = start;
   $("game-home-play3").onclick = start;
+  // The reading sprint: three short passages from papers not sat, 90 seconds each, through the round's own screens.
+  $("game-sprint").onclick = async () => {
+    sfx.unlock();
+    const unsat = bookIds.filter(realistic).filter(id => !sat.has(id) && !HELD_OUT.includes(id));
+    const loaded = (await Promise.all(unsat.map(id => json(setFile(id)).catch(() => null)))).filter(Boolean);
+    const cards = sprintCards({sets: loaded, sat, keys: bossKeys, seen: readGame().seen || {}}).slice(0, SPRINT.size);
+    if (!cards.length) { toast("No unsat paper left for a sprint", "reading"); return; }
+    clearRound(); state = readGame();
+    $("game-back").href = "?view=game"; $("game-back").setAttribute("aria-label", "Back to home"); $("game-back").dataset.end = "false";
+    $("game-back").onclick = e => { e.preventDefault(); clearTimeout(timer); home(); };
+    round = cards; roundLevel = levelOf(state); warmUp = false; beat = null; rights = 0; flagged = 0; practiced = 0; bestCombo = 0;
+    index = 0; score = 0; streak = 0; misses = []; marks = []; ups = []; roundFlags = [];
+    mode("play"); ask();
+  };
   $("game-home-btn").onclick = home;
   document.addEventListener("keydown", e => {
     if ($("game").hidden || e.target.closest("input,textarea,select") || e.metaKey || e.ctrlKey) return;

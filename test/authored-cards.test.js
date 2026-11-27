@@ -161,3 +161,25 @@ test("a grammar gap card takes the wrong choices written for its sentence, where
   assert.ok(gamePool({inventory, examples}).filter(q => q.kind === "gap").every(q => !q.fixedWrong));
   assert.ok(src("../sw.js").includes('"./n2-gap-wrong.json"'));
 });
+
+test("the reading sprint: short passages from papers not sat, ninety seconds, never a held-out paper", async () => {
+  const {sprintCards, SPRINT} = await import("../n2-game.js");
+  const {HELD_OUT} = await import("../n2-comprehension.js");
+  const ids = Object.keys(read("../n2-sets/index.json")), sets = ids.map(id => read("../n2-sets/" + id + ".json")), keys = read("../n2-sets/keys.json").keys;
+  const cards = sprintCards({sets, sat: new Set(["n2-set-2"]), keys, random: seeded(2)});
+  assert.deepEqual(SPRINT, {size: 3, seconds: 90, mondai: [10]});
+  assert.ok(cards.length > 60);
+  for (const q of cards) {
+    const [set, i] = q.id.slice(3).split("#"), src = read("../n2-sets/" + set + ".json").questions[i];
+    assert.ok(set !== "n2-set-2" && !HELD_OUT.includes(set), q.id); assert.equal(src.mondai, 10); assert.equal(q.seconds, 90);
+    assert.deepEqual(q.fixed, src.choices); assert.equal(q.answer, src.choices[src.key - 1]); assert.equal(q.sentence, src.context.replace(/【[^】]*】/g, ""));
+    if (keys[set + "#" + i]) assert.equal(q.solution.ja, keys[set + "#" + i].lines.join(""), "its deciding lines in the review");
+  }
+  // Least recently seen first.
+  const first = cards[0].id, later = sprintCards({sets, sat: new Set(["n2-set-2"]), keys, seen: {[first]: 5}, random: seeded(2)});
+  assert.notEqual(later[0].id, first);
+  const js = src("../n2-mock.js"), html = src("../n2-mock.html");
+  assert.ok(html.includes('id="game-sprint"') && js.includes('$("game-sprint").onclick = async () => {'));
+  assert.ok(js.includes("const cards = sprintCards({sets: loaded, sat, keys: bossKeys, seen: readGame().seen || {}}).slice(0, SPRINT.size);"));
+  assert.equal(KIND_LABEL.sprint, "Reading sprint"); assert.equal(KIND_SKILL.sprint, "reading");
+});

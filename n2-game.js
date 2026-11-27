@@ -38,7 +38,7 @@ export const SECONDS = Object.freeze({reading: 3, meaning: 3, meaningInSentence:
 // The pause after an answer before the next question, in milliseconds.
 export const PAUSE = Object.freeze({right: 250, miss: 800});
 export const KIND_LABEL = Object.freeze({reading: "Reading", meaning: "Meaning", definition: "Which word", listen: "Listen", connective: "Connective · 問題9", homophone: "Which kanji", grammar: "Grammar", block: "Grammar piece", build: "Grammar parts", infer: "New grammar", exam: "Exam question", affix: "Word part", link: "Connective", gap: "Grammar · fill the gap", partgap: "Word part · fill the gap",
-  para: "Same meaning", pair: "Connective · fill the gap", order: "Sentence order · ★"});
+  para: "Same meaning", pair: "Connective · fill the gap", order: "Sentence order · ★", sprint: "Reading sprint"});
 const EXAM_MONDAI = new Set([1, 2, 3, 4, 5, 7]), WRITTEN = new Set(["Vocabulary", "Grammar"]);
 const KANJI = /[一-鿿々]/g;
 const plain = s => String(s || "").replace(/【[^】]*】/g, "");
@@ -447,6 +447,27 @@ function extraCards({paraphrase = [], pairs = [], ordering = []}) {
   return out;
 }
 
+// ---- The reading sprint ----
+// One short passage, its question, 90 seconds (owner's backlog): the game's one long card, started from Home as a round
+// of SPRINT.size, from 問題10 (short passages) of papers not yet sat and never HELD_OUT. The review shows the deciding
+// lines (n2-sets/keys.json) where they exist.
+export const SPRINT = Object.freeze({size: 3, seconds: 90, mondai: [10]});
+export function sprintCards({sets = [], sat = new Set(), keys = {}, seen = {}, random = Math.random} = {}) {
+  const out = [];
+  for (const set of sets) {
+    if (!set?.id || sat.has(set.id) || HELD_OUT.includes(set.id)) continue;
+    for (const [i, q] of (set.questions || []).entries()) {
+      if (q.skill !== "Reading" || !SPRINT.mondai.includes(q.mondai) || !q.context || !Array.isArray(q.choices) || q.choices.length !== 4 || !q.key) continue;
+      const source = set.id + "#" + i, key = keys[source];
+      out.push({id: "sp:" + source, kind: "sprint", target: null, dimension: null, prompt: q.prompt, sentence: plain(q.context), needle: "",
+        answer: q.choices[q.key - 1], wrong: q.choices.filter((_, j) => j !== q.key - 1), fixed: q.choices, seconds: SPRINT.seconds,
+        solution: {word: q.choices[q.key - 1], meaning: "", ja: key ? key.lines.join("") : "", en: key?.en || "", why: q.why || "", source}});
+    }
+  }
+  // Least recently seen first, then at random.
+  return shuffle(out, random).sort((a, b) => (seen[a.id] || 0) - (seen[b.id] || 0));
+}
+
 // ---- The connective on its own ----
 // One word, large, nothing to read: とはいえ → "that said, even so". At N2 a
 // connective says where the writer's point is, and it has to be known on
@@ -808,7 +829,7 @@ const SKILL_NAMES = {Vocabulary: 0, Grammar: 1, Reading: 2, Listening: 3};
 // What each kind of card trains. A connective is a reading tool: it says where the writer's point is.
 export const KIND_SKILL = Object.freeze({reading: "vocabulary", meaning: "vocabulary", definition: "vocabulary", homophone: "vocabulary", affix: "vocabulary", partgap: "vocabulary",
   grammar: "grammar", gap: "grammar", block: "grammar", build: "grammar", infer: "grammar", order: "grammar",
-  link: "reading", connective: "reading", para: "reading", pair: "reading", listen: "listening"});
+  link: "reading", connective: "reading", para: "reading", sprint: "reading", pair: "reading", listen: "listening"});
 export function skillWeights({paper, attempt} = {}) {
   const tally = SKILLS_OF_PAPER.map(() => [0, 0]);
   (paper?.questions || []).forEach((q, i) => { const s = typeof q.skill === "number" ? q.skill : SKILL_NAMES[q.skill]; if (!(s in tally) || !q.key) return; tally[s][1]++; if (attempt?.answers?.[i] !== q.key) tally[s][0]++; });
