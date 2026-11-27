@@ -172,6 +172,25 @@ Open:
   from, which is how the paper asks it.
 - N5, N4, N3 and N1 lists hold no parts (they come from JMdict's word lists).
 
+## Toward N2 faster (owner's list, 27 Nov 2026)
+
+Built in v311: the mix that follows the last boss, grammar and word parts
+with a gap (both for the designer to look at: the English line under the
+sentence, `.qr-en`, is new). Still to build, in the order agreed:
+- **Paraphrase cards** (owner: "useful"). One N2 sentence, four sentences to
+  pick the one that says the same; about 8 seconds. Most reading questions
+  turn on this. New content: a few hundred items, drafted, blind-solved,
+  reviewed.
+- **Short clause pairs for connectives** (see Connectives below).
+- **Sentence ordering as a card (問題8)**: four pieces, the one at ★.
+- **Kanji-first picking for N2 rounds** (never decided).
+- **A reading sprint from Home**: one short passage, one question, 90 s.
+- Deciding lines for the other seventeen papers; section scores on Home; a
+  reason on a flag in one more tap.
+- The gap cards' wrong choices are forms from other sentences: some are
+  plainly ungrammatical in the gap, so a card can be solved by form alone.
+  Authored distractors would fix it.
+
 ## Connectives (v307, 27 Nov 2026)
 
 Built: the connective on its own (`linkCards`, kind `link`, id `k:<word>`):

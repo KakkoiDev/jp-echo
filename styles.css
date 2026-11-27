@@ -2542,6 +2542,8 @@ body[data-view=game] .n2-game{position:fixed;inset:0;box-sizing:border-box;width
 .qr-chip[data-tone=practice]{background:transparent;border:1.5px dashed var(--ink-muted);color:var(--ink-muted)}
 .qr-pips i.pr{background:transparent;box-shadow:inset 0 0 0 1.5px var(--ink-muted)}
 .qr-float.practice{color:var(--ink-muted);font-weight:700}
+/* A gap card: what the sentence means, under it. */
+.qr-sent .qr-en{display:block;margin-top:10px;font-family:var(--ui);font-size:13px;line-height:1.45;font-weight:500;color:var(--ink-muted);text-align:start}
 .qr-sent .qr-blank{display:inline-block;min-width:64px;border-bottom:2px solid var(--seal);margin:0 4px;line-height:1.2}
 .qr-sent .qr-blank.filled{min-width:0;padding:0 4px;border-bottom-color:var(--right);color:var(--right);font-weight:700}
 .qr-sent.heard,.qr-sent.heard[data-lines]{font-size:19px;text-align:start}
@@ -2582,6 +2584,7 @@ html.motion-off .n2-game *{animation:none !important}html.motion-off .n2-game *:
   body[data-view=game] .qr-say{margin-top:10px}
   /* Board 13 · F: a build card gives up the "say it" line first, then its rows tighten. */
   body[data-view=game] .qr-card[data-kind=build] .qr-say{display:none}
+  body[data-view=game] .qr-card[data-kind=gap] .qr-say,body[data-view=game] .qr-card[data-kind=partgap] .qr-say{display:none}
   body[data-view=game] .qr-card[data-kind=build] .qr-sent{line-height:1.6;margin-top:8px}
   /* Measured at 375 × 667: five rows, a two-line sentence and one two-line choice overflowed by 11 px; five rows take 24 px each. */
   body[data-view=game] .qr-grammar-parts[data-rows="5"] b,body[data-view=game] .qr-grammar-parts[data-rows="5"] span{min-height:24px;padding:2px 0}

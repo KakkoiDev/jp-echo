@@ -9,7 +9,7 @@ import {recognitionFactory} from "./speech.js";
 import {speakOnce,speakAndWait,japaneseVoices,RadioPlayer,NoiseBed} from "./speech.js";
 import {RADIO_DEFAULTS,RADIO_PHASE_COPY,clockAt,radioPhase,radioPlan,radioSteps} from "./radio.js";
 import {readNights, nightComparison, comparisonLine, eveningRecall, EVENING_SOURCE, nightPlan, nightRecord, keepNight, NIGHT_KEY} from "./n2-night.js";
-import {flagCard, endRest, bossCards, bossQueue, bossReview, partRows, cutUnderline, provedBy, PROVED_MS, heardGap, grammarBlockCard, grammarCoverage, kanjiCoverage, levelCoverage, isCovered, aheadLevel, applyBoss, verdictLine, rankOf, setRank, rankLevels, hasBoss, RANKS, inSlump, itemLevel, levelAfter, ITEM_LEVEL, gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, patternVoice, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
+import {skillWeights, kindWeights, flagCard, endRest, bossCards, bossQueue, bossReview, partRows, cutUnderline, provedBy, PROVED_MS, heardGap, grammarBlockCard, grammarCoverage, kanjiCoverage, levelCoverage, isCovered, aheadLevel, applyBoss, verdictLine, rankOf, setRank, rankLevels, hasBoss, RANKS, inSlump, itemLevel, levelAfter, ITEM_LEVEL, gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, patternVoice, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
 import {createLevels} from "./jlpt-levels.js";
 import {createSets, levelRows, SET_LEVELS, setLevel, heldOut} from "./jlpt-sets.js";
 import {spokenWord,radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
@@ -1171,6 +1171,8 @@ async function game() {
   const lastBoss = data.attempts.filter(a => a.boss && a.phase === "results" && sat.has(a.book) && a.paper === realisticPaperId(a.book)).sort((a, b) => (a.completedAt || "").localeCompare(b.completedAt || "")).at(-1);
   const bossPaper = lastBoss && sets.find(set => set.id === lastBoss.book);
   const bossKeys = (await json("./n2-sets/keys.json").catch(() => null))?.keys || {};
+  // The mix follows the last boss: the section missed most takes more turns of a round, the strong one fewer.
+  const mixWeights = kindWeights(bossPaper ? skillWeights({paper: bossPaper, attempt: lastBoss}) : null);
   const bossAll = bossPaper ? bossCards({set: bossPaper, pool: n2Pool, keys: bossKeys,
     missed: bossPaper.questions.map((q, i) => lastBoss.answers?.[i] !== q.key || lastBoss.guesses?.[i] ? i : -1).filter(i => i >= 0)}) : [];
   // kanjiFirst: the rank's kanji in order and, as examples, the cards of the other levels at hand.
@@ -1528,7 +1530,7 @@ async function game() {
     // phone has no Japanese voice, or the voice failed twice this session.
     const playable = hears() ? pool : pool.filter(q => q.kind !== "listen");
     const review = hears() ? lower : lower.filter(q => q.kind !== "listen");
-    const next = nextRound({pool: playable, review, kanji: kanjiFirst && {...kanjiFirst, examples: hears() ? kanjiFirst.examples : kanjiFirst.examples.filter(q => q.kind !== "listen")}, recall: data.recall, state, difficulty: difficulty(), grammarCards: pool === n2Pool && grammarCards.length ? grammarCards : null,
+    const next = nextRound({pool: playable, review, kanji: kanjiFirst && {...kanjiFirst, examples: hears() ? kanjiFirst.examples : kanjiFirst.examples.filter(q => q.kind !== "listen")}, recall: data.recall, state, difficulty: difficulty(), weights: pool === n2Pool ? mixWeights : null, grammarCards: pool === n2Pool && grammarCards.length ? grammarCards : null,
       boss: pool === n2Pool ? bossQueue({cards: bossAll, state, key: lastBoss?.id || ""}).filter(q => hears() || q.kind !== "listen") : []});
     round = next.round; roundLevel = next.level; warmUp = next.warmUp; beat = next.beat || null; rights = 0; flagged = 0; practiced = 0; bestCombo = 0;
     index = 0; score = 0; streak = 0; misses = []; marks = []; ups = [];
@@ -1560,6 +1562,7 @@ async function game() {
     [...$("game-lv").querySelectorAll("i")].forEach((sq, i) => { sq.className = i < n ? (up && i === n - 1 ? "f up" : "f") : ""; });
     $("game-lv-n").textContent = "Lv " + n;
   };
+  const gapCard = q => q.kind === "gap" || q.kind === "partgap";
   function ask() {
     clearTimeout(timer); locked = false;
     current = round[index];
@@ -1588,7 +1591,7 @@ async function game() {
     stretchStrip();
     // Card layout per kind (board 3a): sentence kinds show the sentence alone;
     // word kinds the big word; listen a round play button; exam its question.
-    const listen = q.kind === "listen", sentenceKind = !!q.sentence && (["reading", "homophone", "grammar", "connective", "meaning", "affix"].includes(q.kind) || grammarBlockCard(q));
+    const listen = q.kind === "listen", sentenceKind = !!q.sentence && (["reading", "homophone", "grammar", "connective", "meaning", "affix"].includes(q.kind) || grammarBlockCard(q) || gapCard(q));
     const prompt = $("game-prompt");
     prompt.hidden = listen || sentenceKind;
     prompt.textContent = q.prompt;
@@ -1612,6 +1615,8 @@ async function game() {
     else if (sentenceKind && q.kind === "build" && cutUnderline(q.sentence, q.needle, q.parts)) $("game-sentence").replaceChildren(...cutUnderline(q.sentence, q.needle, q.parts).map(s => s.part ? el("u", {class: "n2-mark" + (s.cut ? " qr-cut" : ""), text: s.text}) : s.text));
     else if (sentenceKind) $("game-sentence").replaceChildren(...exampleNodes(q.sentence, [q.needle]));
     else if (inContext) $("game-sentence").replaceChildren(...heard.flatMap((s, n) => !s.mark ? [s.text] : heard[n - 1]?.mark ? [] : [el("span", {class: "qr-blank", id: "game-blank"})]));
+    // A gap card (the exam's direction): the sentence with its gap, and what the sentence means under it.
+    if (gapCard(q)) { const [a, b] = q.sentence.split("（　）"); $("game-sentence").replaceChildren(a, el("span", {class: "qr-blank", id: "game-blank"}), b || "", el("span", {class: "qr-en", lang: "en", text: q.en})); }
     const parts = $("game-grammar-parts");
     parts.hidden = q.kind !== "build";
     parts.replaceChildren(...partList(q.parts)); parts.dataset.rows = String(partRows(q.parts).length);
@@ -1675,6 +1680,7 @@ async function game() {
     if (q.practice && streak >= 2) $("game-combo-chip").textContent += " · kept";
     // Board 11 · F: the blank fills with the answer, and its job shows under the card.
     if ((q.kind === "connective" || q.kind === "listen") && $("game-blank")) { $("game-blank").textContent = q.kind === "listen" ? q.gap || q.prompt : q.answer; $("game-blank").classList.add("filled"); }
+    if (gapCard(q) && $("game-blank")) { $("game-blank").textContent = q.answer; $("game-blank").classList.add("filled"); }
     ribbon(null); stretchStrip();
     // Answer states (fix 7): right tinted with ✓, a wrong pick struck, the rest fade.
     const card = $("game-card"); card.dataset.state = outcome === "right" ? "right" : outcome === "wrong" ? "wrong" : outcome === "timeout" ? "timeout" : "";

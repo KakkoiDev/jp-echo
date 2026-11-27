@@ -46,7 +46,9 @@ for (const level of ["N5", "N4", "N3", "N1"]) {
   levels[level] = {file, words: inv.words.length, cards: p.length, byKind: p.reduce((a, q) => (a[q.kind] = (a[q.kind] || 0) + 1, a), {}), sample};
 }
 
-const out = {links, generated: new Date().toISOString().slice(0, 10), counts: {parts: parts.length, partCards: parts.filter(p => p.id).length, connectives: connectives.length, grammarOpen: open.length, lines: Object.keys(lines).length},
+// F. Gap cards (27 Nov): a sentence with a gap, the form to pick; the sentence's English is shown under it.
+const gaps = pool.filter(q => q.kind === "gap" || q.kind === "partgap").map(q => ({id: q.id, kind: q.kind, sentence: q.sentence, shownEnglish: q.en, answer: q.answer, likelyWrong: (q.near || []).slice(0, 12), wrongChoices: q.wrong.length}));
+const out = {gaps, links, generated: new Date().toISOString().slice(0, 10), counts: {parts: parts.length, partCards: parts.filter(p => p.id).length, connectives: connectives.length, grammarOpen: open.length, lines: Object.keys(lines).length},
   parts, connectives, grammarOpen: open, lines, levels};
 writeFileSync(new URL("tools/scored-review/review-data.json", root), JSON.stringify(out, null, 1) + "\n");
 console.log(out.counts, Object.fromEntries(Object.entries(levels).map(([k, v]) => [k, v.cards + " cards, sample " + v.sample.length])));

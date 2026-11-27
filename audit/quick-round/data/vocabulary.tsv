@@ -23,19 +23,19 @@
 21	順序	じゅんじょ	order, sequence, procedure	order, sequence	説明書【せつめいしょ】の順序【じゅんじょ】どおりに組【く】み立【た】ててください。	Please assemble it following the order in the instructions.	reading meaning definition listen
 22	純情	じゅんじょう	pure heart	pure heart	彼【かれ】は純情【じゅんじょう】な青年【せいねん】で、すぐ顔【かお】が赤【あか】くなる。	He's an innocent young man who blushes easily.	reading meaning definition listen
 23	純粋	じゅんすい	pure, genuine, unmixed	pure, genuine	子供【こども】の純粋【じゅんすい】な疑問【ぎもん】に答【こた】えるのは難【むずか】しい。	It's hard to answer a child's pure, simple questions.	reading meaning definition listen
-24	初～	しょ～	first ~	first ~	初対面【しょたいめん】の人【ひと】と話【はな】すのは今【いま】でも緊張【きんちょう】する。	Even now I get nervous talking to people I'm meeting for the first time.	affix
-25	諸～	しょ～	various ~	various ~	諸外国【しょがいこく】との関係【かんけい】を大切【たいせつ】にしなければならない。	We must value our relations with various foreign countries.	affix
-26	～所	～しょ	place	place	近【ちか】くの市役所【しやくしょ】で書類【しょるい】をもらってきた。	I picked up the forms at the nearby city hall.	affix
-27	～所	～じょ	place	place	研究所【けんきゅうじょ】で新【あたら】しい薬【くすり】の開発【かいはつ】が進【すす】んでいる。	Development of a new drug is under way at the research institute.	affix
-28	女～	じょ～	things done by women	things done by women	この大学【だいがく】では女子学生【じょしがくせい】が半数【はんすう】を超【こ】えた。	At this university, female students now make up more than half.	affix
-29	～女	～じょ	count for sisters	count for sisters	姉【あね】の家【いえ】では先月【せんげつ】、次女【じじょ】が生【う】まれた。	My older sister had her second daughter last month.	affix exam
-30	省～	しょう～	economizing ~	economizing ~	夏【なつ】は省【しょう】エネのため、冷房【れいぼう】を二十八度【にじゅうはちど】に設定【せってい】する。	In summer we set the air conditioning to 28 degrees to save energy.	affix
-31	～省	～しょう	kind of ministry	kind of ministry	文部科学省【もんぶかがくしょう】が新【あたら】しい方針【ほうしん】を発表【はっぴょう】した。	The Ministry of Education announced a new policy.	affix
-32	～商	～しょう	merchant, business	merchant, business	祖父【そふ】は港町【みなとまち】で貿易商【ぼうえきしょう】として働【はたら】いていた。	My grandfather worked as a trader in a port town.	affix
-33	～勝	～しょう	count for victory	count for victory	我【わ】がチームは今季【こんき】、五勝【ごしょう】二敗【にはい】だ。	Our team has five wins and two losses this season.	affix
-34	～条	～じょう	counter for article	counter for article	憲法【けんぽう】第九条【だいきゅうじょう】について授業【じゅぎょう】で議論【ぎろん】した。	We discussed Article 9 of the Constitution in class.	affix
-35	～場	～じょう	kind of field, ground	kind of field, ground	試合【しあい】は市内【しない】の野球場【やきゅうじょう】で行【おこな】われる。	The game will be held at the baseball stadium in the city.	affix
-36	～畳	～じょう	count for tatami, mat	count for tatami, mat	新【あたら】しい部屋【へや】は六畳【ろくじょう】の和室【わしつ】です。	My new room is a six-mat Japanese-style room.	affix
+24	初～	しょ～	first ~	first ~	初対面【しょたいめん】の人【ひと】と話【はな】すのは今【いま】でも緊張【きんちょう】する。	Even now I get nervous talking to people I'm meeting for the first time.	affix partgap
+25	諸～	しょ～	various ~	various ~	諸外国【しょがいこく】との関係【かんけい】を大切【たいせつ】にしなければならない。	We must value our relations with various foreign countries.	affix partgap
+26	～所	～しょ	place	place	近【ちか】くの市役所【しやくしょ】で書類【しょるい】をもらってきた。	I picked up the forms at the nearby city hall.	affix partgap
+27	～所	～じょ	place	place	研究所【けんきゅうじょ】で新【あたら】しい薬【くすり】の開発【かいはつ】が進【すす】んでいる。	Development of a new drug is under way at the research institute.	affix partgap
+28	女～	じょ～	things done by women	things done by women	この大学【だいがく】では女子学生【じょしがくせい】が半数【はんすう】を超【こ】えた。	At this university, female students now make up more than half.	affix partgap
+29	～女	～じょ	count for sisters	count for sisters	姉【あね】の家【いえ】では先月【せんげつ】、次女【じじょ】が生【う】まれた。	My older sister had her second daughter last month.	affix partgap exam
+30	省～	しょう～	economizing ~	economizing ~	夏【なつ】は省【しょう】エネのため、冷房【れいぼう】を二十八度【にじゅうはちど】に設定【せってい】する。	In summer we set the air conditioning to 28 degrees to save energy.	affix partgap
+31	～省	～しょう	kind of ministry	kind of ministry	文部科学省【もんぶかがくしょう】が新【あたら】しい方針【ほうしん】を発表【はっぴょう】した。	The Ministry of Education announced a new policy.	affix partgap
+32	～商	～しょう	merchant, business	merchant, business	祖父【そふ】は港町【みなとまち】で貿易商【ぼうえきしょう】として働【はたら】いていた。	My grandfather worked as a trader in a port town.	affix partgap
+33	～勝	～しょう	count for victory	count for victory	我【わ】がチームは今季【こんき】、五勝【ごしょう】二敗【にはい】だ。	Our team has five wins and two losses this season.	affix partgap
+34	～条	～じょう	counter for article	counter for article	憲法【けんぽう】第九条【だいきゅうじょう】について授業【じゅぎょう】で議論【ぎろん】した。	We discussed Article 9 of the Constitution in class.	affix partgap
+35	～場	～じょう	kind of field, ground	kind of field, ground	試合【しあい】は市内【しない】の野球場【やきゅうじょう】で行【おこな】われる。	The game will be held at the baseball stadium in the city.	affix partgap
+36	～畳	～じょう	count for tatami, mat	count for tatami, mat	新【あたら】しい部屋【へや】は六畳【ろくじょう】の和室【わしつ】です。	My new room is a six-mat Japanese-style room.	affix partgap
 37	消化	しょうか	digestion	digestion	油【あぶら】っこい料理【りょうり】は消化【しょうか】に時間【じかん】がかかる。	Greasy food takes a long time to digest.	reading meaning definition listen
 38	小学生	しょうがくせい	elementary school pupil	elementary school pupil	小学生【しょうがくせい】の息子【むすこ】は毎朝【まいあさ】歩【ある】いて登校【とうこう】する。	My son, who is in elementary school, walks to school every morning.	reading meaning definition listen
 39	しょうがない	しょうがない	It is not worth ~	It is not worth ~	済【す】んだことを悔【く】やんでもしょうがない。	There's no point regretting what's already done.	meaning listen
@@ -67,7 +67,7 @@
 65	消耗	しょうもう	exhaustion, consumption	exhaustion, consumption	長【なが】い会議【かいぎ】で体力【たいりょく】をすっかり消耗【しょうもう】した。	The long meeting completely wore me out.	reading meaning definition listen
 66	初級	しょきゅう	elementary level	elementary level	初級【しょきゅう】の講座【こうざ】から始【はじ】めることにした。	I decided to start with the beginner course.	reading meaning definition listen
 67	助教授	じょきょうじゅ	assistant professor	assistant professor	叔父【おじ】は大学【だいがく】で助教授【じょきょうじゅ】をしている。	My uncle is an assistant professor at a university.	reading meaning definition listen
-68	～色	～しょく	kind of color	kind of color	この虫【むし】は保護色【ほごしょく】で葉【は】に紛【まぎ】れている。	This insect blends in with the leaves thanks to its protective coloring.	affix exam
+68	～色	～しょく	kind of color	kind of color	この虫【むし】は保護色【ほごしょく】で葉【は】に紛【まぎ】れている。	This insect blends in with the leaves thanks to its protective coloring.	affix partgap exam
 69	食塩	しょくえん	table salt	table salt	食塩【しょくえん】を少【すこ】し加【くわ】えると味【あじ】が引【ひ】き締【し】まる。	Adding a little table salt sharpens the flavor.	reading meaning definition listen
 70	職人	しょくにん	artisan, craftsman	artisan, craftsman	祖父【そふ】は腕【うで】のいい家具【かぐ】職人【しょくにん】だった。	My grandfather was a skilled furniture maker.	reading meaning definition listen
 71	職場	しょくば	workplace	workplace	新【あたら】しい職場【しょくば】にはもう慣【な】れましたか？	Have you gotten used to your new workplace yet?	reading meaning definition listen
@@ -127,7 +127,7 @@
 125	好き好き	すきずき	matter of taste	matter of taste	どの色【いろ】を選【えら】ぶかは好【す】き好【す】きだ。	Which color you choose is a matter of taste.	reading meaning definition listen
 126	透き通る	すきとおる	to be(come) transparent	to be(come) transparent	透【す】き通【とお】った川【かわ】の水【みず】に魚【さかな】が見【み】える。	You can see fish in the clear river water.	reading meaning definition listen exam
 127	隙間	すきま	crack, gap, opening	crack, gap	窓【まど】の隙間【すきま】から冷【つめ】たい風【かぜ】が入【はい】ってくる。	A cold draft is coming in through the gap in the window.	meaning definition listen
-128	～過ぎる	～すぎる	too much ~	too much ~	最近【さいきん】は夜【よる】に食【た】べ過【す】ぎる。	Lately I eat too much at night.	affix
+128	～過ぎる	～すぎる	too much ~	too much ~	最近【さいきん】は夜【よる】に食【た】べ過【す】ぎる。	Lately I eat too much at night.	affix partgap
 129	スクール	スクール	school	school	週【しゅう】に二回【にかい】、料理【りょうり】スクールに通【かよ】っている。	I go to a cooking school twice a week.	meaning listen
 130	図形	ずけい	figure	figure	次【つぎ】の図形【ずけい】の面積【めんせき】を求【もと】めなさい。	Find the area of the following figure.	meaning definition listen
 131	鈴	すず	bell	bell	猫【ねこ】の首輪【くびわ】に小【ちい】さな鈴【すず】をつけた。	I put a little bell on the cat's collar.	meaning definition listen
@@ -145,7 +145,7 @@
 143	スマート	スマート	smart, stylish, slim	smart, stylish	兄【あに】は背【せ】が高【たか】くてスマートな体型【たいけい】だ。	My older brother is tall and slim.	meaning listen
 144	住まい	すまい	dwelling, house	dwelling, house	駅【えき】から近【ちか】い住【す】まいを探【さが】している。	I'm looking for a place to live close to the station.	meaning definition listen
 145	すまない	すまない	sorry (phrase)	sorry (phrase)	遅【おく】れてすまない、道【みち】が混【こ】んでいたんだ。	Sorry I'm late — the roads were crowded.	meaning listen
-146	～済	～ずみ	finished	finished	料金【りょうきん】は支払【しはら】い済【ず】みです。	The fee has already been paid.	affix
+146	～済	～ずみ	finished	finished	料金【りょうきん】は支払【しはら】い済【ず】みです。	The fee has already been paid.	affix partgap
 147	相撲	すもう	sumo wrestling	sumo wrestling	祖父【そふ】はテレビで相撲【すもう】を見【み】るのが好【す】きだ。	My grandfather loves watching sumo on TV.	meaning definition listen
 148	スライド	スライド	slide	slide	発表【はっぴょう】のスライドを二十枚【にじゅうまい】用意【ようい】した。	I prepared twenty slides for the presentation.	meaning listen
 149	ずらす	ずらす	to put off, to delay	to put off, to delay	会議【かいぎ】の時間【じかん】を少【すこ】しずらすことはできますか？	Would it be possible to move the meeting time a little?	meaning listen
@@ -171,7 +171,7 @@
 169	成立	せいりつ	formation, establishment, completion	formation, establishment	長【なが】い交渉【こうしょう】の末【すえ】、ようやく契約【けいやく】が成立【せいりつ】した。	After long negotiations, the contract was finally concluded.	meaning definition listen exam
 170	西暦	せいれき	Christian Era, after (Christ’s) death (A.D.)	Christian Era, after (Christ’s) death (A.D.)	生年月日【せいねんがっぴ】は西暦【せいれき】で書【か】いてください。	Please write your date of birth in the Western calendar.	meaning definition listen
 171	背負う	せおう	to be burdened with; to carry on (one's) back or shoulder(s)	to be burdened with, to carry on (one's) back or shoulder(s)	彼【かれ】は若【わか】くして家族【かぞく】の生活【せいかつ】を背負【せお】っている。	Young as he is, he bears the burden of supporting his family.	meaning definition listen
-172	～席	～せき	counter for seats	counter for seats	この劇場【げきじょう】には約千席【やくせんせき】ある。	This theatre has about a thousand seats.	affix
+172	～席	～せき	counter for seats	counter for seats	この劇場【げきじょう】には約千席【やくせんせき】ある。	This theatre has about a thousand seats.	affix partgap
 173	赤道	せきどう	equator	equator	この島【しま】は赤道【せきどう】のすぐ近【ちか】くにある。	This island is very close to the equator.	reading meaning definition listen
 174	折角	せっかく	with trouble, at great pains, long-awaited	with trouble, at great pains	折角【せっかく】作【つく】ったのに、誰【だれ】も食【た】べてくれなかった。	I went to all the trouble of making it, and nobody ate it.	reading meaning definition listen
 175	接近	せっきん	getting closer, drawing nearer, approaching	getting closer, drawing nearer	大型【おおがた】の台風【たいふう】が九州【きゅうしゅう】に接近【せっきん】している。	A large typhoon is approaching Kyushu.	reading meaning definition listen exam
@@ -186,10 +186,10 @@
 184	セメント	セメント	cement	cement	職人【しょくにん】がセメントを混【ま】ぜて壁【かべ】を塗【ぬ】った。	The craftsman mixed cement and plastered the wall.	meaning listen
 185	台詞	せりふ	speech, words, one's lines, remarks	speech, words	舞台【ぶたい】の上【うえ】で台詞【せりふ】を忘【わす】れてしまった。	I forgot my lines on stage.	meaning definition listen
 186	栓	せん	stopper, cork, stopcock	stopper, cork	ワインの栓【せん】がなかなか抜【ぬ】けない。	The wine cork just won't come out.	meaning definition listen exam
-187	～船	～せん	counter for ships	counter for ships	港【みなと】には外国【がいこく】の貨物船【かもつせん】が停泊【ていはく】している。	Foreign cargo ships are anchored in the harbor.	affix
-188	～戦	～せん	counter for games, matches	counter for games, matches	決勝戦【けっしょうせん】は日曜日【にちようび】に行【おこな】われる。	The final will be held on Sunday.	affix
-189	前～	ぜん～	former, late ~, past ~	former, late ~	前社長【ぜんしゃちょう】は今【いま】も相談役【そうだんやく】として残【のこ】っている。	The former president still remains as an adviser.	affix exam
-190	～前	～ぜん	before ~	before ~	紀元前【きげんぜん】の遺跡【いせき】が町【まち】の近【ちか】くで見【み】つかった。	Ruins from before the Common Era were found near the town.	affix
+187	～船	～せん	counter for ships	counter for ships	港【みなと】には外国【がいこく】の貨物船【かもつせん】が停泊【ていはく】している。	Foreign cargo ships are anchored in the harbor.	affix partgap
+188	～戦	～せん	counter for games, matches	counter for games, matches	決勝戦【けっしょうせん】は日曜日【にちようび】に行【おこな】われる。	The final will be held on Sunday.	affix partgap
+189	前～	ぜん～	former, late ~, past ~	former, late ~	前社長【ぜんしゃちょう】は今【いま】も相談役【そうだんやく】として残【のこ】っている。	The former president still remains as an adviser.	affix partgap exam
+190	～前	～ぜん	before ~	before ~	紀元前【きげんぜん】の遺跡【いせき】が町【まち】の近【ちか】くで見【み】つかった。	Ruins from before the Common Era were found near the town.	affix partgap
 191	前後	ぜんご	front and back, before and after	front and back, before and after	前後【ぜんご】の車【くるま】に注意【ちゅうい】して車線【しゃせん】を変更【へんこう】した。	I changed lanes, watching the cars in front and behind.	meaning definition listen exam
 192	全集	ぜんしゅう	complete works	complete works	父【ちち】の書棚【しょだな】には文学【ぶんがく】全集【ぜんしゅう】が並【なら】んでいる。	Complete works of literature line my father's bookshelf.	reading meaning definition listen
 193	扇子	せんす	folding fan	folding fan	暑【あつ】いので扇子【せんす】で顔【かお】をあおいだ。	It was hot, so I fanned my face with a folding fan.	meaning definition listen
@@ -205,9 +205,9 @@
 203	洗面	せんめん	wash up (one's face), have a wash	wash up (one's face), have a wash	朝【あさ】起【お】きたら、まず洗面【せんめん】と歯磨【はみが】きを済【す】ませる。	When I get up, the first thing I do is wash my face and brush my teeth.	meaning definition listen
 204	全力	ぜんりょく	all one's power, whole energy	all one's power, whole energy	最後【さいご】まで全力【ぜんりょく】で走【はし】り抜【ぬ】いた。	I ran with everything I had right to the end.	reading meaning definition listen
 205	線路	せんろ	line, track, roadbed	line, track	線路【せんろ】に人【ひと】が立【た】ち入【い】ったため、電車【でんしゃ】が止【と】まった。	The train stopped because someone went onto the tracks.	meaning definition listen
-206	～沿い	～そい	along	along	川沿【かわぞ】いの道【みち】を毎朝【まいあさ】散歩【さんぽ】している。	Every morning I take a walk along the riverside path.	affix
-207	総～	そう～	gross, general, entire	gross, general	今回【こんかい】の工事【こうじ】の総額【そうがく】は三千万円【さんぜんまんえん】だ。	The total cost of this construction is thirty million yen.	affix exam
-208	～艘	～そう	counter for ships	counter for ships	港【みなと】に小【ちい】さな漁船【ぎょせん】が三艘【さんそう】つながれている。	Three small fishing boats are moored in the harbor.	affix
+206	～沿い	～そい	along	along	川沿【かわぞ】いの道【みち】を毎朝【まいあさ】散歩【さんぽ】している。	Every morning I take a walk along the riverside path.	affix partgap
+207	総～	そう～	gross, general, entire	gross, general	今回【こんかい】の工事【こうじ】の総額【そうがく】は三千万円【さんぜんまんえん】だ。	The total cost of this construction is thirty million yen.	affix partgap exam
+208	～艘	～そう	counter for ships	counter for ships	港【みなと】に小【ちい】さな漁船【ぎょせん】が三艘【さんそう】つながれている。	Three small fishing boats are moored in the harbor.	affix partgap
 209	相違	そうい	difference, discrepancy, variation	difference, discrepancy	二人【ふたり】の証言【しょうげん】には大【おお】きな相違【そうい】がある。	There is a big discrepancy between the two people's testimonies.	meaning definition listen exam
 210	そういえば	そういえば	which reminds me ..	which reminds me ..	そういえば、駅前【えきまえ】に新【あたら】しいパン屋【や】ができたらしいよ。	That reminds me, I hear a new bakery opened in front of the station.	meaning listen
 211	雑巾	ぞうきん	house-cloth, dust cloth	house-cloth, dust cloth	床【ゆか】にこぼれた牛乳【ぎゅうにゅう】を雑巾【ぞうきん】で拭【ふ】いた。	I wiped up the milk spilled on the floor with a rag.	reading meaning definition listen
@@ -224,7 +224,7 @@
 222	草履	ぞうり	Japanese sandals (footwear)	Japanese sandals (footwear)	着物【きもの】に合【あ】わせて草履【ぞうり】を履【は】いた。	I wore zori sandals to go with my kimono.	meaning definition listen
 223	総理大臣	そうりだいじん	Prime Minister	Prime Minister	総理大臣【そうりだいじん】が記者会見【きしゃかいけん】で新【あたら】しい政策【せいさく】を発表【はっぴょう】した。	The Prime Minister announced a new policy at a press conference.	reading meaning definition listen
 224	送料	そうりょう	postage, carriage	postage, carriage	五千円【ごせんえん】以上【いじょう】買【か】うと送料【そうりょう】が無料【むりょう】になる。	If you buy 5,000 yen or more, shipping is free.	reading meaning definition listen
-225	～足	～そく	counter for shoes	counter for shoes	靴下【くつした】を三足【さんぞく】まとめて買【か】った。	I bought three pairs of socks at once.	affix
+225	～足	～そく	counter for shoes	counter for shoes	靴下【くつした】を三足【さんぞく】まとめて買【か】った。	I bought three pairs of socks at once.	affix partgap
 226	属する	ぞくする	to belong to, to come under	to belong to, to come under	私【わたし】は大学【だいがく】で写真部【しゃしんぶ】に属【ぞく】している。	At university I belong to the photography club.	reading meaning definition listen exam
 227	続々	ぞくぞく	successively, one after another	successively, one after another	開店【かいてん】と同時【どうじ】に客【きゃく】が続々【ぞくぞく】と入【はい】ってきた。	As soon as the store opened, customers came in one after another.	reading meaning definition listen exam
 228	速達	そくたつ	express, special delivery	express, special delivery	大切【たいせつ】な書類【しょるい】なので速達【そくたつ】で送【おく】った。	They were important documents, so I sent them by express mail.	reading meaning definition listen
@@ -248,7 +248,7 @@
 246	存ずる	ぞんずる	(humble) to know	(humble) to know	お名前【なまえ】はかねがね存【ぞん】じ上【あ】げております。	I have long known your name.	reading meaning definition listen
 247	損得	そんとく	loss and gain, advantage and disadvantage	loss and gain, advantage and disadvantage	彼【かれ】は損得【そんとく】を考【かんが】えずに人【ひと】を助【たす】ける。	He helps people without thinking about what's in it for him.	reading meaning definition listen
 248	田ぼ	たんぼ	paddy field, farm	paddy field, farm	田【た】んぼの稲【いね】が金色【きんいろ】に実【みの】った。	The rice in the paddies has ripened to gold.	reading meaning definition listen
-249	第～	だい～	~th	~th	第三回【だいさんかい】の会議【かいぎ】は来週【らいしゅう】の金曜日【きんようび】に開【ひら】かれる。	The third meeting will be held next Friday.	affix exam
+249	第～	だい～	~th	~th	第三回【だいさんかい】の会議【かいぎ】は来週【らいしゅう】の金曜日【きんようび】に開【ひら】かれる。	The third meeting will be held next Friday.	affix partgap exam
 250	だいいち (とりわけ)	だいいち (とりわけ)	first, foremost,&nbsp;&nbsp;#1	first, foremost	旅行【りょこう】なんて無理【むり】だよ、だいいちお金【かね】がない。	A trip is out of the question — for one thing, I don't have the money.	meaning listen
 251	大学院	だいがくいん	graduate school	graduate school	卒業後【そつぎょうご】は大学院【だいがくいん】に進【すす】むつもりだ。	After graduating, I intend to go on to graduate school.	reading meaning definition listen
 252	大工	だいく	carpenter	carpenter	大工【だいく】さんに頼【たの】んで棚【たな】を作【つく】ってもらった。	I asked a carpenter to build me some shelves.	meaning definition listen exam
@@ -289,11 +289,11 @@
 287	ダム	ダム	dam	dam	雨【あめ】が少【すく】なく、ダムの水位【すいい】が下【さ】がっている。	There's been little rain, and the water level in the dam is dropping.	meaning listen
 288	溜息	ためいき	a sigh	a sigh	試験【しけん】の結果【けっか】を見【み】て、思【おも】わず溜息【ためいき】をついた。	I let out a sigh in spite of myself when I saw my exam results.	meaning definition listen exam
 289	ためらう	ためらう	to be hesitant	to be hesitant	本当【ほんとう】のことを言【い】うのをためらう気持【きも】ちもあった。	Part of me hesitated to tell the truth.	meaning listen
-290	～だらけ	～だらけ	be full of ~, be filled with ~	be full of ~, be filled with ~	子供【こども】たちは泥【どろ】だらけになって帰【かえ】ってきた。	The children came home covered in mud.	affix
+290	～だらけ	～だらけ	be full of ~, be filled with ~	be full of ~, be filled with ~	子供【こども】たちは泥【どろ】だらけになって帰【かえ】ってきた。	The children came home covered in mud.	affix partgap
 291	だらしない	だらしない	slovenly, loose, a slut	slovenly, loose	服装【ふくそう】がだらしないと、面接【めんせつ】で印象【いんしょう】が悪【わる】い。	If you're sloppily dressed, you make a bad impression at an interview.	meaning listen
 292	足る	たる	to be sufficient, to be enough	to be sufficient, to be enough	それは心配【しんぱい】するに足【た】る問題【もんだい】ではない。	It is not a problem worth worrying about.	meaning definition listen
-293	短～	たん～	short ~	short ~	その本【ほん】は十年【じゅうねん】かけて書【か】かれた短編集【たんぺんしゅう】だ。	That book is a collection of short stories written over ten years.	affix
-294	～団	～だん	group, corps, party	group, corps	海外【かいがい】からの観光団【かんこうだん】がお寺【てら】を訪【おとず】れた。	A tour group from overseas came to the temple.	affix exam
+293	短～	たん～	short ~	short ~	その本【ほん】は十年【じゅうねん】かけて書【か】かれた短編集【たんぺんしゅう】だ。	That book is a collection of short stories written over ten years.	affix partgap
+294	～団	～だん	group, corps, party	group, corps	海外【かいがい】からの観光団【かんこうだん】がお寺【てら】を訪【おとず】れた。	A tour group from overseas came to the temple.	affix partgap exam
 295	オーケストラ	オーケストラ	orchestra	orchestra	オーケストラでバイオリンを弾【ひ】くのが夢【ゆめ】です。	My dream is to play the violin in an orchestra.	meaning listen
 296	おおざっぱ	おおざっぱ	rough (not precise), broad, sketchy	rough (not precise), broad	彼【かれ】はお金【かね】におおざっぱで、レシートを取【と】っておかない。	He is rough about money, so he never keeps receipts.	meaning listen
 297	大通り	おおどおり	main street	main street	駅前【えきまえ】の大通【おおどお】りに大【おお】きな本屋【ほんや】がある。	There is a big bookstore on the main street in front of the station.	reading meaning definition listen
@@ -354,15 +354,15 @@
 352	温帯	おんたい	temperate zone	temperate zone	日本【にほん】の大部分【だいぶぶん】は温帯【おんたい】に属【ぞく】している。	Japan mostly belongs to the temperate zone.	meaning definition listen
 353	御中	おんちゅう	Messrs.	Messrs.	会社【かいしゃ】あての手紙【てがみ】には、社名【しゃめい】の後【あと】に御中【おんちゅう】と書【か】く。	When writing to a company, put "onchu" after its name.	reading meaning definition listen exam
 354	女の人	おんなのひと	woman	woman	女【おんな】の人【ひと】に駅【えき】への道【みち】を聞【き】かれた。	A woman asked me the way to the station.	reading meaning definition listen
-355	～日	～か	counter for days	counter for days	お祭【まつ】りは三日間【みっかかん】にわたって行【おこな】われる。	The festival is held over three days.	affix
-356	～下	～か	under ~	under ~	この薬【くすり】は医師【いし】の管理下【かんりか】で使用【しよう】してください。	This medicine must be used under a doctor's supervision.	affix
-357	～化	～か	action of making something	action of making something	市【し】は手続【てつづ】きのデジタル化【か】を進【すす】めている。	The city is pushing ahead with digitalization of procedures.	affix exam
-358	～科	～か	family, group, course	family, group	娘【むすめ】は大学【だいがく】の看護科【かんごか】に入学【にゅうがく】した。	My daughter entered the nursing course at a university.	affix
-359	～歌	～か	song of ~	song of ~	国歌【こっか】が流【なが】れると、観客【かんきゃく】は全員【ぜんいん】立【た】ち上【あ】がった。	When the national anthem played, the whole crowd stood up.	affix
-360	～画	～が	picture, painting	picture, painting	美術館【びじゅつかん】に有名【ゆうめい】な西洋画【せいようが】が展示【てんじ】されている。	A famous Western painting is on display at the museum.	affix
+355	～日	～か	counter for days	counter for days	お祭【まつ】りは三日間【みっかかん】にわたって行【おこな】われる。	The festival is held over three days.	affix partgap
+356	～下	～か	under ~	under ~	この薬【くすり】は医師【いし】の管理下【かんりか】で使用【しよう】してください。	This medicine must be used under a doctor's supervision.	affix partgap
+357	～化	～か	action of making something	action of making something	市【し】は手続【てつづ】きのデジタル化【か】を進【すす】めている。	The city is pushing ahead with digitalization of procedures.	affix partgap exam
+358	～科	～か	family, group, course	family, group	娘【むすめ】は大学【だいがく】の看護科【かんごか】に入学【にゅうがく】した。	My daughter entered the nursing course at a university.	affix partgap
+359	～歌	～か	song of ~	song of ~	国歌【こっか】が流【なが】れると、観客【かんきゃく】は全員【ぜんいん】立【た】ち上【あ】がった。	When the national anthem played, the whole crowd stood up.	affix partgap
+360	～画	～が	picture, painting	picture, painting	美術館【びじゅつかん】に有名【ゆうめい】な西洋画【せいようが】が展示【てんじ】されている。	A famous Western painting is on display at the museum.	affix partgap
 361	カーブ	カーブ	curve; curve ball (baseball)	curve, curve ball (baseball)	急【きゅう】なカーブの前【まえ】ではスピードを落【お】としなさい。	Slow down before the sharp curve.	meaning listen
-362	外～	がい～	foreign ~, outside ~	foreign ~, outside ~	外国人【がいこくじん】観光客【かんこうきゃく】が年々【ねんねん】増【ふ】えている。	The number of foreign tourists is increasing every year.	affix
-363	～外	～がい	out of ~	out of ~	営業時間外【えいぎょうじかんがい】のお電話【でんわ】は受【う】け付【つ】けておりません。	Calls outside business hours are not accepted.	affix
+362	外～	がい～	foreign ~, outside ~	foreign ~, outside ~	外国人【がいこくじん】観光客【かんこうきゃく】が年々【ねんねん】増【ふ】えている。	The number of foreign tourists is increasing every year.	affix partgap
+363	～外	～がい	out of ~	out of ~	営業時間外【えいぎょうじかんがい】のお電話【でんわ】は受【う】け付【つ】けておりません。	Calls outside business hours are not accepted.	affix partgap
 364	開会	かいかい	opening of a meeting	opening of a meeting	議長【ぎちょう】が開会【かいかい】を宣言【せんげん】した。	The chairman declared the meeting open.	meaning definition listen
 365	会館	かいかん	meeting hall, assembly hall	meeting hall, assembly hall	コンサートは市民会館【しみんかいかん】で開【ひら】かれる。	The concert will be held at the city's public hall.	meaning definition listen
 366	改札	かいさつ	examination of tickets	examination of tickets	七時【しちじ】に改札【かいさつ】の前【まえ】で会【あ】いましょう。	Let's meet in front of the ticket gate at seven.	reading meaning definition listen exam
@@ -390,7 +390,7 @@
 388	書取	かきとり	dictation	dictation	明日【あした】は漢字【かんじ】の書取【かきとり】のテストがある。	We have a kanji dictation test tomorrow.	reading meaning definition listen exam
 389	垣根	かきね	hedge	hedge	垣根【かきね】のすき間【ま】から猫【ねこ】が出【で】てきた。	A cat slipped out through the hedge.	meaning definition listen
 390	限り	かぎり	limit(s), as far as possible	limit(s), as far as possible	できる限【かぎ】りのことはするつもりです。	I will do everything I can.	meaning definition listen
-391	各～	かく～	every ~, each ~	every ~, each ~	大臣【だいじん】は各国【かっこく】の代表【だいひょう】と話【はな】し合【あ】った。	The minister talked with the representatives of each country.	affix
+391	各～	かく～	every ~, each ~	every ~, each ~	大臣【だいじん】は各国【かっこく】の代表【だいひょう】と話【はな】し合【あ】った。	The minister talked with the representatives of each country.	affix partgap
 392	架空	かくう	imaginary, fiction, fanciful	imaginary, fiction	この物語【ものがたり】の登場人物【とうじょうじんぶつ】は架空【かくう】の人物【じんぶつ】です。	The characters in this story are fictional.	meaning definition listen
 393	各自	かくじ	individual, each	individual, each	飲【の】み物【もの】は各自【かくじ】で持【も】ってきてください。	Please each bring something to drink.	reading meaning definition listen
 394	拡充	かくじゅう	expansion	expansion	町【まち】は子育【こそだ】て支援【しえん】の拡充【かくじゅう】を計画【けいかく】している。	The town plans to expand its childcare support.	reading meaning definition listen
@@ -426,7 +426,7 @@
 424	片道	かたみち	one-way (trip)	one-way (trip)	大阪【おおさか】までの片道【かたみち】は一万五千円【いちまんごせんえん】ほどだ。	A one-way ticket to Osaka costs about fifteen thousand yen.	reading meaning definition listen exam
 425	傾く	かたむく	to incline toward, to slant, to lurch	to incline toward, to slant	古【ふる】い塀【へい】が道路【どうろ】の方【ほう】に傾【かたむ】いている。	The old fence is leaning toward the road.	reading meaning definition listen exam
 426	片寄る	かたよる	to be one-sided, to incline, to be partial	to be one-sided, to incline	一人暮【ひとりぐ】らしだと、食事【しょくじ】が片寄【かたよ】りやすい。	When you live alone, your diet tends to become unbalanced.	reading meaning definition listen
-427	～がち	～がち	tend to do ~	tend to do ~	冬【ふゆ】はどうしても家【いえ】にこもりがちだ。	In winter I tend to stay indoors.	affix
+427	～がち	～がち	tend to do ~	tend to do ~	冬【ふゆ】はどうしても家【いえ】にこもりがちだ。	In winter I tend to stay indoors.	affix partgap
 428	学科	がっか	study subject, course of study	study subject, course of study	どの学科【がっか】がいちばん好【す】きですか。	Which subject do you like best?	reading meaning definition listen
 429	学会	がっかい	academic conference	academic conference	教授【きょうじゅ】は来月【らいげつ】の学会【がっかい】で発表【はっぴょう】する。	The professor will give a presentation at an academic conference next month.	reading meaning definition listen
 430	学級	がっきゅう	class	class	インフルエンザで学級閉鎖【がっきゅうへいさ】になった。	The influenza outbreak closed the class.	reading meaning definition listen
@@ -459,11 +459,11 @@
 457	可愛がる	かわいがる	to love, to be affectionate	to love, to be affectionate	祖父【そふ】は孫【まご】をとても可愛【かわい】がっている。	My grandfather dotes on his grandchildren.	meaning definition listen
 458	為替	かわせ	money order, exchange	money order, exchange	為替【かわせ】の変動【へんどう】が輸入品【ゆにゅうひん】の値段【ねだん】に影響【えいきょう】する。	The exchange rate affects the price of imported goods.	meaning definition listen exam
 459	瓦	かわら	roof tile	roof tile	強風【きょうふう】で屋根【やね】の瓦【かわら】が飛【と】ばされた。	Some roof tiles were blown off by the strong wind.	meaning definition listen
-460	～刊	～かん	~ issued (magazine, newspaper)	~ issued (magazine, newspaper)	毎日【まいにち】電車【でんしゃ】で朝刊【ちょうかん】を読【よ】む。	I read the morning paper on the train every day.	affix
-461	～間	～かん	between, during	between, during	両国間【りょうこくかん】の交渉【こうしょう】が始【はじ】まった。	Negotiations between the two countries have begun.	affix exam
-462	～巻	～かん	volume	volume	そのシリーズを最終巻【さいしゅうかん】まで一気【いっき】に読【よ】んだ。	I read the whole series up to the last volume in one go.	affix
-463	～館	～かん	~ hall, ~ building	~ hall, ~ building	今週末【こんしゅうまつ】は美術館【びじゅつかん】に行【い】く予定【よてい】だ。	I'm going to the art museum this weekend.	affix
-464	～感	～かん	feeling, sense, impression	feeling, sense	プロジェクトが終【お】わって、達成感【たっせいかん】を味【あじ】わった。	I felt a sense of accomplishment when the project was finished.	affix exam
+460	～刊	～かん	~ issued (magazine, newspaper)	~ issued (magazine, newspaper)	毎日【まいにち】電車【でんしゃ】で朝刊【ちょうかん】を読【よ】む。	I read the morning paper on the train every day.	affix partgap
+461	～間	～かん	between, during	between, during	両国間【りょうこくかん】の交渉【こうしょう】が始【はじ】まった。	Negotiations between the two countries have begun.	affix partgap exam
+462	～巻	～かん	volume	volume	そのシリーズを最終巻【さいしゅうかん】まで一気【いっき】に読【よ】んだ。	I read the whole series up to the last volume in one go.	affix partgap
+463	～館	～かん	~ hall, ~ building	~ hall, ~ building	今週末【こんしゅうまつ】は美術館【びじゅつかん】に行【い】く予定【よてい】だ。	I'm going to the art museum this weekend.	affix partgap
+464	～感	～かん	feeling, sense, impression	feeling, sense	プロジェクトが終【お】わって、達成感【たっせいかん】を味【あじ】わった。	I felt a sense of accomplishment when the project was finished.	affix partgap exam
 465	換気	かんき	ventilation	ventilation	時々【ときどき】窓【まど】を開【あ】けて換気【かんき】してください。	Open the window occasionally to ventilate the room.	meaning definition listen exam
 466	感激	かんげき	deep emotion, impression, inspiration	deep emotion, impression	ファンの応援【おうえん】に感激【かんげき】した。	I was deeply moved by the fans' cheering.	reading meaning definition listen
 467	関西	かんさい	south-western half of Japan, including Osaka	south-western half of Japan, including Osaka	彼【かれ】は仕事【しごと】で関西【かんさい】に引【ひ】っ越【こ】した。	He moved to Kansai for work.	meaning definition listen
@@ -484,9 +484,9 @@
 482	看病	かんびょう	nursing (a patient)	nursing (a patient)	母【はは】の看病【かんびょう】のために仕事【しごと】を休【やす】んだ。	I took time off work to nurse my mother.	reading meaning definition listen
 483	冠	かんむり	crown, wreath	crown, wreath	優勝者【ゆうしょうしゃ】は花【はな】の冠【かんむり】をかぶった。	The winner wore a crown of flowers.	meaning definition listen
 484	漢和	かんわ	Chinese Character-Japanese (e.g., dictionary)	Chinese Character-Japanese (e.g., dictionary)	漢字【かんじ】の読【よ】み方【かた】は漢和辞典【かんわじてん】で調【しら】べなさい。	Look up the reading of the kanji in a kanji dictionary.	meaning definition listen
-485	～期	～き	~age, ~period	~age, ~period	来週【らいしゅう】から新学期【しんがっき】が始【はじ】まる。	The new semester starts next week.	affix exam
-486	～器	～き	device, equipment	device, equipment	新【あたら】しい炊飯器【すいはんき】を買【か】った。	I bought a new rice cooker.	affix exam
-487	～機	～き	machine	machine	洗濯機【せんたくき】がまた壊【こわ】れた。	The washing machine is broken again.	affix
+485	～期	～き	~age, ~period	~age, ~period	来週【らいしゅう】から新学期【しんがっき】が始【はじ】まる。	The new semester starts next week.	affix partgap exam
+486	～器	～き	device, equipment	device, equipment	新【あたら】しい炊飯器【すいはんき】を買【か】った。	I bought a new rice cooker.	affix partgap exam
+487	～機	～き	machine	machine	洗濯機【せんたくき】がまた壊【こわ】れた。	The washing machine is broken again.	affix partgap
 488	気圧	きあつ	atmospheric pressure	atmospheric pressure	低気圧【ていきあつ】が近【ちか】づいて、天気【てんき】が崩【くず】れそうだ。	A low-pressure system is approaching, so the weather will worsen.	meaning definition listen
 489	着替え	きがえ	changing clothes, change of clothes	changing clothes, change of clothes	濡【ぬ】れた時【とき】のために着替【きが】えを持【も】ってきてください。	Bring a change of clothes in case you get wet.	meaning definition listen
 490	着替える	きがえる	to change (one's) clothes	to change (one's) clothes	家【いえ】に帰【かえ】って、楽【らく】な服【ふく】に着替【きが】えた。	I got home and changed into comfortable clothes.	meaning definition listen exam
@@ -505,7 +505,7 @@
 503	きっかけ	きっかけ	prompt, trigger, cue	prompt, trigger	海外旅行【かいがいりょこう】が日本語【にほんご】を始【はじ】めたきっかけだ。	A trip abroad was what got me interested in Japanese.	meaning listen
 504	ぎっしり	ぎっしり	tightly, fully	tightly, fully	スーツケースにお土産【みやげ】がぎっしり詰【つ】まっている。	The suitcase is tightly packed with souvenirs.	meaning listen
 505	基盤	きばん	foundation, basis	foundation, basis	新【あたら】しい町【まち】で生活【せいかつ】の基盤【きばん】ができた。	We have built a foundation for our life in the new town.	reading meaning definition listen
-506	～気味	～ぎみ	slightly ~	slightly ~	昨日【きのう】から少【すこ】し風邪気味【かぜぎみ】だ。	I've had a slight cold since yesterday.	affix exam
+506	～気味	～ぎみ	slightly ~	slightly ~	昨日【きのう】から少【すこ】し風邪気味【かぜぎみ】だ。	I've had a slight cold since yesterday.	affix partgap exam
 507	客席	きゃくせき	guest seating	guest seating	客席【きゃくせき】はすべて埋【う】まっていた。	The audience seats were all full.	reading meaning definition listen
 508	客間	きゃくま	parlor, guest room	parlor, guest room	お客様【きゃくさま】を客間【きゃくま】にご案内【あんない】して。	Please show the guest to the parlor.	reading meaning definition listen
 509	ギャング	ギャング	gang	gang	その映画【えいが】は昔【むかし】のギャングの話【はなし】だ。	The movie is a story about gangsters of the old days.	meaning listen
@@ -515,12 +515,12 @@
 513	給与	きゅうよ	salary	salary	給与【きゅうよ】は毎月【まいつき】二十五日【にじゅうごにち】に支払【しはら】われる。	Salaries are paid on the twenty-fifth of every month.	reading meaning definition listen exam
 514	休養	きゅうよう	rest, break, recreation	rest, break	医者【いしゃ】にしばらく休養【きゅうよう】するように言【い】われた。	The doctor told me to get some rest for a while.	reading meaning definition listen exam
 515	清い	きよい	clear, pure, noble	clear, pure	村【むら】には清【きよ】い川【かわ】が流【なが】れている。	A clear stream flows through the village.	meaning definition listen
-516	～教	～きょう	religion	religion	仏教【ぶっきょう】は大陸【たいりく】から日本【にほん】に伝【つた】わった。	Buddhism came to Japan from the continent.	affix
-517	～行	～ぎょう	line, row	line, row	ページの三行目【さんぎょうめ】から読【よ】んでください。	Please read from the third line of the page.	affix
-518	～業	～ぎょう	type of business	type of business	彼【かれ】はサービス業【ぎょう】で働【はたら】きたいと思【おも】っている。	He wants to work in the service industry.	affix
+516	～教	～きょう	religion	religion	仏教【ぶっきょう】は大陸【たいりく】から日本【にほん】に伝【つた】わった。	Buddhism came to Japan from the continent.	affix partgap
+517	～行	～ぎょう	line, row	line, row	ページの三行目【さんぎょうめ】から読【よ】んでください。	Please read from the third line of the page.	affix partgap
+518	～業	～ぎょう	type of business	type of business	彼【かれ】はサービス業【ぎょう】で働【はたら】きたいと思【おも】っている。	He wants to work in the service industry.	affix partgap
 519	強化	きょうか	strengthen, intensify, reinforce	strengthen, intensify	警察【けいさつ】は駅【えき】の警備【けいび】を強化【きょうか】している。	The police are stepping up security at the station.	reading meaning definition listen
 520	境界	きょうかい	boundary	boundary	その川【かわ】が二【ふた】つの市【し】の境界【きょうかい】になっている。	The river forms the boundary between the two cities.	reading meaning definition listen exam
-521	共産～	きょうさん～	communist ~	communist ~	その国【くに】はかつて共産主義【きょうさんしゅぎ】の体制【たいせい】だった。	The country used to be under a communist regime.	affix
+521	共産～	きょうさん～	communist ~	communist ~	その国【くに】はかつて共産主義【きょうさんしゅぎ】の体制【たいせい】だった。	The country used to be under a communist regime.	affix partgap
 522	行事	ぎょうじ	event, function	event, function	学校【がっこう】は秋【あき】に多【おお】くの行事【ぎょうじ】がある。	The school holds many events in autumn.	reading meaning definition listen
 523	恐縮	きょうしゅく	sorry to trouble	sorry to trouble	お忙【いそが】しいところ、恐縮【きょうしゅく】です。	I'm very sorry to trouble you when you are busy.	reading meaning definition listen
 524	教養	きょうよう	culture, education, sophistication	culture, education	読書【どくしょ】は教養【きょうよう】を広【ひろ】げてくれる。	Reading broadens your general education.	reading meaning definition listen
@@ -529,12 +529,12 @@
 527	曲線	きょくせん	curve	curve	グラフはなだらかな曲線【きょくせん】を描【えが】いている。	The graph shows a gentle curve.	reading meaning definition listen
 528	規律	きりつ	order, rules, law	order, rules	集団生活【しゅうだんせいかつ】には規律【きりつ】が必要【ひつよう】だ。	Group life requires discipline.	meaning definition listen exam
 529	斬る	きる	to behead, to murder	to behead, to murder	ドラマの中【なか】で、侍【さむらい】が刀【かたな】で敵【てき】を斬【き】った。	In the drama, the samurai cut down his enemy with a sword.	meaning definition listen
-530	～きる	～きる	nevertheless, to carry through	nevertheless, to carry through	彼【かれ】は四十二キロを走【はし】りきる体力【たいりょく】がある。	He has the stamina to run the full 42 km.	affix
-531	～切れ	～きれ	out of ~	out of ~	この牛乳【ぎゅうにゅう】は賞味期限切【しょうみきげんぎ】れだ。	This milk is past its expiry date.	affix exam
+530	～きる	～きる	nevertheless, to carry through	nevertheless, to carry through	彼【かれ】は四十二キロを走【はし】りきる体力【たいりょく】がある。	He has the stamina to run the full 42 km.	affix partgap
+531	～切れ	～きれ	out of ~	out of ~	この牛乳【ぎゅうにゅう】は賞味期限切【しょうみきげんぎ】れだ。	This milk is past its expiry date.	affix partgap exam
 532	気を付ける	きをつける	to be careful, to pay attention, to take care	to be careful, to pay attention	風邪【かぜ】をひかないように気【き】を付【つ】けてください。	Please be careful not to catch a cold.	reading meaning definition listen
 533	金魚	きんぎょ	goldfish	goldfish	夏祭【なつまつ】りですくった金魚【きんぎょ】を大切【たいせつ】に育【そだ】てている。	I'm taking good care of the goldfish I scooped at the summer festival.	reading meaning definition listen
 534	区域	くいき	zone, district, area	zone, district	この区域【くいき】では喫煙【きつえん】が禁止【きんし】されている。	Smoking is prohibited in this area.	meaning definition listen
-535	空～	くう～	empty ~	empty ~	空腹【くうふく】のまま運動【うんどう】するのは体【からだ】によくない。	Exercising on an empty stomach is bad for your body.	affix
+535	空～	くう～	empty ~	empty ~	空腹【くうふく】のまま運動【うんどう】するのは体【からだ】によくない。	Exercising on an empty stomach is bad for your body.	affix partgap
 536	偶数	ぐうすう	even number	even number	偶数【ぐうすう】の番号【ばんごう】の席【せき】は右側【みぎがわ】です。	Even-numbered seats are on the right side.	meaning definition listen exam
 537	空想	くうそう	daydream, fantasy	daydream, fantasy	子供【こども】の頃【ころ】は空想【くうそう】するのが好【す】きだった。	As a child, I liked to daydream.	reading meaning definition listen exam
 538	空中	くうちゅう	sky, air	sky, air	曲芸師【きょくげいし】が空中【くうちゅう】で一回転【いっかいてん】した。	The acrobat turned a somersault in mid-air.	reading meaning definition listen
@@ -553,7 +553,7 @@
 551	砕ける	くだける	to break, to be broken	to break, to be broken	波【なみ】が岩【いわ】に当【あ】たって砕【くだ】けた。	The waves broke against the rocks.	reading meaning definition listen
 552	くたびれる	くたびれる	to get tired, to wear out	to get tired, to wear out	一日中【いちにちじゅう】歩【ある】くと、さすがにくたびれる。	Walking all day really wears you out.	meaning listen
 553	くだらない	くだらない	good-for-nothing, stupid, worthless	good-for-nothing, stupid	そんなくだらないことに時間【じかん】を使【つか】うな。	Don't waste time on such stupid things.	meaning listen
-554	～口	～くち	~ opening; ~ entrance, ~ exit	~ opening, ~ entrance	駅【えき】の北口【きたぐち】で待【ま】ち合【あ】わせしよう。	Let's meet at the north exit of the station.	affix
+554	～口	～くち	~ opening; ~ entrance, ~ exit	~ opening, ~ entrance	駅【えき】の北口【きたぐち】で待【ま】ち合【あ】わせしよう。	Let's meet at the north exit of the station.	affix partgap
 555	唇	くちびる	lip	lip	冬【ふゆ】は唇【くちびる】が荒【あ】れやすい。	My lips get chapped in winter.	reading meaning definition listen exam
 556	口紅	くちべに	lipstick	lipstick	彼女【かのじょ】は出【で】かける前【まえ】に赤【あか】い口紅【くちべに】を塗【ぬ】った。	She put on red lipstick before going out.	reading meaning definition listen
 557	くっつく	くっつく	to adhere to, to keep close to	to adhere to, to keep close to	濡【ぬ】れた手【て】で触【さわ】ると、紙【かみ】が指【ゆび】にくっつく。	If you touch it with wet hands, the paper sticks to your fingers.	meaning listen
@@ -569,9 +569,9 @@
 567	クリーニング	クリーニング	cleaning, dry cleaning, laundry service	cleaning, dry cleaning	スーツをクリーニングに出【だ】した。	I took my suit to the dry cleaner's.	meaning listen
 568	くるむ	くるむ	to be enveloped by, to wrap up	to be enveloped by, to wrap up	赤【あか】ちゃんは毛布【もうふ】でくるむと落【お】ち着【つ】く。	When you wrap a baby in a blanket, it calms down.	meaning listen
 569	くれぐれも	くれぐれも	repeatedly, sincerely, earnestly	repeatedly, sincerely	ご家族【かぞく】にくれぐれもよろしくお伝【つた】えください。	Please give my best regards to your family.	meaning listen
-570	～家	～け	~'s family, the house of ~	~'s family, the house of ~	徳川家【とくがわけ】は長【なが】い間【あいだ】日本【にほん】を治【おさ】めた。	The Tokugawa family ruled Japan for a long time.	affix exam
-571	～形	～けい	shape of ~	shape of ~	この公園【こうえん】の広場【ひろば】は円形【えんけい】になっている。	The square in this park is circular.	affix
-572	～系	～けい	~ system, ~ lineage, ~ group	~ system, ~ lineage	彼【かれ】は理系【りけい】の大学【だいがく】で勉強【べんきょう】している。	He is studying at a science university.	affix
+570	～家	～け	~'s family, the house of ~	~'s family, the house of ~	徳川家【とくがわけ】は長【なが】い間【あいだ】日本【にほん】を治【おさ】めた。	The Tokugawa family ruled Japan for a long time.	affix partgap exam
+571	～形	～けい	shape of ~	shape of ~	この公園【こうえん】の広場【ひろば】は円形【えんけい】になっている。	The square in this park is circular.	affix partgap
+572	～系	～けい	~ system, ~ lineage, ~ group	~ system, ~ lineage	彼【かれ】は理系【りけい】の大学【だいがく】で勉強【べんきょう】している。	He is studying at a science university.	affix partgap
 573	稽古	けいこ	practice, training, study	practice, training	娘【むすめ】は毎週【まいしゅう】ピアノの稽古【けいこ】に通【かよ】っている。	My daughter goes to piano lessons every week.	meaning definition listen exam
 574	敬語	けいご	honorific language (lit., respect language)	honorific language (lit., respect language)	敬語【けいご】を正【ただ】しく使【つか】うのは難【むずか】しい。	Using honorifics correctly is difficult.	meaning definition listen
 575	蛍光灯	けいこうとう	fluorescent lamp	fluorescent lamp	台所【だいどころ】の蛍光灯【けいこうとう】がちかちかしている。	The fluorescent lamp in the kitchen is flickering.	reading meaning definition listen exam
@@ -602,8 +602,8 @@
 600	下品	げひん	vulgar, indecent, coarse	vulgar, indecent	食事中【しょくじちゅう】にそんな下品【げひん】な話【はなし】をしないでほしい。	I'd rather you didn't tell such vulgar stories during a meal.	meaning definition listen
 601	煙い	けむい	smoky	smoky	たき火【び】の近【ちか】くは煙【けむ】くて、目【め】が痛【いた】くなった。	It was smoky near the bonfire and my eyes started to hurt.	meaning definition listen exam
 602	険しい	けわしい	steep, rugged; severe	steep, rugged	頂上【ちょうじょう】までの道【みち】は思【おも】ったより険【けわ】しかった。	The path to the summit was steeper than I expected.	meaning definition listen exam
-603	～圏	～けん	bloc, sphere, area	bloc, sphere	首都圏【しゅとけん】では、朝【あさ】の電車【でんしゃ】がとても混【こ】む。	In the Tokyo metropolitan area, morning trains are very crowded.	affix exam
-604	現～	げん～	present, incumbent	present, incumbent	現社長【げんしゃちょう】は来年【らいねん】で引退【いんたい】するそうだ。	I hear the current president will retire next year.	affix exam
+603	～圏	～けん	bloc, sphere, area	bloc, sphere	首都圏【しゅとけん】では、朝【あさ】の電車【でんしゃ】がとても混【こ】む。	In the Tokyo metropolitan area, morning trains are very crowded.	affix partgap exam
+604	現～	げん～	present, incumbent	present, incumbent	現社長【げんしゃちょう】は来年【らいねん】で引退【いんたい】するそうだ。	I hear the current president will retire next year.	affix partgap exam
 605	見学	けんがく	tour, study by observation	tour, study by observation	社会【しゃかい】の授業【じゅぎょう】で、近【ちか】くの工場【こうじょう】を見学【けんがく】した。	In social studies class we toured a nearby factory.	reading meaning definition listen
 606	謙虚	けんきょ	modesty, humble	modesty, humble	彼【かれ】は成功【せいこう】しても、いつも謙虚【けんきょ】な態度【たいど】を忘【わす】れない。	Even when he succeeds, he never forgets to stay humble.	reading meaning definition listen exam
 607	原稿	げんこう	manuscript, copy	manuscript, copy	明日【あした】の会議【かいぎ】で話【はな】す原稿【げんこう】をまだ書【か】いていない。	I still haven't written the script for my talk at tomorrow's meeting.	reading meaning definition listen
@@ -619,12 +619,12 @@
 617	懸命	けんめい	eagerness, strenuous	eagerness, strenuous	彼【かれ】は試験【しけん】に合格【ごうかく】するため、懸命【けんめい】に勉強【べんきょう】している。	He is studying with all his might to pass the exam.	meaning definition listen
 618	原理	げんり	principle, theory, fundamental truth	principle, theory	飛行機【ひこうき】が飛【と】ぶ原理【げんり】を子【こ】どもに説明【せつめい】した。	I explained to the children the principle of how airplanes fly.	meaning definition listen
 619	原料	げんりょう	raw materials	raw materials	この菓子【かし】の主【おも】な原料【げんりょう】は米【こめ】と砂糖【さとう】です。	The main ingredients of this sweet are rice and sugar.	reading meaning definition listen exam
-620	小～	こ～	small ~	small ~	小雨【こさめ】が降【ふ】ってきたので、傘【かさ】を広【ひろ】げた。	It started to drizzle, so I opened my umbrella.	affix
+620	小～	こ～	small ~	small ~	小雨【こさめ】が降【ふ】ってきたので、傘【かさ】を広【ひろ】げた。	It started to drizzle, so I opened my umbrella.	affix partgap
 621	恋しい	こいしい	dear, beloved; to miss	dear, beloved	一人【ひとり】暮【ぐ】らしを始【はじ】めて、母【はは】の料理【りょうり】が恋【こい】しくなった。	Since I started living alone, I've come to miss my mother's cooking.	reading meaning definition listen
-622	高～	こう～	high (level) ~	high (level) ~	高収入【こうしゅうにゅう】の仕事【しごと】でも、忙【いそが】しすぎるのは嫌【いや】だ。	Even with a high-income job, I don't want to be too busy.	affix
-623	～校	～こう	counter for school	counter for school	市内【しない】の中学【ちゅうがく】三校【さんこう】が大会【たいかい】に参加【さんか】した。	Three junior high schools in the city took part in the tournament.	affix exam
-624	～港	～こう	~ port	~ port	船【ふね】は朝【あさ】八時【はちじ】に横浜港【よこはまこう】を出発【しゅっぱつ】した。	The ship left Yokohama Port at eight in the morning.	affix
-625	～号	～ごう	counter for magazine; the name of ship	counter for magazine, the name of ship	雑誌【ざっし】の来月号【らいげつごう】に、私【わたし】の記事【きじ】が載【の】る予定【よてい】だ。	My article is due to appear in next month's issue of the magazine.	affix
+622	高～	こう～	high (level) ~	high (level) ~	高収入【こうしゅうにゅう】の仕事【しごと】でも、忙【いそが】しすぎるのは嫌【いや】だ。	Even with a high-income job, I don't want to be too busy.	affix partgap
+623	～校	～こう	counter for school	counter for school	市内【しない】の中学【ちゅうがく】三校【さんこう】が大会【たいかい】に参加【さんか】した。	Three junior high schools in the city took part in the tournament.	affix partgap exam
+624	～港	～こう	~ port	~ port	船【ふね】は朝【あさ】八時【はちじ】に横浜港【よこはまこう】を出発【しゅっぱつ】した。	The ship left Yokohama Port at eight in the morning.	affix partgap
+625	～号	～ごう	counter for magazine; the name of ship	counter for magazine, the name of ship	雑誌【ざっし】の来月号【らいげつごう】に、私【わたし】の記事【きじ】が載【の】る予定【よてい】だ。	My article is due to appear in next month's issue of the magazine.	affix partgap
 626	工員	こういん	factory worker	factory worker	父【ちち】は若【わか】いころ、自動車【じどうしゃ】工場【こうじょう】の工員【こういん】だった。	When he was young, my father was a worker at a car factory.	meaning definition listen
 627	強引	ごういん	forcible, assertive, pushy	forcible, assertive	店員【てんいん】に強引【ごういん】に勧【すす】められて、高【たか】い服【ふく】を買【か】ってしまった。	A pushy shop assistant talked me into buying expensive clothes.	meaning definition listen
 628	公害	こうがい	public nuisance, pollution	public nuisance, pollution	工場【こうじょう】の排水【はいすい】が原因【げんいん】で、公害【こうがい】が問題【もんだい】になった。	Pollution became an issue because of the factory's waste water.	reading meaning definition listen exam
@@ -665,7 +665,7 @@
 663	コース	コース	course	course	初心者【しょしんしゃ】向【む】けのコースから始【はじ】めることにした。	I decided to start with the course for beginners.	meaning listen
 664	コーラス	コーラス	chorus	chorus	母【はは】は毎週【まいしゅう】、地域【ちいき】のコーラスに参加【さんか】している。	My mother takes part in the local chorus every week.	meaning listen
 665	焦がす	こがす	to burn, to scorch	to burn, to scorch	電話【でんわ】に出【で】ている間【あいだ】に、魚【さかな】を焦【こ】がしてしまった。	While I was on the phone, I burnt the fish.	reading meaning definition listen exam
-666	～国	～こく	nation of ~	nation of ~	先進国【せんしんこく】の多【おお】くで、少子化【しょうしか】が進【すす】んでいる。	In many developed countries the birth rate is falling.	affix
+666	～国	～こく	nation of ~	nation of ~	先進国【せんしんこく】の多【おお】くで、少子化【しょうしか】が進【すす】んでいる。	In many developed countries the birth rate is falling.	affix partgap
 667	国王	こくおう	king	king	国王【こくおう】が国民【こくみん】に向【む】けて新年【しんねん】のあいさつをした。	The king gave a New Year address to the people.	reading meaning definition listen
 668	国立	こくりつ	national	national	兄【あに】は国立【こくりつ】大学【だいがく】の工学部【こうがくぶ】に通【かよ】っている。	My older brother attends the engineering faculty of a national university.	reading meaning definition listen
 669	ご苦労様	ごくろうさま	Thank you for your had work	Thank you for your had work	遅【おそ】くまで残業【ざんぎょう】、本当【ほんとう】にご苦労様【くろうさま】でした。	Thank you so much for working late.	reading meaning definition listen
@@ -685,7 +685,7 @@
 683	コック	コック	cook; tap, cock	cook, tap	彼【かれ】はホテルのレストランでコックとして働【はたら】いている。	He works as a cook in a hotel restaurant.	meaning listen
 684	こっそり	こっそり	stealthily, secretly	stealthily, secretly	授業中【じゅぎょうちゅう】に、こっそり友達【ともだち】に手紙【てがみ】を渡【わた】した。	During class I secretly passed a note to my friend.	meaning listen
 685	古典	こてん	classics, classic	classics, classic	高校【こうこう】の古典【こてん】の授業【じゅぎょう】で、昔【むかし】の和歌【わか】を読【よ】んだ。	In high school classics class we read old waka poems.	reading meaning definition listen
-686	～毎	～ごと	every ~, each ~	every ~, each ~	このバスは十五分【じゅうごふん】毎【ごと】に駅【えき】から出【で】ている。	This bus leaves the station every fifteen minutes.	affix
+686	～毎	～ごと	every ~, each ~	every ~, each ~	このバスは十五分【じゅうごふん】毎【ごと】に駅【えき】から出【で】ている。	This bus leaves the station every fifteen minutes.	affix partgap
 687	〜 (まる) ごと	〜 (まる) ごと	whole ~, all of ~	whole ~, all of ~	この魚【さかな】は骨【ほね】ごと食【た】べられます。	You can eat this fish bones and all.	
 688	言付ける	ことづける	to leave a message	to leave a message	受付【うけつけ】の人【ひと】に、遅【おく】れると言付【ことづ】けてください。	Please leave word with the receptionist that I'll be late.	reading meaning definition listen
 689	言葉遣い	ことばづかい	speech, expression, wording	speech, expression	目上【めうえ】の人【ひと】と話【はな】すときは、言葉遣【ことばづか】いに気【き】をつけなさい。	Watch your language when you talk to your superiors.	reading meaning definition listen
@@ -702,7 +702,7 @@
 700	転がす	ころがす	to roll	to roll	子【こ】どもたちが雪【ゆき】の玉【たま】を転【ころ】がして、大【おお】きくした。	The children rolled the snowball to make it bigger.	reading meaning definition listen
 701	転がる	ころがる	to roll, to tumble	to roll, to tumble	ボールが坂道【さかみち】を転【ころ】がって、川【かわ】に落【お】ちた。	The ball rolled down the slope and fell into the river.	reading meaning definition listen
 702	紺	こん	navy blue, deep blue	navy blue, deep blue	面接【めんせつ】には紺【こん】のスーツを着【き】て行【い】くつもりだ。	I plan to wear a navy suit to the interview.	meaning definition listen
-703	今～	こん～	this, current	this, current	今学期【こんがっき】は、去年【きょねん】より授業【じゅぎょう】が多【おお】い。	This term I have more classes than last year.	affix
+703	今～	こん～	this, current	this, current	今学期【こんがっき】は、去年【きょねん】より授業【じゅぎょう】が多【おお】い。	This term I have more classes than last year.	affix partgap
 704	コンクール	コンクール	contest (FRE: concours)	contest (FRE: concours)	娘【むすめ】がピアノのコンクールで二位【にい】になった。	My daughter came second in a piano competition.	meaning listen
 705	コンクリート	コンクリート	concrete	concrete	古【ふる】い木【き】の橋【はし】が、コンクリートの橋【はし】に作【つく】り替【か】えられた。	The old wooden bridge was rebuilt as a concrete one.	meaning listen
 706	混合	こんごう	mixing, mixture	mixing, mixture	男女【だんじょ】混合【こんごう】のリレーに出場【しゅつじょう】した。	I ran in the mixed men's and women's relay.	reading meaning definition listen
@@ -710,8 +710,8 @@
 708	献立	こんだて	menu	menu	毎日【まいにち】の夕食【ゆうしょく】の献立【こんだて】を考【かんが】えるのは大変【たいへん】だ。	Planning the dinner menu every day is hard work.	reading meaning definition listen
 709	こんばんは	こんばんは	good evening	good evening	夜【よる】、近所【きんじょ】の人【ひと】に会【あ】って「こんばんは」とあいさつした。	I met a neighbour in the evening and said "good evening".	meaning listen
 710	サークル	サークル	circle, sports club (e.g., at a company)	circle, sports club (e.g., at a company)	大学【だいがく】では、写真【しゃしん】のサークルに入【はい】るつもりです。	At university I plan to join the photography club.	meaning listen
-711	再～	さい～	re ~	re ~	この番組【ばんぐみ】は、来週【らいしゅう】の日曜日【にちようび】に再放送【さいほうそう】される。	This programme will be rebroadcast next Sunday.	affix exam
-712	最～	さい～	the most ~	the most ~	今日【きょう】は今年【ことし】最高【さいこう】の気温【きおん】を記録【きろく】した。	Today we recorded the highest temperature of the year.	affix
+711	再～	さい～	re ~	re ~	この番組【ばんぐみ】は、来週【らいしゅう】の日曜日【にちようび】に再放送【さいほうそう】される。	This programme will be rebroadcast next Sunday.	affix partgap exam
+712	最～	さい～	the most ~	the most ~	今日【きょう】は今年【ことし】最高【さいこう】の気温【きおん】を記録【きろく】した。	Today we recorded the highest temperature of the year.	affix partgap
 713	在学	ざいがく	(enrolled) in school	(enrolled) in school	在学中【ざいがくちゅう】に、一度【いちど】は海外【かいがい】に留学【りゅうがく】したい。	While I'm a student, I want to study abroad at least once.	reading meaning definition listen
 714	再三	さいさん	again and again, repeatedly	again and again, repeatedly	再三【さいさん】注意【ちゅうい】したのに、彼【かれ】はまた遅刻【ちこく】した。	I warned him again and again, but he was late again.	meaning definition listen
 715	祭日	さいじつ	national holiday, festival day	national holiday, festival day	祭日【さいじつ】なので、銀行【ぎんこう】は休【やす】みです。	It's a national holiday, so the banks are closed.	reading meaning definition listen exam
@@ -754,16 +754,16 @@
 752	サラリーマン	サラリーマン	salaryman; company employee	salaryman, company employee	父【ちち】は三十年間【さんじゅうねんかん】、サラリーマンとして働【はたら】いてきた。	My father has worked as a company employee for thirty years.	meaning listen
 753	騒がしい	さわがしい	noisy	noisy	隣【となり】の部屋【へや】が騒【さわ】がしくて、勉強【べんきょう】に集中【しゅうちゅう】できない。	The room next door is so noisy I can't concentrate on studying.	reading meaning definition listen exam
 754	さわやか	さわやか	fresh, refreshing	fresh, refreshing	朝【あさ】の高原【こうげん】は空気【くうき】がさわやかで気持【きも】ちがいい。	In the morning the highland air is fresh and pleasant.	meaning listen
-755	～山	～さん	the name of mountain	the name of mountain	夏休【なつやす】みに、家族【かぞく】で富士山【ふじさん】に登【のぼ】った。	During the summer holidays my family climbed Mount Fuji.	affix exam
-756	～産	～さん	made in ~	made in ~	スーパーで北海道産【ほっかいどうさん】のじゃがいもを買【か】った。	I bought potatoes from Hokkaido at the supermarket.	affix
+755	～山	～さん	the name of mountain	the name of mountain	夏休【なつやす】みに、家族【かぞく】で富士山【ふじさん】に登【のぼ】った。	During the summer holidays my family climbed Mount Fuji.	affix partgap exam
+756	～産	～さん	made in ~	made in ~	スーパーで北海道産【ほっかいどうさん】のじゃがいもを買【か】った。	I bought potatoes from Hokkaido at the supermarket.	affix partgap
 757	三角	さんかく	triangle, triangular	triangle, triangular	サンドイッチを三角【さんかく】に切【き】って、お皿【さら】に並【なら】べた。	I cut the sandwiches into triangles and arranged them on a plate.	reading meaning definition listen
 758	算数	さんすう	arithmetic	arithmetic	弟【おとうと】は小学校【しょうがっこう】の算数【さんすう】が苦手【にがて】だ。	My little brother is bad at elementary school arithmetic.	meaning definition listen
 759	産地	さんち	producing area	producing area	この地方【ちほう】は、おいしいお茶【ちゃ】の産地【さんち】として知【し】られている。	This region is known for producing delicious tea.	meaning definition listen
 760	サンプル	サンプル	sample	sample	化粧品【けしょうひん】の店【みせ】で、新商品【しんしょうひん】のサンプルをもらった。	I got a sample of a new product at the cosmetics shop.	meaning listen
 761	山林	さんりん	mountain forest	mountain forest	大雨【おおあめ】で、山林【さんりん】の一部【いちぶ】が崩【くず】れた。	Part of the mountain forest collapsed in the heavy rain.	meaning definition listen
-762	～史	～し	history of ~	history of ~	大学【だいがく】で日本史【にほんし】を専攻【せんこう】しています。	I'm majoring in Japanese history at university.	affix
-763	～紙	～し	newspaper, type of paper	newspaper, type of paper	地元紙【じもとし】に、私【わたし】たちの店【みせ】が紹介【しょうかい】された。	Our shop was featured in the local newspaper.	affix
-764	～寺	～じ	the name of temple	the name of temple	奈良【なら】で東大寺【とうだいじ】の大仏【だいぶつ】を見【み】た。	In Nara I saw the Great Buddha at Todaiji Temple.	affix
+762	～史	～し	history of ~	history of ~	大学【だいがく】で日本史【にほんし】を専攻【せんこう】しています。	I'm majoring in Japanese history at university.	affix partgap
+763	～紙	～し	newspaper, type of paper	newspaper, type of paper	地元紙【じもとし】に、私【わたし】たちの店【みせ】が紹介【しょうかい】された。	Our shop was featured in the local newspaper.	affix partgap
+764	～寺	～じ	the name of temple	the name of temple	奈良【なら】で東大寺【とうだいじ】の大仏【だいぶつ】を見【み】た。	In Nara I saw the Great Buddha at Todaiji Temple.	affix partgap
 765	仕上がる	しあがる	to be finished	to be finished	頼【たの】んでいたスーツは、来週【らいしゅう】の金曜日【きんようび】に仕上【しあ】がる予定【よてい】です。	The suit I ordered is due to be finished next Friday.	meaning definition listen
 766	明明後日	しあさって	two days after tomorrow	two days after tomorrow	試験【しけん】は明明後日【しあさって】なので、まだ少【すこ】し時間【じかん】がある。	The exam is three days from now, so I still have a little time.	reading meaning definition listen exam
 767	シーズン	シーズン	season (sporting)	season (sporting)	スキーのシーズンになると、この町【まち】は観光客【かんこうきゃく】でにぎわう。	When ski season comes, this town is busy with tourists.	meaning listen
@@ -775,7 +775,7 @@
 773	司会	しかい	host, chairperson	host, chairperson	友人【ゆうじん】の結婚式【けっこんしき】で、司会【しかい】を頼【たの】まれた。	I was asked to be the MC at my friend's wedding.	meaning definition listen
 774	四角い	しかくい	square	square	四角【しかく】い箱【はこ】に、プレゼントをきれいに詰【つ】めた。	I packed the present neatly into a square box.	reading meaning definition listen
 775	仕方がない	しかたがない	it can't be helped, it's inevitable	it can't be helped, it's inevitable	電車【でんしゃ】が止【と】まっているなら、遅【おく】れても仕方【しかた】がない。	If the trains have stopped, being late can't be helped.	reading meaning definition listen exam
-776	～時間目	～じかんめ	~th hour, ~th period	~th hour, ~th period	三時間目【さんじかんめ】の授業【じゅぎょう】は、体育【たいいく】に変更【へんこう】になった。	Third period has been changed to PE.	affix
+776	～時間目	～じかんめ	~th hour, ~th period	~th hour, ~th period	三時間目【さんじかんめ】の授業【じゅぎょう】は、体育【たいいく】に変更【へんこう】になった。	Third period has been changed to PE.	affix partgap
 777	時間割	じかんわり	timetable, schedule	timetable, schedule	新学期【しんがっき】の時間割【じかんわり】が発表【はっぴょう】された。	The timetable for the new term has been announced.	meaning definition listen
 778	〜(日本) 式	～(にほん) しき	custom,	custom	彼女【かのじょ】の家【いえ】は、昔【むかし】ながらの日本式【にほんしき】の家【いえ】だ。	Her home is a traditional Japanese-style house.	
 779	敷地	しきち	site	site	大学【だいがく】の敷地【しきち】の中【なか】に、大【おお】きな池【いけ】がある。	There is a large pond within the university grounds.	reading meaning definition listen
@@ -796,9 +796,9 @@
 794	自宅	じたく	one's own home (same as 自分の家 (じぶんのいえ))	one's own home	今日【きょう】は会社【かいしゃ】に行【い】かず、自宅【じたく】で仕事【しごと】をしている。	Today I'm not going to the office; I'm working from home.	reading meaning definition listen
 795	下町	したまち	old parts of town	old parts of town	祖父【そふ】は東京【とうきょう】の下町【したまち】で生【う】まれ育【そだ】った。	My grandfather was born and raised in the old downtown of Tokyo.	reading meaning definition listen
 796	自治	じち	self-government, autonomy	self-government, autonomy	地方【ちほう】の自治【じち】を強【つよ】めるための法律【ほうりつ】ができた。	A law was passed to strengthen local self-government.	meaning definition listen
-797	室～	しつ～	room	room	室温【しつおん】を二十五度【にじゅうごど】に保【たも】ってください。	Please keep the room temperature at twenty-five degrees.	affix
-798	～室	～しつ	counter for room	counter for room	会議室【かいぎしつ】はもう予約【よやく】でいっぱいだ。	The meeting room is already fully booked.	affix
-799	～日	～じつ	day	day	会議【かいぎ】は翌日【よくじつ】に延期【えんき】された。	The meeting was postponed to the following day.	affix
+797	室～	しつ～	room	room	室温【しつおん】を二十五度【にじゅうごど】に保【たも】ってください。	Please keep the room temperature at twenty-five degrees.	affix partgap
+798	～室	～しつ	counter for room	counter for room	会議室【かいぎしつ】はもう予約【よやく】でいっぱいだ。	The meeting room is already fully booked.	affix partgap
+799	～日	～じつ	day	day	会議【かいぎ】は翌日【よくじつ】に延期【えんき】された。	The meeting was postponed to the following day.	affix partgap
 800	実感	じっかん	feelings, realization	feelings, realization	子【こ】どもが生【う】まれて、親【おや】になったことを実感【じっかん】した。	When my child was born, it really sank in that I'd become a parent.	reading meaning definition listen
 801	湿気	しっき	moisture, humidity, dampness	moisture, humidity	梅雨【つゆ】の時期【じき】は湿気【しっけ】が多【おお】くて、洗濯物【せんたくもの】が乾【かわ】かない。	In the rainy season it's so humid that the laundry won't dry.	reading meaning definition listen
 802	しつこい	しつこい	insistent, obstinate	insistent, obstinate	断【ことわ】ったのに、しつこい勧誘【かんゆう】の電話【でんわ】がまたかかってきた。	I said no, but the persistent sales call came again.	meaning listen
@@ -827,9 +827,9 @@
 825	締め切る	しめきる	to close, cancel	to close, cancel	応募【おうぼ】は、今月末【こんげつまつ】で締【し】め切【き】ります。	Applications close at the end of this month.	meaning definition listen
 826	しめた (かん)	しめた (かん)	I've got it, all right, fine	I've got it, all right	しめた、まだ最終【さいしゅう】電車【でんしゃ】に間【ま】に合【あ】うぞ。	Great, I can still make the last train!	meaning listen
 827	地面	じめん	ground, earth's surface	ground, earth's surface	雨【あめ】が上【あ】がったばかりで、地面【じめん】がまだぬれている。	The rain has only just stopped, so the ground is still wet.	meaning definition listen
-828	～車	～しゃ	~ car	~ car	父【ちち】は最近【さいきん】、小型車【こがたしゃ】に買【か】い替【か】えた。	My father recently switched to a compact car.	affix
-829	～者	～しゃ	person	person	全国【ぜんこく】から応募者【おうぼしゃ】が集【あつ】まった。	Applicants gathered from all over the country.	affix exam
-830	～社	～しゃ	counter for company	counter for company	この仕事【しごと】には、三社【さんしゃ】から見積【みつ】もりを取【と】った。	For this job we got quotes from three companies.	affix
+828	～車	～しゃ	~ car	~ car	父【ちち】は最近【さいきん】、小型車【こがたしゃ】に買【か】い替【か】えた。	My father recently switched to a compact car.	affix partgap
+829	～者	～しゃ	person	person	全国【ぜんこく】から応募者【おうぼしゃ】が集【あつ】まった。	Applicants gathered from all over the country.	affix partgap exam
+830	～社	～しゃ	counter for company	counter for company	この仕事【しごと】には、三社【さんしゃ】から見積【みつ】もりを取【と】った。	For this job we got quotes from three companies.	affix partgap
 831	ジャーナリスト	ジャーナリスト	journalist	journalist	彼女【かのじょ】は、戦争【せんそう】の現場【げんば】を取材【しゅざい】するジャーナリストだ。	She is a journalist who reports from war zones.	meaning listen
 832	社会科学	しゃかいかがく	social science	social science	経済学【けいざいがく】や社会学【しゃかいがく】は、社会科学【しゃかいかがく】に含【ふく】まれる。	Economics and sociology are included in the social sciences.	reading meaning definition listen
 833	しゃがむ	しゃがむ	to squat	to squat	子【こ】どもと話【はな】すときは、しゃがむと目線【めせん】が合【あ】う。	When you talk to children, squatting down puts you at their eye level.	meaning listen
@@ -845,10 +845,10 @@
 843	車輪	しゃりん	(car) wheel	(car) wheel	自転車【じてんしゃ】の後【うし】ろの車輪【しゃりん】がパンクした。	The back wheel of my bicycle got a flat.	meaning definition listen
 844	洒落	しゃれ	joke, pun, witticism	joke, pun	部長【ぶちょう】の洒落【しゃれ】は、いつもあまり面白【おもしろ】くない。	The manager's puns are never very funny.	meaning definition listen
 845	じゃんけん	じゃんけん	rock-scissors-paper game	rock-scissors-paper game	誰【だれ】が掃除【そうじ】をするか、じゃんけんで決【き】めよう。	Let's decide who does the cleaning with rock-paper-scissors.	meaning listen
-846	～手	～しゅ	~ player, person who does ~	~ player, person who does ~	彼【かれ】はチームで一番【いちばん】の投手【とうしゅ】だ。	He is the best pitcher on the team.	affix
-847	～酒	～しゅ	kind of alcohol	kind of alcohol	この店【みせ】には各地【かくち】の日本酒【にほんしゅ】が並【なら】んでいる。	This shop stocks sake from all over the country.	affix
-848	～集	～しゅう	collection of ~	collection of ~	本屋【ほんや】で、好【す】きな詩人【しじん】の作品集【さくひんしゅう】を見【み】つけた。	At the bookshop I found a collection of works by my favourite poet.	affix exam
-849	重～	じゅう～	heavy ~	heavy ~	事故【じこ】で、運転手【うんてんしゅ】が重傷【じゅうしょう】を負【お】った。	The driver was seriously injured in the accident.	affix
+846	～手	～しゅ	~ player, person who does ~	~ player, person who does ~	彼【かれ】はチームで一番【いちばん】の投手【とうしゅ】だ。	He is the best pitcher on the team.	affix partgap
+847	～酒	～しゅ	kind of alcohol	kind of alcohol	この店【みせ】には各地【かくち】の日本酒【にほんしゅ】が並【なら】んでいる。	This shop stocks sake from all over the country.	affix partgap
+848	～集	～しゅう	collection of ~	collection of ~	本屋【ほんや】で、好【す】きな詩人【しじん】の作品集【さくひんしゅう】を見【み】つけた。	At the bookshop I found a collection of works by my favourite poet.	affix partgap exam
+849	重～	じゅう～	heavy ~	heavy ~	事故【じこ】で、運転手【うんてんしゅ】が重傷【じゅうしょう】を負【お】った。	The driver was seriously injured in the accident.	affix partgap
 850	集会	しゅうかい	meeting, assembly	meeting, assembly	駅前【えきまえ】の広場【ひろば】で、環境【かんきょう】問題【もんだい】の集会【しゅうかい】が開【ひら】かれた。	A rally on environmental issues was held in the square in front of the station.	reading meaning definition listen
 851	集金	しゅうきん	money collection	money collection	毎月【まいつき】、新聞【しんぶん】の集金【しゅうきん】の人【ひと】が来【く】る。	Every month someone comes to collect the newspaper money.	reading meaning definition listen
 852	集合	しゅうごう	gathering, assembly	gathering, assembly	明日【あした】は朝【あさ】七時【しちじ】に、駅【えき】の改札【かいさつ】前【まえ】に集合【しゅうごう】してください。	Tomorrow please gather in front of the station ticket gates at seven a.m.	reading meaning definition listen
@@ -861,16 +861,16 @@
 859	リットル	リットル	liter	liter	毎日【まいにち】二【に】リットルの水【みず】を飲【の】むようにしている。	I try to drink two litres of water every day.	meaning listen
 860	リボン	リボン	ribbon	ribbon	プレゼントの箱【はこ】に、赤【あか】いリボンを結【むす】んだ。	I tied a red ribbon on the gift box.	meaning listen
 861	略す	りゃくす	to abbreviate	to abbreviate	「パーソナルコンピューター」を略【りゃく】して「パソコン」と言【い】う。	"Personal computer" is shortened to "pasokon".	reading meaning definition listen
-862	～流	～りゅう	fashion, manner, way	fashion, manner	彼【かれ】は何【なん】でも自分流【じぶんりゅう】にやりたがる。	He always wants to do everything his own way.	affix
+862	～流	～りゅう	fashion, manner, way	fashion, manner	彼【かれ】は何【なん】でも自分流【じぶんりゅう】にやりたがる。	He always wants to do everything his own way.	affix partgap
 863	流域	りゅういき	(river) basin	(river) basin	この川【かわ】の流域【りゅういき】では、昔【むかし】から米作【こめづく】りが盛【さか】んだ。	Rice growing has long flourished in this river's basin.	reading meaning definition listen
-864	両～	りょう～	both ~	both ~	赤【あか】ちゃんを両手【りょうて】でしっかりと抱【だ】いた。	I held the baby firmly with both hands.	affix exam
-865	～料	～りょう	fare, charge	fare, charge	来月【らいげつ】から、この美術館【びじゅつかん】の入場料【にゅうじょうりょう】が上【あ】がる。	From next month, this museum's admission fee goes up.	affix
-866	～領	～りょう	territory	territory	この島【しま】は、かつてフランス領【りょう】だった。	This island was once French territory.	affix
+864	両～	りょう～	both ~	both ~	赤【あか】ちゃんを両手【りょうて】でしっかりと抱【だ】いた。	I held the baby firmly with both hands.	affix partgap exam
+865	～料	～りょう	fare, charge	fare, charge	来月【らいげつ】から、この美術館【びじゅつかん】の入場料【にゅうじょうりょう】が上【あ】がる。	From next month, this museum's admission fee goes up.	affix partgap
+866	～領	～りょう	territory	territory	この島【しま】は、かつてフランス領【りょう】だった。	This island was once French territory.	affix partgap
 867	両側	りょうがわ	both sides	both sides	道【みち】の両側【りょうがわ】に、桜【さくら】の木【き】が並【なら】んでいる。	Cherry trees line both sides of the road.	reading meaning definition listen
 868	漁師	りょうし	fisherman	fisherman	祖父【そふ】は、この港【みなと】で五十年【ごじゅうねん】漁師【りょうし】をしていた。	My grandfather was a fisherman at this port for fifty years.	reading meaning definition listen
 869	領事	りょうじ	consul	consul	ビザのことで、日本【にほん】の領事【りょうじ】に相談【そうだん】した。	I consulted the Japanese consul about my visa.	reading meaning definition listen
 870	領収	りょうしゅう	receipt, voucher	receipt, voucher	代金【だいきん】を確【たし】かに領収【りょうしゅう】いたしました。	We hereby acknowledge receipt of your payment.	reading meaning definition listen exam
-871	～力	～りょく	power of ~	power of ~	彼女【かのじょ】の説明【せつめい】には、人【ひと】を動【うご】かす説得力【せっとくりょく】がある。	Her explanations have a persuasiveness that moves people.	affix exam
+871	～力	～りょく	power of ~	power of ~	彼女【かのじょ】の説明【せつめい】には、人【ひと】を動【うご】かす説得力【せっとくりょく】がある。	Her explanations have a persuasiveness that moves people.	affix partgap exam
 872	臨時	りんじ	temporary, special, extraordinary	temporary, special	雪【ゆき】のため、今日【きょう】は臨時【りんじ】休業【きゅうぎょう】します。	Because of the snow, we are closed today as a special measure.	meaning definition listen exam
 873	留守番	るすばん	care-taking, caretaker, house-watching	care-taking, caretaker	両親【りょうしん】が出【で】かけている間【あいだ】、一人【ひとり】で留守番【るすばん】をした。	While my parents were out, I looked after the house by myself.	reading meaning definition listen
 874	零点	れいてん	zero, no marks	zero, no marks	答【こた】えを書【か】く欄【らん】を間違【まちが】えて、零点【れいてん】を取【と】ってしまった。	I wrote my answers in the wrong boxes and got zero.	meaning definition listen
@@ -888,12 +888,12 @@
 886	録音	ろくおん	(audio) recording	(audio) recording	会議【かいぎ】の内容【ないよう】をスマホで録音【ろくおん】しておいた。	I recorded the meeting on my phone.	reading meaning definition listen exam
 887	ロッカー	ロッカー	locker	locker	荷物【にもつ】は駅【えき】のコインロッカーに預【あず】けました。	I left my luggage in a coin locker at the station.	meaning listen
 888	ロビー	ロビー	lobby	lobby	ホテルのロビーで友人【ゆうじん】と待【ま】ち合【あ】わせをした。	I arranged to meet a friend in the hotel lobby.	meaning listen
-889	～論	～ろん	theory	theory	大学【だいがく】で日本文化論【にほんぶんかろん】の講義【こうぎ】を受【う】けている。	I'm taking a lecture course on theories of Japanese culture at university.	affix exam
+889	～論	～ろん	theory	theory	大学【だいがく】で日本文化論【にほんぶんかろん】の講義【こうぎ】を受【う】けている。	I'm taking a lecture course on theories of Japanese culture at university.	affix partgap exam
 890	論ずる	ろんずる	to argue, to discuss	to argue, to discuss	この本【ほん】は環境問題【かんきょうもんだい】について詳【くわ】しく論【ろん】じている。	This book discusses environmental issues in detail.	meaning definition listen
-891	和～	わ～	Japanese style	Japanese style	旅館【りょかん】の和室【わしつ】に泊【と】まるのは初【はじ】めてです。	It's my first time staying in a Japanese-style room at an inn.	affix
-892	～羽	～わ	counter for rabbits; birds	counter for rabbits, birds	公園【こうえん】の池【いけ】に白【しろ】い鳥【とり】が三羽【さんば】いた。	There were three white birds on the pond in the park.	affix
+891	和～	わ～	Japanese style	Japanese style	旅館【りょかん】の和室【わしつ】に泊【と】まるのは初【はじ】めてです。	It's my first time staying in a Japanese-style room at an inn.	affix partgap
+892	～羽	～わ	counter for rabbits; birds	counter for rabbits, birds	公園【こうえん】の池【いけ】に白【しろ】い鳥【とり】が三羽【さんば】いた。	There were three white birds on the pond in the park.	affix partgap
 893	和英	わえい	Japanese-English	Japanese-English	分【わ】からない単語【たんご】は和英辞典【わえいじてん】で調【しら】べてください。	Look up words you don't know in a Japanese-English dictionary.	meaning definition listen
-894	我～	わが～	our ~	our ~	我【わ】が社【しゃ】は来年【らいねん】、創立【そうりつ】五十周年【ごじゅっしゅうねん】を迎【むか】える。	Our company celebrates its fiftieth anniversary next year.	affix
+894	我～	わが～	our ~	our ~	我【わ】が社【しゃ】は来年【らいねん】、創立【そうりつ】五十周年【ごじゅっしゅうねん】を迎【むか】える。	Our company celebrates its fiftieth anniversary next year.	affix partgap
 895	若々しい	わかわかしい	youthful, young	youthful, young	祖母【そぼ】は八十歳【はちじゅっさい】とは思【おも】えないほど若々【わかわか】しい。	My grandmother is so youthful you'd never think she was eighty.	reading meaning definition listen
 896	詫びる	わびる	to apologize	to apologize	約束【やくそく】の時間【じかん】に遅【おく】れたことを心【こころ】から詫【わ】びた。	I sincerely apologized for being late for our appointment.	meaning definition listen
 897	和服	わふく	Japanese clothes	Japanese clothes	成人式【せいじんしき】には和服【わふく】を着【き】て出席【しゅっせき】するつもりだ。	I plan to wear Japanese clothes to the coming-of-age ceremony.	meaning definition listen
@@ -910,7 +910,7 @@
 908	アクセント	アクセント	accent	accent	関西【かんさい】の人【ひと】とは言葉【ことば】のアクセントが少【すこ】し違【ちが】う。	The accent of my speech is a little different from people in Kansai.	meaning listen
 909	あくび	あくび	yawn	yawn	退屈【たいくつ】な会議【かいぎ】で、思【おも】わずあくびが出【で】てしまった。	In the boring meeting, I couldn't help letting out a yawn.	meaning listen
 910	飽くまで	あくまで	to the end, to the last, stubbornly	to the end, to the last	彼【かれ】は飽【あ】くまで自分【じぶん】の意見【いけん】を変【か】えなかった。	He stubbornly refused to change his opinion to the very end.	meaning definition listen
-911	明くる～	あくる～	next, following	next, following	大雪【おおゆき】の明【あ】くる日【ひ】、町【まち】は真【ま】っ白【しろ】だった。	The day after the heavy snow, the town was completely white.	affix
+911	明くる～	あくる～	next, following	next, following	大雪【おおゆき】の明【あ】くる日【ひ】、町【まち】は真【ま】っ白【しろ】だった。	The day after the heavy snow, the town was completely white.	affix partgap
 912	明け方	あけがた	dawn	dawn	明【あ】け方【がた】まで雨【あめ】の音【おと】で眠【ねむ】れなかった。	I couldn't sleep until dawn because of the sound of the rain.	reading meaning definition listen
 913	憧れる	あこがれる	to long for, to yearn after	to long for, to yearn after	子【こ】どものころから、パイロットに憧【あこが】れていた。	Ever since I was a child, I've longed to be a pilot.	reading meaning definition listen
 914	朝寝坊	あさねぼう	oversleeping, late riser	oversleeping, late riser	朝寝坊【あさねぼう】して、いつものバスに乗【の】り遅【おく】れた。	I overslept and missed my usual bus.	reading meaning definition listen
@@ -944,13 +944,13 @@
 942	慌ただしい	あわただしい	busy, hurried	busy, hurried	引【ひ】っ越【こ】しの準備【じゅんび】で、毎日【まいにち】が慌【あわ】ただしい。	Every day is hectic with preparations for the move.	reading meaning definition listen exam
 943	安易	あんい	easy-going	easy-going	安易【あんい】な気持【きも】ちで借金【しゃっきん】をするべきではない。	You shouldn't take on debt with a casual attitude.	meaning definition listen
 944	アンテナ	アンテナ	antenna	antenna	屋根【やね】の上【うえ】に、テレビのアンテナが立【た】っている。	There's a TV antenna standing on the roof.	meaning listen
-945	～位	～い	~th place	~th place	彼【かれ】はマラソン大会【たいかい】で三位【さんい】に入【はい】った。	He came third in the marathon.	affix
+945	～位	～い	~th place	~th place	彼【かれ】はマラソン大会【たいかい】で三位【さんい】に入【はい】った。	He came third in the marathon.	affix partgap
 946	言い出す	いいだす	to start talking, to suggest	to start talking, to suggest	会議【かいぎ】の最後【さいご】に、部長【ぶちょう】が急【きゅう】に転勤【てんきん】の話【はなし】を言【い】い出【だ】した。	At the end of the meeting, the manager suddenly brought up the subject of a transfer.	meaning definition listen
 947	言い付ける	いいつける	to tell, to order	to tell, to order	母【はは】に買【か】い物【もの】を言【い】い付【つ】けられて、スーパーに行【い】った。	My mother told me to do the shopping, so I went to the supermarket.	reading meaning definition listen
 948	意義	いぎ	meaning, significance	meaning, significance	この研究【けんきゅう】には、社会的【しゃかいてき】に大【おお】きな意義【いぎ】がある。	This research has great social significance.	meaning definition listen
 949	生き生き	いきいき	vividly, lively	vividly, lively	久【ひさ】しぶりに会【あ】った友人【ゆうじん】は、生【い】き生【い】きとした表情【ひょうじょう】をしていた。	The friend I hadn't seen in a while looked lively and full of energy.	meaning definition listen
 950	いきなり	いきなり	all of a sudden	all of a sudden	前【まえ】を歩【ある】いていた人【ひと】が、いきなり立【た】ち止【ど】まった。	The person walking in front of me suddenly stopped.	meaning listen
-951	幾～	いく～	several ~	several ~	この寺【てら】は幾度【いくど】も火事【かじ】に遭【あ】い、そのたびに再建【さいけん】された。	This temple was hit by fire several times and rebuilt each time.	affix
+951	幾～	いく～	several ~	several ~	この寺【てら】は幾度【いくど】も火事【かじ】に遭【あ】い、そのたびに再建【さいけん】された。	This temple was hit by fire several times and rebuilt each time.	affix partgap
 952	育児	いくじ	childcare, nursing	childcare, nursing	育児【いくじ】と仕事【しごと】を両立【りょうりつ】するのは簡単【かんたん】ではない。	Balancing childcare and work is not easy.	meaning definition listen
 953	幾分	いくぶん	somewhat	somewhat	薬【くすり】を飲【の】んだら、痛【いた】みが幾分【いくぶん】和【やわ】らいだ。	After I took the medicine, the pain eased somewhat.	reading meaning definition listen
 954	生け花	いけばな	flower arrangement	flower arrangement	母【はは】は毎週【まいしゅう】、生【い】け花【ばな】の教室【きょうしつ】に通【かよ】っている。	My mother goes to a flower arrangement class every week.	reading meaning definition listen
@@ -1013,7 +1013,7 @@
 1011	売り切れる	うりきれる	to be sold out	to be sold out	新【あたら】しいゲーム機【き】は、発売日【はつばいび】に売【う】り切【き】れた。	The new game console sold out on the day it went on sale.	meaning definition listen exam
 1012	売行き	うれゆき	sales	sales	暑【あつ】い日【ひ】が続【つづ】いて、エアコンの売行【うれゆ】きが好調【こうちょう】だ。	With the hot days continuing, air conditioners are selling well.	meaning definition listen exam
 1013	うろうろ	うろうろ	loitering, aimless wandering	loitering, aimless wandering	道【みち】に迷【まよ】って、駅【えき】の周【まわ】りをうろうろしてしまった。	I got lost and wandered around the station.	meaning listen
-1014	上～	うわ～	upper ~	upper ~	寒【さむ】いので、上着【うわぎ】を着【き】て出【で】かけた。	It was cold, so I put on a jacket and went out.	affix exam
+1014	上～	うわ～	upper ~	upper ~	寒【さむ】いので、上着【うわぎ】を着【き】て出【で】かけた。	It was cold, so I put on a jacket and went out.	affix partgap exam
 1015	運河	うんが	canal, waterway	canal, waterway	この町【まち】には、昔【むかし】作【つく】られた運河【うんが】が今【いま】も残【のこ】っている。	A canal built long ago still remains in this town.	meaning definition listen exam
 1016	うんと	うんと	a great deal, very much	a great deal, very much	試験【しけん】に合格【ごうかく】したら、うんと褒【ほ】めてあげよう。	If you pass the exam, I'll praise you to the skies.	meaning listen
 1017	英文	えいぶん	sentence in English	sentence in English	この英文【えいぶん】を日本語【にほんご】に訳【やく】してください。	Please translate this English sentence into Japanese.	meaning definition listen
@@ -1024,7 +1024,7 @@
 1022	絵の具	えのぐ	colors, paints	colors, paints	子【こ】どもたちは絵【え】の具【ぐ】で空【そら】の絵【え】を描【か】いた。	The children painted pictures of the sky with paints.	meaning definition listen
 1023	エプロン	エプロン	apron	apron	料理【りょうり】をする時【とき】は、エプロンをつけるようにしている。	I make a point of wearing an apron when I cook.	meaning listen
 1024	偉い	えらい	great, celebrated, remarkable,	great, celebrated	毎朝【まいあさ】五時【ごじ】に起【お】きて勉強【べんきょう】するなんて、偉【えら】いね。	Getting up at five every morning to study? That's impressive.	meaning definition listen exam
-1025	～園	～えん	~ garden (especially man made)	~ garden (especially man made)	週末【しゅうまつ】に子【こ】どもを連【つ】れて動物園【どうぶつえん】へ行【い】った。	I took the kids to the zoo on the weekend.	affix
+1025	～園	～えん	~ garden (especially man made)	~ garden (especially man made)	週末【しゅうまつ】に子【こ】どもを連【つ】れて動物園【どうぶつえん】へ行【い】った。	I took the kids to the zoo on the weekend.	affix partgap
 1026	宴会	えんかい	party, banquet	party, banquet	年末【ねんまつ】に会社【かいしゃ】の宴会【えんかい】が開【ひら】かれる。	The company year-end banquet will be held at the end of the year.	meaning definition listen exam
 1027	園芸	えんげい	horticulture, gardening	horticulture, gardening	退職後【たいしょくご】、父【ちち】は園芸【えんげい】を趣味【しゅみ】にしている。	Since retiring, my father has taken up gardening as a hobby.	meaning definition listen
 1028	演劇	えんげき	play (theatrical)	play (theatrical)	大学【だいがく】では演劇【えんげき】サークルに入【はい】っていた。	At university I was in a drama club.	meaning definition listen exam
@@ -1032,7 +1032,7 @@
 1030	遠足	えんそく	trip, hike, picnic	trip, hike	明日【あした】の遠足【えんそく】は、雨【あめ】が降【ふ】ったら中止【ちゅうし】です。	Tomorrow's school trip will be canceled if it rains.	reading meaning definition listen
 1031	延長	えんちょう	extension, prolongation	extension, prolongation	試合【しあい】は同点【どうてん】のまま延長【えんちょう】に入【はい】った。	The game was still tied and went into extra time.	reading meaning definition listen exam
 1032	煙突	えんとつ	chimney	chimney	工場【こうじょう】の煙突【えんとつ】から白【しろ】い煙【けむり】が上【あ】がっている。	White smoke is rising from the factory chimney.	reading meaning definition listen exam
-1033	御～	おん～	honorific ~	honorific ~	取引先【とりひきさき】へ御礼【おんれい】の品【しな】を送【おく】った。	I sent a thank-you gift to our business partner.	affix exam
+1033	御～	おん～	honorific ~	honorific ~	取引先【とりひきさき】へ御礼【おんれい】の品【しな】を送【おく】った。	I sent a thank-you gift to our business partner.	affix partgap exam
 1034	追いかける	おいかける	to chase or run after someone	to chase or run after someone	犬【いぬ】が逃【に】げた猫【ねこ】を追【お】いかけていった。	The dog chased after the cat that had run away.	reading meaning definition listen
 1035	追い越す	おいこす	to pass (e.g., car), to outdistance, to outstrip	to pass (e.g., car), to outdistance	高速道路【こうそくどうろ】で、大型【おおがた】トラックが私【わたし】の車【くるま】を追【お】い越【こ】した。	On the expressway, a big truck overtook my car.	reading meaning definition listen exam
 1036	オイル	オイル	oil	oil	自転車【じてんしゃ】のチェーンにオイルを差【さ】したら、よく走【はし】るようになった。	After I oiled the bike chain, it ran much more smoothly.	meaning listen
@@ -1048,12 +1048,12 @@
 1046	電流	でんりゅう	electric current	electric current	濡【ぬ】れた手【て】で触【さわ】ると、体【からだ】に電流【でんりゅう】が流【なが】れて危険【きけん】だ。	If you touch it with wet hands, current can run through your body, which is dangerous.	reading meaning definition listen
 1047	電力	でんりょく	electric power	electric power	夏【なつ】は冷房【れいぼう】のせいで、電力【でんりょく】の使用量【しようりょう】が増【ふ】える。	In summer, electricity use goes up because of air conditioning.	reading meaning definition listen
 1048	問い合わせ	といあわせ	inquiry	inquiry	新商品【しんしょうひん】について、お客様【きゃくさま】から問【と】い合【あ】わせが相次【あいつ】いでいる。	We've been getting one inquiry after another from customers about the new product.	reading meaning definition listen
-1049	～頭	～とう	counter for animals	counter for animals	牧場【ぼくじょう】には、牛【うし】が二十頭【にじゅっとう】ほどいた。	There were about twenty cows at the ranch.	affix
-1050	～等	～とう	level, place	level, place	商店街【しょうてんがい】の福引【ふくびき】で、二等【にとう】の自転車【じてんしゃ】が当【あ】たった。	I won second prize, a bicycle, in the shopping street lottery.	affix
-1051	～島	～とう	kind of islands	kind of islands	夏【なつ】に離島【りとう】へ旅行【りょこう】する予定【よてい】だ。	I plan to travel to a remote island in the summer.	affix
+1049	～頭	～とう	counter for animals	counter for animals	牧場【ぼくじょう】には、牛【うし】が二十頭【にじゅっとう】ほどいた。	There were about twenty cows at the ranch.	affix partgap
+1050	～等	～とう	level, place	level, place	商店街【しょうてんがい】の福引【ふくびき】で、二等【にとう】の自転車【じてんしゃ】が当【あ】たった。	I won second prize, a bicycle, in the shopping street lottery.	affix partgap
+1051	～島	～とう	kind of islands	kind of islands	夏【なつ】に離島【りとう】へ旅行【りょこう】する予定【よてい】だ。	I plan to travel to a remote island in the summer.	affix partgap
 1052	銅	どう	copper	copper	十円玉【じゅうえんだま】は、主【おも】に銅【どう】でできている。	Ten-yen coins are made mainly of copper.	meaning definition listen
-1053	同～	どう～	same ~	same ~	同【どう】年代【ねんだい】の人【ひと】と話【はな】すと、話題【わだい】が合【あ】いやすい。	When I talk with people of the same generation, we easily find things in common.	affix
-1054	～道	～どう	kind of path, road	kind of path, road	高校【こうこう】のころから、ずっと柔道【じゅうどう】を続【つづ】けている。	I've kept doing judo ever since high school.	affix
+1053	同～	どう～	same ~	same ~	同【どう】年代【ねんだい】の人【ひと】と話【はな】すと、話題【わだい】が合【あ】いやすい。	When I talk with people of the same generation, we easily find things in common.	affix partgap
+1054	～道	～どう	kind of path, road	kind of path, road	高校【こうこう】のころから、ずっと柔道【じゅうどう】を続【つづ】けている。	I've kept doing judo ever since high school.	affix partgap
 1055	どういたしまして (かん)	どういたしまして (かん)	you are welcome, don't mention it	you are welcome, don't mention it	手伝【てつだ】ってくれてありがとう、と言【い】うと、彼【かれ】は「どういたしまして」と笑【わら】った。	When I thanked him for helping, he smiled and said, "You're welcome."	meaning listen
 1056	統一	とういつ	unity, consolidation, uniformity	unity, consolidation	会議【かいぎ】の前【まえ】に、部内【ぶない】の意見【いけん】を統一【とういつ】しておこう。	Let's unify the department's views before the meeting.	reading meaning definition listen
 1057	同格	どうかく	the same rank, equality, apposition	the same rank, equality	この会社【かいしゃ】では、課長【かちょう】と主任【しゅにん】は同格【どうかく】として扱【あつか】われる。	In this company, section chiefs and supervisors are treated as the same rank.	reading meaning definition listen
@@ -1072,7 +1072,7 @@
 1070	透明	とうめい	transparency, cleanness	transparency, cleanness	この湖【みずうみ】の水【みず】は透明【とうめい】で、底【そこ】まで見【み】える。	The water in this lake is so clear you can see the bottom.	meaning definition listen
 1071	灯油	とうゆ	lamp oil, kerosene	lamp oil, kerosene	冬【ふゆ】になる前【まえ】に、ストーブの灯油【とうゆ】を買【か】っておいた。	I bought kerosene for the heater before winter.	meaning definition listen
 1072	童話	どうわ	fairy tale	fairy tale	寝【ね】る前【まえ】に、子【こ】どもに童話【どうわ】を読【よ】んであげる。	Before bed, I read fairy tales to my child.	meaning definition listen
-1073	～通り	～とおり	in accordance with ~; following ~; ~ street, ~ avenue	in accordance with ~, following ~	説明書【せつめいしょ】の通【とお】りに組【く】み立【た】てたのに、うまく動【うご】かない。	I assembled it according to the instructions, but it doesn't work properly.	affix
+1073	～通り	～とおり	in accordance with ~; following ~; ~ street, ~ avenue	in accordance with ~, following ~	説明書【せつめいしょ】の通【とお】りに組【く】み立【た】てたのに、うまく動【うご】かない。	I assembled it according to the instructions, but it doesn't work properly.	affix partgap
 1074	通り掛かる	とおりかかる	to happen to pass by	to happen to pass by	事故【じこ】の現場【げんば】を、たまたま通【とお】り掛【か】かった人【ひと】が通報【つうほう】した。	Someone who happened to be passing by reported the accident.	reading meaning definition listen
 1075	溶かす	とかす	to melt, to dissolve	to melt, to dissolve	砂糖【さとう】をお湯【ゆ】に溶【と】かしてから、冷【ひ】やしてください。	Dissolve the sugar in hot water, then let it cool.	reading meaning definition listen
 1076	尖る	とがる	to taper to a point, to become sharp	to taper to a point, to become sharp	鉛筆【えんぴつ】の先【さき】が尖【とが】っていて、危【あぶ】ない。	The tip of the pencil is sharp and dangerous.	reading meaning definition listen
@@ -1084,7 +1084,7 @@
 1082	溶け込む	とけこむ	to melt into; to become a part of	to melt into, to become a part of	転校【てんこう】した娘【むすめ】は、すぐに新【あたら】しいクラスに溶【と】け込【こ】んだ。	My daughter, who changed schools, quickly fit into her new class.	reading meaning definition listen
 1083	退ける	どける	to dislodge, to put something out of the way	to dislodge, to put something out of the way	通【とお】れないので、道【みち】の石【いし】を退【ど】けてもらえますか。	I can't get through, so could you move the stones out of the way?	reading meaning definition listen
 1084	床の間	とこのま	alcove	alcove	床【とこ】の間【ま】に、季節【きせつ】の花【はな】と掛【か】け軸【じく】を飾【かざ】った。	I decorated the alcove with seasonal flowers and a hanging scroll.	reading meaning definition listen
-1085	～ところ	～ところ	about to do ~	about to do ~	ちょうど今【いま】、家【いえ】を出【で】るところです。	I'm just about to leave the house.	affix
+1085	～ところ	～ところ	about to do ~	about to do ~	ちょうど今【いま】、家【いえ】を出【で】るところです。	I'm just about to leave the house.	affix partgap
 1086	所々	ところどころ	here and there, some parts (of something)	here and there, some parts (of something)	この古【ふる】い本【ほん】は、所々【ところどころ】ページが破【やぶ】れている。	This old book has torn pages here and there.	reading meaning definition listen
 1087	都心	としん	heart (of city)	heart (of city)	都心【としん】のマンションは、家賃【やちん】がとても高【たか】い。	Apartments in central Tokyo have very high rents.	reading meaning definition listen
 1088	戸棚	とだな	cupboard, cabinet	cupboard, cabinet	お皿【さら】は台所【だいどころ】の戸棚【とだな】にしまってあります。	The plates are put away in the kitchen cupboard.	reading meaning definition listen exam
@@ -1104,11 +1104,11 @@
 1102	採る	とる	to adopt (measure, proposal); to pick (fruit)	to adopt (measure, proposal), to pick (fruit)	会議【かいぎ】では、若手社員【わかてしゃいん】の案【あん】が採【と】られた。	At the meeting, a young employee's proposal was adopted.	meaning definition listen
 1103	捕る	とる	to take, to catch (fish)	to take, to catch (fish)	子【こ】どものころ、この川【かわ】でよく魚【さかな】を捕【と】った。	As a child I often caught fish in this river.	meaning definition listen
 1104	丼	どんぶり	porcelain bowl, bowl of rice with food on top	porcelain bowl, bowl of rice with food on top	昼【ひる】ご飯【はん】に、駅前【えきまえ】の店【みせ】で天丼【てんどん】を食【た】べた。	For lunch I had a tempura rice bowl at a shop by the station.	reading meaning definition listen
-1105	～内	～ない	inside ~	inside ~	館内【かんない】では、携帯電話【けいたいでんわ】の使用【しよう】をご遠慮【えんりょ】ください。	Please refrain from using mobile phones inside the building.	affix
+1105	～内	～ない	inside ~	inside ~	館内【かんない】では、携帯電話【けいたいでんわ】の使用【しよう】をご遠慮【えんりょ】ください。	Please refrain from using mobile phones inside the building.	affix partgap
 1106	内科	ないか	internist clinic, internal medicine	internist clinic, internal medicine	熱【ねつ】が続【つづ】くので、近【ちか】くの内科【ないか】で診【み】てもらった。	My fever wouldn't go down, so I saw a doctor at a nearby internal medicine clinic.	meaning definition listen
 1107	内線	ないせん	phone extension	phone extension	経理部【けいりぶ】の内線【ないせん】は三百五番【さんびゃくごばん】です。	The accounting department's extension is 305.	meaning definition listen exam
 1108	ナイロン	ナイロン	nylon	nylon	ナイロンのバッグは軽【かる】くて、雨【あめ】にも強【つよ】い。	Nylon bags are light and hold up well in rain.	meaning listen
-1109	長～	なが～	long ~	long ~	長【なが】そでのシャツを着【き】て、山【やま】に登【のぼ】った。	I climbed the mountain in a long-sleeved shirt.	affix
+1109	長～	なが～	long ~	long ~	長【なが】そでのシャツを着【き】て、山【やま】に登【のぼ】った。	I climbed the mountain in a long-sleeved shirt.	affix partgap
 1110	仲直り	なかなおり	reconciliation, make peace with	reconciliation, make peace with	けんかした友達【ともだち】と、やっと仲直【なかなお】りできた。	I finally made up with the friend I'd fought with.	meaning definition listen
 1111	長引く	ながびく	to be prolonged, to drag on	to be prolonged, to drag on	会議【かいぎ】が長引【ながび】いて、昼【ひる】ご飯【はん】を食【た】べる時間【じかん】がなかった。	The meeting dragged on, and there was no time to eat lunch.	reading meaning definition listen exam
 1112	中指	なかゆび	middle finger	middle finger	ドアに中指【なかゆび】を挟【はさ】んで、けがをした。	I caught my middle finger in the door and hurt it.	reading meaning definition listen
@@ -1135,7 +1135,7 @@
 1133	匂う	におう	to be fragrant, to smell	to be fragrant, to smell	庭【にわ】の金木犀【きんもくせい】が甘【あま】く匂【にお】っている。	The fragrant olive in the garden smells sweet.	meaning definition listen
 1134	逃がす	にがす	to let loose, to set free, to let escape	to let loose, to set free	捕【つか】まえた虫【むし】は、観察【かんさつ】したあと逃【に】がしてあげた。	After observing the insect I caught, I let it go.	meaning definition listen
 1135	憎い	にくい	hateful, abominable, detestable	hateful, abominable	約束【やくそく】を破【やぶ】った彼【かれ】が憎【にく】い。	I hate him for breaking his promise.	meaning definition listen
-1136	～難い	～がたい	hard (difficult) to do ~	hard (difficult) to do ~	彼【かれ】の言【い】うことは、どうも信【しん】じ難【がた】い。	What he says is really hard to believe.	affix exam
+1136	～難い	～がたい	hard (difficult) to do ~	hard (difficult) to do ~	彼【かれ】の言【い】うことは、どうも信【しん】じ難【がた】い。	What he says is really hard to believe.	affix partgap exam
 1137	憎む	にくむ	to hate, to detest	to hate, to detest	罪【つみ】を憎【にく】んで人【ひと】を憎【にく】まず、という言葉【ことば】がある。	There's a saying: hate the sin, not the sinner.	meaning definition listen exam
 1138	憎らしい	にくらしい	odious, hateful	odious, hateful	弟【おとうと】は口【くち】ばかり達者【たっしゃ】で、本当【ほんとう】に憎【にく】らしい。	My little brother is all talk and really annoying.	meaning definition listen exam
 1139	にこにこ	にこにこ	smile sweetly, smiley	smile sweetly, smiley	赤【あか】ちゃんがにこにこ笑【わら】いながら手【て】を振【ふ】った。	The baby waved, smiling happily.	meaning listen
@@ -1159,7 +1159,7 @@
 1157	寝巻	ねまき	sleep-wear, pajamas	sleep-wear, pajamas	旅館【りょかん】では、浴衣【ゆかた】を寝巻【ねまき】として使【つか】う人【ひと】が多【おお】い。	At Japanese inns, many people use the yukata as sleepwear.	meaning definition listen
 1158	狙い	ねらい	aim	aim	この授業【じゅぎょう】の狙【ねら】いは、自分【じぶん】の意見【いけん】を伝【つた】える力【ちから】をつけることだ。	The aim of this class is to build the ability to express your own opinions.	meaning definition listen
 1159	狙う	ねらう	to aim at	to aim at	彼【かれ】は来年【らいねん】の大会【たいかい】で優勝【ゆうしょう】を狙【ねら】っている。	He is aiming to win next year's championship.	meaning definition listen exam
-1160	～年生	～ねんせい	counter for school year	counter for school year	娘【むすめ】は来年【らいねん】、小学【しょうがく】一年生【いちねんせい】になる。	My daughter will be a first-grader in elementary school next year.	affix exam
+1160	～年生	～ねんせい	counter for school year	counter for school year	娘【むすめ】は来年【らいねん】、小学【しょうがく】一年生【いちねんせい】になる。	My daughter will be a first-grader in elementary school next year.	affix partgap exam
 1161	年度	ねんど	year, fiscal year	year, fiscal year	新【あたら】しい制度【せいど】は、来年度【らいねんど】から始【はじ】まる予定【よてい】だ。	The new system is scheduled to start from the next fiscal year.	meaning definition listen
 1162	農産物	のうさんぶつ	agricultural produce	agricultural produce	この地域【ちいき】の主【おも】な農産物【のうさんぶつ】は、米【こめ】とりんごです。	The main agricultural products of this area are rice and apples.	reading meaning definition listen
 1163	農村	のうそん	agricultural community	agricultural community	若者【わかもの】が都会【とかい】に出【で】て、農村【のうそん】の人口【じんこう】が減【へ】っている。	Young people are moving to the cities, and rural farming communities are shrinking.	reading meaning definition listen exam
@@ -1187,7 +1187,7 @@
 1185	秤	はかり	scales, weighing machine	scales, weighing machine	小麦粉【こむぎこ】を秤【はかり】で二百【にひゃく】グラム量【はか】った。	I weighed out two hundred grams of flour on the scales.	meaning definition listen
 1186	吐き気	はきけ	nausea, sickness in the stomach	nausea, sickness in the stomach	バスに酔【よ】って、ひどい吐【は】き気【け】がした。	I got carsick on the bus and felt terribly nauseous.	reading meaning definition listen exam
 1187	はきはき	はきはき	clearly	clearly	面接【めんせつ】では、はきはきと答【こた】えることが大切【たいせつ】だ。	In an interview, it's important to answer clearly and crisply.	meaning listen
-1188	～泊	～はく	counter for staying (e.g., 2 nights)	counter for staying (e.g., 2 nights)	京都【きょうと】に二泊【にはく】する予定【よてい】です。	I'm planning to stay two nights in Kyoto.	affix exam
+1188	～泊	～はく	counter for staying (e.g., 2 nights)	counter for staying (e.g., 2 nights)	京都【きょうと】に二泊【にはく】する予定【よてい】です。	I'm planning to stay two nights in Kyoto.	affix partgap exam
 1189	歯車	はぐるま	gear, cog-wheel	gear, cog-wheel	時計【とけい】の中【なか】で小【ちい】さな歯車【はぐるま】が回【まわ】っている。	Tiny gears are turning inside the clock.	meaning definition listen
 1190	バケツ	バケツ	bucket, pail	bucket, pail	バケツに水【みず】を汲【く】んで、車【くるま】を洗【あら】った。	I filled a bucket with water and washed the car.	meaning listen
 1191	挟まる	はさまる	to get between, to be caught in	to get between, to be caught in	歯【は】の間【あいだ】に肉【にく】が挟【はさ】まって取【と】れない。	A bit of meat is caught between my teeth and won't come out.	meaning definition listen
@@ -1201,7 +1201,7 @@
 1199	肌着	はだぎ	underwear	underwear	寒【さむ】いので、厚手【あつで】の肌着【はだぎ】を着【き】て出【で】かけた。	It was cold, so I wore thick underwear when I went out.	reading meaning definition listen
 1200	果して	はたして	as was expected, really	as was expected, really	果【はた】して彼【かれ】の予想【よそう】は当【あ】たるだろうか。	I wonder whether his prediction will really come true.	reading meaning definition listen exam
 1201	鉢	はち	a bowl, a pot	a bowl, a pot	窓辺【まどべ】の鉢【はち】にトマトの苗【なえ】を植【う】えた。	I planted a tomato seedling in the pot by the window.	meaning definition listen
-1202	～発	～はつ	counter for bullets	counter for bullets	夜中【よなか】に銃声【じゅうせい】が三発【さんぱつ】聞【き】こえた。	Three gunshots were heard in the middle of the night.	affix exam
+1202	～発	～はつ	counter for bullets	counter for bullets	夜中【よなか】に銃声【じゅうせい】が三発【さんぱつ】聞【き】こえた。	Three gunshots were heard in the middle of the night.	affix partgap exam
 1203	×	ばつ	cross	cross	間違【まちが】った答【こた】えには×をつけてください。	Please mark wrong answers with a cross.	meaning listen
 1204	発揮	はっき	exhibition, demonstration, display	exhibition, demonstration	本番【ほんばん】で実力【じつりょく】を十分【じゅうぶん】に発揮【はっき】できた。	I was able to show my full ability in the real performance.	reading meaning definition listen
 1205	バック	バック	back	back	駐車場【ちゅうしゃじょう】で車【くるま】をバックさせるのが苦手【にがて】だ。	I'm bad at reversing the car in parking lots.	meaning listen
@@ -1224,7 +1224,7 @@
 1222	払い戻す	はらいもどす	to repay, to pay back	to repay, to pay back	事故【じこ】で運休【うんきゅう】した切符【きっぷ】の代金【だいきん】を払【はら】い戻【もど】してもらった。	I got a refund for the ticket because the train was cancelled after an accident.	reading meaning definition listen
 1223	針金	はりがね	wire	wire	針金【はりがね】を曲【ま】げてハンガーを作【つく】った。	I bent some wire and made a hanger.	meaning definition listen
 1224	張り切る	はりきる	to be in high spirits, to be full of vigor	to be in high spirits, to be full of vigor	初【はじ】めての発表【はっぴょう】に、新人【しんじん】は張【は】り切【き】っている。	The new employee is all fired up about his first presentation.	meaning definition listen
-1225	反～	はん～	anti ~, counter ~	anti ~, counter ~	その国【くに】では反政府【はんせいふ】デモが続【つづ】いている。	Anti-government demonstrations are continuing in that country.	affix exam
+1225	反～	はん～	anti ~, counter ~	anti ~, counter ~	その国【くに】では反政府【はんせいふ】デモが続【つづ】いている。	Anti-government demonstrations are continuing in that country.	affix partgap exam
 1226	反映	はんえい	reflection, influence	reflection, influence	住民【じゅうみん】の意見【いけん】を計画【けいかく】に反映【はんえい】させる。	The residents' opinions will be reflected in the plan.	meaning definition listen
 1227	半径	はんけい	radius	radius	駅【えき】から半径【はんけい】一【いち】キロ以内【いない】で部屋【へや】を探【さが】している。	I'm looking for a room within a one-kilometer radius of the station.	meaning definition listen exam
 1228	判子	はんこ	seal (used for signature)	seal (used for signature)	この書類【しょるい】に判子【はんこ】を押【お】してください。	Please stamp your seal on this document.	meaning definition listen exam
@@ -1235,9 +1235,9 @@
 1233	バンド	バンド	band	band	兄【あに】は大学【だいがく】でバンドを組【く】んでギターを弾【ひ】いている。	My older brother formed a band at university and plays guitar.	meaning listen
 1234	半島	はんとう	peninsula	peninsula	週末【しゅうまつ】に車【くるま】で半島【はんとう】の先【さき】まで行【い】った。	At the weekend we drove to the tip of the peninsula.	reading meaning definition listen
 1235	ハンドル	ハンドル	handle, steering wheel	handle, steering wheel	雪道【ゆきみち】では急【きゅう】にハンドルを切【き】らないように。	On snowy roads, don't turn the steering wheel sharply.	meaning listen
-1236	～番目	～ばんめ	~th	~th	前【まえ】から三番目【さんばんめ】の席【せき】に座【すわ】ってください。	Please sit in the third seat from the front.	affix
-1237	非～	ひ～	anti~, counter~, an~, non~	anti~, counter~	両国【りょうこく】の首脳【しゅのう】が非公式【ひこうしき】に会談【かいだん】した。	The two countries' leaders held unofficial talks.	affix
-1238	～費	～ひ	cost of ~	cost of ~	今月【こんげつ】は交通費【こうつうひ】がかなりかかった。	My transportation costs were quite high this month.	affix exam
+1236	～番目	～ばんめ	~th	~th	前【まえ】から三番目【さんばんめ】の席【せき】に座【すわ】ってください。	Please sit in the third seat from the front.	affix partgap
+1237	非～	ひ～	anti~, counter~, an~, non~	anti~, counter~	両国【りょうこく】の首脳【しゅのう】が非公式【ひこうしき】に会談【かいだん】した。	The two countries' leaders held unofficial talks.	affix partgap
+1238	～費	～ひ	cost of ~	cost of ~	今月【こんげつ】は交通費【こうつうひ】がかなりかかった。	My transportation costs were quite high this month.	affix partgap exam
 1239	日当たり	ひあたり	exposure to the sun, sunny place	exposure to the sun, sunny place	この部屋【へや】は南向【みなみむ】きで日当【ひあ】たりがいい。	This room faces south and gets plenty of sun.	meaning definition listen
 1240	日帰り	ひがえり	day trip	day trip	週末【しゅうまつ】に温泉【おんせん】へ日帰【ひがえ】りで出【で】かけた。	At the weekend I went on a day trip to a hot spring.	meaning definition listen
 1241	比較的	ひかくてき	comparatively; relatively	comparatively, relatively	今年【ことし】の冬【ふゆ】は比較的【ひかくてき】暖【あたた】かい。	This winter is relatively warm.	reading meaning definition listen exam
@@ -1262,7 +1262,7 @@
 1260	引っ込む	ひっこむ	to draw back, to sink, to cave in	to draw back, to sink	驚【おどろ】いた亀【かめ】の首【くび】が甲羅【こうら】の中【なか】に引【ひ】っ込【こ】んだ。	Startled, the turtle drew its head back into its shell.	reading meaning definition listen
 1261	筆者	ひっしゃ	writer, author	writer, author	この文章【ぶんしょう】で筆者【ひっしゃ】が最【もっと】も言【い】いたいことは何【なん】ですか。	What is the author most trying to say in this passage?	reading meaning definition listen
 1262	必需品	ひつじゅひん	necessities, essential	necessities, essential	今【いま】やスマートフォンは生活【せいかつ】の必需品【ひつじゅひん】だ。	These days a smartphone is a necessity of life.	reading meaning definition listen exam
-1263	一～	ひと～	one ~	one ~	一晩【ひとばん】寝【ね】たら、熱【ねつ】が下【さ】がった。	After one night's sleep, my fever went down.	affix
+1263	一～	ひと～	one ~	one ~	一晩【ひとばん】寝【ね】たら、熱【ねつ】が下【さ】がった。	After one night's sleep, my fever went down.	affix partgap
 1264	人差指	ひとさしゆび	index finger	index finger	人差指【ひとさしゆび】で画面【がめん】の地図【ちず】を広【ひろ】げた。	I zoomed in on the map on the screen with my index finger.	reading meaning definition listen
 1265	一通り	ひととおり	general, briefly	general, briefly	資料【しりょう】には一通【ひととお】り目【め】を通【とお】しておきました。	I've looked over the materials briefly.	reading meaning definition listen exam
 1266	人通り	ひとどおり	pedestrian traffic	pedestrian traffic	この道【みち】は夜【よる】になると人通【ひとどお】りが少【すく】ない。	There are few people on this street at night.	reading meaning definition listen
@@ -1282,7 +1282,7 @@
 1280	皮膚	ひふ	skin	skin	乾燥【かんそう】で皮膚【ひふ】がかゆくなった。	My skin got itchy from the dryness.	meaning definition listen
 1281	ひゃっかじてん	ひゃっかじてん	encyclopedia	encyclopedia	分【わ】からない言葉【ことば】をひゃっかじてんで調【しら】べた。	I looked up the words I didn't know in the encyclopedia.	meaning listen
 1282	美容	びよう	beauty of figure or form	beauty of figure or form	姉【あね】は美容【びよう】のために毎晩【まいばん】早【はや】く寝【ね】る。	My older sister goes to bed early every night for the sake of her looks.	reading meaning definition listen
-1283	～病	～びょう	kind of disease	kind of disease	祖父【そふ】は心臓病【しんぞうびょう】で入院【にゅういん】している。	My grandfather is in hospital with heart disease.	affix exam
+1283	～病	～びょう	kind of disease	kind of disease	祖父【そふ】は心臓病【しんぞうびょう】で入院【にゅういん】している。	My grandfather is in hospital with heart disease.	affix partgap exam
 1284	表紙	ひょうし	front cover, binding	front cover, binding	本【ほん】の表紙【ひょうし】が破【やぶ】れてしまった。	The cover of the book got torn.	reading meaning definition listen
 1285	標識	ひょうしき	sign, mark	sign, mark	運転中【うんてんちゅう】は道路【どうろ】の標識【ひょうしき】に注意【ちゅうい】しよう。	When driving, pay attention to the road signs.	reading meaning definition listen exam
 1286	標準	ひょうじゅん	standard, level	standard, level	彼【かれ】の身長【しんちょう】は標準【ひょうじゅん】よりやや高【たか】い。	He's a little taller than the standard height.	reading meaning definition listen
@@ -1296,15 +1296,15 @@
 1294	ピンク	ピンク	pink	pink	春【はる】になると、公園【こうえん】が桜【さくら】のピンクに染【そ】まる。	In spring the park turns pink with cherry blossoms.	meaning listen
 1295	便箋	びんせん	writing paper, stationery	writing paper, stationery	便箋【びんせん】に丁寧【ていねい】な字【じ】でお礼【れい】を書【か】いた。	I wrote a thank-you note on letter paper in careful handwriting.	reading meaning definition listen exam
 1296	瓶詰	びんづめ	bottling, bottled	bottling, bottled	祖母【そぼ】が作【つく】った瓶詰【びんづめ】のジャムをもらった。	I was given a jar of jam my grandmother made.	reading meaning definition listen
-1297	～部	～ぶ	~ part	~ part	日本【にほん】の北部【ほくぶ】では、もう雪【ゆき】が降【ふ】っている。	It's already snowing in the northern part of Japan.	affix
+1297	～部	～ぶ	~ part	~ part	日本【にほん】の北部【ほくぶ】では、もう雪【ゆき】が降【ふ】っている。	It's already snowing in the northern part of Japan.	affix partgap
 1298	ファスナー	ファスナー	fastener, zipper	fastener, zipper	かばんのファスナーが壊【こわ】れて閉【し】まらない。	The zipper on my bag broke and it won't close.	meaning listen
-1299	～風	～ふう	~ style	~ style	和風【わふう】の部屋【へや】で落【お】ち着【つ】いて食事【しょくじ】をした。	We had a relaxed meal in a Japanese-style room.	affix exam
+1299	～風	～ふう	~ style	~ style	和風【わふう】の部屋【へや】で落【お】ち着【つ】いて食事【しょくじ】をした。	We had a relaxed meal in a Japanese-style room.	affix partgap exam
 1300	風船	ふうせん	balloon	balloon	子供【こども】が持【も】っていた風船【ふうせん】が空【そら】へ飛【と】んでいった。	The balloon the child was holding flew off into the sky.	meaning definition listen
 1301	不運	ふうん	unlucky, misfortune, bad luck	unlucky, misfortune	旅行中【りょこうちゅう】に財布【さいふ】を盗【ぬす】まれるとは不運【ふうん】だった。	It was bad luck to have my wallet stolen while traveling.	meaning definition listen
 1302	不規則	ふきそく	irregularity, unsteadiness	irregularity, unsteadiness	不規則【ふきそく】な生活【せいかつ】を続【つづ】けると体【からだ】を壊【こわ】す。	If you keep living an irregular lifestyle, you'll ruin your health.	reading meaning definition listen exam
 1303	普及	ふきゅう	diffusion, spread	diffusion, spread	スマートフォンの普及【ふきゅう】で、生活【せいかつ】が大【おお】きく変【か】わった。	The spread of smartphones has changed our lives dramatically.	reading meaning definition listen exam
 1304	付近	ふきん	neighborhood, vicinity	neighborhood, vicinity	駅【えき】の付近【ふきん】に安【やす】いホテルはありますか。	Are there any cheap hotels near the station?	meaning definition listen exam
-1305	副～	ふく～	vice ~	vice ~	副社長【ふくしゃちょう】が社長【しゃちょう】の代【か】わりに挨拶【あいさつ】した。	The vice president gave the greeting in place of the president.	affix exam
+1305	副～	ふく～	vice ~	vice ~	副社長【ふくしゃちょう】が社長【しゃちょう】の代【か】わりに挨拶【あいさつ】した。	The vice president gave the greeting in place of the president.	affix partgap exam
 1306	副詞	ふくし	adverb	adverb	「ゆっくり」は動詞【どうし】を修飾【しゅうしょく】する副詞【ふくし】だ。	"Yukkuri" is an adverb that modifies verbs.	reading meaning definition listen
 1307	複写	ふくしゃ	copy, duplicate	copy, duplicate	この資料【しりょう】の無断【むだん】複写【ふくしゃ】は禁止【きんし】されている。	Unauthorized copying of these materials is prohibited.	reading meaning definition listen exam
 1308	複数	ふくすう	plural, multiple	plural, multiple	この問題【もんだい】には答【こた】えが複数【ふくすう】ある。	This question has more than one answer.	reading meaning definition listen exam
@@ -1336,12 +1336,12 @@
 1334	ぶらさげる	ぶらさげる	to hang, to suspend, to swing	to hang, to suspend	祭【まつ】りの時期【じき】には、軒先【のきさき】に提灯【ちょうちん】をぶらさげる。	At festival time, lanterns are hung from the eaves.	meaning listen
 1335	ブラシ	ブラシ	brush	brush	寝【ね】る前【まえ】にブラシで髪【かみ】をとかす。	I brush my hair with a brush before going to bed.	meaning listen
 1336	プラットホーム	プラットホーム	platform	platform	プラットホームの端【はし】は危【あぶ】ないので歩【ある】かないでください。	Please don't walk along the edge of the platform; it's dangerous.	meaning listen
-1337	～振り	～ぶり	after an interval of ~	after an interval of ~	三年【さんねん】振【ぶ】りに高校【こうこう】の友達【ともだち】に会【あ】った。	I met my high school friends for the first time in three years.	affix
+1337	～振り	～ぶり	after an interval of ~	after an interval of ~	三年【さんねん】振【ぶ】りに高校【こうこう】の友達【ともだち】に会【あ】った。	I met my high school friends for the first time in three years.	affix partgap
 1338	フリー	フリー	free	free	姉【あね】は会社【かいしゃ】を辞【や】めて、フリーで翻訳【ほんやく】をしている。	My older sister quit her company and now works freelance as a translator.	meaning listen
 1339	振り仮名	ふりがな	pronunciation key	pronunciation key	子供【こども】向【む】けの本【ほん】には振【ふ】り仮名【がな】がついている。	Books for children have furigana on the kanji.	meaning definition listen
 1340	振り向く	ふりむく	to turn one's face, to turn around	to turn one's face, to turn around	名前【なまえ】を呼【よ】ばれて振【ふ】り向【む】いた。	I turned around when I heard my name called.	meaning definition listen
 1341	プリント	プリント	print, handout	print, handout	先生【せんせい】が授業【じゅぎょう】のプリントを配【くば】った。	The teacher handed out the class handouts.	meaning listen
-1342	古～	ふる～	old ~	old ~	古本【ふるほん】屋【や】で珍【めずら】しい辞書【じしょ】を見【み】つけた。	I found a rare dictionary at a secondhand bookshop.	affix exam
+1342	古～	ふる～	old ~	old ~	古本【ふるほん】屋【や】で珍【めずら】しい辞書【じしょ】を見【み】つけた。	I found a rare dictionary at a secondhand bookshop.	affix partgap exam
 1343	故郷	ふるさと	home town, birthplace	home town, birthplace	毎年【まいとし】お正月【しょうがつ】には故郷【ふるさと】に帰【かえ】る。	I go back to my hometown every year at New Year.	reading meaning definition listen
 1344	古里	ふるさと	home town, birthplace	home town, birthplace	年【とし】を取【と】るほど、古里【ふるさと】の山【やま】が懐【なつ】かしくなる。	The older I get, the more I miss the mountains of my hometown.	reading meaning definition listen
 1345	振舞う	ふるまう	to behave, to conduct	to behave, to conduct	客【きゃく】の前【まえ】では、礼儀正【れいぎただ】しく振舞【ふるま】いなさい。	Behave politely in front of guests.	meaning definition listen exam
@@ -1375,15 +1375,15 @@
 1373	別々	べつべつ	separately, individually	separately, individually	会計【かいけい】は別々【べつべつ】にお願【ねが】いします。	Separate checks, please.	reading meaning definition listen
 1374	ベテラン	ベテラン	veteran	veteran	新人【しんじん】の指導【しどう】はベテランの看護師【かんごし】に任【まか】せた。	We left the training of new staff to a veteran nurse.	meaning listen
 1375	ヘリコプター	ヘリコプター	helicopter	helicopter	山【やま】で遭難【そうなん】した人【ひと】がヘリコプターで救助【きゅうじょ】された。	The people lost in the mountains were rescued by helicopter.	meaning listen
-1376	～遍	～へん	time	time	同【おな】じ説明【せつめい】を何遍【なんべん】も繰【く】り返【かえ】した。	I repeated the same explanation over and over.	affix
-1377	～弁	～べん	speech, dialect	speech, dialect	大阪【おおさか】出身【しゅっしん】の彼【かれ】は、今【いま】も関西弁【かんさいべん】で話【はな】す。	He's from Osaka and still speaks in the Kansai dialect.	affix
+1376	～遍	～へん	time	time	同【おな】じ説明【せつめい】を何遍【なんべん】も繰【く】り返【かえ】した。	I repeated the same explanation over and over.	affix partgap
+1377	～弁	～べん	speech, dialect	speech, dialect	大阪【おおさか】出身【しゅっしん】の彼【かれ】は、今【いま】も関西弁【かんさいべん】で話【はな】す。	He's from Osaka and still speaks in the Kansai dialect.	affix partgap
 1378	編集	へんしゅう	editing, compilation, editorial (e.g., committee)	editing, compilation	彼女【かのじょ】は雑誌【ざっし】の編集【へんしゅう】の仕事【しごと】をしている。	She works in magazine editing.	reading meaning definition listen
 1379	便所	べんじょ	toilet, lavatory	toilet, lavatory	古【ふる】い駅【えき】の便所【べんじょ】が新【あたら】しく改装【かいそう】された。	The toilets at the old station have been renovated.	reading meaning definition listen
 1380	ペンチ	ペンチ	pliers (lit: pinchers)	pliers (lit: pinchers)	ペンチで針金【はりがね】を切【き】った。	I cut the wire with pliers.	meaning listen
-1381	～歩	～ほ	step, pace	step, pace	一歩【いっぽ】前【まえ】に出【で】て、大【おお】きな声【こえ】で名前【なまえ】を言【い】った。	I took one step forward and said my name in a loud voice.	affix
-1382	～ぽい	～ぽい	~ish	~ish	彼【かれ】は忘【わす】れっぽいので、メモを渡【わた】しておいた。	He's forgetful, so I gave him a note.	affix
+1381	～歩	～ほ	step, pace	step, pace	一歩【いっぽ】前【まえ】に出【で】て、大【おお】きな声【こえ】で名前【なまえ】を言【い】った。	I took one step forward and said my name in a loud voice.	affix partgap
+1382	～ぽい	～ぽい	~ish	~ish	彼【かれ】は忘【わす】れっぽいので、メモを渡【わた】しておいた。	He's forgetful, so I gave him a note.	affix partgap
 1383	～ほう (ひかく)	～ほう (ひかく)	(in comparison)	(in comparison)	電車【でんしゃ】で行【い】くほうがバスより早【はや】い。	Going by train is faster than taking the bus.	
-1384	防～	ぼう～	~ prevention	~ prevention	この腕時計【うでどけい】は防水【ぼうすい】仕様【しよう】だ。	This watch is water-resistant.	affix
+1384	防～	ぼう～	~ prevention	~ prevention	この腕時計【うでどけい】は防水【ぼうすい】仕様【しよう】だ。	This watch is water-resistant.	affix partgap
 1385	望遠鏡	ぼうえんきょう	telescope	telescope	望遠鏡【ぼうえんきょう】で土星【どせい】の輪【わ】を見【み】た。	I saw Saturn's rings through a telescope.	reading meaning definition listen exam
 1386	方角	ほうがく	direction, way	direction, way	駅【えき】はどちらの方角【ほうがく】ですか。	Which direction is the station?	reading meaning definition listen
 1387	箒	ほうき	broom	broom	箒【ほうき】で玄関【げんかん】の前【まえ】を掃【は】いた。	I swept in front of the entrance with a broom.	reading meaning definition listen
@@ -1416,11 +1416,11 @@
 1414	ぼろ	ぼろ	rag, tattered clothes	rag, tattered clothes	彼【かれ】はぼろを着【き】ていても、少【すこ】しも気【き】にしない。	Even dressed in rags, he doesn't mind in the least.	meaning listen
 1415	盆	ぼん	Festival of the Dead; tray	Festival of the Dead, tray	お盆【ぼん】には家族【かぞく】で祖父【そふ】の墓参【はかまい】りをする。	During Obon, our family visits my grandfather's grave.	reading meaning definition listen
 1416	盆地	ぼんち	basin (e.g., between mountains)	basin (e.g., between mountains)	京都【きょうと】は盆地【ぼんち】なので、夏【なつ】はとても暑【あつ】い。	Kyoto lies in a basin, so it gets very hot in summer.	reading meaning definition listen exam
-1417	ほんの～	ほんの～	mere, just	mere, just	ほんの少【すこ】しですが、どうぞ召【め】し上【あ】がってください。	It's just a little something, but please help yourself.	affix
+1417	ほんの～	ほんの～	mere, just	mere, just	ほんの少【すこ】しですが、どうぞ召【め】し上【あ】がってください。	It's just a little something, but please help yourself.	affix partgap
 1418	本部	ほんぶ	headquarters	headquarters	事故【じこ】の連絡【れんらく】はすぐ本部【ほんぶ】に伝【つた】えられた。	News of the accident was immediately passed on to headquarters.	reading meaning definition listen
 1419	本来	ほんらい	essentially, naturally, by nature	essentially, naturally	本来【ほんらい】なら、この仕事【しごと】は部長【ぶちょう】がするべきだ。	By rights, the department manager should be doing this job.	meaning definition listen exam
 1420	まあまあ	まあまあ	okay; so-so; decent	okay, so-so	今日【きょう】のテストはまあまあできた。	I did okay on today's test.	meaning listen
-1421	毎～	まい～	every ~	every ~	毎朝【まいあさ】三十分【さんじゅっぷん】ほど散歩【さんぽ】している。	I take a walk for about thirty minutes every morning.	affix
+1421	毎～	まい～	every ~	every ~	毎朝【まいあさ】三十分【さんじゅっぷん】ほど散歩【さんぽ】している。	I take a walk for about thirty minutes every morning.	affix partgap
 1422	枚数	まいすう	the number of flat things	the number of flat things	配【くば】る前【まえ】にプリントの枚数【まいすう】を数【かぞ】えた。	I counted the number of handouts before passing them out.	meaning definition listen
 1423	毎度	まいど	each time, common service-sector greeting	each time, common service-sector greeting	毎度【まいど】ご利用【りよう】ありがとうございます。	Thank you, as always, for your patronage.	meaning definition listen
 1424	枕	まくら	pillow	pillow	枕【まくら】が高【たか】すぎて、よく眠【ねむ】れなかった。	My pillow was too high and I couldn't sleep well.	meaning definition listen
@@ -1449,7 +1449,7 @@
 1447	満員	まんいん	full house, no vacancy, sold out	full house, no vacancy	朝【あさ】の電車【でんしゃ】は満員【まんいん】で、座【すわ】れなかった。	The morning train was packed, so I couldn't sit down.	meaning definition listen exam
 1448	マンション	マンション	multistory apartment house, condominium	multistory apartment house, condominium	駅【えき】に近【ちか】いマンションに引【ひ】っ越【こ】した。	I moved into an apartment close to the station.	meaning listen
 1449	満点	まんてん	perfect score	perfect score	漢字【かんじ】のテストで初【はじ】めて満点【まんてん】を取【と】った。	I got a perfect score on a kanji test for the first time.	meaning definition listen exam
-1450	未～	み～	not yet ~	not yet ~	未成年【みせいねん】にはお酒【さけ】を売【う】ることができない。	Alcohol cannot be sold to minors.	affix exam
+1450	未～	み～	not yet ~	not yet ~	未成年【みせいねん】にはお酒【さけ】を売【う】ることができない。	Alcohol cannot be sold to minors.	affix partgap exam
 1451	見上げる	みあげる	to look up at, to admire	to look up at, to admire	夜空【よぞら】を見上【みあ】げると、星【ほし】がたくさん見【み】えた。	When I looked up at the night sky, I could see lots of stars.	meaning definition listen
 1452	見送る	みおくる	to see off; to escort; to let pass	to see off, to escort	空港【くうこう】で留学【りゅうがく】する友達【ともだち】を見送【みおく】った。	I saw off a friend leaving to study abroad at the airport.	meaning definition listen exam
 1453	見下ろす	みおろす	to overlook, to look down on something	to overlook, to look down on something	丘【おか】の上【うえ】から町【まち】を見下【みお】ろした。	I looked down on the town from the top of the hill.	reading meaning definition listen
@@ -1461,7 +1461,7 @@
 1459	自ら	みずから	for one's self, personally	for one's self, personally	社長【しゃちょう】自【みずか】らが客【きゃく】に謝罪【しゃざい】した。	The company president personally apologized to the customer.	meaning definition listen exam
 1460	水着	みずぎ	bathing suit (woman's)	bathing suit (woman's)	海【うみ】に行【い】く前【まえ】に新【あたら】しい水着【みずぎ】を買【か】った。	I bought a new swimsuit before going to the beach.	meaning definition listen
 1461	店屋	みせや	store, shop	store, shop	昔【むかし】はこの通【とお】りに小【ちい】さな店屋【みせや】がたくさん並【なら】んでいた。	This street used to be lined with lots of little shops.	meaning definition listen exam
-1462	～みたい	～みたい	looks like ~	looks like ~	外【そと】が騒【さわ】がしいけど、何【なに】か事故【じこ】があったみたいだ。	It's noisy outside; it looks like there's been some kind of accident.	affix
+1462	～みたい	～みたい	looks like ~	looks like ~	外【そと】が騒【さわ】がしいけど、何【なに】か事故【じこ】があったみたいだ。	It's noisy outside; it looks like there's been some kind of accident.	affix partgap
 1463	見出し	みだし	heading, index	heading, index	新聞【しんぶん】の見出【みだ】しだけ読【よ】んで内容【ないよう】を判断【はんだん】してはいけない。	You shouldn't judge the content by reading only the newspaper headlines.	meaning definition listen
 1464	道順	みちじゅん	itinerary, route	itinerary, route	駅【えき】から会場【かいじょう】までの道順【みちじゅん】を地図【ちず】で確認【かくにん】した。	I checked the route from the station to the venue on the map.	reading meaning definition listen exam
 1465	みっともない	みっともない	shameful, indecent	shameful, indecent	人前【ひとまえ】で大声【おおごえ】で文句【もんく】を言【い】うのはみっともない。	Complaining loudly in front of people is disgraceful.	meaning listen
@@ -1477,9 +1477,9 @@
 1475	名字	みょうじ	surname, family name	surname, family name	結婚【けっこん】しても名字【みょうじ】を変【か】えたくないという人【ひと】が増【ふ】えている。	More and more people don't want to change their surname when they marry.	reading meaning definition listen exam
 1476	ミリ (メートル)	ミリ (メートル)	milli-	milli-	今日【きょう】は一時間【いちじかん】に五十【ごじゅう】ミリの激【はげ】しい雨【あめ】が降【ふ】った。	Today heavy rain fell at fifty millimeters an hour.	meaning listen
 1477	民間	みんかん	private, civilian	private, civilian	この空港【くうこう】は民間【みんかん】の会社【かいしゃ】が運営【うんえい】している。	This airport is run by a private company.	meaning definition listen
-1478	民主～	みんしゅ～	democratic	democratic	民主主義【みんしゅしゅぎ】の社会【しゃかい】では、一人一人【ひとりひとり】の意見【いけん】が大切【たいせつ】だ。	In a democratic society, each person's opinion matters.	affix
+1478	民主～	みんしゅ～	democratic	democratic	民主主義【みんしゅしゅぎ】の社会【しゃかい】では、一人一人【ひとりひとり】の意見【いけん】が大切【たいせつ】だ。	In a democratic society, each person's opinion matters.	affix partgap
 1479	民謡	みんよう	folk song, popular song	folk song, popular song	祭【まつ】りでは地元【じもと】の民謡【みんよう】に合【あ】わせてみんなで踊【おど】る。	At the festival everyone dances to the local folk songs.	meaning definition listen exam
-1480	～向け	～むけ	for ~	for ~	これは子供向【こどもむ】けの本【ほん】だが、大人【おとな】が読【よ】んでも面白【おもしろ】い。	This is a book for children, but it's interesting for adults too.	affix
+1480	～向け	～むけ	for ~	for ~	これは子供向【こどもむ】けの本【ほん】だが、大人【おとな】が読【よ】んでも面白【おもしろ】い。	This is a book for children, but it's interesting for adults too.	affix partgap
 1481	無限	むげん	infinite	infinite	子供【こども】たちには無限【むげん】の可能性【かのうせい】がある。	Children have infinite potential.	meaning definition listen exam
 1482	無地	むじ	plain	plain	面接【めんせつ】には柄【がら】のない無地【むじ】のネクタイが無難【ぶなん】です。	For an interview, a plain tie without a pattern is the safe choice.	meaning definition listen
 1483	矛盾	むじゅん	contradiction, inconsistency	contradiction, inconsistency	彼【かれ】の説明【せつめい】には矛盾【むじゅん】する点【てん】がいくつもある。	There are several contradictions in his explanation.	reading meaning definition listen
@@ -1487,8 +1487,8 @@
 1485	紫	むらさき	purple color, violet	purple color, violet	庭【にわ】に紫【むらさき】の花【はな】がきれいに咲【さ】いている。	Purple flowers are blooming beautifully in the garden.	meaning definition listen
 1486	群れ	むれ	crowd, flock, herd	crowd, flock	空【そら】を鳥【とり】の群【む】れが南【みなみ】へ飛【と】んでいった。	A flock of birds flew south across the sky.	meaning definition listen
 1487	姪	めい	niece	niece	来月【らいげつ】、姪【めい】の結婚式【けっこんしき】に出席【しゅっせき】する予定【よてい】だ。	I'm going to my niece's wedding next month.	meaning definition listen
-1488	名～	めい～	famous ~	famous ~	彼【かれ】は誰【だれ】もが認【みと】める名選手【めいせんしゅ】だった。	He was a great player whom everyone acknowledged.	affix exam
-1489	～名	～めい	counter for people	counter for people	今回【こんかい】の研修【けんしゅう】には三十名【さんじゅうめい】が参加【さんか】した。	Thirty people took part in this training session.	affix exam
+1488	名～	めい～	famous ~	famous ~	彼【かれ】は誰【だれ】もが認【みと】める名選手【めいせんしゅ】だった。	He was a great player whom everyone acknowledged.	affix partgap exam
+1489	～名	～めい	counter for people	counter for people	今回【こんかい】の研修【けんしゅう】には三十名【さんじゅうめい】が参加【さんか】した。	Thirty people took part in this training session.	affix partgap exam
 1490	名作	めいさく	masterpiece	masterpiece	この映画【えいが】は何度【なんど】見【み】ても感動【かんどう】する名作【めいさく】だ。	This film is a masterpiece that moves me no matter how many times I see it.	meaning definition listen
 1491	名所	めいしょ	famous place	famous place	京都【きょうと】には桜【さくら】の名所【めいしょ】がたくさんある。	Kyoto has many famous spots for cherry blossoms.	meaning definition listen
 1492	命ずる	めいずる	to command, to appoint	to command, to appoint	社長【しゃちょう】は彼【かれ】に大阪支店【おおさかしてん】への転勤【てんきん】を命【めい】じた。	The president ordered him to transfer to the Osaka branch.	meaning definition listen
@@ -1534,9 +1534,9 @@
 1532	揉む	もむ	to rub, to crumple (up), to wrinkle	to rub, to crumple (up)	肩【かた】がこっていたので、妻【つま】に揉【も】んでもらった。	My shoulders were stiff, so I had my wife rub them.	meaning definition listen
 1533	催し	もよおし	event, festivities, function	event, festivities	週末【しゅうまつ】、駅前【えきまえ】の広場【ひろば】でさまざまな催【もよお】しが開【ひら】かれる。	All sorts of events will be held in the square in front of the station this weekend.	reading meaning definition listen
 1534	盛る	もる	to serve (food); to fill up; to prescribe	to serve (food), to fill up	ご飯【はん】を茶碗【ちゃわん】に多【おお】めに盛【も】ってください。	Please serve a generous helping of rice in the bowl.	meaning definition listen
-1535	～問	～もん	counter for questions	counter for questions	試験【しけん】で五問【ごもん】も間違【まちが】えてしまった。	I got as many as five questions wrong on the exam.	affix exam
+1535	～問	～もん	counter for questions	counter for questions	試験【しけん】で五問【ごもん】も間違【まちが】えてしまった。	I got as many as five questions wrong on the exam.	affix partgap exam
 1536	問答	もんどう	questions and answers, dialogue	questions and answers, dialogue	先生【せんせい】と学生【がくせい】の問答【もんどう】を通【とお】して授業【じゅぎょう】が進【すす】む。	The class moves forward through questions and answers between teacher and students.	reading meaning definition listen
-1537	～夜	～や	counter for nights	counter for nights	その町【まち】は一夜【いちや】にして有名【ゆうめい】になった。	That town became famous overnight.	affix exam
+1537	～夜	～や	counter for nights	counter for nights	その町【まち】は一夜【いちや】にして有名【ゆうめい】になった。	That town became famous overnight.	affix partgap exam
 1538	やかましい	やかましい	to be fussy, to be overly critical	to be fussy, to be overly critical	母【はは】は食事【しょくじ】のマナーにとてもやかましい。	My mother is very fussy about table manners.	meaning listen
 1539	夜間	やかん	at night, nighttime	at night, nighttime	この病院【びょういん】は夜間【やかん】も救急【きゅうきゅう】の患者【かんじゃ】を受【う】け付【つ】けている。	This hospital accepts emergency patients at night as well.	meaning definition listen homophone exam
 1540	やかん	やかん	kettle	kettle	やかんでお湯【ゆ】を沸【わ】かして、お茶【ちゃ】をいれた。	I boiled water in the kettle and made tea.	meaning listen
@@ -1584,7 +1584,7 @@
 1582	羊毛	ようもう	wool	wool	このコートは羊毛【ようもう】でできているので、とても暖【あたた】かい。	This coat is made of wool, so it's very warm.	meaning definition listen exam
 1583	漸く	ようやく	at last, finally, hardly	at last, finally	三時間【さんじかん】待【ま】って、漸【ようや】く順番【じゅんばん】が回【まわ】ってきた。	After waiting three hours, my turn finally came.	meaning definition listen exam
 1584	要領	ようりょう	gist, essentials, outline	gist, essentials	彼【かれ】の説明【せつめい】は長【なが】いばかりで要領【ようりょう】を得【え】ない。	His explanation is just long and never gets to the point.	reading meaning definition listen exam
-1585	翌～	よく～	next ~	next ~	大雨【おおあめ】のため、運動会【うんどうかい】は翌日【よくじつ】に延期【えんき】された。	Because of heavy rain, the sports day was postponed to the next day.	affix
+1585	翌～	よく～	next ~	next ~	大雨【おおあめ】のため、運動会【うんどうかい】は翌日【よくじつ】に延期【えんき】された。	Because of heavy rain, the sports day was postponed to the next day.	affix partgap
 1586	欲張り	よくばり	greedy	greedy	欲張【よくば】りな弟【おとうと】は、お菓子【かし】を全部【ぜんぶ】一人【ひとり】で食【た】べてしまった。	My greedy little brother ate all the sweets by himself.	reading meaning definition listen
 1587	余計	よけい	too much, unnecessary, abundance, surplus, excess, superfluity	too much, unnecessary	頼【たの】んでもいないのに、余計【よけい】なことを言【い】わないでほしい。	I wish you wouldn't say unnecessary things when nobody asked.	meaning definition listen
 1588	よこす	よこす	to send, to forward; to hand over (e.g., money)	to send, to forward	何【なに】かわかったら、すぐに連絡【れんらく】をよこすように。	If you find out anything, send me word right away.	meaning listen
@@ -1596,7 +1596,7 @@
 1594	呼び出す	よびだす	to summon, to call (e.g., phone)	to summon, to call (e.g., phone)	授業中【じゅぎょうちゅう】に騒【さわ】いで、職員室【しょくいんしつ】に呼【よ】び出【だ】された。	I made noise during class and was summoned to the staff room.	reading meaning definition listen
 1595	蘇る	よみがえる	to be resurrected, to be revived	to be resurrected, to be revived	その歌【うた】を聞【き】くと、学生時代【がくせいじだい】の思【おも】い出【で】が蘇【よみがえ】る。	When I hear that song, memories of my student days come back to life.	meaning definition listen
 1596	慶ぶ	よろこぶ	to be delighted, to be glad	to be delighted, to be glad	孫【まご】の誕生【たんじょう】を家族【かぞく】みんなで慶【よろこ】んだ。	The whole family rejoiced at the birth of a grandchild.	reading meaning definition listen
-1597	～等	～ら	plural persons	plural persons	彼等【かれら】は毎週末【まいしゅうまつ】、公園【こうえん】でサッカーをしている。	They play soccer in the park every weekend.	affix
+1597	～等	～ら	plural persons	plural persons	彼等【かれら】は毎週末【まいしゅうまつ】、公園【こうえん】でサッカーをしている。	They play soccer in the park every weekend.	affix partgap
 1598	来日	らいにち	coming to Japan, visit to Japan	coming to Japan, visit to Japan	その歌手【かしゅ】は来月【らいげつ】、三年【さんねん】ぶりに来日【らいにち】する。	That singer is coming to Japan next month for the first time in three years.	meaning definition listen
 1599	落第	らくだい	failure, dropping out of a class	failure, dropping out of a class	彼【かれ】は出席日数【しゅっせきにっすう】が足【た】りなくて落第【らくだい】した。	He failed the year because he didn't have enough days of attendance.	meaning definition listen
 1600	ラッシュアワー	ラッシュアワー	rush hour	rush hour	ラッシュアワーを避【さ】けて、早【はや】めに家【いえ】を出【で】ている。	I leave home early to avoid the rush hour.	meaning listen
@@ -1634,7 +1634,7 @@
 1632	地点	ちてん	site, point on a map	site, point on a map	事故【じこ】が起【お】きた地点【ちてん】には、今【いま】も花【はな】が供【そな】えられている。	Flowers are still laid at the spot where the accident happened.	meaning definition listen exam
 1633	地名	ちめい	place name	place name	この辺【あた】りの地名【ちめい】には、昔【むかし】の川【かわ】の名前【なまえ】が残【のこ】っている。	The place names around here preserve the names of old rivers.	meaning definition listen
 1634	茶色い	ちゃいろい	brown	brown	茶色【ちゃいろ】い紙袋【かみぶくろ】にパンを入【い】れてもらった。	They put the bread in a brown paper bag for me.	reading meaning definition listen
-1635	～着	～ちゃく	counter for clothes; finishing place	counter for clothes, finishing place	スーツを二着【にちゃく】買【か】った。	I bought two suits.	affix
+1635	～着	～ちゃく	counter for clothes; finishing place	counter for clothes, finishing place	スーツを二着【にちゃく】買【か】った。	I bought two suits.	affix partgap
 1636	着々	ちゃくちゃく	steadily	steadily	新【あたら】しい駅【えき】の工事【こうじ】は着々【ちゃくちゃく】と進【すす】んでいる。	Construction of the new station is progressing steadily.	reading meaning definition listen
 1637	中間	ちゅうかん	middle, midway, interim	middle, midway	二人【ふたり】の家【いえ】の中間【ちゅうかん】にある駅【えき】で会【あ】うことにした。	We decided to meet at the station halfway between our homes.	reading meaning definition listen
 1638	中旬	ちゅうじゅん	second third of a month	second third of a month	桜【さくら】は四月【しがつ】の中旬【ちゅうじゅん】ごろまで楽【たの】しめそうだ。	It looks like we can enjoy the cherry blossoms until around mid-April.	reading meaning definition listen exam
@@ -1643,11 +1643,11 @@
 1641	中性	ちゅうせい	neuter gender, neutral	neuter gender, neutral	この洗剤【せんざい】は中性【ちゅうせい】なので、手【て】に優【やさ】しい。	This detergent is neutral, so it's gentle on your hands.	reading meaning definition listen homophone
 1642	中途	ちゅうと	in the middle, half-way	in the middle, half-way	仕事【しごと】を中途【ちゅうと】で投【な】げ出【だ】すのはよくない。	It's not good to abandon your work halfway.	reading meaning definition listen exam
 1643	中年	ちゅうねん	middle-aged	middle-aged	最近【さいきん】、ジムに通【かよ】う中年【ちゅうねん】の男性【だんせい】が増【ふ】えている。	Recently more middle-aged men are going to the gym.	reading meaning definition listen exam
-1644	長～	ちょう～	long ~	long ~	長距離【ちょうきょり】の運転【うんてん】は、こまめに休憩【きゅうけい】をとったほうがいい。	On long-distance drives, you should take frequent breaks.	affix
-1645	～庁	～ちょう	office, agency	office, agency	気象庁【きしょうちょう】は明日【あした】、大雨【おおあめ】になると発表【はっぴょう】した。	The Meteorological Agency announced that there will be heavy rain tomorrow.	affix
-1646	～兆	～ちょう	trillion	trillion	国【くに】の借金【しゃっきん】は千兆円【せんちょうえん】を超【こ】えている。	The national debt exceeds one quadrillion yen.	affix
-1647	～長	～ちょう	leader, head	leader, head	来月【らいげつ】から、彼女【かのじょ】が新【あたら】しい部長【ぶちょう】になる。	From next month she will be the new department head.	affix
-1648	～帳	～ちょう	~ book, notebook	~ book, notebook	電車【でんしゃ】の中【なか】で単語帳【たんごちょう】を見【み】ながら暗記【あんき】している。	I memorize words on the train while looking at my vocabulary notebook.	affix
+1644	長～	ちょう～	long ~	long ~	長距離【ちょうきょり】の運転【うんてん】は、こまめに休憩【きゅうけい】をとったほうがいい。	On long-distance drives, you should take frequent breaks.	affix partgap
+1645	～庁	～ちょう	office, agency	office, agency	気象庁【きしょうちょう】は明日【あした】、大雨【おおあめ】になると発表【はっぴょう】した。	The Meteorological Agency announced that there will be heavy rain tomorrow.	affix partgap
+1646	～兆	～ちょう	trillion	trillion	国【くに】の借金【しゃっきん】は千兆円【せんちょうえん】を超【こ】えている。	The national debt exceeds one quadrillion yen.	affix partgap
+1647	～長	～ちょう	leader, head	leader, head	来月【らいげつ】から、彼女【かのじょ】が新【あたら】しい部長【ぶちょう】になる。	From next month she will be the new department head.	affix partgap
+1648	～帳	～ちょう	~ book, notebook	~ book, notebook	電車【でんしゃ】の中【なか】で単語帳【たんごちょう】を見【み】ながら暗記【あんき】している。	I memorize words on the train while looking at my vocabulary notebook.	affix partgap
 1649	超過	ちょうか	excess, being more than	excess, being more than	荷物【にもつ】が重量【じゅうりょう】を超過【ちょうか】して、追加料金【ついかりょうきん】を払【はら】った。	My luggage exceeded the weight limit, so I paid an extra charge.	reading meaning definition listen
 1650	彫刻	ちょうこく	carving, engraving, sculpture	carving, engraving	美術館【びじゅつかん】で有名【ゆうめい】な彫刻【ちょうこく】を見【み】た。	I saw a famous sculpture at the art museum.	reading meaning definition listen exam
 1651	長所	ちょうしょ	strong point, merit; advantage	strong point, merit	彼女【かのじょ】の長所【ちょうしょ】は、誰【だれ】にでも優【やさ】しいところだ。	Her strong point is that she's kind to everyone.	reading meaning definition listen exam
@@ -1659,7 +1659,7 @@
 1657	長男	ちょうなん	eldest son	eldest son	長男【ちょうなん】が家業【かぎょう】を継【つ】ぐことになった。	It was decided that the eldest son would take over the family business.	reading meaning definition listen
 1658	長方形	ちょうほうけい	rectangle, oblong	rectangle, oblong	長方形【ちょうほうけい】の面積【めんせき】は、縦【たて】と横【よこ】をかけて求【もと】める。	The area of a rectangle is found by multiplying its length by its width.	reading meaning definition listen
 1659	調味料	ちょうみりょう	condiment, seasoning	condiment, seasoning	料理【りょうり】の最後【さいご】に、調味料【ちょうみりょう】で味【あじ】を整【ととの】えた。	At the end of cooking, I adjusted the flavor with seasonings.	reading meaning definition listen
-1660	～丁目	～ちょうめ	~ district (of a town; city, block)	~ district (of a town; city, block)	私【わたし】の事務所【じむしょ】は三丁目【さんちょうめ】の交差点【こうさてん】の近【ちか】くにある。	My office is near the intersection in 3-chome.	affix
+1660	～丁目	～ちょうめ	~ district (of a town; city, block)	~ district (of a town; city, block)	私【わたし】の事務所【じむしょ】は三丁目【さんちょうめ】の交差点【こうさてん】の近【ちか】くにある。	My office is near the intersection in 3-chome.	affix partgap
 1661	チョーク	チョーク	chalk	chalk	先生【せんせい】はチョークで黒板【こくばん】に大【おお】きく図【ず】を描【か】いた。	The teacher drew a big diagram on the blackboard with chalk.	meaning listen
 1662	直後	ちょくご	immediately following	immediately following	家【いえ】を出【で】た直後【ちょくご】に、雨【あめ】が降【ふ】り出【だ】した。	Right after I left the house, it started to rain.	reading meaning definition listen
 1663	直線	ちょくせん	straight line	straight line	定規【じょうぎ】を使【つか】って、二【ふた】つの点【てん】を直線【ちょくせん】で結【むす】んだ。	I used a ruler to join the two points with a straight line.	reading meaning definition listen
@@ -1674,18 +1674,18 @@
 1672	塵紙	ちりがみ	tissue paper, toilet paper	tissue paper, toilet paper	鼻【はな】をかみたいので、塵紙【ちりがみ】を一枚【いちまい】もらえますか。	I'd like to blow my nose; could I have a tissue?	meaning definition listen
 1673	追加	ついか	addition, supplement, appendix	addition, supplement	すみません、ビールを二本【にほん】追加【ついか】でお願【ねが】いします。	Excuse me, could we have two more bottles of beer?	meaning definition listen
 1674	ついで	ついで	opportunity, occasion	opportunity, occasion	買【か】い物【もの】のついでに、郵便局【ゆうびんきょく】で切手【きって】を買【か】ってきた。	While I was out shopping, I bought stamps at the post office.	meaning listen
-1675	～通	～つう	counter for letters	counter for letters	留守【るす】の間【あいだ】に、手紙【てがみ】が三通【さんつう】届【とど】いていた。	While I was away, three letters arrived.	affix
+1675	～通	～つう	counter for letters	counter for letters	留守【るす】の間【あいだ】に、手紙【てがみ】が三通【さんつう】届【とど】いていた。	While I was away, three letters arrived.	affix partgap
 1676	通ずる	つうずる	to lead, to run, to open	to lead, to run	この道【みち】は駅前【えきまえ】の大通【おおどお】りに通【つう】じている。	This road leads to the main street in front of the station.	meaning definition listen
 1677	通知	つうち	notice, notification	notice, notification	合格【ごうかく】の通知【つうち】が届【とど】いて、家族【かぞく】みんなで喜【よろこ】んだ。	The notice that I'd passed arrived, and the whole family was delighted.	meaning definition listen exam
 1678	通帳	つうちょう	bankbook	bankbook	銀行【ぎんこう】で通帳【つうちょう】に記帳【きちょう】してもらった。	I had my bankbook updated at the bank.	reading meaning definition listen exam
 1679	通用	つうよう	popular use, circulation	popular use, circulation	学生時代【がくせいじだい】の考【かんが】え方【かた】は、社会【しゃかい】では通用【つうよう】しない。	The way of thinking you had as a student won't work in the real world.	meaning definition listen
 1680	通路	つうろ	passage, pathway	passage, pathway	通路【つうろ】に荷物【にもつ】を置【お】かないでください。	Please don't leave your luggage in the aisle.	meaning definition listen exam
-1681	～遣い	～づかい	use of ~	use of ~	彼【かれ】は言葉遣【ことばづか】いが丁寧【ていねい】で、印象【いんしょう】がいい。	He uses polite language and makes a good impression.	affix exam
-1682	～付	～つき	with ~	with ~	この部屋【へや】は朝食付【ちょうしょくつ】きで一泊【いっぱく】八千円【はっせんえん】です。	This room is eight thousand yen a night with breakfast.	affix
+1681	～遣い	～づかい	use of ~	use of ~	彼【かれ】は言葉遣【ことばづか】いが丁寧【ていねい】で、印象【いんしょう】がいい。	He uses polite language and makes a good impression.	affix partgap exam
+1682	～付	～つき	with ~	with ~	この部屋【へや】は朝食付【ちょうしょくつ】きで一泊【いっぱく】八千円【はっせんえん】です。	This room is eight thousand yen a night with breakfast.	affix partgap
 1683	突き当たり	つきあたり	end (e.g., of street)	end (e.g., of street)	この廊下【ろうか】の突【つ】き当【あ】たりがトイレです。	The toilet is at the end of this corridor.	reading meaning definition listen
 1684	突き当たる	つきあたる	to run into, to collide with	to run into, to collide with	まっすぐ行【い】って突【つ】き当【あ】たったら、左【ひだり】に曲【ま】がってください。	Go straight, and when you reach the end, turn left.	reading meaning definition listen
 1685	月日	つきひ	time, years, days	time, years	卒業【そつぎょう】してから、早【はや】いもので十年【じゅうねん】の月日【つきひ】が流【なが】れた。	Time flies; ten years have passed since we graduated.	reading meaning definition listen exam
-1686	～続く	～つづく	follow, continue, go on	follow, continue	雨【あめ】は明日【あした】まで降【ふ】り続【つづ】く。	The rain will keep falling until tomorrow.	affix
+1686	～続く	～つづく	follow, continue, go on	follow, continue	雨【あめ】は明日【あした】まで降【ふ】り続【つづ】く。	The rain will keep falling until tomorrow.	affix partgap
 1687	突っ込む	つっこむ	to plunge into, to stick into	to plunge into, to stick into	車【くるま】がハンドル操作【そうさ】を誤【あやま】って、店【みせ】に突【つ】っ込【こ】んだ。	A car lost control and crashed into a shop.	reading meaning definition listen
 1688	務める	つとめる	to serve, to act	to serve, to act	彼【かれ】は十年間【じゅうねんかん】、この会社【かいしゃ】の社長【しゃちょう】を務【つと】めた。	He served as president of this company for ten years.	reading meaning definition listen
 1689	努める	つとめる	to try, to aim	to try, to aim	健康【けんこう】のため、野菜【やさい】を多【おお】く食【た】べるように努【つと】めている。	For my health, I try to eat lots of vegetables.	reading meaning definition listen
@@ -1699,12 +1699,12 @@
 1697	爪	つめ	fingernail or toenail	fingernail or toenail	爪【つめ】が伸【の】びてきたから、切【き】らなきゃ。	My nails have grown, so I need to cut them.	meaning definition listen
 1698	艶	つや	gloss, glaze	gloss, glaze	このクリームを塗【ぬ】ると、髪【かみ】に艶【つや】が出【で】る。	When you put this cream on, your hair gets a shine.	meaning definition listen
 1699	強気	つよき	firm, strong	firm, strong	交渉【こうしょう】では強気【つよき】の態度【たいど】を崩【くず】さなかった。	In the negotiations, he never dropped his firm stance.	reading meaning definition listen
-1700	～辛い	～づらい	hard to do ~	hard to do ~	この靴【くつ】は重【おも】くて歩【ある】き辛【づら】い。	These shoes are heavy and hard to walk in.	affix
+1700	～辛い	～づらい	hard to do ~	hard to do ~	この靴【くつ】は重【おも】くて歩【ある】き辛【づら】い。	These shoes are heavy and hard to walk in.	affix partgap
 1701	釣り合う	つりあう	to balance, to be in harmony, to suit	to balance, to be in harmony	収入【しゅうにゅう】と支出【ししゅつ】が釣【つ】り合【あ】うように、家計【かけい】を見直【みなお】した。	I reviewed the household budget so that income and spending would balance.	meaning definition listen
 1702	吊る	つる	to hang	to hang	天井【てんじょう】からランプを吊【つ】って、部屋【へや】の雰囲気【ふんいき】を変【か】えた。	I hung a lamp from the ceiling and changed the feel of the room.	meaning definition listen
 1703	吊す	つるす	to hang	to hang	軒下【のきした】に干【ほ】し柿【がき】を吊【つる】してある。	Dried persimmons are hanging under the eaves.	meaning definition listen exam
 1704	手洗い	てあらい	restroom, lavatory	restroom, lavatory	すみません、お手洗【てあら】いはどこですか。	Excuse me, where is the restroom?	meaning definition listen
-1705	低～	てい～	low ~	low ~	最近【さいきん】は低価格【ていかかく】のスマートフォンも性能【せいのう】がいい。	These days even low-priced smartphones perform well.	affix exam
+1705	低～	てい～	low ~	low ~	最近【さいきん】は低価格【ていかかく】のスマートフォンも性能【せいのう】がいい。	These days even low-priced smartphones perform well.	affix partgap exam
 1706	定員	ていいん	fixed number of regular personnel, capacity (e.g., of boat)	fixed number of regular personnel, capacity (e.g., of boat)	このエレベーターの定員【ていいん】は十人【じゅうにん】です。	This elevator holds a maximum of ten people.	meaning definition listen
 1707	定価	ていか	established price	established price	この本【ほん】は定価【ていか】の半額【はんがく】で売【う】られていた。	This book was being sold at half its list price.	meaning definition listen homophone
 1708	低下	ていか	fall, decline	fall, decline	年齢【ねんれい】とともに、体力【たいりょく】が低下【ていか】してきた。	My physical strength has declined with age.	meaning definition listen homophone
@@ -1716,7 +1716,7 @@
 1714	出入口	でいりぐち	exit and entrance	exit and entrance	出入口【でいりぐち】の前【まえ】に自転車【じてんしゃ】を止【と】めないでください。	Please don't park bicycles in front of the entrance.	reading meaning definition listen
 1715	手入れ	ていれ	repairs, maintenance	repairs, maintenance	庭【にわ】の手入【てい】れは、毎週末【まいしゅうまつ】父【ちち】がしている。	My father looks after the garden every weekend.	meaning definition listen
 1716	テーマ	テーマ	theme, project, topic (GER: Thema)	theme, project	卒業論文【そつぎょうろんぶん】のテーマがなかなか決【き】まらない。	I just can't decide on a topic for my graduation thesis.	meaning listen
-1717	～滴	～てき	drop	drop	最後【さいご】の一滴【いってき】まで飲【の】み干【ほ】した。	I drank it down to the last drop.	affix
+1717	～滴	～てき	drop	drop	最後【さいご】の一滴【いってき】まで飲【の】み干【ほ】した。	I drank it down to the last drop.	affix partgap
 1718	出来上がり	できあがり	be finished, ready	be finished, ready	出来上【できあ】がりまで、あと十分【じゅっぷん】ほどお待【ま】ちください。	Please wait about ten more minutes until it's ready.	reading meaning definition listen
 1719	出来上がる	できあがる	to be finished, to be ready	to be finished, to be ready	新【あたら】しい橋【はし】は来年【らいねん】の春【はる】に出来上【できあ】がる予定【よてい】だ。	The new bridge is scheduled to be finished next spring.	reading meaning definition listen
 1720	的確	てきかく	precise, accurate	precise, accurate	彼女【かのじょ】はいつも的確【てきかく】な判断【はんだん】を下【くだ】す。	She always makes accurate judgments.	reading meaning definition listen
@@ -1736,7 +1736,7 @@
 1734	出迎え	でむかえ	meeting, reception	meeting, reception	空港【くうこう】まで友人【ゆうじん】の出迎【でむか】えに行【い】った。	I went to the airport to meet a friend.	meaning definition listen
 1735	照らす	てらす	to shine on, to illuminate	to shine on, to illuminate	懐中電灯【かいちゅうでんとう】で足元【あしもと】を照【て】らしながら歩【ある】いた。	I walked along lighting my way with a flashlight.	meaning definition listen
 1736	照る	てる	to shine	to shine	朝【あさ】から日【ひ】が照【て】って、洗濯物【せんたくもの】がよく乾【かわ】いた。	The sun shone from the morning, and the laundry dried nicely.	meaning definition listen
-1737	～点	～てん	counter for scores	counter for scores	テストで九十点【きゅうじってん】を取【と】って、母【はは】にほめられた。	I got ninety points on the test, and my mother praised me.	affix
+1737	～点	～てん	counter for scores	counter for scores	テストで九十点【きゅうじってん】を取【と】って、母【はは】にほめられた。	I got ninety points on the test, and my mother praised me.	affix partgap
 1738	展開	てんかい	develop, expansion (opposite of compression)	develop, expansion (opposite of compression)	物語【ものがたり】は後半【こうはん】になって、思【おも】いがけない展開【てんかい】を見【み】せた。	In the second half, the story took an unexpected turn.	meaning definition listen
 1739	伝記	でんき	biography, life story	biography, life story	子供【こども】のころ、偉人【いじん】の伝記【でんき】をよく読【よ】んだ。	As a child I often read biographies of great people.	meaning definition listen
 1740	電球	でんきゅう	light bulb	light bulb	切【き】れた電球【でんきゅう】を新【あたら】しいのに取【と】り替【か】えた。	I replaced the burnt-out light bulb with a new one.	reading meaning definition listen
@@ -1747,31 +1747,31 @@
 1745	転々	てんてん	from one to another	from one to another	彼【かれ】は若【わか】いころ、仕事【しごと】を転々【てんてん】としていた。	When he was young, he moved from one job to another.	meaning definition listen homophone
 1746	電柱	でんちゅう	telephone pole, telegraph pole, light pole	telephone pole, telegraph pole	車【くるま】が電柱【でんちゅう】にぶつかって、辺【あた】り一帯【いったい】が停電【ていでん】した。	A car hit a utility pole and the whole area lost power.	reading meaning definition listen
 1747	天皇	てんのう	Emperor of Japan	Emperor of Japan	新年【しんねん】には天皇【てんのう】のお言葉【ことば】がテレビで放送【ほうそう】される。	At New Year, the Emperor's message is broadcast on television.	meaning definition listen
-1748	不～	ふ～	not ~, un-~	not ~, un-~	この説明【せつめい】では不十分【ふじゅうぶん】だ。	This explanation is not enough.	affix
-1749	無～	む～	without ~, -less	without ~, -less	彼【かれ】は政治【せいじ】に無関心【むかんしん】だ。	He has no interest in politics.	affix
-1750	～的	～てき	-ic, -al; in a ~ way	-ic, -al	もっと具体的【ぐたいてき】に話【はな】してください。	Please speak more concretely.	affix
-1751	～性	～せい	-ity, -ness; quality of ~	-ity, -ness	この車【くるま】は安全性【あんぜんせい】が高【たか】い。	This car is very safe.	affix
-1752	～用	～よう	for ~ use	for ~ use	非常用【ひじょうよう】の水【みず】を買【か】っておいた。	I bought water to keep for emergencies.	affix
-1753	～中	～ちゅう	in the middle of ~, during ~	in the middle of ~, during ~	会議中【かいぎちゅう】は電話【でんわ】に出【で】られない。	I can't answer the phone during a meeting.	affix
-1754	～中	～じゅう	throughout ~, all over ~	throughout ~, all over ~	一年中【いちねんじゅう】暖【あたた】かい島【しま】に住【す】みたい。	I want to live on an island that is warm all year round.	affix
-1755	～別	～べつ	by ~, sorted by ~	by ~, sorted by ~	資料【しりょう】を年代別【ねんだいべつ】に並【なら】べた。	I arranged the materials by era.	affix
-1756	～向き	～むき	suited to ~, meant for ~	suited to ~, meant for ~	これは初心者向【しょしんしゃむ】きの本【ほん】だ。	This is a book for beginners.	affix
-1757	～直す	～なおす	do ~ again, redo	do ~ again, redo	作文【さくぶん】をもう一度【いちど】書【か】き直【なお】す。	I will rewrite the essay once more.	affix
-1758	～抜く	～ぬく	do ~ through to the end	do ~ through to the end	彼【かれ】は難【むずか】しい仕事【しごと】も最後【さいご】までやり抜【ぬ】く人【ひと】だ。	He is someone who sees even hard work through to the end.	affix
-1759	～上	～じょう	in terms of ~, as regards ~	in terms of ~, as regards ~	この計画【けいかく】は予算上【よさんじょう】、難【むずか】しい。	In terms of budget, this plan is difficult.	affix
-1760	～率	～りつ	rate of ~, ~ ratio	rate of ~, ~ ratio	今年【ことし】は合格率【ごうかくりつ】が下【さ】がった。	The pass rate went down this year.	affix
-1761	～制	～せい	~ system	~ system	この店【みせ】は予約制【よやくせい】だ。	This shop is by reservation only.	affix
-1762	～員	～いん	member, staff of ~	member, staff of ~	駅【えき】の係員【かかりいん】に道【みち】を聞【き】いた。	I asked a station attendant the way.	affix
-1763	～学	～がく	study of ~, -logy	study of ~, -logy	兄【あに】は心理学【しんりがく】を専攻【せんこう】している。	My older brother majors in psychology.	affix
-1764	～家	～か	specialist; person who does ~	specialist, person who does ~	彼女【かのじょ】は有名【ゆうめい】な音楽家【おんがくか】だ。	She is a famous musician.	affix
-1765	～おき	～おき	every other ~, at intervals of ~	every other ~, at intervals of ~	一日【いちにち】おきにジムへ通【かよ】っている。	I go to the gym every other day.	affix
-1766	～ずくめ	～ずくめ	nothing but ~, all ~	nothing but ~, all ~	今年【ことし】はいいことずくめだった。	This year was nothing but good things.	affix
-1767	～げ	～げ	with a ~ look, seeming ~	with a ~ look, seeming ~	彼【かれ】は寂【さび】しげに笑【わら】った。	He smiled with a lonely look.	affix
-1768	～め	～め	on the ~ side, somewhat ~	on the ~ side, somewhat ~	髪【かみ】を少【すこ】し長【なが】めに切【き】ってください。	Please cut my hair a little on the long side.	affix
-1769	超～	ちょう～	super-, ultra-	super-, ultra-	超満員【ちょうまんいん】の電車【でんしゃ】で通勤【つうきん】している。	I commute on a jam-packed train.	affix
-1770	準～	じゅん～	semi-, quasi-	semi-, quasi-	チームは準決勝【じゅんけっしょう】で負【ま】けた。	The team lost in the semi-final.	affix
-1771	元～	もと～	former ~, ex-	former ~, ex-	元首相【もとしゅしょう】が大学【だいがく】で講演【こうえん】した。	The former prime minister gave a lecture at the university.	affix
-1772	旧～	きゅう～	old ~, former ~ (replaced)	old ~, former ~ (replaced)	旧校舎【きゅうこうしゃ】は来年【らいねん】取【と】り壊【こわ】される。	The old school building will be torn down next year.	affix
-1773	新～	しん～	new ~	new ~	新製品【しんせいひん】の発表会【はっぴょうかい】が開【ひら】かれた。	A launch event was held for the new product.	affix
-1774	全～	ぜん～	all ~, the whole ~	all ~, the whole ~	全社員【ぜんしゃいん】が会議【かいぎ】に出席【しゅっせき】した。	All the employees attended the meeting.	affix
-1775	真～	ま～	right ~, pure ~, the very ~	right ~, pure ~	真夜中【まよなか】に目【め】が覚【さ】めた。	I woke up in the middle of the night.	affix
+1748	不～	ふ～	not ~, un-~	not ~, un-~	この説明【せつめい】では不十分【ふじゅうぶん】だ。	This explanation is not enough.	affix partgap
+1749	無～	む～	without ~, -less	without ~, -less	彼【かれ】は政治【せいじ】に無関心【むかんしん】だ。	He has no interest in politics.	affix partgap
+1750	～的	～てき	-ic, -al; in a ~ way	-ic, -al	もっと具体的【ぐたいてき】に話【はな】してください。	Please speak more concretely.	affix partgap
+1751	～性	～せい	-ity, -ness; quality of ~	-ity, -ness	この車【くるま】は安全性【あんぜんせい】が高【たか】い。	This car is very safe.	affix partgap
+1752	～用	～よう	for ~ use	for ~ use	非常用【ひじょうよう】の水【みず】を買【か】っておいた。	I bought water to keep for emergencies.	affix partgap
+1753	～中	～ちゅう	in the middle of ~, during ~	in the middle of ~, during ~	会議中【かいぎちゅう】は電話【でんわ】に出【で】られない。	I can't answer the phone during a meeting.	affix partgap
+1754	～中	～じゅう	throughout ~, all over ~	throughout ~, all over ~	一年中【いちねんじゅう】暖【あたた】かい島【しま】に住【す】みたい。	I want to live on an island that is warm all year round.	affix partgap
+1755	～別	～べつ	by ~, sorted by ~	by ~, sorted by ~	資料【しりょう】を年代別【ねんだいべつ】に並【なら】べた。	I arranged the materials by era.	affix partgap
+1756	～向き	～むき	suited to ~, meant for ~	suited to ~, meant for ~	これは初心者向【しょしんしゃむ】きの本【ほん】だ。	This is a book for beginners.	affix partgap
+1757	～直す	～なおす	do ~ again, redo	do ~ again, redo	作文【さくぶん】をもう一度【いちど】書【か】き直【なお】す。	I will rewrite the essay once more.	affix partgap
+1758	～抜く	～ぬく	do ~ through to the end	do ~ through to the end	彼【かれ】は難【むずか】しい仕事【しごと】も最後【さいご】までやり抜【ぬ】く人【ひと】だ。	He is someone who sees even hard work through to the end.	affix partgap
+1759	～上	～じょう	in terms of ~, as regards ~	in terms of ~, as regards ~	この計画【けいかく】は予算上【よさんじょう】、難【むずか】しい。	In terms of budget, this plan is difficult.	affix partgap
+1760	～率	～りつ	rate of ~, ~ ratio	rate of ~, ~ ratio	今年【ことし】は合格率【ごうかくりつ】が下【さ】がった。	The pass rate went down this year.	affix partgap
+1761	～制	～せい	~ system	~ system	この店【みせ】は予約制【よやくせい】だ。	This shop is by reservation only.	affix partgap
+1762	～員	～いん	member, staff of ~	member, staff of ~	駅【えき】の係員【かかりいん】に道【みち】を聞【き】いた。	I asked a station attendant the way.	affix partgap
+1763	～学	～がく	study of ~, -logy	study of ~, -logy	兄【あに】は心理学【しんりがく】を専攻【せんこう】している。	My older brother majors in psychology.	affix partgap
+1764	～家	～か	specialist; person who does ~	specialist, person who does ~	彼女【かのじょ】は有名【ゆうめい】な音楽家【おんがくか】だ。	She is a famous musician.	affix partgap
+1765	～おき	～おき	every other ~, at intervals of ~	every other ~, at intervals of ~	一日【いちにち】おきにジムへ通【かよ】っている。	I go to the gym every other day.	affix partgap
+1766	～ずくめ	～ずくめ	nothing but ~, all ~	nothing but ~, all ~	今年【ことし】はいいことずくめだった。	This year was nothing but good things.	affix partgap
+1767	～げ	～げ	with a ~ look, seeming ~	with a ~ look, seeming ~	彼【かれ】は寂【さび】しげに笑【わら】った。	He smiled with a lonely look.	affix partgap
+1768	～め	～め	on the ~ side, somewhat ~	on the ~ side, somewhat ~	髪【かみ】を少【すこ】し長【なが】めに切【き】ってください。	Please cut my hair a little on the long side.	affix partgap
+1769	超～	ちょう～	super-, ultra-	super-, ultra-	超満員【ちょうまんいん】の電車【でんしゃ】で通勤【つうきん】している。	I commute on a jam-packed train.	affix partgap
+1770	準～	じゅん～	semi-, quasi-	semi-, quasi-	チームは準決勝【じゅんけっしょう】で負【ま】けた。	The team lost in the semi-final.	affix partgap
+1771	元～	もと～	former ~, ex-	former ~, ex-	元首相【もとしゅしょう】が大学【だいがく】で講演【こうえん】した。	The former prime minister gave a lecture at the university.	affix partgap
+1772	旧～	きゅう～	old ~, former ~ (replaced)	old ~, former ~ (replaced)	旧校舎【きゅうこうしゃ】は来年【らいねん】取【と】り壊【こわ】される。	The old school building will be torn down next year.	affix partgap
+1773	新～	しん～	new ~	new ~	新製品【しんせいひん】の発表会【はっぴょうかい】が開【ひら】かれた。	A launch event was held for the new product.	affix partgap
+1774	全～	ぜん～	all ~, the whole ~	all ~, the whole ~	全社員【ぜんしゃいん】が会議【かいぎ】に出席【しゅっせき】した。	All the employees attended the meeting.	affix partgap
+1775	真～	ま～	right ~, pure ~, the very ~	right ~, pure ~	真夜中【まよなか】に目【め】が覚【さ】めた。	I woke up in the middle of the night.	affix partgap

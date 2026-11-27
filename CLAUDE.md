@@ -596,6 +596,21 @@ Before considering the change complete:
   and the exam screen (`marked`) do. Exam cards stay in rounds;
   `nextRound({exams: false})` can leave them out. 当てはめる is read
   あてはめる (は, not the particle): the voice is right.
+- **The mix follows the last boss (owner, 27 Nov, v311).** `skillWeights`
+  (n2-game.js) sets each section's miss rate on the latest N2 boss against
+  the mean of the four, clamped to `SKILL_WEIGHT` (0.5 to 2);
+  `kindWeights` maps it onto card kinds (`KIND_SKILL`), and `byKindInTurn`
+  gives a kind that many turns each time round. No boss yet, or a perfect
+  one: every kind takes one turn, as before. It is for every learner: no
+  number is the owner's.
+- **Grammar and word parts are also asked the exam's way (v311).**
+  `gapCards` (`f:<key>`, kind `gap`) and `partGapCards` (`p:<part>`, kind
+  `partgap`): the deck sentence with the pattern or part replaced by a gap,
+  the form to pick among forms other sentences write, the sentence's English
+  under it (`.qr-en`): a rule cannot know that no other form fits, but only
+  one gives that meaning. Never a near-twin (`GRAMMAR_CONFUSABLE`,
+  `AFFIX_CONFUSABLE`, by written form). Same target as the meaning card, so
+  one of the two in a round. Unreviewed, scored.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

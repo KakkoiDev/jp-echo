@@ -12,10 +12,12 @@ Built by `node tools/build-game-audit.mjs` from the code the game runs. Do not e
 | listen | Listen | 5 | 1,581 | questions/listen.jsonl |
 | homophone | Which kanji | 5 | 19 | questions/homophone.jsonl |
 | grammar | Grammar | 6 | 215 | questions/grammar.jsonl |
+| gap | Grammar · fill the gap | 8 | 196 | questions/gap.jsonl |
 | affix | Word part | 5 | 186 | questions/affix.jsonl |
+| partgap | Word part · fill the gap | 6 | 186 | questions/partgap.jsonl |
 | link | Connective | 3 | 35 | questions/link.jsonl |
 | exam | Exam question | 4–8 | 613 | questions/exam.jsonl |
-| **all** | | | **6,316** | |
+| **all** | | | **6,698** | |
 
 Exam and connective questions count every set from 02 to 18 as sat. In the game, only sets the learner has sat are used; sets 19 and 20 are never used. Exam questions are written sections only (言語知識 問題1–5, 7); connective questions are practice and score nothing.
 

@@ -212,7 +212,7 @@ test("prefixes and suffixes have a card: the part underlined in a sentence, its 
   }
   assert.equal(new Set(cards.map(q => q.id)).size, cards.length, "～所 しょ and ～所 じょ keep apart");
   // No whole word is a wrong choice here, and no word card is made of a part.
-  assert.ok(!pool.some(q => q.kind !== "affix" && q.kind !== "exam" && /[〜～]/.test(q.prompt) && q.target?.[0] === "word"));
+  assert.ok(!pool.some(q => !["affix", "partgap", "exam"].includes(q.kind) && /[〜～]/.test(q.prompt) && q.target?.[0] === "word"));
   // The other levels' lists hold no parts yet: their pools are unchanged.
   const answered = rememberAnswer({}, {q: gimi, outcome: "right", points: 300});
   assert.equal(answered.answered, 1); assert.equal(answered.total, 300);
@@ -407,4 +407,60 @@ test("a paper's 【word】 mark is never shown raw: it is an underline, not a re
   assert.ok(marked.length >= 10); assert.ok(marked.some(q => q.id === "e:n2-set-2#20"), "the card that was flagged");
   // No other kind of card carries a bracket in what it shows.
   for (const q of pool.filter(q => q.kind !== "exam")) for (const f of [q.prompt, q.sentence, q.answer, ...(q.wrong || [])]) assert.ok(!/[【】]/.test(String(f || "")), q.id);
+});
+
+test("the mix follows the last boss: a section missed more takes more turns, within bounds", async () => {
+  const {skillWeights, kindWeights, KIND_SKILL, SKILL_WEIGHT, pickRound} = await import("../n2-game.js");
+  assert.deepEqual(SKILL_WEIGHT, {min: .5, max: 2});
+  // A paper of four sections of ten; missed: 2 vocabulary, 4 grammar, 8 reading, 0 listening (mean miss rate .35).
+  const paper = {questions: ["Vocabulary", "Grammar", "Reading", "Listening"].flatMap(skill => Array.from({length: 10}, () => ({skill, key: 1})))};
+  const answers = [2, 4, 8, 0].flatMap(missed => Array.from({length: 10}, (_, i) => i < missed ? 2 : 1));
+  const w = skillWeights({paper, attempt: {answers}});
+  assert.deepEqual(w, {vocabulary: .57, grammar: 1.14, reading: 2, listening: .5}, "relative to the mean, clamped to .5 and 2");
+  // The same from a paper as the device stores it (skills numbered), and nothing to steer by without a boss or after a perfect one.
+  assert.deepEqual(skillWeights({paper: {questions: paper.questions.map(q => ({...q, skill: ["Vocabulary", "Grammar", "Reading", "Listening"].indexOf(q.skill)}))}, attempt: {answers}}), w);
+  assert.equal(skillWeights({}), null); assert.equal(skillWeights({paper, attempt: {answers: answers.map(() => 1)}}), null); assert.equal(kindWeights(null), null);
+  const k = kindWeights(w);
+  assert.equal(k.listen, .5); assert.equal(k.grammar, 1.14); assert.equal(k.gap, 1.14); assert.equal(k.link, 2); assert.equal(k.meaning, .57); assert.equal(k.partgap, .57);
+  for (const kind of new Set(pool.map(q => q.kind))) if (kind !== "exam") assert.ok(KIND_SKILL[kind], kind + " belongs to a section");
+  // Over many rounds a weak listener hears more, a strong one less; with no weights the round is picked as before.
+  const count = weights => { let n = 0; for (let s = 1; s <= 40; s++) n += pickRound({pool, random: seeded(s), weights}).filter(q => q.kind === "listen").length; return n; };
+  const even = count(null);
+  assert.ok(count({listen: 2}) > even && count({listen: .5}) < even, [count({listen: .5}), even, count({listen: 2})].join(" "));
+  assert.deepEqual(pickRound({pool, random: seeded(4)}).map(q => q.id), pickRound({pool, random: seeded(4), weights: null}).map(q => q.id));
+  assert.deepEqual(nextRound({pool, state: {}, random: seeded(4)}).round.map(q => q.id), nextRound({pool, state: {}, random: seeded(4), weights: Object.fromEntries(Object.keys(KIND_SKILL).map(x => [x, 1]))}).round.map(q => q.id), "weights of 1 change nothing");
+  const js = src("../n2-mock.js");
+  assert.ok(js.includes("const mixWeights = kindWeights(bossPaper ? skillWeights({paper: bossPaper, attempt: lastBoss}) : null);"));
+  assert.ok(js.includes("weights: pool === n2Pool ? mixWeights : null,"));
+});
+
+test("grammar and word parts are also asked the exam's way: a gap in the sentence, the form to pick", async () => {
+  const {GRAMMAR_CONFUSABLE, AFFIX_CONFUSABLE} = await import("../n2-game-review.js");
+  const {SECONDS, choicesFor} = await import("../n2-game.js");
+  const gaps = pool.filter(q => q.kind === "gap"), parts = pool.filter(q => q.kind === "partgap");
+  assert.ok(gaps.length > 150 && parts.length > 150);
+  assert.equal(SECONDS.gap, 8); assert.equal(SECONDS.partgap, 6); assert.equal(KIND_LABEL_OF.gap, "Grammar · fill the gap"); assert.equal(KIND_LABEL_OF.partgap, "Word part · fill the gap");
+  for (const q of [...gaps, ...parts]) {
+    assert.equal(q.sentence.split("（　）").length, 2, q.id + ": one gap");
+    assert.ok(!q.sentence.includes(q.answer), q.id + ": the answer is not left in the sentence");
+    assert.equal(q.sentence.replace("（　）", q.answer), q.solution.ja.replace(/【[^】]*】/g, ""), q.id + ": the gap holds exactly what the sentence writes");
+    assert.ok(q.en && !/[ぁ-んァ-ヶ一-龯]/.test(q.en), q.id + ": the sentence's meaning is shown");
+    assert.ok(q.wrong.length >= 3 && !q.wrong.some(w => w.includes(q.answer) || q.answer.includes(w)), q.id);
+    assert.equal(new Set(choicesFor(q, seeded(3), .5).choices).size, 4, q.id);
+    assert.ok(!q.practice && q.target, q.id);
+  }
+  // It is the same item as the meaning card: one of the two in a round, and a miss counts for the pattern or the part.
+  const zaru = gaps.find(q => q.id === "f:ざるを得ない"), meaning = pool.find(q => q.id === "g:ざるを得ない");
+  assert.deepEqual(zaru.target, meaning.target); assert.equal(zaru.answer, meaning.needle); assert.equal(zaru.dimension, "grammar");
+  // A near-twin is never offered: not a confusable pattern, not a part of the same group.
+  const needle = new Map(gaps.map(q => [q.id.slice(2), q.answer]));
+  for (const [a, b] of GRAMMAR_CONFUSABLE) for (const [x, y] of [[a, b], [b, a]]) { const q = gaps.find(c => c.id === "f:" + x); if (q && needle.has(y)) assert.ok(!q.wrong.includes(needle.get(y)), x + " against " + y); }
+  const partOf = new Map(parts.map(q => [q.prompt, q.answer]));
+  for (const group of AFFIX_CONFUSABLE) for (const a of group) for (const q of parts.filter(c => c.prompt === a)) for (const b of group) if (b !== a && partOf.has(b) && partOf.get(b) !== q.answer) assert.ok(!q.wrong.includes(partOf.get(b)), a + " against " + b);
+  const gimi = parts.find(q => q.id === "p:～気味");
+  assert.equal(gimi.sentence, "昨日から少し風邪（　）だ。"); assert.equal(gimi.answer, "気味"); assert.equal(gimi.en, "I've had a slight cold since yesterday.");
+  const js = src("../n2-mock.js");
+  assert.ok(js.includes('const gapCard = q => q.kind === "gap" || q.kind === "partgap";'));
+  assert.ok(js.includes('el("span", {class: "qr-en", lang: "en", text: q.en})'));
+  assert.ok(js.includes('if (gapCard(q) && $("game-blank")) { $("game-blank").textContent = q.answer; $("game-blank").classList.add("filled"); }'));
 });

@@ -34,10 +34,10 @@ export const GAME_SOURCE = "game";
 // as it is given, so closing the page mid-round loses nothing.
 // Blitz chess, not shogi (owner, 26 Nov): seconds, not minutes, per question.
 export const ROUND_SIZE = 10, REVIEW_SECONDS = 5, DAILY_GOAL = 1000, RECENT_MS = 4 * 3600_000;
-export const SECONDS = Object.freeze({reading: 3, meaning: 3, definition: 4, listen: 5, homophone: 5, grammar: 6, affix: 5, link: 3, connective: 7, exam: {1: 4, 2: 5, 3: 5, 4: 7, 5: 6, 7: 8}});
+export const SECONDS = Object.freeze({reading: 3, meaning: 3, definition: 4, listen: 5, homophone: 5, grammar: 6, affix: 5, gap: 8, partgap: 6, link: 3, connective: 7, exam: {1: 4, 2: 5, 3: 5, 4: 7, 5: 6, 7: 8}});
 // The pause after an answer before the next question, in milliseconds.
 export const PAUSE = Object.freeze({right: 250, miss: 800});
-export const KIND_LABEL = Object.freeze({reading: "Reading", meaning: "Meaning", definition: "Which word", listen: "Listen", connective: "Connective · 問題9", homophone: "Which kanji", grammar: "Grammar", block: "Grammar piece", build: "Grammar parts", infer: "New grammar", exam: "Exam question", affix: "Word part", link: "Connective"});
+export const KIND_LABEL = Object.freeze({reading: "Reading", meaning: "Meaning", definition: "Which word", listen: "Listen", connective: "Connective · 問題9", homophone: "Which kanji", grammar: "Grammar", block: "Grammar piece", build: "Grammar parts", infer: "New grammar", exam: "Exam question", affix: "Word part", link: "Connective", gap: "Grammar · fill the gap", partgap: "Word part · fill the gap"});
 const EXAM_MONDAI = new Set([1, 2, 3, 4, 5, 7]), WRITTEN = new Set(["Vocabulary", "Grammar"]);
 const KANJI = /[一-鿿々]/g;
 const plain = s => String(s || "").replace(/【[^】]*】/g, "");
@@ -209,7 +209,8 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
       sentence: plain(ex.ja), needle: GRAMMAR_SPANS["g:" + g.target[1]] || piecesNeedle(plain(ex.ja), g.prompt) || surfaceNeedle(plain(ex.ja), g.prompt) || g.prompt.replace(/[〜～]/g, ""), answer: gAnswer, wrong: [...new Set(wrong)], seconds: SECONDS.grammar,
       solution: {word: g.prompt, meaning: gAnswer, ja: ex.ja, en: ex.en || ""}});
   }
-  if (!other) pool.push(...affixCards(affixes, sentenceOf));
+  if (!other) pool.push(...gapCards(pool.filter(q => q.kind === "grammar"), confusablePair));
+  if (!other) { const parts = affixCards(affixes, sentenceOf); pool.push(...parts, ...partGapCards(parts)); }
   if (!other && grammarBlocks) addGrammarBlocks(pool, grammarBlocks);
   // Connectives (問題9): from reading passages of sets already sat. The
   // excerpt is up to two sentences before the blank and the blank's sentence.
@@ -251,6 +252,40 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
   // item: what a round counts as one thing, where N2 cards use their target.
   return fit.map(q => ({...q, level, item: level + ":" + q.target[1] + "/" + q.target[2], target: null, ...unscored(REVIEWED_LEVELS.has(level))}));
 }
+// ---- The exam's direction ----
+// The paper does not show a pattern and ask its meaning: it shows a sentence
+// with a gap and asks what goes in it (問題7; 問題3 for word parts). These
+// two kinds ask that way, from the sentences the pattern and part cards
+// already have. The sentence's English sits under it: a rule-built card
+// cannot know that no other pattern could stand in the gap, but only one
+// gives the sentence that meaning. The choices are forms as sentences write
+// them, never a near-twin of the answer (GRAMMAR_CONFUSABLE, AFFIX_CONFUSABLE).
+const GAP = "（　）";
+function gapCards(grammar, confusablePair) {
+  const usable = grammar.filter(q => typeof q.needle === "string" && q.needle.length >= 2 && q.sentence.split(q.needle).length === 2 && q.solution?.en && !EXCLUDED[q.id]);
+  return usable.flatMap(q => {
+    const key = q.id.slice(2);
+    const wrong = [...new Set(usable.filter(o => o !== q && !confusablePair.has(key + "\n" + o.id.slice(2)) && !sameSense(o.answer, q.answer) && !o.needle.includes(q.needle) && !q.needle.includes(o.needle)).map(o => o.needle))];
+    if (wrong.length < 3) return [];
+    return [{id: "f:" + key, kind: "gap", target: q.target, dimension: "grammar", prompt: q.prompt, sentence: q.sentence.replace(q.needle, GAP), en: q.solution.en,
+      answer: q.needle, wrong, near: wrong.filter(w => Math.abs(w.length - q.needle.length) <= 1), seconds: SECONDS.gap, solution: q.solution, needle: q.needle}];
+  });
+}
+function partGapCards(parts) {
+  const apart = new Map();
+  for (const group of AFFIX_CONFUSABLE) for (const t of group) apart.set(t, new Set([...(apart.get(t) || []), ...group]));
+  const usable = parts.filter(q => q.solution?.en);
+  return usable.flatMap(q => {
+    // A near-twin is kept out by what is written, not by its entry: 室～ would put ～室 back among ～所's choices.
+    const twins = new Set(usable.filter(o => apart.get(q.prompt)?.has(o.prompt)).map(o => o.needle));
+    const others = usable.filter(o => o.needle !== q.needle && !twins.has(o.needle) && !sameSense(o.answer, q.answer) && !o.needle.includes(q.needle) && !q.needle.includes(o.needle));
+    const near = [...new Set(others.filter(o => o.side === q.side).map(o => o.needle))], wrong = [...new Set([...near, ...others.map(o => o.needle)])];
+    if (wrong.length < 3) return [];
+    return [{id: "p:" + q.id.slice(2), kind: "partgap", target: q.target, dimension: "meaning", prompt: q.prompt, sentence: q.sentence.replace(q.needle, GAP), en: q.solution.en,
+      answer: q.needle, wrong, near, side: q.side, seconds: SECONDS.partgap, solution: q.solution, needle: q.needle, ...(q.practice ? {practice: true, record: true} : {})}];
+  });
+}
+
 // ---- Word parts ----
 // A prefix or a suffix (前～ former, ～気味 slightly) is a building block: it
 // is never met alone, it changes the word it joins, and the paper asks it in
@@ -454,7 +489,7 @@ export function choicesFor(q, random = Math.random, level = .5) {
 // recent, and the four-hour rest used to leave the round to new cards: owner's
 // report, 27 Nov), and the places left go to the familiar before the new.
 const cardItem = q => q.target ? keyOf(q.target) : q.item || q.id;
-export function pickRound({pool, recall = [], seen = {}, wins = {}, lv = {}, size = ROUND_SIZE, random = Math.random, mix = {weak: 4, fresh: 4, known: 2}, comeback = [], now = Date.now(), calm = false, first = [], places = 0}) {
+export function pickRound({pool, recall = [], seen = {}, wins = {}, lv = {}, size = ROUND_SIZE, random = Math.random, mix = {weak: 4, fresh: 4, known: 2}, comeback = [], now = Date.now(), calm = false, first = [], places = 0, weights = null}) {
 
   const last = new Map();
   for (const r of recall) last.set(r.dimension + keyOf(r.target), r.last);
@@ -470,7 +505,7 @@ export function pickRound({pool, recall = [], seen = {}, wins = {}, lv = {}, siz
   for (const q of shuffle(pool, random)) { const s = state(q); (calm && s === "known" ? groups.known : resting(q) ? recent : groups[s]).push(q); }
   // Least recently seen first, then the kinds taken in turn, so grammar,
   // readings and exam questions are not drowned by the many word questions.
-  for (const [name, g] of Object.entries(groups)) groups[name] = byKindInTurn(g.sort((a, b) => (seen[a.id] || 0) - (seen[b.id] || 0)), random);
+  for (const [name, g] of Object.entries(groups)) groups[name] = byKindInTurn(g.sort((a, b) => (seen[a.id] || 0) - (seen[b.id] || 0)), random, weights);
   const out = [], used = new Set(), targets = new Set();
   const take = (list, n) => { for (const q of list) { if (n <= 0) break; const t = cardItem(q); if (used.has(q.id) || targets.has(t)) continue; used.add(q.id); targets.add(t); out.push(q); n--; } };
   const byId = new Map(pool.map(q => [q.id, q]));
@@ -485,11 +520,17 @@ export function pickRound({pool, recall = [], seen = {}, wins = {}, lv = {}, siz
   const rest = interleave(shuffle(out.slice(backCount, size), random));
   return [...out.slice(0, backCount).map(q => ({...q, comeback: true})), ...rest].slice(0, Math.max(size, backCount));
 }
-function byKindInTurn(list, random) {
+// weights: kind → how many turns it takes each time round (1 where unsaid). With none the kinds take one turn
+// each, as they always did. A kind at 0.5 is taken every other time round, a kind at 2 twice.
+function byKindInTurn(list, random, weights = null) {
   const queues = new Map();
   for (const q of list) queues.set(q.kind, [...(queues.get(q.kind) || []), q]);
-  const kinds = shuffle([...queues.keys()], random), out = [];
-  while (out.length < list.length) for (const k of kinds) { const next = queues.get(k).shift(); if (next) out.push(next); }
+  const kinds = shuffle([...queues.keys()], random), out = [], credit = new Map();
+  while (out.length < list.length) for (const k of kinds) {
+    const queue = queues.get(k); if (!queue.length) continue;
+    credit.set(k, (credit.get(k) || 0) + (weights?.[k] ?? 1));
+    while (credit.get(k) >= 1 && queue.length) { out.push(queue.shift()); credit.set(k, credit.get(k) - 1); }
+  }
   return out;
 }
 // The kind with the most left goes next, never the one just asked.
@@ -690,6 +731,30 @@ export function bossQueue({cards = [], state = {}, key = ""}) {
   }).map(q => ({...q, boss: key}));
 }
 
+// ---- The mix follows the last boss ----
+// A learner's weak section gets more of the round, the strong one less
+// (owner, 27 Nov: for every learner, from the relative result of the last
+// boss). Each section's miss rate is set against the mean of the four: a
+// section missed twice as often as the mean takes twice the turns, one
+// missed half as often takes half, never outside SKILL_WEIGHT's bounds, so
+// no skill disappears and none floods the round. Before a first boss, or
+// after a perfect one, every kind takes one turn as before.
+export const SKILL_WEIGHT = Object.freeze({min: .5, max: 2});
+export const SKILLS_OF_PAPER = Object.freeze(["vocabulary", "grammar", "reading", "listening"]);
+const SKILL_NAMES = {Vocabulary: 0, Grammar: 1, Reading: 2, Listening: 3};
+// What each kind of card trains. A connective is a reading tool: it says where the writer's point is.
+export const KIND_SKILL = Object.freeze({reading: "vocabulary", meaning: "vocabulary", definition: "vocabulary", homophone: "vocabulary", affix: "vocabulary", partgap: "vocabulary",
+  grammar: "grammar", gap: "grammar", block: "grammar", build: "grammar", infer: "grammar", link: "reading", connective: "reading", listen: "listening"});
+export function skillWeights({paper, attempt} = {}) {
+  const tally = SKILLS_OF_PAPER.map(() => [0, 0]);
+  (paper?.questions || []).forEach((q, i) => { const s = typeof q.skill === "number" ? q.skill : SKILL_NAMES[q.skill]; if (!(s in tally) || !q.key) return; tally[s][1]++; if (attempt?.answers?.[i] !== q.key) tally[s][0]++; });
+  const rates = tally.map(([missed, n]) => n ? missed / n : null), known = rates.filter(r => r !== null);
+  const mean = known.length ? known.reduce((a, b) => a + b, 0) / known.length : 0;
+  if (!mean) return null;
+  return Object.fromEntries(SKILLS_OF_PAPER.map((name, i) => [name, rates[i] === null ? 1 : Math.min(SKILL_WEIGHT.max, Math.max(SKILL_WEIGHT.min, Math.round(rates[i] / mean * 100) / 100))]));
+}
+export const kindWeights = skills => skills ? Object.fromEntries(Object.entries(KIND_SKILL).map(([kind, skill]) => [kind, skills[skill] ?? 1])) : null;
+
 // ---- A flag ----
 // A flag says the card itself looks wrong. It is not an answer, and the card
 // must not come straight back: flagged while it was waiting as a miss, it
@@ -742,7 +807,7 @@ export function inSlump(state = {}) {
 // picked exactly as it always was.
 // kanji: {order, examples} picks the rank's places by kanji (kanjiPick)
 // instead of by card: the way of every level whose cards are word cards only.
-export function nextRound({pool, review = [], kanji = null, grammarCards = null, boss = [], recall = [], state = {}, difficulty = "normal", random = Math.random, now = Date.now(), exams = true}) {
+export function nextRound({pool, review = [], kanji = null, grammarCards = null, boss = [], recall = [], state = {}, difficulty = "normal", random = Math.random, now = Date.now(), exams = true, weights = null}) {
   // exams: false leaves a paper's own questions (the `e:` cards) out of the round. The game does (owner, 27 Nov).
   if (!exams) pool = pool.filter(q => q.kind !== "exam");
   // A flagged card rests (flagCard): it is in no round until the rest is over.
@@ -760,7 +825,7 @@ export function nextRound({pool, review = [], kanji = null, grammarCards = null,
     picked = [...back, ...kanjiPick({pool, examples: kanji.examples || [], order: kanji.order, state, size: places - back.length, skip: back, random, now})];
     // Kanji with nothing left to ask: the places left are picked by card, so a round is always full.
     if (picked.length < places) { const words = new Set(picked.map(q => q.item)); picked.push(...pickRound({...memory, pool: pool.filter(q => !words.has(q.item)), size: places - picked.length, mix: flowMix(level)})); }
-  } else picked = pickRound({...memory, pool, size: ROUND_SIZE - share, comeback, mix: slump ? WARM_UP.mix : flowMix(level), calm: slump,
+  } else picked = pickRound({...memory, pool, size: ROUND_SIZE - share, comeback, mix: slump ? WARM_UP.mix : flowMix(level), calm: slump, weights,
     // The last boss's misses take the first places after the comebacks; a recovery round leaves them out.
     ...(slump ? {} : {first: boss, places: BOSS_PLACES})});
 
