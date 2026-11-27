@@ -313,9 +313,10 @@ they do not reach Today's checks, Evening recall or the Night Radio.
 - **Six list entries are not labelled as a clean part** and so have no card:
   〜(まる)ごと → ～ごと, 〜(日本)式 → ～式, ～いち(にほんいち) → ～一, ～もち →
   ～持ち, and ～続ける as its own entry.
-- **Word parts to add** (both reviews): ～用, ～中, ～性, ～的, ～別, ～向き,
-  ～直す, ～抜く, 不～, 無～, ～上, ～率, ～制, ～員, ～学, ～家 (か), ～おき,
-  ～ずくめ, ～げ, ～め, 超～, 準～, 元～, 旧～, 新～, 全～, 真～.
+- **Word parts added on 27 Nov (v309), unreviewed:** the 28 named by both
+  reviews (不～ … 真～), with meanings and sentences written by the maintainer
+  agent. They are in `tools/scored-review/review-data.json` (part A) for the
+  next reviewer.
 - **Ten weak grammar findings** (に, と, 思う, もの and others): cues per
   sense, none false.
 - **Other levels, the outside verdict:** hold scoring for N5, N3 and N1; N4

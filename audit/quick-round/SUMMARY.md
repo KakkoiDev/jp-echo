@@ -12,19 +12,19 @@ Built by `node tools/build-game-audit.mjs` from the code the game runs. Do not e
 | listen | Listen | 5 | 1,581 | questions/listen.jsonl |
 | homophone | Which kanji | 5 | 19 | questions/homophone.jsonl |
 | grammar | Grammar | 6 | 215 | questions/grammar.jsonl |
-| affix | Word part | 5 | 158 | questions/affix.jsonl |
+| affix | Word part | 5 | 186 | questions/affix.jsonl |
 | link | Connective | 3 | 35 | questions/link.jsonl |
 | exam | Exam question | 4–8 | 613 | questions/exam.jsonl |
-| **all** | | | **6,288** | |
+| **all** | | | **6,316** | |
 
 Exam and connective questions count every set from 02 to 18 as sat. In the game, only sets the learner has sat are used; sets 19 and 20 are never used. Exam questions are written sections only (言語知識 問題1–5, 7); connective questions are practice and score nothing.
 
 ## Source lists
 
-- data/vocabulary.tsv: 1748 N2 words with their deck sentence and the question kinds each feeds
+- data/vocabulary.tsv: 1776 N2 words with their deck sentence and the question kinds each feeds
 - data/readings.tsv: 767 reading questions with every near miss
 - data/grammar.tsv: 221 N2 grammar patterns with their deck sentence
-- data/kanji.tsv: 1034 kanji used in the N2 words, with readings and the words using each
+- data/kanji.tsv: 1036 kanji used in the N2 words, with readings and the words using each
 - data/connectives.tsv: 35 connectives with their job (planned connective cards)
 - data/connective-passages.tsv: 228 connective excerpts as the game used to ask them (out of the rounds since 27 Nov; the connective is asked on its own)
 - data/excluded.tsv: 40 items left out of the game until fixed, with reasons

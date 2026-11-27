@@ -53,7 +53,7 @@ test("the daily queue puts weak items first and holds today's checks for tomorro
 test("the daily goal spreads first checks across the days that actually assign new material",()=>{
   const g=dailyGoal({inventory,recall:[],examDate:new Date(2026,11,6),now:new Date(2026,10,24,9)});
   assert.equal(g.daysLeft,9);
-  assert.equal(g.goal,Math.ceil((1748+221)/9));
+  assert.equal(g.goal,Math.ceil((1776+221)/9));
 });
 
 import {todayPlan,measuredPace,capMinutes} from "../n2-study.js";

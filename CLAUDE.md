@@ -583,6 +583,12 @@ Before considering the change complete:
   other levels (the reviewer's verdict: hold scoring for N5, N3 and N1).
   The `REVIEWED_*` flags are still false: the fixes themselves have not been
   read back by a reviewer.
+- **28 word parts were added to the N2 list on 27 Nov (v309).** The last 28
+  words of `n2-inventory.json` (不～ … 真～, indexes 1748–1775) are prefixes
+  and suffixes the JLPT list lacked, named by two reviews, each with a deck
+  sentence (`n2-word-<i>`) written for Echo. They are N2 recall items like
+  any other and have word-part cards. New entries are appended, never
+  inserted: the deck ids are indexes. Unreviewed.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

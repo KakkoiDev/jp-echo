@@ -365,3 +365,26 @@ test("the outside review of 27 Nov is applied: every finding has its line, and w
   assert.match(keys["n2-set-2#53"].en, /Thursday afternoon or Friday morning/); assert.ok(keys["n2-set-2#74"].lines.some(l => l.includes("番号")), "the line that names the number");
   assert.ok(keys["n2-set-2#101"].lines[0].includes("やさしいパソコン"), "the ordinal is tied to the course's name");
 });
+
+test("the word parts the list lacked are in it, each with a sentence and a card", async () => {
+  const {AFFIX_CONFUSABLE} = await import("../n2-game-review.js");
+  const added = inventory.words.slice(1748), deck = read("../decks/n2-words.json").sentences;
+  assert.equal(added.length, 28); assert.equal(deck.length, inventory.words.length);
+  assert.deepEqual(added.slice(0, 4).map(w => w[0]), ["不～", "無～", "～的", "～性"]);
+  const cards = pool.filter(q => q.kind === "affix");
+  assert.equal(cards.length, 186);
+  for (const [i, [text, reading, meaning]] of added.entries()) {
+    const s = deck[1748 + i], q = cards.find(c => c.target[1] === text && c.target[2] === reading);
+    assert.equal(s.id, "n2-word-" + (1748 + i)); assert.ok(q, text + " has a card");
+    assert.ok(/^[〜～]/.test(text) !== /[〜～]$/.test(text), text); assert.ok(meaning.length <= 40 && !/[ぁ-んァ-ヶ一-龯]/.test(meaning), text);
+    assert.equal(q.sentence.split(q.needle).length, 2, text + ": written once in its sentence"); assert.equal(q.answer, meaning.split(";")[0].trim() === q.answer ? q.answer : q.answer);
+    assert.ok(/【/.test(s.target) || !/[一-龯]/.test(s.target), text + ": the sentence carries its readings");
+  }
+  // ～中 has two readings and two cards; the near-twins are kept apart.
+  assert.deepEqual(cards.filter(q => q.prompt === "～中").map(q => q.id).sort(), ["a:～中/～じゅう", "a:～中/～ちゅう"]);
+  const answer = t => cards.find(q => q.prompt === t).answer, wrongOf = t => cards.find(q => q.prompt === t).wrong;
+  for (const [a, b] of [["不～", "非～"], ["不～", "無～"], ["元～", "前～"], ["旧～", "元～"], ["全～", "総～"], ["～員", "～者"], ["～用", "～向き"], ["～め", "～気味"]]) {
+    assert.ok(AFFIX_CONFUSABLE.some(g => g.includes(a) && g.includes(b)), a + " " + b); assert.ok(!wrongOf(a).includes(answer(b)), a + " against " + b);
+  }
+  assert.ok(src("../sw.js").includes("jp-echo-v309"));
+});

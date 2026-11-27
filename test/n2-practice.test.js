@@ -40,6 +40,6 @@ test("working answers do not count as exam evidence until their section closes",
 });
 
 test("every N2 inventory target can be checked with an answer",()=>{
-  assert.equal(inventory.words.length,1748);assert.equal(inventory.grammar.length,221);
+  assert.equal(inventory.words.length,1776);/* 1,748 from the JLPT list and 28 word parts added on 27 Nov */assert.equal(inventory.grammar.length,221);
   for(const row of [...inventory.words,...inventory.grammar])assert.ok(row.every(Boolean));
 });
