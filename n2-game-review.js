@@ -9,6 +9,8 @@ export const ACCEPTED_READINGS = Object.freeze({
   的確: ["てっかく"], 適確: ["てっかく"],          // both readings are accepted
   湿気: ["しっき"],                                // しっけ in everyday speech; しっき also exists
   境界: ["きょうがい"],                            // a real reading in another sense
+  本当: ["ほんと"], 大丈夫: ["だいじょぶ"], 寂しい: ["さみしい", "さびしい"], 淋しい: ["さみしい", "さびしい"], // colloquial readings a learner will hear (reviews, 27 Nov)
+  面目: ["めんぼく", "めんもく"], 刃: ["やいば", "は"],
 });
 export const READING_KEY = Object.freeze({
   湿気: "しっけ",  // the deck sentence teaches しっけ (humidity); the inventory says しっき
@@ -331,6 +333,20 @@ export const LIST_LABEL = Object.freeze({
   "どういたしまして (かん)": {text: "どういたしまして", reading: "どういたしまして", answer: "you're welcome"},
   "はい (かん)": {text: "はい", reading: "はい", answer: "yes; here (answering)"},
   "ミリ (メートル)": {text: "ミリ", reading: "ミリ", answer: "millimetre; milli-"}});
+// The other levels, from the two reviews of 27 Nov (part E): their cards are built by rule from JMdict lists.
+// LEVEL_GLOSS: the meaning a learner at that level expects, where the list's first sense is rare or wrong.
+export const LEVEL_GLOSS = Object.freeze({"N5:シャツ": "shirt", "N4:先輩": "senior (at school or work)", "N1:延べ": "total, cumulative",
+  "N3:パス": "pass (exam, ball, ticket)", "N3:助ける": "to help, to rescue", "N1:配給": "rationed distribution", "N1:政策": "government policy",
+  "N4:テキスト": "textbook, course material", "N3:加味": "taking into account", "N1:レンジ": "microwave; cooking range"});
+// LEVEL_DROP: cards whose prompt cannot say which sense is meant (すぎ, そう, あら in kana, 直 and 分 alone). Dropped
+// until a sentence can carry them.
+export const LEVEL_DROP = Object.freeze(["N5:すぎ", "N5:そう", "N3:あら", "N3:直", "N3:分/ぶ", "N3:わた"]);
+// LEVEL_READING: the standard reading where the list gives a synonym instead (吝嗇 is りんしょく; ケチ is another word).
+export const LEVEL_READING = Object.freeze({"N3:吝嗇": "りんしょく"});
+// NOT_WRONG: words that must never be offered against each other: one means what the other means.
+export const NOT_WRONG = Object.freeze([["遅刻", "遅れ"], ["開始", "始まり"], ["要求", "求める"], ["信じる", "信用"], ["信じる", "信頼"],
+  ["助ける", "救助"], ["助ける", "援助"], ["促進", "推進"], ["配給", "分配"], ["逃亡", "逃げ出す"], ["細工", "工作"], ["約束", "予約"],
+  ["管", "血管"], ["政策", "方策"], ["直", "直ちに"]]);
 export const LINK_SHOWN = Object.freeze({"にもかかわらず": "それにもかかわらず", "とすれば": "だとすれば"});
 // The word-part cards (前～, ～気味): their meanings are the word list's and their sentences the deck's, neither read by
 // a reviewer as affix content. False: practice, no points. True only after that review.

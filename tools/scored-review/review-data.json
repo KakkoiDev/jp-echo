@@ -38088,12 +38088,12 @@
   "N5": {
    "file": "levels/ea136ba9cc/n5.json",
    "words": 707,
-   "cards": 2502,
+   "cards": 2498,
    "byKind": {
     "reading": 544,
-    "meaning": 707,
+    "meaning": 705,
     "definition": 544,
-    "listen": 707
+    "listen": 705
    },
    "sample": [
     {
@@ -38118,9 +38118,9 @@
       "telephone call, phone call",
       "noon, midday",
       "to erase, to rub out",
-      "very, awfully",
-      "younger brother, little brother",
-      "fountain pen"
+      "Saturday",
+      "bicycle, bike",
+      "warm, mild"
      ]
     },
     {
@@ -38173,7 +38173,7 @@
       "in front (of), before (e.g. a building)",
       "girl, daughter",
       "to memorize, to memorise",
-      "a little, a bit"
+      "stand, rest"
      ]
     },
     {
@@ -38184,10 +38184,10 @@
      "wrong": [
       "押す",
       "黄色い",
-      "手紙",
-      "おばあさん",
-      "お茶",
-      "冊"
+      "番号",
+      "お風呂",
+      "靴",
+      "住む"
      ]
     },
     {
@@ -38198,10 +38198,10 @@
      "wrong": [
       "to buy, to purchase",
       "good(-tasting), nice",
-      "disliking, not wanting",
-      "inside, interior",
-      "strong, potent",
-      "please, kindly"
+      "father, dad",
+      "et cetera, etc.",
+      "last night, yesterday evening",
+      "who"
      ]
     },
     {
@@ -38238,10 +38238,10 @@
      "wrong": [
       "花瓶",
       "青い",
-      "ポケット",
-      "行く",
-      "鉛筆",
-      "年"
+      "ボタン",
+      "一日",
+      "出る",
+      "病気"
      ]
     },
     {
@@ -38251,11 +38251,11 @@
      "answer": "left, left-hand side",
      "wrong": [
       "to lend, to loan",
-      "country, state",
-      "sport, sports",
-      "to go out (e.g. on an excursion or outing), to leave",
-      "the vertical, height",
-      "shirt (undergarment), undershirt"
+      "five, 5",
+      "sweater, jumper",
+      "when, at what time",
+      "refrigerator, fridge",
+      "liking, being fond of"
      ]
     },
     {
@@ -38280,9 +38280,9 @@
       "to come (spatially or temporally), to approach",
       "fountain pen",
       "to put in, to let in",
-      "summer",
-      "bread, (sweet) pastry",
-      "-ian (e.g. Italian), -ite (e.g. Tokyoite)"
+      "big, large",
+      "talk, speech",
+      "one month"
      ]
     },
     {
@@ -38295,8 +38295,8 @@
       "茶色",
       "黄色い",
       "側",
-      "角",
-      "緑"
+      "元気",
+      "野菜"
      ]
     },
     {
@@ -38351,7 +38351,7 @@
       "病気",
       "元気",
       "天気",
-      "ボールペン"
+      "ポケット"
      ]
     },
     {
@@ -38360,12 +38360,12 @@
      "prompt": "西",
      "answer": "west",
      "wrong": [
-      "I, me",
-      "how, in what way",
-      "that is so, that is right",
-      "one month",
-      "university, college",
-      "to raise, to elevate"
+      "foot, paw",
+      "salted salmon roe",
+      "that, it",
+      "page",
+      "spring, springtime",
+      "to take off (clothes, shoes, etc.), to undress"
      ]
     },
     {
@@ -38376,8 +38376,7 @@
      "wrong": [
       "ぼんとう",
       "ほうんとう",
-      "ほんどう",
-      "ほんと"
+      "ほんどう"
      ]
     },
     {
@@ -38386,12 +38385,12 @@
      "prompt": "料理",
      "answer": "cooking, cookery",
      "wrong": [
-      "picture, drawing",
-      "then, well",
-      "east",
-      "convenient, handy",
-      "rice bowl, tea cup",
-      "woman, female"
+      "year before last",
+      "degree (angle, temperature, scale, etc.)",
+      "every day, daily",
+      "big, large",
+      "spicy, hot",
+      "important, significant"
      ]
     },
     {
@@ -38414,12 +38413,12 @@
      "prompt": "魚",
      "answer": "fish",
      "wrong": [
-      "money",
-      "man, male",
-      "early evening (usu. from 3pm to 6pm), dusk",
-      "to disappear, to vanish",
-      "handkerchief",
-      "to clear up, to clear away"
+      "medicine, pharmaceuticals",
+      "company, corporation",
+      "stamp (postage)",
+      "to shine",
+      "minute (unit of time)",
+      "to begin, to start"
      ]
     },
     {
@@ -38440,11 +38439,11 @@
      "answer": "study",
      "wrong": [
       "strong, potent",
-      "cat (esp. the domestic cat, Felis catus), feline",
-      "half, semi-",
-      "soy sauce, soya sauce",
-      "six",
-      "coffee shop, tearoom"
+      "difficult, hard",
+      "every year, yearly",
+      "hot, warm",
+      "8th day of the month",
+      "yellow, amber"
      ]
     },
     {
@@ -38453,12 +38452,12 @@
      "prompt": "village",
      "answer": "村",
      "wrong": [
-      "洗濯",
-      "橋",
-      "お菓子",
-      "年",
-      "起きる",
-      "どの"
+      "荷物",
+      "毎月",
+      "おじさん",
+      "町",
+      "遠い",
+      "妹"
      ]
     },
     {
@@ -38467,12 +38466,12 @@
      "prompt": "横",
      "answer": "horizontal (as opposed to vertical)",
      "wrong": [
-      "please (give me)",
-      "dining room, dining hall",
-      "and then, after that",
-      "now, the present time",
-      "then, well",
-      "busy, occupied"
+      "homework, assignment",
+      "to request, to beg",
+      "medium (size), average (grade, level, etc.)",
+      "sometimes, occasionally",
+      "sport, sports",
+      "this morning"
      ]
     },
     {
@@ -38495,10 +38494,10 @@
      "wrong": [
       "sometimes, occasionally",
       "clock, watch",
-      "to tie, to fasten",
-      "fountain pen",
-      "right, right-hand side",
-      "where, what place"
+      "to wash, to cleanse",
+      "to stand (up), to rise",
+      "rain",
+      "there, over there"
      ]
     },
     {
@@ -38508,11 +38507,11 @@
      "answer": "広い",
      "wrong": [
       "背広",
-      "今晩",
-      "かたかな",
-      "薬",
-      "そちら",
-      "寝る"
+      "並ぶ",
+      "同じ",
+      "昼",
+      "中",
+      "細い"
      ]
     },
     {
@@ -38521,12 +38520,12 @@
      "prompt": "池",
      "answer": "pond",
      "wrong": [
-      "to be shut, to close",
-      "that, that thing",
-      "to dash over oneself (e.g. water), to take (e.g. shower)",
-      "foreigner, foreign citizen",
-      "5th day of the month",
-      "to sing"
+      "various, a variety of",
+      "to go, to move (towards)",
+      "washing, laundry",
+      "car, automobile",
+      "alcohol, sake",
+      "to ascend, to go up"
      ]
     },
     {
@@ -38535,12 +38534,12 @@
      "prompt": "brothers and sisters, siblings",
      "answer": "兄弟",
      "wrong": [
-      "家",
-      "月曜日",
-      "返す",
-      "出す",
-      "賑やか",
-      "狭い"
+      "行く",
+      "ここ",
+      "昨夜",
+      "門",
+      "バター",
+      "歩く"
      ]
     },
     {
@@ -38551,10 +38550,10 @@
      "wrong": [
       "teacher, instructor",
       "point, tip",
-      "month (of the year)",
-      "near, neighbourhood",
-      "light (i.e. not heavy), feeling light (i.e. offering little resistance, moving easily)",
-      "high, tall"
+      "bag, satchel",
+      "to arrive at, to reach",
+      "hiragana",
+      "movie theatre, movie theater"
      ]
     },
     {
@@ -38563,12 +38562,12 @@
      "prompt": "friend, companion",
      "answer": "友達",
      "wrong": [
-      "中",
-      "引く",
-      "咖哩",
-      "遊ぶ",
-      "出口",
-      "何"
+      "水曜日",
+      "プール",
+      "キロメートル",
+      "いる",
+      "荷物",
+      "大人"
      ]
     },
     {
@@ -38581,8 +38580,8 @@
       "bank, banking institution",
       "travel, trip",
       "to go, to move (towards)",
-      "first day of the month, the first of the month",
-      "number one, first"
+      "to work (for, at, in), to be employed (at)",
+      "foreigner, foreign citizen"
      ]
     },
     {
@@ -38596,7 +38595,7 @@
       "先生",
       "生まれる",
       "誕生日",
-      "人"
+      "ノート"
      ]
     },
     {
@@ -38607,10 +38606,10 @@
      "wrong": [
       "woman, female",
       "child, children",
-      "boy, son",
       "hat, cap",
       "chair, seat",
-      "confections, sweets"
+      "confections, sweets",
+      "button (clothing)"
      ]
     },
     {
@@ -38622,7 +38621,6 @@
       "たいじょうぶ",
       "だいしょうぶ",
       "だいじようぶ",
-      "だいじょぶ",
       "だいじょうふ",
       "だいじょうぷ"
      ]
@@ -38633,12 +38631,12 @@
      "prompt": "皆さん",
      "answer": "all, everyone",
      "wrong": [
-      "newspaper",
-      "to hold (in one's hand), to take",
-      "area, vicinity",
-      "to wear (from the shoulders down), to put on",
-      "... years old, age (of) ...",
-      "post office"
+      "university, college",
+      "movie theatre, movie theater",
+      "to ferry across (e.g. a river), to carry across",
+      "red, crimson",
+      "police box, koban",
+      "refrigerator, fridge"
      ]
     },
     {
@@ -38662,11 +38660,11 @@
      "answer": "stairs, stairway",
      "wrong": [
       "storey, story",
-      "travel, trip",
-      "near, close",
-      "to cross over, to go across",
-      "curry (esp. Japanese curry)",
-      "toilet, restroom"
+      "adult, grown-up",
+      "nine",
+      "many, numerous",
+      "counter for (small) things or pieces",
+      "to line up, to set up"
      ]
     },
     {
@@ -38687,11 +38685,11 @@
      "answer": "post office",
      "wrong": [
       "convenient, handy",
-      "everyone, everybody",
-      "that, those",
-      "what",
-      "next year",
-      "clock, watch"
+      "younger sister",
+      "how, in what way",
+      "sake cup, cup for alcoholic beverages",
+      "(public) park",
+      "to request, to beg"
      ]
     },
     {
@@ -38714,12 +38712,12 @@
      "prompt": "砂糖",
      "answer": "sugar",
      "wrong": [
-      "washing, laundry",
-      "pluralizing suffix (esp. for people and animals, formerly honorific)",
-      "electricity",
-      "to stop (moving), to come to a stop",
-      "bento",
-      "good, excellent"
+      "hat, cap",
+      "next, following",
+      "town, block",
+      "clear weather, fine weather",
+      "approximately, about",
+      "grandfather"
      ]
     },
     {
@@ -38742,10 +38740,10 @@
      "wrong": [
       "tomorrow",
       "day after tomorrow",
-      "to return (something), to restore",
-      "foot, paw",
-      "envelope",
-      "Mr, Mrs"
+      "strong, potent",
+      "foreign country",
+      "please (give me)",
+      "spoon"
      ]
     },
     {
@@ -38754,12 +38752,12 @@
      "prompt": "counter for occurrences",
      "answer": "回",
      "wrong": [
-      "締める",
-      "東",
-      "乗る",
-      "分",
-      "去年",
-      "財布"
+      "辛い",
+      "水",
+      "遊ぶ",
+      "磨く",
+      "借りる",
+      "紅茶"
      ]
     },
     {
@@ -38769,11 +38767,11 @@
      "answer": "washing, laundry",
      "wrong": [
       "toilet, restroom",
-      "tonight, this evening",
-      "travel, trip",
-      "buckwheat (Fagopyrum esculentum)",
-      "song, singing",
-      "katakana"
+      "cool, refreshing",
+      "black",
+      "narrow, confined",
+      "very, greatly",
+      "easy, plain"
      ]
     },
     {
@@ -38782,12 +38780,12 @@
      "prompt": "to descend (e.g. a mountain), to go down",
      "answer": "降りる",
      "wrong": [
-      "閉まる",
-      "図書館",
-      "しかし",
-      "嫌",
-      "誕生日",
-      "どう"
+      "そば",
+      "文章",
+      "ずつ",
+      "押す",
+      "どうして",
+      "ぬるい"
      ]
     },
     {
@@ -38797,11 +38795,11 @@
      "answer": "last year",
      "wrong": [
       "fountain pen",
-      "house, residence",
-      "stamp (postage)",
-      "tie, necktie",
-      "thin, slender",
-      "morning, a.m."
+      "one day",
+      "high, tall",
+      "number (in a series)",
+      "interesting, fascinating",
+      "two, 2"
      ]
     },
     {
@@ -38826,10 +38824,10 @@
      "wrong": [
       "police box, koban",
       "to shine",
-      "(all) through (e.g. the night), throughout (e.g. the year)",
-      "to swim",
-      "classroom, lecture room",
-      "that, the"
+      "liking, being fond of",
+      "warm, mild",
+      "every year, yearly",
+      "tape"
      ]
     },
     {
@@ -38839,11 +38837,11 @@
      "answer": "鉛筆",
      "wrong": [
       "万年筆",
-      "１日",
-      "困る",
-      "取る",
-      "屋",
-      "上"
+      "テープ",
+      "石鹸",
+      "漢字",
+      "音楽",
+      "ヶ月"
      ]
     },
     {
@@ -38852,12 +38850,12 @@
      "prompt": "読む",
      "answer": "to read",
      "wrong": [
-      "7th day of the month",
-      "narrow, confined",
-      "business suit",
-      "two",
       "news",
-      "to say, to utter"
+      "to open (a door, etc.), to unwrap (e.g. parcel, package)",
+      "hot (to the touch)",
+      "all, entire",
+      "film",
+      "three, 3"
      ]
     },
     {
@@ -38870,8 +38868,8 @@
       "自分",
       "半分",
       "分",
-      "ボールペン",
-      "キログラム"
+      "本",
+      "コート"
      ]
     },
     {
@@ -38880,12 +38878,11 @@
      "prompt": "熱い",
      "answer": "hot (to the touch)",
      "wrong": [
-      "movie, film",
-      "next, following",
-      "to be born",
-      "heavy, weighty",
-      "to end, to come to an end",
-      "small, little"
+      "face, visage",
+      "department store",
+      "belly, abdomen",
+      "cold (to the touch), chilly",
+      "thick, deep"
      ]
     },
     {
@@ -38898,7 +38895,7 @@
       "うた",
       "たべる",
       "あつい",
-      "まえ"
+      "はい"
      ]
     },
     {
@@ -38907,11 +38904,12 @@
      "prompt": "寝る",
      "answer": "to sleep (lying down)",
      "wrong": [
-      "marriage",
-      "foreign country",
-      "bad(-tasting), unpalatable",
-      "bustling, busy",
-      "next, following"
+      "teacher, instructor",
+      "nine, 9",
+      "shop, store",
+      "handkerchief",
+      "knife",
+      "photograph, photo"
      ]
     },
     {
@@ -38924,8 +38922,8 @@
       "来月",
       "来週",
       "再来年",
-      "出す",
-      "海"
+      "勉強",
+      "雑誌"
      ]
     },
     {
@@ -38938,8 +38936,8 @@
       "coat, jacket",
       "to raise, to elevate",
       "above, over",
-      "tomorrow",
-      "winter"
+      "yen (currency of Japan)",
+      "snow, snowfall"
      ]
     },
     {
@@ -38960,12 +38958,12 @@
      "prompt": "返す",
      "answer": "to return (something), to restore",
      "wrong": [
-      "sugar",
-      "five",
-      "socks, sock",
-      "to teach, to instruct",
-      "guitar",
-      "Thursday"
+      "food",
+      "box, case",
+      "nine",
+      "(hard) candy, toffee",
+      "below, down",
+      "home, household"
      ]
     },
     {
@@ -38974,12 +38972,12 @@
      "prompt": "wanting (to have), desiring",
      "answer": "欲しい",
      "wrong": [
-      "辞書",
-      "赤い",
-      "教える",
-      "ころ",
-      "ボールペン",
-      "有名"
+      "黄色",
+      "向こう",
+      "閉まる",
+      "スポーツ",
+      "ラジオ",
+      "今週"
      ]
     },
     {
@@ -38989,11 +38987,11 @@
      "answer": "interesting, fascinating",
      "wrong": [
       "white",
-      "remainder, remnant",
-      "warm, mild",
-      "direction, way",
-      "film",
-      "night, evening"
+      "to sleep (lying down)",
+      "to take (a photograph)",
+      "approximately, about",
+      "store, shop",
+      "famous, well-known"
      ]
     },
     {
@@ -39002,12 +39000,12 @@
      "prompt": "round, circular",
      "answer": "丸い",
      "wrong": [
-      "箸",
-      "見せる",
-      "とても",
-      "大変",
-      "洋服",
-      "あれ"
+      "曇り",
+      "わかる",
+      "人",
+      "紙",
+      "寝る",
+      "お弁当"
      ]
     },
     {
@@ -39030,12 +39028,12 @@
      "prompt": "nine",
      "answer": "九つ",
      "wrong": [
-      "飲む",
-      "さあ",
-      "名前",
-      "面白い",
-      "テープレコーダー",
-      "犬"
+      "タバコ",
+      "シャワー",
+      "紙",
+      "椅子",
+      "日曜日",
+      "薬"
      ]
     },
     {
@@ -39045,11 +39043,11 @@
      "answer": "ashtray",
      "wrong": [
       "plate, dish",
-      "cooked rice",
-      "test (of ability, knowledge, etc.), exam",
-      "bridge",
-      "to take (a resource, e.g. time or money)",
-      "ten, 10"
+      "bad, poor",
+      "10th day of the month",
+      "safe, secure",
+      "to go, to move (towards)",
+      "(doing) together"
      ]
     },
     {
@@ -39069,12 +39067,12 @@
      "prompt": "遊ぶ",
      "answer": "to play (games, sports), to enjoy oneself",
      "wrong": [
-      "coffee",
-      "tree, shrub",
-      "to tie, to fasten",
-      "movie, film",
-      "fountain pen",
-      "toilet, restroom"
+      "copy, photocopy",
+      "child, children",
+      "year after next",
+      "four, 4",
+      "(flower) vase",
+      "for the first time"
      ]
     },
     {
@@ -39085,10 +39083,10 @@
      "wrong": [
       "入り口",
       "入れる",
-      "０",
-      "一緒",
-      "脱ぐ",
-      "授業"
+      "空",
+      "公園",
+      "明後日",
+      "弟"
      ]
     },
     {
@@ -39099,10 +39097,10 @@
      "wrong": [
       "to come (spatially or temporally), to approach",
       "fountain pen",
-      "degree (angle, temperature, scale, etc.)",
-      "letter, note",
-      "9th day of the month",
-      "splendid, nice"
+      "place, spot",
+      "famous, well-known",
+      "shower",
+      "hat, cap"
      ]
     },
     {
@@ -39111,12 +39109,12 @@
      "prompt": "to fall (of rain, snow, ash, etc.), to come down",
      "answer": "降る",
      "wrong": [
-      "働く",
-      "後ろ",
-      "はい",
-      "辛い",
-      "紙",
-      "冷たい"
+      "人",
+      "便利",
+      "プール",
+      "出かける",
+      "作る",
+      "消える"
      ]
     },
     {
@@ -39127,10 +39125,10 @@
      "wrong": [
       "to take out, to get out",
       "exit, way out",
-      "hello (e.g. on phone)",
-      "cleaning, sweeping",
-      "car, automobile",
-      "bento"
+      "4th day of the month",
+      "walk, stroll",
+      "left, left-hand side",
+      "coffee"
      ]
     },
     {
@@ -39141,9 +39139,9 @@
      "wrong": [
       "づかれる",
       "つがれる",
-      "ちゅう",
-      "ふつか",
-      "りょうしん"
+      "ならべる",
+      "しごと",
+      "おおぜい"
      ]
     },
     {
@@ -39152,12 +39150,12 @@
      "prompt": "起きる",
      "answer": "to get up, to rise",
      "wrong": [
-      "every day, daily",
-      "to close, to shut",
-      "evening, night",
-      "one",
-      "door",
-      "desk"
+      "I, me",
+      "to erase, to rub out",
+      "exit, way out",
+      "to know, to be aware (of)",
+      "to sweep, to brush",
+      "height, stature"
      ]
     },
     {
@@ -39169,9 +39167,9 @@
       "一緒",
       "一昨年",
       "一昨日",
-      "部屋",
-      "暗い",
-      "古い"
+      "練習",
+      "冊",
+      "靴下"
      ]
     },
     {
@@ -39180,12 +39178,12 @@
      "prompt": "吸う",
      "answer": "to breathe in, to inhale",
      "wrong": [
-      "famous, well-known",
-      "alcohol, sake",
-      "to get up, to rise",
-      "to be able to do, to be possible",
-      "sometimes, occasionally",
-      "-ian (e.g. Italian), -ite (e.g. Tokyoite)"
+      "younger brother, little brother",
+      "to write, to compose",
+      "to teach, to instruct",
+      "strong, potent",
+      "height, stature",
+      "tape"
      ]
     },
     {
@@ -39197,8 +39195,8 @@
       "がえる",
       "やすい",
       "ここのか",
-      "はつか",
-      "むっつ"
+      "ところ",
+      "ぎんこう"
      ]
     },
     {
@@ -39208,11 +39206,11 @@
      "answer": "to disappear, to vanish",
      "wrong": [
       "to erase, to rub out",
-      "to push, to thrust",
-      "postcard",
-      "bustling, busy",
-      "toilet, restroom",
-      "to work (for, at, in), to be employed (at)"
+      "dining room, dining hall",
+      "person, someone",
+      "handkerchief",
+      "notebook, copy-book",
+      "counter for people"
      ]
     },
     {
@@ -39234,12 +39232,12 @@
      "prompt": "閉まる",
      "answer": "to be shut, to close",
      "wrong": [
-      "clear weather, fine weather",
-      "six, 6",
-      "number, series of digits",
-      "friend, companion",
-      "liking very much, loving (something or someone)",
-      "et cetera, etc."
+      "few, little",
+      "marriage",
+      "train, electric train",
+      "splendid, fine",
+      "umbrella, parasol",
+      "pen"
      ]
     },
     {
@@ -39259,12 +39257,12 @@
      "prompt": "かかる",
      "answer": "to take (a resource, e.g. time or money)",
      "wrong": [
-      "tonight, this evening",
-      "disliking, not wanting",
-      "again, once more",
-      "apartment building, apartment block",
-      "place, spot",
-      "to ascend, to go up"
+      "soy sauce, soya sauce",
+      "early evening (usu. from 3pm to 6pm), dusk",
+      "to wash, to cleanse",
+      "older sister, elder sister",
+      "to pull, to tug",
+      "to get on (train, plane, bus, ship, etc.), to get in"
      ]
     },
     {
@@ -39273,12 +39271,12 @@
      "prompt": "cheap, inexpensive",
      "answer": "安い",
      "wrong": [
-      "閉まる",
-      "黄色",
-      "たくさん",
-      "所",
-      "結婚",
-      "おばさん"
+      "脱ぐ",
+      "着る",
+      "あそこ",
+      "バター",
+      "全部",
+      "時"
      ]
     },
     {
@@ -39290,9 +39288,9 @@
       "morning",
       "every morning",
       "this morning",
-      "to put in, to let in",
-      "sweet-tasting, sweet",
-      "below, down"
+      "good(-tasting), nice",
+      "fat, thick",
+      "and, and then"
      ]
     },
     {
@@ -39301,12 +39299,12 @@
      "prompt": "to walk",
      "answer": "歩く",
      "wrong": [
-      "コーヒー",
-      "答える",
-      "ポケット",
-      "来週",
-      "かかる",
-      "皆さん"
+      "ころ",
+      "消える",
+      "やる",
+      "高い",
+      "奥さん",
+      "浴びる"
      ]
     },
     {
@@ -39329,12 +39327,12 @@
      "prompt": "うるさい",
      "answer": "noisy, loud",
      "wrong": [
-      "counter for people",
-      "and, like that",
-      "garden, yard",
-      "kilometer, kilometre",
-      "window",
-      "notebook, copy-book"
+      "for the first time",
+      "medium (size), average (grade, level, etc.)",
+      "new, novel",
+      "skirt",
+      "safe, secure",
+      "3rd day of the month"
      ]
     },
     {
@@ -39343,12 +39341,12 @@
      "prompt": "奥さん",
      "answer": "wife, your wife",
      "wrong": [
-      "store, shop",
-      "number (in a series)",
-      "enjoyable, fun",
-      "Thursday",
-      "nine",
-      "to make, to produce"
+      "shop, store",
+      "bed",
+      "this morning",
+      "north",
+      "when, at what time",
+      "shopping, purchased goods"
      ]
     },
     {
@@ -39371,10 +39369,10 @@
      "wrong": [
       "library",
       "dictionary, lexicon",
-      "six, 6",
-      "last month",
-      "copy, photocopy",
-      "Western-style clothes (cf. traditional Japanese clothes)"
+      "woman, female",
+      "room, chamber",
+      "sport, sports",
+      "how many"
      ]
     },
     {
@@ -39383,12 +39381,12 @@
      "prompt": "かばん",
      "answer": "bag, satchel",
      "wrong": [
-      "travel, trip",
-      "bird",
-      "for the first time",
-      "to answer, to reply",
-      "all, everyone",
-      "four, 4"
+      "lesson, class",
+      "entrance, front door",
+      "another place, some other place",
+      "to take off (clothes, shoes, etc.), to undress",
+      "to dash over oneself (e.g. water), to take (e.g. shower)",
+      "body"
      ]
     },
     {
@@ -39397,12 +39395,12 @@
      "prompt": "ギター",
      "answer": "guitar",
      "wrong": [
-      "tomorrow",
-      "storey, story",
-      "one",
-      "that, it",
-      "cool, refreshing",
-      "morning"
+      "entrance, front door",
+      "refrigerator, fridge",
+      "(public) park",
+      "very, awfully",
+      "(hard) candy, toffee",
+      "who"
      ]
     },
     {
@@ -39411,12 +39409,12 @@
      "prompt": "グラム",
      "answer": "gram, gramme",
      "wrong": [
-      "stairs, stairway",
-      "to come (spatially or temporally), to approach",
-      "tea (esp. green or barley)",
-      "hundred, 100",
-      "party (social gathering)",
-      "good(-tasting), nice"
+      "early evening (usu. from 3pm to 6pm), dusk",
+      "to return (something), to restore",
+      "door (esp. Japanese-style)",
+      "animal",
+      "6th day of the month",
+      "this, this one"
      ]
     },
     {
@@ -39425,12 +39423,12 @@
      "prompt": "こちら",
      "answer": "this way, this direction",
      "wrong": [
-      "to buy, to purchase",
-      "evening, early night hours",
-      "to sleep (lying down)",
-      "door (esp. Japanese-style)",
-      "gate",
-      "man, male"
+      "corridor, hallway",
+      "to lend, to loan",
+      "strong, potent",
+      "writing (an essay, prose, etc.), composition",
+      "bridge",
+      "left, left-hand side"
      ]
     },
     {
@@ -39439,278 +39437,245 @@
      "prompt": "to bloom, to flower",
      "answer": "咲く",
      "wrong": [
-      "目",
-      "エレベーター",
-      "安い",
-      "見せる",
-      "誰か",
-      "週間"
+      "交番",
+      "お風呂",
+      "生まれる",
+      "狭い",
+      "渡る",
+      "鍵"
      ]
     },
     {
      "id": "l:N5:シャツ",
      "kind": "listen",
      "prompt": "シャツ",
-     "answer": "shirt (undergarment), undershirt",
+     "answer": "shirt",
      "wrong": [
-      "blue, azure",
-      "sweater, jumper",
-      "taxi",
-      "birthday",
-      "table",
-      "grandfather"
-     ]
-    },
-    {
-     "id": "m:N5:すぎ",
-     "kind": "meaning",
-     "prompt": "すぎ",
-     "answer": "cobia (Rachycentron canadum), sergeant fish",
-     "wrong": [
-      "to drink, to swallow",
-      "20 years old",
-      "(formal) shirt, dress shirt",
-      "a little, a bit",
-      "what",
-      "student (esp. a university student)"
-     ]
-    },
-    {
-     "id": "l:N5:そう",
-     "kind": "listen",
-     "prompt": "そう",
-     "answer": "appearing that, seeming that",
-     "wrong": [
-      "honorific/polite/humble prefix",
-      "flower, blossom",
-      "mother, mom",
-      "dictionary, lexicon",
       "to memorize, to memorise",
-      "enjoyable, fun"
+      "near, neighbourhood",
+      "please, kindly",
+      "to lose (something)",
+      "20 years old",
+      "however, but"
      ]
     },
     {
-     "id": "d:N5:其れから",
-     "kind": "definition",
-     "prompt": "and then, after that",
-     "answer": "其れから",
-     "wrong": [
-      "其れでは",
-      "中",
-      "電車",
-      "歳",
-      "歩く",
-      "バター"
-     ]
-    },
-    {
-     "id": "m:N5:近く",
+     "id": "m:N5:すぐに",
      "kind": "meaning",
-     "prompt": "近く",
-     "answer": "near, neighbourhood",
+     "prompt": "すぐに",
+     "answer": "immediately, right away",
      "wrong": [
-      "degree (angle, temperature, scale, etc.)",
-      "new, novel",
-      "police officer",
-      "notebook, copy-book",
-      "big, large",
-      "practice, training"
+      "easy, plain",
+      "page",
+      "afternoon, p.m.",
+      "body",
+      "crowd of people, great number of people",
+      "road, path"
      ]
     },
     {
-     "id": "d:N5:着く",
-     "kind": "definition",
-     "prompt": "to arrive at, to reach",
-     "answer": "着く",
-     "wrong": [
-      "着る",
-      "上着",
-      "働く",
-      "紅茶",
-      "こちら",
-      "雨"
-     ]
-    },
-    {
-     "id": "l:N5:デパート",
+     "id": "l:N5:そうです",
      "kind": "listen",
-     "prompt": "デパート",
-     "answer": "department store",
+     "prompt": "そうです",
+     "answer": "that is so, that is right",
      "wrong": [
-      "movie, film",
-      "to differ (from), to be different",
-      "thing, object",
-      "yellow, amber",
-      "that way, that direction",
-      "there (place relatively near listener)"
+      "belly, abdomen",
+      "I, me",
+      "girl, daughter",
+      "brown, light brown",
+      "to disappear, to vanish",
+      "small, little"
      ]
     },
     {
-     "id": "r:N5:１０日",
+     "id": "d:N5:其れでは",
+     "kind": "definition",
+     "prompt": "well, ...",
+     "answer": "其れでは",
+     "wrong": [
+      "其れから",
+      "スカート",
+      "服",
+      "始め",
+      "ええ",
+      "ペット"
+     ]
+    },
+    {
+     "id": "m:N5:中/ちゅう",
+     "kind": "meaning",
+     "prompt": "中",
+     "answer": "medium (size), average (grade, level, etc.)",
+     "wrong": [
+      "please, kindly",
+      "disliking, hating",
+      "to get cloudy, to cloud over",
+      "to play (a stringed or keyboard instrument)",
+      "railway station, train station",
+      "ear"
+     ]
+    },
+    {
+     "id": "r:N5:勤める",
      "kind": "reading",
-     "prompt": "１０日",
-     "answer": "とおか",
+     "prompt": "勤める",
+     "answer": "つとめる",
      "wrong": [
-      "どおか",
-      "とうおか",
-      "とおうか",
-      "とおが"
+      "づとめる",
+      "つどめる",
+      "つとうめる"
      ]
     },
     {
-     "id": "l:N5:どんな",
+     "id": "l:N5:テレビ",
      "kind": "listen",
-     "prompt": "どんな",
-     "answer": "what kind of, what sort of",
+     "prompt": "テレビ",
+     "answer": "television, TV",
      "wrong": [
-      "to take out, to get out",
-      "that, the",
-      "to end, to come to an end",
-      "pet",
-      "to fly, to soar",
-      "that way, that direction"
-     ]
-    },
-    {
-     "id": "r:N5:並べる",
-     "kind": "reading",
-     "prompt": "並べる",
-     "answer": "ならべる",
-     "wrong": [
-      "ならへる",
-      "ならぺる",
-      "ならぶ"
-     ]
-    },
-    {
-     "id": "l:N5:ニュース",
-     "kind": "listen",
-     "prompt": "ニュース",
-     "answer": "news",
-     "wrong": [
-      "stairs, stairway",
-      "home, household",
-      "good(-tasting), nice",
-      "box, case",
-      "seven",
-      "to use (a tool, method, etc.), to make use of"
-     ]
-    },
-    {
-     "id": "d:N5:杯",
-     "kind": "definition",
-     "prompt": "sake cup, cup for alcoholic beverages",
-     "answer": "杯",
-     "wrong": [
-      "辞書",
-      "部屋",
-      "日",
-      "上げる",
-      "切符",
-      "毎晩"
-     ]
-    },
-    {
-     "id": "m:N5:働く",
-     "kind": "meaning",
-     "prompt": "働く",
-     "answer": "to work, to labor",
-     "wrong": [
-      "white",
-      "flesh",
-      "university, college",
-      "but, however",
-      "to open (e.g. doors)",
-      "shower"
-     ]
-    },
-    {
-     "id": "d:N5:引く",
-     "kind": "definition",
-     "prompt": "to pull, to tug",
-     "answer": "引く",
-     "wrong": [
-      "字引",
-      "立つ",
-      "冷蔵庫",
-      "弟",
-      "自動車",
-      "はがき"
-     ]
-    },
-    {
-     "id": "l:N5:プール",
-     "kind": "listen",
-     "prompt": "プール",
-     "answer": "(swimming) pool",
-     "wrong": [
-      "tonight, this evening",
-      "to sleep (lying down)",
-      "morning",
-      "subway, metro",
-      "travel, trip",
-      "cat (esp. the domestic cat, Felis catus), feline"
-     ]
-    },
-    {
-     "id": "m:N5:ペン",
-     "kind": "meaning",
-     "prompt": "ペン",
-     "answer": "pen",
-     "wrong": [
-      "cooked rice",
-      "to begin, to start",
-      "greengrocer, fruit and vegetable shop",
-      "last night, yesterday evening",
-      "to open (a door, etc.), to unwrap (e.g. parcel, package)"
-     ]
-    },
-    {
-     "id": "m:N5:前",
-     "kind": "meaning",
-     "prompt": "前",
-     "answer": "in front (of), before (e.g. a building)",
-     "wrong": [
-      "morning, a.m.",
-      "name",
-      "month (of the year)",
-      "to put in, to let in",
-      "to show signs of being, to feel",
-      "this"
-     ]
-    },
-    {
-     "id": "d:N5:店",
-     "kind": "definition",
-     "prompt": "store, shop",
-     "answer": "店",
-     "wrong": [
-      "ずつ",
-      "ノート",
-      "ワイシャツ",
-      "雨",
-      "売る"
-     ]
-    },
-    {
-     "id": "l:N5:木曜日",
-     "kind": "listen",
-     "prompt": "木曜日",
-     "answer": "Thursday",
-     "wrong": [
+      "north",
+      "to get up, to rise",
       "tree, shrub",
+      "painful, sore",
+      "what",
+      "Sunday"
+     ]
+    },
+    {
+     "id": "r:N5:所",
+     "kind": "reading",
+     "prompt": "所",
+     "answer": "ところ",
+     "wrong": [
+      "どころ",
+      "とうころ",
+      "とごろ",
+      "とこうろ"
+     ]
+    },
+    {
+     "id": "m:N5:中/なか",
+     "kind": "meaning",
+     "prompt": "中",
+     "answer": "inside, interior",
+     "wrong": [
+      "gate",
+      "tape",
+      "red, crimson",
+      "number one, first",
+      "one, 1",
+      "(hard) candy, toffee"
+     ]
+    },
+    {
+     "id": "r:N5:何/なん",
+     "kind": "reading",
+     "prompt": "何",
+     "answer": "なん",
+     "wrong": [
+      "しち",
+      "よる",
+      "おかね",
+      "はし",
+      "と"
+     ]
+    },
+    {
+     "id": "l:N5:人/にん",
+     "kind": "listen",
+     "prompt": "人",
+     "answer": "counter for people",
+     "wrong": [
+      "foreigner, foreign citizen",
+      "one person",
+      "adult, grown-up",
+      "sometimes, occasionally",
+      "afternoon, p.m.",
+      "aunt"
+     ]
+    },
+    {
+     "id": "r:N5:掃く",
+     "kind": "reading",
+     "prompt": "掃く",
+     "answer": "はく",
+     "wrong": [
+      "ばく",
+      "はぐ",
+      "そうじ"
+     ]
+    },
+    {
+     "id": "m:N5:２０日",
+     "kind": "meaning",
+     "prompt": "２０日",
+     "answer": "20th day of the month",
+     "wrong": [
+      "tomorrow",
+      "yesterday",
       "Tuesday",
       "Friday",
       "Monday",
-      "Wednesday",
-      "Saturday"
+      "Wednesday"
      ]
     },
     {
-     "id": "d:N5:８日",
+     "id": "d:N5:弾く",
      "kind": "definition",
-     "prompt": "8th day of the month",
-     "answer": "８日",
+     "prompt": "to play (a stringed or keyboard instrument)",
+     "answer": "弾く",
+     "wrong": [
+      "話す",
+      "作文",
+      "ある",
+      "一つ",
+      "ボールペン",
+      "南"
+     ]
+    },
+    {
+     "id": "m:N5:吹く",
+     "kind": "meaning",
+     "prompt": "吹く",
+     "answer": "to blow (of the wind)",
+     "wrong": [
+      "one, 1",
+      "busy, occupied",
+      "envelope",
+      "desk",
+      "mother, mom",
+      "Western-style clothes (cf. traditional Japanese clothes)"
+     ]
+    },
+    {
+     "id": "r:N5:他",
+     "kind": "reading",
+     "prompt": "他",
+     "answer": "ほか",
+     "wrong": [
+      "ぼか",
+      "ほうか",
+      "ほが"
+     ]
+    },
+    {
+     "id": "l:N5:まずい",
+     "kind": "listen",
+     "prompt": "まずい",
+     "answer": "bad(-tasting), unpalatable",
+     "wrong": [
+      "curry (esp. Japanese curry)",
+      "confections, sweets",
+      "counter for (small) things or pieces",
+      "immediately, right away",
+      "then, well",
+      "thousand, 1"
+     ]
+    },
+    {
+     "id": "d:N5:３日",
+     "kind": "definition",
+     "prompt": "3rd day of the month",
+     "answer": "３日",
      "wrong": [
       "明日",
       "昨日",
@@ -39721,17 +39686,30 @@
      ]
     },
     {
-     "id": "m:N5:私/わたくし",
-     "kind": "meaning",
-     "prompt": "私",
-     "answer": "I, me",
+     "id": "l:N5:もっと",
+     "kind": "listen",
+     "prompt": "もっと",
+     "answer": "(some) more, even more",
      "wrong": [
-      "movie, film",
-      "outside, exterior",
-      "to read",
-      "that, that thing",
-      "still, as yet",
-      "last week, the week before"
+      "what kind of, what sort of",
+      "handkerchief",
+      "six, 6",
+      "flesh",
+      "low (rank, degree, value, content, quality, etc.)",
+      "that, those"
+     ]
+    },
+    {
+     "id": "r:N5:４日",
+     "kind": "reading",
+     "prompt": "４日",
+     "answer": "よっか",
+     "wrong": [
+      "ようっか",
+      "よくか",
+      "よつか",
+      "よちか",
+      "よっが"
      ]
     }
    ]
@@ -40188,7 +40166,7 @@
     {
      "id": "d:N4:先輩",
      "kind": "definition",
-     "prompt": "senior (at school, work, etc.), superior",
+     "prompt": "senior (at school or work)",
      "answer": "先輩",
      "wrong": [
       "開く",
@@ -40219,12 +40197,12 @@
      "prompt": "promise, agreement",
      "answer": "約束",
      "wrong": [
-      "予約",
       "世界",
       "会議室",
       "見つかる",
       "親切",
-      "払う"
+      "払う",
+      "花見"
      ]
     },
     {
@@ -40517,12 +40495,12 @@
      "prompt": "sightseeing, watching",
      "answer": "見物",
      "wrong": [
-      "意見",
       "見つかる",
-      "花見",
       "見える",
       "拝見",
-      "見つける"
+      "見つける",
+      "お見舞い",
+      "動物園"
      ]
     },
     {
@@ -40545,12 +40523,12 @@
      "prompt": "one cup (of), one glass (of)",
      "answer": "一杯",
      "wrong": [
-      "一生懸命",
       "展覧会",
       "だいぶ",
       "滑る",
       "君",
-      "用"
+      "用",
+      "教会"
      ]
     },
     {
@@ -41150,12 +41128,12 @@
      "prompt": "to build, to construct",
      "answer": "建てる",
      "wrong": [
-      "建て",
       "中学校",
       "止める",
       "文法",
       "卒業",
-      "しかる"
+      "しかる",
+      "どんどん"
      ]
     },
     {
@@ -41176,7 +41154,7 @@
      "id": "m:N4:テキスト",
      "kind": "meaning",
      "prompt": "テキスト",
-     "answer": "text",
+     "answer": "textbook, course material",
      "wrong": [
       "exhibition",
       "consultation, discussion",
@@ -41301,12 +41279,12 @@
   "N3": {
    "file": "levels/ea136ba9cc/n3.json",
    "words": 2055,
-   "cards": 7652,
+   "cards": 7640,
    "byKind": {
-    "reading": 1771,
-    "meaning": 2055,
-    "definition": 1771,
-    "listen": 2055
+    "reading": 1769,
+    "meaning": 2051,
+    "definition": 1769,
+    "listen": 2051
    },
    "sample": [
     {
@@ -41374,9 +41352,9 @@
       "専攻",
       "撃つ",
       "命",
-      "柄",
-      "股",
-      "ボーイ"
+      "慣行",
+      "迷う",
+      "ほこり"
      ]
     },
     {
@@ -41386,11 +41364,11 @@
      "answer": "時期",
      "wrong": [
       "一時",
-      "期間",
       "期待",
       "長期",
-      "期限",
-      "定期"
+      "延期",
+      "学期",
+      "予期"
      ]
     },
     {
@@ -41401,10 +41379,10 @@
      "wrong": [
       "態度",
       "形態",
-      "優秀",
-      "便り",
-      "判",
-      "倒産"
+      "容易",
+      "段",
+      "ビール",
+      "なお"
      ]
     },
     {
@@ -41417,8 +41395,8 @@
       "組",
       "組む",
       "織る",
-      "有無",
-      "生年月日"
+      "梅",
+      "眺める"
      ]
     },
     {
@@ -41442,11 +41420,11 @@
      "answer": "舞台",
      "wrong": [
       "見舞い",
-      "脂肪",
-      "きつい",
-      "一生",
-      "ショック",
-      "熱帯"
+      "自慢",
+      "旧",
+      "栄養",
+      "優れる",
+      "本物"
      ]
     },
     {
@@ -41460,7 +41438,7 @@
       "要素",
       "要するに",
       "要点",
-      "求める"
+      "笛"
      ]
     },
     {
@@ -41469,12 +41447,12 @@
      "prompt": "start, commencement",
      "answer": "開始",
      "wrong": [
-      "始まり",
-      "礼儀",
-      "ヨット",
-      "燃える",
-      "保証",
-      "クリスマス"
+      "引用",
+      "ライター",
+      "数える",
+      "余裕",
+      "コード",
+      "差"
      ]
     },
     {
@@ -41483,12 +41461,12 @@
      "prompt": "army, armed forces",
      "answer": "軍",
      "wrong": [
-      "計器",
-      "野党",
-      "近視",
-      "計",
-      "組織",
-      "泉"
+      "計る",
+      "連続",
+      "訴える",
+      "氏",
+      "地方",
+      "主に"
      ]
     },
     {
@@ -41500,9 +41478,9 @@
       "航海",
       "空",
       "空き",
-      "人ごみ",
-      "神",
-      "せいぜい"
+      "訳す",
+      "機械",
+      "象"
      ]
     },
     {
@@ -41529,8 +41507,8 @@
       "深まる",
       "時刻",
       "遅刻",
-      "苦",
-      "容易"
+      "ぐっすり",
+      "礼"
      ]
     },
     {
@@ -41542,9 +41520,9 @@
       "服装",
       "包装",
       "位置",
-      "それと",
-      "勇気",
-      "涙"
+      "揃える",
+      "現れ",
+      "旗"
      ]
     },
     {
@@ -41586,7 +41564,7 @@
       "有機",
       "有能",
       "効果",
-      "実施"
+      "住民"
      ]
     },
     {
@@ -41600,7 +41578,7 @@
       "対象",
       "現象",
       "象",
-      "見解"
+      "現代"
      ]
     },
     {
@@ -41610,11 +41588,11 @@
      "answer": "管",
      "wrong": [
       "管理",
-      "血管",
-      "理解",
-      "裁く",
-      "ノー",
-      "医療"
+      "話題",
+      "凝と",
+      "敗",
+      "環境",
+      "見解"
      ]
     },
     {
@@ -41637,12 +41615,12 @@
      "prompt": "children, juvenile",
      "answer": "児童",
      "wrong": [
-      "注文",
-      "記事",
-      "損害",
-      "消防",
-      "活気",
-      "率"
+      "適切",
+      "教授",
+      "地位",
+      "単に",
+      "停電",
+      "影響"
      ]
     },
     {
@@ -41653,10 +41631,10 @@
      "wrong": [
       "通信",
       "信号",
-      "信仰",
-      "信じる",
       "使用",
-      "費用"
+      "費用",
+      "適用",
+      "活用"
      ]
     },
     {
@@ -41696,9 +41674,9 @@
       "周囲",
       "雰囲気",
       "囲む",
-      "破産",
-      "順",
-      "夢中"
+      "無事",
+      "進学",
+      "姓名"
      ]
     },
     {
@@ -41712,7 +41690,7 @@
       "親友",
       "好み",
       "好む",
-      "見舞い"
+      "居間"
      ]
     },
     {
@@ -41721,12 +41699,12 @@
      "prompt": "hill, height",
      "answer": "丘",
      "wrong": [
-      "加味",
-      "土産",
-      "やや",
-      "才能",
-      "たまる",
-      "図"
+      "幸い",
+      "隠す",
+      "ルール",
+      "流す",
+      "できれば",
+      "列"
      ]
     },
     {
@@ -41744,1176 +41722,1163 @@
      ]
     },
     {
-     "id": "d:N3:直",
+     "id": "d:N3:支出",
      "kind": "definition",
-     "prompt": "soon, in a moment",
-     "answer": "直",
+     "prompt": "expenditure, disbursement",
+     "answer": "支出",
      "wrong": [
-      "直接",
-      "直ちに",
-      "正直",
-      "例え",
-      "替わる",
-      "末"
+      "支店",
+      "支配",
+      "支払い",
+      "支給",
+      "支払う",
+      "支える"
      ]
     },
     {
-     "id": "d:N3:食糧",
+     "id": "d:N3:署名",
      "kind": "definition",
-     "prompt": "food (esp. staple food such as rice or wheat), provisions",
-     "answer": "食糧",
+     "prompt": "signature, autograph",
+     "answer": "署名",
      "wrong": [
-      "昼食",
-      "食卓",
-      "食欲",
-      "食う",
-      "ひも",
-      "いつの間にか"
+      "名",
+      "名人",
+      "名刺",
+      "題名",
+      "姓名",
+      "名詞"
      ]
     },
     {
-     "id": "r:N3:太陽",
+     "id": "r:N3:互い",
      "kind": "reading",
-     "prompt": "太陽",
-     "answer": "たいよう",
+     "prompt": "互い",
+     "answer": "たがい",
      "wrong": [
-      "だいよう",
-      "たいよ",
-      "ようき"
+      "だがい",
+      "たかい",
+      "おたがい"
      ]
     },
     {
-     "id": "r:N3:年寄り",
+     "id": "r:N3:友",
      "kind": "reading",
-     "prompt": "年寄り",
-     "answer": "としより",
+     "prompt": "友",
+     "answer": "とも",
      "wrong": [
-      "どしより",
-      "とうしより",
-      "とじより",
-      "としようり"
-     ]
-    },
-    {
-     "id": "r:N3:反省",
-     "kind": "reading",
-     "prompt": "反省",
-     "answer": "はんせい",
-     "wrong": [
-      "ばんせい",
-      "はんぜい",
-      "いはん",
-      "はんこう",
-      "しょうりゃく",
-      "はぶく"
-     ]
-    },
-    {
-     "id": "r:N3:有利",
-     "kind": "reading",
-     "prompt": "有利",
-     "answer": "ゆうり",
-     "wrong": [
+      "ども",
+      "とうも",
+      "ゆうじん",
       "ゆうこう",
-      "うむ",
-      "ゆうき",
-      "ゆうのう",
-      "けんり",
-      "りえき"
+      "ゆうじょう",
+      "しんゆう"
      ]
     },
     {
-     "id": "r:N3:一種",
+     "id": "r:N3:飛行",
      "kind": "reading",
-     "prompt": "一種",
-     "answer": "いっしゅ",
+     "prompt": "飛行",
+     "answer": "ひこう",
      "wrong": [
-      "いくしゅ",
-      "いつしゅ",
-      "いちしゅ",
-      "いっじゅ",
-      "いっしゆ"
+      "びこう",
+      "ひごう",
+      "ひこ"
      ]
     },
     {
-     "id": "r:N3:級",
+     "id": "r:N3:許す",
      "kind": "reading",
-     "prompt": "級",
-     "answer": "きゅう",
+     "prompt": "許す",
+     "answer": "ゆるす",
      "wrong": [
-      "ぎゅう",
-      "きゆう",
-      "きゅ"
+      "ゆるず",
+      "きょか",
+      "めんきょ"
      ]
     },
     {
-     "id": "r:N3:示す",
+     "id": "r:N3:引退",
      "kind": "reading",
-     "prompt": "示す",
-     "answer": "しめす",
+     "prompt": "引退",
+     "answer": "いんたい",
      "wrong": [
-      "じめす",
-      "しめず",
-      "けいじ"
+      "いんだい",
+      "ひっこし",
+      "いんよう",
+      "ひっぱる",
+      "じたい",
+      "たいがく"
      ]
     },
     {
-     "id": "r:N3:先行",
+     "id": "r:N3:休暇",
      "kind": "reading",
-     "prompt": "先行",
-     "answer": "せんこう",
+     "prompt": "休暇",
+     "answer": "きゅうか",
      "wrong": [
-      "ぜんこう",
-      "せんごう",
-      "せんこ"
+      "ぎゅうか",
+      "きゆうか",
+      "きゅか",
+      "きゅうが"
      ]
     },
     {
-     "id": "r:N3:同僚",
+     "id": "r:N3:借金",
      "kind": "reading",
-     "prompt": "同僚",
-     "answer": "どうりょう",
+     "prompt": "借金",
+     "answer": "しゃっきん",
      "wrong": [
-      "とうりょう",
-      "どりょう",
-      "どうりよう",
-      "どうりょ"
+      "じゃっきん",
+      "しやっきん",
+      "しゃくきん",
+      "しゃつきん",
+      "しゃちきん",
+      "しゃっぎん"
      ]
     },
     {
-     "id": "r:N3:縁/ふち",
+     "id": "r:N3:宣伝",
      "kind": "reading",
-     "prompt": "縁",
-     "answer": "ふち",
+     "prompt": "宣伝",
+     "answer": "せんでん",
      "wrong": [
-      "ぶち",
-      "ふぢ",
-      "おもに",
-      "まつり",
-      "しるし"
+      "ぜんでん",
+      "せんてん",
+      "でんとう",
+      "てつだい",
+      "でんごん",
+      "つたわる"
      ]
     },
     {
-     "id": "r:N3:留学",
+     "id": "r:N3:得意",
      "kind": "reading",
-     "prompt": "留学",
-     "answer": "りゅうがく",
+     "prompt": "得意",
+     "answer": "とくい",
      "wrong": [
-      "りゆうがく",
-      "りゅがく",
-      "りゅうかく",
-      "りゅうがぐ"
+      "どくい",
+      "とうくい",
+      "とぐい"
      ]
     },
     {
-     "id": "r:N3:延期",
+     "id": "r:N3:文明",
      "kind": "reading",
-     "prompt": "延期",
-     "answer": "えんき",
+     "prompt": "文明",
+     "answer": "ぶんめい",
      "wrong": [
-      "えんぎ",
-      "きかん",
-      "きたい",
-      "じき",
-      "ちょうき",
-      "きげん"
+      "ふんめい",
+      "ぷんめい",
+      "もじ",
+      "ちゅうもん",
+      "ろんぶん",
+      "もんく"
      ]
     },
     {
-     "id": "r:N3:組",
+     "id": "r:N3:礼",
      "kind": "reading",
-     "prompt": "組",
-     "answer": "くみ",
+     "prompt": "礼",
+     "answer": "れい",
      "wrong": [
-      "ぐみ",
-      "そしき",
-      "くみあい",
-      "くむ"
+      "れいぎ",
+      "ちえ",
+      "かこむ",
+      "どうし",
+      "ぶじ"
      ]
     },
     {
-     "id": "r:N3:左右",
+     "id": "r:N3:応じる",
      "kind": "reading",
-     "prompt": "左右",
-     "answer": "さゆう",
+     "prompt": "応じる",
+     "answer": "おうじる",
      "wrong": [
-      "ざゆう",
-      "ねったい",
-      "こいびと",
-      "かんせい",
-      "はっしゃ"
+      "おじる",
+      "おうしる",
+      "おうえん"
      ]
     },
     {
-     "id": "r:N3:身長",
+     "id": "r:N3:暮れ",
      "kind": "reading",
-     "prompt": "身長",
-     "answer": "しんちょう",
+     "prompt": "暮れ",
+     "answer": "くれ",
      "wrong": [
-      "じんちょう",
-      "しんぢょう",
-      "しんちよう",
-      "しんちょ"
+      "ぐれ",
+      "くらし",
+      "くらす"
      ]
     },
     {
-     "id": "r:N3:出来事",
+     "id": "r:N3:自殺",
      "kind": "reading",
-     "prompt": "出来事",
-     "answer": "できごと",
+     "prompt": "自殺",
+     "answer": "じさつ",
      "wrong": [
-      "てきごと",
-      "でぎごと",
-      "できこと",
-      "できごうと",
-      "できごど"
+      "しさつ",
+      "じざつ",
+      "じさづ"
      ]
     },
     {
-     "id": "r:N3:迷惑",
+     "id": "r:N3:世間",
      "kind": "reading",
-     "prompt": "迷惑",
-     "answer": "めいわく",
+     "prompt": "世間",
+     "answer": "せけん",
      "wrong": [
-      "めいわぐ",
-      "まよう",
-      "まいご"
+      "ぜけん",
+      "せげん",
+      "せいき",
+      "よ",
+      "よのなか",
+      "きかん"
      ]
     },
     {
-     "id": "r:N3:囲む",
+     "id": "r:N3:都会",
      "kind": "reading",
-     "prompt": "囲む",
-     "answer": "かこむ",
+     "prompt": "都会",
+     "answer": "とかい",
      "wrong": [
-      "がこむ",
-      "かごむ",
-      "かこうむ"
+      "どかい",
+      "とうかい",
+      "とがい"
      ]
     },
     {
-     "id": "r:N3:氏",
+     "id": "r:N3:飯",
      "kind": "reading",
-     "prompt": "氏",
-     "answer": "し",
+     "prompt": "飯",
+     "answer": "めし",
      "wrong": [
-      "じ",
-      "ふり",
-      "じみ",
-      "うず",
-      "なわ"
+      "めじ",
+      "やど",
+      "こくご",
+      "せめる",
+      "くべつ"
      ]
     },
     {
-     "id": "r:N3:通訳",
+     "id": "r:N3:方々/かたがた",
      "kind": "reading",
-     "prompt": "通訳",
-     "answer": "つうやく",
+     "prompt": "方々",
+     "answer": "かたがた",
      "wrong": [
-      "づうやく",
-      "つうやぐ",
-      "つうしん",
-      "きょうつう",
-      "つうか",
-      "つうきん"
+      "がたがた",
+      "かだがた",
+      "かたかた",
+      "かたがだ"
      ]
     },
     {
-     "id": "d:N3:瓶",
+     "id": "r:N3:収穫",
+     "kind": "reading",
+     "prompt": "収穫",
+     "answer": "しゅうかく",
+     "wrong": [
+      "じゅうかく",
+      "しゆうかく",
+      "しゅかく",
+      "しゅうがく",
+      "しゅうかぐ"
+     ]
+    },
+    {
+     "id": "r:N3:疲れ",
+     "kind": "reading",
+     "prompt": "疲れ",
+     "answer": "つかれ",
+     "wrong": [
+      "づかれ",
+      "つがれ",
+      "いりょう",
+      "うん",
+      "はだか"
+     ]
+    },
+    {
+     "id": "d:N3:不自由",
      "kind": "definition",
-     "prompt": "bottle, jar",
-     "answer": "瓶",
-     "wrong": [
-      "データ",
-      "ほぼ",
-      "成功",
-      "治める",
-      "警告",
-      "有利"
-     ]
-    },
-    {
-     "id": "d:N3:現れ",
-     "kind": "definition",
-     "prompt": "embodiment, manifestation",
-     "answer": "現れ",
-     "wrong": [
-      "現在",
-      "現実",
-      "現場",
-      "現状",
-      "現代",
-      "実現"
-     ]
-    },
-    {
-     "id": "d:N3:刊行",
-     "kind": "definition",
-     "prompt": "publication, issue",
-     "answer": "刊行",
-     "wrong": [
-      "行動",
-      "実行",
-      "飛行",
-      "先行",
-      "流行",
-      "慣行"
-     ]
-    },
-    {
-     "id": "d:N3:好み",
-     "kind": "definition",
-     "prompt": "liking, taste",
-     "answer": "好み",
-     "wrong": [
-      "友好",
-      "好む",
-      "判断",
-      "少しも",
-      "恐れる",
-      "徐々に"
-     ]
-    },
-    {
-     "id": "d:N3:高まる",
-     "kind": "definition",
-     "prompt": "to rise, to swell",
-     "answer": "高まる",
-     "wrong": [
-      "最高",
-      "高速",
-      "高める",
-      "高価",
-      "設備",
-      "ビデオ"
-     ]
-    },
-    {
-     "id": "d:N3:見送り",
-     "kind": "definition",
-     "prompt": "seeing (someone) off, send-off",
-     "answer": "見送り",
-     "wrong": [
-      "見解",
-      "発見",
-      "見事",
-      "見舞い",
-      "見当",
-      "失業"
-     ]
-    },
-    {
-     "id": "d:N3:驚き",
-     "kind": "definition",
-     "prompt": "surprise, astonishment",
-     "answer": "驚き",
-     "wrong": [
-      "貴重",
-      "水準",
-      "メンバー",
-      "支える",
-      "気づく",
-      "腐る"
-     ]
-    },
-    {
-     "id": "d:N3:幸せ",
-     "kind": "definition",
-     "prompt": "happiness, good fortune",
-     "answer": "幸せ",
-     "wrong": [
-      "不幸",
-      "汗",
-      "提出",
-      "消費",
-      "教授",
-      "バイオリン"
-     ]
-    },
-    {
-     "id": "d:N3:典型",
-     "kind": "definition",
-     "prompt": "type, pattern",
-     "answer": "典型",
-     "wrong": [
-      "依頼",
-      "奪う",
-      "植物",
-      "挑戦",
-      "肩",
-      "物価"
-     ]
-    },
-    {
-     "id": "d:N3:当てる",
-     "kind": "definition",
-     "prompt": "to hit",
-     "answer": "当てる",
-     "wrong": [
-      "当時",
-      "担当",
-      "相当",
-      "当然",
-      "当たり前",
-      "弁当"
-     ]
-    },
-    {
-     "id": "r:N3:件",
-     "kind": "reading",
-     "prompt": "件",
-     "answer": "けん",
-     "wrong": [
-      "げん",
-      "じけん",
-      "じょうけん"
-     ]
-    },
-    {
-     "id": "r:N3:性質",
-     "kind": "reading",
-     "prompt": "性質",
-     "answer": "せいしつ",
-     "wrong": [
-      "ぜいしつ",
-      "せいじつ",
-      "せいしづ"
-     ]
-    },
-    {
-     "id": "r:N3:意地",
-     "kind": "reading",
-     "prompt": "意地",
-     "answer": "いじ",
-     "wrong": [
-      "いし",
-      "いしき",
-      "いがい",
-      "とくい",
-      "けいい",
-      "いじわる"
-     ]
-    },
-    {
-     "id": "r:N3:幸福",
-     "kind": "reading",
-     "prompt": "幸福",
-     "answer": "こうふく",
-     "wrong": [
-      "ごうふく",
-      "こふく",
-      "こうぶく",
-      "こうふぐ"
-     ]
-    },
-    {
-     "id": "r:N3:中古",
-     "kind": "reading",
-     "prompt": "中古",
-     "answer": "ちゅうこ",
-     "wrong": [
-      "ぢゅうこ",
-      "ちゆうこ",
-      "ちゅこ",
-      "ちゅうご"
-     ]
-    },
-    {
-     "id": "r:N3:炎",
-     "kind": "reading",
-     "prompt": "炎",
-     "answer": "ほのお",
-     "wrong": [
-      "ぼのお",
-      "ほうのお",
-      "ほのうお"
-     ]
-    },
-    {
-     "id": "r:N3:勘",
-     "kind": "reading",
-     "prompt": "勘",
-     "answer": "かん",
-     "wrong": [
-      "がん",
-      "かんじょう",
-      "おう",
-      "しばふ",
-      "さほう"
-     ]
-    },
-    {
-     "id": "r:N3:注",
-     "kind": "reading",
-     "prompt": "注",
-     "answer": "ちゅう",
-     "wrong": [
-      "ぢゅう",
-      "ちゆう",
-      "ちゅ"
-     ]
-    },
-    {
-     "id": "r:N3:扱う",
-     "kind": "reading",
-     "prompt": "扱う",
-     "answer": "あつかう",
-     "wrong": [
-      "あづかう",
-      "あっかう",
-      "あつがう"
-     ]
-    },
-    {
-     "id": "r:N3:題名",
-     "kind": "reading",
-     "prompt": "題名",
-     "answer": "だいめい",
-     "wrong": [
-      "たいめい",
-      "かだい",
-      "わだい",
-      "だい",
-      "な",
-      "しょめい"
-     ]
-    },
-    {
-     "id": "m:N3:わた",
-     "kind": "meaning",
-     "prompt": "わた",
-     "answer": "cotton plant (Gossypium spp.)",
-     "wrong": [
-      "on purpose, deliberately",
-      "root (of a plant)",
-      "to insert, to put in",
-      "prize, award",
-      "flat, level",
-      "equipment, facilities"
-     ]
-    },
-    {
-     "id": "r:N3:道徳",
-     "kind": "reading",
-     "prompt": "道徳",
-     "answer": "どうとく",
-     "wrong": [
-      "とうとく",
-      "どとく",
-      "どうどく",
-      "どうとうく",
-      "どうとぐ"
-     ]
-    },
-    {
-     "id": "d:N3:加味",
-     "kind": "definition",
-     "prompt": "seasoning, flavoring",
-     "answer": "加味",
-     "wrong": [
-      "参加",
-      "増加",
-      "加減",
-      "加わる",
-      "加える",
-      "気味"
-     ]
-    },
-    {
-     "id": "r:N3:無駄",
-     "kind": "reading",
-     "prompt": "無駄",
-     "answer": "むだ",
-     "wrong": [
-      "むた",
-      "むりょう",
-      "うむ",
-      "ぶじ",
-      "むし",
-      "とんでもない"
-     ]
-    },
-    {
-     "id": "d:N3:発明",
-     "kind": "definition",
-     "prompt": "invention",
-     "answer": "発明",
-     "wrong": [
-      "発行",
-      "発展",
-      "発表",
-      "爆発",
-      "発見",
-      "発射"
-     ]
-    },
-    {
-     "id": "r:N3:賞品",
-     "kind": "reading",
-     "prompt": "賞品",
-     "answer": "しょうひん",
-     "wrong": [
-      "じょうひん",
-      "しようひん",
-      "しょひん",
-      "しょうびん"
-     ]
-    },
-    {
-     "id": "r:N3:幸運",
-     "kind": "reading",
-     "prompt": "幸運",
-     "answer": "こううん",
-     "wrong": [
-      "こうん",
-      "ふこう",
-      "しあわせ",
-      "こうふく",
-      "さいわい",
-      "うん"
-     ]
-    },
-    {
-     "id": "d:N3:貸し",
-     "kind": "definition",
-     "prompt": "loan, lending",
-     "answer": "貸し",
-     "wrong": [
-      "計",
-      "判",
-      "帯",
-      "計器",
-      "食物",
-      "添う"
-     ]
-    },
-    {
-     "id": "d:N3:不通",
-     "kind": "definition",
-     "prompt": "suspension, interruption",
-     "answer": "不通",
+     "prompt": "discomfort, inconvenience",
+     "answer": "不自由",
      "wrong": [
       "不安",
       "不足",
       "不満",
       "不正",
-      "不自由",
-      "不幸"
+      "不幸",
+      "不利"
      ]
     },
     {
-     "id": "d:N3:助ける",
+     "id": "d:N3:合わせる",
      "kind": "definition",
-     "prompt": "to save, to rescue",
-     "answer": "助ける",
+     "prompt": "to match (rhythm, actions, clothes, etc.), to do in line with",
+     "answer": "合わせる",
+     "wrong": [
+      "会合",
+      "組合",
+      "合計",
+      "合格",
+      "付き合い",
+      "知り合い"
+     ]
+    },
+    {
+     "id": "d:N3:観察",
+     "kind": "definition",
+     "prompt": "observation, survey",
+     "answer": "観察",
+     "wrong": [
+      "観光",
+      "観客",
+      "観",
+      "診察",
+      "規制",
+      "行けない"
+     ]
+    },
+    {
+     "id": "d:N3:才能",
+     "kind": "definition",
+     "prompt": "talent, ability",
+     "answer": "才能",
+     "wrong": [
+      "可能",
+      "機能",
+      "知能",
+      "有能",
+      "訪問",
+      "説"
+     ]
+    },
+    {
+     "id": "d:N3:通行",
+     "kind": "definition",
+     "prompt": "passage (of people or vehicles), passing (through)",
+     "answer": "通行",
+     "wrong": [
+      "通信",
+      "共通",
+      "通貨",
+      "通勤",
+      "通訳",
+      "通学"
+     ]
+    },
+    {
+     "id": "d:N3:向かい",
+     "kind": "definition",
+     "prompt": "facing, opposite",
+     "answer": "向かい",
+     "wrong": [
+      "方向",
+      "傾向",
+      "向く",
+      "向ける",
+      "手術",
+      "指導"
+     ]
+    },
+    {
+     "id": "d:N3:快適",
+     "kind": "definition",
+     "prompt": "pleasant, agreeable",
+     "answer": "快適",
+     "wrong": [
+      "適切",
+      "適用",
+      "適度",
+      "適する",
+      "腰",
+      "父親"
+     ]
+    },
+    {
+     "id": "d:N3:視覚",
+     "kind": "definition",
+     "prompt": "(sense of) sight, eyesight",
+     "answer": "視覚",
+     "wrong": [
+      "視点",
+      "重視",
+      "無視",
+      "近視",
+      "感覚",
+      "覚悟"
+     ]
+    },
+    {
+     "id": "d:N3:図書",
+     "kind": "definition",
+     "prompt": "books",
+     "answer": "図書",
+     "wrong": [
+      "図",
+      "図る",
+      "合図",
+      "教科書",
+      "書類",
+      "読書"
+     ]
+    },
+    {
+     "id": "d:N3:永遠",
+     "kind": "definition",
+     "prompt": "eternity, perpetuity",
+     "answer": "永遠",
+     "wrong": [
+      "巣",
+      "流行",
+      "個々",
+      "姓",
+      "瓶",
+      "寄せる"
+     ]
+    },
+    {
+     "id": "r:N3:後者",
+     "kind": "reading",
+     "prompt": "後者",
+     "answer": "こうしゃ",
+     "wrong": [
+      "ごうしゃ",
+      "こしゃ",
+      "こうじゃ",
+      "こうしや"
+     ]
+    },
+    {
+     "id": "r:N3:相続",
+     "kind": "reading",
+     "prompt": "相続",
+     "answer": "そうぞく",
+     "wrong": [
+      "ぞうぞく",
+      "そぞく",
+      "そうそく",
+      "そうぞうく",
+      "そうぞぐ"
+     ]
+    },
+    {
+     "id": "r:N3:異動",
+     "kind": "reading",
+     "prompt": "異動",
+     "answer": "いどう",
+     "wrong": [
+      "いとう",
+      "いど",
+      "いじょう",
+      "ことなる",
+      "い",
+      "かつどう"
+     ]
+    },
+    {
+     "id": "r:N3:興奮",
+     "kind": "reading",
+     "prompt": "興奮",
+     "answer": "こうふん",
+     "wrong": [
+      "ごうふん",
+      "こふん",
+      "こうぶん"
+     ]
+    },
+    {
+     "id": "r:N3:徹夜",
+     "kind": "reading",
+     "prompt": "徹夜",
+     "answer": "てつや",
+     "wrong": [
+      "でつや",
+      "てづや",
+      "てってい",
+      "よなか",
+      "よあけ"
+     ]
+    },
+    {
+     "id": "r:N3:膜",
+     "kind": "reading",
+     "prompt": "膜",
+     "answer": "まく",
+     "wrong": [
+      "まぐ",
+      "なみ",
+      "むかえ",
+      "たつ",
+      "さす"
+     ]
+    },
+    {
+     "id": "r:N3:乾燥",
+     "kind": "reading",
+     "prompt": "乾燥",
+     "answer": "かんそう",
+     "wrong": [
+      "がんそう",
+      "かんぞう",
+      "かんそ"
+     ]
+    },
+    {
+     "id": "r:N3:駐車",
+     "kind": "reading",
+     "prompt": "駐車",
+     "answer": "ちゅうしゃ",
+     "wrong": [
+      "ぢゅうしゃ",
+      "ちゆうしゃ",
+      "ちゅしゃ",
+      "ちゅうじゃ",
+      "ちゅうしや"
+     ]
+    },
+    {
+     "id": "r:N3:泡",
+     "kind": "reading",
+     "prompt": "泡",
+     "answer": "あわ",
+     "wrong": [
+      "こうか",
+      "ぐん",
+      "おとる",
+      "くるう",
+      "どうし"
+     ]
+    },
+    {
+     "id": "r:N3:便り",
+     "kind": "reading",
+     "prompt": "便り",
+     "answer": "たより",
+     "wrong": [
+      "だより",
+      "たようり",
+      "ゆうびん",
+      "びん"
+     ]
+    },
+    {
+     "id": "r:N3:疑う",
+     "kind": "reading",
+     "prompt": "疑う",
+     "answer": "うたがう",
+     "wrong": [
+      "うだがう",
+      "うたかう",
+      "ぎもん"
+     ]
+    },
+    {
+     "id": "d:N3:謎",
+     "kind": "definition",
+     "prompt": "riddle, puzzle",
+     "answer": "謎",
+     "wrong": [
+      "投票",
+      "王子",
+      "以来",
+      "勤め",
+      "汚染",
+      "普段"
+     ]
+    },
+    {
+     "id": "r:N3:狩り",
+     "kind": "reading",
+     "prompt": "狩り",
+     "answer": "かり",
+     "wrong": [
+      "がり",
+      "れいぎ",
+      "なやむ",
+      "くせ",
+      "たとえ"
+     ]
+    },
+    {
+     "id": "d:N3:合図",
+     "kind": "definition",
+     "prompt": "sign, signal",
+     "answer": "合図",
+     "wrong": [
+      "会合",
+      "組合",
+      "合計",
+      "合格",
+      "付き合い",
+      "合わせる"
+     ]
+    },
+    {
+     "id": "r:N3:深まる",
+     "kind": "reading",
+     "prompt": "深まる",
+     "answer": "ふかまる",
+     "wrong": [
+      "ぶかまる",
+      "ふがまる",
+      "しんこく",
+      "ふかめる"
+     ]
+    },
+    {
+     "id": "d:N3:生理",
+     "kind": "definition",
+     "prompt": "physiology",
+     "answer": "生理",
+     "wrong": [
+      "人生",
+      "生命",
+      "誕生",
+      "生物",
+      "生涯",
+      "一生"
+     ]
+    },
+    {
+     "id": "r:N3:上京",
+     "kind": "reading",
+     "prompt": "上京",
+     "answer": "じょうきょう",
+     "wrong": [
+      "しょうきょう",
+      "じようきょう",
+      "じょきょう",
+      "じょうぎょう",
+      "じょうきよう",
+      "じょうきょ"
+     ]
+    },
+    {
+     "id": "r:N3:郡",
+     "kind": "reading",
+     "prompt": "郡",
+     "answer": "ぐん",
+     "wrong": [
+      "くん",
+      "おとる",
+      "くるう",
+      "どうし",
+      "ならす"
+     ]
+    },
+    {
+     "id": "r:N3:愉快",
+     "kind": "reading",
+     "prompt": "愉快",
+     "answer": "ゆかい",
+     "wrong": [
+      "ゆがい",
+      "かいてき",
+      "こづつみ",
+      "えさ",
+      "きたい"
+     ]
+    },
+    {
+     "id": "r:N3:握る",
+     "kind": "reading",
+     "prompt": "握る",
+     "answer": "にぎる",
+     "wrong": [
+      "にきる",
+      "あくしゅ",
+      "はかる",
+      "まなぶ",
+      "ながめ"
+     ]
+    },
+    {
+     "id": "r:N3:陽気",
+     "kind": "reading",
+     "prompt": "陽気",
+     "answer": "ようき",
+     "wrong": [
+      "よき",
+      "ようぎ",
+      "たいよう",
+      "けいき",
+      "にんき",
+      "ふんいき"
+     ]
+    },
+    {
+     "id": "d:N3:休息",
+     "kind": "definition",
+     "prompt": "rest, relief",
+     "answer": "休息",
+     "wrong": [
+      "休暇",
+      "息",
+      "悩む",
+      "生涯",
+      "証明",
+      "妙"
+     ]
+    },
+    {
+     "id": "r:N3:親しい",
+     "kind": "reading",
+     "prompt": "親しい",
+     "answer": "したしい",
+     "wrong": [
+      "じたしい",
+      "しだしい",
+      "したじい"
+     ]
+    },
+    {
+     "id": "r:N3:通り過ぎる",
+     "kind": "reading",
+     "prompt": "通り過ぎる",
+     "answer": "とおりすぎる",
+     "wrong": [
+      "どおりすぎる",
+      "とうおりすぎる",
+      "とおうりすぎる",
+      "とおりずぎる",
+      "とおりすきる"
+     ]
+    },
+    {
+     "id": "r:N3:行儀",
+     "kind": "reading",
+     "prompt": "行儀",
+     "answer": "ぎょうぎ",
+     "wrong": [
+      "きょうぎ",
+      "ぎようぎ",
+      "ぎょぎ",
+      "ぎょうき"
+     ]
+    },
+    {
+     "id": "r:N3:散る",
+     "kind": "reading",
+     "prompt": "散る",
+     "answer": "ちる",
+     "wrong": [
+      "ぢる",
+      "ちらす",
+      "きづく",
+      "せき",
+      "かえす"
+     ]
+    },
+    {
+     "id": "d:N3:連想",
+     "kind": "definition",
+     "prompt": "association (of ideas), being reminded (of something)",
+     "answer": "連想",
+     "wrong": [
+      "関連",
+      "連続",
+      "連れ",
+      "予想",
+      "思想",
+      "感想"
+     ]
+    },
+    {
+     "id": "d:N3:離す",
+     "kind": "definition",
+     "prompt": "to separate, to part",
+     "answer": "離す",
+     "wrong": [
+      "離れる",
+      "離婚",
+      "震える",
+      "汲む",
+      "金額",
+      "名刺"
+     ]
+    },
+    {
+     "id": "d:N3:人ごみ",
+     "kind": "definition",
+     "prompt": "crowd of people",
+     "answer": "人ごみ",
+     "wrong": [
+      "個人",
+      "人気",
+      "人間",
+      "人生",
+      "人物",
+      "夫人"
+     ]
+    },
+    {
+     "id": "d:N3:混じる",
+     "kind": "definition",
+     "prompt": "to be mixed, to be blended with",
+     "answer": "混じる",
+     "wrong": [
+      "混乱",
+      "混雑",
+      "年間",
+      "市場",
+      "姉妹",
+      "その上"
+     ]
+    },
+    {
+     "id": "d:N3:助かる",
+     "kind": "definition",
+     "prompt": "to be saved, to be rescued",
+     "answer": "助かる",
      "wrong": [
       "援助",
       "助手",
       "救助",
-      "助かる",
+      "助ける",
       "助詞",
-      "手間"
+      "声明"
      ]
     },
     {
-     "id": "d:N3:縄",
-     "kind": "definition",
-     "prompt": "rope, cord",
-     "answer": "縄",
-     "wrong": [
-      "負う",
-      "中学",
-      "注目",
-      "旅",
-      "誕生",
-      "沖"
-     ]
-    },
-    {
-     "id": "d:N3:悲しむ",
-     "kind": "definition",
-     "prompt": "to be sad, to mourn for",
-     "answer": "悲しむ",
-     "wrong": [
-      "悲劇",
-      "年月",
-      "贈る",
-      "牛",
-      "有無",
-      "境"
-     ]
-    },
-    {
-     "id": "d:N3:採集",
-     "kind": "definition",
-     "prompt": "collecting, gathering",
-     "answer": "採集",
-     "wrong": [
-      "集団",
-      "集中",
-      "真剣",
-      "迷惑",
-      "寄せる",
-      "単語"
-     ]
-    },
-    {
-     "id": "d:N3:遅刻",
-     "kind": "definition",
-     "prompt": "lateness, tardiness",
-     "answer": "遅刻",
-     "wrong": [
-      "遅れ",
-      "深刻",
-      "時刻",
-      "横切る",
-      "盛り",
-      "年月"
-     ]
-    },
-    {
-     "id": "d:N3:織る",
-     "kind": "definition",
-     "prompt": "to weave",
-     "answer": "織る",
-     "wrong": [
-      "組織",
-      "アルバム",
-      "要するに",
-      "賭ける",
-      "パイロット",
-      "通貨"
-     ]
-    },
-    {
-     "id": "d:N3:悔しい",
-     "kind": "definition",
-     "prompt": "frustrated (over a failure, humiliation or injustice), annoyed",
-     "answer": "悔しい",
-     "wrong": [
-      "後悔",
-      "ことわざ",
-      "鎖",
-      "揃える",
-      "少年",
-      "言語"
-     ]
-    },
-    {
-     "id": "r:N3:用心",
+     "id": "r:N3:混ぜる",
      "kind": "reading",
-     "prompt": "用心",
-     "answer": "ようじん",
+     "prompt": "混ぜる",
+     "answer": "まぜる",
      "wrong": [
-      "よじん",
-      "ようしん",
-      "しよう",
-      "ひよう",
-      "しんよう",
-      "てきよう"
+      "ませる",
+      "こんらん",
+      "こんざつ",
+      "まじる",
+      "まざる"
      ]
     },
     {
-     "id": "r:N3:親戚",
+     "id": "r:N3:思いつく",
      "kind": "reading",
-     "prompt": "親戚",
-     "answer": "しんせき",
+     "prompt": "思いつく",
+     "answer": "おもいつく",
      "wrong": [
-      "じんせき",
-      "しんぜき",
-      "しんせぎ"
+      "おうもいつく",
+      "おもういつく",
+      "おもいづく",
+      "おもいっく",
+      "おもいつぐ"
      ]
     },
     {
-     "id": "r:N3:省略",
-     "kind": "reading",
-     "prompt": "省略",
-     "answer": "しょうりゃく",
-     "wrong": [
-      "じょうりゃく",
-      "しようりゃく",
-      "しょりゃく",
-      "しょうりやく",
-      "しょうりゃぐ"
-     ]
-    },
-    {
-     "id": "r:N3:泊める",
-     "kind": "reading",
-     "prompt": "泊める",
-     "answer": "とめる",
-     "wrong": [
-      "どめる",
-      "とうめる",
-      "しゅくはく"
-     ]
-    },
-    {
-     "id": "r:N3:姓名",
-     "kind": "reading",
-     "prompt": "姓名",
-     "answer": "せいめい",
-     "wrong": [
-      "ぜいめい",
-      "せい",
-      "な",
-      "しょめい",
-      "めいじん",
-      "めいし"
-     ]
-    },
-    {
-     "id": "d:N3:信じる",
+     "id": "d:N3:伸ばす",
      "kind": "definition",
-     "prompt": "to believe, to believe in",
-     "answer": "信じる",
+     "prompt": "to grow long (e.g. hair, nails)",
+     "answer": "伸ばす",
      "wrong": [
-      "通信",
-      "信用",
-      "信頼",
-      "信号",
-      "信仰",
-      "最低"
+      "伸びる",
+      "画家",
+      "光景",
+      "ユーモア",
+      "軒",
+      "衝突"
      ]
     },
     {
-     "id": "d:N3:混ざる",
-     "kind": "definition",
-     "prompt": "to be mixed, to be blended with",
-     "answer": "混ざる",
-     "wrong": [
-      "混乱",
-      "混雑",
-      "活躍",
-      "絶対",
-      "ゲーム",
-      "睡眠"
-     ]
-    },
-    {
-     "id": "r:N3:取り上げる",
+     "id": "r:N3:帰す",
      "kind": "reading",
-     "prompt": "取り上げる",
-     "answer": "とりあげる",
+     "prompt": "帰す",
+     "answer": "かえす",
      "wrong": [
-      "どりあげる",
-      "とうりあげる",
-      "とりあける"
+      "がえす",
+      "かえず",
+      "きたく"
      ]
     },
     {
-     "id": "d:N3:捕まる",
-     "kind": "definition",
-     "prompt": "to be caught, to be arrested",
-     "answer": "捕まる",
+     "id": "r:N3:述べる",
+     "kind": "reading",
+     "prompt": "述べる",
+     "answer": "のべる",
      "wrong": [
-      "一生",
-      "気候",
-      "差",
-      "大家",
-      "尊重",
-      "人気"
+      "のうべる",
+      "のへる",
+      "のぺる"
      ]
     },
     {
-     "id": "d:N3:湿る",
-     "kind": "definition",
-     "prompt": "to become damp, to become moist",
-     "answer": "湿る",
-     "wrong": [
-      "湿度",
-      "湿気",
-      "収穫",
-      "洗剤",
-      "重視",
-      "ホーム"
-     ]
-    },
-    {
-     "id": "m:N3:あら",
+     "id": "m:N3:ありがとう",
      "kind": "meaning",
-     "prompt": "あら",
-     "answer": "remaining bony parts (of a fish after filleting)",
+     "prompt": "ありがとう",
+     "answer": "thank you, thanks",
      "wrong": [
-      "(school) subject, curriculum",
-      "feather, plume",
-      "nest, rookery",
-      "distinction, differentiation",
-      "to bump into, to run into",
-      "coin"
+      "monk, priest",
+      "study, library",
+      "to hold in one's arms, to carry in one's arms",
+      "scene, setting",
+      "wine",
+      "to run, to dash"
      ]
     },
     {
-     "id": "m:N3:いつまでも",
+     "id": "m:N3:イメージ",
      "kind": "meaning",
-     "prompt": "いつまでも",
-     "answer": "forever, eternally",
+     "prompt": "イメージ",
+     "answer": "image (in one's mind), impression",
      "wrong": [
-      "energy, vigour",
-      "to become clear (water, air, etc.), to become transparent",
-      "unexpectedly, surprisingly",
-      "forecast, prediction",
-      "application (of a rule, law, method, etc.)",
-      "to omit, to leave out"
+      "power outage, power failure",
+      "superior, first-class",
+      "ruin, destruction",
+      "reading",
+      "artificial, man-made",
+      "Europe"
      ]
     },
     {
-     "id": "d:N3:縁/えん",
-     "kind": "definition",
-     "prompt": "fate, destiny (esp. as a mysterious force that binds two people together)",
-     "answer": "縁",
-     "wrong": [
-      "建つ",
-      "優れる",
-      "通じる",
-      "刺さる",
-      "偶然",
-      "飛行"
-     ]
-    },
-    {
-     "id": "r:N3:嗅ぐ",
+     "id": "r:N3:お互い",
      "kind": "reading",
-     "prompt": "嗅ぐ",
-     "answer": "かぐ",
+     "prompt": "お互い",
+     "answer": "おたがい",
      "wrong": [
-      "がぐ",
-      "かく",
-      "さばく",
-      "はく",
-      "まねく"
+      "おうたがい",
+      "おだがい",
+      "おたかい"
      ]
     },
     {
-     "id": "r:N3:旧",
+     "id": "r:N3:陰",
      "kind": "reading",
-     "prompt": "旧",
-     "answer": "きゅう",
+     "prompt": "陰",
+     "answer": "かげ",
      "wrong": [
-      "ぎゅう",
-      "きゆう",
-      "きゅ"
-     ]
-    },
-    {
-     "id": "r:N3:吝嗇",
-     "kind": "reading",
-     "prompt": "吝嗇",
-     "answer": "ケチ",
-     "wrong": [
-      "つめる",
+      "がげ",
+      "かけ",
+      "する",
       "ぶん",
-      "げんば",
-      "ばめん",
-      "かち"
+      "まる"
      ]
     },
     {
-     "id": "d:N3:裂ける",
-     "kind": "definition",
-     "prompt": "to split, to tear",
-     "answer": "裂ける",
-     "wrong": [
-      "できれば",
-      "得意",
-      "納得",
-      "湿気",
-      "いただきます",
-      "意志"
-     ]
-    },
-    {
-     "id": "d:N3:占める",
-     "kind": "definition",
-     "prompt": "to account for, to make up",
-     "answer": "占める",
-     "wrong": [
-      "ミルク",
-      "休憩",
-      "陽気",
-      "スピーチ",
-      "営業",
-      "だけど"
-     ]
-    },
-    {
-     "id": "m:N3:ずっと",
-     "kind": "meaning",
-     "prompt": "ずっと",
-     "answer": "continuously, the whole time",
-     "wrong": [
-      "to desire, to want",
-      "after",
-      "claim, insistence",
-      "plan",
-      "hole, opening"
-     ]
-    },
-    {
-     "id": "m:N3:そこで",
-     "kind": "meaning",
-     "prompt": "そこで",
-     "answer": "so, accordingly",
-     "wrong": [
-      "increase, rise",
-      "trouble, burden",
-      "assistance, aid",
-      "mainly, primarily",
-      "frustrated (over a failure, humiliation or injustice), annoyed",
-      "teaching, instruction"
-     ]
-    },
-    {
-     "id": "m:N3:タオル",
-     "kind": "meaning",
-     "prompt": "タオル",
-     "answer": "towel",
-     "wrong": [
-      "author (usu. of a particular book), writer",
-      "to hold in one's arms (e.g. a baby), to embrace",
-      "valley, ravine",
-      "delinquency, misconduct",
-      "supervision, control",
-      "typewriter"
-     ]
-    },
-    {
-     "id": "d:N3:近頃",
-     "kind": "definition",
-     "prompt": "lately, recently",
-     "answer": "近頃",
-     "wrong": [
-      "近代",
-      "近視",
-      "幕",
-      "詰める",
-      "肌",
-      "じかに"
-     ]
-    },
-    {
-     "id": "m:N3:ですから",
-     "kind": "meaning",
-     "prompt": "ですから",
-     "answer": "so, therefore",
-     "wrong": [
-      "left and right, right and left",
-      "candidate, contender",
-      "body temperature",
-      "level, standard",
-      "to appear, to come in sight",
-      "title, subject"
-     ]
-    },
-    {
-     "id": "m:N3:ドライブ",
-     "kind": "meaning",
-     "prompt": "ドライブ",
-     "answer": "drive, trip by car",
-     "wrong": [
-      "down-train, train heading toward the ending point of its route",
-      "expectation, anticipation",
-      "luxury, extravagance",
-      "queen, female monarch",
-      "dazzling, radiant",
-      "if, when"
-     ]
-    },
-    {
-     "id": "d:N3:音/ね",
-     "kind": "definition",
-     "prompt": "sound, tone",
-     "answer": "音",
-     "wrong": [
-      "騒音",
-      "友情",
-      "適切",
-      "パーセント",
-      "決心",
-      "爆発"
-     ]
-    },
-    {
-     "id": "m:N3:パス",
-     "kind": "meaning",
-     "prompt": "パス",
-     "answer": "passing (an examination, inspection, etc.)",
-     "wrong": [
-      "to pass, to elapse",
-      "tragedy, tragic drama",
-      "boy",
-      "banknote, bill",
-      "disregarding, ignoring",
-      "shell, husk"
-     ]
-    },
-    {
-     "id": "d:N3:分/ぶ",
-     "kind": "definition",
-     "prompt": "one-tenth, one percent (one-tenth of a wari)",
-     "answer": "分",
-     "wrong": [
-      "部分",
-      "分野",
-      "分析",
-      "分ける",
-      "大部分",
-      "分かれる"
-     ]
-    },
-    {
-     "id": "r:N3:方々/ほうぼう",
+     "id": "r:N3:切れ",
      "kind": "reading",
-     "prompt": "方々",
-     "answer": "ほうぼう",
+     "prompt": "切れ",
+     "answer": "きれ",
      "wrong": [
-      "ぼうぼう",
-      "ほぼう",
-      "ほうほう",
-      "ほうぽう",
-      "ほうぼ"
+      "ぎれ",
+      "てきせつ",
+      "うらぎる",
+      "よこぎる",
+      "きれる"
      ]
     },
     {
-     "id": "d:N3:末/まつ",
+     "id": "r:N3:県",
+     "kind": "reading",
+     "prompt": "県",
+     "answer": "けん",
+     "wrong": [
+      "げん",
+      "たく",
+      "みつ",
+      "りょう",
+      "すじ"
+     ]
+    },
+    {
+     "id": "d:N3:支える",
      "kind": "definition",
-     "prompt": "the end (of)",
-     "answer": "末",
+     "prompt": "to support, to prop",
+     "answer": "支える",
      "wrong": [
-      "粗末",
-      "溺れる",
-      "映す",
+      "支店",
+      "支配",
+      "支払い",
+      "支出",
+      "支給",
+      "支払う"
+     ]
+    },
+    {
+     "id": "r:N3:修飾",
+     "kind": "reading",
+     "prompt": "修飾",
+     "answer": "しゅうしょく",
+     "wrong": [
+      "じゅうしょく",
+      "しゆうしょく",
+      "しゅしょく",
+      "しゅうじょく",
+      "しゅうしよく",
+      "しゅうしょうく"
+     ]
+    },
+    {
+     "id": "r:N3:済ませる",
+     "kind": "reading",
+     "prompt": "済ませる",
+     "answer": "すませる",
+     "wrong": [
+      "ずませる",
+      "すまぜる",
+      "ふれる",
+      "まぶしい",
+      "かくだい"
+     ]
+    },
+    {
+     "id": "d:N3:その上",
+     "kind": "definition",
+     "prompt": "in addition, furthermore",
+     "answer": "その上",
+     "wrong": [
+      "上司",
+      "頂上",
+      "上京",
+      "持ち上げる",
+      "上達",
+      "目上"
+     ]
+    },
+    {
+     "id": "r:N3:焚く",
+     "kind": "reading",
+     "prompt": "焚く",
+     "answer": "たく",
+     "wrong": [
+      "だく",
+      "たぐ",
+      "みつ",
+      "りょう",
+      "すじ"
+     ]
+    },
+    {
+     "id": "r:N3:対/つい",
+     "kind": "reading",
+     "prompt": "対",
+     "answer": "つい",
+     "wrong": [
+      "づい",
+      "たいしょう",
+      "ぜったい",
+      "たいする"
+     ]
+    },
+    {
+     "id": "r:N3:棟",
+     "kind": "reading",
+     "prompt": "棟",
+     "answer": "とう",
+     "wrong": [
+      "どう",
+      "と",
+      "ぬらす",
+      "ほとけ",
+      "あいて"
+     ]
+    },
+    {
+     "id": "m:N3:トレーニング",
+     "kind": "meaning",
+     "prompt": "トレーニング",
+     "answer": "training (for a skill, job, sport, etc.), practice",
+     "wrong": [
+      "showy, loud",
+      "distinction, differentiation",
+      "upper, upward",
+      "mistake, error",
+      "(one's) self, oneself",
+      "to turn over, to turn (pages)"
+     ]
+    },
+    {
+     "id": "r:N3:覗く",
+     "kind": "reading",
+     "prompt": "覗く",
+     "answer": "のぞく",
+     "wrong": [
+      "のうぞく",
+      "のそく",
+      "のぞうく",
+      "のぞぐ"
+     ]
+    },
+    {
+     "id": "r:N3:放れる",
+     "kind": "reading",
+     "prompt": "放れる",
+     "answer": "はなれる",
+     "wrong": [
+      "ばなれる",
+      "はなす",
+      "かんじゃ",
+      "こうどう",
+      "せいちょう"
+     ]
+    },
+    {
+     "id": "d:N3:含める",
+     "kind": "definition",
+     "prompt": "to include (in a group or scope)",
+     "answer": "含める",
+     "wrong": [
+      "含む",
       "計る",
-      "裏切る",
-      "霧"
+      "握手",
+      "宣伝",
+      "主婦",
+      "届く"
      ]
     },
     {
-     "id": "m:N3:メモ",
+     "id": "m:N3:ホーム",
      "kind": "meaning",
-     "prompt": "メモ",
-     "answer": "note, memo",
+     "prompt": "ホーム",
+     "answer": "platform",
      "wrong": [
-      "rice field",
-      "motionlessly (e.g. stand, wait), (be) still",
-      "to avoid (situation), to evade (question, subject)",
-      "case (container)",
-      "to break, to snap",
-      "towel"
+      "noun",
+      "crude, rough",
+      "time, labour",
+      "steering, piloting",
+      "point of view, viewpoint",
+      "old person, elderly person"
      ]
     },
     {
-     "id": "m:N3:ライター",
-     "kind": "meaning",
-     "prompt": "ライター",
-     "answer": "lighter",
+     "id": "r:N3:招く",
+     "kind": "reading",
+     "prompt": "招く",
+     "answer": "まねく",
      "wrong": [
-      "paint",
-      "dazzling, radiant",
-      "state, country",
-      "sightseeing, tourism",
-      "clear, precise",
-      "precious, valuable"
+      "まねぐ",
+      "かかく",
+      "けってい",
+      "どうじ",
+      "いしき"
+     ]
+    },
+    {
+     "id": "m:N3:もしかすると",
+     "kind": "meaning",
+     "prompt": "もしかすると",
+     "answer": "perhaps, possibly",
+     "wrong": [
+      "to amass, to accumulate",
+      "centre, center",
+      "before very long, soon",
+      "softly, gently",
+      "or, or else",
+      "beer"
+     ]
+    },
+    {
+     "id": "d:N3:量",
+     "kind": "definition",
+     "prompt": "quantity, amount",
+     "answer": "量",
+     "wrong": [
+      "全く",
+      "ルール",
+      "人気",
+      "道路",
+      "提出",
+      "画家"
      ]
     }
    ]
@@ -42960,15 +42925,15 @@
     {
      "id": "d:N1:政策",
      "kind": "definition",
-     "prompt": "political measures, policy",
+     "prompt": "government policy",
      "answer": "政策",
      "wrong": [
-      "行政",
       "財政",
-      "方策",
+      "政権",
       "鉄鋼",
       "農地",
-      "落ち着き"
+      "落ち着き",
+      "家出"
      ]
     },
     {
@@ -43071,11 +43036,11 @@
      "answer": "促進",
      "wrong": [
       "促す",
-      "推進",
       "進出",
       "進展",
       "行進",
-      "進化"
+      "進化",
+      "増進"
      ]
     },
     {
@@ -43153,10 +43118,10 @@
      "wrong": [
       "追及",
       "追放",
-      "追跡",
       "見込み",
       "申し込み",
-      "落ち込む"
+      "落ち込む",
+      "組み込む"
      ]
     },
     {
@@ -43361,12 +43326,12 @@
      "prompt": "technical skill, ability",
      "answer": "技能",
      "wrong": [
-      "技",
       "放射能",
       "万能",
       "本能",
       "無能",
-      "軽蔑"
+      "軽蔑",
+      "あざ笑う"
      ]
     },
     {
@@ -43386,15 +43351,15 @@
     {
      "id": "d:N1:配給",
      "kind": "definition",
-     "prompt": "distribution (e.g. films, rice)",
+     "prompt": "rationed distribution",
      "answer": "配給",
      "wrong": [
       "配慮",
       "配置",
       "配偶者",
-      "分配",
       "手配",
-      "配列"
+      "配列",
+      "給食"
      ]
     },
     {
@@ -43607,7 +43572,7 @@
       "細菌",
       "心細い",
       "細やか",
-      "工作"
+      "加工"
      ]
     },
     {
@@ -43658,12 +43623,12 @@
      "prompt": "escape, flight",
      "answer": "逃亡",
      "wrong": [
-      "逃げ出す",
-      "逃す",
       "見逃す",
       "滅亡",
       "ねじれる",
-      "夕焼け"
+      "夕焼け",
+      "使命",
+      "うっとうしい"
      ]
     },
     {
@@ -43896,12 +43861,12 @@
      "prompt": "to shake, to jolt",
      "answer": "揺さぶる",
      "wrong": [
-      "揺らぐ",
       "整える",
       "出生",
       "嫉妬",
       "大幅",
-      "引き下げる"
+      "引き下げる",
+      "尽くす"
      ]
     },
     {
@@ -43986,7 +43951,7 @@
     {
      "id": "d:N1:延べ",
      "kind": "definition",
-     "prompt": "futures",
+     "prompt": "total, cumulative",
      "answer": "延べ",
      "wrong": [
       "天国",
@@ -44068,12 +44033,12 @@
      "prompt": "way of using (something), usage",
      "answer": "用法",
      "wrong": [
-      "採用",
-      "運用",
-      "専用",
       "用紙",
       "用品",
-      "作用"
+      "作用",
+      "乱用",
+      "無用",
+      "公用"
      ]
     },
     {
@@ -44516,7 +44481,7 @@
      "id": "m:N1:レンジ",
      "kind": "meaning",
      "prompt": "レンジ",
-     "answer": "range, stove",
+     "answer": "microwave, cooking range",
      "wrong": [
       "perhaps, possibly",
       "lied (German song, usually for solo voice and piano)",

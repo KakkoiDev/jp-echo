@@ -183,3 +183,21 @@ test("the reading sprint: short passages from papers not sat, ninety seconds, ne
   assert.ok(js.includes("const cards = sprintCards({sets: loaded, sat, keys: bossKeys, seen: readGame().seen || {}}).slice(0, SPRINT.size);"));
   assert.equal(KIND_LABEL.sprint, "Reading sprint"); assert.equal(KIND_SKILL.sprint, "reading");
 });
+
+test("the other levels' cards follow the reviews: the expected sense, accepted readings, no synonym against its word", async () => {
+  const {LEVEL_GLOSS, LEVEL_DROP, NOT_WRONG, ACCEPTED_READINGS} = await import("../n2-game-review.js");
+  const m = read("../levels/manifest.json"), pools = {};
+  for (const lv of ["N5", "N4", "N3", "N1"]) pools[lv] = gamePool({inventory: {words: read("../levels/" + m.version + "/" + lv.toLowerCase() + ".json").words, grammar: []}, level: lv});
+  const card = (lv, id) => pools[lv].find(q => q.id === id);
+  assert.equal(card("N5", "l:N5:シャツ").answer, "shirt"); assert.equal(card("N1", "d:N1:延べ").prompt, "total, cumulative"); assert.equal(card("N4", "d:N4:先輩").prompt, LEVEL_GLOSS["N4:先輩"]);
+  for (const id of LEVEL_DROP) { const [lv] = id.split(":"), word = id.split("/")[0]; assert.ok(!pools[lv].some(q => id.includes("/") ? q.item === id : q.item?.startsWith(word + "/")), id + " is dropped"); }
+  assert.ok(pools.N3.some(q => q.item === "N3:分/ぶん"), "分 read ぶん keeps its cards");
+  assert.equal(card("N3", "r:N3:吝嗇").answer, "りんしょく", "the standard reading, not the synonym ケチ");
+  for (const [lv, id, reading] of [["N5", "r:N5:本当", "ほんと"], ["N5", "r:N5:大丈夫", "だいじょぶ"]]) assert.ok(!card(lv, id).wrong.includes(reading), id + ": " + reading + " is accepted");
+  assert.ok(ACCEPTED_READINGS["寂しい"].includes("さみしい"));
+  for (const lv of Object.keys(pools)) for (const q of pools[lv].filter(c => c.kind === "definition")) for (const [a, b] of NOT_WRONG) {
+    if (q.answer === a) assert.ok(!q.wrong.includes(b), lv + " " + a + " against " + b);
+    if (q.answer === b) assert.ok(!q.wrong.includes(a), lv + " " + b + " against " + a);
+  }
+  assert.ok(!card("N3", "d:N3:遅刻").wrong.includes("遅れ") && !card("N3", "d:N3:助ける").wrong.includes("救助") && !card("N1", "d:N1:促進").wrong.includes("推進"));
+});

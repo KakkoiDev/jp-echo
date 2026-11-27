@@ -23,7 +23,7 @@
 import {recallItems, localDay} from "./n2-study.js";
 import {HELD_OUT} from "./n2-comprehension.js";
 import {connectiveSites, jobOf, glossOf, JOBS, OVERLAP, CHOICE_FOR_JOB, CONNECTIVES} from "./n2-connectives.js";
-import {ACCEPTED_READINGS, READING_KEY, EXCLUDED, GLOSS_FIX, GRAMMAR_SPANS, REVIEWED_LEVELS, REVIEWED_GRAMMAR_BLOCKS, REVIEWED_AFFIXES, AFFIX_GLOSS, AFFIX_CONFUSABLE, AFFIX_SHOWN, AFFIX_READING, LINK_NOT_WRONG, LINK_SHOWN, LINK_WHY, LINK_PARTS, WORD_PIECES, LIST_LABEL, SCORE_ALL, GRAMMAR_CONFUSABLE} from "./n2-game-review.js";
+import {ACCEPTED_READINGS, READING_KEY, EXCLUDED, GLOSS_FIX, GRAMMAR_SPANS, REVIEWED_LEVELS, REVIEWED_GRAMMAR_BLOCKS, REVIEWED_AFFIXES, AFFIX_GLOSS, AFFIX_CONFUSABLE, AFFIX_SHOWN, AFFIX_READING, LINK_NOT_WRONG, LINK_SHOWN, LINK_WHY, LINK_PARTS, WORD_PIECES, LIST_LABEL, LEVEL_GLOSS, LEVEL_DROP, LEVEL_READING, NOT_WRONG, SCORE_ALL, GRAMMAR_CONFUSABLE} from "./n2-game-review.js";
 import {exampleSegments} from "./n2-delayed.js";
 import {LEVELS} from "./jlpt-levels.js";
 
@@ -132,13 +132,16 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
   const items = recallItems(inventory), pool = [];
   // Affixes such as ～発 are left out: they are not words to pick or read alone.
   // READING_KEY and GLOSS_FIX correct the N2 list; they are not applied elsewhere.
-  const allWords = items.meaning.map(it => (!other && LIST_LABEL[it.target[1]]) ? {target: it.target, ...LIST_LABEL[it.target[1]]} : (() => { const text = it.target[1], reading = (!other && READING_KEY[text]) || it.reading || it.target[2];
-    return {target: it.target, text, reading, answer: (!other && (GLOSS_FIX[text + "/" + reading] || GLOSS_FIX[text])) || it.answer}; })());
+  const allWords = items.meaning.map(it => (!other && LIST_LABEL[it.target[1]]) ? {target: it.target, ...LIST_LABEL[it.target[1]]} : (() => { const text = it.target[1], reading = (!other && READING_KEY[text]) || (other && LEVEL_READING[level + ":" + text]) || it.reading || it.target[2];
+    return {target: it.target, text, reading, answer: (!other && (GLOSS_FIX[text + "/" + reading] || GLOSS_FIX[text])) || (other && (LEVEL_GLOSS[level + ":" + text + "/" + reading] || LEVEL_GLOSS[level + ":" + text])) || it.answer}; })())
+    .filter(w => !(other && (LEVEL_DROP.includes(level + ":" + w.text) || LEVEL_DROP.includes(level + ":" + w.text + "/" + w.reading))));
   // The prefixes and suffixes of the list (前～, ～気味): not words, but word parts with a card of their own (affixCards).
   const affixes = allWords.filter(w => /[〜～]/.test(w.text)), words = allWords.filter(w => !/[〜～]/.test(w.text));
   // Stable ids: a word written the same way twice (紅葉 こうよう / もみじ) carries its reading.
   const spellings = new Map(); for (const w of words) spellings.set(w.text, (spellings.get(w.text) || 0) + 1);
   const idOf = w => tag + (spellings.get(w.text) > 1 ? w.text + "/" + w.reading : w.text);
+  const apartWords = new Map();
+  for (const [a, b] of NOT_WRONG) { apartWords.set(a, new Set([...(apartWords.get(a) || []), b])); apartWords.set(b, new Set([...(apartWords.get(b) || []), a])); }
   const byKanji = new Map();
   for (const w of words) for (const k of new Set(w.text.match(KANJI) || [])) byKanji.set(k, [...(byKanji.get(k) || []), w]);
   const byReading = new Map();
@@ -166,8 +169,10 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
     }
     // Meaning: confusable words share a kanji; the rest come from anywhere.
     // Never a word written the same way (紅葉: autumn leaves / maple) or sharing the meaning.
-    const fair = o => o !== w && o.text !== w.text && !sameSense(gloss(o.answer), own);
-    const near = [...new Set((kanji || []).flatMap(k => byKanji.get(k) || []))].filter(fair);
+    // A word never stands against one that means the same (NOT_WRONG), and a word sharing a kanji never against one whose
+    // full meaning overlaps (review, 27 Nov: 助ける against 救助, 遅刻 against 遅れ).
+    const fair = o => o !== w && o.text !== w.text && !sameSense(gloss(o.answer), own) && !apartWords.get(w.text)?.has(o.text);
+    const near = [...new Set((kanji || []).flatMap(k => byKanji.get(k) || []))].filter(o => fair(o) && !sameSense(o.answer, w.answer));
     const far = [7, 11, 17, 23, 29, 31].map((m, k) => words[(i * m + [13, 101, 307, 503, 709, 911][k]) % words.length]).filter(fair);
     const wrongMeanings = distinct(own, [...new Set([...near, ...far].map(o => gloss(o.answer)))]);
     // A word spelled like another (紅葉 こうよう / もみじ) shows its sentence: the cue to its sense.
