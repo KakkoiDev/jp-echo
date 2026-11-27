@@ -2542,6 +2542,8 @@ body[data-view=game] .n2-game{position:fixed;inset:0;box-sizing:border-box;width
 .qr-chip[data-tone=practice]{background:transparent;border:1.5px dashed var(--ink-muted);color:var(--ink-muted)}
 .qr-pips i.pr{background:transparent;box-shadow:inset 0 0 0 1.5px var(--ink-muted)}
 .qr-float.practice{color:var(--ink-muted);font-weight:700}
+/* Round end: one tap to say why a card was flagged. */
+.qr-flagwhy{flex-wrap:wrap;gap:6px}.qr-flagwhy .qr-flagword{font-family:var(--display);font-weight:700}.qr-flagchips{display:flex;flex-wrap:wrap;gap:6px;width:100%}.qr-flagchips .qr-chip{border:1px solid var(--hairline);background:var(--panel);min-height:32px;padding:0 12px}
 /* Sentence order: the ★ slot. */
 .qr-sent .qr-blank.star{min-width:40px;text-align:center;color:var(--seal);font-family:var(--ui);font-size:14px;font-weight:700;line-height:1.6}
 /* A gap card: what the sentence means, under it. */

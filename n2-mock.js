@@ -1443,6 +1443,10 @@ async function game() {
     const rank = rankOf(st), own = !missing.includes(rank);
     // The rank is a seal chip beside the title; the line under the chart keeps the notes.
     $("game-rank").textContent = rank; $("game-rank").setAttribute("aria-label", "Rank " + rank);
+    // The last boss by section (owner's backlog): where the points are, at a glance. Below its minimum, a section says so.
+    const lastRun = [...(st.runs || [])].reverse().map(run => examOf(run)).find(e => e?.complete);
+    $("game-home-sections").hidden = !lastRun;
+    if (lastRun) $("game-home-sections").textContent = "Last boss · " + lastRun.sections.map(s => (s.short || s.ja || s.label || s.name) + " " + s.scaled + "/" + (s.max ?? SECTION_MAX) + (s.ok === false ? " (under " + (s.min ?? SECTION_MIN) + ")" : "")).join(" · ");
     $("game-home-level").textContent = [!own ? rank + " needs a connection once: playing N2" : pool.every(q => q.practice) ? "practice, not scored yet" : "", verdictLine((st.bossLog || []).at(-1)),
       difficulty() === "normal" ? "" : DIFFICULTY[difficulty()].label].filter(Boolean).join(" · ") + (own && !pool.every(q => q.practice) && difficulty() === "normal" && !(st.bossLog || []).length ? "" : " · change in Settings");
     // The dock: one big button, then the pair (boards 1 · A–D).
@@ -1537,7 +1541,7 @@ async function game() {
     const next = nextRound({pool: playable, review, kanji: kanjiFirst && {...kanjiFirst, examples: hears() ? kanjiFirst.examples : kanjiFirst.examples.filter(q => q.kind !== "listen")}, recall: data.recall, state, difficulty: difficulty(), weights: pool === n2Pool ? mixWeights : null, grammarCards: pool === n2Pool && grammarCards.length ? grammarCards : null,
       boss: pool === n2Pool ? bossQueue({cards: bossAll, state, key: lastBoss?.id || ""}).filter(q => hears() || q.kind !== "listen") : []});
     round = next.round; roundLevel = next.level; warmUp = next.warmUp; beat = next.beat || null; rights = 0; flagged = 0; practiced = 0; bestCombo = 0;
-    index = 0; score = 0; streak = 0; misses = []; marks = []; ups = [];
+    index = 0; score = 0; streak = 0; misses = []; marks = []; ups = []; roundFlags = [];
     mode("play");
     ask();
   }
@@ -1857,6 +1861,7 @@ async function game() {
   // Round end (fix 8): the number, the pips, one line, one big button.
   function done() {
     clearTimeout(timer); clearInterval(ticker);
+    flagWhy();
     // Right counts only answers that were right: a flag or a skip is never a win.
     const before = readGame().best || 0;
     // Accuracy over scored answers only: flags and practice are not evidence.
@@ -1907,9 +1912,24 @@ async function game() {
   $("game-skip").onclick = () => answer(-1);
   // One tap, no questions (owner, 26 Nov): the flag saves the question exactly
   // as shown and the game moves on. Working out why is the audit's job.
+  // The flags of the round in hand: the round's end offers one tap to say why (owner's backlog: the maintainer had to
+  // guess at flags with no reason). Never asked during play, never required.
+  let roundFlags = [];
+  const FLAG_WHY = [["answer", "Wrong answer"], ["meaning", "Meaning"], ["reading", "Reading"], ["voice", "Voice"], ["unnatural", "Odd Japanese"], ["other", "Other"]];
+  function flagWhy() {
+    const next = roundFlags.find(f => f.report && !f.asked);
+    $("game-flagwhy").hidden = !next;
+    if (!next) return;
+    $("game-flagwhy-word").textContent = next.word;
+    $("game-flagwhy-chips").replaceChildren(...FLAG_WHY.map(([reason, label]) => el("button", {type: "button", class: "qr-chip", "data-ui": "button", text: label, onclick: async () => {
+      next.asked = true; flagWhy();
+      try { next.report = await reportHistory.edit(next.report, {reasons: [reason]}); } catch {}
+    }})));
+  }
   const quickFlag = async card => {
     const snapshot = screenSnapshot(root); // taken at the tap, before the game moves on
-    try { await fileReport(createReport({kind: "card", reasons: [], note: "Flagged in Quick round with one tap; the reason is for the audit to find.", subject: card, snapshot, screen: screenOf(location, "Quick round"), version: await appVersion(), device: deviceInfo()})); } catch {}
+    const entry = {word: String(card.extra?.answer || card.text || "").slice(0, 24), report: null, asked: false}; roundFlags.push(entry);
+    try { entry.report = await fileReport(createReport({kind: "card", reasons: [], note: "Flagged in Quick round with one tap; the reason is for the audit to find.", subject: card, snapshot, screen: screenOf(location, "Quick round"), version: await appVersion(), device: deviceInfo()})); } catch {}
   };
   $("game-flag").onclick = () => {
     if (locked || !current || $("game-play").hidden) return;

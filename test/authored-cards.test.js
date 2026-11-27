@@ -99,3 +99,15 @@ test("a paper revised on its own has its own edition; the others keep theirs and
   }
   for (const [n, i] of [[4, 33], [10, 19], [14, 39], [20, 36]]) assert.equal(q(n, i).choices.length, 4);
 });
+
+test("Home shows the last boss by section, and the round's end asks once why a card was flagged", () => {
+  const html = src("../n2-mock.html"), js = src("../n2-mock.js");
+  assert.ok(html.includes('id="game-home-sections" hidden') && html.includes('id="game-flagwhy" hidden'));
+  assert.ok(js.includes('const lastRun = [...(st.runs || [])].reverse().map(run => examOf(run)).find(e => e?.complete);'));
+  assert.ok(js.includes('(s.ok === false ? " (under " + (s.min ?? SECTION_MIN) + ")" : "")'), "a section under its minimum says so");
+  // The reason is one tap, after the round, on the report already filed; never asked during play.
+  assert.ok(js.includes("try { next.report = await reportHistory.edit(next.report, {reasons: [reason]}); } catch {}"));
+  assert.ok(js.includes("roundFlags.push(entry)") && js.includes("misses = []; marks = []; ups = []; roundFlags = [];"));
+  const why = js.match(/const FLAG_WHY = (\[.*\]);/)[1];
+  for (const r of ["answer", "meaning", "reading", "voice", "unnatural", "other"]) assert.ok(why.includes('"' + r + '"'), r);
+});
