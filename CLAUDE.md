@@ -672,6 +672,18 @@ Before considering the change complete:
   eight questions with a second natural answer were fixed; the others keep
   `SETS_EDITION`, so their sittings stay attached to their review lines.
   This replaces "Revise a set → bump `SETS_EDITION`" above.
+- **The backlog run of 27 Nov, second part (v318).** Home shows the last
+  boss by section (`#game-home-sections`); the round's end offers one tap to
+  say why a card was flagged (`flagWhy`, the reason added to the report
+  already filed, never asked during play). `LIST_LABEL` gives the 17 list
+  entries with a note in their label a clean label and cards (recall target
+  unchanged). N2 rounds give `KANJI_PLACES` (2) places to `kanjiPick` over
+  the same pool, in `kanjiOrderOf` order. Grammar gap cards take the wrong
+  choices written for their sentence (`n2-gap-wrong.json`, 195 after a blind
+  test). A reading sprint from Home (`sprintCards`, `SPRINT`: three 問題10
+  passages of papers not sat, never `HELD_OUT`, 90 s each, through the
+  round's screens). The other levels follow both reviews: `LEVEL_GLOSS`,
+  `LEVEL_READING`, `LEVEL_DROP`, `NOT_WRONG`, more `ACCEPTED_READINGS`.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

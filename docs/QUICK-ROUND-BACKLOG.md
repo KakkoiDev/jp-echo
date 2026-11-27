@@ -179,10 +179,15 @@ ordering (119 items), clause pairs for connectives (155), the papers' English
 (798), 614 audited word pieces, the eight paper questions fixed with an
 edition per paper; paraphrase cards (239 of 240 after their blind test, v317). All
 unreviewed by a person, scored, for the designer to look at (the ★ slot, the
-pair card). **Not built in that run, still open:** kanji-first picking for N2
-rounds (needs the owner's decision), a reading sprint from Home, section
-scores on Home, a reason on a flag, authored wrong choices for the gap cards,
-relabelling six list entries, and everything under "After the exam".
+pair card). Built in v318 (the owner's "implement the whole backlog"): kanji places in
+N2 rounds (two a round, not the whole round), the reading sprint, section
+scores on Home, a reason on a flag after the round, authored wrong choices
+for the gap cards, clean labels for all 17 noted list entries, and the other
+levels' fixes from both reviews. **Still open, and why:** the designer's
+items (they need boards); N1 papers and other mock-exam work (their own
+session); where a new player starts and making other levels' cards reviewed
+(decisions for after 6 Dec); the 24-hour run multiplier against sleep (a
+decision); a native read of the AI-written content.
 
 Built in v311: the mix that follows the last boss, grammar and word parts
 with a gap (both for the designer to look at: the English line under the
