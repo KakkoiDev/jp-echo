@@ -1524,11 +1524,14 @@ async function game() {
       ({round, index, score, streak, bestCombo, marks, rights, flagged, practiced, roundLevel, warmUp, beat, misses, ups} = kept);
       mode("play"); ask(); return;
     }
+    // No round asks a paper's own question again (`exams: false`; owner, 27 Nov, flags on e:n2-set-2#33 and #20):
+    // seen once on the paper, a second time it is known by sight. What it tested comes back as a word or pattern
+    // card (bossCards), and the question itself is read in the boss review.
     // Listen cards leave the mix when nothing can be heard: the sound is off, the
     // phone has no Japanese voice, or the voice failed twice this session.
     const playable = hears() ? pool : pool.filter(q => q.kind !== "listen");
     const review = hears() ? lower : lower.filter(q => q.kind !== "listen");
-    const next = nextRound({pool: playable, review, kanji: kanjiFirst && {...kanjiFirst, examples: hears() ? kanjiFirst.examples : kanjiFirst.examples.filter(q => q.kind !== "listen")}, recall: data.recall, state, difficulty: difficulty(), grammarCards: pool === n2Pool && grammarCards.length ? grammarCards : null,
+    const next = nextRound({pool: playable, review, kanji: kanjiFirst && {...kanjiFirst, examples: hears() ? kanjiFirst.examples : kanjiFirst.examples.filter(q => q.kind !== "listen")}, recall: data.recall, state, difficulty: difficulty(), exams: false, grammarCards: pool === n2Pool && grammarCards.length ? grammarCards : null,
       boss: pool === n2Pool ? bossQueue({cards: bossAll, state, key: lastBoss?.id || ""}).filter(q => hears() || q.kind !== "listen") : []});
     round = next.round; roundLevel = next.level; warmUp = next.warmUp; beat = next.beat || null; rights = 0; flagged = 0; practiced = 0; bestCombo = 0;
     index = 0; score = 0; streak = 0; misses = []; marks = []; ups = [];

@@ -742,7 +742,9 @@ export function inSlump(state = {}) {
 // picked exactly as it always was.
 // kanji: {order, examples} picks the rank's places by kanji (kanjiPick)
 // instead of by card: the way of every level whose cards are word cards only.
-export function nextRound({pool, review = [], kanji = null, grammarCards = null, boss = [], recall = [], state = {}, difficulty = "normal", random = Math.random, now = Date.now()}) {
+export function nextRound({pool, review = [], kanji = null, grammarCards = null, boss = [], recall = [], state = {}, difficulty = "normal", random = Math.random, now = Date.now(), exams = true}) {
+  // exams: false leaves a paper's own questions (the `e:` cards) out of the round. The game does (owner, 27 Nov).
+  if (!exams) pool = pool.filter(q => q.kind !== "exam");
   // A flagged card rests (flagCard): it is in no round until the rest is over.
   if (Object.keys(state.flags || {}).length) { const live = list => list && list.filter(q => !flagRests(state, q.id, now));
     pool = live(pool); review = live(review); boss = live(boss); grammarCards = live(grammarCards); if (kanji?.examples) kanji = {...kanji, examples: live(kanji.examples)}; }

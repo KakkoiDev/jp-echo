@@ -386,5 +386,18 @@ test("the word parts the list lacked are in it, each with a sentence and a card"
   for (const [a, b] of [["不～", "非～"], ["不～", "無～"], ["元～", "前～"], ["旧～", "元～"], ["全～", "総～"], ["～員", "～者"], ["～用", "～向き"], ["～め", "～気味"]]) {
     assert.ok(AFFIX_CONFUSABLE.some(g => g.includes(a) && g.includes(b)), a + " " + b); assert.ok(!wrongOf(a).includes(answer(b)), a + " against " + b);
   }
-  assert.ok(src("../sw.js").includes("jp-echo-v309"));
+  
+});
+
+test("no round asks a paper's own question again", () => {
+  const js = src("../n2-mock.js");
+  assert.ok(js.includes("difficulty: difficulty(), exams: false, grammarCards:"));
+  const sat = gamePool({inventory, examples, sets: [set], sat: new Set([set.id])}), exams = sat.filter(q => q.kind === "exam");
+  assert.ok(exams.length > 30);
+  for (let n = 1; n <= 30; n++) assert.ok(!nextRound({pool: sat, state: {comeback: [exams[0].id]}, random: seeded(n), exams: false}).round.some(q => q.kind === "exam"));
+  assert.ok([1, 2, 3, 4, 5, 6].some(n => nextRound({pool: sat, state: {}, random: seeded(n)}).round.some(q => q.kind === "exam")), "the picker itself still can");
+  // The cards still exist (the audit lists them, a round in progress may hold one); what a paper tested comes back another way.
+  assert.ok(pool.some(q => q.kind === "exam"));
+  const q = set.questions.findIndex(x => x.target?.[1] === "勝手");
+  if (q >= 0) assert.ok(bossCards({set, missed: [q], pool}).every(c => c.kind !== "exam"));
 });

@@ -589,6 +589,12 @@ Before considering the change complete:
   sentence (`n2-word-<i>`) written for Echo. They are N2 recall items like
   any other and have word-part cards. New entries are appended, never
   inserted: the deck ids are indexes. Unreviewed.
+- **No round asks a paper's own question (v310).** The exam cards (`e:`) are
+  still built (audit, a round in progress) but `start()` leaves them out of
+  every round: the owner flagged them the day same-question cards left the
+  boss queue. This replaces "short exam questions only from sets already
+  sat" above. 当てはめる is read あてはめる (は, not the particle): the voice
+  is right.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 
