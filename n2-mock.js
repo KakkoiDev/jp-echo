@@ -1744,19 +1744,11 @@ async function game() {
   let paperReview = null;
   // A paper marks its word 【so】 and its blank （　）: here the word is underlined and the blank holds the answer.
   const paperText = (text, answer) => String(text).split(/(【[^】]*】|（\s*）|＿+\s*★\s*＿+|★)/).filter(Boolean).map(part => /^【/.test(part) ? el("u", {class: "n2-mark", text: part.slice(1, -1)}) : /^（\s*）$/.test(part) ? el("u", {class: "n2-mark", text: answer}) : part);
-  function startPaperReview(sitting, paper) {
-    const set = sitting.paper === realisticPaperId(sitting.book) ? sitting.book : "";
-    const items = bossReview({paper, attempt: sitting, keys: bossKeys, source: set});
-    if (!items.length) return false;
-    clearTimeout(timer); window.speechSynthesis?.cancel();
-    paperReview = {href: "?book=" + encodeURIComponent(sitting.book) + "&attempt=" + encodeURIComponent(sitting.id)};
-    // A vocabulary or grammar question reads like a round's review card (owner, 27 Nov): the word, its reading and
-    // its meaning large, at a glance (険しい · けわしい · steep); the paper's sentence under them, then the why.
-    const known = t => t && n2Cards.find(c => c.kind !== "exam" && c.solution?.meaning && c.target?.[0] === t[0] && c.target[1] === t[1] && (t[2] === undefined || c.target[2] === t[2]));
-    misses = items.map(it => {
-      const card = known(it.target), sol = card?.solution, id = "paper:" + sitting.book + "#" + it.index, source = sitting.book + "#" + it.index;
-      const picked = it.picked === null ? "No answer" : it.unsure ? "Right, but marked unsure" : it.picked;
-      const base = {kind: "paper", id, prompt: it.ask, mondai: it.mondai, answer: it.answer, seconds: it.seconds};
+  // One question of a paper as a review card: used by the boss review, and by a round's review for an exam card
+  // (owner's flag, 27 Nov: it showed the answer twice and no sentence).
+  const known = t => t && n2Cards.find(c => c.kind !== "exam" && c.solution?.meaning && c.target?.[0] === t[0] && c.target[1] === t[1] && (t[2] === undefined || c.target[2] === t[2]));
+  function paperCardOf(it, base, source, picked) {
+      const card = known(it.target), sol = card?.solution;
       // A usage question (問題6) asks with the bare word and answers with a sentence: that sentence is the line.
       const usage = sol && !/【|（\s*）/.test(it.ask) && it.answer.length > it.ask.length;
       // Every card of the review is spoken once (owner, 27 Nov: some were, some were not): the word with its
@@ -1767,6 +1759,19 @@ async function game() {
         solution: {word: sol.word, reading: sol.reading || "", meaning: sol.meaning, ja: "", en: usage || /（\s*）/.test(it.ask) || [sol.word, sol.reading].includes(it.answer) ? "" : "Answer: " + it.answer, why: it.why, source}}};
       return {picked, q: {...base, ask: it.ask, say: it.heard && it.lines.length ? it.lines.join("　") : it.answer,
         solution: {word: it.answer, meaning: "", ja: it.lines.join(""), en: it.en, why: it.why, source}}};
+  }
+  function startPaperReview(sitting, paper) {
+    const set = sitting.paper === realisticPaperId(sitting.book) ? sitting.book : "";
+    const items = bossReview({paper, attempt: sitting, keys: bossKeys, source: set});
+    if (!items.length) return false;
+    clearTimeout(timer); window.speechSynthesis?.cancel();
+    paperReview = {href: "?book=" + encodeURIComponent(sitting.book) + "&attempt=" + encodeURIComponent(sitting.id)};
+    // A vocabulary or grammar question reads like a round's review card (owner, 27 Nov): the word, its reading and
+    // its meaning large, at a glance (険しい · けわしい · steep); the paper's sentence under them, then the why.
+    misses = items.map(it => {
+      const id = "paper:" + sitting.book + "#" + it.index, source = sitting.book + "#" + it.index;
+      const picked = it.picked === null ? "No answer" : it.unsure ? "Right, but marked unsure" : it.picked;
+      return paperCardOf(it, {kind: "paper", id, prompt: it.ask, mondai: it.mondai, answer: it.answer, seconds: it.seconds}, source, picked);
     });
     $("game-back").href = "?view=game"; $("game-back").setAttribute("aria-label", "Back to home"); $("game-back").dataset.end = "false";
     // The review hides the head, so it carries its own way out: back to Home at any card.
@@ -1778,7 +1783,11 @@ async function game() {
     clearTimeout(timer);
     reviewAt = n;
     if (!misses[n]) { if (paperReview) { paperReview = null; root.dataset.paper = "false"; $("game-review-back").hidden = true; window.speechSynthesis?.cancel(); home(); } else done(); return; }
-    const {q, picked} = misses[n], sol = q.solution || {};
+    const {q: asked, picked} = misses[n];
+    // An exam card missed in a round is shown as the boss review shows a paper's question.
+    const q = asked.kind === "exam" ? paperCardOf({target: asked.target, ask: asked.prompt, answer: asked.answer, why: asked.solution?.why || "", heard: false, lines: [], en: ""},
+      {kind: "exam", id: asked.id, prompt: asked.prompt, mondai: asked.mondai, answer: asked.answer}, asked.solution?.source || "", picked).q : asked;
+    const sol = q.solution || {};
     mode("review");
     if (!paperReview) clearRound();
     root.dataset.paper = String(!!paperReview);
@@ -1789,9 +1798,9 @@ async function game() {
     const word = sol.word || q.answer;
     $("game-review-word").textContent = word;
     $("game-review-word").classList.toggle("long", word.length > 6);
-    const pattern = q.kind === "grammar" || grammarBlockCard(q) ? grammarVoice(q, sol) : null;
+    const pattern = q.kind === "grammar" || q.kind === "gap" || grammarBlockCard(q) ? grammarVoice(q, sol) : null;
     $("game-review-reading").textContent = pattern ? pattern.reading : sol.reading && sol.reading !== sol.word ? sol.reading : "";
-    $("game-review-meaning").textContent = sol.meaning || (q.kind === "exam" ? "Answer: " + q.answer : "");
+    $("game-review-meaning").textContent = sol.meaning || "";
     // A long pick stacks: the label on its own line, the struck text under it (review C13).
     const chose = picked && !/^(Time ran out|I don’t know|No answer|Right, but marked unsure)$/.test(picked), long = chose && picked.length > (paperReview ? 12 : 24);
     $("game-review-picked").dataset.long = String(!!long);
@@ -1814,8 +1823,11 @@ async function game() {
     $("game-review-same").hidden = !same; $("game-review-same").replaceChildren(...(same ? ["Same sound: ", el("span", {lang: "ja", text: same.join(" · ")})] : []));
     if (same) $("game-review-sentence").hidden = false;
     const reviewToken = ++askToken;
+    // Every review card is spoken (owner, 27 Nov: gap, connective and word-part cards were silent): the pattern as its
+    // sentence reads it, the word with its reading (a part without its ～), or what answerSpeech gives the kind (`voiced`).
     const spoken = pattern ? pattern.speak : sol.word && sol.reading ? spokenWord(sol.word, sol.reading) : "";
-    if (sound() && (q.say || spoken)) setTimeout(() => { if (reviewToken === askToken && !$("game-review").hidden) say(q.say || spoken); }, 150);
+    const voiced = q.say || (["affix", "partgap"].includes(q.kind) ? answerSpeech(q) : spoken || answerSpeech(q)) || "";
+    if (sound() && voiced) setTimeout(() => { if (reviewToken === askToken && !$("game-review").hidden) say(voiced); }, 150);
     held = false; root.dataset.held = "false"; $("game-hold").setAttribute("aria-pressed", "false"); $("game-hold").setAttribute("aria-label", "Hold");
     $("game-hold").innerHTML = PAUSE_SVG;
     runBar(q.seconds && paperReview ? q.seconds : REVIEW_SECONDS, {review: true});

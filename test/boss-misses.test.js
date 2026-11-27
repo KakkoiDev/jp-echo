@@ -260,7 +260,7 @@ test("every boss review card is spoken once: the word, the pattern, a listening 
   assert.ok(js.includes('const voiceOf = () => card.kind === "grammar" ? grammarVoice(card, sol).speak : spokenWord(sol.word.replace(/[〜～]/g, ""), String(sol.reading || "").replace(/[〜～]/g, ""));'));
   assert.ok(js.includes('if (sol) return {picked, q: {...base, say: voiceOf(), paperLine:'));
   assert.ok(js.includes('say: it.heard && it.lines.length ? it.lines.join("　") : it.answer,'));
-  assert.ok(js.includes("if (sound() && (q.say || spoken)) setTimeout(() => { if (reviewToken === askToken && !$(\"game-review\").hidden) say(q.say || spoken); }, 150);"));
+  assert.ok(js.includes("if (sound() && voiced) setTimeout(() => { if (reviewToken === askToken && !$(\"game-review\").hidden) say(voiced); }, 150);"));
 });
 
 test("a connective excerpt (no longer in rounds) keeps up to two sentences before the gap; its review is the word and its meaning at a glance", () => {
@@ -488,4 +488,23 @@ test("all nineteen papers have their deciding lines: checked, solved blind, and 
   const brief = src("../docs/N2-PAPERS-LINES-HANDOFF.md"), check = src("../tools/boss-keys/check-return.mjs");
   for (const s of ["character for character", "120 characters", "80 characters", "A blind solve", '"skip"', "findings"]) assert.ok(brief.includes(s), s);
   assert.ok(check.includes('import {checkKey} from "../n2-build-keys.mjs";') && check.includes("no `solved` mark"));
+});
+
+test("a round's review speaks every kind of card, and shows an exam card as the boss review does", async () => {
+  const {answerSpeech} = await import("../n2-game.js");
+  // What the voice is given, per kind: nothing is silent, and a part is said without its ～.
+  for (const kind of ["reading", "meaning", "definition", "listen", "homophone", "grammar", "gap", "affix", "partgap", "link"]) {
+    for (const q of pool.filter(c => c.kind === kind).slice(0, 40)) { const s = answerSpeech(q); assert.ok(s && !/[〜～]/.test(s), q.id + ": " + s); }
+  }
+  assert.equal(answerSpeech(pool.find(q => q.id === "f:限り")), "限り");
+  assert.equal(answerSpeech(pool.find(q => q.id === "a:～気味")), "気味【ぎみ】"); assert.equal(answerSpeech(pool.find(q => q.id === "k:このように")), "このように");
+  const js = src("../n2-mock.js");
+  assert.ok(js.includes('const pattern = q.kind === "grammar" || q.kind === "gap" || grammarBlockCard(q) ? grammarVoice(q, sol) : null;'));
+  assert.ok(js.includes('const voiced = q.say || (["affix", "partgap"].includes(q.kind) ? answerSpeech(q) : spoken || answerSpeech(q)) || "";'));
+  // An exam card missed in a round: the word and its meaning large, the paper's sentence with its answer, the why.
+  assert.ok(js.includes('const q = asked.kind === "exam" ? paperCardOf({target: asked.target, ask: asked.prompt, answer: asked.answer,'));
+  assert.ok(js.includes('$("game-review-meaning").textContent = sol.meaning || "";'), "never the answer a second time");
+  assert.ok(!js.includes('"Answer: " + q.answer'));
+  const exam = gamePool({inventory, examples, sets: [set], sat: new Set([set.id])}).find(q => q.id === "e:n2-set-2#31");
+  assert.deepEqual(exam.target, ["grammar", "以上2"]); assert.ok(pool.some(q => q.kind === "grammar" && q.target[1] === "以上2" && q.solution.meaning), "the pattern's meaning is at hand");
 });

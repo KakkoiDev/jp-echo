@@ -620,6 +620,14 @@ Before considering the change complete:
   `n2-sets/keys.json` holds 914 lines in all. This replaces "Sets 2 and 3 so
   far" above. `tools/boss-keys/make-handoff.mjs` makes the input files for
   any paper without lines.
+- **A round's review speaks every card and shows an exam card like the boss
+  review (v313).** `paperCardOf` (n2-mock.js) builds one question of a paper
+  as a review card for both: the word or pattern, its reading and meaning
+  large, the paper's sentence with the answer in place, the why; never
+  "Answer: x" under the same x (owner's flag on e:n2-set-2#31). The paper's
+  sentences have no English of their own. `voiced` gives the voice the
+  pattern (gap cards too), the word, a part without its ～, or the
+  connective: gap, connective and word-part cards were silent.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

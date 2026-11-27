@@ -1337,7 +1337,8 @@ export function answerSpeech(q) {
   const word = (text, reading) => text && reading && text !== reading ? text + "【" + reading + "】" : text || reading || "";
   const pattern = text => String(text || "").replace(/[〜～]/g, "").replace(/（[^）]*）|\([^)]*\)/g, "").trim();
   if (["reading", "meaning", "definition", "listen", "homophone"].includes(q.kind)) return word(q.solution?.word, q.solution?.reading) || null;
-  if (q.kind === "grammar" || grammarBlockCard(q)) return pattern(q.solution?.word || q.prompt) || null;
+  if (q.kind === "grammar" || q.kind === "gap" || grammarBlockCard(q)) return pattern(q.solution?.word || q.prompt) || null;
+  if (q.kind === "affix" || q.kind === "partgap") return word(pattern(q.solution?.word), pattern(q.solution?.reading)) || null;
   if (q.kind === "connective") return q.answer;
   if (q.kind === "link") return q.prompt;
   if (q.kind === "exam" && q.target) return q.target[0] === "grammar" ? pattern(q.target[1]) || null : word(q.target[1], q.target[2]).replace(/[〜～]/g, "") || null;
