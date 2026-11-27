@@ -201,3 +201,26 @@ test("the other levels' cards follow the reviews: the expected sense, accepted r
   }
   assert.ok(!card("N3", "d:N3:遅刻").wrong.includes("遅れ") && !card("N3", "d:N3:助ける").wrong.includes("救助") && !card("N1", "d:N1:促進").wrong.includes("推進"));
 });
+
+test("every word of the other levels was read by a reviewer: their meanings, accepted readings and drops apply", () => {
+  const rv = read("../level-review.json"), m = read("../levels/manifest.json");
+  assert.ok(Object.keys(rv.gloss).length > 600 && Object.keys(rv.also).length > 100 && Object.keys(rv.drop).length > 150);
+  for (const [k, v] of Object.entries(rv.gloss)) assert.ok(v.length <= 40 && !/[ぁ-んァ-ヶ一-龯]/.test(v), k);
+  const pool = lv => gamePool({inventory: read("../levels/" + m.version + "/" + lv.toLowerCase() + ".json"), level: lv, review: rv});
+  const n5 = pool("N5"), n3 = pool("N3"), n1 = pool("N1");
+  assert.equal(n5.find(q => q.id === "m:N5:肉").answer, "meat"); assert.equal(n1.find(q => q.id === "m:N1:延べ")?.answer, rv.gloss["N1:延べ/のべ"]);
+  assert.ok(!n5.some(q => q.item === "N5:イクラ/イクラ"), "dropped: the N5 word is いくら");
+  assert.ok(!n5.find(q => q.id === "r:N5:七")?.wrong.includes("なな"), "a second reading is never a wrong choice");
+  assert.ok(n3.length < gamePool({inventory: read("../levels/" + m.version + "/n3.json"), level: "N3"}).length);
+  assert.ok(src("../n2-mock.js").includes("gamePool({inventory: inv, level: l, review: levelReview})"));
+  assert.ok(src("../sw.js").includes('"./level-review.json"'));
+});
+
+test("a new player starts at N5; a boss wears the game's look", async () => {
+  const {rankOf, START_RANK} = await import("../n2-game.js");
+  assert.equal(START_RANK, "N5"); assert.equal(rankOf({}), "N5"); assert.equal(rankOf({answered: 1}), "N2"); assert.equal(rankOf({rank: "N3"}), "N3");
+  const js = src("../n2-mock.js"), css = src("../styles.css");
+  assert.ok(js.includes('document.body.dataset.from = "game"; document.body.dataset.boss = "true";'));
+  assert.ok(js.includes('$("result-next").href = "?view=game"; $("result-next").textContent = "Back to Quick round";'));
+  assert.ok(css.includes("body[data-boss=true] .n2-choice{") && css.includes("body[data-boss=true] #exam .drill-bar{height:14px"));
+});

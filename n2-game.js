@@ -124,7 +124,7 @@ export function nearMisses(reading = "") {
 // has read; with SCORE_ALL off, unread content goes back to practice: no
 // points, the answer recorded and counted.
 const unscored = reviewed => reviewed || SCORE_ALL ? {} : {practice: true, record: true};
-export function gamePool({inventory, examples = new Map(), sets = [], sat = new Set(), level = "N2", parts = null, grammarBlocks = null, excerpts = false, extras = null}) {
+export function gamePool({inventory, examples = new Map(), sets = [], sat = new Set(), level = "N2", parts = null, grammarBlocks = null, excerpts = false, extras = null, review = null}) {
   const other = level !== "N2", tag = other ? level + ":" : "";
   const split = new Map(inventory.words.map(([w, r, , p]) => [w + "/" + r, p || parts?.[w + "/" + r] || ""]));
   const kanjiOf = w => { const ks = (w.text.match(KANJI) || []).filter(k => k !== "々"), bases = (split.get(w.target[1] + "/" + w.target[2]) || "").split("|");
@@ -132,9 +132,11 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
   const items = recallItems(inventory), pool = [];
   // Affixes such as ～発 are left out: they are not words to pick or read alone.
   // READING_KEY and GLOSS_FIX correct the N2 list; they are not applied elsewhere.
-  const allWords = items.meaning.map(it => (!other && LIST_LABEL[it.target[1]]) ? {target: it.target, ...LIST_LABEL[it.target[1]]} : (() => { const text = it.target[1], reading = (!other && READING_KEY[text]) || (other && LEVEL_READING[level + ":" + text]) || it.reading || it.target[2];
-    return {target: it.target, text, reading, answer: (!other && (GLOSS_FIX[text + "/" + reading] || GLOSS_FIX[text])) || (other && (LEVEL_GLOSS[level + ":" + text + "/" + reading] || LEVEL_GLOSS[level + ":" + text])) || it.answer}; })())
-    .filter(w => !(other && (LEVEL_DROP.includes(level + ":" + w.text) || LEVEL_DROP.includes(level + ":" + w.text + "/" + w.reading))));
+  const allWords = items.meaning.map(it => (!other && LIST_LABEL[it.target[1]]) ? {target: it.target, ...LIST_LABEL[it.target[1]]} : (() => { const text = it.target[1], reading = (!other && READING_KEY[text]) || (other && LEVEL_READING[level + ":" + text]) || it.reading || it.target[2], rk = level + ":" + text + "/" + (it.reading || it.target[2]);
+    return {target: it.target, text, reading, answer: (!other && (GLOSS_FIX[text + "/" + reading] || GLOSS_FIX[text])) || (other && (review?.gloss?.[rk] || LEVEL_GLOSS[level + ":" + text + "/" + reading] || LEVEL_GLOSS[level + ":" + text])) || it.answer, also: other ? review?.also?.[rk] || [] : [], dropped: !!(other && review?.drop?.[rk])}; })())
+    // `review` (level-review.json): every word of the other levels read by a reviewer: the meaning a learner knows,
+    // the other readings a learner would give (never a wrong choice), and the entries no card can ask fairly.
+    .filter(w => !w.dropped && !(other && (LEVEL_DROP.includes(level + ":" + w.text) || LEVEL_DROP.includes(level + ":" + w.text + "/" + w.reading))));
   // The prefixes and suffixes of the list (前～, ～気味): not words, but word parts with a card of their own (affixCards).
   const affixes = allWords.filter(w => /[〜～]/.test(w.text)), words = allWords.filter(w => !/[〜～]/.test(w.text));
   // Stable ids: a word written the same way twice (紅葉 こうよう / もみじ) carries its reading.
@@ -154,7 +156,7 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
   for (const [i, w] of words.entries()) {
     const ex = sentenceOf(w.target), kanji = w.text.match(KANJI), own = gloss(w.answer), id = idOf(w);
     if (kanji && w.reading && w.reading !== w.text) {
-      const accepted = new Set([w.reading, ...(ACCEPTED_READINGS[w.text] || [])]);
+      const accepted = new Set([w.reading, ...(ACCEPTED_READINGS[w.text] || []), ...(w.also || [])]);
       const misses = nearMisses(w.reading).filter(m => !accepted.has(m));
       // A reading with no trap of its own (委員 いいん) would have no card, and its
       // kanji could never be asked. In the levels played kanji first, the
@@ -1185,7 +1187,11 @@ export function grammarPick({pool, state, slots, skip, comeback = [], now}) {
 // How the rank moves up and down is the owner's to decide (promotion is meant
 // to be the level's boss); until then it only changes by setRank.
 export const RANKS = LEVELS, DEFAULT_RANK = "N2";
-export const rankOf = (state = {}) => RANKS.includes(state?.rank) ? state.rank : DEFAULT_RANK;
+// Where a player starts (JLPT plan, phase 4; owner, 27 Nov: "do it all now"): a new player, with no rank and no
+// answer yet, starts at START_RANK and moves up by passing each level's boss. A state that has answered without a rank
+// (from before ranks existed) is N2, as it always was, so earlier progress is untouched.
+export const START_RANK = "N5";
+export const rankOf = (state = {}) => RANKS.includes(state?.rank) ? state.rank : state?.answered ? DEFAULT_RANK : START_RANK;
 export function setRank(state = {}, rank, now = Date.now()) {
   return RANKS.includes(rank) ? {...state, rank, rankAt: new Date(now).toISOString()} : state;
 }

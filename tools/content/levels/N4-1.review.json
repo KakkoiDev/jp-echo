@@ -1,0 +1,218 @@
+{
+ "運転/うんてん": {
+  "meaning": "driving, operation"
+ },
+ "今度/こんど": {
+  "meaning": "next time, this time"
+ },
+ "格好/かっこう": {
+  "meaning": "appearance, outfit"
+ },
+ "周り/まわり": {
+  "meaning": "surroundings, around"
+ },
+ "表/おもて": {
+  "meaning": "front, surface"
+ },
+ "下げる/さげる": {
+  "meaning": "to lower, to hang"
+ },
+ "合う/あう": {
+  "meaning": "to fit, to match"
+ },
+ "ため/ため": {
+  "meaning": "for the sake of, because of"
+ },
+ "承知/しょうち": {
+  "meaning": "understanding, consent"
+ },
+ "起こす/おこす": {
+  "meaning": "to wake (someone) up, to cause"
+ },
+ "一杯/いっぱい": {
+  "meaning": "full, one cup (of)"
+ },
+ "急行/きゅうこう": {
+  "meaning": "express (train)"
+ },
+ "向かう/むかう": {
+  "meaning": "to head toward, to face"
+ },
+ "写す/うつす": {
+  "meaning": "to copy, to photograph"
+ },
+ "差し上げる/さしあげる": {
+  "meaning": "to give (humble)"
+ },
+ "折る/おる": {
+  "meaning": "to fold, to break"
+ },
+ "戻る/もどる": {
+  "meaning": "to return, to go back"
+ },
+ "伺う/うかがう": {
+  "meaning": "to visit, to ask (humble)"
+ },
+ "うかがう/うかがう": {
+  "meaning": "to visit, to ask (humble)"
+ },
+ "寄る/よる": {
+  "meaning": "to drop by, to approach"
+ },
+ "居らっしゃる/いらっしゃる": {
+  "drop": "the kanji spelling is rare; learners meet いらっしゃる in kana"
+ },
+ "うまい/うまい": {
+  "meaning": "skillful, delicious"
+ },
+ "おいでになる/おいでになる": {
+  "meaning": "to come, to go, to be (honorific)"
+ },
+ "おかげ/おかげ": {
+  "meaning": "thanks to, help"
+ },
+ "お土産/おみやげ": {
+  "meaning": "souvenir"
+ },
+ "お見舞い/おみまい": {
+  "meaning": "visit to a sick person"
+ },
+ "家/か": {
+  "drop": "suffix; the kanji alone is read いえ or うち"
+ },
+ "君/くん": {
+  "drop": "suffix; the kanji alone is read きみ"
+ },
+ "式/しき": {
+  "meaning": "ceremony, style"
+ },
+ "しばらく/しばらく": {
+  "meaning": "for a while"
+ },
+ "しまう/しまう": {
+  "meaning": "to put away, to finish"
+ },
+ "すごい/すごい": {
+  "meaning": "amazing, great"
+ },
+ "すっと/すっと": {
+  "drop": "not an N4 word; the list item is ずっと"
+ },
+ "ソフト/ソフト": {
+  "meaning": "soft, software"
+ },
+ "建て/だて": {
+  "meaning": "-storey (building), built of"
+ },
+ "チェック/チェック": {
+  "meaning": "check, checking"
+ },
+ "町/ちょう": {
+  "drop": "the kanji alone is read まち; ちょう is a suffix"
+ },
+ "つく/つく": {
+  "drop": "kana alone: arrive, stick and switch on are all common"
+ },
+ "どんどん/どんどん": {
+  "meaning": "rapidly, steadily"
+ },
+ "パート/パート": {
+  "meaning": "part-time job, part"
+ },
+ "開く/ひらく": {
+  "also": [
+   "あく"
+  ]
+ },
+ "別/べつ": {
+  "meaning": "separate, different"
+ },
+ "焼く/やく": {
+  "meaning": "to grill, to bake"
+ },
+ "よう/よう": {
+  "drop": "kana alone: grammar ending with many senses"
+ },
+ "止める/とめる": {
+  "also": [
+   "やめる"
+  ]
+ },
+ "空く/すく": {
+  "also": [
+   "あく"
+  ]
+ },
+ "裏/うら": {
+  "meaning": "back, reverse side"
+ },
+ "熱/ねつ": {
+  "meaning": "heat, fever"
+ },
+ "星/ほし": {
+  "meaning": "star"
+ },
+ "無理/むり": {
+  "meaning": "impossible, unreasonable"
+ },
+ "押入れ/おしいれ": {
+  "meaning": "built-in closet"
+ },
+ "反対/はんたい": {
+  "meaning": "opposite, opposition"
+ },
+ "彼女/かのじょ": {
+  "meaning": "she, girlfriend"
+ },
+ "十分/じゅうぶん": {
+  "also": [
+   "じゅっぷん",
+   "じっぷん"
+  ]
+ },
+ "郊外/こうがい": {
+  "meaning": "suburbs, outskirts"
+ },
+ "特急/とっきゅう": {
+  "meaning": "limited express (train)"
+ },
+ "通う/かよう": {
+  "meaning": "to commute, to go regularly"
+ },
+ "頑張る/がんばる": {
+  "meaning": "to do one's best, to persevere"
+ },
+ "貿易/ぼうえき": {
+  "meaning": "foreign trade"
+ },
+ "興味/きょうみ": {
+  "meaning": "interest"
+ },
+ "住所/じゅうしょ": {
+  "meaning": "address"
+ },
+ "中学校/ちゅうがっこう": {
+  "meaning": "junior high school"
+ },
+ "移る/うつる": {
+  "meaning": "to move, to change"
+ },
+ "寂しい/さびしい": {
+  "also": [
+   "さみしい"
+  ]
+ },
+ "工場/こうじょう": {
+  "also": [
+   "こうば"
+  ]
+ },
+ "ＦＡＸ/ファックス": {
+  "also": [
+   "ファクス"
+  ]
+ },
+ "テキスト/テキスト": {
+  "meaning": "textbook, text"
+ }
+}

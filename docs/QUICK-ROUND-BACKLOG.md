@@ -183,11 +183,14 @@ pair card). Built in v318 (the owner's "implement the whole backlog"): kanji pla
 N2 rounds (two a round, not the whole round), the reading sprint, section
 scores on Home, a reason on a flag after the round, authored wrong choices
 for the gap cards, clean labels for all 17 noted list entries, and the other
-levels' fixes from both reviews. **Still open, and why:** the designer's
-items (they need boards); N1 papers and other mock-exam work (their own
-session); where a new player starts and making other levels' cards reviewed
-(decisions for after 6 Dec); the 24-hour run multiplier against sleep (a
-decision); a native read of the AI-written content.
+levels' fixes from both reviews. Built in v319 ("do it all now"):
+the boss exam in the game's look (without boards: the designer should still
+look), a new player starting at N5, and a full reviewer pass over every word
+of N5, N4, N3 and N1 (level-review.json). Sent to the mock-exams session: the
+N1 papers and the review steps of the N5–N3 sets. **Still open:**
+`REVIEWED_LEVELS` (held at N2 until 6 Dec so N2 rounds stay N2), the 24-hour
+run multiplier against sleep (a decision), a native read of the AI-written
+content, and the designer's boards.
 
 Built in v311: the mix that follows the last boss, grammar and word parts
 with a gap (both for the designer to look at: the English line under the

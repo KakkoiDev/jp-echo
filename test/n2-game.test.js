@@ -813,17 +813,17 @@ test("the gate: only a boss moves the rank: up with a margin, skip far above, do
 });
 
 test("the boss moves the rank: up on a pass with margin, down on the second fail in a row, once per boss", () => {
-  const up = applyBoss({}, {key: "run-1", rank: "N2", total: 120, now: Date.parse("2026-11-27T10:00:00Z")});
+  const up = applyBoss({answered: 1000}, {key: "run-1", rank: "N2", total: 120, now: Date.parse("2026-11-27T10:00:00Z")});
   assert.equal(rankOf(up), "N1"); assert.equal(up.rankAt, "2026-11-27T10:00:00.000Z"); assert.ok(!up.bossReady);
   assert.deepEqual(up.bossLog, [{key: "run-1", at: "2026-11-27T10:00:00.000Z", rank: "N2", total: 120, verdict: "up", to: "N1"}]);
   assert.equal(applyBoss(up, {key: "run-1", rank: "N2", total: 20}), up, "a boss is applied once");
   const skip = applyBoss(setRank({}, "N4", 1), {key: "s", rank: "N4", total: 160, now: 2});
   assert.equal(rankOf(skip), "N3"); assert.equal(skip.bossReady, true, "far above the line: the next boss opens at once");
-  let st = applyBoss({}, {key: "a", rank: "N2", total: 70, now: 1});
+  let st = applyBoss({answered: 1000}, {key: "a", rank: "N2", total: 70, now: 1});
   assert.equal(st.bossLog[0].verdict, "fail"); assert.equal(rankOf(st), "N2", "one fail moves nothing");
   st = applyBoss(st, {key: "b", rank: "N2", total: 60, now: 2});
   assert.equal(rankOf(st), "N3", "the second fail in a row goes down one level"); assert.equal(st.bossLog[1].to, "N3");
-  const broken = applyBoss(applyBoss(applyBoss({}, {key: "a", rank: "N2", total: 70, now: 1}), {key: "b", rank: "N2", total: 95, now: 2}), {key: "c", rank: "N2", total: 70, now: 3});
+  const broken = applyBoss(applyBoss(applyBoss({answered: 1000}, {key: "a", rank: "N2", total: 70, now: 1}), {key: "b", rank: "N2", total: 95, now: 2}), {key: "c", rank: "N2", total: 70, now: 3});
   assert.equal(rankOf(broken), "N2", "a pass in between ends the streak");
   assert.equal(rankOf(applyBoss(setRank({}, "N1", 1), {key: "top", rank: "N1", total: 170, now: 2})), "N1", "nothing above N1 yet");
   assert.equal(rankOf(applyBoss(applyBoss(setRank({}, "N5", 1), {key: "x", rank: "N5", total: 10, now: 2}), {key: "y", rank: "N5", total: 10, now: 3})), "N5", "nothing below N5");
@@ -887,7 +887,7 @@ test("the cards of another level hold the same bar: four distinct choices, the a
 test("the rank is a JLPT level; a state without one is N2, so nobody's progress moves", () => {
   assert.deepEqual([...RANKS], ["N5", "N4", "N3", "N2", "N1"]);
   assert.equal(DEFAULT_RANK, "N2");
-  assert.equal(rankOf({}), "N2"); assert.equal(rankOf(undefined), "N2"); assert.equal(rankOf({rank: "N9"}), "N2");
+  assert.equal(rankOf({answered: 3}), "N2", "a state from before ranks stays N2"); assert.equal(rankOf({}), "N5", "a new player starts at N5"); assert.equal(rankOf(undefined), "N5"); assert.equal(rankOf({rank: "N9", answered: 1}), "N2");
   const old = {seen: {"r:就任": 1}, wins: {"r:就任": 2}, lv: {"r:就任": 3}, comeback: ["m:就任"], total: 10};
   const set = setRank(old, "N3", Date.parse("2026-11-26T10:00:00Z"));
   assert.equal(rankOf(set), "N3"); assert.equal(set.rankAt, "2026-11-26T10:00:00.000Z");
@@ -1202,13 +1202,13 @@ test("a finished run on Home links to its boss results", () => {
 
 // Owner, 27 Nov: N2 comes first until 6 Dec. Passing the N2 boss must not move the player to a level with no papers.
 test("the rank waits when the next level has no papers on the device", () => {
-  const passed = applyBoss({}, {key: "r1", rank: "N2", total: 130, now: 5, levels: ["N5", "N4", "N3", "N2"]});
+  const passed = applyBoss({answered: 1000}, {key: "r1", rank: "N2", total: 130, now: 5, levels: ["N5", "N4", "N3", "N2"]});
   assert.equal(rankOf(passed), "N2");
   assert.deepEqual([passed.bossLog[0].verdict, passed.bossLog[0].waits, passed.bossLog[0].to], ["up", "N1", undefined]);
   assert.equal(verdictLine(passed.bossLog[0]), "Last boss 130 of 180: N2 passed: N1 opens when its exams exist");
-  const down = applyBoss(applyBoss({}, {key: "a", rank: "N2", total: 60, now: 1, levels: ["N3", "N2"]}), {key: "b", rank: "N2", total: 60, now: 2, levels: ["N3", "N2"]});
+  const down = applyBoss(applyBoss({answered: 1000}, {key: "a", rank: "N2", total: 60, now: 1, levels: ["N3", "N2"]}), {key: "b", rank: "N2", total: 60, now: 2, levels: ["N3", "N2"]});
   assert.equal(rankOf(down), "N3", "a level with papers is reachable");
-  assert.equal(rankOf(applyBoss({}, {key: "r1", rank: "N2", total: 130, now: 5})), "N1", "with every level's papers there, it moves");
+  assert.equal(rankOf(applyBoss({answered: 1000}, {key: "r1", rank: "N2", total: 130, now: 5})), "N1", "with every level's papers there, it moves");
   const js = src("../n2-mock.js");
   assert.match(js, /sectionsOk: exam\.sections\.every\(x => x\.ok\), levels: bossLevels\}\)/);
 });

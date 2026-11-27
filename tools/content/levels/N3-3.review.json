@@ -1,0 +1,472 @@
+{
+ "途端/とたん": {
+  "meaning": "just as, the moment (that)"
+ },
+ "割る/わる": {
+  "meaning": "to break, to divide"
+ },
+ "映る/うつる": {
+  "meaning": "to be reflected, to appear (on screen)"
+ },
+ "替わる/かわる": {
+  "meaning": "to be replaced, to change"
+ },
+ "対する/たいする": {
+  "meaning": "to face, to be directed toward"
+ },
+ "生じる/しょうじる": {
+  "meaning": "to occur, to arise"
+ },
+ "当たる/あたる": {
+  "meaning": "to hit, to be right (guess)"
+ },
+ "擦る/する": {
+  "also": [
+   "こする",
+   "さする"
+  ]
+ },
+ "臨む/のぞむ": {
+  "meaning": "to face (a situation), to overlook"
+ },
+ "認める/みとめる": {
+  "meaning": "to admit, to recognize"
+ },
+ "足袋/たび": {
+  "meaning": "tabi (split-toe socks)"
+ },
+ "訴える/うったえる": {
+  "meaning": "to sue, to appeal to"
+ },
+ "汚す/よごす": {
+  "meaning": "to make dirty, to soil"
+ },
+ "伸ばす/のばす": {
+  "meaning": "to stretch, to grow (hair)"
+ },
+ "諮る/はかる": {
+  "drop": "rare formal verb (to refer to a committee); not an N3 word"
+ },
+ "討つ/うつ": {
+  "drop": "literary 'to strike down'; learners meet 打つ"
+ },
+ "片付く/かたづく": {
+  "meaning": "to be tidied up, to be settled"
+ },
+ "頂戴/ちょうだい": {
+  "meaning": "please give me, receiving"
+ },
+ "通じる/つうじる": {
+  "meaning": "to be understood, to lead to"
+ },
+ "ＯＵＴ/アウト": {
+  "drop": "written in full-width Latin letters; learners meet it as アウト"
+ },
+ "あら/あら": {
+  "drop": "kana alone: the fish-scraps sense is rare and the interjection is a different word"
+ },
+ "異/い": {
+  "drop": "rarely a word alone; used in compounds"
+ },
+ "意/い": {
+  "drop": "rarely a word alone; used in compounds"
+ },
+ "行けない/いけない": {
+  "drop": "written 行けない it reads as 'cannot go'; the 'bad, must not' sense is written いけない"
+ },
+ "いずれ/いずれ": {
+  "meaning": "sooner or later, which"
+ },
+ "抱く/いだく": {
+  "meaning": "to harbor (a feeling), to embrace",
+  "also": [
+   "だく"
+  ]
+ },
+ "抱く/だく": {
+  "also": [
+   "いだく"
+  ]
+ },
+ "市/いち": {
+  "drop": "learners read 市 alone as し (city); いち 'market' is rare"
+ },
+ "いとこ/いとこ": {
+  "meaning": "cousin"
+ },
+ "いや/いや": {
+  "drop": "kana alone: 'no!' and 嫌 'unpleasant' are both common"
+ },
+ "いらいら/いらいら": {
+  "meaning": "irritated, impatient"
+ },
+ "いらっしゃい/いらっしゃい": {
+  "meaning": "welcome!, come in"
+ },
+ "上/うわ": {
+  "drop": "a prefix; 上 alone is read うえ"
+ },
+ "柄/え": {
+  "drop": "learners read 柄 as がら (pattern); え 'handle' is rare"
+ },
+ "得る/える": {
+  "also": [
+   "うる"
+  ]
+ },
+ "縁/えん": {
+  "meaning": "bond, connection, fate"
+ },
+ "溺れる/おぼれる": {
+  "meaning": "to drown, to be addicted to"
+ },
+ "音/おん": {
+  "drop": "learners read 音 alone as おと; おん is in compounds"
+ },
+ "かかる/かかる": {
+  "drop": "kana alone: 'to take (time), to cost, to hang' are the common senses"
+ },
+ "角/かく": {
+  "drop": "learners read 角 alone as かど or つの"
+ },
+ "欠く/かく": {
+  "meaning": "to lack, to chip"
+ },
+ "かく/かく": {
+  "drop": "kana alone: 書く 'write' and 'scratch' are both common"
+ },
+ "金/かね": {
+  "also": [
+   "きん"
+  ]
+ },
+ "金/きん": {
+  "also": [
+   "かね"
+  ]
+ },
+ "上/かみ": {
+  "drop": "rare sense; 上 alone is read うえ"
+ },
+ "観/かん": {
+  "drop": "a suffix, not a word alone"
+ },
+ "関/かん": {
+  "drop": "rarely a word alone; learners meet 関 in compounds"
+ },
+ "急に/きゅうに": {
+  "meaning": "suddenly"
+ },
+ "苦/く": {
+  "drop": "rarely a word alone; learners meet 苦しい, 苦い"
+ },
+ "酌む/くむ": {
+  "drop": "rare; learners meet くむ as 汲む"
+ },
+ "くわえる/くわえる": {
+  "drop": "kana alone: read as 加える 'to add', the common word"
+ },
+ "下/げ": {
+  "drop": "rarely a word alone; 下 alone is read した"
+ },
+ "吝嗇/ケチ": {
+  "drop": "rare kanji spelling; learners know けち in kana"
+ },
+ "県/けん": {
+  "meaning": "prefecture"
+ },
+ "後/ご": {
+  "drop": "後 alone is read あと or うしろ; ご is a suffix"
+ },
+ "コード/コード": {
+  "meaning": "code, cord (electric)"
+ },
+ "昨/さく": {
+  "drop": "a prefix, not a word alone"
+ },
+ "さす/さす": {
+  "drop": "kana alone: 指す, 差す (umbrella) and others are more common"
+ },
+ "札/さつ": {
+  "also": [
+   "ふだ"
+  ]
+ },
+ "さっぱり/さっぱり": {
+  "meaning": "refreshed, (not) at all"
+ },
+ "凝と/じっと": {
+  "drop": "rare kanji spelling; learners know じっと in kana"
+ },
+ "品/しな": {
+  "also": [
+   "ひん"
+  ]
+ },
+ "品/ひん": {
+  "also": [
+   "しな"
+  ]
+ },
+ "下/しも": {
+  "drop": "rare sense; 下 alone is read した"
+ },
+ "修飾/しゅうしょく": {
+  "meaning": "modification (grammar), decoration"
+ },
+ "小/しょう": {
+  "drop": "a prefix, not a word alone"
+ },
+ "上/じょう": {
+  "drop": "a suffix; 上 alone is read うえ"
+ },
+ "身体/しんたい": {
+  "meaning": "body",
+  "also": [
+   "からだ"
+  ]
+ },
+ "数/すう": {
+  "drop": "a prefix; 数 alone is read かず"
+ },
+ "スタイル/スタイル": {
+  "meaning": "style, figure"
+ },
+ "スタンド/スタンド": {
+  "meaning": "stand, stands (seating)"
+ },
+ "性/せい": {
+  "drop": "alone ambiguous: sex, gender or nature"
+ },
+ "せい/せい": {
+  "meaning": "fault, because of"
+ },
+ "生/せい": {
+  "drop": "rarely a word alone; 生 alone is read なま"
+ },
+ "全/ぜん": {
+  "drop": "a prefix, not a word alone"
+ },
+ "相/そう": {
+  "drop": "rarely a word alone; used in compounds"
+ },
+ "象/ぞう": {
+  "meaning": "elephant"
+ },
+ "そっくり/そっくり": {
+  "meaning": "exactly alike, all"
+ },
+ "対/たい": {
+  "also": [
+   "つい"
+  ]
+ },
+ "大/だい": {
+  "drop": "a prefix; 大 alone is ambiguous (だい, おお)"
+ },
+ "ダイヤ/ダイヤ": {
+  "meaning": "diamond, train timetable"
+ },
+ "種/たね": {
+  "also": [
+   "しゅ"
+  ]
+ },
+ "度/たび": {
+  "also": [
+   "ど"
+  ]
+ },
+ "たま/たま": {
+  "drop": "kana alone: 玉 'ball' and 'occasional' are both common"
+ },
+ "ちゃんと/ちゃんと": {
+  "meaning": "properly, exactly"
+ },
+ "対/つい": {
+  "drop": "learners read 対 as たい; 'pair' is met in 一対"
+ },
+ "接ぐ/つぐ": {
+  "drop": "rare; not an N3 word"
+ },
+ "摘む/つむ": {
+  "also": [
+   "つまむ"
+  ]
+ },
+ "と/と": {
+  "drop": "a particle with many functions; not a card"
+ },
+ "棟/とう": {
+  "drop": "a counter for buildings; rarely a word alone"
+ },
+ "解く/とく": {
+  "also": [
+   "ほどく"
+  ]
+ },
+ "解ける/とける": {
+  "also": [
+   "ほどける"
+  ]
+ },
+ "値/ね": {
+  "also": [
+   "あたい"
+  ]
+ },
+ "音/ね": {
+  "drop": "learners read 音 alone as おと; ね is literary"
+ },
+ "載る/のる": {
+  "meaning": "to appear (in print), to be placed on"
+ },
+ "はあ/はあ": {
+  "drop": "interjection with several senses (yes, huh?, sigh)"
+ },
+ "敗/はい": {
+  "drop": "a suffix (counting losses), not a word alone"
+ },
+ "吐く/はく": {
+  "also": [
+   "つく"
+  ]
+ },
+ "パス/パス": {
+  "meaning": "pass"
+ },
+ "ばったり/ばったり": {
+  "meaning": "unexpectedly (meet), with a thud"
+ },
+ "放れる/はなれる": {
+  "drop": "rare spelling; learners know 離れる"
+ },
+ "額/ひたい": {
+  "also": [
+   "がく"
+  ]
+ },
+ "ぴったり/ぴったり": {
+  "meaning": "exactly, perfectly (fitting)"
+ },
+ "表/ひょう": {
+  "also": [
+   "おもて"
+  ]
+ },
+ "不/ふ": {
+  "drop": "a prefix, not a word"
+ },
+ "分/ぶ": {
+  "drop": "分 alone is ambiguous (ふん, ぶん, ぶ); the ぶ sense is rare"
+ },
+ "無/ぶ": {
+  "drop": "a prefix, not a word"
+ },
+ "分/ぶん": {
+  "drop": "分 alone is ambiguous (ふん minute, ぶん part)"
+ },
+ "番瀝青/ペンキ": {
+  "drop": "obscure kanji spelling; learners know ペンキ in katakana"
+ },
+ "法/ほう": {
+  "meaning": "law, method"
+ },
+ "方々/ほうぼう": {
+  "drop": "方々 is also read かたがた 'people', a common sense"
+ },
+ "ボーイ/ボーイ": {
+  "meaning": "waiter, boy"
+ },
+ "ほこり/ほこり": {
+  "drop": "kana alone: 埃 'dust' and 誇り 'pride' are both common"
+ },
+ "呆んやり/ぼんやり": {
+  "drop": "obscure kanji spelling; learners know ぼんやり in kana"
+ },
+ "間/ま": {
+  "drop": "間 alone is usually read あいだ; ambiguous"
+ },
+ "まあ/まあ": {
+  "meaning": "well, oh my"
+ },
+ "まく/まく": {
+  "drop": "kana alone: 巻く, 撒く, 蒔く are all common"
+ },
+ "まさか/まさか": {
+  "meaning": "no way!, surely not"
+ },
+ "末/まつ": {
+  "drop": "末 alone is read すえ; まつ is in compounds"
+ },
+ "全く/まったく": {
+  "meaning": "completely, (not) at all"
+ },
+ "まとまる/まとまる": {
+  "meaning": "to come together, to be settled"
+ },
+ "密/みつ": {
+  "drop": "rarely a word alone at this level"
+ },
+ "むく/むく": {
+  "drop": "kana alone: 向く 'face' and 剥く 'peel' are both common"
+ },
+ "綿/めん": {
+  "also": [
+   "わた"
+  ]
+ },
+ "面/めん": {
+  "drop": "alone ambiguous (mask, side, surface)"
+ },
+ "求める/もとめる": {
+  "meaning": "to seek, to request"
+ },
+ "訳/やく": {
+  "drop": "訳 alone is read わけ (reason); やく is in compounds"
+ },
+ "優/ゆう": {
+  "drop": "a grade mark, rarely a word alone for learners"
+ },
+ "床/ゆか": {
+  "also": [
+   "とこ"
+  ]
+ },
+ "よる/よる": {
+  "drop": "kana alone: 夜, 寄る and 因る are all common"
+ },
+ "よろしく/よろしく": {
+  "meaning": "best regards, please (treat me well)"
+ },
+ "最中/さいちゅう": {
+  "also": [
+   "さなか"
+  ]
+ },
+ "描く/えがく": {
+  "also": [
+   "かく"
+  ]
+ },
+ "臭い/くさい": {
+  "also": [
+   "におい"
+  ]
+ },
+ "故郷/こきょう": {
+  "also": [
+   "ふるさと"
+  ]
+ },
+ "避ける/さける": {
+  "also": [
+   "よける"
+  ]
+ },
+ "頬/ほお": {
+  "also": [
+   "ほほ"
+  ]
+ }
+}

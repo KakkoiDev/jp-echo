@@ -1170,6 +1170,8 @@ async function game() {
   const n2Cards = gamePool({inventory, examples, sets, sat, parts, grammarBlocks: activeGrammar ? grammarIndex : null, extras});
   const grammarCards = n2Cards.filter(grammarBlockCard), n2Pool = n2Cards.filter(q => !grammarBlockCard(q));
   const levelPools = new Map([["N2", n2Pool]]);
+  // The other levels' word lists as a reviewer read them (level-review.json): meanings, accepted readings, drops.
+  const levelReview = await json("./level-review.json").catch(() => null);
   // The last boss's misses (bossCards): wrong or unsure answers of the latest
   // N2 boss sat on the current edition of its paper, as cards for the rounds.
   const lastBoss = data.attempts.filter(a => a.boss && a.phase === "results" && sat.has(a.book) && a.paper === realisticPaperId(a.book)).sort((a, b) => (a.completedAt || "").localeCompare(b.completedAt || "")).at(-1);
@@ -1185,7 +1187,7 @@ async function game() {
   async function loadRank() {
     const {level, review} = rankLevels(rankOf(readGame())), wanted = [level, ...review];
     const pools = await Promise.all(wanted.map(async l => {
-      if (!levelPools.has(l)) { const inv = await gameLevels.inventory(l); if (inv) levelPools.set(l, gamePool({inventory: inv, level: l})); }
+      if (!levelPools.has(l)) { const inv = await gameLevels.inventory(l); if (inv) levelPools.set(l, gamePool({inventory: inv, level: l, review: levelReview})); }
       return levelPools.get(l) || null;
     }));
     missing = wanted.filter((_, i) => !pools[i]);
@@ -1203,7 +1205,7 @@ async function game() {
     // The rank's words nearly all met: the level above joins the review places as a preview.
     const ahead = aheadLevel(level);
     if (pools[0] && ahead && isCovered(levelCoverage(pool, readGame()))) {
-      if (!levelPools.has(ahead)) { const inv = await gameLevels.inventory(ahead); if (inv) levelPools.set(ahead, gamePool({inventory: inv, level: ahead})); }
+      if (!levelPools.has(ahead)) { const inv = await gameLevels.inventory(ahead); if (inv) levelPools.set(ahead, gamePool({inventory: inv, level: ahead, review: levelReview})); }
       lower = [...lower, ...(levelPools.get(ahead) || [])];
     }
   }
@@ -2347,6 +2349,15 @@ async function exam() {
   // The boss (Quick round): the real paper at half the time. It stays a boss
   // once started, and never counts as a standard sitting (checkpoint, chart).
   if (state.phase === "ready" && params.get("boss") === "1" && (realistic(year) || levelSet)) state.boss = true;
+  // A boss wears the game's look (owner's backlog, 27 Nov): one skin over the same screens and logic, as Day Radio has
+  // (body[data-from=game]); every way out leads back to Quick round.
+  if (state.boss) {
+    document.body.dataset.from = "game"; document.body.dataset.boss = "true";
+    for (const g of document.querySelectorAll("#intro .mode-intro .glyph")) g.textContent = "鬼";
+    for (const a of document.querySelectorAll("#intro .tool-head a.icon-button, #exam .n2-exam-head a.icon-button, #results .tool-head a.icon-button")) { a.href = "?view=game"; a.innerHTML = GAME_CHEVRON; }
+    $("result-next").href = "?view=game"; $("result-next").textContent = "Back to Quick round";
+    for (const a of document.querySelectorAll('#rest a.button.quiet')) { a.href = "?view=game"; a.textContent = "Later · back to Quick round"; }
+  }
   // Only the written clock halves: listening audio can't play faster.
   const half = (m, phase) => state.boss && phase === "written" ? Math.ceil(m / 2) : m;
 
@@ -2519,7 +2530,7 @@ async function exam() {
     $("jump").querySelector('[aria-current="true"]')?.focus({preventScroll: false});
   }
   function renderResults() {
-    $("results-title").textContent = "Results";
+    $("results-title").textContent = state.boss ? "Boss" : "Results";
     const paused = state.pausedMs ? Math.max(1, Math.round(state.pausedMs / 60000)) : 0;
     $("results-date").textContent = [bookIds.includes(paper.book) ? "Mock " + String(bookIds.indexOf(paper.book) + 1).padStart(2, "0") : paper.title, dateLabel(state.completedAt), archivedView ? "earlier attempt" : null].filter(Boolean).join(" · ");
     $("results-date").title = paper.title + (paused ? " · paused " + paused + " min" + (state.pauses > 1 ? " in " + state.pauses + " pauses" : "") : "");

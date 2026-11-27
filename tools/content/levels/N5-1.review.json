@@ -1,0 +1,334 @@
+{
+ "足/あし": {
+  "meaning": "foot, leg"
+ },
+ "後/あと": {
+  "meaning": "after, later"
+ },
+ "九/きゅう": {
+  "also": [
+   "く"
+  ]
+ },
+ "言葉/ことば": {
+  "meaning": "word, language"
+ },
+ "四/し": {
+  "also": [
+   "よん"
+  ]
+ },
+ "七/しち": {
+  "also": [
+   "なな"
+  ]
+ },
+ "台/だい": {
+  "meaning": "stand, counter for machines"
+ },
+ "電話/でんわ": {
+  "meaning": "telephone, phone call"
+ },
+ "私/わたし": {
+  "also": [
+   "わたくし"
+  ]
+ },
+ "私/わたくし": {
+  "also": [
+   "わたし"
+  ]
+ },
+ "一昨年/おととし": {
+  "also": [
+   "いっさくねん"
+  ]
+ },
+ "大変/たいへん": {
+  "meaning": "hard, terrible, very"
+ },
+ "電気/でんき": {
+  "meaning": "electricity, light"
+ },
+ "年/とし": {
+  "also": [
+   "ねん"
+  ]
+ },
+ "年/ねん": {
+  "also": [
+   "とし"
+  ]
+ },
+ "何/なに": {
+  "also": [
+   "なん"
+  ]
+ },
+ "何/なん": {
+  "also": [
+   "なに"
+  ]
+ },
+ "本当/ほんとう": {
+  "also": [
+   "ほんと"
+  ]
+ },
+ "毎年/まいとし": {
+  "also": [
+   "まいねん"
+  ]
+ },
+ "横/よこ": {
+  "meaning": "side, beside"
+ },
+ "明日/あした": {
+  "also": [
+   "あす"
+  ]
+ },
+ "肉/にく": {
+  "meaning": "meat"
+ },
+ "毎月/まいつき": {
+  "also": [
+   "まいげつ"
+  ]
+ },
+ "休み/やすみ": {
+  "meaning": "holiday, rest"
+ },
+ "元気/げんき": {
+  "meaning": "healthy, energetic"
+ },
+ "大丈夫/だいじょうぶ": {
+  "meaning": "all right, okay"
+ },
+ "結構/けっこう": {
+  "meaning": "fine, quite"
+ },
+ "高い/たかい": {
+  "meaning": "high, expensive"
+ },
+ "背/せい": {
+  "also": [
+   "せ"
+  ]
+ },
+ "降りる/おりる": {
+  "meaning": "to get off, to go down"
+ },
+ "渡す/わたす": {
+  "meaning": "to hand over"
+ },
+ "低い/ひくい": {
+  "meaning": "low, short (height)"
+ },
+ "あまり/あまり": {
+  "meaning": "not very (with negative)"
+ },
+ "早い/はやい": {
+  "meaning": "early, fast"
+ },
+ "遅い/おそい": {
+  "meaning": "slow, late"
+ },
+ "昨夜/ゆうべ": {
+  "also": [
+   "さくや"
+  ]
+ },
+ "語/ご": {
+  "meaning": "language (as in 英語), word"
+ },
+ "かける/かける": {
+  "drop": "kana alone: hang, call, put on glasses and sit are all common senses"
+ },
+ "休む/やすむ": {
+  "meaning": "to rest, to take a day off"
+ },
+ "辛い/からい": {
+  "also": [
+   "つらい"
+  ]
+ },
+ "いる/いる": {
+  "drop": "kana alone: learners know いる as 'to be (animate)', not 要る 'to be needed'"
+ },
+ "消す/けす": {
+  "meaning": "to turn off, to erase"
+ },
+ "宵/よい": {
+  "drop": "not an N5 word; よい is met as 'good'"
+ },
+ "曲がる/まがる": {
+  "meaning": "to turn, to bend"
+ },
+ "起きる/おきる": {
+  "meaning": "to get up, to wake up"
+ },
+ "零/れい": {
+  "also": [
+   "ゼロ"
+  ]
+ },
+ "やさしい/やさしい": {
+  "drop": "kana alone: 易しい 'easy' and 優しい 'kind' are both N5"
+ },
+ "一昨日/おととい": {
+  "also": [
+   "いっさくじつ"
+  ]
+ },
+ "差す/さす": {
+  "meaning": "to put up (an umbrella)"
+ },
+ "そば/そば": {
+  "drop": "kana alone: 'near, beside' and 'soba noodles' are both common"
+ },
+ "ご飯/ごはん": {
+  "meaning": "meal, cooked rice"
+ },
+ "ああ/ああ": {
+  "drop": "kana alone: interjection 'ah' and 'like that' are both common"
+ },
+ "開く/あく": {
+  "also": [
+   "ひらく"
+  ]
+ },
+ "家/いえ": {
+  "also": [
+   "うち"
+  ]
+ },
+ "イクラ/イクラ": {
+  "drop": "wrong word: the N5 item is いくら 'how much', not salmon roe"
+ },
+ "一日/いちにち": {
+  "also": [
+   "ついたち"
+  ]
+ },
+ "お/お": {
+  "drop": "a prefix, not a word alone"
+ },
+ "お弁当/おべんとう": {
+  "meaning": "boxed lunch, bento"
+ },
+ "方/かた": {
+  "meaning": "person (polite), way of doing"
+ },
+ "月/がつ": {
+  "drop": "a suffix; 月 alone reads つき (moon)"
+ },
+ "カップ/カップ": {
+  "meaning": "cup"
+ },
+ "がる/がる": {
+  "drop": "a suffix, not an N5 word alone"
+ },
+ "咖哩/カレー": {
+  "drop": "rare kanji spelling; learners only meet カレー"
+ },
+ "聞く/きく": {
+  "meaning": "to listen, to ask"
+ },
+ "綺麗/きれい": {
+  "meaning": "pretty, clean"
+ },
+ "キロ/キロ": {
+  "meaning": "kilo (gram or metre)"
+ },
+ "位/くらい": {
+  "also": [
+   "ぐらい"
+  ]
+ },
+ "ころ/ころ": {
+  "also": [
+   "ごろ"
+  ]
+ },
+ "先/さき": {
+  "meaning": "ahead, earlier"
+ },
+ "時/じ": {
+  "drop": "a suffix (o'clock); 時 alone reads とき"
+ },
+ "シャツ/シャツ": {
+  "meaning": "shirt"
+ },
+ "中/じゅう": {
+  "drop": "a suffix; 中 alone reads なか"
+ },
+ "人/じん": {
+  "drop": "a suffix; 人 alone reads ひと"
+ },
+ "すぎ/すぎ": {
+  "drop": "kana alone: the fish sense is rare; learners meet すぎ as a suffix"
+ },
+ "０/ゼロ": {
+  "also": [
+   "れい"
+  ]
+ },
+ "そう/そう": {
+  "drop": "kana alone: 'so, like that' and 'seems' are both common"
+ },
+ "そうです/そうです": {
+  "meaning": "that's right"
+ },
+ "其れから/それから": {
+  "drop": "rare kanji spelling; learners only meet それから"
+ },
+ "其れでは/それでは": {
+  "drop": "rare kanji spelling; learners only meet それでは"
+ },
+ "中/ちゅう": {
+  "drop": "a suffix; 中 alone reads なか"
+ },
+ "つける/つける": {
+  "meaning": "to turn on, to attach"
+ },
+ "どうして/どうして": {
+  "meaning": "why, how"
+ },
+ "どうぞ/どうぞ": {
+  "meaning": "please, go ahead"
+ },
+ "どちら/どちら": {
+  "meaning": "which (of two), where"
+ },
+ "日/にち": {
+  "drop": "wrong sense: 日 alone reads ひ (day, sun); Sunday is 日曜日"
+ },
+ "人/にん": {
+  "drop": "a counter suffix; 人 alone reads ひと"
+ },
+ "杯/はい": {
+  "meaning": "cups, glasses (counter)"
+ },
+ "２０歳/はたち": {
+  "also": [
+   "にじゅっさい",
+   "にじっさい"
+  ]
+ },
+ "一月/ひとつき": {
+  "drop": "一月 alone reads いちがつ (January) as often as ひとつき"
+ },
+ "分/ふん": {
+  "drop": "a counter suffix; reads ぷん after many numbers"
+ },
+ "他/ほか": {
+  "meaning": "other, another"
+ },
+ "磨く/みがく": {
+  "meaning": "to brush (teeth), to polish"
+ },
+ "よく/よく": {
+  "meaning": "well, often"
+ }
+}

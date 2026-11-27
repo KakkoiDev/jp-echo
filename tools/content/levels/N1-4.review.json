@@ -1,0 +1,331 @@
+{
+ "画/かく": {
+  "drop": "single kanji: alone it is usually が 'picture'"
+ },
+ "箇条書き/かじょうがき": {
+  "meaning": "bulleted list, itemized list"
+ },
+ "片/かた": {
+  "drop": "a prefix, not a standalone word; also read へん"
+ },
+ "かつ/かつ": {
+  "drop": "kana alone: heard as 勝つ 'to win' or カツ 'cutlet'"
+ },
+ "かぶれる/かぶれる": {
+  "meaning": "to get a rash, to be influenced by"
+ },
+ "構える/かまえる": {
+  "meaning": "to set up (a shop), to take a stance"
+ },
+ "玩具/がんぐ": {
+  "also": [
+   "おもちゃ"
+  ]
+ },
+ "来る/きたる": {
+  "drop": "written alone it reads くる; きたる only before a date"
+ },
+ "強/きょう": {
+  "drop": "a suffix; the kanji alone suggests つよ-"
+ },
+ "狂/きょう": {
+  "drop": "a suffix, not a standalone word"
+ },
+ "ぐっと/ぐっと": {
+  "meaning": "firmly, much (more)"
+ },
+ "汚らわしい/けがらわしい": {
+  "meaning": "filthy, disgusting"
+ },
+ "げっそり/げっそり": {
+  "meaning": "haggard, disheartened"
+ },
+ "故/こ": {
+  "drop": "a prefix; the kanji alone reads ゆえ"
+ },
+ "講読/こうどく": {
+  "meaning": "reading (and interpreting) a text"
+ },
+ "こだわる/こだわる": {
+  "meaning": "to be particular about, to fuss over"
+ },
+ "細やか/こまやか": {
+  "also": [
+   "ささやか"
+  ]
+ },
+ "込める/こめる": {
+  "meaning": "to put into (feelings), to load"
+ },
+ "さらう/さらう": {
+  "drop": "kana alone: snatch, dredge and rehearse are all common"
+ },
+ "強いて/しいて": {
+  "meaning": "if pressed, forcibly"
+ },
+ "シート/シート": {
+  "meaning": "seat, sheet"
+ },
+ "湿気る/しける": {
+  "also": [
+   "しっける"
+  ]
+ },
+ "弱/じゃく": {
+  "drop": "a suffix; the kanji alone suggests よわ-"
+ },
+ "主/しゅ": {
+  "drop": "single kanji: alone it reads ぬし or あるじ"
+ },
+ "主/ぬし": {
+  "also": [
+   "あるじ",
+   "しゅ"
+  ]
+ },
+ "種/しゅ": {
+  "drop": "single kanji: alone it reads たね 'seed'"
+ },
+ "称/しょう": {
+  "drop": "not a standalone word for learners"
+ },
+ "証/しょう": {
+  "drop": "single kanji: rare alone, also read あかし"
+ },
+ "助動詞/じょどうし": {
+  "meaning": "auxiliary verb"
+ },
+ "心/しん": {
+  "drop": "single kanji: alone it reads こころ"
+ },
+ "粋/すい": {
+  "drop": "single kanji: alone it is usually いき 'chic'"
+ },
+ "すくう/すくう": {
+  "drop": "kana alone: heard as 救う 'to save' as much as 'to scoop'"
+ },
+ "ストロボ/ストロボ": {
+  "meaning": "camera flash, strobe"
+ },
+ "ズバリ/ズバリ": {
+  "meaning": "frankly, straight to the point"
+ },
+ "ずるずる/ずるずる": {
+  "meaning": "dragging, dragging on"
+ },
+ "擦れる/すれる": {
+  "also": [
+   "こすれる"
+  ]
+ },
+ "すんなり/すんなり": {
+  "meaning": "smoothly, without a hitch"
+ },
+ "先/せん": {
+  "drop": "single kanji: alone it reads さき"
+ },
+ "添える/そえる": {
+  "meaning": "to attach, to add (to)"
+ },
+ "揃い/そろい": {
+  "meaning": "set, matching (outfit)"
+ },
+ "タイム/タイム": {
+  "meaning": "time (recorded), time-out"
+ },
+ "ダンプ/ダンプ": {
+  "meaning": "dump truck"
+ },
+ "違える/ちがえる": {
+  "meaning": "to make different, to mistake"
+ },
+ "ちらっと/ちらっと": {
+  "meaning": "with a glance, briefly"
+ },
+ "塵/ちり": {
+  "also": [
+   "ごみ"
+  ]
+ },
+ "角/つの": {
+  "drop": "single kanji: alone also かど and かく, both common"
+ },
+ "できもの/できもの": {
+  "meaning": "boil, pimple"
+ },
+ "てっきり/てっきり": {
+  "meaning": "I was sure (mistakenly)"
+ },
+ "手回し/てまわし": {
+  "meaning": "preparations, arrangements"
+ },
+ "当/とう": {
+  "drop": "a prefix, not a standalone word"
+ },
+ "とかく/とかく": {
+  "meaning": "apt to, tend to"
+ },
+ "ドライバー/ドライバー": {
+  "meaning": "driver, screwdriver"
+ },
+ "とりあえず/とりあえず": {
+  "meaning": "for now, for the time being"
+ },
+ "ど忘れ/どわすれ": {
+  "meaning": "momentary lapse of memory"
+ },
+ "とんだ/とんだ": {
+  "meaning": "terrible, unexpected"
+ },
+ "舐める/なめる": {
+  "meaning": "to lick, to underestimate"
+ },
+ "ネガ/ネガ": {
+  "meaning": "(photo) negative"
+ },
+ "はたく/はたく": {
+  "meaning": "to slap, to dust off"
+ },
+ "罰/ばつ": {
+  "also": [
+   "ばち"
+  ]
+ },
+ "はまる/はまる": {
+  "meaning": "to fit, to get hooked on"
+ },
+ "万人/ばんにん": {
+  "also": [
+   "まんにん"
+  ]
+ },
+ "人気/ひとけ": {
+  "drop": "written alone it reads にんき 'popularity'"
+ },
+ "ファイト/ファイト": {
+  "meaning": "fighting spirit, go for it!"
+ },
+ "ふける/ふける": {
+  "drop": "kana alone: 老ける, 更ける and 耽る are all common"
+ },
+ "ブザー/ブザー": {
+  "meaning": "buzzer"
+ },
+ "ブル/ブル": {
+  "drop": "rare clipped form; not a learner word"
+ },
+ "フロント/フロント": {
+  "meaning": "front desk, front"
+ },
+ "ベース/ベース": {
+  "meaning": "base, bass (music)"
+ },
+ "干し/ほし": {
+  "drop": "not a standalone word; meets learners in 干し物 etc."
+ },
+ "干し物/ほしもの": {
+  "meaning": "laundry hung out to dry"
+ },
+ "ポット/ポット": {
+  "meaning": "thermos, hot-water pot"
+ },
+ "ぼつぼつ/ぼつぼつ": {
+  "meaning": "little by little, soon"
+ },
+ "ボルト/ボルト": {
+  "drop": "volt and bolt are both common"
+ },
+ "誠/まこと": {
+  "meaning": "sincerity, truth"
+ },
+ "味/み": {
+  "drop": "a suffix; the kanji alone reads あじ"
+ },
+ "めど/めど": {
+  "meaning": "prospect, outlook"
+ },
+ "網/もう": {
+  "drop": "single kanji: alone it reads あみ"
+ },
+ "目下/もっか": {
+  "drop": "also めした 'subordinate', equally common"
+ },
+ "持てる/もてる": {
+  "meaning": "to be popular, to be able to hold"
+ },
+ "もはや/もはや": {
+  "meaning": "no longer, already"
+ },
+ "薬/やく": {
+  "drop": "single kanji: alone it reads くすり"
+ },
+ "要/よう": {
+  "drop": "single kanji: alone also かなめ"
+ },
+ "よし/よし": {
+  "meaning": "all right!, good"
+ },
+ "よほど/よほど": {
+  "also": [
+   "よっぽど"
+  ]
+ },
+ "寄り/より": {
+  "drop": "a sumo term; より is heard as the particle"
+ },
+ "リート/リート": {
+  "drop": "rare musical term; not a learner word"
+ },
+ "レース/レース": {
+  "meaning": "race, lace"
+ },
+ "レバー/レバー": {
+  "meaning": "liver, lever"
+ },
+ "レンジ/レンジ": {
+  "meaning": "microwave, stove"
+ },
+ "ぶらぶら/ぶらぶら": {
+  "meaning": "strolling about, dangling"
+ },
+ "尊ぶ/とうとぶ": {
+  "also": [
+   "たっとぶ"
+  ]
+ },
+ "はげる/はげる": {
+  "meaning": "to peel off, to go bald"
+ },
+ "ポーズ/ポーズ": {
+  "meaning": "pose, pause"
+ },
+ "ベスト/ベスト": {
+  "meaning": "best, vest"
+ },
+ "瞬き/まばたき": {
+  "also": [
+   "またたき"
+  ]
+ },
+ "もたらす/もたらす": {
+  "meaning": "to bring about, to bring"
+ },
+ "歪む/ゆがむ": {
+  "also": [
+   "ひずむ"
+  ]
+ },
+ "近眼/きんがん": {
+  "also": [
+   "ちかめ"
+  ]
+ },
+ "蹴飛ばす/けとばす": {
+  "also": [
+   "けっとばす"
+  ]
+ },
+ "ユニーク/ユニーク": {
+  "meaning": "unique, quirky"
+ }
+}

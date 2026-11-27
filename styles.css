@@ -2642,6 +2642,31 @@ body[data-from=game] .n2-day-example{margin-top:10px;padding:14px 16px;border:1p
 body[data-from=game] .n2-day-example [lang=ja]{font-size:18px;line-height:2.1}
 body[data-from=game] .n2-day-example rt{margin-inline:-.5em}
 body[data-from=game] .n2-day-example u,body[data-from=game] .n2-mark{text-decoration-color:var(--chip-learn-fg);text-decoration-thickness:2px;text-underline-offset:8px}
+/* The boss exam in the game's look (owner's backlog, 27 Nov; built without boards): the same screens, flat surfaces,
+   the UI sans, choices as the game's rows, the clock as the game's. */
+body[data-boss=true] :is(#intro,#exam,#rest,#results) :is(.tool-title,.drill-title,.mode-intro-title){font-family:var(--ui);font-weight:900;letter-spacing:normal}
+body[data-boss=true] :is(#intro,#results,#rest) .tool-head{min-height:64px;padding:calc(12px + env(safe-area-inset-top)) 0 8px;gap:10px}
+body[data-boss=true] :is(#intro,#exam,#results,#rest) .icon-button{border-radius:12px;background:transparent;border:1px solid var(--hairline);color:var(--sumi)}
+body[data-boss=true] :is(#intro,#rest) .mode-intro{border:1px solid var(--hairline);border-radius:20px;background:var(--panel);padding:18px}
+body[data-boss=true] :is(#intro,#rest) .mode-intro .glyph{background:none;border:0;font-family:var(--display);font-size:52px;font-weight:800;color:var(--seal);width:auto;height:auto}
+body[data-boss=true] :is(#intro,#rest,#results) :is(button.primary,a.button.primary){min-height:60px;border-radius:18px;border:0;background:var(--seal);color:var(--seal-on);font-family:var(--ui);font-size:18px;font-weight:900;letter-spacing:normal;text-transform:none;box-shadow:none}
+body[data-boss=true] :is(#rest,#results) :is(a.button.quiet,a.button.outline,.link-button){font-family:var(--ui);letter-spacing:normal;text-transform:none}
+body[data-boss=true] .n2-exam-head .n2-clock{font-family:var(--ui);font-weight:900;font-variant-numeric:tabular-nums;font-size:24px}
+body[data-boss=true] .n2-exam-line .n2-exam-section{font-family:var(--ui);font-size:16px}
+body[data-boss=true] #exam .drill-bar{height:14px;border-radius:7px;background:var(--rule);overflow:hidden}
+body[data-boss=true] #exam .drill-bar span{height:14px;border-radius:7px;background:var(--sumi)}
+body[data-boss=true] .n2-question{padding-top:14px}
+body[data-boss=true] .n2-question .n2-mondai-label{font-family:var(--ui);font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-muted)}
+body[data-boss=true] .n2-passage{border:1px solid var(--hairline);border-left:1px solid var(--hairline);border-radius:16px;background:var(--panel)}
+body[data-boss=true] .n2-stem{font-size:20px;line-height:1.6}
+body[data-boss=true] .n2-choices{gap:8px}
+body[data-boss=true] .n2-choice{min-height:56px;border-radius:16px;border:1px solid var(--hairline);background:var(--panel);box-shadow:none}
+body[data-boss=true] .n2-choice-n{border-radius:8px}
+body[data-boss=true] .n2-choice[aria-checked=true]{border-color:var(--chip-learn-fg);background:var(--chip-learn-bg);color:var(--sumi)}
+body[data-boss=true] .n2-choice[aria-checked=true] .n2-choice-n{background:var(--chip-learn-fg);border-color:var(--chip-learn-fg);color:var(--panel)}
+body[data-boss=true] .n2-choice-text{font-family:var(--ui);font-size:17px;font-weight:700}
+body[data-boss=true] .n2-exam-bar :is(button){border-radius:14px;font-family:var(--ui);letter-spacing:normal;text-transform:none}
+body[data-boss=true] #scores :is(.n2-score,.score-card,.n2-card){border-radius:20px}
 body[data-from=game] :is(#day,#check) .hint{font-size:13px;line-height:1.5;color:var(--ink-muted)}
 body[data-from=game] .n2-say{min-height:44px;padding:0 14px;border:0;border-radius:12px;background:var(--rule);color:var(--sumi);font-size:14px;font-weight:700}
 body[data-from=game] .n2-day-rate{gap:8px}

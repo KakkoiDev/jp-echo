@@ -1,0 +1,484 @@
+{
+ "牛/うし": {
+  "meaning": "cow, cattle"
+ },
+ "応じる/おうじる": {
+  "meaning": "to respond to, to comply with"
+ },
+ "感動/かんどう": {
+  "meaning": "being deeply moved"
+ },
+ "組/くみ": {
+  "meaning": "group, class (of students)"
+ },
+ "暮れ/くれ": {
+  "meaning": "end of the year, nightfall"
+ },
+ "携帯/けいたい": {
+  "meaning": "mobile phone, carrying"
+ },
+ "住/じゅう": {
+  "drop": "not a standalone word; met only in compounds like 衣食住"
+ },
+ "進学/しんがく": {
+  "meaning": "going on to higher education"
+ },
+ "信号/しんごう": {
+  "meaning": "traffic light, signal"
+ },
+ "節/せつ": {
+  "drop": "alone it is ambiguous (occasion, section, verse, joint)"
+ },
+ "全身/ぜんしん": {
+  "meaning": "whole body"
+ },
+ "通過/つうか": {
+  "meaning": "passing through, transit"
+ },
+ "虎/とら": {
+  "meaning": "tiger"
+ },
+ "飯/めし": {
+  "meaning": "meal, cooked rice"
+ },
+ "梅/うめ": {
+  "meaning": "Japanese plum, ume"
+ },
+ "奥/おく": {
+  "meaning": "inner part, back"
+ },
+ "計/けい": {
+  "meaning": "total, sum"
+ },
+ "進行/しんこう": {
+  "meaning": "progress, advance"
+ },
+ "巣/す": {
+  "meaning": "nest"
+ },
+ "通訳/つうやく": {
+  "meaning": "interpreting, interpreter"
+ },
+ "天然/てんねん": {
+  "meaning": "natural, nature"
+ },
+ "同志/どうし": {
+  "meaning": "comrade, kindred spirit"
+ },
+ "なる/なる": {
+  "drop": "kana alone reads as 'to become' (N5); the fruit sense is rare"
+ },
+ "弁当/べんとう": {
+  "meaning": "boxed lunch, bento"
+ },
+ "現れ/あらわれ": {
+  "meaning": "sign, manifestation"
+ },
+ "合わせる/あわせる": {
+  "meaning": "to match, to put together"
+ },
+ "稲/いね": {
+  "meaning": "rice plant"
+ },
+ "課/か": {
+  "meaning": "section (of an office), lesson"
+ },
+ "抱える/かかえる": {
+  "meaning": "to hold (in arms), to have (problems)"
+ },
+ "禁煙/きんえん": {
+  "meaning": "no smoking, quitting smoking"
+ },
+ "下り/くだり": {
+  "meaning": "going down, descent"
+ },
+ "後輩/こうはい": {
+  "meaning": "junior (at school or work)"
+ },
+ "国語/こくご": {
+  "meaning": "national language, Japanese (subject)"
+ },
+ "座席/ざせき": {
+  "meaning": "seat"
+ },
+ "酸素/さんそ": {
+  "meaning": "oxygen"
+ },
+ "通行/つうこう": {
+  "meaning": "passage, traffic"
+ },
+ "良い/よい": {
+  "also": [
+   "いい"
+  ]
+ },
+ "碑/いしぶみ": {
+  "drop": "reading いしぶみ is rare; learners meet 碑 as ひ in compounds"
+ },
+ "学歴/がくれき": {
+  "meaning": "educational background"
+ },
+ "女史/じょし": {
+  "meaning": "Ms. (for a woman of note)"
+ },
+ "備える/そなえる": {
+  "meaning": "to prepare for, to equip with"
+ },
+ "続き/つづき": {
+  "meaning": "continuation, sequel"
+ },
+ "典型/てんけい": {
+  "meaning": "typical example, model"
+ },
+ "納得/なっとく": {
+  "meaning": "understanding, being convinced"
+ },
+ "灯/ひ": {
+  "also": [
+   "あかり"
+  ]
+ },
+ "無事/ぶじ": {
+  "meaning": "safe and sound, safety"
+ },
+ "物理/ぶつり": {
+  "meaning": "physics"
+ },
+ "寄せる/よせる": {
+  "meaning": "to bring near, to draw close"
+ },
+ "当てる/あてる": {
+  "meaning": "to hit, to guess right"
+ },
+ "横断/おうだん": {
+  "meaning": "crossing (a road, etc.)"
+ },
+ "きり/きり": {
+  "drop": "kana alone is ambiguous (fog, end, only)"
+ },
+ "自慢/じまん": {
+  "meaning": "pride, boasting"
+ },
+ "相続/そうぞく": {
+  "meaning": "inheritance"
+ },
+ "手間/てま": {
+  "meaning": "time and effort, trouble"
+ },
+ "便/びん": {
+  "meaning": "flight, service"
+ },
+ "異動/いどう": {
+  "meaning": "personnel transfer"
+ },
+ "貝/かい": {
+  "meaning": "shellfish, shell"
+ },
+ "雷/かみなり": {
+  "meaning": "thunder, lightning"
+ },
+ "勘定/かんじょう": {
+  "meaning": "bill, calculation"
+ },
+ "菌/きん": {
+  "meaning": "germ, bacteria"
+ },
+ "群/ぐん": {
+  "also": [
+   "むれ"
+  ]
+ },
+ "交際/こうさい": {
+  "meaning": "dating, association"
+ },
+ "鋭い/するどい": {
+  "meaning": "sharp"
+ },
+ "盾/たて": {
+  "meaning": "shield"
+ },
+ "動揺/どうよう": {
+  "meaning": "agitation, being shaken"
+ },
+ "乗せる/のせる": {
+  "meaning": "to give a ride, to place on"
+ },
+ "見舞い/みまい": {
+  "meaning": "visit to a sick person"
+ },
+ "土産/みやげ": {
+  "meaning": "souvenir"
+ },
+ "医院/いいん": {
+  "meaning": "clinic, doctor's office"
+ },
+ "行き/いき": {
+  "meaning": "going, the way there",
+  "also": [
+   "ゆき"
+  ]
+ },
+ "居間/いま": {
+  "meaning": "living room"
+ },
+ "撃つ/うつ": {
+  "meaning": "to shoot"
+ },
+ "刀/かたな": {
+  "meaning": "sword, katana"
+ },
+ "鐘/かね": {
+  "meaning": "bell"
+ },
+ "勘/かん": {
+  "meaning": "intuition, sixth sense"
+ },
+ "乾燥/かんそう": {
+  "meaning": "dryness, drying"
+ },
+ "句/く": {
+  "meaning": "phrase, verse"
+ },
+ "克服/こくふく": {
+  "meaning": "overcoming"
+ },
+ "節約/せつやく": {
+  "meaning": "saving, economizing"
+ },
+ "出/で": {
+  "drop": "not met alone; a suffix/compound element (日の出)"
+ },
+ "手伝い/てつだい": {
+  "meaning": "help, helper"
+ },
+ "並/なみ": {
+  "meaning": "average, ordinary"
+ },
+ "引っ越し/ひっこし": {
+  "meaning": "moving house"
+ },
+ "方/ほう": {
+  "drop": "alone ambiguous: ほう (direction, side) vs かた (person, way)"
+ },
+ "豆/まめ": {
+  "meaning": "bean, pea"
+ },
+ "空き/あき": {
+  "meaning": "vacancy, empty space"
+ },
+ "扱う/あつかう": {
+  "meaning": "to handle, to treat"
+ },
+ "墨/すみ": {
+  "meaning": "ink (sumi), ink stick"
+ },
+ "像/ぞう": {
+  "meaning": "statue, image"
+ },
+ "便り/たより": {
+  "meaning": "news, letter"
+ },
+ "梅雨/つゆ": {
+  "meaning": "rainy season",
+  "also": [
+   "ばいう"
+  ]
+ },
+ "不思議/ふしぎ": {
+  "meaning": "strange, mysterious"
+ },
+ "振り/ふり": {
+  "meaning": "pretense, swing"
+ },
+ "塀/へい": {
+  "meaning": "wall, fence"
+ },
+ "わた/わた": {
+  "meaning": "cotton"
+ },
+ "さる/さる": {
+  "drop": "kana alone is ambiguous with 去る; monkey is written 猿 or サル"
+ },
+ "勤め/つとめ": {
+  "meaning": "work, duty"
+ },
+ "悪口/わるぐち": {
+  "meaning": "speaking ill, bad-mouthing",
+  "also": [
+   "わるくち"
+  ]
+ },
+ "加味/かみ": {
+  "meaning": "taking into account"
+ },
+ "記入/きにゅう": {
+  "meaning": "filling in (a form)"
+ },
+ "享受/きょうじゅ": {
+  "meaning": "enjoyment (of rights, etc.)"
+ },
+ "幸い/さいわい": {
+  "meaning": "happiness, fortunately"
+ },
+ "沖/おき": {
+  "meaning": "offshore, open sea"
+ },
+ "機嫌/きげん": {
+  "meaning": "mood, humor"
+ },
+ "組む/くむ": {
+  "meaning": "to cross (arms, legs), to team up"
+ },
+ "ただ/ただ": {
+  "drop": "kana alone is ambiguous (only, free, ordinary)"
+ },
+ "年中/ねんじゅう": {
+  "meaning": "all year round"
+ },
+ "万一/まんいち": {
+  "meaning": "by any chance, emergency",
+  "also": [
+   "まんいつ"
+  ]
+ },
+ "慌てる/あわてる": {
+  "meaning": "to panic, to be flustered"
+ },
+ "写る/うつる": {
+  "meaning": "to be photographed, to show (in a photo)"
+ },
+ "生理/せいり": {
+  "meaning": "menstruation, physiology"
+ },
+ "禅/ぜん": {
+  "meaning": "Zen"
+ },
+ "答案/とうあん": {
+  "meaning": "answer sheet"
+ },
+ "年月/としつき": {
+  "meaning": "years, time",
+  "also": [
+   "ねんげつ"
+  ]
+ },
+ "借り/かり": {
+  "meaning": "debt, borrowing"
+ },
+ "さらに/さらに": {
+  "meaning": "furthermore, even more"
+ },
+ "膳/ぜん": {
+  "meaning": "meal tray, small dining table"
+ },
+ "注ぐ/そそぐ": {
+  "also": [
+   "つぐ"
+  ]
+ },
+ "貸し/かし": {
+  "meaning": "loan, lending"
+ },
+ "湿気/しっけ": {
+  "also": [
+   "しっき"
+  ]
+ },
+ "衆/しゅう": {
+  "drop": "not a standalone word at N3; met in compounds (大衆, 観衆)"
+ },
+ "戦う/たたかう": {
+  "meaning": "to fight"
+ },
+ "供/とも": {
+  "drop": "とも alone is rare; learners meet 供 in 子供, お供"
+ },
+ "両替/りょうがえ": {
+  "meaning": "money exchange"
+ },
+ "辺り/あたり": {
+  "meaning": "neighborhood, vicinity"
+ },
+ "加減/かげん": {
+  "meaning": "degree, condition"
+ },
+ "書斎/しょさい": {
+  "meaning": "study (room)"
+ },
+ "尻/しり": {
+  "meaning": "buttocks, bottom"
+ },
+ "助ける/たすける": {
+  "meaning": "to help, to save"
+ },
+ "伝わる/つたわる": {
+  "meaning": "to be conveyed, to spread"
+ },
+ "減らす/へらす": {
+  "meaning": "to reduce, to decrease"
+ },
+ "減る/へる": {
+  "meaning": "to decrease"
+ },
+ "預ける/あずける": {
+  "meaning": "to leave (with someone), to deposit"
+ },
+ "収める/おさめる": {
+  "meaning": "to put away, to obtain"
+ },
+ "季刊/きかん": {
+  "meaning": "quarterly"
+ },
+ "加わる/くわわる": {
+  "meaning": "to join, to be added"
+ },
+ "訓/くん": {
+  "meaning": "kun reading (native Japanese)"
+ },
+ "今に/いまに": {
+  "meaning": "before long, soon"
+ },
+ "癖/くせ": {
+  "meaning": "habit, quirk"
+ },
+ "診る/みる": {
+  "meaning": "to examine (a patient)"
+ },
+ "温まる/あたたまる": {
+  "meaning": "to warm up"
+ },
+ "加える/くわえる": {
+  "meaning": "to add"
+ },
+ "外れる/はずれる": {
+  "meaning": "to come off, to miss"
+ },
+ "得る/うる": {
+  "meaning": "to get, to obtain",
+  "also": [
+   "える"
+  ]
+ },
+ "餌/えさ": {
+  "also": [
+   "え"
+  ]
+ },
+ "精算/せいさん": {
+  "meaning": "settling accounts, fare adjustment"
+ },
+ "地平線/ちへいせん": {
+  "meaning": "horizon"
+ },
+ "日本/にほん": {
+  "also": [
+   "にっぽん"
+  ]
+ },
+ "迷う/まよう": {
+  "meaning": "to get lost, to hesitate"
+ },
+ "弱まる/よわまる": {
+  "meaning": "to weaken, to abate"
+ }
+}

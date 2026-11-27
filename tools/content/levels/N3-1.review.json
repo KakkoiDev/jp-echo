@@ -1,0 +1,505 @@
+{
+ "相手/あいて": {
+  "meaning": "partner, opponent"
+ },
+ "維持/いじ": {
+  "meaning": "maintenance, preservation"
+ },
+ "一時/いちじ": {
+  "meaning": "temporarily, one o'clock"
+ },
+ "市場/いちば": {
+  "meaning": "market",
+  "also": [
+   "しじょう"
+  ]
+ },
+ "一方/いっぽう": {
+  "meaning": "one side, on the other hand"
+ },
+ "課題/かだい": {
+  "meaning": "task, issue"
+ },
+ "活動/かつどう": {
+  "meaning": "activity"
+ },
+ "監督/かんとく": {
+  "meaning": "director, supervision"
+ },
+ "議員/ぎいん": {
+  "meaning": "member of parliament"
+ },
+ "機関/きかん": {
+  "meaning": "organization, institution"
+ },
+ "機構/きこう": {
+  "meaning": "organization, mechanism"
+ },
+ "金融/きんゆう": {
+  "meaning": "finance"
+ },
+ "作品/さくひん": {
+  "meaning": "work (of art or writing)"
+ },
+ "実施/じっし": {
+  "meaning": "implementation, carrying out"
+ },
+ "州/しゅう": {
+  "meaning": "state, province"
+ },
+ "首相/しゅしょう": {
+  "meaning": "prime minister"
+ },
+ "出身/しゅっしん": {
+  "meaning": "hometown, origin"
+ },
+ "商品/しょうひん": {
+  "meaning": "goods, product"
+ },
+ "情報/じょうほう": {
+  "meaning": "information"
+ },
+ "筋/すじ": {
+  "meaning": "muscle, plot (of a story)"
+ },
+ "責任/せきにん": {
+  "meaning": "responsibility"
+ },
+ "捜査/そうさ": {
+  "meaning": "(criminal) investigation"
+ },
+ "大会/たいかい": {
+  "meaning": "tournament, convention"
+ },
+ "対象/たいしょう": {
+  "meaning": "target, subject"
+ },
+ "都市/とし": {
+  "meaning": "city"
+ },
+ "土地/とち": {
+  "meaning": "land, plot of land"
+ },
+ "批判/ひはん": {
+  "meaning": "criticism"
+ },
+ "舞台/ぶたい": {
+  "meaning": "stage"
+ },
+ "報告/ほうこく": {
+  "meaning": "report"
+ },
+ "訪問/ほうもん": {
+  "meaning": "visit"
+ },
+ "保護/ほご": {
+  "meaning": "protection"
+ },
+ "役割/やくわり": {
+  "meaning": "role, part"
+ },
+ "優勝/ゆうしょう": {
+  "meaning": "victory, championship"
+ },
+ "予算/よさん": {
+  "meaning": "budget"
+ },
+ "衛星/えいせい": {
+  "meaning": "satellite"
+ },
+ "核/かく": {
+  "meaning": "nucleus, nuclear weapons"
+ },
+ "組合/くみあい": {
+  "meaning": "union, association"
+ },
+ "貢献/こうけん": {
+  "meaning": "contribution"
+ },
+ "実現/じつげん": {
+  "meaning": "realization, coming true"
+ },
+ "実際/じっさい": {
+  "meaning": "actually, reality"
+ },
+ "主義/しゅぎ": {
+  "meaning": "-ism, principle"
+ },
+ "出場/しゅつじょう": {
+  "meaning": "participation, taking part"
+ },
+ "首都/しゅと": {
+  "meaning": "capital (city)"
+ },
+ "主婦/しゅふ": {
+  "meaning": "housewife, homemaker"
+ },
+ "障害/しょうがい": {
+  "meaning": "obstacle, disability"
+ },
+ "承認/しょうにん": {
+  "meaning": "approval, recognition"
+ },
+ "数字/すうじ": {
+  "meaning": "number, figure"
+ },
+ "装置/そうち": {
+  "meaning": "device, equipment"
+ },
+ "担当/たんとう": {
+  "meaning": "being in charge"
+ },
+ "独立/どくりつ": {
+  "meaning": "independence"
+ },
+ "仲間/なかま": {
+  "meaning": "friend, companion"
+ },
+ "発行/はっこう": {
+  "meaning": "publication, issue"
+ },
+ "被害/ひがい": {
+  "meaning": "damage, harm"
+ },
+ "本人/ほんにん": {
+  "meaning": "the person themselves"
+ },
+ "様子/ようす": {
+  "meaning": "appearance, state"
+ },
+ "無料/むりょう": {
+  "meaning": "free (of charge)"
+ },
+ "以前/いぜん": {
+  "meaning": "before, formerly"
+ },
+ "応援/おうえん": {
+  "meaning": "support, cheering"
+ },
+ "額/がく": {
+  "meaning": "amount (of money), frame"
+ },
+ "空/から": {
+  "drop": "空 alone is read そら (sky) far more often; から would mark そら wrong"
+ },
+ "期限/きげん": {
+  "meaning": "deadline, time limit"
+ },
+ "急速/きゅうそく": {
+  "meaning": "rapid"
+ },
+ "供給/きょうきゅう": {
+  "meaning": "supply"
+ },
+ "近代/きんだい": {
+  "meaning": "modern times"
+ },
+ "最低/さいてい": {
+  "meaning": "lowest, worst"
+ },
+ "差別/さべつ": {
+  "meaning": "discrimination"
+ },
+ "資格/しかく": {
+  "meaning": "qualification, license"
+ },
+ "指揮/しき": {
+  "meaning": "command, conducting (music)"
+ },
+ "実行/じっこう": {
+  "meaning": "carrying out, execution"
+ },
+ "児童/じどう": {
+  "meaning": "child, children"
+ },
+ "資本/しほん": {
+  "meaning": "capital, funds"
+ },
+ "銃/じゅう": {
+  "meaning": "gun"
+ },
+ "集中/しゅうちゅう": {
+  "meaning": "concentration"
+ },
+ "性格/せいかく": {
+  "meaning": "personality, character"
+ },
+ "請求/せいきゅう": {
+  "meaning": "demand, billing"
+ },
+ "成績/せいせき": {
+  "meaning": "grades, results"
+ },
+ "設計/せっけい": {
+  "meaning": "design, plan"
+ },
+ "専攻/せんこう": {
+  "meaning": "major (field of study)"
+ },
+ "相当/そうとう": {
+  "meaning": "considerably, equivalent to"
+ },
+ "他/た": {
+  "also": [
+   "ほか"
+  ]
+ },
+ "代理/だいり": {
+  "meaning": "proxy, substitute"
+ },
+ "単位/たんい": {
+  "meaning": "unit, (school) credit"
+ },
+ "誕生/たんじょう": {
+  "meaning": "birth"
+ },
+ "中学/ちゅうがく": {
+  "meaning": "junior high school"
+ },
+ "中止/ちゅうし": {
+  "meaning": "cancellation, suspension"
+ },
+ "注目/ちゅうもく": {
+  "meaning": "attention, notice"
+ },
+ "著者/ちょしゃ": {
+  "meaning": "author"
+ },
+ "定期/ていき": {
+  "meaning": "regular, periodic"
+ },
+ "提出/ていしゅつ": {
+  "meaning": "submission"
+ },
+ "徹底/てってい": {
+  "meaning": "thoroughness"
+ },
+ "何か/なにか": {
+  "also": [
+   "なんか"
+  ]
+ },
+ "物価/ぶっか": {
+  "meaning": "prices, cost of living"
+ },
+ "都/みやこ": {
+  "meaning": "capital (city)"
+ },
+ "文字/もじ": {
+  "meaning": "letter, character"
+ },
+ "模様/もよう": {
+  "meaning": "pattern, design"
+ },
+ "友好/ゆうこう": {
+  "meaning": "friendship"
+ },
+ "余裕/よゆう": {
+  "meaning": "room, leeway, time to spare"
+ },
+ "依然/いぜん": {
+  "meaning": "still, as before"
+ },
+ "一致/いっち": {
+  "meaning": "agreement, match"
+ },
+ "命/いのち": {
+  "meaning": "life"
+ },
+ "影/かげ": {
+  "meaning": "shadow"
+ },
+ "活躍/かつやく": {
+  "meaning": "being active, great work"
+ },
+ "記憶/きおく": {
+  "meaning": "memory"
+ },
+ "寄付/きふ": {
+  "meaning": "donation"
+ },
+ "球/きゅう": {
+  "also": [
+   "たま"
+  ]
+ },
+ "経緯/けいい": {
+  "also": [
+   "いきさつ"
+  ],
+  "meaning": "details, how it came about"
+ },
+ "刑事/けいじ": {
+  "meaning": "detective"
+ },
+ "作曲/さっきょく": {
+  "meaning": "composing music"
+ },
+ "直/じき": {
+  "drop": "直 alone has several common readings (ちょく, じか, すぐ); じき is not how a learner meets it"
+ },
+ "重視/じゅうし": {
+  "meaning": "attaching importance to"
+ },
+ "順調/じゅんちょう": {
+  "meaning": "going well, smooth"
+ },
+ "少女/しょうじょ": {
+  "meaning": "girl"
+ },
+ "食糧/しょくりょう": {
+  "meaning": "food supplies, provisions"
+ },
+ "署名/しょめい": {
+  "meaning": "signature"
+ },
+ "心理/しんり": {
+  "meaning": "psychology, mentality"
+ },
+ "末/すえ": {
+  "meaning": "end (of a period)"
+ },
+ "正/せい": {
+  "drop": "not a standalone word an N3 learner meets; the logic sense is rare"
+ },
+ "操作/そうさ": {
+  "meaning": "operation (of a machine)"
+ },
+ "底/そこ": {
+  "meaning": "bottom"
+ },
+ "大戦/たいせん": {
+  "meaning": "great war, world war"
+ },
+ "貯金/ちょきん": {
+  "meaning": "savings"
+ },
+ "適用/てきよう": {
+  "meaning": "application (of a rule)"
+ },
+ "電子/でんし": {
+  "meaning": "electron, electronic"
+ },
+ "日中/にっちゅう": {
+  "meaning": "daytime, Japan and China"
+ },
+ "野/の": {
+  "drop": "rare alone; learners meet 野 in compounds"
+ },
+ "博士/はかせ": {
+  "meaning": "doctor (PhD), expert",
+  "also": [
+   "はくし"
+  ]
+ },
+ "畑/はたけ": {
+  "meaning": "field, farm"
+ },
+ "反省/はんせい": {
+  "meaning": "reflection, regret"
+ },
+ "松/まつ": {
+  "meaning": "pine tree"
+ },
+ "未来/みらい": {
+  "meaning": "future"
+ },
+ "役/やく": {
+  "meaning": "role, part"
+ },
+ "郵便/ゆうびん": {
+  "meaning": "mail, post"
+ },
+ "許す/ゆるす": {
+  "meaning": "to allow, to forgive"
+ },
+ "予防/よぼう": {
+  "meaning": "prevention"
+ },
+ "論文/ろんぶん": {
+  "meaning": "thesis, paper"
+ },
+ "会計/かいけい": {
+  "meaning": "accounting, the bill (check)"
+ },
+ "火災/かさい": {
+  "meaning": "fire"
+ },
+ "級/きゅう": {
+  "meaning": "grade, level"
+ },
+ "化粧/けしょう": {
+  "meaning": "makeup"
+ },
+ "強盗/ごうとう": {
+  "meaning": "robber, robbery"
+ },
+ "騒ぎ/さわぎ": {
+  "meaning": "uproar, commotion"
+ },
+ "酸化/さんか": {
+  "drop": "technical, not an N3 word; heard, it is 参加 to a learner"
+ },
+ "刺激/しげき": {
+  "meaning": "stimulus, stimulation"
+ },
+ "示す/しめす": {
+  "meaning": "to show, to indicate"
+ },
+ "借金/しゃっきん": {
+  "meaning": "debt, loan"
+ },
+ "申告/しんこく": {
+  "meaning": "declaration, (tax) return"
+ },
+ "審判/しんぱん": {
+  "meaning": "referee, judgment"
+ },
+ "整理/せいり": {
+  "meaning": "sorting, putting in order"
+ },
+ "調子/ちょうし": {
+  "meaning": "condition, tone"
+ },
+ "敵/てき": {
+  "meaning": "enemy, opponent"
+ },
+ "倒産/とうさん": {
+  "meaning": "bankruptcy"
+ },
+ "得意/とくい": {
+  "meaning": "good at, strong point"
+ },
+ "独特/どくとく": {
+  "meaning": "unique, peculiar"
+ },
+ "なお/なお": {
+  "meaning": "still, furthermore"
+ },
+ "なんとか/なんとか": {
+  "meaning": "somehow, something or other"
+ },
+ "能/のう": {
+  "meaning": "Noh (theatre), ability"
+ },
+ "端/はし": {
+  "also": [
+   "はじ"
+  ]
+ },
+ "縁/ふち": {
+  "drop": "縁 alone is read えん (bond, fate) at least as often; the edge sense is ambiguous"
+ },
+ "保存/ほぞん": {
+  "meaning": "saving, storage"
+ },
+ "免許/めんきょ": {
+  "meaning": "license"
+ },
+ "来/らい": {
+  "drop": "a prefix (来年), not a word on its own"
+ },
+ "礼/れい": {
+  "meaning": "thanks, bow"
+ }
+}

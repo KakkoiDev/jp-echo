@@ -684,6 +684,17 @@ Before considering the change complete:
   passages of papers not sat, never `HELD_OUT`, 90 s each, through the
   round's screens). The other levels follow both reviews: `LEVEL_GLOSS`,
   `LEVEL_READING`, `LEVEL_DROP`, `NOT_WRONG`, more `ACCEPTED_READINGS`.
+- **The rest of the backlog (owner, 27 Nov: "do it all now", v319).** A boss
+  wears the game's look: when the exam is a boss, `body[data-from=game]` and
+  `data-boss=true` skin the intro, questions, break and results (the
+  `body[data-boss=true]` block in styles.css, after the Day Radio skin); every
+  way out leads to Quick round. Built without boards. A new player (no rank,
+  no answer) starts at `START_RANK` N5; a state that has answered without a
+  rank stays N2. Every word of the N5, N4, N3 and N1 lists was read by nine
+  Opus reviewers: `level-review.json` (precached) holds 633 meanings, 124
+  sets of accepted readings and 159 drops, applied by `gamePool({review})`.
+  `REVIEWED_LEVELS` stays `["N2"]` until 6 Dec: adding a level there mixes
+  its cards into N2 rounds. N1 papers are with the mock-exams session.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 
