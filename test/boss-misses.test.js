@@ -464,3 +464,17 @@ test("grammar and word parts are also asked the exam's way: a gap in the sentenc
   assert.ok(js.includes('el("span", {class: "qr-en", lang: "en", text: q.en})'));
   assert.ok(js.includes('if (gapCard(q) && $("game-blank")) { $("game-blank").textContent = q.answer; $("game-blank").classList.add("filled"); }'));
 });
+
+test("the seventeen papers without deciding lines have an input file each, and a returned file is checked before use", () => {
+  const ids = Object.keys(read("../n2-sets/index.json")), done = ["n2-set-2", "n2-set-3"];
+  for (const id of ids.filter(x => !done.includes(x))) {
+    const input = read("../tools/boss-keys/handoff/" + id + ".input.json"), paper = read("../n2-sets/" + id + ".json");
+    assert.equal(input.set, id); assert.equal(Object.keys(input.questions).length, paper.questions.length);
+    assert.equal(Object.values(input.questions).filter(q => q.needsLines).length, 53, id);
+    for (const [i, q] of Object.entries(input.questions)) { assert.equal(q.key, paper.questions[i].key); assert.equal(q.needsLines, ["Reading", "Listening"].includes(q.skill)); if (q.needsLines) assert.equal(q.context, paper.questions[i].context); }
+  }
+  assert.equal(ids.length - done.length, 17);
+  const brief = src("../docs/N2-PAPERS-LINES-HANDOFF.md"), check = src("../tools/boss-keys/check-return.mjs");
+  for (const s of ["character for character", "120 characters", "80 characters", "A blind solve", '"skip"', "findings"]) assert.ok(brief.includes(s), s);
+  assert.ok(check.includes('import {checkKey} from "../n2-build-keys.mjs";') && check.includes("no `solved` mark"), "the limits are the validator's, and nothing is used before the blind solve");
+});
