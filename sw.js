@@ -1,4 +1,4 @@
-const CACHE="jp-echo-v319";
+const CACHE="jp-echo-v320";
 const DICT_CACHE="jp-echo-dict";
 const LEVELS_CACHE="jp-echo-levels";
 const SETS_CACHE="jp-echo-sets";

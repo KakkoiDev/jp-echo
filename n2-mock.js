@@ -9,7 +9,7 @@ import {recognitionFactory} from "./speech.js";
 import {speakOnce,speakAndWait,japaneseVoices,RadioPlayer,NoiseBed} from "./speech.js";
 import {RADIO_DEFAULTS,RADIO_PHASE_COPY,clockAt,radioPhase,radioPlan,radioSteps} from "./radio.js";
 import {readNights, nightComparison, comparisonLine, eveningRecall, EVENING_SOURCE, nightPlan, nightRecord, keepNight, NIGHT_KEY} from "./n2-night.js";
-import {SPRINT, sprintCards, kanjiOrderOf, skillWeights, kindWeights, flagCard, endRest, bossCards, bossQueue, bossReview, partRows, cutUnderline, provedBy, PROVED_MS, heardGap, grammarBlockCard, grammarCoverage, kanjiCoverage, levelCoverage, isCovered, aheadLevel, applyBoss, verdictLine, rankOf, setRank, rankLevels, hasBoss, RANKS, inSlump, itemLevel, levelAfter, ITEM_LEVEL, gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, patternVoice, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
+import {askableKanji, SPRINT, sprintCards, kanjiOrderOf, skillWeights, kindWeights, flagCard, endRest, bossCards, bossQueue, bossReview, partRows, cutUnderline, provedBy, PROVED_MS, heardGap, grammarBlockCard, grammarCoverage, kanjiCoverage, levelCoverage, isCovered, aheadLevel, applyBoss, verdictLine, rankOf, setRank, rankLevels, hasBoss, RANKS, inSlump, itemLevel, levelAfter, ITEM_LEVEL, gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, patternVoice, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
 import {createLevels} from "./jlpt-levels.js";
 import {createSets, levelRows, SET_LEVELS, setLevel, heldOut} from "./jlpt-sets.js";
 import {spokenWord,radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
@@ -1200,7 +1200,7 @@ async function game() {
     else { bossIds = Object.keys((await gameSets.index(level))?.sets || gameSets.ready(level)?.sets || {}); gameSets.keep(level).catch(() => {}); }
     pool = pools[0] || n2Pool; lower = pools[0] ? pools.slice(1).filter(Boolean).flat() : [];
     // Levels of word cards are played kanji first; N2, with its grammar and exam cards, as it always was.
-    rankKanji = (await gameLevels.ready())?.kanji?.[pools[0] ? level : "N2"] || "";
+    rankKanji = askableKanji((await gameLevels.ready())?.kanji?.[pools[0] ? level : "N2"] || "", [pools[0], lower, n2Pool]);
     kanjiFirst = pools[0] && level !== "N2" && rankKanji ? {order: rankKanji, examples: [...lower, ...n2Pool.filter(q => q.kanji)]} : null;
     // The rank's words nearly all met: the level above joins the review places as a preview.
     const ahead = aheadLevel(level);
@@ -1224,7 +1224,8 @@ async function game() {
   function gameSettings() {
     mode("settings"); $("game-title").textContent = "Settings";
     $("game-back").href = "?view=game"; $("game-back").setAttribute("aria-label", "Back to Quick round home"); $("game-back").onclick = e => { e.preventDefault(); home(); };
-    setSeg("game-set-rank", rankOf(readGame())); setSeg("game-set-difficulty", difficulty()); $("game-set-bedtime").value = settings.gameBedtime || "23:30";
+    // The rank has no setting (owner, 27 Nov): it starts at N5 for a new player and only the boss moves it.
+    setSeg("game-set-difficulty", difficulty()); $("game-set-bedtime").value = settings.gameBedtime || "23:30";
     setSwitch("game-set-sound", sound()); setSwitch("game-set-start", !!settings.startGame); $("game-set-status").textContent = "";
     checkUpdate();
   }
@@ -1285,7 +1286,6 @@ async function game() {
   document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && nightPlayer.running) navigator.wakeLock?.request("screen").then(w => { nightWake = w; }).catch(() => {}); });
   segClick("game-set-difficulty", v => savePreference("gameDifficulty", difficultyOf(v)));
   // The rank, set by hand until the owner fixes how it is won and lost.
-  segClick("game-set-rank", async v => { writeGame(setRank(readGame(), v)); await loadRank(); $("game-set-status").textContent = missing.includes(v) ? v + " needs a connection once. Playing N2 until then." : ""; });
   $("game-set-bedtime").onchange = e => savePreference("gameBedtime", e.target.value || "23:30");
   switchClick("game-set-start", on => savePreference("startGame", on));
   switchClick("game-set-sound", on => setSound(on));
@@ -1451,7 +1451,7 @@ async function game() {
     $("game-home-sections").hidden = !lastRun;
     if (lastRun) $("game-home-sections").textContent = "Last boss · " + lastRun.sections.map(s => (s.short || s.ja || s.label || s.name) + " " + s.scaled + "/" + (s.max ?? SECTION_MAX) + (s.ok === false ? " (under " + (s.min ?? SECTION_MIN) + ")" : "")).join(" · ");
     $("game-home-level").textContent = [!own ? rank + " needs a connection once: playing N2" : pool.every(q => q.practice) ? "practice, not scored yet" : "", verdictLine((st.bossLog || []).at(-1)),
-      difficulty() === "normal" ? "" : DIFFICULTY[difficulty()].label].filter(Boolean).join(" · ") + (own && !pool.every(q => q.practice) && difficulty() === "normal" && !(st.bossLog || []).length ? "" : " · change in Settings");
+      difficulty() === "normal" ? "" : DIFFICULTY[difficulty()].label].filter(Boolean).join(" · ") + (difficulty() === "normal" ? "" : " · change in Settings");
     // The dock: one big button, then the pair (boards 1 · A–D).
     $("game-home-boss").hidden = !open; $("game-home-radio").hidden = !rest || open; $("game-home-play").hidden = open || rest;
     $("game-home-play2").hidden = !open; $("game-home-play3").hidden = !rest || open;

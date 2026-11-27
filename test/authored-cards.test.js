@@ -224,3 +224,27 @@ test("a new player starts at N5; a boss wears the game's look", async () => {
   assert.ok(js.includes('$("result-next").href = "?view=game"; $("result-next").textContent = "Back to Quick round";'));
   assert.ok(css.includes("body[data-boss=true] .n2-choice{") && css.includes("body[data-boss=true] #exam .drill-bar{height:14px"));
 });
+
+test("after the word-list review every kanji a level counts can still be asked somewhere", async () => {
+  const {askableKanji} = await import("../n2-game.js");
+  const rv = read("../level-review.json"), m = read("../levels/manifest.json"), pools = {};
+  for (const lv of ["N5", "N4", "N3", "N1"]) pools[lv] = gamePool({inventory: read("../levels/" + m.version + "/" + lv.toLowerCase() + ".json"), level: lv, review: rv});
+  const n2 = gamePool({inventory, parts: read("../n2-kanji-parts.json")});
+  const all = [...Object.values(pools), n2];
+  for (const lv of Object.keys(pools)) {
+    const order = askableKanji(m.kanji[lv], all), has = new Set(all.flatMap(p => p.filter(q => q.kind === "reading").flatMap(q => (q.kanji || []).map(k => [...k][0]))));
+    for (const k of order) assert.ok(has.has(k), lv + " " + k);
+    assert.ok(order.length >= m.kanji[lv].length - 10, lv + ": only the kanji of dropped rare spellings leave");
+  }
+  assert.ok(!askableKanji(m.kanji.N5, all).includes("咖") && !askableKanji(m.kanji.N3, all).includes("吝"));
+  assert.ok(src("../n2-mock.js").includes("rankKanji = askableKanji((await gameLevels.ready())?.kanji?.[pools[0] ? level : \"N2\"] || \"\", [pools[0], lower, n2Pool]);"));
+});
+
+test("the handoffs: one for the designer, one for a native reader with its data", () => {
+  const design = src("../docs/design/game/UNBOARDED-HANDOFF.md"), native = src("../docs/NATIVE-REVIEW-HANDOFF.md"), data = read("../tools/scored-review/native-review-data.json");
+  for (const s of ["Sentence order · ★", "The boss review", "The boss exam", "What to hand back"]) assert.ok(design.includes(s), s);
+  for (const part of ["paraphrase", "ordering", "pairs", "gapWrong", "addedParts", "connectives", "wordPieces", "partMeanings", "listLabels", "examEnglish", "decidingLines"]) {
+    assert.ok(native.includes("`" + part + "`"), part); assert.ok(Object.keys(data[part] || {}).length > 0, part);
+  }
+  assert.equal(data.paraphrase.length, read("../n2-paraphrase.json").items.length);
+});

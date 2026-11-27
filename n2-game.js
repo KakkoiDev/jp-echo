@@ -903,6 +903,14 @@ export function inSlump(state = {}) {
 // over the same pool (kanjiPick): a missed reading first, then new kanji in the order of how many N2 words carry them,
 // then proving them in words not seen yet. `kanjiOrder` is that order; without it the round is picked as before.
 export const KANJI_PLACES = 2;
+// A level's kanji that some card can ask (a reading card in any of the pools given). A kanji whose only words were
+// dropped by the word-list review (咖哩, 其れから, 吝嗇: rare spellings) leaves the level's order and its count, so a
+// level can be fully known.
+export function askableKanji(order = "", pools = []) {
+  const has = new Set();
+  for (const pool of pools) for (const q of pool || []) if (q.kind === "reading") for (const key of q.kanji || []) has.add([...key][0]);
+  return [...order].filter(k => has.has(k)).join("");
+}
 export function kanjiOrderOf(pool = []) {
   const count = new Map();
   for (const q of pool) if (q.kind === "reading") for (const key of q.kanji || []) { const k = [...key][0]; count.set(k, (count.get(k) || 0) + 1); }

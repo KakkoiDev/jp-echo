@@ -695,6 +695,13 @@ Before considering the change complete:
   sets of accepted readings and 159 drops, applied by `gamePool({review})`.
   `REVIEWED_LEVELS` stays `["N2"]` until 6 Dec: adding a level there mixes
   its cards into N2 rounds. N1 papers are with the mock-exams session.
+- **No rank setting (owner, 27 Nov, v320).** The rank segment is gone from
+  Settings: a new player starts at N5 and only the boss moves the rank. A
+  rank's kanji order keeps only kanji some card can ask (`askableKanji`), so
+  a level can be fully known after the word-list review dropped rare
+  spellings. Handoffs: `docs/design/game/UNBOARDED-HANDOFF.md` (everything
+  built without boards) and `docs/NATIVE-REVIEW-HANDOFF.md` with
+  `tools/scored-review/make-native.mjs` (everything an AI wrote).
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

@@ -950,10 +950,9 @@ test("the game screen loads the rank's levels, shows the rank on Home and sets i
   assert.match(js, /\$\("game-rank"\)\.textContent = rank;/, "the rank is a chip beside the title");
   assert.match(html, /<span id="game-title">Quick round<\/span><span class="qr-chip" data-tone="seal" id="game-rank" hidden><\/span>/);
   assert.match(html, /id="game-radio-open" type="button"><span class="qr-glyph" lang="ja" aria-hidden="true">音<\/span>Radio<\/button>/, "Radio is 音, not a moon");
-  assert.match(js, /writeGame\(setRank\(readGame\(\), v\)\); await loadRank\(\)/);
+  // The rank has no setting (owner, 27 Nov): only the boss moves it.
+  assert.ok(!js.includes("game-set-rank") && !html.includes("game-set-rank"));
   assert.match(js, /const bossNow = \(\) => hasBoss\(bossRank\(\)\) && bossIds\.length \? bossSet\(\{sets: bossIds, attempts: data\.attempts, /, "no boss is promised while a level has no papers on the device");
-  for (const r of RANKS) assert.ok(html.includes('role="radio" data-value="' + r + '">' + r + "</button>"), r);
-  assert.match(html, /id="game-set-rank" role="radiogroup" aria-label="Rank"/);
 });
 
 // ---- Kanji first ----
