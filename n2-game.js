@@ -345,15 +345,14 @@ function addGrammarBlocks(pool, {blocks = {}, patterns = {}}) {
 // The level a card belongs to: cards without one are N2's.
 export const levelOfCard = q => q?.level || "N2";
 
-export const CONNECTIVE_PREV = 60;
 function connectiveQuestion(source, text, site) {
   const job = jobOf(site.word);
   if (!job) return [];
   const before = text.slice(0, site.at).replace(/\n/g, ""), after = text.slice(site.at + site.word.length);
-  // One sentence before the gap, no more (owner, 27 Nov): a long excerpt is known by its shape, not read. A
-  // sentence over CONNECTIVE_PREV characters is cut at a comma, and the cut shown with an ellipsis.
-  let prev = (before.match(/[^。」]*[。」]\s*$/) || [""])[0].trim();
-  if (prev.length > CONNECTIVE_PREV) { const tail = prev.slice(-CONNECTIVE_PREV), cut = tail.indexOf("、"); prev = "…" + (cut >= 0 && cut < tail.length - 12 ? tail.slice(cut + 1) : tail); }
+  // Up to two sentences before the gap. One sentence was tried (27 Nov) and taken back the same day: with less
+  // before it, a second connective often fits too, and the card stops being fair (owner: "the wrong direction").
+  // What keeps a long excerpt from being known by its shape is its rest (restFor), not its length.
+  const prev = (before.match(/(?:[^。」]*[。」]){1,2}\s*$/) || [""])[0].trim();
   const rest = (after.match(/^、[^。\n]*[。」]?/) || [""])[0];
   if (!prev || rest.length < 6) return [];
   const blocked = new Set(OVERLAP[job] || [job]);

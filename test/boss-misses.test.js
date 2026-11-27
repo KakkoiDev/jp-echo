@@ -263,23 +263,21 @@ test("every boss review card is spoken once: the word, the pattern, a listening 
   assert.ok(js.includes("if (sound() && (q.say || spoken)) setTimeout(() => { if (reviewToken === askToken && !$(\"game-review\").hidden) say(q.say || spoken); }, 150);"));
 });
 
-test("a connective excerpt is one sentence before the gap; its review is the word and its meaning at a glance", async () => {
-  const {CONNECTIVE_PREV} = await import("../n2-game.js");
+test("a connective keeps up to two sentences before the gap; its review is the word and its meaning at a glance", () => {
   const ids = Object.keys(read("../n2-sets/index.json")), all = gamePool({inventory, examples, sets: ids.map(id => read("../n2-sets/" + id + ".json")), sat: new Set(ids)}).filter(q => q.kind === "connective");
-  assert.ok(all.length > 200); assert.equal(CONNECTIVE_PREV, 60);
+  assert.ok(all.length > 200);
   for (const q of all) {
     const [before, after] = q.sentence.split("（　）");
-    assert.ok(before.length <= CONNECTIVE_PREV + 1, q.id + ": " + before.length);
-    assert.equal((before.replace(/[。」]\s*$/, "").match(/。/g) || []).length, 0, q.id + ": one sentence before the gap");
+    assert.ok((before.match(/[。」]/g) || []).length >= 1, q.id);
     assert.ok(after.startsWith("、") && after.length >= 6, q.id);
     // The review: the connective, a short meaning, its job as the why, and the gap's own sentence.
     assert.equal(q.solution.word, q.answer); assert.ok(q.solution.meaning && q.solution.meaning.length <= 60 && !q.solution.meaning.includes(" · "), q.id);
     assert.ok(/^[A-Z][a-z]+: /.test(q.solution.why), q.id); assert.equal(q.solution.ja, q.answer + after);
   }
-  const lengths = all.map(q => q.sentence.length).sort((a, b) => a - b);
-  assert.ok(lengths[lengths.length >> 1] <= 70, "half of them are under 70 characters");
+  // Shortening to one sentence was tried and taken back (owner, 27 Nov): less context makes a second connective fit.
   const mata = all.find(q => q.id === "c:n2-set-2#66@286");
-  assert.equal(mata.sentence, "一冊の本が汚れれば、次に読む人が迷惑する。（　）、古い資料の中には、一度傷むと二度と元に戻らないものもある。");
-  assert.equal(mata.solution.meaning, "also, in addition");
+  assert.equal(mata.sentence, "しかし、図書館の本は多くの人が共有する財産だ。一冊の本が汚れれば、次に読む人が迷惑する。（　）、古い資料の中には、一度傷むと二度と元に戻らないものもある。");
+  assert.equal(mata.solution.meaning, "also, in addition"); assert.equal(mata.solution.ja, "また、古い資料の中には、一度傷むと二度と元に戻らないものもある。");
+  assert.ok(src("../n2-game.js").includes("(?:[^。」]*[。」]){1,2}"));
   assert.ok(src("../n2-mock.js").includes('if (q.kind === "connective") line.textContent = q.solution?.why || "";'));
 });
