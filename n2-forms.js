@@ -42,7 +42,12 @@ export function instructionFor(q) {
   if (q.skill === "Listening") return q.options === 3 || (q.choices || []).length === 3 ? by("Listening", 4) : by("Listening", 2);
   return "";
 }
-export const realisticPaperId = id => id + "@" + SETS_EDITION;
+// A paper revised on its own carries its own edition, so that revising one does not detach every sitting of the
+// others from its review lines (27 Nov: eight questions with a second natural answer, found by an outside review).
+export const SET_EDITIONS = Object.freeze({"n2-set-4": "2026.11-r4", "n2-set-5": "2026.11-r4", "n2-set-8": "2026.11-r4", "n2-set-9": "2026.11-r4",
+  "n2-set-10": "2026.11-r4", "n2-set-14": "2026.11-r4", "n2-set-20": "2026.11-r4"});
+export const editionOf = id => SET_EDITIONS[id] || SETS_EDITION;
+export const realisticPaperId = id => id + "@" + editionOf(id);
 export const setFile = id => "./n2-sets/" + id + ".json";
 // A realistic set (n2-sets/<id>.json) as exam rows: each question carries its
 // 問題 number, kind and the official-style instruction.

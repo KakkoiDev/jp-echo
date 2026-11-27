@@ -13,7 +13,7 @@ import {mkdtempSync, writeFileSync, mkdirSync} from "node:fs";
 import {tmpdir} from "node:os";
 import {pathToFileURL} from "node:url";
 import {TAG} from "../n2-comprehension.js";
-import {SETS_EDITION, realisticPaperId, realisticRows, setFile} from "../n2-forms.js";
+import {SETS_EDITION, editionOf, realisticPaperId, realisticRows, setFile} from "../n2-forms.js";
 
 const read = p => JSON.parse(readFileSync(new URL(p, import.meta.url), "utf8"));
 const profiles = Object.fromEntries(read("../datasets/jlpt/exam-profiles.json").profiles.map(p => [p.level, p]));
@@ -275,7 +275,7 @@ test("the exam opens bundled N2 bosses without the downloaded levels, including 
   const getPaper = vm.runInNewContext(route + "\n" + loader + "\ngetPaper", {
     SET_LEVELS, setLevel, materials: async () => {},
     access: async (_, op, value) => op === "get" ? papers.get(value) : papers.set(value.id, value),
-    realistic: book => book === id, realisticPaperId, realisticRows, setFile, SETS_EDITION,
+    realistic: book => book === id, realisticPaperId, realisticRows, setFile, SETS_EDITION, editionOf,
     titleOf: book => book, json: async file => { files.push(file); return read("../" + file); },
     gameSets: {ready: () => assert.fail("a bundled N2 boss must not use the downloaded level loader")},
   });

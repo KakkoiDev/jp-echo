@@ -1,5 +1,5 @@
 import {dateKey, parseGoalDate, firstPassEnd, goalKey, readGoal, writeGoal, shortDate, longDate} from "./jlpt-goal.js";
-import {bookIds,bookName,EDITION,SETS_EDITION,form,realisticRows,realisticPaperId,setFile,instructionFor,solutionOf,whyReadings} from "./n2-forms.js";
+import {bookIds,bookName,EDITION,SETS_EDITION,editionOf,form,realisticRows,realisticPaperId,setFile,instructionFor,solutionOf,whyReadings} from "./n2-forms.js";
 import {access,currentAttempts,download,prefix,report,scored,n2Adapter} from "./n2-progress.js";
 import {startAutoSync,markDirty,gistSettings} from "./sync.js";
 import {LEVEL_EXAM,examOf as examRules,SKILLS,SKILL_JA,SECTIONS,PASS_TOTAL,SECTION_MIN,SECTION_MAX,estimate,sprintCheckpoint,nextExamDate,daysUntil,recallQueue,recallRecord,recallId,dailyGoal,coverage,localDay,todayPlan,measuredPace,capMinutes,DAY_MINUTES,EXAM_CHECKLIST,goalDates,formatMinutes,shortenPlan,maintenancePlan,resultsMonth,doneToday,markDone,scoreSeries,scoreCaption,examHeadLine,nextKicker,checkpointLine,mockTileState,historyKind,answering,resultPractice} from "./n2-study.js";
@@ -334,7 +334,7 @@ async function getPaper(id, version) {
   let rows;
   if (realistic(id) && (!version || version === realisticPaperId(id))) {
     const set = await json(setFile(id));
-    const paper = {id: key, book: id, title: titleOf(id), edition: SETS_EDITION, questions: realisticRows(set)};
+    const paper = {id: key, book: id, title: titleOf(id), edition: editionOf(id), questions: realisticRows(set)};
     await access("papers", "put", paper);
     return paper;
   }
