@@ -628,6 +628,15 @@ Before considering the change complete:
   sentences have no English of their own. `voiced` gives the voice the
   pattern (gap cards too), the word, a part without its ～, or the
   connective: gap, connective and word-part cards were silent.
+- **A word is met in its sentence, and a built connective shows its pieces
+  (owner, 27 Nov, v314).** An N2 meaning card shows the deck sentence with
+  the word underlined, in the form the sentence writes it (`heardGap`), four
+  seconds; this replaces "word kinds show the big word" for that kind where a
+  sentence exists. `LINK_PARTS` (n2-game-review.js) lists the connectives
+  made of plain pieces (それ + な + のに): their card shows the pieces as a
+  build card does, says them together after the answer, and repeats them in
+  the review; five seconds. The pieces were written by the maintainer agent
+  and are unreviewed.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

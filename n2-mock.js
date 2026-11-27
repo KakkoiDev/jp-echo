@@ -1618,7 +1618,7 @@ async function game() {
     // A gap card (the exam's direction): the sentence with its gap, and what the sentence means under it.
     if (gapCard(q)) { const [a, b] = q.sentence.split("（　）"); $("game-sentence").replaceChildren(a, el("span", {class: "qr-blank", id: "game-blank"}), b || "", el("span", {class: "qr-en", lang: "en", text: q.en})); }
     const parts = $("game-grammar-parts");
-    parts.hidden = q.kind !== "build";
+    parts.hidden = !(q.kind === "build" || (q.kind === "link" && q.parts?.length));
     parts.replaceChildren(...partList(q.parts)); parts.dataset.rows = String(partRows(q.parts).length);
     card.dataset.kind = q.kind; $("game-proved").hidden = true;
     // Board 11 · E: a practice card reads as practice: dashed card, dim clock, ring pip.
@@ -1710,6 +1710,8 @@ async function game() {
     else if (outcome === "dontknow") line.textContent = "Fine. Keep going.";
     // Board 13 · D–E: after any answer on a build card, the parts read together, in the line's slot.
     if (q.kind === "build" && q.literal) { line.replaceChildren(el("small", {text: "piece by piece"}), q.literal); line.className = "qr-line literal"; line.dataset.tone = outcome === "right" ? "right" : ""; }
+    // A built connective says its pieces together the same way (それ + な + のに: "even though that is so").
+    if (q.kind === "link" && q.literal) { line.replaceChildren(el("small", {text: "piece by piece"}), q.literal); line.className = "qr-line literal"; line.dataset.tone = outcome === "right" ? "right" : ""; }
     // Item strength: a fast right answer stamps a square in; a miss takes one away (boards 9, 2).
     const lvFrom = q.practice && !q.record ? 0 : itemLevel(readGame(), q.id), lvTo = q.practice && !q.record ? 0 : levelAfter(readGame(), {id: q.id, outcome, fast: result.fast});
     if (lvTo > lvFrom) { ups.push({word: String(q.solution?.word || q.prompt).replace(/[〜～]/g, ""), from: lvFrom, to: lvTo}); if (!$("game-lv").hidden || !$("game-master").hidden) { paintLevel(lvTo, true); $("game-lvup").hidden = false; } }
@@ -1808,6 +1810,8 @@ async function game() {
     // Board 13 · G: a missed build or infer card shows its parts and their literal reading, between the pick and the sentence.
     const rows = (q.kind === "build" || q.kind === "infer") && q.parts ? partList(q.parts) : [];
     $("game-review-parts").hidden = !rows.length; $("game-review-partlist").replaceChildren(...rows);
+    // A built connective shows its pieces here too.
+    if (q.kind === "link" && q.parts) { $("game-review-parts").hidden = false; $("game-review-partlist").replaceChildren(...partList(q.parts)); }
     $("game-review-literal").hidden = !q.literal; $("game-review-literal").replaceChildren(...(q.literal ? [el("small", {text: "piece by piece"}), q.literal] : []));
     $("game-next").textContent = n === misses.length - 1 ? (paperReview ? "Done" : "Round end") : "Next";
     // A boss review card (bossReview): the question, the right choice, the pick; then the deciding lines and the why.

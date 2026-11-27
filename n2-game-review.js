@@ -225,6 +225,26 @@ export const LINK_WHY = Object.freeze({
 // is underlined, and the reading shown where the part is voiced in compounds (川沿い ぞい, 北口 ぐち).
 export const AFFIX_SHOWN = Object.freeze({"～済": "済み", "～付": "付き", "～ぽい": "っぽい", "我～": "我が"});
 export const AFFIX_READING = Object.freeze({"～沿い": "～ぞい", "～切れ": "～ぎれ", "～口": "～ぐち"});
+// Connectives built of plain pieces, as the card shows them: [piece, what it does] in order, and the pieces read
+// together. The pieces joined must be the word as the card writes it. Written by the maintainer agent on 27 Nov at
+// the owner's request (それなのに and それなら were "too bare"); not reviewed.
+export const LINK_PARTS = Object.freeze({
+  "それなのに": {parts: [["それ", "that"], ["な", "being so"], ["のに", "even though"]], literal: "even though that is so"},
+  "それなら": {parts: [["それ", "that"], ["なら", "if it is"]], literal: "if that is so"},
+  "それでも": {parts: [["それ", "that"], ["でも", "even with"]], literal: "even with that"},
+  "それに対して": {parts: [["それ", "that"], ["に対して", "set against"]], literal: "set against that"},
+  "そのため": {parts: [["その", "that"], ["ため", "reason; sake"]], literal: "for that reason"},
+  "その結果": {parts: [["その", "that"], ["結果", "result"]], literal: "as the result of that"},
+  "そのうえ": {parts: [["その", "that"], ["うえ", "top; on top"]], literal: "on top of that"},
+  "このように": {parts: [["この", "this"], ["ように", "in the way of"]], literal: "in this way"},
+  "とはいえ": {parts: [["と", "(what was said)"], ["は", "as for"], ["いえ", "though one can say"]], literal: "though one can say that"},
+  "にもかかわらず": {parts: [["それ", "that"], ["に", "to"], ["も", "even"], ["かかわらず", "without regard"]], literal: "without regard even to that"},
+  "とすれば": {parts: [["だ", "is so"], ["と", "(supposing)"], ["すれば", "if one takes it"]], literal: "if one takes it to be so"},
+  "だから": {parts: [["だ", "is so"], ["から", "because"]], literal: "because it is so"},
+  "なぜなら": {parts: [["なぜ", "why"], ["なら", "if (you ask)"]], literal: "if you ask why"},
+  "例えば": {parts: [["例え", "giving a case"], ["ば", "if"]], literal: "if one gives a case"},
+  "言い換えれば": {parts: [["言い", "saying"], ["換えれ", "swapped"], ["ば", "if"]], literal: "if one says it another way"},
+  "要するに": {parts: [["要する", "boiling down"], ["に", "in"]], literal: "in what it boils down to"}});
 export const LINK_SHOWN = Object.freeze({"にもかかわらず": "それにもかかわらず", "とすれば": "だとすれば"});
 // The word-part cards (前～, ～気味): their meanings are the word list's and their sentences the deck's, neither read by
 // a reviewer as affix content. False: practice, no points. True only after that review.

@@ -508,3 +508,33 @@ test("a round's review speaks every kind of card, and shows an exam card as the 
   const exam = gamePool({inventory, examples, sets: [set], sat: new Set([set.id])}).find(q => q.id === "e:n2-set-2#31");
   assert.deepEqual(exam.target, ["grammar", "以上2"]); assert.ok(pool.some(q => q.kind === "grammar" && q.target[1] === "以上2" && q.solution.meaning), "the pattern's meaning is at hand");
 });
+
+test("a connective built of plain pieces shows them; a word is met in its sentence, not bare", async () => {
+  const {LINK_PARTS, LINK_SHOWN} = await import("../n2-game-review.js");
+  const {SECONDS, partRows, heardGap} = await import("../n2-game.js");
+  const links = pool.filter(q => q.kind === "link"), built = links.filter(q => q.parts);
+  assert.equal(built.length, Object.keys(LINK_PARTS).length); assert.ok(built.length >= 15);
+  for (const q of built) {
+    assert.equal(q.parts.map(p => p.text).join(""), q.prompt, q.id + ": the pieces make the word as the card writes it");
+    assert.ok(q.parts.every(p => p.gloss && p.gloss.length <= 40 && !/[ぁ-んァ-ヶ一-龯]/.test(p.gloss)), q.id);
+    assert.ok(q.literal && !/[ぁ-んァ-ヶ一-龯]/.test(q.literal)); assert.equal(q.seconds, SECONDS.linkBuilt); assert.equal(partRows(q.parts).length, q.parts.length);
+  }
+  const nanoni = links.find(q => q.id === "k:それなのに"), nara = links.find(q => q.id === "k:それなら");
+  assert.deepEqual(nanoni.parts.map(p => p.text), ["それ", "な", "のに"]); assert.equal(nanoni.literal, "even though that is so");
+  assert.deepEqual(nara.parts.map(p => p.text), ["それ", "なら"]); assert.equal(nara.literal, "if that is so");
+  assert.equal(links.find(q => q.id === "k:にもかかわらず").prompt, LINK_SHOWN["にもかかわらず"]);
+  assert.ok(!links.find(q => q.id === "k:しかし").parts, "a connective that is one piece stays as it was");
+  const js = src("../n2-mock.js");
+  assert.ok(js.includes('parts.hidden = !(q.kind === "build" || (q.kind === "link" && q.parts?.length));'));
+  assert.ok(js.includes('if (q.kind === "link" && q.literal) { line.replaceChildren(el("small", {text: "piece by piece"}), q.literal);'));
+  assert.ok(js.includes('if (q.kind === "link" && q.parts) { $("game-review-parts").hidden = false;'));
+  // Meaning cards: the deck sentence with the word underlined, in the form the sentence writes it.
+  const meaning = pool.filter(q => q.kind === "meaning");
+  assert.ok(meaning.every(q => q.sentence && q.sentence.includes(q.needle)), "every N2 meaning card shows its sentence");
+  const kagiri = meaning.find(q => q.id === "m:限り"), kuzusu = meaning.find(q => q.id === "m:崩す");
+  assert.equal(kagiri.sentence, "できる限りのことはするつもりです。"); assert.equal(kagiri.needle, "限り"); assert.equal(kagiri.seconds, SECONDS.meaningInSentence);
+  assert.equal(kuzusu.needle, heardGap(kuzusu.solution.ja, "崩す")); assert.ok(kuzusu.sentence.includes("崩して"));
+  assert.deepEqual([SECONDS.meaning, SECONDS.meaningInSentence, SECONDS.link, SECONDS.linkBuilt], [3, 4, 3, 5]);
+  // Another level has no deck sentences: its meaning cards stay a bare word.
+  assert.ok(gamePool({inventory: {words: [["犬", "いぬ", "dog"], ["猫", "ねこ", "cat"], ["鳥", "とり", "bird"], ["魚", "さかな", "fish"], ["馬", "うま", "horse"]], grammar: []}, level: "N5"}).filter(q => q.kind === "meaning").every(q => q.sentence === ""));
+});

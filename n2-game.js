@@ -23,7 +23,7 @@
 import {recallItems, localDay} from "./n2-study.js";
 import {HELD_OUT} from "./n2-comprehension.js";
 import {connectiveSites, jobOf, glossOf, JOBS, OVERLAP, CHOICE_FOR_JOB, CONNECTIVES} from "./n2-connectives.js";
-import {ACCEPTED_READINGS, READING_KEY, EXCLUDED, GLOSS_FIX, GRAMMAR_SPANS, REVIEWED_LEVELS, REVIEWED_GRAMMAR_BLOCKS, REVIEWED_AFFIXES, AFFIX_GLOSS, AFFIX_CONFUSABLE, AFFIX_SHOWN, AFFIX_READING, LINK_NOT_WRONG, LINK_SHOWN, LINK_WHY, SCORE_ALL, GRAMMAR_CONFUSABLE} from "./n2-game-review.js";
+import {ACCEPTED_READINGS, READING_KEY, EXCLUDED, GLOSS_FIX, GRAMMAR_SPANS, REVIEWED_LEVELS, REVIEWED_GRAMMAR_BLOCKS, REVIEWED_AFFIXES, AFFIX_GLOSS, AFFIX_CONFUSABLE, AFFIX_SHOWN, AFFIX_READING, LINK_NOT_WRONG, LINK_SHOWN, LINK_WHY, LINK_PARTS, SCORE_ALL, GRAMMAR_CONFUSABLE} from "./n2-game-review.js";
 import {exampleSegments} from "./n2-delayed.js";
 import {LEVELS} from "./jlpt-levels.js";
 
@@ -34,7 +34,7 @@ export const GAME_SOURCE = "game";
 // as it is given, so closing the page mid-round loses nothing.
 // Blitz chess, not shogi (owner, 26 Nov): seconds, not minutes, per question.
 export const ROUND_SIZE = 10, REVIEW_SECONDS = 5, DAILY_GOAL = 1000, RECENT_MS = 4 * 3600_000;
-export const SECONDS = Object.freeze({reading: 3, meaning: 3, definition: 4, listen: 5, homophone: 5, grammar: 6, affix: 5, gap: 8, partgap: 6, link: 3, connective: 7, exam: {1: 4, 2: 5, 3: 5, 4: 7, 5: 6, 7: 8}});
+export const SECONDS = Object.freeze({reading: 3, meaning: 3, meaningInSentence: 4, definition: 4, listen: 5, homophone: 5, grammar: 6, affix: 5, gap: 8, partgap: 6, link: 3, linkBuilt: 5, connective: 7, exam: {1: 4, 2: 5, 3: 5, 4: 7, 5: 6, 7: 8}});
 // The pause after an answer before the next question, in milliseconds.
 export const PAUSE = Object.freeze({right: 250, miss: 800});
 export const KIND_LABEL = Object.freeze({reading: "Reading", meaning: "Meaning", definition: "Which word", listen: "Listen", connective: "Connective · 問題9", homophone: "Which kanji", grammar: "Grammar", block: "Grammar piece", build: "Grammar parts", infer: "New grammar", exam: "Exam question", affix: "Word part", link: "Connective", gap: "Grammar · fill the gap", partgap: "Word part · fill the gap"});
@@ -171,8 +171,11 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
     const wrongMeanings = distinct(own, [...new Set([...near, ...far].map(o => gloss(o.answer)))]);
     // A word spelled like another (紅葉 こうよう / もみじ) shows its sentence: the cue to its sense.
     const cue = spellings.get(w.text) > 1 && ex && plain(ex.ja).includes(w.text) ? plain(ex.ja) : "";
+    // The word is met in its sentence, underlined, not bare (owner, 27 Nov: 限り alone says little): where the
+    // deck sentence writes the word, in this form or another (崩す, 崩して), the card shows it.
+    const written = ex ? heardGap(ex.ja, w.text) : "";
     if (own && wrongMeanings.length >= 3) pool.push({id: "m:" + id, kind: "meaning", target: w.target, dimension: "meaning", prompt: w.text,
-      sentence: cue, needle: w.text, answer: own, wrong: wrongMeanings, near: wrongMeanings.filter(m => near.some(o => gloss(o.answer) === m)), seconds: SECONDS.meaning,
+      sentence: written ? plain(ex.ja) : cue, needle: written || w.text, answer: own, wrong: wrongMeanings, near: wrongMeanings.filter(m => near.some(o => gloss(o.answer) === m)), seconds: written ? SECONDS.meaningInSentence : SECONDS.meaning,
       solution: {word: w.text, reading: w.reading, meaning: w.answer, ja: ex?.ja || "", en: ex?.en || ""}});
     // Definition: the meaning shown, the word to find; no wrong word may share the meaning.
     const nearWords = [...new Set(near.map(o => o.text))].filter(t => t !== w.text), farWords = [...new Set(far.map(o => o.text))].filter(t => t !== w.text && !nearWords.includes(t));
@@ -400,9 +403,13 @@ function linkCards() {
     const blocked = new Set(OVERLAP[job] || [job]);
     const wrong = [...new Set(CONNECTIVES.filter(([w, j, m]) => w !== word && !blocked.has(j) && !sameSense(m, meaning)).map(([, , m]) => m))].filter(m => !(LINK_NOT_WRONG[word] || []).includes(m));
     const shown = LINK_SHOWN[word] || word; // the form the word is met in (それにもかかわらず); the id keeps the table's
+    // Where a connective is built of plain pieces (それ + な + のに), the card shows them, as a grammar card shows its
+    // parts, and says them together after the answer: one more word worked out, not memorised (owner, 27 Nov).
+    const built = LINK_PARTS[word];
     if (wrong.length < 3 || !JOBS[job]) return [];
     return [{...(SCORE_ALL ? {} : {practice: true, record: true}), id: "k:" + word, kind: "link", target: null, dimension: null, prompt: shown,
-      sentence: "", answer: meaning, wrong, job, seconds: SECONDS.link, solution: {word: shown, meaning, why: LINK_WHY[word] || JOBS[job], ja: "", en: ""}}];
+      sentence: "", answer: meaning, wrong, job, seconds: built ? SECONDS.linkBuilt : SECONDS.link, ...(built ? {parts: built.parts.map(([text, g]) => ({text, gloss: g})), literal: built.literal} : {}),
+      solution: {word: shown, meaning, why: LINK_WHY[word] || JOBS[job], ja: "", en: ""}}];
   });
 }
 

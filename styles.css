@@ -2585,6 +2585,8 @@ html.motion-off .n2-game *{animation:none !important}html.motion-off .n2-game *:
   /* Board 13 · F: a build card gives up the "say it" line first, then its rows tighten. */
   body[data-view=game] .qr-card[data-kind=build] .qr-say{display:none}
   body[data-view=game] .qr-card[data-kind=gap] .qr-say,body[data-view=game] .qr-card[data-kind=partgap] .qr-say{display:none}
+  /* A connective shown with its pieces: the word smaller and no "say it" line, so the choices stay on screen. */
+  body[data-view=game] .qr-card[data-kind=link] .qr-say{display:none}body[data-view=game] .qr-card[data-kind=link] .qr-big.mid{font-size:24px;margin:6px 0 2px}body[data-view=game] .qr-card[data-kind=link] .qr-grammar-parts{margin-top:4px}
   body[data-view=game] .qr-card[data-kind=build] .qr-sent{line-height:1.6;margin-top:8px}
   /* Measured at 375 × 667: five rows, a two-line sentence and one two-line choice overflowed by 11 px; five rows take 24 px each. */
   body[data-view=game] .qr-grammar-parts[data-rows="5"] b,body[data-view=game] .qr-grammar-parts[data-rows="5"] span{min-height:24px;padding:2px 0}
