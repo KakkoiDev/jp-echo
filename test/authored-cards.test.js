@@ -34,7 +34,7 @@ test("sentence order (問題8): four tiles, the one on ★; only items a second 
 
 test("clause pairs: a gap between two short clauses, wrong choices from jobs that cannot stand in", () => {
   const cards = pool.filter(q => q.kind === "pair");
-  if (!cards.length) return; // the file ships once its blind test is done
+  assert.ok(cards.length >= 150, "what passed the blind test");
   assert.equal(SECONDS.pair, 6); assert.equal(KIND_SKILL.pair, "reading");
   for (const q of cards) {
     const job = jobOf(q.answer), blocked = new Set(OVERLAP[job] || [job]);
@@ -47,7 +47,8 @@ test("clause pairs: a gap between two short clauses, wrong choices from jobs tha
 
 test("paraphrase: one sentence, the choice that says the same", () => {
   const cards = pool.filter(q => q.kind === "para");
-  if (!cards.length) return; // the file ships once its blind test is done
+  assert.ok(cards.length >= 230, "what passed the blind test");
+  assert.ok(src("../sw.js").includes('"./n2-paraphrase.json"'));
   assert.equal(SECONDS.para, 8); assert.equal(KIND_LABEL.para, "Same meaning"); assert.equal(KIND_SKILL.para, "reading");
   for (const q of cards) {
     assert.equal(q.wrong.length, 3); assert.ok(!q.wrong.includes(q.answer)); assert.equal(q.sentence, plain(q.solution.ja));

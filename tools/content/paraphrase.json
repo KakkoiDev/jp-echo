@@ -1,0 +1,3122 @@
+[
+ {
+  "id": "pp-001",
+  "ja": "雨【あめ】にもかかわらず、試合【しあい】は予定【よてい】どおり行【おこな】われた。",
+  "choices": [
+   "雨【あめ】のため、試合【しあい】は中止【ちゅうし】になった。",
+   "雨【あめ】が止【や】んだので、試合【しあい】が始【はじ】まった。",
+   "雨【あめ】が降【ふ】ったが、試合【しあい】は行【おこな】われた。",
+   "雨【あめ】が降【ふ】る前【まえ】に、試合【しあい】が終【お】わった。"
+  ],
+  "key": 3,
+  "en": "Despite the rain, the match was held as planned.",
+  "why": "The pattern means 'in spite of'; 1 reverses the result, 2 says the rain stopped, 4 changes the timing."
+ },
+ {
+  "id": "pp-002",
+  "ja": "終電【しゅうでん】を逃【のが】したので、タクシーで帰【かえ】らざるを得【え】なかった。",
+  "choices": [
+   "終電【しゅうでん】がなかったが、タクシーには乗【の】らなかった。",
+   "終電【しゅうでん】がなく、タクシーで帰【かえ】るしかなかった。",
+   "タクシーで帰【かえ】りたかったので、終電【しゅうでん】に乗【の】らなかった。",
+   "終電【しゅうでん】に間【ま】に合【あ】ったので、電車【でんしゃ】で帰【かえ】った。"
+  ],
+  "key": 2,
+  "en": "I missed the last train, so I had no choice but to go home by taxi.",
+  "why": "The pattern means 'had no choice but to'; 1 denies the taxi, 3 turns it into a wish, 4 says the train was caught."
+ },
+ {
+  "id": "pp-003",
+  "ja": "明日【あした】は大事【だいじ】な会議【かいぎ】があるので、休【やす】むわけにはいかない。",
+  "choices": [
+   "明日【あした】は会議【かいぎ】がないので、休【やす】んでもいい。",
+   "会議【かいぎ】があっても、明日【あした】は休【やす】むつもりだ。",
+   "明日【あした】は大事【だいじ】な会議【かいぎ】があり、休【やす】めない。",
+   "明日【あした】は休【やす】んで、会議【かいぎ】に出【で】ない。"
+  ],
+  "key": 3,
+  "en": "I have an important meeting tomorrow, so I can't take the day off.",
+  "why": "The pattern means 'cannot (for social reasons)'; 1 removes the meeting, 2 and 4 say the speaker will take the day off."
+ },
+ {
+  "id": "pp-004",
+  "ja": "この量【りょう】なら、一日【いちにち】で終【お】わらせられないことはない。",
+  "choices": [
+   "この量【りょう】では、一日【いちにち】で終【お】わるはずがない。",
+   "この量【りょう】なら、半日【はんにち】で簡単【かんたん】に終【お】わる。",
+   "一日【いちにち】でも、終【お】わらせることは可能【かのう】だ。",
+   "一日【いちにち】で終【お】わらせなければならない。"
+  ],
+  "key": 3,
+  "en": "With this amount, it's not impossible to finish it in a day.",
+  "why": "A double negative: 'not impossible' means possible; 1 says impossible, 2 exaggerates the ease, 4 turns it into an obligation."
+ },
+ {
+  "id": "pp-005",
+  "ja": "そんな運転【うんてん】をしていたら、事故【じこ】を起【お】こしかねない。",
+  "choices": [
+   "そんな運転【うんてん】でも、事故【じこ】は起【お】こさないだろう。",
+   "事故【じこ】を起【お】こしたので、運転【うんてん】をやめた。",
+   "事故【じこ】のせいで、そんな運転【うんてん】になった。",
+   "そんな運転【うんてん】では、事故【じこ】を起【お】こすかもしれない。"
+  ],
+  "key": 4,
+  "en": "If you drive like that, you could cause an accident.",
+  "why": "The pattern means 'there is a risk of' something bad; 1 denies the risk, 2 says it already happened, 3 swaps cause and result."
+ },
+ {
+  "id": "pp-006",
+  "ja": "申【もう】し訳【わけ】ありませんが、そのご要望【ようぼう】にはお応【こた】えしかねます。",
+  "choices": [
+   "残念【ざんねん】ですが、その要望【ようぼう】には応【こた】えられません。",
+   "その要望【ようぼう】には、喜【よろこ】んで応【こた】えます。",
+   "その要望【ようぼう】に応【こた】えるかどうか、まだ決【き】めていません。",
+   "要望【ようぼう】を出【だ】すことはできません。"
+  ],
+  "key": 1,
+  "en": "We're sorry, but we are unable to meet that request.",
+  "why": "The pattern is a polite 'cannot'; 2 accepts the request, 3 says it is undecided, 4 changes the action to making a request."
+ },
+ {
+  "id": "pp-007",
+  "ja": "こんな難【むずか】しい問題【もんだい】、子供【こども】に解【と】けっこないよ。",
+  "choices": [
+   "こんな難【むずか】しい問題【もんだい】は、子供【こども】には絶対【ぜったい】に解【と】けない。",
+   "難【むずか】しい問題【もんだい】だが、子供【こども】にも解【と】ける。",
+   "子供【こども】は、難【むずか】しい問題【もんだい】が好【す】きだ。",
+   "子供【こども】に、こんな問題【もんだい】を作【つく】れるはずがない。"
+  ],
+  "key": 1,
+  "en": "There's no way a child could solve such a hard problem.",
+  "why": "The pattern means 'there is no way'; 2 says a child can solve it, 3 talks about liking, 4 changes solving to making."
+ },
+ {
+  "id": "pp-008",
+  "ja": "彼【かれ】は謝【あやま】るどころか、逆【ぎゃく】に怒【おこ】り出【だ】した。",
+  "choices": [
+   "彼【かれ】は謝【あやま】ってから、少【すこ】し怒【おこ】った。",
+   "彼【かれ】は怒【おこ】ったが、すぐに謝【あやま】った。",
+   "彼【かれ】が怒【おこ】ったので、私【わたし】が謝【あやま】った。",
+   "彼【かれ】は謝【あやま】らないで、反対【はんたい】に怒【おこ】った。"
+  ],
+  "key": 4,
+  "en": "Far from apologizing, he got angry instead.",
+  "why": "The pattern means 'far from': he did not apologize at all; 1 and 2 have him apologize, 3 has someone else apologize."
+ },
+ {
+  "id": "pp-009",
+  "ja": "彼女【かのじょ】は英語【えいご】ばかりか、中国語【ちゅうごくご】も話【はな】せる。",
+  "choices": [
+   "彼女【かのじょ】は英語【えいご】も中国語【ちゅうごくご】も話【はな】せる。",
+   "彼女【かのじょ】は英語【えいご】しか話【はな】せない。",
+   "彼女【かのじょ】は中国語【ちゅうごくご】だけ話【はな】せる。",
+   "彼女【かのじょ】は英語【えいご】より中国語【ちゅうごくご】が得意【とくい】だ。"
+  ],
+  "key": 1,
+  "en": "She can speak not only English but also Chinese.",
+  "why": "The pattern means 'not only... but also'; 2 and 3 leave out one language, 4 compares skill instead."
+ },
+ {
+  "id": "pp-010",
+  "ja": "引【ひ】き受【う】けたからには、最後【さいご】まで責任【せきにん】を持【も】つべきだ。",
+  "choices": [
+   "引【ひ】き受【う】けても、途中【とちゅう】でやめてかまわない。",
+   "責任【せきにん】が重【おも】いので、引【ひ】き受【う】けなかった。",
+   "引【ひ】き受【う】けたのなら、最後【さいご】まで責任【せきにん】を持【も】つべきだ。",
+   "最後【さいご】まで責任【せきにん】を持【も】てば、引【ひ】き受【う】けられる。"
+  ],
+  "key": 3,
+  "en": "Once you've taken it on, you should see it through to the end.",
+  "why": "The pattern means 'now that / since'; 1 gives permission to quit, 2 says it was refused, 4 turns the condition around."
+ },
+ {
+  "id": "pp-011",
+  "ja": "契約【けいやく】した以上【いじょう】、途中【とちゅう】でやめることはできない。",
+  "choices": [
+   "契約【けいやく】したのだから、途中【とちゅう】ではやめられない。",
+   "契約【けいやく】したが、途中【とちゅう】でやめてもいい。",
+   "途中【とちゅう】でやめたので、契約【けいやく】できなかった。",
+   "契約【けいやく】する前【まえ】に、途中【とちゅう】でやめた。"
+  ],
+  "key": 1,
+  "en": "Now that the contract is signed, you can't quit partway.",
+  "why": "The pattern means 'now that'; 2 gives permission to quit, 3 swaps cause and result, 4 changes the timing."
+ },
+ {
+  "id": "pp-012",
+  "ja": "新【あたら】しいパソコンを買【か】ったものの、まだ一度【いちど】も使【つか】っていない。",
+  "choices": [
+   "パソコンを買【か】って、毎日【まいにち】使【つか】っている。",
+   "パソコンを買【か】いたいが、まだ買【か】っていない。",
+   "パソコンを買【か】ったが、まだ使【つか】っていない。",
+   "使【つか】わないので、パソコンは買【か】わなかった。"
+  ],
+  "key": 3,
+  "en": "I bought a new computer, but I haven't used it even once.",
+  "why": "The pattern means 'although'; 1 says it is used daily, 2 and 4 say it was never bought."
+ },
+ {
+  "id": "pp-013",
+  "ja": "大方【おおかた】の予想【よそう】に反【はん】して、新人【しんじん】の候補者【こうほしゃ】が当選【とうせん】した。",
+  "choices": [
+   "多【おお】くの人【ひと】の予想【よそう】と違【ちが】って、新人【しんじん】が当選【とうせん】した。",
+   "予想【よそう】どおり、新人【しんじん】が当選【とうせん】した。",
+   "予想【よそう】と違【ちが】って、新人【しんじん】は落選【らくせん】した。",
+   "予想【よそう】と違【ちが】って、選挙【せんきょ】は中止【ちゅうし】された。"
+  ],
+  "key": 1,
+  "en": "Contrary to most predictions, the newcomer candidate won.",
+  "why": "The pattern means 'contrary to'; 2 says it was expected, 3 says the newcomer lost, 4 cancels the election."
+ },
+ {
+  "id": "pp-014",
+  "ja": "この公園【こうえん】は週末【しゅうまつ】に限【かぎ】らず、いつも人【ひと】でにぎわっている。",
+  "choices": [
+   "この公園【こうえん】は、週末【しゅうまつ】だけでなく平日【へいじつ】も混【こ】んでいる。",
+   "この公園【こうえん】は、週末【しゅうまつ】だけ混【こ】んでいる。",
+   "この公園【こうえん】は、週末【しゅうまつ】はすいている。",
+   "この公園【こうえん】は、いつも静【しず】かだ。"
+  ],
+  "key": 1,
+  "en": "This park is lively not only on weekends but all the time.",
+  "why": "The pattern means 'not limited to'; 2 limits it to weekends, 3 and 4 say the park is empty."
+ },
+ {
+  "id": "pp-015",
+  "ja": "新【あたら】しい駅【えき】の建設【けんせつ】をめぐって、住民【じゅうみん】の意見【いけん】が分【わ】かれている。",
+  "choices": [
+   "新【あたら】しい駅【えき】を作【つく】ることに、住民【じゅうみん】は皆【みな】賛成【さんせい】だ。",
+   "住民【じゅうみん】が反対【はんたい】したので、駅【えき】はできなかった。",
+   "新【あたら】しい駅【えき】の前【まえ】で、住民【じゅうみん】が集【あつ】まっている。",
+   "新【あたら】しい駅【えき】を作【つく】ることについて、住民【じゅうみん】の考【かんが】えが違【ちが】う。"
+  ],
+  "key": 4,
+  "en": "Residents are divided over the construction of a new station.",
+  "why": "The pattern means 'over (a disputed issue)'; 1 says all agree, 2 invents an outcome, 3 reads it as a place."
+ },
+ {
+  "id": "pp-016",
+  "ja": "人口【じんこう】の増加【ぞうか】に伴【ともな】って、ごみの量【りょう】も増【ふ】えている。",
+  "choices": [
+   "人口【じんこう】は増【ふ】えたが、ごみは減【へ】っている。",
+   "人口【じんこう】が増【ふ】えるとともに、ごみも増【ふ】えている。",
+   "ごみが増【ふ】えたので、人口【じんこう】が増【ふ】えた。",
+   "人口【じんこう】が減【へ】って、ごみも減【へ】っている。"
+  ],
+  "key": 2,
+  "en": "As the population grows, the amount of garbage is also increasing.",
+  "why": "The pattern means 'along with a change'; 1 reverses the garbage trend, 3 swaps cause and result, 4 reverses both."
+ },
+ {
+  "id": "pp-017",
+  "ja": "準備【じゅんび】ができ次第【しだい】、すぐに出発【しゅっぱつ】いたします。",
+  "choices": [
+   "準備【じゅんび】ができる前【まえ】に、出発【しゅっぱつ】します。",
+   "準備【じゅんび】ができても、すぐには出発【しゅっぱつ】しません。",
+   "準備【じゅんび】ができないので、出発【しゅっぱつ】しません。",
+   "準備【じゅんび】ができたら、すぐに出発【しゅっぱつ】します。"
+  ],
+  "key": 4,
+  "en": "We'll leave as soon as we're ready.",
+  "why": "The pattern means 'as soon as'; 1 leaves before being ready, 2 delays the start, 3 cancels the departure."
+ },
+ {
+  "id": "pp-018",
+  "ja": "家【いえ】を出【で】たとたん、雨【あめ】が降【ふ】り出【だ】した。",
+  "choices": [
+   "家【いえ】を出【で】る前【まえ】から、雨【あめ】が降【ふ】っていた。",
+   "家【いえ】を出【で】てすぐに、雨【あめ】が降【ふ】り始【はじ】めた。",
+   "雨【あめ】が降【ふ】り出【だ】したので、家【いえ】を出【で】なかった。",
+   "家【いえ】を出【で】てしばらくして、雨【あめ】が止【や】んだ。"
+  ],
+  "key": 2,
+  "en": "The moment I left the house, it started to rain.",
+  "why": "The pattern means 'the moment'; 1 has the rain start earlier, 3 says I stayed in, 4 says the rain stopped later."
+ },
+ {
+  "id": "pp-019",
+  "ja": "さんざん迷【まよ】ったあげく、結局【けっきょく】何【なに】も買【か】わなかった。",
+  "choices": [
+   "少【すこ】しも迷【まよ】わずに、すぐに買【か】った。",
+   "長【なが】い間【あいだ】悩【なや】んだが、最後【さいご】は何【なに】も買【か】わなかった。",
+   "長【なが】い間【あいだ】迷【まよ】って、結局【けっきょく】全部【ぜんぶ】買【か】った。",
+   "何【なに】も買【か】えなかったので、迷【まよ】ってしまった。"
+  ],
+  "key": 2,
+  "en": "After agonizing for a long time, I ended up buying nothing.",
+  "why": "The pattern means 'after much (with a poor outcome)'; 1 removes the hesitation, 3 reverses the outcome, 4 swaps cause and result."
+ },
+ {
+  "id": "pp-020",
+  "ja": "何度【なんど】も話【はな】し合【あ】った末【すえ】に、二人【ふたり】は別【わか】れることにした。",
+  "choices": [
+   "二人【ふたり】は話【はな】し合【あ】わないまま、別【わか】れた。",
+   "何度【なんど】も話【はな】し合【あ】って、二人【ふたり】は別【わか】れないことにした。",
+   "二人【ふたり】は何回【なんかい】も話【はな】し合【あ】って、最後【さいご】に別【わか】れると決【き】めた。",
+   "別【わか】れてから、二人【ふたり】は何度【なんど】も話【はな】し合【あ】った。"
+  ],
+  "key": 3,
+  "en": "After talking it over many times, the two decided to break up.",
+  "why": "The pattern means 'in the end, after'; 1 drops the talks, 2 reverses the decision, 4 changes the order."
+ },
+ {
+  "id": "pp-021",
+  "ja": "台風【たいふう】の影響【えいきょう】で、明日【あした】は電車【でんしゃ】が止【と】まるおそれがある。",
+  "choices": [
+   "台風【たいふう】が来【き】ても、明日【あした】の電車【でんしゃ】は必【かなら】ず動【うご】く。",
+   "台風【たいふう】のせいで、明日【あした】は電車【でんしゃ】が止【と】まるかもしれない。",
+   "台風【たいふう】のせいで、今日【きょう】電車【でんしゃ】が止【と】まった。",
+   "台風【たいふう】のせいで、明日【あした】は必【かなら】ず電車【でんしゃ】が止【と】まる。"
+  ],
+  "key": 2,
+  "en": "Because of the typhoon, trains may stop tomorrow.",
+  "why": "The pattern means 'there is a risk'; 1 denies the risk, 3 moves it to today, 4 turns a risk into a certainty."
+ },
+ {
+  "id": "pp-022",
+  "ja": "もう二度【にど】とあの店【みせ】には行【い】くまいと心【こころ】に決【き】めた。",
+  "choices": [
+   "またあの店【みせ】に行【い】こうと決【き】めた。",
+   "あの店【みせ】に行【い】くかどうか、まだ迷【まよ】っている。",
+   "あの店【みせ】にはもう行【い】けないと言【い】われた。",
+   "もうあの店【みせ】には絶対【ぜったい】に行【い】かないと決【き】めた。"
+  ],
+  "key": 4,
+  "en": "I made up my mind never to go to that shop again.",
+  "why": "The pattern means 'will not (resolve)'; 1 reverses it, 2 says it is undecided, 3 makes it someone else's ban."
+ },
+ {
+  "id": "pp-023",
+  "ja": "彼【かれ】の話【はなし】を聞【き】くと、笑【わら】わずにはいられない。",
+  "choices": [
+   "彼【かれ】の話【はなし】を聞【き】くと、どうしても笑【わら】ってしまう。",
+   "彼【かれ】の話【はなし】は、全然【ぜんぜん】おもしろくない。",
+   "彼【かれ】の話【はなし】を聞【き】いても、笑【わら】ってはいけない。",
+   "彼【かれ】は私【わたし】の話【はなし】を聞【き】いて、いつも笑【わら】う。"
+  ],
+  "key": 1,
+  "en": "Whenever I hear his stories, I can't help laughing.",
+  "why": "The pattern means 'cannot help doing'; 2 says it is not funny, 3 forbids laughing, 4 swaps who laughs."
+ },
+ {
+  "id": "pp-024",
+  "ja": "困【こま】っている人【ひと】を見【み】ると、声【こえ】をかけないではいられない。",
+  "choices": [
+   "困【こま】っている人【ひと】がいても、声【こえ】はかけない。",
+   "困【こま】ったときは、誰【だれ】かに声【こえ】をかけてほしい。",
+   "困【こま】っている人【ひと】に、声【こえ】をかけるべきではない。",
+   "困【こま】っている人【ひと】がいると、つい声【こえ】をかけてしまう。"
+  ],
+  "key": 4,
+  "en": "When I see someone in trouble, I can't help speaking to them.",
+  "why": "The pattern means 'cannot keep from doing'; 1 reverses it, 2 makes the speaker the one in trouble, 3 turns it into advice against."
+ },
+ {
+  "id": "pp-025",
+  "ja": "高【たか】い薬【くすり】がよく効【き】くとは限【かぎ】らない。",
+  "choices": [
+   "高【たか】い薬【くすり】は、必【かなら】ずよく効【き】く。",
+   "値段【ねだん】の高【たか】い薬【くすり】が、よく効【き】かないこともある。",
+   "高【たか】い薬【くすり】は、どれも効【き】かない。",
+   "安【やす】い薬【くすり】のほうが、必【かなら】ずよく効【き】く。"
+  ],
+  "key": 2,
+  "en": "Expensive medicine doesn't necessarily work well.",
+  "why": "The pattern means 'not necessarily'; 1 says always, 3 says never, 4 makes a sure claim about cheap medicine."
+ },
+ {
+  "id": "pp-026",
+  "ja": "肉【にく】が嫌【きら】いなわけではないが、最近【さいきん】はあまり食【た】べない。",
+  "choices": [
+   "肉【にく】は嫌【きら】いではないが、最近【さいきん】は少【すこ】ししか食【た】べない。",
+   "肉【にく】が嫌【きら】いなので、最近【さいきん】は食【た】べない。",
+   "肉【にく】が好【す】きなので、最近【さいきん】よく食【た】べる。",
+   "最近【さいきん】、肉【にく】が嫌【きら】いになってきた。"
+  ],
+  "key": 1,
+  "en": "It's not that I dislike meat, but I don't eat much of it lately.",
+  "why": "The pattern means 'it is not that'; 2 and 4 say the speaker dislikes meat, 3 says they eat a lot."
+ },
+ {
+  "id": "pp-027",
+  "ja": "練習【れんしゅう】は長【なが】くやればいいというものではない。",
+  "choices": [
+   "練習【れんしゅう】は、長【なが】ければ長【なが】いほどいい。",
+   "練習【れんしゅう】は、しなくてもいい。",
+   "長【なが】く練習【れんしゅう】しても、効果【こうか】があるとは限【かぎ】らない。",
+   "長【なが】く練習【れんしゅう】したので、上手【じょうず】になった。"
+  ],
+  "key": 3,
+  "en": "Practice isn't good just because you do it for a long time.",
+  "why": "The pattern means 'it is not simply the case that'; 1 says longer is better, 2 drops practice, 4 reports a success."
+ },
+ {
+  "id": "pp-028",
+  "ja": "小【ちい】さなミスだから、そんなに気【き】にすることはない。",
+  "choices": [
+   "小【ちい】さなミスでも、気【き】にしたほうがいい。",
+   "小【ちい】さなミスなので、誰【だれ】も気【き】づかなかった。",
+   "小【ちい】さなミスなので、気【き】にしなくていい。",
+   "小【ちい】さなミスを、気【き】にせずにはいられない。"
+  ],
+  "key": 3,
+  "en": "It was only a small mistake, so there's no need to worry so much.",
+  "why": "The pattern means 'there is no need to'; 1 advises worrying, 2 talks about noticing, 4 says the speaker can't stop worrying."
+ },
+ {
+  "id": "pp-029",
+  "ja": "体【からだ】のためには、早寝【はやね】早起【はやお】きに越【こ】したことはない。",
+  "choices": [
+   "体【からだ】のためには、早【はや】く寝【ね】て早【はや】く起【お】きるのが一番【いちばん】だ。",
+   "早【はや】く寝【ね】ても、体【からだ】にはよくない。",
+   "早【はや】く寝【ね】られないのは、体【からだ】のせいだ。",
+   "早【はや】く寝【ね】て早【はや】く起【お】きる必要【ひつよう】はない。"
+  ],
+  "key": 1,
+  "en": "For your health, nothing beats early to bed and early to rise.",
+  "why": "The pattern means 'nothing is better than'; 2 says it is not good, 3 invents a cause, 4 says it is unnecessary."
+ },
+ {
+  "id": "pp-030",
+  "ja": "部屋【へや】の電気【でんき】がついているから、彼【かれ】は家【いえ】にいるに違【ちが】いない。",
+  "choices": [
+   "電気【でんき】はついているが、彼【かれ】は家【いえ】にいないはずだ。",
+   "電気【でんき】がついているので、彼【かれ】はきっと家【いえ】にいる。",
+   "彼【かれ】が家【いえ】にいるので、電気【でんき】をつけた。",
+   "彼【かれ】が家【いえ】にいるかどうか、全然【ぜんぜん】わからない。"
+  ],
+  "key": 2,
+  "en": "The light is on in his room, so he must be at home.",
+  "why": "The pattern means 'must be'; 1 reverses the conclusion, 3 swaps cause and result, 4 removes the certainty."
+ },
+ {
+  "id": "pp-031",
+  "ja": "この字【じ】は、田中【たなか】さんが書【か】いたものに相違【そうい】ない。",
+  "choices": [
+   "この字【じ】は、きっと田中【たなか】さんが書【か】いたものだ。",
+   "この字【じ】は、田中【たなか】さんが書【か】いたものではない。",
+   "田中【たなか】さんは、この字【じ】が読【よ】めない。",
+   "田中【たなか】さんが書【か】いたかどうか、わからない。"
+  ],
+  "key": 1,
+  "en": "This handwriting is surely Mr. Tanaka's.",
+  "why": "The pattern means 'without doubt'; 2 denies it, 3 is about reading, 4 removes the certainty."
+ },
+ {
+  "id": "pp-032",
+  "ja": "そんな高【たか】い値段【ねだん】では、誰【だれ】も買【か】わないに決【き】まっている。",
+  "choices": [
+   "高【たか】くても、買【か】う人【ひと】はたくさんいる。",
+   "誰【だれ】も買【か】わないので、値段【ねだん】が高【たか】くなった。",
+   "値段【ねだん】が高【たか】いかどうか、誰【だれ】も知【し】らない。",
+   "そんなに高【たか】ければ、きっと誰【だれ】も買【か】わない。"
+  ],
+  "key": 4,
+  "en": "At such a high price, of course nobody will buy it.",
+  "why": "The pattern means 'surely, of course'; 1 reverses the prediction, 2 swaps cause and result, 3 is about knowing the price."
+ },
+ {
+  "id": "pp-033",
+  "ja": "誰【だれ】も手伝【てつだ】ってくれないなら、自分【じぶん】でやるよりほかない。",
+  "choices": [
+   "誰【だれ】かが手伝【てつだ】うまで、待【ま】つしかない。",
+   "手伝【てつだ】う人【ひと】がいないなら、自分【じぶん】でするしかない。",
+   "自分【じぶん】でやらずに、誰【だれ】かに頼【たの】めばいい。",
+   "自分【じぶん】でやったので、誰【だれ】も手伝【てつだ】わなかった。"
+  ],
+  "key": 2,
+  "en": "If no one will help me, I have no choice but to do it myself.",
+  "why": "The pattern means 'no other way than'; 1 waits for help, 3 asks someone else, 4 swaps cause and result."
+ },
+ {
+  "id": "pp-034",
+  "ja": "住所【じゅうしょ】がわからないので、手紙【てがみ】の送【おく】りようがない。",
+  "choices": [
+   "住所【じゅうしょ】はわかるが、手紙【てがみ】を送【おく】りたくない。",
+   "手紙【てがみ】を送【おく】ったので、住所【じゅうしょ】がわかった。",
+   "住所【じゅうしょ】がなくても、手紙【てがみ】は送【おく】れる。",
+   "住所【じゅうしょ】を知【し】らないので、手紙【てがみ】を送【おく】ることができない。"
+  ],
+  "key": 4,
+  "en": "I don't know the address, so there's no way to send the letter.",
+  "why": "The pattern means 'there is no way to'; 1 makes it unwillingness, 2 swaps cause and result, 3 says it is possible."
+ },
+ {
+  "id": "pp-035",
+  "ja": "今回【こんかい】の成功【せいこう】は、皆【みな】さんの努力【どりょく】の結果【けっか】にほかならない。",
+  "choices": [
+   "皆【みな】さんが努力【どりょく】したが、成功【せいこう】しなかった。",
+   "今回【こんかい】の成功【せいこう】は、運【うん】がよかったからだ。",
+   "今回【こんかい】成功【せいこう】したのは、まさに皆【みな】さんが努力【どりょく】したからだ。",
+   "成功【せいこう】したので、皆【みな】さんがもっと努力【どりょく】した。"
+  ],
+  "key": 3,
+  "en": "This success is nothing other than the result of everyone's efforts.",
+  "why": "The pattern means 'nothing other than'; 1 denies success, 2 gives another cause, 4 swaps cause and result."
+ },
+ {
+  "id": "pp-036",
+  "ja": "この店【みせ】の料理【りょうり】は安【やす】い上【うえ】に、量【りょう】も多【おお】い。",
+  "choices": [
+   "この店【みせ】の料理【りょうり】は、安【やす】くて量【りょう】も多【おお】い。",
+   "この店【みせ】の料理【りょうり】は安【やす】いが、量【りょう】が少【すく】ない。",
+   "この店【みせ】の料理【りょうり】は高【たか】いが、量【りょう】が多【おお】い。",
+   "この店【みせ】の料理【りょうり】は、高【たか】くて量【りょう】も少【すく】ない。"
+  ],
+  "key": 1,
+  "en": "The food at this restaurant is cheap, and the portions are big too.",
+  "why": "The pattern means 'on top of'; 2 reverses the portions, 3 reverses the price, 4 reverses both."
+ },
+ {
+  "id": "pp-037",
+  "ja": "試合【しあい】に出【で】ると決【き】めた上【うえ】は、全力【ぜんりょく】で戦【たたか】うつもりだ。",
+  "choices": [
+   "試合【しあい】に出【で】ると決【き】めたので、全力【ぜんりょく】で戦【たたか】う。",
+   "試合【しあい】に出【で】るかどうか、まだ決【き】めていない。",
+   "試合【しあい】には出【で】るが、無理【むり】はしないつもりだ。",
+   "全力【ぜんりょく】で戦【たたか】えないので、試合【しあい】には出【で】ない。"
+  ],
+  "key": 1,
+  "en": "Now that I've decided to play in the match, I intend to give it my all.",
+  "why": "The pattern means 'now that'; 2 says it is undecided, 3 holds back effort, 4 says the speaker won't play."
+ },
+ {
+  "id": "pp-038",
+  "ja": "この町【まち】は、駅【えき】を中心【ちゅうしん】に発展【はってん】してきた。",
+  "choices": [
+   "この町【まち】は、駅【えき】から遠【とお】い所【ところ】が発展【はってん】した。",
+   "この町【まち】には、まだ駅【えき】がない。",
+   "この町【まち】は、主【おも】に駅【えき】の周【まわ】りが発展【はってん】してきた。",
+   "駅【えき】ができてから、町【まち】の人口【じんこう】が減【へ】った。"
+  ],
+  "key": 3,
+  "en": "This town has grown up around the station.",
+  "why": "The pattern means 'centred on'; 1 moves the growth away, 2 removes the station, 4 says the town shrank."
+ },
+ {
+  "id": "pp-039",
+  "ja": "会議【かいぎ】は三日間【みっかかん】にわたって行【おこな】われた。",
+  "choices": [
+   "会議【かいぎ】は三日間【みっかかん】続【つづ】いた。",
+   "会議【かいぎ】は三日後【みっかご】に行【おこな】われる。",
+   "会議【かいぎ】は三日【みっか】に一回【いっかい】行【おこな】われる。",
+   "会議【かいぎ】は三時間【さんじかん】で終【お】わった。"
+  ],
+  "key": 1,
+  "en": "The conference was held over three days.",
+  "why": "The pattern means 'spanning'; 2 changes it to a date, 3 to a frequency, 4 shortens it to hours."
+ },
+ {
+  "id": "pp-040",
+  "ja": "川【かわ】に沿【そ】って、桜【さくら】の木【き】が植【う】えられている。",
+  "choices": [
+   "川【かわ】のそばに、桜【さくら】の木【き】が並【なら】んでいる。",
+   "川【かわ】の中【なか】に、桜【さくら】の木【き】が一本【いっぽん】ある。",
+   "桜【さくら】の木【き】を切【き】って、川【かわ】を作【つく】った。",
+   "川【かわ】から遠【とお】い所【ところ】に、桜【さくら】の木【き】がある。"
+  ],
+  "key": 1,
+  "en": "Cherry trees are planted along the river.",
+  "why": "The pattern means 'along'; 2 puts one tree in the river, 3 cuts the trees, 4 moves them away from it."
+ },
+ {
+  "id": "pp-041",
+  "ja": "山【やま】を登【のぼ】るにしたがって、空気【くうき】が薄【うす】くなる。",
+  "choices": [
+   "山【やま】の高【たか】い所【ところ】へ行【い】くほど、空気【くうき】が薄【うす】くなる。",
+   "山【やま】を登【のぼ】っても、空気【くうき】は変【か】わらない。",
+   "山【やま】を下【お】りるほど、空気【くうき】が薄【うす】くなる。",
+   "空気【くうき】が薄【うす】いので、山【やま】に登【のぼ】れない。"
+  ],
+  "key": 1,
+  "en": "The higher you climb the mountain, the thinner the air becomes.",
+  "why": "The pattern means 'as one thing changes, so does another'; 2 denies the change, 3 reverses direction, 4 invents a cause."
+ },
+ {
+  "id": "pp-042",
+  "ja": "工事中【こうじちゅう】につき、この道【みち】は通【とお】れません。",
+  "choices": [
+   "工事【こうじ】をしているので、この道【みち】は通【とお】れない。",
+   "工事【こうじ】は終【お】わったので、この道【みち】を通【とお】れる。",
+   "この道【みち】を通【とお】ると、工事【こうじ】の場所【ばしょ】に着【つ】く。",
+   "この道【みち】は、工事【こうじ】のあとで通【とお】れなくなる。"
+  ],
+  "key": 1,
+  "en": "This road is closed due to construction.",
+  "why": "The pattern means 'due to' (on notices); 2 says the work is over, 3 reads it as directions, 4 moves the closure later."
+ },
+ {
+  "id": "pp-043",
+  "ja": "この写真【しゃしん】を見【み】るにつけ、楽【たの】しかった旅行【りょこう】を思【おも】い出【だ】す。",
+  "choices": [
+   "この写真【しゃしん】を見【み】ても、旅行【りょこう】のことは思【おも】い出【だ】せない。",
+   "この写真【しゃしん】を見【み】ると、つらい旅行【りょこう】を思【おも】い出【だ】す。",
+   "この写真【しゃしん】を見【み】るたびに、楽【たの】しかった旅行【りょこう】を思【おも】い出【だ】す。",
+   "旅行【りょこう】を思【おも】い出【だ】したくないので、写真【しゃしん】を見【み】ない。"
+  ],
+  "key": 3,
+  "en": "Whenever I look at this photo, I remember the fun trip.",
+  "why": "The pattern means 'whenever'; 1 denies remembering, 2 makes the trip unhappy, 4 says the speaker avoids the photo."
+ },
+ {
+  "id": "pp-044",
+  "ja": "命【いのち】にかかわる病気【びょうき】ではないので、安心【あんしん】してください。",
+  "choices": [
+   "命【いのち】が危【あぶ】ない病気【びょうき】なので、注意【ちゅうい】してください。",
+   "病気【びょうき】ではないが、大【おお】きなけがをしている。",
+   "死【し】ぬような病気【びょうき】ではないから、心配【しんぱい】しなくていい。",
+   "安心【あんしん】したので、病気【びょうき】が治【なお】った。"
+  ],
+  "key": 3,
+  "en": "It's not a life-threatening illness, so please don't worry.",
+  "why": "The pattern means 'affecting (life)'; 1 misses the negation, 2 changes illness to injury, 4 invents a cause."
+ },
+ {
+  "id": "pp-045",
+  "ja": "来月【らいげつ】の大会【たいかい】に向【む】けて、毎日【まいにち】練習【れんしゅう】している。",
+  "choices": [
+   "来月【らいげつ】の大会【たいかい】が終【お】わってから、練習【れんしゅう】を始【はじ】める。",
+   "大会【たいかい】は来月【らいげつ】だが、練習【れんしゅう】はしていない。",
+   "来月【らいげつ】の大会【たいかい】のために、毎日【まいにち】練習【れんしゅう】している。",
+   "毎日【まいにち】練習【れんしゅう】したので、大会【たいかい】で優勝【ゆうしょう】した。"
+  ],
+  "key": 3,
+  "en": "I'm practicing every day for next month's tournament.",
+  "why": "The pattern means 'aiming at'; 1 changes the timing, 2 denies practice, 4 says the tournament is already won."
+ },
+ {
+  "id": "pp-046",
+  "ja": "彼女【かのじょ】は服【ふく】が濡【ぬ】れるのも構【かま】わず、雨【あめ】の中【なか】を走【はし】っていった。",
+  "choices": [
+   "彼女【かのじょ】は服【ふく】が濡【ぬ】れても気【き】にしないで、雨【あめ】の中【なか】を走【はし】った。",
+   "彼女【かのじょ】は服【ふく】が濡【ぬ】れないように、雨【あめ】の中【なか】を歩【ある】いた。",
+   "服【ふく】が濡【ぬ】れるので、彼女【かのじょ】は雨【あめ】の中【なか】を走【はし】らなかった。",
+   "彼女【かのじょ】は雨【あめ】が止【や】んでから、外【そと】を走【はし】った。"
+  ],
+  "key": 1,
+  "en": "She ran out into the rain without caring that her clothes would get wet.",
+  "why": "The pattern means 'without caring about'; 2 and 3 have her care about her clothes, 4 waits for the rain to stop."
+ },
+ {
+  "id": "pp-047",
+  "ja": "日曜日【にちようび】を除【のぞ】いて、毎日【まいにち】店【みせ】を開【あ】けている。",
+  "choices": [
+   "日曜日【にちようび】だけ、店【みせ】を開【あ】けている。",
+   "日曜日【にちようび】も含【ふく】めて、毎日【まいにち】店【みせ】を開【あ】けている。",
+   "日曜日【にちようび】は、いつもより早【はや】く店【みせ】を開【あ】ける。",
+   "日曜日【にちようび】以外【いがい】は、毎日【まいにち】店【みせ】を開【あ】けている。"
+  ],
+  "key": 4,
+  "en": "The shop is open every day except Sunday.",
+  "why": "The pattern means 'except'; 1 opens only on Sunday, 2 includes Sunday, 3 opens early on Sunday."
+ },
+ {
+  "id": "pp-048",
+  "ja": "経験【けいけん】の有無【うむ】にかかわらず、誰【だれ】でも応募【おうぼ】できます。",
+  "choices": [
+   "経験【けいけん】のある人【ひと】だけが、応募【おうぼ】できる。",
+   "経験【けいけん】のない人【ひと】だけが、応募【おうぼ】できる。",
+   "経験【けいけん】があってもなくても、誰【だれ】でも応募【おうぼ】できる。",
+   "応募【おうぼ】すれば、誰【だれ】でも経験【けいけん】が積【つ】める。"
+  ],
+  "key": 3,
+  "en": "Anyone can apply, with or without experience.",
+  "why": "The pattern means 'regardless of'; 1 and 2 limit who can apply, 4 is about gaining experience."
+ },
+ {
+  "id": "pp-049",
+  "ja": "傘【かさ】を持【も】っていない日【ひ】に限【かぎ】って、雨【あめ】が降【ふ】る。",
+  "choices": [
+   "傘【かさ】を持【も】っている日【ひ】は、必【かなら】ず雨【あめ】が降【ふ】る。",
+   "傘【かさ】がない日【ひ】に、なぜかよく雨【あめ】が降【ふ】る。",
+   "雨【あめ】が降【ふ】る日【ひ】は、傘【かさ】を持【も】って行【い】かない。",
+   "傘【かさ】がない日【ひ】は、一度【いちど】も雨【あめ】が降【ふ】ったことがない。"
+  ],
+  "key": 2,
+  "en": "It always rains on the very day I don't have an umbrella.",
+  "why": "The pattern means 'of all times, just when'; 1 flips the umbrella, 3 swaps the clauses, 4 reverses the result."
+ },
+ {
+  "id": "pp-050",
+  "ja": "体【からだ】が元気【げんき】な限【かぎ】り、この仕事【しごと】を続【つづ】けたい。",
+  "choices": [
+   "体【からだ】が元気【げんき】なうちは、この仕事【しごと】を続【つづ】けたい。",
+   "体【からだ】が元気【げんき】でも、この仕事【しごと】はやめたい。",
+   "体【からだ】が弱【よわ】くなったので、仕事【しごと】をやめた。",
+   "この仕事【しごと】を続【つづ】けたので、体【からだ】が元気【げんき】になった。"
+  ],
+  "key": 1,
+  "en": "As long as I'm healthy, I want to keep doing this job.",
+  "why": "The pattern means 'as long as'; 2 reverses the wish, 3 says the speaker already quit, 4 swaps cause and result."
+ },
+ {
+  "id": "pp-051",
+  "ja": "結果【けっか】は、これからの努力【どりょく】次第【しだい】で変【か】わる。",
+  "choices": [
+   "これからどれだけ努力【どりょく】するかで、結果【けっか】が変【か】わる。",
+   "どんなに努力【どりょく】しても、結果【けっか】は変【か】わらない。",
+   "結果【けっか】を見【み】てから、努力【どりょく】するかどうか決【き】める。",
+   "結果【けっか】がよかったので、もっと努力【どりょく】するようになった。"
+  ],
+  "key": 1,
+  "en": "The result will depend on the effort you make from now on.",
+  "why": "The pattern means 'depending on'; 2 denies the dependence, 3 reverses the order, 4 swaps cause and result."
+ },
+ {
+  "id": "pp-052",
+  "ja": "薬【くすり】を飲【の】んでから、熱【ねつ】は次第【しだい】に下【さ】がっていった。",
+  "choices": [
+   "薬【くすり】を飲【の】んだあと、熱【ねつ】が急【きゅう】に下【さ】がった。",
+   "薬【くすり】を飲【の】んだのに、熱【ねつ】が少【すこ】しずつ上【あ】がった。",
+   "薬【くすり】を飲【の】んだあと、熱【ねつ】は少【すこ】しずつ下【さ】がった。",
+   "熱【ねつ】が下【さ】がってから、薬【くすり】を飲【の】んだ。"
+  ],
+  "key": 3,
+  "en": "After I took the medicine, my fever gradually went down.",
+  "why": "The word means 'gradually'; 1 makes it sudden, 2 reverses the direction, 4 changes the order."
+ },
+ {
+  "id": "pp-053",
+  "ja": "自分【じぶん】でやってみてこそ、本当【ほんとう】の難【むずか】しさがわかる。",
+  "choices": [
+   "自分【じぶん】でやらなくても、難【むずか】しさはわかる。",
+   "自分【じぶん】でやらなければ、本当【ほんとう】の難【むずか】しさはわからない。",
+   "難【むずか】しいとわかっているので、自分【じぶん】ではやらない。",
+   "自分【じぶん】でやってみたら、意外【いがい】に簡単【かんたん】だった。"
+  ],
+  "key": 2,
+  "en": "Only by trying it yourself do you understand how hard it really is.",
+  "why": "The pattern means 'only by doing'; 1 denies the need, 3 refuses to try, 4 says it was easy."
+ },
+ {
+  "id": "pp-054",
+  "ja": "この大会【たいかい】には、年齢【ねんれい】を問【と】わず誰【だれ】でも参加【さんか】できる。",
+  "choices": [
+   "この大会【たいかい】には、若【わか】い人【ひと】しか参加【さんか】できない。",
+   "この大会【たいかい】には、何歳【なんさい】の人【ひと】でも参加【さんか】できる。",
+   "参加【さんか】できるかどうかは、年齢【ねんれい】で決【き】まる。",
+   "この大会【たいかい】は、誰【だれ】も見【み】に来【こ】られない。"
+  ],
+  "key": 2,
+  "en": "Anyone can take part in this event, regardless of age.",
+  "why": "The pattern means 'regardless of'; 1 limits it to the young, 3 makes age decide, 4 is about watching."
+ },
+ {
+  "id": "pp-055",
+  "ja": "予約【よやく】がいっぱいなら、ほかの日【ひ】にするよりしかたがない。",
+  "choices": [
+   "予約【よやく】がいっぱいでも、その日【ひ】に行【い】ける。",
+   "予約【よやく】が取【と】れないなら、別【べつ】の日【ひ】にするしかない。",
+   "予約【よやく】が取【と】れたので、別【べつ】の日【ひ】にした。",
+   "別【べつ】の日【ひ】なら、予約【よやく】はいらない。"
+  ],
+  "key": 2,
+  "en": "If reservations are full, there's nothing for it but to pick another day.",
+  "why": "The pattern means 'no choice but'; 1 says that day still works, 3 says the booking succeeded, 4 drops the booking."
+ },
+ {
+  "id": "pp-056",
+  "ja": "親【おや】に相談【そうだん】してからでないと、お返事【へんじ】できません。",
+  "choices": [
+   "親【おや】に相談【そうだん】しないで、すぐ返事【へんじ】をする。",
+   "返事【へんじ】をしてから、親【おや】に相談【そうだん】する。",
+   "親【おや】に相談【そうだん】する前【まえ】には、返事【へんじ】ができない。",
+   "親【おや】が返事【へんじ】をするので、相談【そうだん】はいらない。"
+  ],
+  "key": 3,
+  "en": "I can't give you an answer until I've talked it over with my parents.",
+  "why": "The pattern means 'not until after'; 1 skips the talk, 2 reverses the order, 4 changes who answers."
+ },
+ {
+  "id": "pp-057",
+  "ja": "納豆【なっとう】は食【た】べられなくはないが、あまり好【す】きではない。",
+  "choices": [
+   "納豆【なっとう】は食【た】べることはできるが、あまり好【す】きではない。",
+   "納豆【なっとう】は大好【だいす】きで、よく食【た】べる。",
+   "納豆【なっとう】は嫌【きら】いで、全然【ぜんぜん】食【た】べられない。",
+   "納豆【なっとう】は好【す】きだが、今【いま】は食【た】べられない。"
+  ],
+  "key": 1,
+  "en": "I can eat natto, but I'm not very fond of it.",
+  "why": "A double negative: 'not unable' means able; 2 says the speaker loves it, 3 says they can't eat it, 4 reverses both."
+ },
+ {
+  "id": "pp-058",
+  "ja": "実際【じっさい】に会【あ】ってみないことには、どんな人【ひと】かわからない。",
+  "choices": [
+   "会【あ】わなくても、どんな人【ひと】かよくわかる。",
+   "実際【じっさい】に会【あ】ったが、どんな人【ひと】かわからなかった。",
+   "実際【じっさい】に会【あ】わなければ、どんな人【ひと】か知【し】ることはできない。",
+   "どんな人【ひと】かわからないので、会【あ】いたくない。"
+  ],
+  "key": 3,
+  "en": "You can't tell what someone is like until you actually meet them.",
+  "why": "The pattern means 'unless one does'; 1 denies the need to meet, 2 reports a past meeting, 4 refuses to meet."
+ },
+ {
+  "id": "pp-059",
+  "ja": "締【し】め切【き】りまでに、この報告書【ほうこくしょ】を仕上【しあ】げねばならない。",
+  "choices": [
+   "締【し】め切【き】りを過【す】ぎても、報告書【ほうこくしょ】は出【だ】せる。",
+   "締【し】め切【き】りまでに、報告書【ほうこくしょ】を完成【かんせい】させなければならない。",
+   "報告書【ほうこくしょ】は、締【し】め切【き】りまでにもう完成【かんせい】した。",
+   "報告書【ほうこくしょ】は、完成【かんせい】させなくてもいい。"
+  ],
+  "key": 2,
+  "en": "I must finish this report by the deadline.",
+  "why": "The pattern means 'must'; 1 allows lateness, 3 says it is already done, 4 removes the obligation."
+ },
+ {
+  "id": "pp-060",
+  "ja": "音楽【おんがく】を聴【き】きつつ、夜【よる】の道【みち】をゆっくり歩【ある】いた。",
+  "choices": [
+   "音楽【おんがく】を聴【き】いたあとで、夜【よる】の道【みち】を歩【ある】いた。",
+   "音楽【おんがく】を聴【き】きながら、夜【よる】の道【みち】を歩【ある】いた。",
+   "夜【よる】の道【みち】を歩【ある】いてから、音楽【おんがく】を聴【き】いた。",
+   "夜【よる】の道【みち】では、音楽【おんがく】を聴【き】かなかった。"
+  ],
+  "key": 2,
+  "en": "I walked slowly along the night road, listening to music.",
+  "why": "The pattern means 'while'; 1 and 3 put the actions one after the other, 4 denies the music."
+ },
+ {
+  "id": "pp-061",
+  "ja": "体【からだ】に悪【わる】いと知【し】りつつも、ついたばこを吸【す】ってしまう。",
+  "choices": [
+   "体【からだ】に悪【わる】いので、たばこはやめた。",
+   "体【からだ】に悪【わる】いとは知【し】らずに、たばこを吸【す】っている。",
+   "たばこを吸【す】ったので、体【からだ】が悪【わる】くなった。",
+   "体【からだ】に悪【わる】いとわかっているのに、たばこを吸【す】ってしまう。"
+  ],
+  "key": 4,
+  "en": "Even though I know it's bad for me, I end up smoking.",
+  "why": "The pattern means 'even though'; 1 says the speaker quit, 2 denies knowing, 3 reports a result instead."
+ },
+ {
+  "id": "pp-062",
+  "ja": "海外【かいがい】に出発【しゅっぱつ】するに際【さい】して、予防【よぼう】注射【ちゅうしゃ】を受【う】けた。",
+  "choices": [
+   "海外【かいがい】から帰【かえ】ってから、予防【よぼう】注射【ちゅうしゃ】を受【う】けた。",
+   "予防【よぼう】注射【ちゅうしゃ】を受【う】けなかったので、出発【しゅっぱつ】できなかった。",
+   "海外【かいがい】に行【い】く前【まえ】に、予防【よぼう】注射【ちゅうしゃ】を受【う】けた。",
+   "海外【かいがい】に行【い】くが、予防【よぼう】注射【ちゅうしゃ】は受【う】けない。"
+  ],
+  "key": 3,
+  "en": "Before leaving for abroad, I got vaccinated.",
+  "why": "The pattern means 'on the occasion of'; 1 moves it after the trip, 2 and 4 deny the vaccination."
+ },
+ {
+  "id": "pp-063",
+  "ja": "新【あたら】しい事業【じぎょう】を始【はじ】めるにあたって、市場【しじょう】を詳【くわ】しく調査【ちょうさ】した。",
+  "choices": [
+   "市場【しじょう】を調【しら】べないで、新【あたら】しい事業【じぎょう】を始【はじ】めた。",
+   "新【あたら】しい事業【じぎょう】を始【はじ】める前【まえ】に、市場【しじょう】をよく調【しら】べた。",
+   "事業【じぎょう】を始【はじ】めたあとで、市場【しじょう】を調【しら】べた。",
+   "市場【しじょう】を調【しら】べたので、新【あたら】しい事業【じぎょう】はやめた。"
+  ],
+  "key": 2,
+  "en": "Before launching the new business, we researched the market in detail.",
+  "why": "The pattern means 'in preparing for'; 1 skips the research, 3 changes the order, 4 cancels the business."
+ },
+ {
+  "id": "pp-064",
+  "ja": "入院【にゅういん】を契機【けいき】に、父【ちち】はお酒【さけ】をやめた。",
+  "choices": [
+   "入院【にゅういん】したことがきっかけで、父【ちち】は酒【さけ】をやめた。",
+   "父【ちち】は酒【さけ】をやめたので、入院【にゅういん】しなかった。",
+   "入院【にゅういん】したあとも、父【ちち】は酒【さけ】を飲【の】み続【つづ】けた。",
+   "酒【さけ】を飲【の】みすぎて、父【ちち】は入院【にゅういん】した。"
+  ],
+  "key": 1,
+  "en": "Being hospitalized was what made my father quit drinking.",
+  "why": "The pattern means 'taking as an occasion'; 2 denies the stay, 3 denies quitting, 4 gives the stay a cause and drops quitting."
+ },
+ {
+  "id": "pp-065",
+  "ja": "地球【ちきゅう】の気温【きおん】は、年々【ねんねん】上【あ】がりつつある。",
+  "choices": [
+   "地球【ちきゅう】の気温【きおん】は、少【すこ】しずつ上【あ】がってきている。",
+   "地球【ちきゅう】の気温【きおん】は、毎年【まいとし】下【さ】がっている。",
+   "地球【ちきゅう】の気温【きおん】は、ずっと変【か】わらない。",
+   "地球【ちきゅう】の気温【きおん】は、急【きゅう】に上【あ】がって止【と】まった。"
+  ],
+  "key": 1,
+  "en": "The Earth's temperature is rising year by year.",
+  "why": "The pattern means 'is in the process of'; 2 reverses the trend, 3 denies change, 4 says the rise has stopped."
+ },
+ {
+  "id": "pp-066",
+  "ja": "出【で】かけようとしているところへ、友達【ともだち】から電話【でんわ】がかかってきた。",
+  "choices": [
+   "出【で】かけたあとで、友達【ともだち】から電話【でんわ】が来【き】た。",
+   "ちょうど出【で】かける前【まえ】に、友達【ともだち】から電話【でんわ】が来【き】た。",
+   "友達【ともだち】に電話【でんわ】をしてから、出【で】かけた。",
+   "家【いえ】でゆっくりしていたら、友達【ともだち】から電話【でんわ】が来【き】た。"
+  ],
+  "key": 2,
+  "en": "Just as I was about to go out, a friend called.",
+  "why": "The pattern means 'just at the moment when'; 1 moves the call later, 3 swaps who calls, 4 drops going out."
+ },
+ {
+  "id": "pp-067",
+  "ja": "ベルが鳴【な】るか鳴【な】らないかのうちに、学生【がくせい】たちは教室【きょうしつ】を飛【と】び出【だ】した。",
+  "choices": [
+   "ベルが鳴【な】ってしばらくして、学生【がくせい】は教室【きょうしつ】を出【で】た。",
+   "ベルが鳴【な】っても、学生【がくせい】は教室【きょうしつ】を出【で】なかった。",
+   "ベルが鳴【な】るとほぼ同時【どうじ】に、学生【がくせい】は教室【きょうしつ】を出【で】た。",
+   "学生【がくせい】が教室【きょうしつ】を出【で】たので、ベルが鳴【な】った。"
+  ],
+  "key": 3,
+  "en": "The bell had barely rung when the students rushed out of the classroom.",
+  "why": "The pattern means 'hardly had... when'; 1 adds a delay, 2 denies leaving, 4 swaps cause and result."
+ },
+ {
+  "id": "pp-068",
+  "ja": "会社【かいしゃ】の帰【かえ】りがけに、本屋【ほんや】に寄【よ】った。",
+  "choices": [
+   "会社【かいしゃ】から帰【かえ】る途中【とちゅう】で、本屋【ほんや】に行【い】った。",
+   "会社【かいしゃ】へ行【い】く途中【とちゅう】で、本屋【ほんや】に行【い】った。",
+   "家【いえ】に帰【かえ】ってから、本屋【ほんや】に行【い】った。",
+   "本屋【ほんや】に寄【よ】らないで、まっすぐ帰【かえ】った。"
+  ],
+  "key": 1,
+  "en": "I stopped by a bookstore on my way home from work.",
+  "why": "The pattern means 'on the way home'; 2 makes it the way to work, 3 goes after getting home, 4 denies the stop."
+ },
+ {
+  "id": "pp-069",
+  "ja": "そんなにのんびりしていては、約束【やくそく】の時間【じかん】に間【ま】に合【あ】わないよ。",
+  "choices": [
+   "ゆっくりしていても、約束【やくそく】の時間【じかん】には間【ま】に合【あ】う。",
+   "約束【やくそく】の時間【じかん】に遅【おく】れたので、のんびりした。",
+   "急【いそ】ぎすぎると、約束【やくそく】の時間【じかん】に遅【おく】れる。",
+   "そんなにゆっくりしていると、約束【やくそく】の時間【じかん】に遅【おく】れる。"
+  ],
+  "key": 4,
+  "en": "If you dawdle like that, you won't make it on time.",
+  "why": "The pattern means 'if you keep doing (bad result)'; 1 denies the result, 2 swaps cause and result, 3 blames hurrying."
+ },
+ {
+  "id": "pp-070",
+  "ja": "もう少【すこ】しで、大事【だいじ】な書類【しょるい】を捨【す】ててしまうところだった。",
+  "choices": [
+   "大事【だいじ】な書類【しょるい】を、間違【まちが】えて捨【す】ててしまった。",
+   "大事【だいじ】な書類【しょるい】は、もう少【すこ】しで見【み】つかる。",
+   "要【い】らない書類【しょるい】を、捨【す】て忘【わす】れていた。",
+   "大事【だいじ】な書類【しょるい】を、危【あや】うく捨【す】てそうになった。"
+  ],
+  "key": 4,
+  "en": "I very nearly threw away an important document.",
+  "why": "The pattern means 'almost did (but didn't)'; 1 says it was thrown away, 2 is about finding it, 3 is about other papers."
+ },
+ {
+  "id": "pp-071",
+  "ja": "仕事【しごと】が忙【いそが】しくて、旅行【りょこう】どころではない。",
+  "choices": [
+   "仕事【しごと】が暇【ひま】なので、旅行【りょこう】に行【い】ける。",
+   "仕事【しごと】が忙【いそが】しいので、旅行【りょこう】をする余裕【よゆう】はない。",
+   "仕事【しごと】は忙【いそが】しいが、旅行【りょこう】には行【い】く。",
+   "旅行【りょこう】に行【い】ったので、仕事【しごと】が忙【いそが】しくなった。"
+  ],
+  "key": 2,
+  "en": "I'm so busy with work that a trip is out of the question.",
+  "why": "The pattern means 'out of the question'; 1 says work is quiet, 3 goes anyway, 4 swaps cause and result."
+ },
+ {
+  "id": "pp-072",
+  "ja": "十年【じゅうねん】ぶりに、故郷【こきょう】の友人【ゆうじん】と再会【さいかい】した。",
+  "choices": [
+   "十年間【じゅうねんかん】会【あ】っていなかった友人【ゆうじん】に、また会【あ】った。",
+   "故郷【こきょう】の友人【ゆうじん】とは、十年前【じゅうねんまえ】から会【あ】っていない。",
+   "故郷【こきょう】の友人【ゆうじん】と、十年間【じゅうねんかん】毎年【まいとし】会【あ】っている。",
+   "十年後【じゅうねんご】に、故郷【こきょう】の友人【ゆうじん】と会【あ】う約束【やくそく】をした。"
+  ],
+  "key": 1,
+  "en": "I met my hometown friend again for the first time in ten years.",
+  "why": "The pattern means 'for the first time in (a period)'; 2 says they still haven't met, 3 meets yearly, 4 moves it to the future."
+ },
+ {
+  "id": "pp-073",
+  "ja": "日本【にほん】に来【き】て以来【いらい】、ずっとこのアパートに住【す】んでいる。",
+  "choices": [
+   "日本【にほん】に来【く】る前【まえ】に、このアパートに住【す】んでいた。",
+   "日本【にほん】に来【き】てすぐ、このアパートを出【で】た。",
+   "日本【にほん】に来【き】たときから、今【いま】もこのアパートに住【す】んでいる。",
+   "日本【にほん】に来【き】てから、何度【なんど】も引【ひ】っ越【こ】した。"
+  ],
+  "key": 3,
+  "en": "I've lived in this apartment ever since I came to Japan.",
+  "why": "The pattern means 'ever since'; 1 changes the time, 2 says the speaker left, 4 says they moved often."
+ },
+ {
+  "id": "pp-074",
+  "ja": "映画【えいが】の公開【こうかい】に先立【さきだ】ち、監督【かんとく】の記者【きしゃ】会見【かいけん】が開【ひら】かれた。",
+  "choices": [
+   "映画【えいが】が公開【こうかい】されたあとで、監督【かんとく】が会見【かいけん】をした。",
+   "映画【えいが】が公開【こうかい】されたが、監督【かんとく】は会見【かいけん】をしなかった。",
+   "映画【えいが】が公開【こうかい】される前【まえ】に、監督【かんとく】が会見【かいけん】をした。",
+   "会見【かいけん】で、監督【かんとく】は映画【えいが】の公開【こうかい】をやめると言【い】った。"
+  ],
+  "key": 3,
+  "en": "Ahead of the film's release, the director held a press conference.",
+  "why": "The pattern means 'prior to'; 1 changes the order, 2 denies the conference, 4 cancels the release."
+ },
+ {
+  "id": "pp-075",
+  "ja": "毎日【まいにち】練習【れんしゅう】した甲斐【かい】があって、試合【しあい】に勝【か】てた。",
+  "choices": [
+   "毎日【まいにち】練習【れんしゅう】したのに、試合【しあい】に負【ま】けた。",
+   "毎日【まいにち】の練習【れんしゅう】が役【やく】に立【た】って、試合【しあい】に勝【か】った。",
+   "練習【れんしゅう】しなかったが、試合【しあい】に勝【か】った。",
+   "試合【しあい】に勝【か】ったので、毎日【まいにち】練習【れんしゅう】するようになった。"
+  ],
+  "key": 2,
+  "en": "My daily practice paid off, and I won the match.",
+  "why": "The pattern means 'the effort was worth it'; 1 reverses the result, 3 denies practice, 4 swaps cause and result."
+ },
+ {
+  "id": "pp-076",
+  "ja": "料理【りょうり】の腕【うで】にかけては、彼【かれ】の右【みぎ】に出【で】る者【もの】はいない。",
+  "choices": [
+   "彼【かれ】は料理【りょうり】が下手【へた】で、いつも人【ひと】に頼【たの】む。",
+   "料理【りょうり】では、彼【かれ】より上手【じょうず】な人【ひと】がたくさんいる。",
+   "彼【かれ】は料理【りょうり】より、ほかのことが得意【とくい】だ。",
+   "料理【りょうり】が上手【じょうず】なことでは、彼【かれ】が一番【いちばん】だ。"
+  ],
+  "key": 4,
+  "en": "When it comes to cooking, no one can beat him.",
+  "why": "The pattern means 'when it comes to'; the idiom means no one is better; 1, 2 and 3 all deny he is the best cook."
+ },
+ {
+  "id": "pp-077",
+  "ja": "この映画【えいが】は、実際【じっさい】にあった事件【じけん】をもとに作【つく】られた。",
+  "choices": [
+   "本当【ほんとう】に起【お】きた事件【じけん】が、この映画【えいが】の元【もと】になっている。",
+   "この映画【えいが】の話【はなし】は、全部【ぜんぶ】作【つく】り話【ばなし】だ。",
+   "この映画【えいが】を見【み】て、事件【じけん】を起【お】こした人【ひと】がいる。",
+   "この映画【えいが】は、事件【じけん】のせいで作【つく】れなくなった。"
+  ],
+  "key": 1,
+  "en": "This film was based on a real incident.",
+  "why": "The pattern means 'based on'; 2 says it is all fiction, 3 swaps cause and result, 4 says the film was stopped."
+ },
+ {
+  "id": "pp-078",
+  "ja": "この店【みせ】は、地元【じもと】の人【ひと】はもとより、観光客【かんこうきゃく】にも人気【にんき】がある。",
+  "choices": [
+   "この店【みせ】は、地元【じもと】の人【ひと】にも観光客【かんこうきゃく】にも人気【にんき】だ。",
+   "この店【みせ】は、観光客【かんこうきゃく】にだけ人気【にんき】がある。",
+   "この店【みせ】は、地元【じもと】の人【ひと】にだけ人気【にんき】がある。",
+   "この店【みせ】は、どちらにもあまり人気【にんき】がない。"
+  ],
+  "key": 1,
+  "en": "This shop is popular with tourists, not to mention locals.",
+  "why": "The pattern means 'not to mention'; 2 and 3 drop one group, 4 denies its popularity."
+ },
+ {
+  "id": "pp-079",
+  "ja": "この雨【あめ】は、今日中【きょうじゅう】には止【や】みそうにない。",
+  "choices": [
+   "この雨【あめ】は、たぶん今日【きょう】は止【や】まないだろう。",
+   "この雨【あめ】は、もうすぐ止【や】むだろう。",
+   "雨【あめ】は、今日【きょう】の夕方【ゆうがた】に止【や】んだ。",
+   "今日【きょう】は、雨【あめ】が降【ふ】りそうにない。"
+  ],
+  "key": 1,
+  "en": "It doesn't look like this rain will stop today.",
+  "why": "The pattern means 'not likely to'; 2 predicts it stops, 3 says it stopped, 4 says it won't rain at all."
+ },
+ {
+  "id": "pp-080",
+  "ja": "この仕事【しごと】は給料【きゅうりょう】がいい反面【はんめん】、休【やす】みが少【すく】ない。",
+  "choices": [
+   "この仕事【しごと】は、給料【きゅうりょう】はいいが休【やす】みが少【すく】ない。",
+   "この仕事【しごと】は、給料【きゅうりょう】もよくて休【やす】みも多【おお】い。",
+   "この仕事【しごと】は、給料【きゅうりょう】が安【やす】くて休【やす】みも少【すく】ない。",
+   "この仕事【しごと】は、給料【きゅうりょう】は安【やす】いが休【やす】みが多【おお】い。"
+  ],
+  "key": 1,
+  "en": "This job pays well, but on the other hand there are few days off.",
+  "why": "The pattern means 'on the other hand'; 2 reverses the days off, 3 reverses the pay, 4 reverses both."
+ },
+ {
+  "id": "pp-081",
+  "ja": "友達【ともだち】が車【くるま】で送【おく】ってくれたので、タクシーを使【つか】わずに済【す】んだ。",
+  "choices": [
+   "友達【ともだち】が送【おく】れなかったので、タクシーを使【つか】った。",
+   "友達【ともだち】が送【おく】ってくれて、タクシーに乗【の】る必要【ひつよう】がなかった。",
+   "友達【ともだち】と一緒【いっしょ】に、タクシーで帰【かえ】った。",
+   "私【わたし】が、友達【ともだち】を車【くるま】で送【おく】った。"
+  ],
+  "key": 2,
+  "en": "My friend drove me home, so I didn't have to take a taxi.",
+  "why": "The pattern means 'got by without'; 1 and 3 have a taxi taken, 4 swaps who drove."
+ },
+ {
+  "id": "pp-082",
+  "ja": "参加者【さんかしゃ】の人数【にんずう】に応【おう】じて、会場【かいじょう】を選【えら】ぶ。",
+  "choices": [
+   "参加者【さんかしゃ】が何人【なんにん】でも、会場【かいじょう】は同【おな】じだ。",
+   "会場【かいじょう】の広【ひろ】さで、参加者【さんかしゃ】の人数【にんずう】を決【き】める。",
+   "参加者【さんかしゃ】が、自分【じぶん】で会場【かいじょう】を選【えら】ぶ。",
+   "何人【なんにん】参加【さんか】するかによって、会場【かいじょう】を決【き】める。"
+  ],
+  "key": 4,
+  "en": "We choose the venue according to the number of participants.",
+  "why": "The pattern means 'according to'; 1 denies the link, 2 reverses what decides what, 3 changes who chooses."
+ },
+ {
+  "id": "pp-083",
+  "ja": "この店【みせ】は、一年【いちねん】を通【つう】じて観光客【かんこうきゃく】が絶【た】えない。",
+  "choices": [
+   "この店【みせ】に観光客【かんこうきゃく】が来【く】るのは、夏【なつ】だけだ。",
+   "この店【みせ】には、一年【いちねん】に一度【いちど】しか観光客【かんこうきゃく】が来【こ】ない。",
+   "この店【みせ】には、一年中【いちねんじゅう】いつも観光客【かんこうきゃく】が来【く】る。",
+   "この店【みせ】は、一年前【いちねんまえ】から観光客【かんこうきゃく】が来【こ】なくなった。"
+  ],
+  "key": 3,
+  "en": "This shop has a steady stream of tourists all year round.",
+  "why": "The pattern means 'throughout'; 1 limits it to summer, 2 makes it yearly, 4 says tourists stopped coming."
+ },
+ {
+  "id": "pp-084",
+  "ja": "先輩【せんぱい】を通【とお】して、社長【しゃちょう】に意見【いけん】を伝【つた】えた。",
+  "choices": [
+   "先輩【せんぱい】には言【い】わずに、直接【ちょくせつ】社長【しゃちょう】に意見【いけん】を言【い】った。",
+   "社長【しゃちょう】が、先輩【せんぱい】に意見【いけん】を伝【つた】えた。",
+   "先輩【せんぱい】に頼【たの】んで、社長【しゃちょう】に意見【いけん】を言【い】ってもらった。",
+   "先輩【せんぱい】の意見【いけん】を、社長【しゃちょう】から聞【き】いた。"
+  ],
+  "key": 3,
+  "en": "I conveyed my opinion to the president through a senior colleague.",
+  "why": "The pattern means 'through (a go-between)'; 1 skips the senior, 2 reverses the direction, 4 changes whose opinion it is."
+ },
+ {
+  "id": "pp-085",
+  "ja": "ファンの声【こえ】に応【こた】えて、バンドは再結成【さいけっせい】することになった。",
+  "choices": [
+   "ファンが望【のぞ】んだので、バンドはもう一度【いちど】集【あつ】まることになった。",
+   "ファンが反対【はんたい】したが、バンドは解散【かいさん】した。",
+   "バンドがもう一度【いちど】集【あつ】まったので、ファンが増【ふ】えた。",
+   "ファンが望【のぞ】んだが、バンドは集【あつ】まらなかった。"
+  ],
+  "key": 1,
+  "en": "In response to the fans' wishes, the band decided to get back together.",
+  "why": "The pattern means 'in response to'; 2 has the band split, 3 swaps cause and result, 4 denies the reunion."
+ },
+ {
+  "id": "pp-086",
+  "ja": "子供【こども】にしたら、毎日【まいにち】の塾【じゅく】はつらいだろう。",
+  "choices": [
+   "子供【こども】は、毎日【まいにち】塾【じゅく】に行【い】くのを楽【たの】しんでいる。",
+   "毎日【まいにち】塾【じゅく】に行【い】かせるのは、親【おや】にとって大変【たいへん】だ。",
+   "子供【こども】の立場【たちば】から見【み】れば、毎日【まいにち】塾【じゅく】に行【い】くのは大変【たいへん】だろう。",
+   "子供【こども】は、塾【じゅく】に毎日【まいにち】は行【い】っていない。"
+  ],
+  "key": 3,
+  "en": "For a child, going to cram school every day must be hard.",
+  "why": "The pattern means 'from the point of view of'; 1 says the child enjoys it, 2 shifts it to the parents, 4 denies going daily."
+ },
+ {
+  "id": "pp-087",
+  "ja": "賛成【さんせい】するにしても反対【はんたい】するにしても、理由【りゆう】を言【い】うべきだ。",
+  "choices": [
+   "反対【はんたい】する人【ひと】だけ、理由【りゆう】を言【い】えばいい。",
+   "どちらの意見【いけん】でも、理由【りゆう】を説明【せつめい】する必要【ひつよう】がある。",
+   "賛成【さんせい】か反対【はんたい】かだけ言【い】えば、理由【りゆう】はいらない。",
+   "理由【りゆう】を聞【き】いてから、賛成【さんせい】するかどうか決【き】める。"
+  ],
+  "key": 2,
+  "en": "Whether you agree or disagree, you should give your reasons.",
+  "why": "The pattern means 'whether A or B'; 1 limits it to one side, 3 drops the reasons, 4 is about deciding."
+ },
+ {
+  "id": "pp-088",
+  "ja": "私【わたし】としては、この計画【けいかく】にはあまり賛成【さんせい】できない。",
+  "choices": [
+   "私【わたし】は、この計画【けいかく】に大賛成【だいさんせい】だ。",
+   "私【わたし】以外【いがい】の人【ひと】は、この計画【けいかく】に反対【はんたい】だ。",
+   "私【わたし】の考【かんが】えでは、この計画【けいかく】はあまりよくない。",
+   "私【わたし】が、この計画【けいかく】を作【つく】った。"
+  ],
+  "key": 3,
+  "en": "Personally, I can't really support this plan.",
+  "why": "The pattern means 'as for me'; 1 reverses the view, 2 gives it to others, 4 is about who made the plan."
+ },
+ {
+  "id": "pp-089",
+  "ja": "たとえ失敗【しっぱい】したとしても、挑戦【ちょうせん】したことに意味【いみ】がある。",
+  "choices": [
+   "失敗【しっぱい】したら、挑戦【ちょうせん】した意味【いみ】はない。",
+   "失敗【しっぱい】しないように、挑戦【ちょうせん】はやめたほうがいい。",
+   "挑戦【ちょうせん】したので、失敗【しっぱい】しなかった。",
+   "失敗【しっぱい】しても、挑戦【ちょうせん】したことには意味【いみ】がある。"
+  ],
+  "key": 4,
+  "en": "Even if you fail, there is meaning in having tried.",
+  "why": "The pattern means 'even if'; 1 denies the meaning, 2 advises against trying, 3 reports a result."
+ },
+ {
+  "id": "pp-090",
+  "ja": "彼【かれ】は十年間【じゅうねんかん】、一日【いちにち】も休【やす】むことなく働【はたら】き続【つづ】けた。",
+  "choices": [
+   "彼【かれ】は十年間【じゅうねんかん】で、一日【いちにち】だけ休【やす】んだ。",
+   "彼【かれ】は十年間【じゅうねんかん】、毎日【まいにち】休【やす】まずに働【はたら】いた。",
+   "彼【かれ】は十年間【じゅうねんかん】、ほとんど働【はたら】かなかった。",
+   "彼【かれ】は十日間【とおかかん】休【やす】まずに働【はたら】いた。"
+  ],
+  "key": 2,
+  "en": "He worked for ten years without taking a single day off.",
+  "why": "The pattern means 'without doing'; 1 adds a day off, 3 denies the work, 4 changes years to days."
+ },
+ {
+  "id": "pp-091",
+  "ja": "子供【こども】は泣【な】いていたかと思【おも】ったら、もう笑【わら】っている。",
+  "choices": [
+   "子供【こども】は笑【わら】っていたが、急【きゅう】に泣【な】き出【だ】した。",
+   "子供【こども】は泣【な】いていたのに、すぐにもう笑【わら】っている。",
+   "子供【こども】は、長【なが】い間【あいだ】ずっと泣【な】いている。",
+   "子供【こども】が笑【わら】ったので、私【わたし】が泣【な】いた。"
+  ],
+  "key": 2,
+  "en": "The child was crying a moment ago, and now he's already laughing.",
+  "why": "The pattern means 'no sooner... than'; 1 reverses the order, 3 keeps the crying, 4 changes who cries."
+ },
+ {
+  "id": "pp-092",
+  "ja": "困【こま】っている人【ひと】を助【たす】けるのが、友達【ともだち】というものだ。",
+  "choices": [
+   "友達【ともだち】でも、困【こま】っている人【ひと】を助【たす】ける必要【ひつよう】はない。",
+   "困【こま】ったときは、友達【ともだち】に助【たす】けてもらえない。",
+   "助【たす】けてくれた人【ひと】が、友達【ともだち】になった。",
+   "困【こま】っている人【ひと】を助【たす】けるのは、友達【ともだち】として当然【とうぜん】だ。"
+  ],
+  "key": 4,
+  "en": "Helping someone in trouble is what a friend is for.",
+  "why": "The pattern states what something naturally is; 1 denies the duty, 2 says friends don't help, 3 tells a story."
+ },
+ {
+  "id": "pp-093",
+  "ja": "返事【へんじ】が来【こ】ないところを見【み】ると、彼【かれ】はまだ怒【おこ】っているようだ。",
+  "choices": [
+   "返事【へんじ】がないので、彼【かれ】はまだ怒【おこ】っているらしい。",
+   "返事【へんじ】が来【き】たので、彼【かれ】はもう怒【おこ】っていない。",
+   "彼【かれ】が怒【おこ】っているので、私【わたし】は返事【へんじ】をしない。",
+   "返事【へんじ】はないが、彼【かれ】はもう怒【おこ】っていないようだ。"
+  ],
+  "key": 1,
+  "en": "Since there's no reply, he seems to still be angry.",
+  "why": "The pattern means 'judging from'; 2 says a reply came, 3 swaps who is silent, 4 reverses the conclusion."
+ },
+ {
+  "id": "pp-094",
+  "ja": "あの話【はな】し方【かた】からすると、彼【かれ】は関西【かんさい】の出身【しゅっしん】だろう。",
+  "choices": [
+   "彼【かれ】は関西【かんさい】の出身【しゅっしん】だが、話【はな】し方【かた】は違【ちが】う。",
+   "話【はな】し方【かた】を聞【き】いても、出身【しゅっしん】はわからない。",
+   "話【はな】し方【かた】から考【かんが】えて、彼【かれ】はたぶん関西【かんさい】の人【ひと】だ。",
+   "関西【かんさい】に住【す】んでから、彼【かれ】の話【はな】し方【かた】が変【か】わった。"
+  ],
+  "key": 3,
+  "en": "Judging from the way he talks, he's probably from the Kansai region.",
+  "why": "The pattern means 'judging from'; 1 breaks the link, 2 says nothing can be told, 4 tells a different story."
+ },
+ {
+  "id": "pp-095",
+  "ja": "彼【かれ】は態度【たいど】からして、やる気【き】が感【かん】じられない。",
+  "choices": [
+   "彼【かれ】は態度【たいど】は悪【わる】いが、やる気【き】はある。",
+   "彼【かれ】はやる気【き】があるので、態度【たいど】もいい。",
+   "彼【かれ】は、まず態度【たいど】を見【み】ただけでやる気【き】がないとわかる。",
+   "彼【かれ】は、やる気【き】がない人【ひと】に厳【きび】しい。"
+  ],
+  "key": 3,
+  "en": "Starting with his attitude, he shows no motivation at all.",
+  "why": "The pattern means 'to begin with, just from'; 1 and 2 say he is motivated, 4 is about how he treats others."
+ },
+ {
+  "id": "pp-096",
+  "ja": "有名【ゆうめい】な大学【だいがく】を出【で】たからといって、仕事【しごと】ができるとは限【かぎ】らない。",
+  "choices": [
+   "有名【ゆうめい】な大学【だいがく】を出【で】た人【ひと】は、必【かなら】ず仕事【しごと】ができる。",
+   "有名【ゆうめい】な大学【だいがく】を出【で】ても、仕事【しごと】ができない人【ひと】もいる。",
+   "有名【ゆうめい】な大学【だいがく】を出【で】た人【ひと】は、仕事【しごと】ができない。",
+   "仕事【しごと】ができる人【ひと】は、みんな有名【ゆうめい】な大学【だいがく】を出【で】ている。"
+  ],
+  "key": 2,
+  "en": "Graduating from a famous university doesn't mean you're good at your job.",
+  "why": "The pattern means 'just because... doesn't mean'; 1 says always, 3 says never, 4 reverses the claim."
+ },
+ {
+  "id": "pp-097",
+  "ja": "彼【かれ】は、何【なに】もなかったかのように笑【わら】っていた。",
+  "choices": [
+   "彼【かれ】は本当【ほんとう】は何【なに】かあったのに、平気【へいき】な顔【かお】で笑【わら】っていた。",
+   "彼【かれ】は、何【なに】もなかったので笑【わら】っていた。",
+   "彼【かれ】は、何【なに】かあったので泣【な】いていた。",
+   "何【なに】もなかったが、彼【かれ】は怒【おこ】っていた。"
+  ],
+  "key": 1,
+  "en": "He was laughing as if nothing had happened.",
+  "why": "The pattern means 'as if (but not really)'; 2 says nothing happened, 3 has him cry, 4 has him angry."
+ },
+ {
+  "id": "pp-098",
+  "ja": "この計画【けいかく】は、少【すこ】し無理【むり】があるのではないだろうか。",
+  "choices": [
+   "この計画【けいかく】には、まったく問題【もんだい】がない。",
+   "この計画【けいかく】には、少【すこ】し無理【むり】があると思【おも】う。",
+   "この計画【けいかく】は、もう中止【ちゅうし】になった。",
+   "この計画【けいかく】に無理【むり】があるかどうか、誰【だれ】にもわからない。"
+  ],
+  "key": 2,
+  "en": "Isn't this plan a bit unrealistic?",
+  "why": "The pattern is a soft 'I think'; 1 reverses the view, 3 says the plan was cancelled, 4 says no one can judge."
+ },
+ {
+  "id": "pp-099",
+  "ja": "あんなにひどいことを言【い】われたら、怒【おこ】って当然【とうぜん】だ。",
+  "choices": [
+   "ひどいことを言【い】われても、怒【おこ】ってはいけない。",
+   "ひどいことを言【い】ったので、怒【おこ】られた。",
+   "ひどいことを言【い】われたが、全然【ぜんぜん】怒【おこ】らなかった。",
+   "あんなにひどいことを言【い】われたら、怒【おこ】るのは普通【ふつう】だ。"
+  ],
+  "key": 4,
+  "en": "Anyone would be angry after being told something so cruel.",
+  "why": "The pattern means 'it is natural to'; 1 forbids anger, 2 swaps who spoke, 3 denies the anger."
+ },
+ {
+  "id": "pp-100",
+  "ja": "今【いま】から出【で】ても、おそらく最終【さいしゅう】のバスには間【ま】に合【あ】わない。",
+  "choices": [
+   "今【いま】出【で】れば、きっと最後【さいご】のバスに乗【の】れる。",
+   "最後【さいご】のバスは、もう出【で】てしまった。",
+   "今【いま】出【で】ても、たぶん最後【さいご】のバスに乗【の】れないだろう。",
+   "今【いま】出【で】ないと、最後【さいご】のバスに間【ま】に合【あ】わない。"
+  ],
+  "key": 3,
+  "en": "Even if we leave now, we probably won't make the last bus.",
+  "why": "The word means 'probably'; 1 reverses it, 2 says the bus has gone, 4 implies leaving now is enough."
+ },
+ {
+  "id": "pp-101",
+  "ja": "あんな失礼【しつれい】な店【みせ】には、二度【にど】と行【い】くものか。",
+  "choices": [
+   "あの店【みせ】は失礼【しつれい】だったが、また行【い】きたい。",
+   "あの店【みせ】の人【ひと】に、失礼【しつれい】なことを言【い】ってしまった。",
+   "あの店【みせ】に行【い】ったことは、一度【いちど】もない。",
+   "あの店【みせ】は失礼【しつれい】だったので、もう行【い】かない。"
+  ],
+  "key": 4,
+  "en": "I'll never go back to that rude shop again!",
+  "why": "The pattern is a strong 'never'; 1 wants to go back, 2 makes the speaker rude, 3 says they never went."
+ },
+ {
+  "id": "pp-102",
+  "ja": "この会社【かいしゃ】では、毎朝【まいあさ】九時【くじ】に朝礼【ちょうれい】をすることになっている。",
+  "choices": [
+   "この会社【かいしゃ】には、毎朝【まいあさ】九時【くじ】に朝礼【ちょうれい】をする決【き】まりがある。",
+   "この会社【かいしゃ】では、朝礼【ちょうれい】をするかどうか毎朝【まいあさ】決【き】める。",
+   "この会社【かいしゃ】では、朝礼【ちょうれい】は月【つき】に一度【いちど】だけだ。",
+   "この会社【かいしゃ】では、九時【くじ】に朝礼【ちょうれい】をしてもしなくてもいい。"
+  ],
+  "key": 1,
+  "en": "At this company, there's a morning meeting at nine every day as a rule.",
+  "why": "The pattern means 'it is the rule that'; 2 decides daily, 3 changes the frequency, 4 makes it optional."
+ },
+ {
+  "id": "pp-103",
+  "ja": "真面目【まじめ】な彼【かれ】のことだから、約束【やくそく】の時間【じかん】には来【く】るだろう。",
+  "choices": [
+   "彼【かれ】は真面目【まじめ】だが、時間【じかん】には遅【おく】れるだろう。",
+   "彼【かれ】は時間【じかん】を守【まも】らないので、真面目【まじめ】とは言【い】えない。",
+   "真面目【まじめ】な彼【かれ】が、約束【やくそく】の時間【じかん】を決【き】めた。",
+   "彼【かれ】は真面目【まじめ】な人【ひと】なので、きっと時間【じかん】どおりに来【く】る。"
+  ],
+  "key": 4,
+  "en": "He's so conscientious that he'll surely come on time.",
+  "why": "The pattern means 'knowing him'; 1 predicts lateness, 2 denies he is serious, 3 is about setting the time."
+ },
+ {
+  "id": "pp-104",
+  "ja": "道【みち】が混【こ】んでいたものだから、会議【かいぎ】に遅【おく】れてしまった。",
+  "choices": [
+   "道【みち】はすいていたが、会議【かいぎ】に遅刻【ちこく】した。",
+   "道【みち】が混【こ】んでいたが、会議【かいぎ】には間【ま】に合【あ】った。",
+   "会議【かいぎ】に遅【おく】れたので、道【みち】が混【こ】んだ。",
+   "道【みち】が混【こ】んでいたので、会議【かいぎ】に遅刻【ちこく】した。"
+  ],
+  "key": 4,
+  "en": "The roads were jammed, so I was late for the meeting.",
+  "why": "The pattern gives an excuse, 'because'; 1 removes the traffic, 2 reverses the result, 3 swaps cause and result."
+ },
+ {
+  "id": "pp-105",
+  "ja": "彼【かれ】の歌声【うたごえ】には、人【ひと】の心【こころ】を動【うご】かすものがある。",
+  "choices": [
+   "彼【かれ】の歌声【うたごえ】は、きれいだが心【こころ】に響【ひび】かない。",
+   "彼【かれ】の歌声【うたごえ】は、聞【き】く人【ひと】を感動【かんどう】させる力【ちから】を持【も】っている。",
+   "彼【かれ】は、人【ひと】の歌【うた】を聞【き】くと感動【かんどう】する。",
+   "彼【かれ】の歌声【うたごえ】を聞【き】いた人【ひと】は、少【すく】ない。"
+  ],
+  "key": 2,
+  "en": "There's something in his singing voice that moves people's hearts.",
+  "why": "The pattern means 'there is something (moving)'; 1 denies it, 3 swaps who is moved, 4 is about how many heard it."
+ },
+ {
+  "id": "pp-106",
+  "ja": "最近【さいきん】の若者【わかもの】は、車【くるま】を買【か】わない傾向【けいこう】がある。",
+  "choices": [
+   "最近【さいきん】の若者【わかもの】は、みんな車【くるま】を買【か】いたがる。",
+   "最近【さいきん】の若者【わかもの】は、一人【ひとり】も車【くるま】を買【か】わない。",
+   "最近【さいきん】は、車【くるま】を買【か】わない若者【わかもの】が多【おお】くなっている。",
+   "若者【わかもの】に、車【くるま】を売【う】ってはいけない。"
+  ],
+  "key": 3,
+  "en": "Young people these days tend not to buy cars.",
+  "why": "The pattern means 'tend to'; 1 reverses it, 2 makes it absolute, 4 turns it into a rule."
+ },
+ {
+  "id": "pp-107",
+  "ja": "この本【ほん】は、忙【いそが】しくても一度【いちど】は読【よ】むに値【あたい】する。",
+  "choices": [
+   "忙【いそが】しいなら、この本【ほん】は読【よ】まなくていい。",
+   "この本【ほん】は、忙【いそが】しい人【ひと】には向【む】かない。",
+   "忙【いそが】しくて、この本【ほん】はまだ一度【いちど】も読【よ】んでいない。",
+   "忙【いそが】しくても、この本【ほん】は一度【いちど】読【よ】む価値【かち】がある。"
+  ],
+  "key": 4,
+  "en": "This book is worth reading at least once, even if you're busy.",
+  "why": "The pattern means 'worth doing'; 1 excuses busy people, 2 says it is unsuitable, 3 is about the speaker's reading."
+ },
+ {
+  "id": "pp-108",
+  "ja": "試験【しけん】の結果【けっか】が気【き】になってしょうがない。",
+  "choices": [
+   "試験【しけん】の結果【けっか】は、少【すこ】しも気【き】にならない。",
+   "試験【しけん】の結果【けっか】を、もう聞【き】きたくない。",
+   "試験【しけん】の結果【けっか】が、とても気【き】になる。",
+   "試験【しけん】の結果【けっか】がよかったので、安心【あんしん】した。"
+  ],
+  "key": 3,
+  "en": "I can't stop worrying about my exam results.",
+  "why": "The pattern means 'extremely, unbearably'; 1 denies the worry, 2 refuses to hear, 4 says the worry is over."
+ },
+ {
+  "id": "pp-109",
+  "ja": "給料【きゅうりょう】は下【さ】がったが、仕事【しごと】があるだけましだ。",
+  "choices": [
+   "給料【きゅうりょう】が下【さ】がったので、仕事【しごと】をやめたい。",
+   "給料【きゅうりょう】は上【あ】がったが、仕事【しごと】が大変【たいへん】だ。",
+   "仕事【しごと】がなくなるより、給料【きゅうりょう】が下【さ】がるほうが困【こま】る。",
+   "給料【きゅうりょう】は減【へ】ったけれど、仕事【しごと】がないよりはいい。"
+  ],
+  "key": 4,
+  "en": "My pay went down, but at least I still have a job.",
+  "why": "The pattern means 'at least... is better'; 1 wants to quit, 2 reverses the pay, 3 reverses the comparison."
+ },
+ {
+  "id": "pp-110",
+  "ja": "こんな簡単【かんたん】な問題【もんだい】で間違【まちが】えるようでは、合格【ごうかく】は難【むずか】しい。",
+  "choices": [
+   "簡単【かんたん】な問題【もんだい】を間違【まちが】えても、合格【ごうかく】できる。",
+   "合格【ごうかく】したので、簡単【かんたん】な問題【もんだい】は間違【まちが】えない。",
+   "問題【もんだい】が簡単【かんたん】すぎて、誰【だれ】でも合格【ごうかく】できる。",
+   "簡単【かんたん】な問題【もんだい】を間違【まちが】えるなら、合格【ごうかく】はできそうにない。"
+  ],
+  "key": 4,
+  "en": "If you get such easy questions wrong, passing will be difficult.",
+  "why": "The pattern means 'if you are the kind who'; 1 says you can still pass, 2 swaps cause and result, 3 says anyone passes."
+ },
+ {
+  "id": "pp-111",
+  "ja": "十年【じゅうねん】もアメリカに住【す】んでいただけあって、彼【かれ】の英語【えいご】は完璧【かんぺき】だ。",
+  "choices": [
+   "十年【じゅうねん】もアメリカにいたのに、英語【えいご】が下手【へた】だ。",
+   "英語【えいご】が上手【じょうず】なので、アメリカに住【す】むことにした。",
+   "十年【じゅうねん】もアメリカに住【す】んでいたので、英語【えいご】が上手【じょうず】なのは当然【とうぜん】だ。",
+   "アメリカに十年【じゅうねん】いたが、英語【えいご】は使【つか】わなかった。"
+  ],
+  "key": 3,
+  "en": "As you'd expect from ten years in America, his English is perfect.",
+  "why": "The pattern means 'as expected of'; 1 reverses the skill, 2 swaps cause and result, 4 says he did not use English."
+ },
+ {
+  "id": "pp-112",
+  "ja": "期待【きたい】していただけに、負【ま】けたときのショックは大【おお】きかった。",
+  "choices": [
+   "期待【きたい】していなかったので、負【ま】けても平気【へいき】だった。",
+   "期待【きたい】していたが、負【ま】けてもショックはなかった。",
+   "負【ま】けたので、次【つぎ】は期待【きたい】しないことにした。",
+   "とても期待【きたい】していたので、そのぶん負【ま】けてがっかりした。"
+  ],
+  "key": 4,
+  "en": "Because I'd had such high hopes, the shock of losing was all the greater.",
+  "why": "The pattern means 'all the more because'; 1 removes the hopes, 2 denies the shock, 3 is about the next time."
+ },
+ {
+  "id": "pp-113",
+  "ja": "日本【にほん】の夏【なつ】の楽【たの】しみは、何【なん】といっても花火【はなび】大会【たいかい】だ。",
+  "choices": [
+   "日本【にほん】の夏【なつ】には、花火【はなび】大会【たいかい】がない。",
+   "花火【はなび】大会【たいかい】より、ほかの夏【なつ】の行事【ぎょうじ】が楽【たの】しい。",
+   "日本【にほん】の夏【なつ】は暑【あつ】くて、何【なに】も楽【たの】しくない。",
+   "日本【にほん】の夏【なつ】で一番【いちばん】楽【たの】しいのは、花火【はなび】大会【たいかい】だ。"
+  ],
+  "key": 4,
+  "en": "The best thing about summer in Japan has to be the fireworks festivals.",
+  "why": "The phrase means 'above all'; 1 says there are none, 2 ranks other events higher, 3 says nothing is fun."
+ },
+ {
+  "id": "pp-114",
+  "ja": "一人【ひとり】で暮【く】らしている母【はは】のことが、心配【しんぱい】でならない。",
+  "choices": [
+   "母【はは】は一人【ひとり】で暮【く】らしているが、心配【しんぱい】はない。",
+   "母【はは】が、一人【ひとり】で暮【く】らしている私【わたし】を心配【しんぱい】している。",
+   "一人【ひとり】で住【す】んでいる母【はは】が、とても心配【しんぱい】だ。",
+   "母【はは】と一緒【いっしょ】に暮【く】らすことになって、安心【あんしん】した。"
+  ],
+  "key": 3,
+  "en": "I can't help worrying about my mother, who lives alone.",
+  "why": "The pattern means 'extremely, can't help feeling'; 1 denies worry, 2 swaps who worries, 4 says they live together."
+ },
+ {
+  "id": "pp-115",
+  "ja": "この問題【もんだい】は日本【にほん】のみならず、世界【せかい】全体【ぜんたい】の課題【かだい】だ。",
+  "choices": [
+   "この問題【もんだい】は、日本【にほん】だけの問題【もんだい】だ。",
+   "この問題【もんだい】は、日本【にほん】以外【いがい】の国【くに】の問題【もんだい】だ。",
+   "この問題【もんだい】は、日本【にほん】だけでなく世界中【せかいじゅう】の問題【もんだい】だ。",
+   "この問題【もんだい】は、もう世界中【せかいじゅう】で解決【かいけつ】された。"
+  ],
+  "key": 3,
+  "en": "This issue is a challenge not only for Japan but for the whole world.",
+  "why": "The pattern means 'not only... but'; 1 limits it to Japan, 2 excludes Japan, 4 says it is solved."
+ },
+ {
+  "id": "pp-116",
+  "ja": "私【わたし】がしたことは、ほんの小【ちい】さな手伝【てつだ】いにすぎない。",
+  "choices": [
+   "私【わたし】は、少【すこ】し手伝【てつだ】っただけだ。",
+   "私【わたし】が、ほとんど全部【ぜんぶ】やった。",
+   "私【わたし】は、何【なに】も手伝【てつだ】わなかった。",
+   "私【わたし】が、小【ちい】さな子【こ】に手伝【てつだ】ってもらった。"
+  ],
+  "key": 1,
+  "en": "What I did was nothing more than a little help.",
+  "why": "The pattern means 'nothing more than'; 2 inflates it, 3 denies helping, 4 swaps who helped."
+ },
+ {
+  "id": "pp-117",
+  "ja": "どんなに説明【せつめい】しても、それは言【い】い訳【わけ】でしかない。",
+  "choices": [
+   "よく説明【せつめい】すれば、それは言【い】い訳【わけ】ではなくなる。",
+   "いくら説明【せつめい】しても、それはただの言【い】い訳【わけ】だ。",
+   "言【い】い訳【わけ】をしないで、きちんと説明【せつめい】した。",
+   "説明【せつめい】が長【なが】すぎて、何【なに】もわからない。"
+  ],
+  "key": 2,
+  "en": "However much you explain, it's nothing but an excuse.",
+  "why": "The pattern means 'nothing but'; 1 says explaining fixes it, 3 denies the excuse, 4 is about length."
+ },
+ {
+  "id": "pp-118",
+  "ja": "歯【は】が痛【いた】くてたまらないので、今日【きょう】は早退【そうたい】します。",
+  "choices": [
+   "歯【は】は少【すこ】し痛【いた】いが、今日【きょう】は最後【さいご】まで働【はたら】く。",
+   "歯【は】がとても痛【いた】いので、今日【きょう】は早【はや】く帰【かえ】る。",
+   "歯【は】が痛【いた】かったが、もう治【なお】ったので会社【かいしゃ】に来【き】た。",
+   "今日【きょう】は早【はや】く帰【かえ】ったので、歯【は】が痛【いた】くなった。"
+  ],
+  "key": 2,
+  "en": "My tooth hurts terribly, so I'm leaving early today.",
+  "why": "The pattern means 'unbearably'; 1 lowers the pain and stays, 3 says it healed, 4 swaps cause and result."
+ },
+ {
+  "id": "pp-119",
+  "ja": "どんな理由【りゆう】があるにせよ、暴力【ぼうりょく】は許【ゆる】されない。",
+  "choices": [
+   "理由【りゆう】によっては、暴力【ぼうりょく】も許【ゆる】される。",
+   "理由【りゆう】が何【なん】であっても、暴力【ぼうりょく】はだめだ。",
+   "暴力【ぼうりょく】をふるった理由【りゆう】は、誰【だれ】にもわからない。",
+   "暴力【ぼうりょく】を受【う】けた人【ひと】を、許【ゆる】してはいけない。"
+  ],
+  "key": 2,
+  "en": "Whatever the reason, violence is unacceptable.",
+  "why": "The pattern means 'whatever, even if'; 1 allows exceptions, 3 is about knowing the reason, 4 changes who is not forgiven."
+ },
+ {
+  "id": "pp-120",
+  "ja": "何【なに】しろ初【はじ】めての経験【けいけん】なので、うまくいかなくても仕方【しかた】がない。",
+  "choices": [
+   "何度【なんど】も経験【けいけん】しているので、失敗【しっぱい】は許【ゆる】されない。",
+   "初【はじ】めてなのに、うまくいったのは不思議【ふしぎ】だ。",
+   "とにかく初【はじ】めてのことだから、失敗【しっぱい】してもしかたない。",
+   "初【はじ】めてなので、うまくいくに決【き】まっている。"
+  ],
+  "key": 3,
+  "en": "It's my first time, after all, so it can't be helped if it doesn't go well.",
+  "why": "The word means 'after all, in any case'; 1 denies it is the first time, 2 reports success, 4 predicts certain success."
+ },
+ {
+  "id": "pp-121",
+  "ja": "味【あじ】はともかく、この店【みせ】は値段【ねだん】が安【やす】い。",
+  "choices": [
+   "この店【みせ】は、味【あじ】はいいが値段【ねだん】が高【たか】い。",
+   "味【あじ】のことは別【べつ】にして、この店【みせ】は安【やす】い。",
+   "この店【みせ】は、値段【ねだん】が高【たか】いうえに味【あじ】も悪【わる】い。",
+   "この店【みせ】は、値段【ねだん】より味【あじ】で選【えら】ばれている。"
+  ],
+  "key": 2,
+  "en": "Taste aside, this restaurant is cheap.",
+  "why": "The pattern means 'setting aside'; 1 and 3 make it expensive, 4 makes taste the point."
+ },
+ {
+  "id": "pp-122",
+  "ja": "子供【こども】ならともかく、大人【おとな】がそんなことを知【し】らないのは恥【は】ずかしい。",
+  "choices": [
+   "大人【おとな】でも子供【こども】でも、知【し】らなくて当然【とうぜん】だ。",
+   "子供【こども】は別【べつ】だが、大人【おとな】がそれを知【し】らないのは恥【は】ずかしい。",
+   "子供【こども】がそんなことを知【し】らないのは、恥【は】ずかしい。",
+   "大人【おとな】は、子供【こども】にそんなことを教【おし】えるべきではない。"
+  ],
+  "key": 2,
+  "en": "A child might be excused, but it's embarrassing for an adult not to know that.",
+  "why": "The pattern means 'it would be one thing if'; 1 excuses adults too, 3 blames children, 4 is about teaching."
+ },
+ {
+  "id": "pp-123",
+  "ja": "引【ひ】っ越【こ】しの準備【じゅんび】やら仕事【しごと】やらで、最近【さいきん】は休【やす】む暇【ひま】がない。",
+  "choices": [
+   "引【ひ】っ越【こ】しの準備【じゅんび】や仕事【しごと】などで、最近【さいきん】とても忙【いそが】しい。",
+   "引【ひ】っ越【こ】しも終【お】わり、最近【さいきん】は暇【ひま】だ。",
+   "仕事【しごと】が忙【いそが】しいので、引【ひ】っ越【こ】しはやめた。",
+   "最近【さいきん】休【やす】んだので、引【ひ】っ越【こ】しの準備【じゅんび】が進【すす】んだ。"
+  ],
+  "key": 1,
+  "en": "What with preparing to move and work, I've had no time to rest lately.",
+  "why": "The pattern lists causes, 'what with A and B'; 2 says the speaker is free, 3 cancels the move, 4 says they rested."
+ },
+ {
+  "id": "pp-124",
+  "ja": "一度【いちど】謝【あやま】っただけでは、反省【はんせい】したことにはならない。",
+  "choices": [
+   "一度【いちど】謝【あやま】れば、反省【はんせい】したことになる。",
+   "反省【はんせい】していないので、一度【いちど】も謝【あやま】らなかった。",
+   "何度【なんど】謝【あやま】っても、許【ゆる】してもらえない。",
+   "一回【いっかい】謝【あやま】っても、それで反省【はんせい】したとは言【い】えない。"
+  ],
+  "key": 4,
+  "en": "Apologizing once doesn't mean you've truly reflected on it.",
+  "why": "The pattern means 'does not count as'; 1 misses the negation, 2 denies any apology, 3 is about forgiveness."
+ },
+ {
+  "id": "pp-125",
+  "ja": "さすが一流【いちりゅう】ホテルだけのことはあって、サービスが素晴【すば】らしい。",
+  "choices": [
+   "一流【いちりゅう】ホテルなのに、サービスがよくない。",
+   "サービスはいいが、一流【いちりゅう】ホテルではない。",
+   "サービスがいいので、一流【いちりゅう】ホテルになった。",
+   "一流【いちりゅう】ホテルらしく、サービスがとてもいい。"
+  ],
+  "key": 4,
+  "en": "As you'd expect of a first-class hotel, the service is excellent.",
+  "why": "The pattern means 'it lives up to its name'; 1 reverses the service, 2 denies the rank, 3 swaps cause and result."
+ },
+ {
+  "id": "pp-126",
+  "ja": "この部屋【へや】には、関係者【かんけいしゃ】以外【いがい】は入【はい】ってはならない。",
+  "choices": [
+   "この部屋【へや】には、誰【だれ】でも入【はい】っていい。",
+   "関係者【かんけいしゃ】は、この部屋【へや】に入【はい】ってはいけない。",
+   "この部屋【へや】に入【はい】れるのは、関係者【かんけいしゃ】だけだ。",
+   "この部屋【へや】に入【はい】った人【ひと】は、関係者【かんけいしゃ】になる。"
+  ],
+  "key": 3,
+  "en": "No one but authorized staff may enter this room.",
+  "why": "The pattern means 'must not'; 1 lets anyone in, 2 bans the wrong people, 4 reverses the logic."
+ },
+ {
+  "id": "pp-127",
+  "ja": "試験【しけん】まで一週間【いっしゅうかん】しかないので、遊【あそ】んではいられない。",
+  "choices": [
+   "試験【しけん】まで時間【じかん】があるので、まだ遊【あそ】べる。",
+   "試験【しけん】が一週間後【いっしゅうかんご】なので、遊【あそ】んでいる時間【じかん】はない。",
+   "試験【しけん】が終【お】わったので、一週間【いっしゅうかん】遊【あそ】ぶ。",
+   "一週間【いっしゅうかん】遊【あそ】んだので、試験【しけん】に落【お】ちた。"
+  ],
+  "key": 2,
+  "en": "The exam is only a week away, so I can't afford to play around.",
+  "why": "The pattern means 'cannot afford to keep doing'; 1 says there is time, 3 puts the exam in the past, 4 reports a failure."
+ },
+ {
+  "id": "pp-128",
+  "ja": "借金【しゃっきん】をしてでも、子供【こども】を大学【だいがく】に行【い】かせたい。",
+  "choices": [
+   "借金【しゃっきん】をするくらいなら、大学【だいがく】には行【い】かせない。",
+   "子供【こども】が大学【だいがく】に行【い】ったので、借金【しゃっきん】ができた。",
+   "子供【こども】は、借金【しゃっきん】をして大学【だいがく】に行【い】きたがっている。",
+   "お金【かね】を借【か】りることになっても、子供【こども】を大学【だいがく】に入【い】れたい。"
+  ],
+  "key": 4,
+  "en": "I want to send my child to university, even if I have to borrow money.",
+  "why": "The pattern means 'even if it takes'; 1 reverses the priority, 2 reports a past result, 3 makes it the child's wish."
+ },
+ {
+  "id": "pp-129",
+  "ja": "部長【ぶちょう】に誘【さそ】われたら、飲【の】み会【かい】に行【い】かないわけにはいかない。",
+  "choices": [
+   "部長【ぶちょう】に誘【さそ】われても、飲【の】み会【かい】には行【い】かない。",
+   "部長【ぶちょう】が、飲【の】み会【かい】に行【い】きたがっている。",
+   "部長【ぶちょう】を、飲【の】み会【かい】に誘【さそ】わなければならない。",
+   "部長【ぶちょう】に誘【さそ】われたなら、飲【の】み会【かい】に行【い】くしかない。"
+  ],
+  "key": 4,
+  "en": "If the department head invites me, I can't very well not go to the drinking party.",
+  "why": "A double negative: 'cannot not go' means must go; 1 refuses, 2 makes it the boss's wish, 3 swaps who invites."
+ },
+ {
+  "id": "pp-130",
+  "ja": "外国人【がいこくじん】だから日本語【にほんご】が話【はな】せないというわけではない。",
+  "choices": [
+   "外国人【がいこくじん】でも、日本語【にほんご】が話【はな】せる人【ひと】はいる。",
+   "外国人【がいこくじん】は、日本語【にほんご】が話【はな】せない。",
+   "外国人【がいこくじん】は、みんな日本語【にほんご】が上手【じょうず】だ。",
+   "日本語【にほんご】が話【はな】せない人【ひと】は、外国人【がいこくじん】だ。"
+  ],
+  "key": 1,
+  "en": "Being a foreigner doesn't mean you can't speak Japanese.",
+  "why": "The pattern means 'it does not follow that'; 2 misses the negation, 3 over-generalizes, 4 reverses the claim."
+ },
+ {
+  "id": "pp-131",
+  "ja": "あれだけ練習【れんしゅう】したのだから、彼【かれ】が優勝【ゆうしょう】したのももっともだ。",
+  "choices": [
+   "たくさん練習【れんしゅう】したのに、彼【かれ】は優勝【ゆうしょう】できなかった。",
+   "練習【れんしゅう】しなかったのに、彼【かれ】は優勝【ゆうしょう】した。",
+   "たくさん練習【れんしゅう】したので、彼【かれ】が優勝【ゆうしょう】したのは当然【とうぜん】だ。",
+   "優勝【ゆうしょう】したので、彼【かれ】はもう練習【れんしゅう】しない。"
+  ],
+  "key": 3,
+  "en": "He practiced so hard that it's no wonder he won.",
+  "why": "The pattern means 'it is only natural'; 1 reverses the result, 2 denies the practice, 4 is about the future."
+ },
+ {
+  "id": "pp-132",
+  "ja": "いくら頼【たの】んだって、あの人【ひと】は貸【か】してくれないよ。",
+  "choices": [
+   "どんなに頼【たの】んでも、あの人【ひと】は貸【か】してくれない。",
+   "何度【なんど】か頼【たの】めば、あの人【ひと】は貸【か】してくれる。",
+   "あの人【ひと】は、頼【たの】まなくても貸【か】してくれる。",
+   "あの人【ひと】に、何【なに】か貸【か】してほしいと頼【たの】まれた。"
+  ],
+  "key": 1,
+  "en": "No matter how much you ask, that person won't lend it to you.",
+  "why": "The pattern is a casual 'even if'; 2 and 3 say they will lend, 4 swaps who asks."
+ },
+ {
+  "id": "pp-133",
+  "ja": "どんなに苦【くる】しくとも、最後【さいご】まで走【はし】り続【つづ】けるつもりだ。",
+  "choices": [
+   "苦【くる】しくなったら、途中【とちゅう】でやめるつもりだ。",
+   "どれだけ苦【くる】しくても、最後【さいご】まで走【はし】るつもりだ。",
+   "苦【くる】しくないので、最後【さいご】まで走【はし】れた。",
+   "最後【さいご】まで走【はし】ったので、とても苦【くる】しくなった。"
+  ],
+  "key": 2,
+  "en": "However painful it gets, I intend to keep running to the end.",
+  "why": "The pattern is a written 'even if'; 1 plans to stop, 3 denies the pain, 4 reports a past result."
+ },
+ {
+  "id": "pp-134",
+  "ja": "忙【いそが】しくて、最近【さいきん】はろくに寝【ね】ていない。",
+  "choices": [
+   "最近【さいきん】は暇【ひま】なので、よく寝【ね】ている。",
+   "最近【さいきん】は、全然【ぜんぜん】忙【いそが】しくない。",
+   "寝【ね】すぎたので、最近【さいきん】忙【いそが】しくなった。",
+   "忙【いそが】しいので、最近【さいきん】は十分【じゅうぶん】に寝【ね】ていない。"
+  ],
+  "key": 4,
+  "en": "I've been so busy that I haven't had a decent night's sleep lately.",
+  "why": "The pattern means 'not properly'; 1 reverses it, 2 denies being busy, 3 swaps cause and result."
+ },
+ {
+  "id": "pp-135",
+  "ja": "どうやら、明日【あした】の会議【かいぎ】は延期【えんき】になったらしい。",
+  "choices": [
+   "明日【あした】の会議【かいぎ】は、予定【よてい】どおり行【おこな】われる。",
+   "明日【あした】の会議【かいぎ】は、別【べつ】の日【ひ】になったようだ。",
+   "明日【あした】の会議【かいぎ】は、中止【ちゅうし】になったようだ。",
+   "会議【かいぎ】は、明日【あした】に変更【へんこう】されたようだ。"
+  ],
+  "key": 2,
+  "en": "It seems tomorrow's meeting has been postponed.",
+  "why": "The word means 'it seems'; postponed means moved; 1 keeps the date, 3 cancels it, 4 moves it to tomorrow."
+ },
+ {
+  "id": "pp-136",
+  "ja": "忙【いそが】しくても、せめて週【しゅう】に一度【いちど】は家族【かぞく】に電話【でんわ】したい。",
+  "choices": [
+   "忙【いそが】しいので、家族【かぞく】には電話【でんわ】しない。",
+   "忙【いそが】しくても、少【すく】なくとも週【しゅう】に一回【いっかい】は家族【かぞく】に電話【でんわ】したい。",
+   "家族【かぞく】は、毎日【まいにち】私【わたし】に電話【でんわ】してくる。",
+   "週【しゅう】に一度【いちど】、家族【かぞく】と会【あ】うことにしている。"
+  ],
+  "key": 2,
+  "en": "Even if I'm busy, I'd like to call my family at least once a week.",
+  "why": "The word means 'at least'; 1 denies calling, 3 swaps who calls, 4 changes calling to meeting."
+ },
+ {
+  "id": "pp-137",
+  "ja": "どうせ間【ま】に合【あ】わないのだから、急【いそ】いでも無駄【むだ】だ。",
+  "choices": [
+   "急【いそ】げば、まだ間【ま】に合【あ】う。",
+   "間【ま】に合【あ】わないので、急【いそ】がなければならない。",
+   "どちらにしても間【ま】に合【あ】わないので、急【いそ】ぐ意味【いみ】はない。",
+   "間【ま】に合【あ】うので、急【いそ】ぐ必要【ひつよう】はない。"
+  ],
+  "key": 3,
+  "en": "We won't make it anyway, so there's no point in hurrying.",
+  "why": "The word means 'anyway'; 1 says hurrying works, 2 demands hurrying, 4 says we will be in time."
+ },
+ {
+  "id": "pp-138",
+  "ja": "万【まん】が一【いち】地震【じしん】が起【お】きたら、すぐに机【つくえ】の下【した】に入【はい】ってください。",
+  "choices": [
+   "地震【じしん】が起【お】きても、机【つくえ】の下【した】に入【はい】る必要【ひつよう】はない。",
+   "地震【じしん】が起【お】きる前【まえ】に、机【つくえ】の下【した】に入【はい】ってください。",
+   "地震【じしん】が起【お】きたら、すぐに外【そと】へ出【で】てください。",
+   "もし地震【じしん】が起【お】きたら、すぐ机【つくえ】の下【した】に隠【かく】れてください。"
+  ],
+  "key": 4,
+  "en": "In the unlikely event of an earthquake, get under a desk right away.",
+  "why": "The phrase means 'in the unlikely event'; 1 drops the instruction, 2 changes the timing, 3 changes the action."
+ },
+ {
+  "id": "pp-139",
+  "ja": "雨【あめ】は降【ふ】らないと思【おも】うが、一応【いちおう】傘【かさ】を持【も】って行【い】こう。",
+  "choices": [
+   "雨【あめ】が降【ふ】りそうなので、傘【かさ】を持【も】って行【い】く。",
+   "雨【あめ】は降【ふ】らないので、傘【かさ】は持【も】って行【い】かない。",
+   "雨【あめ】は降【ふ】らないだろうが、念【ねん】のために傘【かさ】を持【も】って行【い】く。",
+   "傘【かさ】を持【も】って行【い】けば、雨【あめ】は降【ふ】らない。"
+  ],
+  "key": 3,
+  "en": "I don't think it will rain, but I'll take an umbrella just in case.",
+  "why": "The word means 'just in case'; 1 expects rain, 2 leaves the umbrella, 4 invents a cause."
+ },
+ {
+  "id": "pp-140",
+  "ja": "できるものなら、もう一度【いちど】学生【がくせい】時代【じだい】に戻【もど】りたい。",
+  "choices": [
+   "学生【がくせい】時代【じだい】には、二度【にど】と戻【もど】りたくない。",
+   "学生【がくせい】のころ、早【はや】く大人【おとな】になりたかった。",
+   "もし可能【かのう】なら、また学生【がくせい】のころに戻【もど】りたい。",
+   "もう一度【いちど】、大学【だいがく】に入【はい】ることにした。"
+  ],
+  "key": 3,
+  "en": "If only I could, I'd like to go back to my school days once more.",
+  "why": "The pattern means 'if it were possible'; 1 reverses the wish, 2 is a past wish, 4 makes it a real decision."
+ },
+ {
+  "id": "pp-141",
+  "ja": "健康上【けんこうじょう】の理由【りゆう】で、彼【かれ】は会社【かいしゃ】を辞【や】めた。",
+  "choices": [
+   "彼【かれ】は、会社【かいしゃ】を辞【や】めてから元気【げんき】になった。",
+   "彼【かれ】は体【からだ】が弱【よわ】いが、会社【かいしゃ】を辞【や】めなかった。",
+   "彼【かれ】は、お金【かね】の問題【もんだい】で会社【かいしゃ】を辞【や】めた。",
+   "彼【かれ】は、体【からだ】の問題【もんだい】で仕事【しごと】を辞【や】めた。"
+  ],
+  "key": 4,
+  "en": "He quit his company for health reasons.",
+  "why": "The suffix means 'in terms of'; 1 tells a later result, 2 denies quitting, 3 changes the reason."
+ },
+ {
+  "id": "pp-142",
+  "ja": "新【あたら】しい仕事【しごと】は、思【おも】っていた以上【いじょう】に大変【たいへん】だった。",
+  "choices": [
+   "新【あたら】しい仕事【しごと】は、思【おも】ったほど大変【たいへん】ではなかった。",
+   "新【あたら】しい仕事【しごと】は、予想【よそう】よりもずっと大変【たいへん】だった。",
+   "新【あたら】しい仕事【しごと】は、思【おも】っていたとおり大変【たいへん】だった。",
+   "新【あたら】しい仕事【しごと】は、前【まえ】の仕事【しごと】より楽【らく】だった。"
+  ],
+  "key": 2,
+  "en": "The new job was even harder than I'd expected.",
+  "why": "The pattern means 'more than'; 1 makes it easier than expected, 3 exactly as expected, 4 easier than before."
+ },
+ {
+  "id": "pp-143",
+  "ja": "駅【えき】へ向【む】かう途中【とちゅう】で、財布【さいふ】を落【お】としたことに気【き】づいた。",
+  "choices": [
+   "駅【えき】に着【つ】いてから、財布【さいふ】を落【お】とした。",
+   "駅【えき】に行【い】くまでの間【あいだ】に、財布【さいふ】がないとわかった。",
+   "財布【さいふ】を落【お】としたので、駅【えき】へ行【い】けなかった。",
+   "駅【えき】で、落【お】とした財布【さいふ】が見【み】つかった。"
+  ],
+  "key": 2,
+  "en": "On my way to the station, I realized I had dropped my wallet.",
+  "why": "The word means 'on the way'; 1 changes the place, 3 invents a result, 4 says it was found."
+ },
+ {
+  "id": "pp-144",
+  "ja": "有名【ゆうめい】な先生【せんせい】の指導【しどう】の下【もと】で、研究【けんきゅう】を続【つづ】けている。",
+  "choices": [
+   "有名【ゆうめい】な先生【せんせい】に教【おし】えてもらいながら、研究【けんきゅう】している。",
+   "有名【ゆうめい】な先生【せんせい】に、研究【けんきゅう】の方法【ほうほう】を教【おし】えている。",
+   "先生【せんせい】の指導【しどう】をやめて、一人【ひとり】で研究【けんきゅう】している。",
+   "研究【けんきゅう】を続【つづ】けて、有名【ゆうめい】な先生【せんせい】になった。"
+  ],
+  "key": 1,
+  "en": "I'm continuing my research under the guidance of a famous professor.",
+  "why": "The pattern means 'under'; 2 swaps who teaches, 3 drops the guidance, 4 makes the speaker the professor."
+ },
+ {
+  "id": "pp-145",
+  "ja": "大丈夫【だいじょうぶ】だと言【い】ってしまった手前【てまえ】、今更【いまさら】できないとは言【い】えない。",
+  "choices": [
+   "大丈夫【だいじょうぶ】だと言【い】ったが、やはりできないと正直【しょうじき】に言【い】った。",
+   "最初【さいしょ】から、できないとはっきり言【い】っておいた。",
+   "大丈夫【だいじょうぶ】かどうか、まだ誰【だれ】にも言【い】っていない。",
+   "できると言【い】ってしまったので、今【いま】になって無理【むり】だとは言【い】いにくい。"
+  ],
+  "key": 4,
+  "en": "Having said it would be fine, I can't now say I can't do it.",
+  "why": "The pattern means 'having said so (to save face)'; 1 admits it anyway, 2 and 3 deny the earlier promise."
+ },
+ {
+  "id": "pp-146",
+  "ja": "店【みせ】のことは息子【むすこ】に任【まか】せて、父【ちち】は引退【いんたい】した。",
+  "choices": [
+   "息子【むすこ】は店【みせ】を父【ちち】に任【まか】せて、引退【いんたい】した。",
+   "父【ちち】は引退【いんたい】し、今【いま】は息子【むすこ】が店【みせ】をやっている。",
+   "父【ちち】は引退【いんたい】せず、息子【むすこ】と店【みせ】をやっている。",
+   "父【ちち】は引退【いんたい】して、店【みせ】を閉【し】めた。"
+  ],
+  "key": 2,
+  "en": "Father handed the shop over to his son and retired.",
+  "why": "The pattern means 'leave to'; 1 swaps father and son, 3 denies retiring, 4 closes the shop."
+ },
+ {
+  "id": "pp-147",
+  "ja": "旅行【りょこう】に行【い】ったつもりで、そのお金【かね】を貯金【ちょきん】した。",
+  "choices": [
+   "旅行【りょこう】には行【い】かずに、その分【ぶん】のお金【かね】を貯【た】めた。",
+   "貯金【ちょきん】したお金【かね】で、旅行【りょこう】に行【い】った。",
+   "旅行【りょこう】に行【い】くために、お金【かね】を借【か】りた。",
+   "旅行【りょこう】に行【い】ったが、お金【かね】は使【つか】わなかった。"
+  ],
+  "key": 1,
+  "en": "I pretended I'd gone on a trip and saved that money instead.",
+  "why": "The pattern means 'treating it as if'; there was no trip; 2, 3 and 4 all have a real trip."
+ },
+ {
+  "id": "pp-148",
+  "ja": "留学【りゅうがく】の経験【けいけん】を活【い】かして、通訳【つうやく】の仕事【しごと】をしている。",
+  "choices": [
+   "通訳【つうやく】の仕事【しごと】をするために、これから留学【りゅうがく】する。",
+   "留学【りゅうがく】したが、その経験【けいけん】は仕事【しごと】に役立【やくだ】っていない。",
+   "通訳【つうやく】の人【ひと】に、留学【りゅうがく】の経験【けいけん】を話【はな】した。",
+   "留学【りゅうがく】で学【まな】んだことを使【つか】って、通訳【つうやく】として働【はたら】いている。"
+  ],
+  "key": 4,
+  "en": "I'm putting my experience studying abroad to use working as an interpreter.",
+  "why": "The verb means 'make good use of'; 1 moves study to the future, 2 denies the use, 3 changes the action."
+ },
+ {
+  "id": "pp-149",
+  "ja": "隣【となり】の部屋【へや】から、なにやら変【へん】な音【おと】が聞【き】こえる。",
+  "choices": [
+   "隣【となり】の部屋【へや】で、何【なに】か変【へん】な音【おと】がしている。",
+   "隣【となり】の部屋【へや】からは、何【なに】も聞【き】こえない。",
+   "隣【となり】の人【ひと】が、私【わたし】の部屋【へや】の音【おと】を気【き】にしている。",
+   "隣【となり】の部屋【へや】から、きれいな音楽【おんがく】が聞【き】こえる。"
+  ],
+  "key": 1,
+  "en": "Some strange noise is coming from the next room.",
+  "why": "The word means 'something or other'; 2 denies the noise, 3 reverses the rooms, 4 makes it pleasant music."
+ },
+ {
+  "id": "pp-150",
+  "ja": "駅【えき】から会場【かいじょう】まで、歩【ある】いておおよそ二十分【にじゅっぷん】かかる。",
+  "choices": [
+   "駅【えき】から会場【かいじょう】へは、歩【ある】いて二十分【にじゅっぷん】ぐらいだ。",
+   "駅【えき】から会場【かいじょう】まで、歩【ある】くとちょうど二十分【にじゅっぷん】だ。",
+   "駅【えき】から会場【かいじょう】まで、車【くるま】で二十分【にじゅっぷん】ぐらいだ。",
+   "駅【えき】から会場【かいじょう】まで、歩【ある】いて二時間【にじかん】かかる。"
+  ],
+  "key": 1,
+  "en": "It takes roughly twenty minutes on foot from the station to the venue.",
+  "why": "The word means 'roughly'; 2 makes it exact, 3 changes walking to driving, 4 changes the time."
+ },
+ {
+  "id": "pp-151",
+  "ja": "確【たし】かに彼【かれ】の意見【いけん】にも一理【いちり】あるが、全面的【ぜんめんてき】には賛成【さんせい】できない。",
+  "choices": [
+   "彼【かれ】の意見【いけん】は正【ただ】しいので、全部【ぜんぶ】賛成【さんせい】する。",
+   "彼【かれ】の意見【いけん】も少【すこ】し正【ただ】しいが、全部【ぜんぶ】には賛成【さんせい】しない。",
+   "彼【かれ】の意見【いけん】は、まったく間違【まちが】っている。",
+   "彼【かれ】は、私【わたし】の意見【いけん】に少【すこ】しだけ賛成【さんせい】した。"
+  ],
+  "key": 2,
+  "en": "His view certainly has a point, but I can't agree with it entirely.",
+  "why": "The word concedes a point, 'certainly... but'; 1 agrees fully, 3 rejects it fully, 4 swaps the people."
+ },
+ {
+  "id": "pp-152",
+  "ja": "知【し】らない人【ひと】に、いきなり名前【なまえ】を呼【よ】ばれて驚【おどろ】いた。",
+  "choices": [
+   "知【し】らない人【ひと】に突然【とつぜん】名前【なまえ】を呼【よ】ばれて、びっくりした。",
+   "知【し】らない人【ひと】の名前【なまえ】を呼【よ】んで、驚【おどろ】かせた。",
+   "友達【ともだち】に名前【なまえ】を呼【よ】ばれたが、驚【おどろ】かなかった。",
+   "知【し】らない人【ひと】が、私【わたし】の名前【なまえ】を聞【き】いてきた。"
+  ],
+  "key": 1,
+  "en": "I was startled when a stranger suddenly called out my name.",
+  "why": "The word means 'suddenly'; 2 swaps who called, 3 changes the person and denies surprise, 4 changes calling to asking."
+ },
+ {
+  "id": "pp-153",
+  "ja": "新【あたら】しいゲームは発売【はつばい】されると、たちまち売【う】り切【き】れた。",
+  "choices": [
+   "新【あたら】しいゲームは、発売【はつばい】から一年【いちねん】かけて売【う】り切【き】れた。",
+   "新【あたら】しいゲームは、ほとんど売【う】れなかった。",
+   "ゲームが売【う】り切【き】れたので、新【あたら】しいゲームが発売【はつばい】された。",
+   "新【あたら】しいゲームは、売【う】り出【だ】されてすぐに全部【ぜんぶ】売【う】れた。"
+  ],
+  "key": 4,
+  "en": "The new game sold out the moment it was released.",
+  "why": "The word means 'instantly'; 1 makes it slow, 2 denies the sales, 3 swaps cause and result."
+ },
+ {
+  "id": "pp-154",
+  "ja": "いよいよ明日【あした】から、新【あたら】しい生活【せいかつ】が始【はじ】まる。",
+  "choices": [
+   "とうとう明日【あした】から、新【あたら】しい生活【せいかつ】がスタートする。",
+   "新【あたら】しい生活【せいかつ】は、もう始【はじ】まっている。",
+   "新【あたら】しい生活【せいかつ】が始【はじ】まるのは、まだずっと先【さき】だ。",
+   "明日【あした】で、新【あたら】しい生活【せいかつ】が終【お】わる。"
+  ],
+  "key": 1,
+  "en": "At long last, my new life starts tomorrow.",
+  "why": "The word means 'at last'; 2 says it already began, 3 puts it far ahead, 4 says it ends."
+ },
+ {
+  "id": "pp-155",
+  "ja": "十年前【じゅうねんまえ】の事件【じけん】の犯人【はんにん】は、未【いま】だに捕【つか】まっていない。",
+  "choices": [
+   "十年前【じゅうねんまえ】の事件【じけん】の犯人【はんにん】は、最近【さいきん】捕【つか】まった。",
+   "十年前【じゅうねんまえ】の事件【じけん】の犯人【はんにん】は、今【いま】もまだ捕【つか】まっていない。",
+   "十年前【じゅうねんまえ】の事件【じけん】の犯人【はんにん】は、すぐに捕【つか】まった。",
+   "犯人【はんにん】は、十年後【じゅうねんご】にまた事件【じけん】を起【お】こした。"
+  ],
+  "key": 2,
+  "en": "The culprit of the incident ten years ago still hasn't been caught.",
+  "why": "The word means 'still (not)'; 1 and 3 say he was caught, 4 tells of another crime."
+ },
+ {
+  "id": "pp-156",
+  "ja": "本【ほん】を読【よ】んでいるうちに、いつの間【ま】にか眠【ねむ】ってしまった。",
+  "choices": [
+   "本【ほん】を読【よ】んでいて、知【し】らないあいだに寝【ね】てしまった。",
+   "本【ほん】を読【よ】む前【まえ】に、眠【ねむ】ってしまった。",
+   "眠【ねむ】れないので、本【ほん】を読【よ】んだ。",
+   "眠【ねむ】かったが、本【ほん】を最後【さいご】まで読【よ】んだ。"
+  ],
+  "key": 1,
+  "en": "While I was reading, I fell asleep before I knew it.",
+  "why": "The phrase means 'before one knew it'; 2 changes the timing, 3 says the speaker couldn't sleep, 4 stays awake."
+ },
+ {
+  "id": "pp-157",
+  "ja": "一旦【いったん】家【いえ】に帰【かえ】って、着替【きが】えてからパーティーに行【い】きます。",
+  "choices": [
+   "パーティーの前【まえ】に、一度【いちど】家【いえ】に戻【もど】って着替【きが】える。",
+   "家【いえ】に帰【かえ】らないで、そのままパーティーに行【い】く。",
+   "パーティーのあとで、家【いえ】に帰【かえ】って着替【きが】える。",
+   "着替【きが】えたので、パーティーには行【い】かない。"
+  ],
+  "key": 1,
+  "en": "I'll go home first, change, and then go to the party.",
+  "why": "The word means 'once, for a while'; 2 skips going home, 3 changes the order, 4 drops the party."
+ },
+ {
+  "id": "pp-158",
+  "ja": "急【いそ】いで駅【えき】に行【い】ったが、電車【でんしゃ】はとっくに出【で】ていた。",
+  "choices": [
+   "駅【えき】に着【つ】いたとき、電車【でんしゃ】はちょうど出【で】るところだった。",
+   "駅【えき】に着【つ】いたとき、電車【でんしゃ】はずっと前【まえ】に出【で】てしまっていた。",
+   "急【いそ】いだので、電車【でんしゃ】に間【ま】に合【あ】った。",
+   "駅【えき】に着【つ】いてから、電車【でんしゃ】が来【く】るまで長【なが】く待【ま】った。"
+  ],
+  "key": 2,
+  "en": "I hurried to the station, but the train had long since left.",
+  "why": "The word means 'long ago'; 1 makes it just leaving, 3 catches it, 4 has the train still to come."
+ },
+ {
+  "id": "pp-159",
+  "ja": "最初【さいしょ】は反対【はんたい】していた両親【りょうしん】も、やがて私【わたし】の夢【ゆめ】を応援【おうえん】してくれた。",
+  "choices": [
+   "両親【りょうしん】は、最初【さいしょ】から私【わたし】の夢【ゆめ】を応援【おうえん】していた。",
+   "両親【りょうしん】は初【はじ】め反対【はんたい】したが、しばらくして応援【おうえん】してくれた。",
+   "両親【りょうしん】は、最後【さいご】まで私【わたし】の夢【ゆめ】に反対【はんたい】した。",
+   "両親【りょうしん】は初【はじ】め応援【おうえん】していたが、後【あと】で反対【はんたい】した。"
+  ],
+  "key": 2,
+  "en": "My parents, who were against it at first, eventually came to support my dream.",
+  "why": "The word means 'eventually'; 1 drops the early opposition, 3 drops the support, 4 reverses the order."
+ },
+ {
+  "id": "pp-160",
+  "ja": "はたして彼【かれ】の言【い】ったことは本当【ほんとう】なのだろうか。",
+  "choices": [
+   "彼【かれ】の言【い】ったことは、間違【まちが】いなく本当【ほんとう】だ。",
+   "彼【かれ】は、私【わたし】の言【い】ったことを信【しん】じていない。",
+   "彼【かれ】の言【い】ったことが本当【ほんとう】かどうか、疑【うたが】わしい。",
+   "彼【かれ】の言【い】ったことは、全部【ぜんぶ】うそだとわかった。"
+  ],
+  "key": 3,
+  "en": "I wonder whether what he said is really true.",
+  "why": "The word expresses doubt, 'really?'; 1 is certain it is true, 2 swaps the people, 4 is certain it is false."
+ },
+ {
+  "id": "pp-161",
+  "ja": "要【よう】するに、彼【かれ】は仕事【しごと】をやめたいということだ。",
+  "choices": [
+   "結局【けっきょく】、彼【かれ】は仕事【しごと】を続【つづ】けることにした。",
+   "彼【かれ】は、仕事【しごと】をやめさせられた。",
+   "彼【かれ】は、私【わたし】に仕事【しごと】をやめてほしいと思【おも】っている。",
+   "簡単【かんたん】に言【い】えば、彼【かれ】は仕事【しごと】をやめたがっている。"
+  ],
+  "key": 4,
+  "en": "In short, he wants to quit his job.",
+  "why": "The phrase means 'in short'; 1 reverses his wish, 2 makes it forced, 3 changes who would quit."
+ },
+ {
+  "id": "pp-162",
+  "ja": "感謝【かんしゃ】の気持【きも】ちを込【こ】めて、先生【せんせい】に手紙【てがみ】を書【か】いた。",
+  "choices": [
+   "先生【せんせい】から、感謝【かんしゃ】の手紙【てがみ】をもらった。",
+   "ありがとうという気持【きも】ちで、先生【せんせい】に手紙【てがみ】を書【か】いた。",
+   "先生【せんせい】に謝【あやま】るために、手紙【てがみ】を書【か】いた。",
+   "先生【せんせい】に感謝【かんしゃ】しているが、手紙【てがみ】は書【か】いていない。"
+  ],
+  "key": 2,
+  "en": "I wrote a letter to my teacher, full of gratitude.",
+  "why": "The pattern means 'putting (a feeling) into'; 1 reverses the direction, 3 changes the feeling, 4 denies writing."
+ },
+ {
+  "id": "pp-163",
+  "ja": "大雨【おおあめ】に加【くわ】えて強【つよ】い風【かぜ】も吹【ふ】き、電車【でんしゃ】が止【と】まった。",
+  "choices": [
+   "雨【あめ】はひどかったが、風【かぜ】がなかったので電車【でんしゃ】は動【うご】いた。",
+   "雨【あめ】がひどく、さらに風【かぜ】も強【つよ】くて、電車【でんしゃ】が止【と】まった。",
+   "風【かぜ】は強【つよ】かったが、雨【あめ】は降【ふ】らなかった。",
+   "電車【でんしゃ】が止【と】まったので、雨【あめ】と風【かぜ】が強【つよ】くなった。"
+  ],
+  "key": 2,
+  "en": "On top of the heavy rain, strong winds blew too, and the trains stopped.",
+  "why": "The pattern means 'in addition to'; 1 removes the wind and the stop, 3 removes the rain, 4 swaps cause and result."
+ },
+ {
+  "id": "pp-164",
+  "ja": "結果【けっか】は別【べつ】として、最後【さいご】まで頑張【がんば】ったことを褒【ほ】めたい。",
+  "choices": [
+   "結果【けっか】がよかったので、頑張【がんば】ったことを褒【ほ】めたい。",
+   "結果【けっか】はどうであっても、最後【さいご】まで頑張【がんば】ったことは褒【ほ】めたい。",
+   "最後【さいご】まで頑張【がんば】ったが、結果【けっか】が悪【わる】いので褒【ほ】められない。",
+   "頑張【がんば】ったかどうかより、結果【けっか】が大切【たいせつ】だ。"
+  ],
+  "key": 2,
+  "en": "Whatever the result, I want to praise you for doing your best to the end.",
+  "why": "The pattern means 'apart from'; 1 ties praise to the result, 3 withholds it, 4 puts the result first."
+ },
+ {
+  "id": "pp-165",
+  "ja": "彼【かれ】は勉強【べんきょう】は苦手【にがて】だが、体力【たいりょく】だけは誰【だれ】にも負【ま】けない。",
+  "choices": [
+   "彼【かれ】は勉強【べんきょう】もできるし、体力【たいりょく】もある。",
+   "彼【かれ】は勉強【べんきょう】は得意【とくい】だが、体力【たいりょく】がない。",
+   "彼【かれ】は勉強【べんきょう】はできないが、体力【たいりょく】では一番【いちばん】だ。",
+   "彼【かれ】は、勉強【べんきょう】でも体力【たいりょく】でも人【ひと】に負【ま】ける。"
+  ],
+  "key": 3,
+  "en": "He's poor at studying, but when it comes to stamina, he's second to none.",
+  "why": "The pattern means 'at least in this'; 1 makes him good at study, 2 reverses both, 4 makes him lose in both."
+ },
+ {
+  "id": "pp-166",
+  "ja": "何【なに】より大切【たいせつ】なのは、毎日【まいにち】続【つづ】けることだ。",
+  "choices": [
+   "毎日【まいにち】続【つづ】けなくても、大丈夫【だいじょうぶ】だ。",
+   "毎日【まいにち】続【つづ】けるより、大切【たいせつ】なことがある。",
+   "毎日【まいにち】続【つづ】けることが、一番【いちばん】大事【だいじ】だ。",
+   "毎日【まいにち】続【つづ】けるのは、とても難【むずか】しい。"
+  ],
+  "key": 3,
+  "en": "What matters more than anything is keeping at it every day.",
+  "why": "The phrase means 'above all'; 1 says it is unnecessary, 2 ranks something higher, 4 is about difficulty."
+ },
+ {
+  "id": "pp-167",
+  "ja": "彼【かれ】は風邪【かぜ】か何【なに】かで、今日【きょう】は学校【がっこう】を休【やす】んでいる。",
+  "choices": [
+   "彼【かれ】は風邪【かぜ】をひいているのに、学校【がっこう】に来【き】た。",
+   "彼【かれ】は、風邪【かぜ】ではなく旅行【りょこう】で休【やす】んでいる。",
+   "彼【かれ】は、たぶん風邪【かぜ】などで今日【きょう】は休【やす】みだ。",
+   "彼【かれ】は、風邪【かぜ】がうつらないように休【やす】ませられた。"
+  ],
+  "key": 3,
+  "en": "He's off school today with a cold or something.",
+  "why": "The phrase means 'or something like that'; 1 has him at school, 2 rules out the cold, 4 invents another reason."
+ },
+ {
+  "id": "pp-168",
+  "ja": "京都【きょうと】や奈良【なら】といった古【ふる】い町【まち】には、外国人【がいこくじん】観光客【かんこうきゃく】が多【おお】い。",
+  "choices": [
+   "京都【きょうと】や奈良【なら】のような古【ふる】い町【まち】は、外国【がいこく】からの観光客【かんこうきゃく】が多【おお】い。",
+   "京都【きょうと】や奈良【なら】には、外国人【がいこくじん】はあまり来【こ】ない。",
+   "京都【きょうと】や奈良【なら】より、新【あたら】しい町【まち】のほうが人気【にんき】だ。",
+   "京都【きょうと】や奈良【なら】に住【す】む外国人【がいこくじん】が増【ふ】えている。"
+  ],
+  "key": 1,
+  "en": "Old cities such as Kyoto and Nara draw many foreign tourists.",
+  "why": "The pattern gives examples, 'such as'; 2 denies the tourists, 3 prefers new towns, 4 changes tourists to residents."
+ },
+ {
+  "id": "pp-169",
+  "ja": "彼【かれ】はいわゆる天才【てんさい】で、一度【いちど】聞【き】いたことは忘【わす】れない。",
+  "choices": [
+   "彼【かれ】は天才【てんさい】と言【い】われるが、よく物【もの】を忘【わす】れる。",
+   "彼【かれ】は、何度【なんど】も聞【き】かないと覚【おぼ】えられない。",
+   "彼【かれ】は、天才【てんさい】の話【はなし】を一度【いちど】聞【き】いたことがある。",
+   "彼【かれ】は世間【せけん】で言【い】う天才【てんさい】で、聞【き】いたことを全部【ぜんぶ】覚【おぼ】えている。"
+  ],
+  "key": 4,
+  "en": "He's what you'd call a genius; he never forgets anything he hears once.",
+  "why": "The word means 'so-called'; 1 and 2 deny his memory, 3 misreads the sentence."
+ },
+ {
+  "id": "pp-170",
+  "ja": "人生【じんせい】には、いい時【とき】もあれば悪【わる】い時【とき】もある。",
+  "choices": [
+   "人生【じんせい】には、いいことしかない。",
+   "人生【じんせい】は、悪【わる】いことのほうがずっと多【おお】い。",
+   "いい時【とき】があっても、人生【じんせい】は短【みじか】い。",
+   "人生【じんせい】では、いいことも悪【わる】いことも起【お】こる。"
+  ],
+  "key": 4,
+  "en": "In life, there are good times and bad times.",
+  "why": "The pattern means 'there is A and there is also B'; 1 drops the bad, 2 weighs them unequally, 3 changes the topic."
+ },
+ {
+  "id": "pp-171",
+  "ja": "この部屋【へや】は駅【えき】から近【ちか】く、しかも家賃【やちん】が安【やす】い。",
+  "choices": [
+   "この部屋【へや】は駅【えき】に近【ちか】いが、家賃【やちん】が高【たか】い。",
+   "この部屋【へや】は駅【えき】に近【ちか】いし、家賃【やちん】も安【やす】い。",
+   "この部屋【へや】は家賃【やちん】が安【やす】いが、駅【えき】から遠【とお】い。",
+   "駅【えき】から近【ちか】い部屋【へや】は、どれも家賃【やちん】が高【たか】い。"
+  ],
+  "key": 2,
+  "en": "This apartment is close to the station, and the rent is cheap too.",
+  "why": "The word means 'moreover'; 1 reverses the rent, 3 reverses the distance, 4 makes a general claim against it."
+ },
+ {
+  "id": "pp-172",
+  "ja": "道【みち】に迷【まよ】い、おまけに雨【あめ】まで降【ふ】ってきた。",
+  "choices": [
+   "道【みち】がわからなくなったし、さらに雨【あめ】も降【ふ】り出【だ】した。",
+   "雨【あめ】が降【ふ】ってきたので、道【みち】に迷【まよ】った。",
+   "道【みち】に迷【まよ】ったが、雨【あめ】は降【ふ】らなかった。",
+   "雨【あめ】は降【ふ】ったが、道【みち】には迷【まよ】わなかった。"
+  ],
+  "key": 1,
+  "en": "I got lost, and on top of that, it even started to rain.",
+  "why": "The word adds a further misfortune; 2 makes rain the cause, 3 denies the rain, 4 denies getting lost."
+ },
+ {
+  "id": "pp-173",
+  "ja": "合格者【ごうかくしゃ】のみ、来週【らいしゅう】の面接【めんせつ】に進【すす】むことができる。",
+  "choices": [
+   "来週【らいしゅう】の面接【めんせつ】を受【う】けられるのは、合格【ごうかく】した人【ひと】だけだ。",
+   "合格【ごうかく】しなかった人【ひと】も、来週【らいしゅう】の面接【めんせつ】を受【う】けられる。",
+   "来週【らいしゅう】の面接【めんせつ】に合格【ごうかく】すれば、試験【しけん】が受【う】けられる。",
+   "合格【ごうかく】した人【ひと】は、面接【めんせつ】を受【う】けなくてもいい。"
+  ],
+  "key": 1,
+  "en": "Only those who pass may go on to next week's interview.",
+  "why": "The word means 'only'; 2 lets others in, 3 reverses the order, 4 removes the interview."
+ },
+ {
+  "id": "pp-174",
+  "ja": "遅【おく】れるとは聞【き】いていたが、それにしても遅【おそ】すぎる。",
+  "choices": [
+   "遅【おく】れると聞【き】いていたので、遅【おそ】くても気【き】にならない。",
+   "遅【おく】れることは知【し】っていたが、それを考【かんが】えても遅【おそ】すぎる。",
+   "遅【おく】れるとは聞【き】いていなかったので、驚【おどろ】いた。",
+   "遅【おく】れると聞【き】いていたが、思【おも】ったより早【はや】く来【き】た。"
+  ],
+  "key": 2,
+  "en": "I'd heard he'd be late, but even so, this is far too late.",
+  "why": "The phrase means 'even so'; 1 says it doesn't matter, 3 denies being told, 4 says he came early."
+ },
+ {
+  "id": "pp-175",
+  "ja": "行【い】くにしろ行【い】かないにしろ、明日【あした】までに連絡【れんらく】してください。",
+  "choices": [
+   "行【い】く人【ひと】だけ、明日【あした】までに連絡【れんらく】してください。",
+   "明日【あした】行【い】くかどうか、今日中【きょうじゅう】に決【き】めてください。",
+   "行【い】くかどうか、どちらにしても明日【あした】までに知【し】らせてほしい。",
+   "連絡【れんらく】をもらってから、行【い】くかどうか決【き】めます。"
+  ],
+  "key": 3,
+  "en": "Whether you're going or not, please let me know by tomorrow.",
+  "why": "The pattern means 'whether A or B'; 1 limits it to those going, 2 changes the deadline and task, 4 reverses who decides."
+ },
+ {
+  "id": "pp-176",
+  "ja": "今日【きょう】は堅【かた】い話【はなし】は抜【ぬ】きで、楽【たの】しく飲【の】みましょう。",
+  "choices": [
+   "今日【きょう】は楽【たの】しく飲【の】んだあとで、まじめな話【はなし】をしよう。",
+   "今日【きょう】は飲【の】まないで、まじめな話【はなし】をしよう。",
+   "今日【きょう】は難【むずか】しい話【はなし】はしないで、楽【たの】しく飲【の】もう。",
+   "堅【かた】い話【はなし】ばかりで、今日【きょう】は楽【たの】しくなかった。"
+  ],
+  "key": 3,
+  "en": "Let's leave serious talk aside today and just enjoy our drinks.",
+  "why": "The pattern means 'without'; 1 keeps the serious talk for later, 2 drops the drinking, 4 reports the opposite."
+ },
+ {
+  "id": "pp-177",
+  "ja": "苦【くる】しかったが、四十二【よんじゅうに】キロを最後【さいご】まで走【はし】り抜【ぬ】いた。",
+  "choices": [
+   "苦【くる】しくて、途中【とちゅう】で走【はし】るのをやめた。",
+   "苦【くる】しかったが、四十二【よんじゅうに】キロを全部【ぜんぶ】走【はし】った。",
+   "苦【くる】しくなかったので、四十二【よんじゅうに】キロを走【はし】れた。",
+   "四十二【よんじゅうに】キロを走【はし】ったあとで、苦【くる】しくなった。"
+  ],
+  "key": 2,
+  "en": "It was painful, but I ran the full forty-two kilometres to the end.",
+  "why": "The suffix means 'to the very end'; 1 gives up, 3 denies the pain, 4 moves the pain to afterwards."
+ },
+ {
+  "id": "pp-178",
+  "ja": "薬【くすり】を飲【の】んだら、逆【ぎゃく】に具合【ぐあい】が悪【わる】くなった。",
+  "choices": [
+   "薬【くすり】を飲【の】んだので、体調【たいちょう】がよくなった。",
+   "体調【たいちょう】が悪【わる】くなったので、薬【くすり】を飲【の】んだ。",
+   "薬【くすり】を飲【の】まなかったので、体調【たいちょう】が悪【わる】くなった。",
+   "薬【くすり】を飲【の】んだのに、かえって体調【たいちょう】が悪【わる】くなった。"
+  ],
+  "key": 4,
+  "en": "I took the medicine, but it actually made me feel worse.",
+  "why": "The word means 'on the contrary'; 1 reverses the result, 2 swaps cause and result, 3 denies taking it."
+ },
+ {
+  "id": "pp-179",
+  "ja": "調査【ちょうさ】の結果【けっか】、事故【じこ】の原因【げんいん】は機械【きかい】の故障【こしょう】だとわかった。",
+  "choices": [
+   "調査【ちょうさ】しても、事故【じこ】の原因【げんいん】はわからなかった。",
+   "事故【じこ】のせいで、機械【きかい】が故障【こしょう】した。",
+   "機械【きかい】の故障【こしょう】を調【しら】べていて、事故【じこ】が起【お】きた。",
+   "調【しら】べてみて、機械【きかい】が壊【こわ】れていたことが事故【じこ】の原因【げんいん】だとわかった。"
+  ],
+  "key": 4,
+  "en": "The investigation showed that the accident was caused by a machine fault.",
+  "why": "The pattern means 'as a result of'; 1 finds nothing, 2 swaps cause and result, 3 tells a different story."
+ },
+ {
+  "id": "pp-180",
+  "ja": "一冊【いっさつ】の本【ほん】がきっかけで、医者【いしゃ】になろうと決【き】めた。",
+  "choices": [
+   "ある本【ほん】を読【よ】んだことから、医者【いしゃ】を目指【めざ】すようになった。",
+   "医者【いしゃ】になってから、一冊【いっさつ】の本【ほん】を書【か】いた。",
+   "医者【いしゃ】になりたくて、たくさんの本【ほん】を読【よ】んだ。",
+   "本【ほん】を読【よ】んで、医者【いしゃ】になるのをやめた。"
+  ],
+  "key": 1,
+  "en": "A single book was what made me decide to become a doctor.",
+  "why": "The word means 'trigger'; 2 reverses the order, 3 swaps cause and result, 4 reverses the decision."
+ },
+ {
+  "id": "pp-181",
+  "ja": "彼【かれ】は書【か】いては消【け】し、書【か】いては消【け】し、手紙【てがみ】を何度【なんど】も書【か】き直【なお】した。",
+  "choices": [
+   "彼【かれ】は、手紙【てがみ】を一度【いちど】で書【か】き上【あ】げた。",
+   "彼【かれ】は手紙【てがみ】を書【か】いたが、すぐに捨【す】ててしまった。",
+   "彼【かれ】は、何度【なんど】も手紙【てがみ】をもらった。",
+   "彼【かれ】は書【か】いたり消【け】したりを繰【く】り返【かえ】して、手紙【てがみ】を書【か】いた。"
+  ],
+  "key": 4,
+  "en": "He wrote and erased, wrote and erased, rewriting the letter again and again.",
+  "why": "The pattern shows repeated actions; 1 says one try, 2 throws it away, 3 has him receive letters."
+ },
+ {
+  "id": "pp-182",
+  "ja": "怪我【けが】のせいで、思【おも】うように体【からだ】が動【うご】かない。",
+  "choices": [
+   "けがは治【なお】ったので、体【からだ】はよく動【うご】く。",
+   "体【からだ】が動【うご】かなかったので、けがをした。",
+   "けがをしないように、体【からだ】を動【うご】かさない。",
+   "けがをしたので、体【からだ】が自由【じゆう】に動【うご】かない。"
+  ],
+  "key": 4,
+  "en": "Because of my injury, my body won't move the way I want it to.",
+  "why": "The phrase means 'as one wishes'; 1 says it healed, 2 swaps cause and result, 3 makes it a choice."
+ },
+ {
+  "id": "pp-183",
+  "ja": "皆【みな】さんにご協力【きょうりょく】いただければと思【おも】います。",
+  "choices": [
+   "皆【みな】さんの協力【きょうりょく】は、必要【ひつよう】ない。",
+   "私【わたし】が、皆【みな】さんに協力【きょうりょく】したい。",
+   "皆【みな】さんに協力【きょうりょく】してほしいと思【おも】っている。",
+   "皆【みな】さんが協力【きょうりょく】してくれて、うれしい。"
+  ],
+  "key": 3,
+  "en": "I would be grateful for everyone's cooperation.",
+  "why": "The pattern is a polite request, 'I hope you would'; 1 denies the need, 2 swaps who helps, 4 says it already happened."
+ },
+ {
+  "id": "pp-184",
+  "ja": "事故【じこ】の原因【げんいん】は、運転手【うんてんしゅ】の居眠【いねむ】りだと考【かんが】えられる。",
+  "choices": [
+   "運転手【うんてんしゅ】は、事故【じこ】のあとで眠【ねむ】ってしまった。",
+   "事故【じこ】の原因【げんいん】は、運転手【うんてんしゅ】ではない。",
+   "運転手【うんてんしゅ】は、居眠【いねむ】りしないように注意【ちゅうい】していた。",
+   "運転手【うんてんしゅ】が寝【ね】てしまったことが、事故【じこ】の原因【げんいん】だろう。"
+  ],
+  "key": 4,
+  "en": "The accident is thought to have been caused by the driver dozing off.",
+  "why": "The pattern means 'it is thought that'; 1 moves the sleep after, 2 clears the driver, 3 denies the dozing."
+ },
+ {
+  "id": "pp-185",
+  "ja": "費用【ひよう】という点【てん】から考【かんが】えると、バスで行【い】くほうがいい。",
+  "choices": [
+   "お金【かね】はかかるが、バスで行【い】くほうが速【はや】い。",
+   "お金【かね】のことを考【かんが】えれば、バスで行【い】くのがいい。",
+   "費用【ひよう】を考【かんが】えると、バスより電車【でんしゃ】がいい。",
+   "バスで行【い】くと、時間【じかん】がかかりすぎる。"
+  ],
+  "key": 2,
+  "en": "In terms of cost, it's better to go by bus.",
+  "why": "The pattern means 'from the point of view of'; 1 changes cost to speed, 3 prefers the train, 4 argues against the bus."
+ },
+ {
+  "id": "pp-186",
+  "ja": "電気【でんき】が消【き】えているということは、もう誰【だれ】もいないのだろう。",
+  "choices": [
+   "誰【だれ】もいないので、電気【でんき】を消【け】した。",
+   "電気【でんき】は消【き】えているが、まだ誰【だれ】かいるはずだ。",
+   "電気【でんき】が消【き】えているので、たぶんもう誰【だれ】もいない。",
+   "電気【でんき】がついているので、誰【だれ】かいるだろう。"
+  ],
+  "key": 3,
+  "en": "If the lights are off, that means nobody's there anymore.",
+  "why": "The pattern draws a conclusion, 'that means'; 1 swaps cause and result, 2 reverses the conclusion, 4 reverses the evidence."
+ },
+ {
+  "id": "pp-187",
+  "ja": "そんなふうに言【い】われると、何【なに】も言【い】い返【かえ】せない。",
+  "choices": [
+   "そう言【い】われても、私【わたし】は反論【はんろん】する。",
+   "何【なに】も言【い】われなかったので、黙【だま】っていた。",
+   "私【わたし】がそう言【い】ったら、相手【あいて】は何【なに】も言【い】わなかった。",
+   "そのように言【い】われたら、反論【はんろん】できない。"
+  ],
+  "key": 4,
+  "en": "When you put it that way, I can't argue back.",
+  "why": "The pattern means 'in that way'; 1 argues back, 2 says nothing was said, 3 swaps the speakers."
+ },
+ {
+  "id": "pp-188",
+  "ja": "子供【こども】から見【み】ると、大人【おとな】の世界【せかい】は不思議【ふしぎ】なことばかりだ。",
+  "choices": [
+   "大人【おとな】にとって、子供【こども】の世界【せかい】は不思議【ふしぎ】だ。",
+   "子供【こども】にとっては、大人【おとな】の世界【せかい】はわからないことが多【おお】い。",
+   "子供【こども】は、大人【おとな】の世界【せかい】をよく理解【りかい】している。",
+   "子供【こども】が見【み】る大人【おとな】の世界【せかい】は、楽【たの】しいことばかりだ。"
+  ],
+  "key": 2,
+  "en": "Seen through a child's eyes, the adult world is full of mysteries.",
+  "why": "The pattern means 'from the viewpoint of'; 1 swaps the viewpoints, 3 says children understand, 4 changes mysterious to fun."
+ },
+ {
+  "id": "pp-189",
+  "ja": "そういえば、彼【かれ】は来月【らいげつ】引【ひ】っ越【こ】すと言【い】っていた。",
+  "choices": [
+   "彼【かれ】は、先月【せんげつ】引【ひ】っ越【こ】したと言【い】っていた。",
+   "彼【かれ】は、来月【らいげつ】は引【ひ】っ越【こ】さないと言【い】っていた。",
+   "思【おも】い出【だ】したが、彼【かれ】は来月【らいげつ】引【ひ】っ越【こ】すそうだ。",
+   "私【わたし】が来月【らいげつ】引【ひ】っ越【こ】すと、彼【かれ】に言【い】った。"
+  ],
+  "key": 3,
+  "en": "Come to think of it, he said he's moving next month.",
+  "why": "The phrase means 'come to think of it'; 1 changes the time, 2 adds a negation, 4 swaps the people."
+ },
+ {
+  "id": "pp-190",
+  "ja": "会場内【かいじょうない】では、携帯【けいたい】電話【でんわ】の電源【でんげん】をお切【き】り願【ねが】います。",
+  "choices": [
+   "会場【かいじょう】の中【なか】でも、携帯【けいたい】電話【でんわ】を使【つか】ってかまいません。",
+   "会場【かいじょう】の外【そと】では、携帯【けいたい】電話【でんわ】を使【つか】ってはいけません。",
+   "会場【かいじょう】の中【なか】では、携帯【けいたい】電話【でんわ】の電源【でんげん】を切【き】ってください。",
+   "携帯【けいたい】電話【でんわ】の電源【でんげん】を入【い】れてから、会場【かいじょう】に入【はい】ってください。"
+  ],
+  "key": 3,
+  "en": "Please switch off your mobile phones inside the venue.",
+  "why": "The pattern is a polite request; 1 gives permission instead, 2 moves the rule outside, 4 says switch on."
+ },
+ {
+  "id": "pp-191",
+  "ja": "皆【みな】で力【ちから】を合【あ】わせて、この町【まち】を守【まも】ろうではないか。",
+  "choices": [
+   "この町【まち】を守【まも】るのは、一人【ひとり】でもできる。",
+   "みんなで協力【きょうりょく】しても、この町【まち】は守【まも】れない。",
+   "この町【まち】が、みんなを守【まも】ってくれる。",
+   "みんなで協力【きょうりょく】して、この町【まち】を守【まも】りましょう。"
+  ],
+  "key": 4,
+  "en": "Let's all join forces and protect this town.",
+  "why": "The pattern is a call, 'let us'; 1 says one person is enough, 2 says it is hopeless, 3 swaps who protects whom."
+ },
+ {
+  "id": "pp-192",
+  "ja": "毎日【まいにち】遅【おそ】くまで働【はたら】いているのだから、疲【つか】れるのも当然【とうぜん】だ。",
+  "choices": [
+   "毎日【まいにち】夜【よる】遅【おそ】くまで働【はたら】いていれば、疲【つか】れて当【あ】たり前【まえ】だ。",
+   "毎日【まいにち】遅【おそ】くまで働【はたら】いても、少【すこ】しも疲【つか】れない。",
+   "疲【つか】れているので、毎日【まいにち】早【はや】く帰【かえ】っている。",
+   "毎日【まいにち】遅【おそ】くまで働【はたら】くのは、当然【とうぜん】のことだ。"
+  ],
+  "key": 1,
+  "en": "You work late every day, so of course you're tired.",
+  "why": "The pattern means 'it is no wonder'; 2 denies tiredness, 3 denies the late work, 4 makes the work the natural thing."
+ },
+ {
+  "id": "pp-193",
+  "ja": "彼【かれ】はたった一年【いちねん】で、日本語【にほんご】がぺらぺらになった。",
+  "choices": [
+   "彼【かれ】は日本語【にほんご】が上手【じょうず】になるまで、何年【なんねん】もかかった。",
+   "彼【かれ】は一年【いちねん】勉強【べんきょう】したが、日本語【にほんご】は上達【じょうたつ】しなかった。",
+   "彼【かれ】は一年前【いちねんまえ】から、日本語【にほんご】を勉強【べんきょう】している。",
+   "彼【かれ】は一年【いちねん】という短【みじか】い間【あいだ】に、日本語【にほんご】が上手【じょうず】になった。"
+  ],
+  "key": 4,
+  "en": "In just one year, he became fluent in Japanese.",
+  "why": "The word means 'only'; 1 makes it years, 2 denies progress, 3 says nothing about fluency."
+ },
+ {
+  "id": "pp-194",
+  "ja": "彼女【かのじょ】は何【なに】か言【い】いたげな顔【かお】で、こちらを見【み】ていた。",
+  "choices": [
+   "彼女【かのじょ】は、こちらを見【み】ないで何【なに】か言【い】った。",
+   "彼女【かのじょ】は、何【なに】も言【い】いたくなさそうだった。",
+   "私【わたし】は、彼女【かのじょ】に何【なに】か言【い】いたかった。",
+   "彼女【かのじょ】は、何【なに】か言【い】いたそうな様子【ようす】でこちらを見【み】ていた。"
+  ],
+  "key": 4,
+  "en": "She was looking at me as if she wanted to say something.",
+  "why": "The suffix means 'seeming to'; 1 says she spoke without looking, 2 reverses the wish, 3 swaps the people."
+ },
+ {
+  "id": "pp-195",
+  "ja": "なんだか、今日【きょう】はいいことがありそうな気【き】がする。",
+  "choices": [
+   "今日【きょう】は、悪【わる】いことが起【お】こりそうだ。",
+   "今日【きょう】は、いいことがあった。",
+   "今日【きょう】は、何【なに】も起【お】こらないと思【おも】う。",
+   "今日【きょう】は、何【なに】かいいことが起【お】こりそうだと感【かん】じる。"
+  ],
+  "key": 4,
+  "en": "Somehow, I have a feeling something good will happen today.",
+  "why": "The phrase means 'have a feeling'; 1 makes it bad, 2 says it already happened, 3 expects nothing."
+ },
+ {
+  "id": "pp-196",
+  "ja": "頑張【がんば】っても、この成績【せいせき】では精々【せいぜい】三位【さんい】だろう。",
+  "choices": [
+   "この成績【せいせき】なら、一位【いちい】になれるだろう。",
+   "この成績【せいせき】なら、どんなによくても三位【さんい】ぐらいだろう。",
+   "この成績【せいせき】では、三位【さんい】にも入【はい】れないだろう。",
+   "三位【さんい】になったので、もっと頑張【がんば】りたい。"
+  ],
+  "key": 2,
+  "en": "Even with effort, these grades will get third place at best.",
+  "why": "The word means 'at best'; 1 raises the limit, 3 lowers it, 4 reports a past result."
+ },
+ {
+  "id": "pp-197",
+  "ja": "試合【しあい】は、僅【わず】かに一点【いってん】の差【さ】で負【ま】けた。",
+  "choices": [
+   "試合【しあい】は、一点【いってん】の差【さ】で勝【か】った。",
+   "試合【しあい】は、たった一点【いってん】足【た】りなくて負【ま】けた。",
+   "試合【しあい】は、大差【たいさ】で負【ま】けた。",
+   "試合【しあい】は、引【ひ】き分【わ】けだった。"
+  ],
+  "key": 2,
+  "en": "We lost the match by a mere one point.",
+  "why": "The word means 'barely, only'; 1 reverses the result, 3 widens the gap, 4 makes it a draw."
+ },
+ {
+  "id": "pp-198",
+  "ja": "会場【かいじょう】には、千人【せんにん】強【きょう】の人【ひと】が集【あつ】まった。",
+  "choices": [
+   "会場【かいじょう】には、千人【せんにん】に少【すこ】し足【た】りない人【ひと】が来【き】た。",
+   "会場【かいじょう】には、ちょうど千人【せんにん】が来【き】た。",
+   "会場【かいじょう】には、千人【せんにん】を少【すこ】し超【こ】える人【ひと】が来【き】た。",
+   "会場【かいじょう】には、二千人【にせんにん】近【ちか】くが来【き】た。"
+  ],
+  "key": 3,
+  "en": "A little over a thousand people gathered at the venue.",
+  "why": "The suffix means 'a little over'; 1 makes it a little under, 2 exact, 4 nearly double."
+ },
+ {
+  "id": "pp-199",
+  "ja": "駅【えき】から歩【ある】いて、一時間【いちじかん】弱【じゃく】かかった。",
+  "choices": [
+   "駅【えき】から歩【ある】いて、一時間【いちじかん】以上【いじょう】かかった。",
+   "駅【えき】から歩【ある】いて、三十分【さんじゅっぷん】もかからなかった。",
+   "駅【えき】から歩【ある】くと、一時間【いちじかん】近【ちか】くかかった。",
+   "駅【えき】まで車【くるま】で、一時間【いちじかん】ぐらいかかった。"
+  ],
+  "key": 3,
+  "en": "It took just under an hour to walk from the station.",
+  "why": "The suffix means 'a little under'; 1 makes it over, 2 far shorter, 4 changes walking to driving."
+ },
+ {
+  "id": "pp-200",
+  "ja": "会員【かいいん】およびその家族【かぞく】は、入場料【にゅうじょうりょう】が無料【むりょう】です。",
+  "choices": [
+   "会員【かいいん】は無料【むりょう】だが、家族【かぞく】はお金【かね】がかかる。",
+   "会員【かいいん】と会員【かいいん】の家族【かぞく】は、お金【かね】を払【はら】わずに入【はい】れる。",
+   "会員【かいいん】も家族【かぞく】も、入場料【にゅうじょうりょう】を払【はら】う必要【ひつよう】がある。",
+   "家族【かぞく】で来【く】ると、会員【かいいん】の入場料【にゅうじょうりょう】が安【やす】くなる。"
+  ],
+  "key": 2,
+  "en": "Admission is free for members and their families.",
+  "why": "The word means 'and'; 1 drops the families, 3 drops the free entry, 4 turns it into a discount."
+ },
+ {
+  "id": "pp-201",
+  "ja": "大【おお】きな地震【じしん】がこの町【まち】で起【お】きることも、十分【じゅうぶん】あり得【う】る。",
+  "choices": [
+   "この町【まち】で大【おお】きな地震【じしん】が起【お】きる可能性【かのうせい】は、十分【じゅうぶん】にある。",
+   "この町【まち】で大【おお】きな地震【じしん】が起【お】きることは、絶対【ぜったい】にない。",
+   "この町【まち】では、最近【さいきん】大【おお】きな地震【じしん】が起【お】きた。",
+   "この町【まち】で大【おお】きな地震【じしん】が起【お】きるのは、確実【かくじつ】だ。"
+  ],
+  "key": 1,
+  "en": "A major earthquake could quite possibly happen in this town.",
+  "why": "The pattern means 'can happen'; 2 denies it, 3 says it happened, 4 makes it certain."
+ },
+ {
+  "id": "pp-202",
+  "ja": "彼【かれ】が約束【やくそく】を破【やぶ】るなんて、あり得【え】ない。",
+  "choices": [
+   "彼【かれ】は、よく約束【やくそく】を破【やぶ】る。",
+   "彼【かれ】が約束【やくそく】を破【やぶ】ることは、考【かんが】えられない。",
+   "私【わたし】が約束【やくそく】を破【やぶ】ったので、彼【かれ】は怒【おこ】った。",
+   "彼【かれ】は、約束【やくそく】をするのが嫌【きら】いだ。"
+  ],
+  "key": 2,
+  "en": "It's unthinkable that he would break a promise.",
+  "why": "The pattern means 'impossible'; 1 says he often does, 3 swaps who broke it, 4 is about making promises."
+ },
+ {
+  "id": "pp-203",
+  "ja": "この島【しま】には、まだ知【し】られざる美【うつく】しい景色【けしき】がたくさんある。",
+  "choices": [
+   "この島【しま】の美【うつく】しい景色【けしき】は、誰【だれ】でも知【し】っている。",
+   "この島【しま】には、きれいな景色【けしき】がほとんどない。",
+   "この島【しま】の人【ひと】は、美【うつく】しい景色【けしき】を知【し】らない。",
+   "この島【しま】には、まだ人【ひと】に知【し】られていないきれいな景色【けしき】が多【おお】い。"
+  ],
+  "key": 4,
+  "en": "This island still has many beautiful sights that remain unknown.",
+  "why": "The old ending means 'not'; 1 misses the negation, 2 denies the sights, 3 changes who doesn't know."
+ },
+ {
+  "id": "pp-204",
+  "ja": "お忙【いそが】しい中【なか】を、わざわざ来【き】ていただきありがとうございます。",
+  "choices": [
+   "暇【ひま】なときに来【き】てくれて、ありがとうございます。",
+   "忙【いそが】しいので、来【こ】なくても大丈夫【だいじょうぶ】です。",
+   "忙【いそが】しいのに来【き】てくれて、ありがとうございます。",
+   "忙【いそが】しくて、行【い】けなくてすみません。"
+  ],
+  "key": 3,
+  "en": "Thank you for taking the trouble to come despite being so busy.",
+  "why": "The pattern means 'in the midst of'; 1 says they were free, 2 tells them not to come, 4 swaps who could not go."
+ },
+ {
+  "id": "pp-205",
+  "ja": "彼【かれ】は頭【あたま】がよく、その上【うえ】スポーツも得意【とくい】だ。",
+  "choices": [
+   "彼【かれ】は頭【あたま】もいいし、スポーツも上手【じょうず】だ。",
+   "彼【かれ】は頭【あたま】はいいが、スポーツは苦手【にがて】だ。",
+   "彼【かれ】はスポーツは得意【とくい】だが、勉強【べんきょう】はできない。",
+   "彼【かれ】は、スポーツをしたので頭【あたま】がよくなった。"
+  ],
+  "key": 1,
+  "en": "He's clever, and on top of that he's good at sports.",
+  "why": "The phrase means 'besides'; 2 denies the sport, 3 denies the brains, 4 invents a cause."
+ },
+ {
+  "id": "pp-206",
+  "ja": "後【あと】の作業【さぎょう】は、明日【あした】の朝【あさ】やることにしよう。",
+  "choices": [
+   "明日【あした】の朝【あさ】の仕事【しごと】を、今【いま】やってしまおう。",
+   "仕事【しごと】は全部【ぜんぶ】、今日中【きょうじゅう】に終【お】わらせよう。",
+   "前【まえ】の仕事【しごと】を、明日【あした】の朝【あさ】やり直【なお】そう。",
+   "残【のこ】りの仕事【しごと】は、明日【あした】の朝【あさ】にしよう。"
+  ],
+  "key": 4,
+  "en": "Let's leave the rest of the work for tomorrow morning.",
+  "why": "Here the word means 'the remaining'; 1 brings work forward, 2 finishes it today, 3 redoes earlier work."
+ },
+ {
+  "id": "pp-207",
+  "ja": "そんなに毎日【まいにち】外食【がいしょく】しては、お金【かね】がいくらあっても足【た】りない。",
+  "choices": [
+   "毎日【まいにち】外食【がいしょく】しても、お金【かね】は十分【じゅうぶん】ある。",
+   "お金【かね】がないので、毎日【まいにち】外食【がいしょく】している。",
+   "毎日【まいにち】外【そと】で食事【しょくじ】をしていたら、お金【かね】がなくなってしまう。",
+   "外食【がいしょく】をやめたら、お金【かね】が足【た】りなくなった。"
+  ],
+  "key": 3,
+  "en": "If you eat out every day like that, no amount of money will be enough.",
+  "why": "The pattern means 'if you do (with a bad result)'; 1 denies the result, 2 invents a cause, 4 reverses the habit."
+ },
+ {
+  "id": "pp-208",
+  "ja": "週末【しゅうまつ】は映画【えいが】を見【み】に行【い】こうか、それとも家【いえ】でゆっくりしようか。",
+  "choices": [
+   "週末【しゅうまつ】は、映画【えいが】を見【み】てから家【いえ】で休【やす】む。",
+   "週末【しゅうまつ】は、映画【えいが】に行【い】くか家【いえ】で休【やす】むか迷【まよ】っている。",
+   "週末【しゅうまつ】は、映画【えいが】にも行【い】かず家【いえ】にもいない。",
+   "週末【しゅうまつ】は、家【いえ】で映画【えいが】を見【み】ることにした。"
+  ],
+  "key": 2,
+  "en": "Shall I go see a film this weekend, or just relax at home?",
+  "why": "The word means 'or'; the choice is open; 1 does both, 3 does neither, 4 has already decided."
+ },
+ {
+  "id": "pp-209",
+  "ja": "知【し】らぬ間【ま】に、子供【こども】たちはすっかり大【おお】きくなっていた。",
+  "choices": [
+   "子供【こども】たちが大【おお】きくなるのを、毎日【まいにち】見【み】ていた。",
+   "子供【こども】たちは、まだ小【ちい】さいままだ。",
+   "子供【こども】たちは、私【わたし】の知【し】らない所【ところ】へ行【い】ってしまった。",
+   "気【き】がつかないうちに、子供【こども】たちはとても大【おお】きくなっていた。"
+  ],
+  "key": 4,
+  "en": "Before I knew it, the children had grown up completely.",
+  "why": "The old negative means 'without knowing'; 1 says it was noticed, 2 denies the growth, 3 misreads it as a place."
+ },
+ {
+  "id": "pp-210",
+  "ja": "本日【ほんじつ】の説明会【せつめいかい】は、三階【さんがい】の会議室【かいぎしつ】にて行【おこな】います。",
+  "choices": [
+   "今日【きょう】の説明会【せつめいかい】は、三階【さんがい】の会議室【かいぎしつ】でやります。",
+   "今日【きょう】の説明会【せつめいかい】は、三階【さんがい】から別【べつ】の場所【ばしょ】に変【か】わった。",
+   "三階【さんがい】の会議室【かいぎしつ】は、今日【きょう】は使【つか】えない。",
+   "説明会【せつめいかい】は、明日【あした】三階【さんがい】の会議室【かいぎしつ】で行【おこな】う。"
+  ],
+  "key": 1,
+  "en": "Today's information session will be held in the third-floor meeting room.",
+  "why": "The particle is a formal 'at'; 2 moves the place, 3 says the room is unavailable, 4 changes the day."
+ },
+ {
+  "id": "pp-211",
+  "ja": "隣【となり】の田中【たなか】さん、来月【らいげつ】結婚【けっこん】するとか。",
+  "choices": [
+   "隣【となり】の田中【たなか】さんは、先月【せんげつ】結婚【けっこん】した。",
+   "隣【となり】の田中【たなか】さんは、結婚【けっこん】しないらしい。",
+   "隣【となり】の田中【たなか】さんは、来月【らいげつ】結婚【けっこん】するそうだ。",
+   "田中【たなか】さんが、来月【らいげつ】隣【となり】に引【ひ】っ越【こ】してくる。"
+  ],
+  "key": 3,
+  "en": "I hear Mr. Tanaka next door is getting married next month.",
+  "why": "The ending means 'I hear'; 1 changes the time, 2 adds a negation, 4 changes the news."
+ },
+ {
+  "id": "pp-212",
+  "ja": "事故【じこ】に遭【あ】ったが、幸【さいわ】いけがはなかった。",
+  "choices": [
+   "事故【じこ】に遭【あ】って、ひどいけがをした。",
+   "事故【じこ】には遭【あ】わなかったが、けがをした。",
+   "事故【じこ】に遭【あ】ったけれど、運【うん】よくけがをしなかった。",
+   "けがをしたので、事故【じこ】を起【お】こしてしまった。"
+  ],
+  "key": 3,
+  "en": "I was in an accident, but luckily I wasn't hurt.",
+  "why": "The word means 'fortunately'; 1 adds an injury, 2 denies the accident, 4 swaps cause and result."
+ },
+ {
+  "id": "pp-213",
+  "ja": "行【い】くことは行【い】くが、少【すこ】し遅【おく】れるかもしれない。",
+  "choices": [
+   "遅【おく】れそうなので、行【い】くのはやめる。",
+   "一応【いちおう】行【い】くつもりだが、遅刻【ちこく】する可能性【かのうせい】がある。",
+   "時間【じかん】どおりに行【い】けるので、心配【しんぱい】いらない。",
+   "行【い】くかどうか、まだわからない。"
+  ],
+  "key": 2,
+  "en": "I will go, but I may be a little late.",
+  "why": "The pattern means 'I do, but'; 1 cancels, 3 denies the delay, 4 makes going uncertain."
+ },
+ {
+  "id": "pp-214",
+  "ja": "来月【らいげつ】から、電気【でんき】料金【りょうきん】が更【さら】に値上【ねあ】がりするそうだ。",
+  "choices": [
+   "来月【らいげつ】から、電気代【でんきだい】が安【やす】くなるらしい。",
+   "電気代【でんきだい】は、来月【らいげつ】から変【か】わらないらしい。",
+   "来月【らいげつ】から、電気代【でんきだい】がもっと高【たか】くなるらしい。",
+   "電気代【でんきだい】は、先月【せんげつ】初【はじ】めて値上【ねあ】がりした。"
+  ],
+  "key": 3,
+  "en": "I hear electricity rates will go up even further from next month.",
+  "why": "The word means 'even further'; 1 reverses the change, 2 denies it, 4 moves it to the past."
+ },
+ {
+  "id": "pp-215",
+  "ja": "引【ひ】っ越【こ】しのときは、何【なに】から何【なに】まで友達【ともだち】に手伝【てつだ】ってもらった。",
+  "choices": [
+   "引【ひ】っ越【こ】しでは、友達【ともだち】に少【すこ】しだけ手伝【てつだ】ってもらった。",
+   "引【ひ】っ越【こ】しは、友達【ともだち】に頼【たの】まず一人【ひとり】でやった。",
+   "友達【ともだち】の引【ひ】っ越【こ】しを、全部【ぜんぶ】手伝【てつだ】ってあげた。",
+   "引【ひ】っ越【こ】しでは、全部【ぜんぶ】のことを友達【ともだち】が手伝【てつだ】ってくれた。"
+  ],
+  "key": 4,
+  "en": "When I moved, my friends helped me with absolutely everything.",
+  "why": "The phrase means 'everything'; 1 lowers the degree, 2 denies the help, 3 swaps who helped."
+ },
+ {
+  "id": "pp-216",
+  "ja": "日本【にほん】の季節【きせつ】のうちで、私【わたし】は秋【あき】が一番【いちばん】好【す】きだ。",
+  "choices": [
+   "日本【にほん】の秋【あき】は、あまり好【す】きではない。",
+   "日本【にほん】では、秋【あき】が一番【いちばん】短【みじか】い季節【きせつ】だ。",
+   "私【わたし】は、どの季節【きせつ】も同【おな】じくらい好【す】きだ。",
+   "日本【にほん】の四季【しき】の中【なか】では、秋【あき】が最【もっと】も好【す】きだ。"
+  ],
+  "key": 4,
+  "en": "Of all Japan's seasons, I like autumn best.",
+  "why": "The pattern means 'among'; 1 denies the liking, 2 is about length, 3 removes the preference."
+ },
+ {
+  "id": "pp-217",
+  "ja": "お降【お】りの際【さい】は、足元【あしもと】にご注意【ちゅうい】ください。",
+  "choices": [
+   "降【お】りるときは、足【あし】の下【した】に気【き】をつけてください。",
+   "乗【の】るときは、足元【あしもと】に気【き】をつけてください。",
+   "降【お】りるときは、急【いそ】いでください。",
+   "足元【あしもと】が危【あぶ】ないので、降【お】りないでください。"
+  ],
+  "key": 1,
+  "en": "Please watch your step when getting off.",
+  "why": "The word means 'when'; 2 changes getting off to getting on, 3 changes the advice, 4 forbids getting off."
+ },
+ {
+  "id": "pp-218",
+  "ja": "隣【となり】の人【ひと】の話【はな】し声【ごえ】が気【き】になって、勉強【べんきょう】に集中【しゅうちゅう】できない。",
+  "choices": [
+   "隣【となり】の人【ひと】の声【こえ】がうるさく感【かん】じて、勉強【べんきょう】が進【すす】まない。",
+   "隣【となり】の人【ひと】が話【はな】していても、勉強【べんきょう】に集中【しゅうちゅう】できる。",
+   "隣【となり】の人【ひと】が、私【わたし】の声【こえ】がうるさいと言【い】った。",
+   "勉強【べんきょう】に集中【しゅうちゅう】したくて、隣【となり】の人【ひと】と話【はな】した。"
+  ],
+  "key": 1,
+  "en": "The voices of the people next to me bother me, and I can't concentrate on studying.",
+  "why": "The phrase means 'be bothered by'; 2 denies the problem, 3 swaps who is noisy, 4 has the speaker talk."
+ },
+ {
+  "id": "pp-219",
+  "ja": "冬【ふゆ】は空気【くうき】が乾燥【かんそう】するので、火【ひ】の元【もと】に十分【じゅうぶん】気【き】をつけてください。",
+  "choices": [
+   "冬【ふゆ】は空気【くうき】が乾【かわ】くから、火事【かじ】にならないよう注意【ちゅうい】してください。",
+   "冬【ふゆ】は空気【くうき】が湿【しめ】っているので、火事【かじ】は少【すく】ない。",
+   "冬【ふゆ】は寒【さむ】いので、火【ひ】をたくさん使【つか】ってください。",
+   "空気【くうき】が乾燥【かんそう】しているので、水【みず】をたくさん飲【の】んでください。"
+  ],
+  "key": 1,
+  "en": "The air is dry in winter, so please be careful with anything that could start a fire.",
+  "why": "The phrase means 'be careful of'; 2 reverses the dryness, 3 urges using fire, 4 changes the advice."
+ },
+ {
+  "id": "pp-220",
+  "ja": "合格【ごうかく】の知【し】らせを聞【き】いて、どれほどうれしかったことか。",
+  "choices": [
+   "合格【ごうかく】したと聞【き】いても、あまりうれしくなかった。",
+   "合格【ごうかく】したと聞【き】いて、本当【ほんとう】にとてもうれしかった。",
+   "合格【ごうかく】したかどうか、まだ知【し】らせがない。",
+   "不合格【ふごうかく】と聞【き】いて、とても悲【かな】しかった。"
+  ],
+  "key": 2,
+  "en": "How happy I was to hear that I had passed!",
+  "why": "The pattern is an exclamation, 'how very'; it is not a question; 1 denies the joy, 3 has no news, 4 reverses the result."
+ },
+ {
+  "id": "pp-221",
+  "ja": "こんな簡単【かんたん】な仕事【しごと】で、三日【みっか】もかかるわけがない。",
+  "choices": [
+   "こんな簡単【かんたん】な仕事【しごと】なら、三日【みっか】もかからないはずだ。",
+   "簡単【かんたん】な仕事【しごと】だが、三日【みっか】はかかるだろう。",
+   "三日【みっか】かかったので、簡単【かんたん】な仕事【しごと】ではない。",
+   "簡単【かんたん】な仕事【しごと】は、三日【みっか】以内【いない】にやらなければならない。"
+  ],
+  "key": 1,
+  "en": "There's no way such a simple job would take three whole days.",
+  "why": "The pattern means 'there is no way'; 2 misses the negation, 3 reverses the logic, 4 makes it a deadline."
+ },
+ {
+  "id": "pp-222",
+  "ja": "自分【じぶん】では何【なに】もしないくせに、彼【かれ】は文句【もんく】ばかり言【い】う。",
+  "choices": [
+   "彼【かれ】は何【なに】でもするが、文句【もんく】ばかり言【い】う。",
+   "彼【かれ】は何【なに】もしないが、文句【もんく】も言【い】わない。",
+   "彼【かれ】は文句【もんく】を言【い】われるので、何【なに】もしない。",
+   "彼【かれ】は自分【じぶん】では何【なに】もしないのに、不満【ふまん】ばかり言【い】う。"
+  ],
+  "key": 4,
+  "en": "He does nothing himself, yet all he does is complain.",
+  "why": "The pattern is a critical 'even though'; 1 says he does everything, 2 denies the complaints, 3 swaps the roles."
+ },
+ {
+  "id": "pp-223",
+  "ja": "先生【せんせい】が丁寧【ていねい】に教【おし】えてくださったおかげで、試験【しけん】に合格【ごうかく】できた。",
+  "choices": [
+   "先生【せんせい】がよく教【おし】えてくれたのに、試験【しけん】に落【お】ちた。",
+   "試験【しけん】に合格【ごうかく】したので、先生【せんせい】が褒【ほ】めてくれた。",
+   "先生【せんせい】がよく教【おし】えてくれたので、試験【しけん】に受【う】かった。",
+   "先生【せんせい】に教【おし】わらずに、自分【じぶん】の力【ちから】で合格【ごうかく】した。"
+  ],
+  "key": 3,
+  "en": "Thanks to my teacher's careful teaching, I was able to pass the exam.",
+  "why": "The pattern means 'thanks to'; 1 reverses the result, 2 swaps cause and result, 4 denies the teaching."
+ },
+ {
+  "id": "pp-224",
+  "ja": "寝坊【ねぼう】したせいで、大事【だいじ】な会議【かいぎ】に間【ま】に合【あ】わなかった。",
+  "choices": [
+   "遅【おそ】くまで寝【ね】ていたので、大事【だいじ】な会議【かいぎ】に遅【おく】れた。",
+   "早【はや】く起【お】きたので、大事【だいじ】な会議【かいぎ】に間【ま】に合【あ】った。",
+   "会議【かいぎ】が遅【おく】れたので、ゆっくり寝【ね】られた。",
+   "寝坊【ねぼう】したが、会議【かいぎ】には間【ま】に合【あ】った。"
+  ],
+  "key": 1,
+  "en": "I overslept and missed the important meeting.",
+  "why": "The pattern means 'because of (a bad cause)'; 2 reverses both, 3 swaps cause and result, 4 reverses the result."
+ },
+ {
+  "id": "pp-225",
+  "ja": "一言【ひとこと】余計【よけい】なことを言【い】ったばかりに、彼女【かのじょ】を怒【おこ】らせてしまった。",
+  "choices": [
+   "彼女【かのじょ】が余計【よけい】なことを言【い】って、私【わたし】を怒【おこ】らせた。",
+   "何【なに】も言【い】わなかったので、彼女【かのじょ】が怒【おこ】った。",
+   "一言【ひとこと】謝【あやま】ったら、彼女【かのじょ】の怒【いか】りがおさまった。",
+   "言【い】わなくていいことを一言【ひとこと】言【い】ったため、彼女【かのじょ】が怒【おこ】った。"
+  ],
+  "key": 4,
+  "en": "Just because I said one word too many, I made her angry.",
+  "why": "The pattern means 'simply because (with regret)'; 1 swaps the people, 2 denies speaking, 3 tells a different story."
+ },
+ {
+  "id": "pp-226",
+  "ja": "駅前【えきまえ】の商店街【しょうてんがい】は、客【きゃく】が減【へ】る一方【いっぽう】だ。",
+  "choices": [
+   "駅前【えきまえ】の商店街【しょうてんがい】は、客【きゃく】が増【ふ】え続【つづ】けている。",
+   "駅前【えきまえ】の商店街【しょうてんがい】は、客【きゃく】がどんどん少【すく】なくなっている。",
+   "駅前【えきまえ】の商店街【しょうてんがい】は、客【きゃく】が減【へ】ったが、また増【ふ】えてきた。",
+   "駅前【えきまえ】の商店街【しょうてんがい】は、客【きゃく】の数【かず】が変【か】わらない。"
+  ],
+  "key": 2,
+  "en": "The shopping street in front of the station keeps losing customers.",
+  "why": "The pattern means 'keeps on (one way)'; 1 reverses it, 3 adds a recovery, 4 denies change."
+ },
+ {
+  "id": "pp-227",
+  "ja": "冬【ふゆ】になると、運動【うんどう】不足【ぶそく】になりがちだ。",
+  "choices": [
+   "冬【ふゆ】は、体【からだ】を動【うご】かさなくなることが多【おお】い。",
+   "冬【ふゆ】は、いつもより運動【うんどう】をする人【ひと】が多【おお】い。",
+   "冬【ふゆ】に運動【うんどう】すると、体【からだ】によくない。",
+   "運動【うんどう】しないので、冬【ふゆ】は寒【さむ】く感【かん】じる。"
+  ],
+  "key": 1,
+  "en": "In winter, people tend not to get enough exercise.",
+  "why": "The pattern means 'tend to (a bad thing)'; 2 reverses it, 3 warns against exercise, 4 invents a result."
+ },
+ {
+  "id": "pp-228",
+  "ja": "最近【さいきん】、年【とし】のせいか忘【わす】れっぽくなった。",
+  "choices": [
+   "最近【さいきん】は、昔【むかし】より物覚【ものおぼ】えがよくなった。",
+   "最近【さいきん】は、年【とし】を忘【わす】れるほど元気【げんき】だ。",
+   "物【もの】を忘【わす】れたので、年【とし】を取【と】った気【き】がする。",
+   "最近【さいきん】は年【とし】を取【と】ったからか、よく物【もの】を忘【わす】れる。"
+  ],
+  "key": 4,
+  "en": "Lately I've become forgetful, maybe because of my age.",
+  "why": "The suffix means 'prone to'; 1 reverses it, 2 misreads forgetting, 3 swaps cause and result."
+ },
+ {
+  "id": "pp-229",
+  "ja": "この店【みせ】の料理【りょうり】は、値段【ねだん】のわりにおいしくない。",
+  "choices": [
+   "この店【みせ】の料理【りょうり】は、値段【ねだん】が高【たか】いのにおいしくない。",
+   "この店【みせ】の料理【りょうり】は、安【やす】いのにおいしい。",
+   "この店【みせ】の料理【りょうり】は、高【たか】いだけあっておいしい。",
+   "この店【みせ】の料理【りょうり】は、おいしくないので安【やす】い。"
+  ],
+  "key": 1,
+  "en": "The food at this restaurant isn't good for what it costs.",
+  "why": "The pattern means 'for (compared with expectations)'; 2 and 3 make it tasty, 4 makes it cheap."
+ },
+ {
+  "id": "pp-230",
+  "ja": "郵便局【ゆうびんきょく】に行【い】くついでに、この手紙【てがみ】も出【だ】してきてくれる？",
+  "choices": [
+   "郵便局【ゆうびんきょく】へ行【い】くなら、一緒【いっしょ】にこの手紙【てがみ】も出【だ】してほしい。",
+   "この手紙【てがみ】を出【だ】すために、郵便局【ゆうびんきょく】へ行【い】ってほしい。",
+   "郵便局【ゆうびんきょく】に行【い】ったら、手紙【てがみ】が届【とど】いていた。",
+   "私【わたし】が郵便局【ゆうびんきょく】へ行【い】って、手紙【てがみ】を出【だ】してくる。"
+  ],
+  "key": 1,
+  "en": "Since you're going to the post office, could you mail this letter too?",
+  "why": "The pattern means 'while you are at it'; 2 makes it a special trip, 3 reports news, 4 swaps who goes."
+ },
+ {
+  "id": "pp-231",
+  "ja": "暗【くら】くならないうちに、家【いえ】に帰【かえ】りましょう。",
+  "choices": [
+   "暗【くら】くなってから、家【いえ】に帰【かえ】ろう。",
+   "暗【くら】いので、今日【きょう】は家【いえ】から出【で】ないでおこう。",
+   "暗【くら】くなる前【まえ】に、家【いえ】に帰【かえ】ろう。",
+   "家【いえ】に帰【かえ】ったら、もう暗【くら】くなっていた。"
+  ],
+  "key": 3,
+  "en": "Let's head home before it gets dark.",
+  "why": "The pattern means 'before (something happens)'; 1 waits for dark, 2 stays in, 4 reports a past event."
+ },
+ {
+  "id": "pp-232",
+  "ja": "去年【きょねん】に比【くら】べて、今年【ことし】の夏【なつ】はずいぶん涼【すず】しい。",
+  "choices": [
+   "今年【ことし】の夏【なつ】は、去年【きょねん】よりずっと暑【あつ】い。",
+   "今年【ことし】の夏【なつ】も、去年【きょねん】と同【おな】じくらい涼【すず】しい。",
+   "今年【ことし】の夏【なつ】は、去年【きょねん】より少【すこ】しだけ涼【すず】しい。",
+   "今年【ことし】の夏【なつ】は、去年【きょねん】よりかなり涼【すず】しい。"
+  ],
+  "key": 4,
+  "en": "Compared with last year, this summer is much cooler.",
+  "why": "The pattern means 'compared with'; 1 reverses it, 2 makes them equal, 3 lowers the degree."
+ },
+ {
+  "id": "pp-233",
+  "ja": "母【はは】の作【つく】るカレーほどおいしいものはない。",
+  "choices": [
+   "母【はは】の作【つく】るカレーは、あまりおいしくない。",
+   "母【はは】の作【つく】るカレーが、一番【いちばん】おいしい。",
+   "母【はは】のカレーより、店【みせ】のカレーのほうがおいしい。",
+   "母【はは】は、私【わたし】の作【つく】るカレーが一番【いちばん】好【す】きだ。"
+  ],
+  "key": 2,
+  "en": "Nothing is as delicious as the curry my mother makes.",
+  "why": "The pattern means 'nothing is as... as'; 1 denies it, 3 ranks another higher, 4 swaps the people."
+ },
+ {
+  "id": "pp-234",
+  "ja": "あんな会社【かいしゃ】で働【はたら】くくらいなら、自分【じぶん】で店【みせ】を始【はじ】めたほうがいい。",
+  "choices": [
+   "自分【じぶん】で店【みせ】を始【はじ】めるより、あの会社【かいしゃ】で働【はたら】きたい。",
+   "あの会社【かいしゃ】で働【はたら】きながら、自分【じぶん】の店【みせ】を始【はじ】めたい。",
+   "あの会社【かいしゃ】は、店【みせ】を始【はじ】める人【ひと】を助【たす】けている。",
+   "あの会社【かいしゃ】で働【はたら】くより、自分【じぶん】の店【みせ】を持【も】つほうがましだ。"
+  ],
+  "key": 4,
+  "en": "Rather than work at a company like that, I'd be better off starting my own shop.",
+  "why": "The pattern means 'rather than'; 1 reverses the preference, 2 does both, 3 is about the company."
+ },
+ {
+  "id": "pp-235",
+  "ja": "疲【つか】れた日【ひ】は、温【あたた】かいお風呂【ふろ】に入【はい】って早【はや】く寝【ね】るに限【かぎ】る。",
+  "choices": [
+   "疲【つか】れた日【ひ】でも、お風呂【ふろ】には入【はい】らないほうがいい。",
+   "疲【つか】れた日【ひ】は、お風呂【ふろ】に入【はい】って早【はや】く寝【ね】るのが一番【いちばん】だ。",
+   "疲【つか】れた日【ひ】は、遅【おそ】くまで起【お】きていてもいい。",
+   "お風呂【ふろ】に入【はい】ると、疲【つか】れて眠【ねむ】れなくなる。"
+  ],
+  "key": 2,
+  "en": "On a tiring day, there's nothing like a hot bath and an early night.",
+  "why": "The pattern means 'the best thing is'; 1 advises against the bath, 3 allows staying up, 4 says it stops sleep."
+ },
+ {
+  "id": "pp-236",
+  "ja": "店【みせ】に問【と】い合【あ】わせたところ、その商品【しょうひん】はもう売【う】り切【き】れだった。",
+  "choices": [
+   "店【みせ】に聞【き】いたら、その商品【しょうひん】はまだたくさんあった。",
+   "商品【しょうひん】が売【う】り切【き】れたので、店【みせ】が問【と】い合【あ】わせてきた。",
+   "店【みせ】に聞【き】かないで、別【べつ】の商品【しょうひん】を買【か】った。",
+   "店【みせ】に聞【き】いてみたら、その商品【しょうひん】はもうなかった。"
+  ],
+  "key": 4,
+  "en": "When I contacted the shop, the product was already sold out.",
+  "why": "The pattern means 'when I did, I found'; 1 reverses the finding, 2 swaps who asked, 3 denies asking."
+ },
+ {
+  "id": "pp-237",
+  "ja": "アンケートの結果【けっか】に基【もと】づいて、新【あたら】しい商品【しょうひん】を開発【かいはつ】した。",
+  "choices": [
+   "新【あたら】しい商品【しょうひん】を作【つく】ってから、アンケートをとった。",
+   "アンケートの結果【けっか】とは関係【かんけい】なく、新【あたら】しい商品【しょうひん】を作【つく】った。",
+   "アンケートの結果【けっか】を参考【さんこう】にして、新【あたら】しい商品【しょうひん】を作【つく】った。",
+   "アンケートの結果【けっか】が悪【わる】かったので、新【あたら】しい商品【しょうひん】をやめた。"
+  ],
+  "key": 3,
+  "en": "We developed the new product based on the survey results.",
+  "why": "The pattern means 'based on'; 1 reverses the order, 2 denies the link, 4 cancels the product."
+ },
+ {
+  "id": "pp-238",
+  "ja": "本人【ほんにん】がいないところで、人【ひと】の悪口【わるぐち】を言【い】うものではない。",
+  "choices": [
+   "本人【ほんにん】がいなければ、悪口【わるぐち】を言【い】ってもかまわない。",
+   "悪口【わるぐち】は、本人【ほんにん】の前【まえ】で言【い】うべきだ。",
+   "本人【ほんにん】がいない所【ところ】で、私【わたし】の悪口【わるぐち】を言【い】われた。",
+   "本人【ほんにん】がいない所【ところ】で、人【ひと】の悪口【わるぐち】を言【い】ってはいけない。"
+  ],
+  "key": 4,
+  "en": "You shouldn't speak ill of people behind their backs.",
+  "why": "The pattern means 'one should not'; 1 gives permission, 2 urges saying it to their face, 3 reports an event."
+ },
+ {
+  "id": "pp-239",
+  "ja": "子供【こども】のころは、よくこの川【かわ】で泳【およ】いだものだ。",
+  "choices": [
+   "子供【こども】のころ、この川【かわ】で泳【およ】いだことは一度【いちど】もない。",
+   "子供【こども】のとき、この川【かわ】でよく泳【およ】いでいた。",
+   "今【いま】でも、よくこの川【かわ】で泳【およ】いでいる。",
+   "子供【こども】たちは、この川【かわ】で泳【およ】いではいけない。"
+  ],
+  "key": 2,
+  "en": "When I was a child, I often used to swim in this river.",
+  "why": "The pattern recalls a past habit; 1 denies it, 3 moves it to the present, 4 turns it into a rule."
+ },
+ {
+  "id": "pp-240",
+  "ja": "よく考【かんが】えた上【うえ】で、お返事【へんじ】させていただきます。",
+  "choices": [
+   "考【かんが】える前【まえ】に、すぐ返事【へんじ】をします。",
+   "よく考【かんが】えたので、返事【へんじ】はしません。",
+   "しっかり考【かんが】えてから、返事【へんじ】をします。",
+   "あなたがよく考【かんが】えてから、返事【へんじ】をください。"
+  ],
+  "key": 3,
+  "en": "I'll give you my answer after thinking it over carefully.",
+  "why": "The pattern means 'after doing'; 1 answers without thinking, 2 refuses to answer, 4 swaps who answers."
+ }
+]

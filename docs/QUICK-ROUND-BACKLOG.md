@@ -177,7 +177,7 @@ Open:
 Built in v316 (27 Nov, the owner's "do the whole backlog" run): sentence
 ordering (119 items), clause pairs for connectives (155), the papers' English
 (798), 614 audited word pieces, the eight paper questions fixed with an
-edition per paper; paraphrase cards when their blind test is done. All
+edition per paper; paraphrase cards (239 of 240 after their blind test, v317). All
 unreviewed by a person, scored, for the designer to look at (the ★ slot, the
 pair card). **Not built in that run, still open:** kanji-first picking for N2
 rounds (needs the owner's decision), a reading sprint from Home, section
