@@ -553,15 +553,16 @@ Before considering the change complete:
   until the answer was known by the look of the card. Every boss review card
   is spoken once (`say`): the word, the pattern, a listening line, or else
   the answer.
-- **A connective keeps up to two sentences before its gap (v307).** One
-  sentence was tried on 27 Nov and taken back the same day (owner: "the wrong
-  direction"): with less context a second connective often fits. What stops
-  a long excerpt being known by its shape is `restFor`, not its length. A
-  missed connective's review is the word and its short meaning large
-  (`solution.meaning`, from n2-connectives.js), its job as the why
-  (`solution.why`), and the gap's own sentence. Connectives get no word card
-  from the other levels' lists: those give the dictionary's first sense
-  (また "again", 一方 "one of two"), not the connective's.
+- **A connective is asked on its own (owner, 27 Nov, v307).** `linkCards`
+  (n2-game.js): one word large, its meaning to pick in three seconds, kind
+  `link`, id `k:<word>`, from the table in n2-connectives.js; no wrong choice
+  is the meaning of a connective whose job overlaps (`OVERLAP`); the job
+  shows in a line after the answer. The passage excerpts (`c:` cards,
+  問題9-style) are **out of the rounds**: fair meant long, and long was not
+  fun; one sentence was unfair. `gamePool({excerpts: true})` still builds
+  them for the audit and the reviewer. This replaces every earlier line here
+  about connective cards in a round. Next: short clause pairs
+  (docs/QUICK-ROUND-BACKLOG.md).
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

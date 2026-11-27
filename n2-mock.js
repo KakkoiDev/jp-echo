@@ -1695,7 +1695,7 @@ async function game() {
       $("game-score").dataset.flash = "gold";
     } else if (q.bonus && outcome === "right") { line.textContent = "Bonus +" + paid.points; line.className = "qr-line gold"; }
     // Rule two: a mistake is part of the game. Say so, then keep going.
-    if (q.kind === "connective") line.textContent = q.solution?.why || "";
+    if (q.kind === "connective" || q.kind === "link") line.textContent = q.solution?.why || "";
     else if (outcome === "wrong") line.textContent = "Part of the game. Keep going.";
     else if (outcome === "timeout") line.textContent = "Too slow this time. It comes back next round.";
     else if (outcome === "dontknow") line.textContent = "Fine. Keep going.";

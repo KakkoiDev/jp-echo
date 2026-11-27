@@ -64,7 +64,8 @@ write("data/kanji.tsv", tsv(["kanji", "on", "kun", "meanings", "JLPT", "newspape
   [...kanjiWords].sort((a, b) => b[1].length - a[1].length).map(([k, words]) => { const r = READINGS[k] || {}; return [k, (r.on || []).join("・"), (r.kun || []).join("・"), (r.en || []).join(", "), r.jlpt, r.freq, words.join(" "), words.length]; })));
 
 // ---- Connectives: exactly the excerpts the game asks (practice, not scored) ----
-const conn = byKind.get("connective") || [];
+// The passage excerpts are out of the rounds (27 Nov); they are still listed here, built apart from the pool.
+const conn = gamePool({inventory, examples, sets, sat: playable, excerpts: true}).filter(q => q.kind === "connective");
 const counts = new Map(); for (const q of conn) counts.set(q.answer, (counts.get(q.answer) || 0) + 1);
 write("data/connectives.tsv", tsv(["connective", "job", "gloss", "job explained", "questions in the game"], CONNECTIVES.map(([w, job, g]) => [w, job, g, JOBS[job], counts.get(w) || 0])));
 write("data/connective-passages.tsv", tsv(["id", "answer", "job", "excerpt with the blank", "wrong choices the game may offer"], conn.map(q => [q.id, q.answer, q.solution.job, q.sentence, q.wrong.join(" · ")])));
@@ -94,7 +95,7 @@ const lines = [
   `- data/grammar.tsv: ${items.grammar.length} N2 grammar patterns with their deck sentence`,
   `- data/kanji.tsv: ${kanjiWords.size} kanji used in the N2 words, with readings and the words using each`,
   `- data/connectives.tsv: ${CONNECTIVES.length} connectives with their job (planned connective cards)`,
-  `- data/connective-passages.tsv: ${sites.length} connective questions exactly as the game asks them (practice, not scored)`,
+  `- data/connective-passages.tsv: ${sites.length} connective excerpts as the game used to ask them (out of the rounds since 27 Nov; the connective is asked on its own)`,
   `- data/excluded.tsv: ${Object.keys(EXCLUDED).length} items left out of the game until fixed, with reasons`,
   `- data/accepted-readings.tsv: readings never offered as wrong, and keys changed to match what Echo teaches`,
   `- data/exam-questions.tsv: ${exam.length} authored short exam questions`, "",

@@ -313,10 +313,11 @@ test("difficulty: Normal is the 80% zone, Easy aims higher and pays less, Hard a
 
 test("connectives are 問題9 文章の文法: a passage excerpt, one blank, four connectives, wrong ones from jobs that cannot stand in", async () => {
   const {OVERLAP, jobOf, CHOICE_FOR_JOB} = await import("../n2-connectives.js");
-  const pool = gamePool({inventory, examples, sets, sat: new Set(ids.filter(id => !HELD_OUT.includes(id)))});
+  const pool = gamePool({inventory, examples, sets, sat: new Set(ids.filter(id => !HELD_OUT.includes(id))), excerpts: true});
   const cs = pool.filter(q => q.kind === "connective");
   assert.ok(cs.length > 150, "plenty from the sets already sat");
-  assert.equal(gamePool({inventory, examples, sets, sat: new Set()}).filter(q => q.kind === "connective").length, 0, "only from sets already sat");
+  assert.equal(gamePool({inventory, examples, sets, sat: new Set(), excerpts: true}).filter(q => q.kind === "connective").length, 0, "only from sets already sat");
+  assert.equal(pool.length - cs.length, gamePool({inventory, examples, sets, sat: new Set(ids.filter(id => !HELD_OUT.includes(id)))}).length, "a round's pool has none of them (owner, 27 Nov)");
   for (const q of cs) {
     assert.equal(q.prompt, "（　）に入るのは？", "the 問題9 wording");
     assert.equal((q.sentence.match(/（　）/g) || []).length, 1, q.id);
@@ -410,7 +411,7 @@ test("audit P0: a flag earns nothing, ends the combo, and the round's right coun
 
 test("connective questions are scored like every card of a round; the practice path stays for unpaid cards", () => {
   const pool = allSat();
-  assert.ok(pool.filter(q => q.kind === "connective").every(q => !q.practice), "owner, 27 Nov: every card pays and costs");
+  assert.ok(pool.filter(q => q.kind === "link").length > 30 && pool.filter(q => q.kind === "link").every(q => !q.practice), "owner, 27 Nov: every card pays and costs");
   assert.match(src("../n2-mock.js"), /const paid = q\.practice \? \{points: 0, jackpot: 0\}/);
 });
 
@@ -567,8 +568,8 @@ test("re-audit P2: the audit export shows the underline, practice and the filter
   const reading = src("../audit/quick-round/questions/reading.jsonl").split("\n").find(l => l.includes('"r:的確"'));
   if (reading) assert.ok(!JSON.parse(reading).wrongCandidates.includes("てっかく"));
   assert.doesNotMatch(src("../audit/quick-round/data/readings.tsv").split("\n").find(l => l.startsWith("的確\t")) || "", /てっかく/);
-  // Every card is scored since SCORE_ALL (owner, 27 Nov): the export no longer marks connectives as practice.
-  assert.doesNotMatch(src("../audit/quick-round/questions/connective.jsonl"), /"practice":true/);
+  // Every card is scored since SCORE_ALL (owner, 27 Nov), and the connective is asked on its own: no card is marked practice.
+  assert.doesNotMatch(src("../audit/quick-round/questions/link.jsonl"), /"practice":true/);
   assert.match(src("../audit/quick-round/questions/grammar.jsonl"), /"underline":/);
 });
 

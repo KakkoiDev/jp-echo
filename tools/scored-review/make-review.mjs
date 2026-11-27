@@ -11,7 +11,7 @@ const read = p => JSON.parse(readFileSync(new URL(p, root), "utf8"));
 const inventory = read("n2-inventory.json"), words = read("decks/n2-words.json"), grammar = read("decks/n2-grammar.json");
 const examples = examplesFromDecks(inventory, [words, grammar]);
 const ids = Object.keys(read("n2-sets/index.json")), sets = ids.map(id => read("n2-sets/" + id + ".json"));
-const pool = gamePool({inventory, examples, sets, sat: new Set(ids), grammarBlocks: read("n2-grammar-blocks.json")});
+const pool = gamePool({inventory, examples, sets, sat: new Set(ids), grammarBlocks: read("n2-grammar-blocks.json"), excerpts: true});
 const plain = s => String(s || "").replace(/【[^】]*】/g, "");
 
 // A. Word parts: every entry of the list written with ～, with its card or the reason it has none.
@@ -23,6 +23,8 @@ const parts = inventory.words.map(([text, reading, meaning], i) => ({text, readi
 });
 
 // B. Connectives: every card as it is asked, with all the wrong choices it can draw.
+// Out of the rounds since 27 Nov (the connective is asked on its own); kept here in case they return.
+const links = pool.filter(q => q.kind === "link").map(q => ({id: q.id, word: q.prompt, answer: q.answer, job: q.job, shownAfterAnswer: q.solution.why, wrong: q.wrong}));
 const connectives = pool.filter(q => q.kind === "connective").map(q => ({id: q.id, excerpt: q.sentence, answer: q.answer, wrong: q.wrong, shownAfterAnswer: q.solution?.meaning || "", source: q.solution?.source || q.id.slice(2).split("@")[0]}));
 
 // C. Grammar pieces: what the first review left open.
@@ -44,7 +46,7 @@ for (const level of ["N5", "N4", "N3", "N1"]) {
   levels[level] = {file, words: inv.words.length, cards: p.length, byKind: p.reduce((a, q) => (a[q.kind] = (a[q.kind] || 0) + 1, a), {}), sample};
 }
 
-const out = {generated: new Date().toISOString().slice(0, 10), counts: {parts: parts.length, partCards: parts.filter(p => p.id).length, connectives: connectives.length, grammarOpen: open.length, lines: Object.keys(lines).length},
+const out = {links, generated: new Date().toISOString().slice(0, 10), counts: {parts: parts.length, partCards: parts.filter(p => p.id).length, connectives: connectives.length, grammarOpen: open.length, lines: Object.keys(lines).length},
   parts, connectives, grammarOpen: open, lines, levels};
 writeFileSync(new URL("tools/scored-review/review-data.json", root), JSON.stringify(out, null, 1) + "\n");
 console.log(out.counts, Object.fromEntries(Object.entries(levels).map(([k, v]) => [k, v.cards + " cards, sample " + v.sample.length])));

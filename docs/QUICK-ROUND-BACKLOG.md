@@ -172,6 +172,26 @@ Open:
   from, which is how the paper asks it.
 - N5, N4, N3 and N1 lists hold no parts (they come from JMdict's word lists).
 
+## Connectives (v307, 27 Nov 2026)
+
+Built: the connective on its own (`linkCards`, kind `link`, id `k:<word>`):
+one word large, its meaning to pick, three seconds, the job in a line after
+the answer. The 228 passage excerpts are out of the rounds: long enough to be
+fair was too long to be fun, and one sentence was unfair (owner, 27 Nov).
+`gamePool({excerpts: true})` still builds them for the audit.
+
+**Next (owner said yes, 27 Nov; costs credit, needs review):** short clause
+pairs written for the purpose, about five seconds a card.
+- Two clauses of about 25 characters with a gap between them, made so that
+  only one connective can stand there: 雨が降った。（　）、試合は中止になった。
+- Four connectives to choose from; the wrong ones from jobs that cannot stand
+  in (`OVERLAP`).
+- A few pairs per connective, 100 to 150 in all, in a data file of their own.
+  Sonnet writers, then a blind solver that must find the one answer with all
+  35 connectives allowed, then into `tools/scored-review/` for the reviewer.
+- Decide then whether the excerpts have any use left (a boss review card?) or
+  are deleted.
+
 ## Grammar from its blocks
 
 Two handoffs wait on other people (27 Nov 2026):

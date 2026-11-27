@@ -248,7 +248,7 @@ test("a card known better rests longer, so a small kind cannot loop", async () =
   const h = 3600_000;
   assert.deepEqual([0, 1, 2, 3, 4, 5].map(l => restFor(l) / h), [4, 8, 16, 32, 64, 72]); assert.equal(restFor(9), ITEM_LEVEL.restMs); assert.equal(restFor(undefined), RECENT_MS);
   // Eleven connective cards among thousands: one at level 2 seen ten hours ago still rests; at sixteen hours it may return.
-  const con = pool.filter(q => q.kind === "connective"), others = pool.filter(q => q.kind === "meaning").slice(0, 200), now = 1000 * h;
+  const con = gamePool({inventory, examples, sets: [set], sat: new Set([set.id]), excerpts: true}).filter(q => q.kind === "connective"), others = pool.filter(q => q.kind === "meaning").slice(0, 200), now = 1000 * h;
   assert.ok(con.length > 0 && con.length < 20, "a small kind: one paper sat");
   const state = hours => ({seen: Object.fromEntries(con.map(q => [q.id, now - hours * h])), lv: Object.fromEntries(con.map(q => [q.id, 2]))});
   for (let n = 1; n <= 10; n++) assert.ok(!pickRound({pool: [...con, ...others], ...state(10), random: seeded(n), now}).some(q => q.kind === "connective"));
@@ -263,8 +263,8 @@ test("every boss review card is spoken once: the word, the pattern, a listening 
   assert.ok(js.includes("if (sound() && (q.say || spoken)) setTimeout(() => { if (reviewToken === askToken && !$(\"game-review\").hidden) say(q.say || spoken); }, 150);"));
 });
 
-test("a connective keeps up to two sentences before the gap; its review is the word and its meaning at a glance", () => {
-  const ids = Object.keys(read("../n2-sets/index.json")), all = gamePool({inventory, examples, sets: ids.map(id => read("../n2-sets/" + id + ".json")), sat: new Set(ids)}).filter(q => q.kind === "connective");
+test("a connective excerpt (no longer in rounds) keeps up to two sentences before the gap; its review is the word and its meaning at a glance", () => {
+  const ids = Object.keys(read("../n2-sets/index.json")), all = gamePool({inventory, examples, sets: ids.map(id => read("../n2-sets/" + id + ".json")), sat: new Set(ids), excerpts: true}).filter(q => q.kind === "connective");
   assert.ok(all.length > 200);
   for (const q of all) {
     const [before, after] = q.sentence.split("（　）");
@@ -279,5 +279,29 @@ test("a connective keeps up to two sentences before the gap; its review is the w
   assert.equal(mata.sentence, "しかし、図書館の本は多くの人が共有する財産だ。一冊の本が汚れれば、次に読む人が迷惑する。（　）、古い資料の中には、一度傷むと二度と元に戻らないものもある。");
   assert.equal(mata.solution.meaning, "also, in addition"); assert.equal(mata.solution.ja, "また、古い資料の中には、一度傷むと二度と元に戻らないものもある。");
   assert.ok(src("../n2-game.js").includes("(?:[^。」]*[。」]){1,2}"));
-  assert.ok(src("../n2-mock.js").includes('if (q.kind === "connective") line.textContent = q.solution?.why || "";'));
+  assert.ok(src("../n2-mock.js").includes('if (q.kind === "connective" || q.kind === "link") line.textContent = q.solution?.why || "";'));
+});
+
+test("a connective is asked on its own: one word, its meaning to pick, nothing to read", async () => {
+  const {CONNECTIVES, OVERLAP, JOBS} = await import("../n2-connectives.js");
+  const {SECONDS, choicesFor, answerSpeech} = await import("../n2-game.js");
+  const links = pool.filter(q => q.kind === "link");
+  assert.equal(links.length, CONNECTIVES.length, "every connective of the table"); assert.ok(links.length >= 35);
+  assert.equal(pool.filter(q => q.kind === "connective").length, 0, "no passage excerpt in a round");
+  assert.equal(SECONDS.link, 3); assert.equal(KIND_LABEL_OF.link, "Connective");
+  const meaningOf = new Map(CONNECTIVES.map(([w, j, m]) => [m, j]));
+  for (const q of links) {
+    const [word, job, meaning] = CONNECTIVES.find(c => c[0] === q.prompt);
+    assert.equal(q.id, "k:" + word); assert.equal(q.answer, meaning); assert.equal(q.sentence, "", "nothing to read but the word");
+    assert.equal(q.solution.why, JOBS[job]); assert.equal(q.solution.word, word); assert.ok(!q.practice && q.target === null);
+    // No wrong choice is the meaning of a connective that could do the same job.
+    for (const w of q.wrong) assert.ok(!(OVERLAP[job] || [job]).includes(meaningOf.get(w)), word + " against " + w);
+    assert.equal(new Set(choicesFor(q, seeded(5), .5).choices).size, 4, word);
+    assert.equal(answerSpeech(q), word);
+  }
+  const mata = links.find(q => q.prompt === "また");
+  assert.equal(mata.answer, "also, in addition"); assert.match(mata.solution.why, /^Add: /);
+  // A miss comes back and is scored like any card; the job line shows after the answer.
+  const st = rememberAnswer({}, {q: mata, outcome: "wrong", points: -200});
+  assert.deepEqual(st.comeback, ["k:また"]); assert.equal(st.total, -200);
 });

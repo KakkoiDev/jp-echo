@@ -22,7 +22,7 @@
 // Pure (no DOM, no storage): test/n2-game.test.js holds it.
 import {recallItems, localDay} from "./n2-study.js";
 import {HELD_OUT} from "./n2-comprehension.js";
-import {connectiveSites, jobOf, glossOf, JOBS, OVERLAP, CHOICE_FOR_JOB} from "./n2-connectives.js";
+import {connectiveSites, jobOf, glossOf, JOBS, OVERLAP, CHOICE_FOR_JOB, CONNECTIVES} from "./n2-connectives.js";
 import {ACCEPTED_READINGS, READING_KEY, EXCLUDED, GLOSS_FIX, GRAMMAR_SPANS, REVIEWED_LEVELS, REVIEWED_GRAMMAR_BLOCKS, REVIEWED_AFFIXES, SCORE_ALL, GRAMMAR_CONFUSABLE} from "./n2-game-review.js";
 import {exampleSegments} from "./n2-delayed.js";
 import {LEVELS} from "./jlpt-levels.js";
@@ -34,10 +34,10 @@ export const GAME_SOURCE = "game";
 // as it is given, so closing the page mid-round loses nothing.
 // Blitz chess, not shogi (owner, 26 Nov): seconds, not minutes, per question.
 export const ROUND_SIZE = 10, REVIEW_SECONDS = 5, DAILY_GOAL = 1000, RECENT_MS = 4 * 3600_000;
-export const SECONDS = Object.freeze({reading: 3, meaning: 3, definition: 4, listen: 5, homophone: 5, grammar: 6, affix: 5, connective: 7, exam: {1: 4, 2: 5, 3: 5, 4: 7, 5: 6, 7: 8}});
+export const SECONDS = Object.freeze({reading: 3, meaning: 3, definition: 4, listen: 5, homophone: 5, grammar: 6, affix: 5, link: 3, connective: 7, exam: {1: 4, 2: 5, 3: 5, 4: 7, 5: 6, 7: 8}});
 // The pause after an answer before the next question, in milliseconds.
 export const PAUSE = Object.freeze({right: 250, miss: 800});
-export const KIND_LABEL = Object.freeze({reading: "Reading", meaning: "Meaning", definition: "Which word", listen: "Listen", connective: "Connective · 問題9", homophone: "Which kanji", grammar: "Grammar", block: "Grammar piece", build: "Grammar parts", infer: "New grammar", exam: "Exam question", affix: "Word part"});
+export const KIND_LABEL = Object.freeze({reading: "Reading", meaning: "Meaning", definition: "Which word", listen: "Listen", connective: "Connective · 問題9", homophone: "Which kanji", grammar: "Grammar", block: "Grammar piece", build: "Grammar parts", infer: "New grammar", exam: "Exam question", affix: "Word part", link: "Connective"});
 const EXAM_MONDAI = new Set([1, 2, 3, 4, 5, 7]), WRITTEN = new Set(["Vocabulary", "Grammar"]);
 const KANJI = /[一-鿿々]/g;
 const plain = s => String(s || "").replace(/【[^】]*】/g, "");
@@ -123,7 +123,7 @@ export function nearMisses(reading = "") {
 // has read; with SCORE_ALL off, unread content goes back to practice: no
 // points, the answer recorded and counted.
 const unscored = reviewed => reviewed || SCORE_ALL ? {} : {practice: true, record: true};
-export function gamePool({inventory, examples = new Map(), sets = [], sat = new Set(), level = "N2", parts = null, grammarBlocks = null}) {
+export function gamePool({inventory, examples = new Map(), sets = [], sat = new Set(), level = "N2", parts = null, grammarBlocks = null, excerpts = false}) {
   const other = level !== "N2", tag = other ? level + ":" : "";
   const split = new Map(inventory.words.map(([w, r, , p]) => [w + "/" + r, p || parts?.[w + "/" + r] || ""]));
   const kanjiOf = w => { const ks = (w.text.match(KANJI) || []).filter(k => k !== "々"), bases = (split.get(w.target[1] + "/" + w.target[2]) || "").split("|");
@@ -215,7 +215,11 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
   // excerpt is up to two sentences before the blank and the blank's sentence.
   // Practice only, not scored, until the excerpts are reviewed (audit P2).
   if (other) sets = [];
-  for (const set of sets) {
+  // The connective on its own (linkCards) is what a round asks. The passage excerpts are no longer in rounds
+  // (owner, 27 Nov: long enough to be fair was too long to be fun, and shorter was unfair); `excerpts` still
+  // builds them, for the audit and the reviewer.
+  if (!other) pool.push(...linkCards());
+  for (const set of excerpts ? sets : []) {
     if (!set?.id || HELD_OUT.includes(set.id) || !sat.has(set.id)) continue;
     const seen = new Set();
     for (const [i, q] of (set.questions || []).entries()) {
@@ -344,6 +348,23 @@ function addGrammarBlocks(pool, {blocks = {}, patterns = {}}) {
 
 // The level a card belongs to: cards without one are N2's.
 export const levelOfCard = q => q?.level || "N2";
+
+// ---- The connective on its own ----
+// One word, large, nothing to read: とはいえ → "that said, even so". At N2 a
+// connective says where the writer's point is, and it has to be known on
+// sight. The words, their meanings and their jobs are n2-connectives.js; a
+// wrong choice is never the meaning of a connective whose job overlaps the
+// answer's (OVERLAP), so しかし is not offered against だが. After the answer
+// the card says the word's job in a line.
+function linkCards() {
+  return CONNECTIVES.flatMap(([word, job, meaning]) => {
+    const blocked = new Set(OVERLAP[job] || [job]);
+    const wrong = [...new Set(CONNECTIVES.filter(([w, j, m]) => w !== word && !blocked.has(j) && !sameSense(m, meaning)).map(([, , m]) => m))];
+    if (wrong.length < 3 || !JOBS[job]) return [];
+    return [{...(SCORE_ALL ? {} : {practice: true, record: true}), id: "k:" + word, kind: "link", target: null, dimension: null, prompt: word,
+      sentence: "", answer: meaning, wrong, job, seconds: SECONDS.link, solution: {word, meaning, why: JOBS[job], ja: "", en: ""}}];
+  });
+}
 
 function connectiveQuestion(source, text, site) {
   const job = jobOf(site.word);
@@ -1246,6 +1267,7 @@ export function answerSpeech(q) {
   if (["reading", "meaning", "definition", "listen", "homophone"].includes(q.kind)) return word(q.solution?.word, q.solution?.reading) || null;
   if (q.kind === "grammar" || grammarBlockCard(q)) return pattern(q.solution?.word || q.prompt) || null;
   if (q.kind === "connective") return q.answer;
+  if (q.kind === "link") return q.prompt;
   if (q.kind === "exam" && q.target) return q.target[0] === "grammar" ? pattern(q.target[1]) || null : word(q.target[1], q.target[2]).replace(/[〜～]/g, "") || null;
   return null;
 }
