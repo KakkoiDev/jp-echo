@@ -244,7 +244,65 @@ export const LINK_PARTS = Object.freeze({
   "なぜなら": {parts: [["なぜ", "why"], ["なら", "if (you ask)"]], literal: "if you ask why"},
   "例えば": {parts: [["例え", "giving a case"], ["ば", "if"]], literal: "if one gives a case"},
   "言い換えれば": {parts: [["言い", "saying"], ["換えれ", "swapped"], ["ば", "if"]], literal: "if one says it another way"},
-  "要するに": {parts: [["要する", "boiling down"], ["に", "in"]], literal: "in what it boils down to"}});
+  "要するに": {parts: [["要する", "boiling down"], ["に", "in"]], literal: "in what it boils down to"},
+  // More of them (owner, 27 Nov: "there are more compounds we didn't dissect yet").
+  "だが": {parts: [["だ", "is so"], ["が", "but"]], literal: "it is so, but"},
+  "ところが": {parts: [["ところ", "at that point"], ["が", "but"]], literal: "at that point, but"},
+  "ところで": {parts: [["ところ", "at that point"], ["で", "leaving it at"]], literal: "leaving it at that point"},
+  "けれども": {parts: [["けれど", "but"], ["も", "even so"]], literal: "but even so"},
+  "確かに": {parts: [["確か", "certain"], ["に", "-ly"]], literal: "certainly"},
+  "したがって": {parts: [["したがっ", "following"], ["て", "and so"]], literal: "following from that"},
+  "さらに": {parts: [["さら", "anew; further"], ["に", "-ly"]], literal: "further still"},
+  "一方": {parts: [["一", "one"], ["方", "side"]], literal: "on one side (and on the other)"},
+  "しかも": {parts: [["しか", "so; thus"], ["も", "also"]], literal: "thus, and also"}});
+// Words and patterns the game asks whole that are made of pieces a learner already has: [piece, what it does] in
+// order, and the pieces read together. Shown after the answer and in the review of a miss, never on the card (the
+// card is the test). The pieces joined must be the word as the list writes it (～ and ①② aside). Written by the
+// maintainer agent on 27 Nov at the owner's request; not reviewed.
+export const WORD_PIECES = Object.freeze({
+  // grammar patterns learned whole
+  "したがって": {parts: [["したがっ", "following"], ["て", "and so"]], literal: "following from that"},
+  "要するに": {parts: [["要する", "boiling down"], ["に", "in"]], literal: "in what it boils down to"},
+  "それなのに": {parts: [["それ", "that"], ["な", "being so"], ["のに", "even though"]], literal: "even though that is so"},
+  "それとも": {parts: [["それ", "that"], ["とも", "or else"]], literal: "that, or else"},
+  "おまけに": {parts: [["おまけ", "an extra thrown in"], ["に", "as"]], literal: "as an extra on top"},
+  "しかしながら": {parts: [["しかし", "however"], ["ながら", "while granting it"]], literal: "however, while that is so"},
+  "反面": {parts: [["反", "opposite"], ["面", "side, face"]], literal: "on the opposite side"},
+  "以来": {parts: [["以", "from that point"], ["来", "coming on"]], literal: "from then on"},
+  "以上": {parts: [["以", "from that point"], ["上", "upward"]], literal: "from that upward: given that"},
+  "未だに": {parts: [["未だ", "not yet"], ["に", "as"]], literal: "still, as not yet"},
+  "確かに": {parts: [["確か", "certain"], ["に", "-ly"]], literal: "certainly"},
+  "更に": {parts: [["更", "anew; further"], ["に", "-ly"]], literal: "further still"},
+  "とっくに": {parts: [["とっく", "long past"], ["に", "at"]], literal: "at a time long past"},
+  "はたして": {parts: [["はたし", "carrying through"], ["て", "and"]], literal: "carried through: really, in the end"},
+  "いきなり": {parts: [["いき", "going"], ["なり", "just as"]], literal: "just as it goes: abruptly"},
+  "手前": {parts: [["手", "hand"], ["前", "front"]], literal: "this side, in front of one"},
+  "っこない": {parts: [["っこ", "such a thing"], ["ない", "there is none"]], literal: "there is no such thing as"},
+  "精々": {parts: [["精", "utmost effort"], ["々", "(repeated)"]], literal: "at the very most"},
+  // expressions of the word list
+  "やむをえない": {parts: [["やむ", "stop"], ["を", "(it)"], ["えない", "cannot"]], literal: "cannot stop it: unavoidable"},
+  "しょうがない": {parts: [["しょう", "way of doing"], ["が", "(there is)"], ["ない", "none"]], literal: "there is no way to deal with it"},
+  "もしかしたら": {parts: [["もし", "if"], ["か", "perhaps"], ["したら", "it were so"]], literal: "if perhaps it were so"},
+  "そういえば": {parts: [["そう", "so"], ["いえば", "if one says"]], literal: "if one says so: speaking of which"},
+  "こうして": {parts: [["こう", "like this"], ["して", "doing"]], literal: "doing like this"},
+  "ぜひとも": {parts: [["ぜひ", "by all means"], ["とも", "indeed"]], literal: "by all means indeed"},
+  "なんとなく": {parts: [["なん", "what"], ["と", "as"], ["なく", "without"]], literal: "without a 'what': somehow"},
+  "なんとも": {parts: [["なん", "what"], ["とも", "at all"]], literal: "not anything at all"},
+  "ひとりでに": {parts: [["ひとり", "alone"], ["でに", "by"]], literal: "by itself alone"},
+  "ともかく": {parts: [["とも", "be it so"], ["かく", "this way"]], literal: "be that as it may"},
+  "なにしろ": {parts: [["なに", "what"], ["しろ", "do it"]], literal: "whatever one does: anyway"},
+  "そのころ": {parts: [["その", "that"], ["ころ", "time"]], literal: "around that time"},
+  "あちらこちら": {parts: [["あちら", "over there"], ["こちら", "here"]], literal: "there and here"},
+  "あれこれ": {parts: [["あれ", "that"], ["これ", "this"]], literal: "that and this"},
+  "ひとまず": {parts: [["ひと", "one"], ["まず", "first"]], literal: "first of all, for now"},
+  "くれぐれも": {parts: [["くれぐれ", "again and again"], ["も", "even"]], literal: "again and again"},
+  "おかげさまで": {parts: [["おかげ", "thanks to you"], ["さま", "(honorific)"], ["で", "by"]], literal: "by your kind help"},
+  "みっともない": {parts: [["みっとも", "wanting to see"], ["ない", "not"]], literal: "not fit to be seen"},
+  "くだらない": {parts: [["くだら", "pass; come down"], ["ない", "not"]], literal: "does not pass: worthless"},
+  "すまない": {parts: [["すま", "be settled"], ["ない", "not"]], literal: "it is not settled: sorry"},
+  "ばからしい": {parts: [["ばか", "fool"], ["らしい", "-like"]], literal: "like a fool: absurd"},
+  "そのため": {parts: [["その", "that"], ["ため", "reason; sake"]], literal: "for that reason"},
+  "それなら": {parts: [["それ", "that"], ["なら", "if it is"]], literal: "if that is so"}});
 export const LINK_SHOWN = Object.freeze({"にもかかわらず": "それにもかかわらず", "とすれば": "だとすれば"});
 // The word-part cards (前～, ～気味): their meanings are the word list's and their sentences the deck's, neither read by
 // a reviewer as affix content. False: practice, no points. True only after that review.

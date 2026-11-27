@@ -637,6 +637,15 @@ Before considering the change complete:
   build card does, says them together after the answer, and repeats them in
   the review; five seconds. The pieces were written by the maintainer agent
   and are unreviewed.
+- **Words and patterns asked whole carry their pieces where they have them
+  (v315).** `WORD_PIECES` (n2-game-review.js): やむ + を + えない, 以 + 来,
+  それ + とも. `gamePool` puts them on the item's grammar, gap, block,
+  meaning, definition and listen cards as `q.pieces`: said together after
+  the answer and listed in the review of a miss, never on the card. Nine
+  more connectives joined `LINK_PARTS`. The pieces joined must be the word.
+  All written by the maintainer agent, unreviewed;
+  `docs/PIECES-AUDIT-HANDOFF.md` and `tools/scored-review/make-pieces.mjs`
+  hand the search for more to an auditor.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

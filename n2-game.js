@@ -23,7 +23,7 @@
 import {recallItems, localDay} from "./n2-study.js";
 import {HELD_OUT} from "./n2-comprehension.js";
 import {connectiveSites, jobOf, glossOf, JOBS, OVERLAP, CHOICE_FOR_JOB, CONNECTIVES} from "./n2-connectives.js";
-import {ACCEPTED_READINGS, READING_KEY, EXCLUDED, GLOSS_FIX, GRAMMAR_SPANS, REVIEWED_LEVELS, REVIEWED_GRAMMAR_BLOCKS, REVIEWED_AFFIXES, AFFIX_GLOSS, AFFIX_CONFUSABLE, AFFIX_SHOWN, AFFIX_READING, LINK_NOT_WRONG, LINK_SHOWN, LINK_WHY, LINK_PARTS, SCORE_ALL, GRAMMAR_CONFUSABLE} from "./n2-game-review.js";
+import {ACCEPTED_READINGS, READING_KEY, EXCLUDED, GLOSS_FIX, GRAMMAR_SPANS, REVIEWED_LEVELS, REVIEWED_GRAMMAR_BLOCKS, REVIEWED_AFFIXES, AFFIX_GLOSS, AFFIX_CONFUSABLE, AFFIX_SHOWN, AFFIX_READING, LINK_NOT_WRONG, LINK_SHOWN, LINK_WHY, LINK_PARTS, WORD_PIECES, SCORE_ALL, GRAMMAR_CONFUSABLE} from "./n2-game-review.js";
 import {exampleSegments} from "./n2-delayed.js";
 import {LEVELS} from "./jlpt-levels.js";
 
@@ -246,6 +246,13 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
         solution: {why: q.why || "", source: set.id + "#" + i}});
     }
   }
+  // A word or pattern asked whole that is made of plain pieces carries them (WORD_PIECES): said together after the
+  // answer and listed in the review of a miss. Cards that already show parts (build, infer, a built connective) keep theirs.
+  if (!other) for (const q of pool) {
+    if (q.parts || !["grammar", "gap", "block", "meaning", "definition", "listen"].includes(q.kind)) continue;
+    const built = WORD_PIECES[pieceKey(q.solution?.word)];
+    if (built) q.pieces = {parts: built.parts.map(([text, g]) => ({text, gloss: g})), literal: built.literal};
+  }
   // The bar for every item: not excluded, and four distinct choices.
   // The kanji a word card exercises; grammar, connective and exam cards have none.
   const byTarget = new Map(words.map(w => [w.target, kanjiOf(w)]));
@@ -298,6 +305,8 @@ function partGapCards(parts) {
 // its sentence has a card: where it shows twice the underline could not say
 // which one is meant. Practice until the list's glosses and the sentences
 // are reviewed (REVIEWED_AFFIXES): no points, but every answer counts.
+// A word or pattern as WORD_PIECES names it: without ～, the ①② of a second sense, spaces or a bracketed note.
+export const pieceKey = word => String(word || "").replace(/[〜～①-⑨\s]/g, "").replace(/（[^）]*）|\([^)]*\)/g, "");
 export const affixSide = text => /^[〜～]/.test(text) ? "suffix" : "prefix";
 function affixCards(affixes, sentenceOf) {
   const reviewed = w => AFFIX_GLOSS[w.text + "/" + w.reading] || AFFIX_GLOSS[w.text];

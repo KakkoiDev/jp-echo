@@ -538,3 +538,31 @@ test("a connective built of plain pieces shows them; a word is met in its senten
   // Another level has no deck sentences: its meaning cards stay a bare word.
   assert.ok(gamePool({inventory: {words: [["犬", "いぬ", "dog"], ["猫", "ねこ", "cat"], ["鳥", "とり", "bird"], ["魚", "さかな", "fish"], ["馬", "うま", "horse"]], grammar: []}, level: "N5"}).filter(q => q.kind === "meaning").every(q => q.sentence === ""));
 });
+
+test("words and patterns made of pieces carry them, and the pieces join up to the word", async () => {
+  const {WORD_PIECES, LINK_PARTS, LINK_SHOWN} = await import("../n2-game-review.js");
+  const {pieceKey} = await import("../n2-game.js");
+  const blocks = read("../n2-grammar-blocks.json"), full = gamePool({inventory, examples, grammarBlocks: blocks});
+  assert.ok(Object.keys(WORD_PIECES).length >= 40 && Object.keys(LINK_PARTS).length >= 25);
+  for (const [word, p] of Object.entries(WORD_PIECES)) {
+    assert.equal(p.parts.map(x => x[0]).join(""), word, word + ": the pieces make the word");
+    assert.ok(p.parts.length >= 2 && p.parts.every(([t, g]) => t && g && g.length <= 40 && !/[ぁ-んァ-ヶ一-龯]/.test(g)), word);
+    assert.ok(p.literal && p.literal.length <= 60 && !/[ぁ-んァ-ヶ一-龯]/.test(p.literal), word);
+    assert.ok(full.some(q => q.pieces && pieceKey(q.solution.word) === word), word + " is on a card");
+  }
+  for (const [word, p] of Object.entries(LINK_PARTS)) assert.equal(p.parts.map(x => x[0]).join(""), LINK_SHOWN[word] || word, word);
+  assert.equal(pieceKey("以上 ②"), "以上"); assert.equal(pieceKey("～ざる"), "ざる");
+  // Never on a card that already shows parts, and never on the card itself: after the answer and in the review.
+  for (const q of full) if (q.pieces) { assert.ok(!q.parts, q.id); assert.ok(["grammar", "gap", "block", "meaning", "definition", "listen"].includes(q.kind), q.id); }
+  const yamu = full.find(q => q.id === "m:やむをえない");
+  assert.deepEqual(yamu.pieces.parts.map(p => p.text), ["やむ", "を", "えない"]); assert.equal(yamu.pieces.literal, "cannot stop it: unavoidable");
+  assert.ok(full.find(q => q.id === "g:以来").pieces && full.find(q => q.id === "f:以来").pieces);
+  const js = src("../n2-mock.js");
+  assert.ok(js.includes('if (q.pieces) { line.replaceChildren(el("small", {text: "piece by piece"}), q.pieces.literal);'));
+  assert.ok(js.includes('if (q.pieces) { $("game-review-parts").hidden = false; $("game-review-partlist").replaceChildren(...partList(q.pieces.parts));'));
+  // The auditor's data lists every dissection and everything still asked whole.
+  const data = read("../tools/scored-review/pieces-data.json");
+  assert.equal(data.dissected.length, data.counts.dissected); assert.ok(data.whole.length > 1500);
+  assert.ok(data.dissected.some(d => d.word === "それなのに") && !data.whole.some(w => w.word === "やむをえない"));
+  for (const s of ["texts joined must equal the", "folk etymology", "pieces-audit.json"]) assert.ok(src("../docs/PIECES-AUDIT-HANDOFF.md").includes(s), s);
+});

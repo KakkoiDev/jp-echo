@@ -1710,6 +1710,8 @@ async function game() {
     else if (outcome === "dontknow") line.textContent = "Fine. Keep going.";
     // Board 13 · D–E: after any answer on a build card, the parts read together, in the line's slot.
     if (q.kind === "build" && q.literal) { line.replaceChildren(el("small", {text: "piece by piece"}), q.literal); line.className = "qr-line literal"; line.dataset.tone = outcome === "right" ? "right" : ""; }
+    // So does a word or pattern asked whole that is made of pieces (やむ + を + えない: "cannot stop it").
+    if (q.pieces) { line.replaceChildren(el("small", {text: "piece by piece"}), q.pieces.literal); line.className = "qr-line literal"; line.dataset.tone = outcome === "right" ? "right" : ""; }
     // A built connective says its pieces together the same way (それ + な + のに: "even though that is so").
     if (q.kind === "link" && q.literal) { line.replaceChildren(el("small", {text: "piece by piece"}), q.literal); line.className = "qr-line literal"; line.dataset.tone = outcome === "right" ? "right" : ""; }
     // Item strength: a fast right answer stamps a square in; a miss takes one away (boards 9, 2).
@@ -1810,6 +1812,8 @@ async function game() {
     // Board 13 · G: a missed build or infer card shows its parts and their literal reading, between the pick and the sentence.
     const rows = (q.kind === "build" || q.kind === "infer") && q.parts ? partList(q.parts) : [];
     $("game-review-parts").hidden = !rows.length; $("game-review-partlist").replaceChildren(...rows);
+    // A word or pattern made of pieces shows them here, with the pieces read together.
+    if (q.pieces) { $("game-review-parts").hidden = false; $("game-review-partlist").replaceChildren(...partList(q.pieces.parts)); $("game-review-literal").hidden = false; $("game-review-literal").replaceChildren(el("small", {text: "piece by piece"}), q.pieces.literal); }
     // A built connective shows its pieces here too.
     if (q.kind === "link" && q.parts) { $("game-review-parts").hidden = false; $("game-review-partlist").replaceChildren(...partList(q.parts)); }
     $("game-review-literal").hidden = !q.literal; $("game-review-literal").replaceChildren(...(q.literal ? [el("small", {text: "piece by piece"}), q.literal] : []));
