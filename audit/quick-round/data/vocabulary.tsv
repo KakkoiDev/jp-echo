@@ -31,7 +31,7 @@
 29	～女	～じょ	count for sisters	count for sisters	姉【あね】の家【いえ】では先月【せんげつ】、次女【じじょ】が生【う】まれた。	My older sister had her second daughter last month.	affix exam
 30	省～	しょう～	economizing ~	economizing ~	夏【なつ】は省【しょう】エネのため、冷房【れいぼう】を二十八度【にじゅうはちど】に設定【せってい】する。	In summer we set the air conditioning to 28 degrees to save energy.	affix
 31	～省	～しょう	kind of ministry	kind of ministry	文部科学省【もんぶかがくしょう】が新【あたら】しい方針【ほうしん】を発表【はっぴょう】した。	The Ministry of Education announced a new policy.	affix
-32	～商	～しょう	merchant, business	merchant, business	祖父【そふ】は港町【みなとまち】で貿易商【ぼうえきしょう】をしていた。	My grandfather was a trader in a port town.	affix
+32	～商	～しょう	merchant, business	merchant, business	祖父【そふ】は港町【みなとまち】で貿易商【ぼうえきしょう】として働【はたら】いていた。	My grandfather worked as a trader in a port town.	affix
 33	～勝	～しょう	count for victory	count for victory	我【わ】がチームは今季【こんき】、五勝【ごしょう】二敗【にはい】だ。	Our team has five wins and two losses this season.	affix
 34	～条	～じょう	counter for article	counter for article	憲法【けんぽう】第九条【だいきゅうじょう】について授業【じゅぎょう】で議論【ぎろん】した。	We discussed Article 9 of the Constitution in class.	affix
 35	～場	～じょう	kind of field, ground	kind of field, ground	試合【しあい】は市内【しない】の野球場【やきゅうじょう】で行【おこな】われる。	The game will be held at the baseball stadium in the city.	affix
@@ -127,7 +127,7 @@
 125	好き好き	すきずき	matter of taste	matter of taste	どの色【いろ】を選【えら】ぶかは好【す】き好【す】きだ。	Which color you choose is a matter of taste.	reading meaning definition listen
 126	透き通る	すきとおる	to be(come) transparent	to be(come) transparent	透【す】き通【とお】った川【かわ】の水【みず】に魚【さかな】が見【み】える。	You can see fish in the clear river water.	reading meaning definition listen exam
 127	隙間	すきま	crack, gap, opening	crack, gap	窓【まど】の隙間【すきま】から冷【つめ】たい風【かぜ】が入【はい】ってくる。	A cold draft is coming in through the gap in the window.	meaning definition listen
-128	～過ぎる	～すぎる	too much ~	too much ~	夜遅【よるおそ】くまで働【はたら】き過【す】ぎて、体調【たいちょう】を崩【くず】した。	I worked too late into the night and ruined my health.	
+128	～過ぎる	～すぎる	too much ~	too much ~	最近【さいきん】は夜【よる】に食【た】べ過【す】ぎる。	Lately I eat too much at night.	affix
 129	スクール	スクール	school	school	週【しゅう】に二回【にかい】、料理【りょうり】スクールに通【かよ】っている。	I go to a cooking school twice a week.	meaning listen
 130	図形	ずけい	figure	figure	次【つぎ】の図形【ずけい】の面積【めんせき】を求【もと】めなさい。	Find the area of the following figure.	meaning definition listen
 131	鈴	すず	bell	bell	猫【ねこ】の首輪【くびわ】に小【ちい】さな鈴【すず】をつけた。	I put a little bell on the cat's collar.	meaning definition listen
@@ -145,7 +145,7 @@
 143	スマート	スマート	smart, stylish, slim	smart, stylish	兄【あに】は背【せ】が高【たか】くてスマートな体型【たいけい】だ。	My older brother is tall and slim.	meaning listen
 144	住まい	すまい	dwelling, house	dwelling, house	駅【えき】から近【ちか】い住【す】まいを探【さが】している。	I'm looking for a place to live close to the station.	meaning definition listen
 145	すまない	すまない	sorry (phrase)	sorry (phrase)	遅【おく】れてすまない、道【みち】が混【こ】んでいたんだ。	Sorry I'm late — the roads were crowded.	meaning listen
-146	～済	～ずみ	finished	finished	支払【しはら】い済【ず】みの書類【しょるい】はこの箱【はこ】に入【い】れてください。	Please put documents that have been paid into this box.	affix
+146	～済	～ずみ	finished	finished	料金【りょうきん】は支払【しはら】い済【ず】みです。	The fee has already been paid.	affix
 147	相撲	すもう	sumo wrestling	sumo wrestling	祖父【そふ】はテレビで相撲【すもう】を見【み】るのが好【す】きだ。	My grandfather loves watching sumo on TV.	meaning definition listen
 148	スライド	スライド	slide	slide	発表【はっぴょう】のスライドを二十枚【にじゅうまい】用意【ようい】した。	I prepared twenty slides for the presentation.	meaning listen
 149	ずらす	ずらす	to put off, to delay	to put off, to delay	会議【かいぎ】の時間【じかん】を少【すこ】しずらすことはできますか？	Would it be possible to move the meeting time a little?	meaning listen
@@ -1383,7 +1383,7 @@
 1381	～歩	～ほ	step, pace	step, pace	一歩【いっぽ】前【まえ】に出【で】て、大【おお】きな声【こえ】で名前【なまえ】を言【い】った。	I took one step forward and said my name in a loud voice.	affix
 1382	～ぽい	～ぽい	~ish	~ish	彼【かれ】は忘【わす】れっぽいので、メモを渡【わた】しておいた。	He's forgetful, so I gave him a note.	affix
 1383	～ほう (ひかく)	～ほう (ひかく)	(in comparison)	(in comparison)	電車【でんしゃ】で行【い】くほうがバスより早【はや】い。	Going by train is faster than taking the bus.	
-1384	防～	ぼう～	~ prevention	~ prevention	この腕時計【うでどけい】は防水【ぼうすい】なので、泳【およ】いでも大丈夫【だいじょうぶ】だ。	This wristwatch is waterproof, so it's fine to swim with it.	affix
+1384	防～	ぼう～	~ prevention	~ prevention	この腕時計【うでどけい】は防水【ぼうすい】仕様【しよう】だ。	This watch is water-resistant.	affix
 1385	望遠鏡	ぼうえんきょう	telescope	telescope	望遠鏡【ぼうえんきょう】で土星【どせい】の輪【わ】を見【み】た。	I saw Saturn's rings through a telescope.	reading meaning definition listen exam
 1386	方角	ほうがく	direction, way	direction, way	駅【えき】はどちらの方角【ほうがく】ですか。	Which direction is the station?	reading meaning definition listen
 1387	箒	ほうき	broom	broom	箒【ほうき】で玄関【げんかん】の前【まえ】を掃【は】いた。	I swept in front of the entrance with a broom.	reading meaning definition listen
@@ -1685,7 +1685,7 @@
 1683	突き当たり	つきあたり	end (e.g., of street)	end (e.g., of street)	この廊下【ろうか】の突【つ】き当【あ】たりがトイレです。	The toilet is at the end of this corridor.	reading meaning definition listen
 1684	突き当たる	つきあたる	to run into, to collide with	to run into, to collide with	まっすぐ行【い】って突【つ】き当【あ】たったら、左【ひだり】に曲【ま】がってください。	Go straight, and when you reach the end, turn left.	reading meaning definition listen
 1685	月日	つきひ	time, years, days	time, years	卒業【そつぎょう】してから、早【はや】いもので十年【じゅうねん】の月日【つきひ】が流【なが】れた。	Time flies; ten years have passed since we graduated.	reading meaning definition listen exam
-1686	～続く	～つづく	follow, continue, go on	follow, continue	一週間【いっしゅうかん】も雨【あめ】が降【ふ】り続【つづ】いている。	It has kept raining for a whole week.	
+1686	～続く	～つづく	follow, continue, go on	follow, continue	雨【あめ】は明日【あした】まで降【ふ】り続【つづ】く。	The rain will keep falling until tomorrow.	affix
 1687	突っ込む	つっこむ	to plunge into, to stick into	to plunge into, to stick into	車【くるま】がハンドル操作【そうさ】を誤【あやま】って、店【みせ】に突【つ】っ込【こ】んだ。	A car lost control and crashed into a shop.	reading meaning definition listen
 1688	務める	つとめる	to serve, to act	to serve, to act	彼【かれ】は十年間【じゅうねんかん】、この会社【かいしゃ】の社長【しゃちょう】を務【つと】めた。	He served as president of this company for ten years.	reading meaning definition listen
 1689	努める	つとめる	to try, to aim	to try, to aim	健康【けんこう】のため、野菜【やさい】を多【おお】く食【た】べるように努【つと】めている。	For my health, I try to eat lots of vegetables.	reading meaning definition listen

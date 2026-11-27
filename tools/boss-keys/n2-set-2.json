@@ -15,13 +15,9 @@
   "lines": [
    "木曜日の午後か金曜日の午前であれば、こちらはいつでも伺えます。ご都合のよい日時を、今週中にお知らせいただけますと幸いです。"
   ],
-  "en": "Murata can come Thursday or Friday; please tell him your time this week",
-  "wrong": [
-   "Yamashita is asked to visit Murata's company on Thursday afternoon",
-   "Murata asks Yamashita to reply by next Tuesday with a time",
-   "Murata cannot meet before Friday morning, so Yamashita must wait"
-  ],
-  "solved": true
+  "en": "We can come any time Thursday afternoon or Friday morning; tell us this week",
+  "solved": true,
+  "by": "outside review 2026-11-27"
  },
  "54": {
   "lines": [
@@ -74,15 +70,12 @@
  },
  "58": {
   "lines": [
-   "そうした、わざわざ教えられたわけではない情報から、若手は多くを学んでいたのだ。在宅勤務では、こうした「聞こえてくる学び」がほとんどなくなってしまう。"
+   "オフィスにいれば、隣の席の先輩が電話でどう話しているのかが自然に耳に入る。",
+   "そうした、わざわざ教えられたわけではない情報から、若手は多くを学んでいたのだ。"
   ],
-  "en": "Juniors learned much from information nobody deliberately taught them",
-  "wrong": [
-   "Juniors learned mainly from formal lessons given by seniors",
-   "Juniors learned by taking recorded training sessions at home",
-   "Juniors learned mostly from instructions given in meetings"
-  ],
-  "solved": true
+  "en": "At the office you overhear seniors; juniors learned from what nobody taught",
+  "solved": true,
+  "by": "outside review 2026-11-27"
  },
  "59": {
   "lines": [
@@ -258,15 +251,12 @@
  },
  "74": {
   "lines": [
+   "では、番号がお分かりになりましたら、もう一度お電話いただけますか。",
    "じゃあ、明日会社で確認して、また電話します。"
   ],
-  "en": "He will check the number at his office tomorrow and call again",
-  "wrong": [
-   "He will book the retest by phone now and check the number later",
-   "He will go back to the clinic to pick up his result sheet",
-   "He will stop eating from nine tonight and phone tomorrow"
-  ],
-  "solved": true
+  "en": "Call again once you have the number. — I'll check at work and call back",
+  "solved": true,
+  "by": "outside review 2026-11-27"
  },
  "75": {
   "lines": [
@@ -342,15 +332,11 @@
  },
  "81": {
   "lines": [
-   "それも少しはあると思いますが、一番は、お菓子を小さくしたことですね。"
+   "半分の大きさにして、いろいろな種類を少しずつ選べるようにしたら、買ってくださる方がずいぶん増えました。"
   ],
-  "en": "Online ads helped a little; the main reason was making the sweets smaller",
-  "wrong": [
-   "The main reason was starting to advertise on the internet",
-   "The main reason was changing the flavor for young tastes",
-   "The main reason was making the sweets twice as large"
-  ],
-  "solved": true
+  "en": "Halving the size so people could pick several kinds brought many more buyers",
+  "solved": true,
+  "by": "outside review 2026-11-27"
  },
  "82": {
   "lines": [
@@ -403,15 +389,12 @@
  },
  "86": {
   "lines": [
-   "そこで来月からは、一つの字を書く回数を減らし、その代わりに、その字を使った短い文を自分で作る宿題に変えます。"
+   "確かに、ただ手を動かすだけでは、途中から形をなぞるだけの作業になってしまいます。",
+   "字の形だけでなく、どんな場面で使うのかまで、一緒に覚えてほしいと考えています。"
   ],
-  "en": "Next month, kanji homework switches to making short sentences with each kanji",
-  "wrong": [
-   "Homework will have more repetitions of each kanji, not fewer",
-   "The teacher keeps the homework unchanged, rejecting the complaint",
-   "Students will copy short model sentences every night instead"
-  ],
-  "solved": true
+  "en": "Copying turns into mere tracing; learn where each kanji is used as well",
+  "solved": true,
+  "by": "outside review 2026-11-27"
  },
  "87": {
   "lines": [
@@ -583,12 +566,12 @@
  },
  "101": {
   "lines": [
-   "四つ目にしようかな。",
-   "だから、僕が習って教えるよ。"
+   "四つ目は「やさしいパソコン」。",
+   "四つ目にしようかな。"
   ],
-  "en": "He leans to the fourth course, then decides to learn it and teach his father",
+  "en": "Course four is Easy Computing; he says he will take the fourth",
   "solved": true,
-  "by": "review 2026-11-27"
+  "by": "outside review 2026-11-27"
  },
  "102": {
   "lines": [

@@ -1,0 +1,906 @@
+[
+ {
+  "part": "A",
+  "id": "a:前～",
+  "field": "answer",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "AFFIX_GLOSS: the suggested meaning"
+ },
+ {
+  "part": "A",
+  "id": "a:～形",
+  "field": "answer",
+  "severity": "weak",
+  "status": "applied",
+  "note": "AFFIX_GLOSS: the suggested meaning"
+ },
+ {
+  "part": "A",
+  "id": "a:～室",
+  "field": "answer",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "AFFIX_GLOSS: the suggested meaning"
+ },
+ {
+  "part": "A",
+  "id": "a:～年生",
+  "field": "answer",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "AFFIX_GLOSS: the suggested meaning"
+ },
+ {
+  "part": "A",
+  "id": "a:～島",
+  "field": "answer",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "AFFIX_GLOSS: the suggested meaning"
+ },
+ {
+  "part": "A",
+  "id": "a:～論",
+  "field": "answer",
+  "severity": "weak",
+  "status": "applied",
+  "note": "AFFIX_GLOSS: the suggested meaning"
+ },
+ {
+  "part": "A",
+  "id": "a:～難い",
+  "field": "answer",
+  "severity": "weak",
+  "status": "applied",
+  "note": "AFFIX_GLOSS: the suggested meaning"
+ },
+ {
+  "part": "A",
+  "id": "a:防～",
+  "field": "sentence",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "deck sentence replaced"
+ },
+ {
+  "part": "A",
+  "id": "a:～済",
+  "field": "underlined",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "AFFIX_SHOWN: the card underlines the form the sentence writes; sentence replaced"
+ },
+ {
+  "part": "A",
+  "id": "a:～付",
+  "field": "underlined",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "AFFIX_SHOWN: the card underlines the form the sentence writes"
+ },
+ {
+  "part": "A",
+  "id": "a:～ぽい",
+  "field": "underlined",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "AFFIX_SHOWN: the card underlines the form the sentence writes"
+ },
+ {
+  "part": "A",
+  "id": "a:我～",
+  "field": "underlined",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "AFFIX_SHOWN: the card underlines the form the sentence writes"
+ },
+ {
+  "part": "A",
+  "id": "a:～沿い",
+  "field": "reading",
+  "severity": "weak",
+  "status": "applied",
+  "note": "AFFIX_READING: the voiced reading is shown"
+ },
+ {
+  "part": "A",
+  "id": "a:～切れ",
+  "field": "reading",
+  "severity": "weak",
+  "status": "applied",
+  "note": "AFFIX_READING: the voiced reading is shown"
+ },
+ {
+  "part": "A",
+  "id": "a:～口",
+  "field": "reading",
+  "severity": "weak",
+  "status": "applied",
+  "note": "AFFIX_READING: the voiced reading is shown"
+ },
+ {
+  "part": "A",
+  "id": "a:～通り",
+  "field": "reading",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "both readings are right for different compounds; the list has one entry"
+ },
+ {
+  "part": "A",
+  "id": "a:～番目",
+  "field": "answer",
+  "severity": "weak",
+  "status": "applied",
+  "note": "AFFIX_GLOSS: the suggested meaning"
+ },
+ {
+  "part": "A",
+  "id": "a:～位",
+  "field": "pair",
+  "severity": "note",
+  "status": "no change needed",
+  "note": "already in one AFFIX_CONFUSABLE group"
+ },
+ {
+  "part": "A",
+  "id": "a:～器",
+  "field": "pair",
+  "severity": "note",
+  "status": "no change needed",
+  "note": "already in one AFFIX_CONFUSABLE group"
+ },
+ {
+  "part": "A",
+  "id": "a:～機",
+  "field": "pair",
+  "severity": "note",
+  "status": "no change needed",
+  "note": "already in one AFFIX_CONFUSABLE group"
+ },
+ {
+  "part": "A",
+  "id": "a:～園",
+  "field": "wrong",
+  "severity": "unfair",
+  "status": "applied",
+  "note": "AFFIX_CONFUSABLE: ～園 and ～場 kept apart"
+ },
+ {
+  "part": "A",
+  "id": "a:～館",
+  "field": "answer",
+  "severity": "weak",
+  "status": "applied",
+  "note": "AFFIX_GLOSS: the suggested meaning"
+ },
+ {
+  "part": "A",
+  "id": "a:～商",
+  "field": "sentence",
+  "severity": "weak",
+  "status": "applied",
+  "note": "deck sentence replaced"
+ },
+ {
+  "part": "A",
+  "id": "a:～済",
+  "field": "sentence",
+  "severity": "weak",
+  "status": "applied",
+  "note": "deck sentence replaced"
+ },
+ {
+  "part": "A",
+  "id": "a:～産",
+  "field": "answer",
+  "severity": "weak",
+  "status": "applied",
+  "note": "AFFIX_GLOSS: the suggested meaning"
+ },
+ {
+  "part": "A",
+  "id": "a:～系",
+  "field": "answer",
+  "severity": "weak",
+  "status": "applied",
+  "note": "AFFIX_GLOSS: the suggested meaning"
+ },
+ {
+  "part": "A",
+  "id": "a:～所/～じょ",
+  "field": "pair",
+  "severity": "note",
+  "status": "no change needed",
+  "note": "the same spelling is never its own wrong choice"
+ },
+ {
+  "part": "A",
+  "id": "～過ぎる",
+  "field": "missing",
+  "severity": "weak",
+  "status": "applied",
+  "note": "deck sentence replaced: the part now has a card"
+ },
+ {
+  "part": "A",
+  "id": "〜 (まる) ごと",
+  "field": "missing",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "the entry’s label in the list is not a clean part; relabelling the list is in the backlog"
+ },
+ {
+  "part": "A",
+  "id": "〜(日本) 式",
+  "field": "missing",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "the entry’s label in the list is not a clean part; relabelling the list is in the backlog"
+ },
+ {
+  "part": "A",
+  "id": "～いち (にほんいち)",
+  "field": "missing",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "the entry’s label in the list is not a clean part; relabelling the list is in the backlog"
+ },
+ {
+  "part": "A",
+  "id": "～もち",
+  "field": "missing",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "the entry’s label in the list is not a clean part; relabelling the list is in the backlog"
+ },
+ {
+  "part": "A",
+  "id": "～続く",
+  "field": "missing",
+  "severity": "weak",
+  "status": "applied",
+  "note": "deck sentence replaced: the part now has a card"
+ },
+ {
+  "part": "A",
+  "id": "N2-prefix-suffix",
+  "field": "missing",
+  "severity": "note",
+  "status": "not applied",
+  "note": "new entries: listed in the backlog"
+ },
+ {
+  "part": "B",
+  "id": "k:もっとも",
+  "field": "wrong",
+  "severity": "unfair",
+  "status": "applied",
+  "note": "LINK_NOT_WRONG"
+ },
+ {
+  "part": "B",
+  "id": "k:確かに",
+  "field": "wrong",
+  "severity": "unfair",
+  "status": "applied",
+  "note": "LINK_NOT_WRONG"
+ },
+ {
+  "part": "B",
+  "id": "k:確かに",
+  "field": "meaning",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "LINK_WHY: the line shown after the answer"
+ },
+ {
+  "part": "B",
+  "id": "k:もちろん",
+  "field": "meaning",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "LINK_WHY: the line shown after the answer"
+ },
+ {
+  "part": "B",
+  "id": "k:このように",
+  "field": "meaning",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "LINK_WHY: the line shown after the answer"
+ },
+ {
+  "part": "B",
+  "id": "k:とすれば",
+  "field": "meaning",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "LINK_WHY: the line shown after the answer"
+ },
+ {
+  "part": "B",
+  "id": "k:それなら",
+  "field": "meaning",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "LINK_WHY: the line shown after the answer"
+ },
+ {
+  "part": "B",
+  "id": "k:とはいえ",
+  "field": "meaning",
+  "severity": "weak",
+  "status": "applied",
+  "note": "LINK_WHY: the line shown after the answer"
+ },
+ {
+  "part": "B",
+  "id": "k:ところが",
+  "field": "meaning",
+  "severity": "weak",
+  "status": "applied",
+  "note": "LINK_WHY: the line shown after the answer"
+ },
+ {
+  "part": "B",
+  "id": "k:さて",
+  "field": "meaning",
+  "severity": "weak",
+  "status": "applied",
+  "note": "LINK_WHY: the line shown after the answer"
+ },
+ {
+  "part": "C",
+  "id": "ni",
+  "field": "meaning",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "weak, not false: left as it is"
+ },
+ {
+  "part": "C",
+  "id": "te",
+  "field": "pattern",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "で in ないではいられない is glossed as the negative link: without"
+ },
+ {
+  "part": "C",
+  "id": "suru-do",
+  "field": "pattern",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "際 carries on the occasion of; して no longer says facing it"
+ },
+ {
+  "part": "C",
+  "id": "ue",
+  "field": "answer",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "block gloss: top; above"
+ },
+ {
+  "part": "C",
+  "id": "につき",
+  "field": "meaning",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "weak, not false: left as it is"
+ },
+ {
+  "part": "C",
+  "id": "da",
+  "field": "pattern",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "weak, not false: left as it is"
+ },
+ {
+  "part": "C",
+  "id": "to-when",
+  "field": "meaning",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "weak, not false: left as it is"
+ },
+ {
+  "part": "C",
+  "id": "omou",
+  "field": "pattern",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "weak, not false: left as it is"
+ },
+ {
+  "part": "C",
+  "id": "wake",
+  "field": "answer",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "block gloss: reason; why"
+ },
+ {
+  "part": "C",
+  "id": "mono-thing",
+  "field": "meaning",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "weak, not false: left as it is"
+ },
+ {
+  "part": "C",
+  "id": "mono-explanation",
+  "field": "meaning",
+  "severity": "weak",
+  "status": "applied",
+  "note": "block gloss: sets up an explanation or excuse"
+ },
+ {
+  "part": "C",
+  "id": "tsuki",
+  "field": "answer",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "block gloss: due to (formal)"
+ },
+ {
+  "part": "C",
+  "id": "tsukeru",
+  "field": "answer",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "weak, not false: left as it is"
+ },
+ {
+  "part": "C",
+  "id": "kaneru",
+  "field": "pattern",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "かねない is one part, risk of a bad result, learned whole"
+ },
+ {
+  "part": "C",
+  "id": "tsuujiru",
+  "field": "pattern",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "通して removed from the forms of 通じる"
+ },
+ {
+  "part": "C",
+  "id": "choudai",
+  "field": "answer",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "a noun: receiving (humble)"
+ },
+ {
+  "part": "C",
+  "id": "hatashite",
+  "field": "answer",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "weak, not false: left as it is"
+ },
+ {
+  "part": "C",
+  "id": "tatte",
+  "field": "pattern",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "weak, not false: left as it is"
+ },
+ {
+  "part": "C",
+  "id": "お-願う",
+  "field": "pattern",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "weak, not false: left as it is"
+ },
+ {
+  "part": "C",
+  "id": "transparency-calibration",
+  "field": "pattern",
+  "severity": "note",
+  "status": "not applied",
+  "note": "weak, not false: left as it is"
+ },
+ {
+  "part": "C",
+  "id": "pair-policy",
+  "field": "pair",
+  "severity": "note",
+  "status": "not applied",
+  "note": "weak, not false: left as it is"
+ },
+ {
+  "part": "D",
+  "id": "n2-set-2#53",
+  "field": "en",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "tools/boss-keys: lines or English replaced"
+ },
+ {
+  "part": "D",
+  "id": "n2-set-2#58",
+  "field": "lines",
+  "severity": "weak",
+  "status": "applied",
+  "note": "tools/boss-keys: lines or English replaced"
+ },
+ {
+  "part": "D",
+  "id": "n2-set-2#71",
+  "field": "answer",
+  "severity": "unfair",
+  "status": "not applied",
+  "note": "a change to the paper itself needs a new edition of the set (SETS_EDITION): in the backlog"
+ },
+ {
+  "part": "D",
+  "id": "n2-set-2#71",
+  "field": "lines",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "two lines cannot hold it; left as it is"
+ },
+ {
+  "part": "D",
+  "id": "n2-set-2#74",
+  "field": "lines",
+  "severity": "unfair",
+  "status": "applied",
+  "note": "tools/boss-keys: lines or English replaced"
+ },
+ {
+  "part": "D",
+  "id": "n2-set-2#86",
+  "field": "lines",
+  "severity": "unfair",
+  "status": "applied",
+  "note": "tools/boss-keys: lines or English replaced"
+ },
+ {
+  "part": "D",
+  "id": "n2-set-2#96",
+  "field": "answer",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "a change to the paper itself needs a new edition of the set (SETS_EDITION): in the backlog"
+ },
+ {
+  "part": "D",
+  "id": "n2-set-2#101",
+  "field": "lines",
+  "severity": "unfair",
+  "status": "applied",
+  "note": "tools/boss-keys: lines or English replaced"
+ },
+ {
+  "part": "D",
+  "id": "n2-set-2#103",
+  "field": "lines",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "two lines cannot hold it; left as it is"
+ },
+ {
+  "part": "D",
+  "id": "n2-set-3#62",
+  "field": "lines",
+  "severity": "weak",
+  "status": "applied",
+  "note": "tools/boss-keys: lines or English replaced"
+ },
+ {
+  "part": "D",
+  "id": "n2-set-3#72",
+  "field": "answer",
+  "severity": "unfair",
+  "status": "not applied",
+  "note": "a change to the paper itself needs a new edition of the set (SETS_EDITION): in the backlog"
+ },
+ {
+  "part": "D",
+  "id": "n2-set-3#79",
+  "field": "en",
+  "severity": "weak",
+  "status": "applied",
+  "note": "tools/boss-keys: lines or English replaced"
+ },
+ {
+  "part": "D",
+  "id": "n2-set-3#81",
+  "field": "lines",
+  "severity": "unfair",
+  "status": "applied",
+  "note": "tools/boss-keys: lines or English replaced"
+ },
+ {
+  "part": "D",
+  "id": "n2-set-3#86",
+  "field": "lines",
+  "severity": "weak",
+  "status": "applied",
+  "note": "tools/boss-keys: lines or English replaced"
+ },
+ {
+  "part": "D",
+  "id": "n2-set-3#94",
+  "field": "en",
+  "severity": "weak",
+  "status": "applied",
+  "note": "tools/boss-keys: lines or English replaced"
+ },
+ {
+  "part": "E",
+  "id": "l:N5:横",
+  "field": "answer",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "other levels: recorded for after 6 Dec (docs/QUICK-ROUND-BACKLOG.md)"
+ },
+ {
+  "part": "E",
+  "id": "r:N5:本当",
+  "field": "wrong",
+  "severity": "unfair",
+  "status": "not applied",
+  "note": "other levels: recorded for after 6 Dec (docs/QUICK-ROUND-BACKLOG.md)"
+ },
+ {
+  "part": "E",
+  "id": "r:N5:大丈夫",
+  "field": "wrong",
+  "severity": "unfair",
+  "status": "not applied",
+  "note": "other levels: recorded for after 6 Dec (docs/QUICK-ROUND-BACKLOG.md)"
+ },
+ {
+  "part": "E",
+  "id": "l:N5:シャツ",
+  "field": "answer",
+  "severity": "wrong",
+  "status": "not applied",
+  "note": "other levels: recorded for after 6 Dec (docs/QUICK-ROUND-BACKLOG.md)"
+ },
+ {
+  "part": "E",
+  "id": "m:N5:すぎ",
+  "field": "answer",
+  "severity": "wrong",
+  "status": "not applied",
+  "note": "other levels: recorded for after 6 Dec (docs/QUICK-ROUND-BACKLOG.md)"
+ },
+ {
+  "part": "E",
+  "id": "l:N5:そう",
+  "field": "answer",
+  "severity": "wrong",
+  "status": "not applied",
+  "note": "other levels: recorded for after 6 Dec (docs/QUICK-ROUND-BACKLOG.md)"
+ },
+ {
+  "part": "E",
+  "id": "d:N5:杯",
+  "field": "pattern",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "other levels: recorded for after 6 Dec (docs/QUICK-ROUND-BACKLOG.md)"
+ },
+ {
+  "part": "E",
+  "id": "l:N5:一日",
+  "field": "pattern",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "other levels: recorded for after 6 Dec (docs/QUICK-ROUND-BACKLOG.md)"
+ },
+ {
+  "part": "E",
+  "id": "d:N4:先輩",
+  "field": "answer",
+  "severity": "wrong",
+  "status": "not applied",
+  "note": "other levels: recorded for after 6 Dec (docs/QUICK-ROUND-BACKLOG.md)"
+ },
+ {
+  "part": "E",
+  "id": "d:N4:約束",
+  "field": "wrong",
+  "severity": "unfair",
+  "status": "not applied",
+  "note": "other levels: recorded for after 6 Dec (docs/QUICK-ROUND-BACKLOG.md)"
+ },
+ {
+  "part": "E",
+  "id": "m:N4:テキスト",
+  "field": "answer",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "other levels: recorded for after 6 Dec (docs/QUICK-ROUND-BACKLOG.md)"
+ },
+ {
+  "part": "E",
+  "id": "d:N4:売り場",
+  "field": "pattern",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "other levels: recorded for after 6 Dec (docs/QUICK-ROUND-BACKLOG.md)"
+ },
+ {
+  "part": "E",
+  "id": "d:N4:式",
+  "field": "pattern",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "other levels: recorded for after 6 Dec (docs/QUICK-ROUND-BACKLOG.md)"
+ },
+ {
+  "part": "E",
+  "id": "r:N4:空く",
+  "field": "pattern",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "other levels: recorded for after 6 Dec (docs/QUICK-ROUND-BACKLOG.md)"
+ },
+ {
+  "part": "E",
+  "id": "r:N4:寂しい",
+  "field": "pattern",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "other levels: recorded for after 6 Dec (docs/QUICK-ROUND-BACKLOG.md)"
+ },
+ {
+  "part": "E",
+  "id": "m:N4:なかなか",
+  "field": "pattern",
+  "severity": "note",
+  "status": "not applied",
+  "note": "other levels: recorded for after 6 Dec (docs/QUICK-ROUND-BACKLOG.md)"
+ },
+ {
+  "part": "E",
+  "id": "d:N3:開始",
+  "field": "wrong",
+  "severity": "unfair",
+  "status": "not applied",
+  "note": "other levels: recorded for after 6 Dec (docs/QUICK-ROUND-BACKLOG.md)"
+ },
+ {
+  "part": "E",
+  "id": "d:N3:直",
+  "field": "wrong",
+  "severity": "unfair",
+  "status": "not applied",
+  "note": "other levels: recorded for after 6 Dec (docs/QUICK-ROUND-BACKLOG.md)"
+ },
+ {
+  "part": "E",
+  "id": "d:N3:遅刻",
+  "field": "wrong",
+  "severity": "unfair",
+  "status": "not applied",
+  "note": "other levels: recorded for after 6 Dec (docs/QUICK-ROUND-BACKLOG.md)"
+ },
+ {
+  "part": "E",
+  "id": "r:N3:吝嗇",
+  "field": "answer",
+  "severity": "wrong",
+  "status": "not applied",
+  "note": "other levels: recorded for after 6 Dec (docs/QUICK-ROUND-BACKLOG.md)"
+ },
+ {
+  "part": "E",
+  "id": "d:N3:加味",
+  "field": "answer",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "other levels: recorded for after 6 Dec (docs/QUICK-ROUND-BACKLOG.md)"
+ },
+ {
+  "part": "E",
+  "id": "d:N3:管/かん",
+  "field": "wrong",
+  "severity": "unfair",
+  "status": "not applied",
+  "note": "other levels: recorded for after 6 Dec (docs/QUICK-ROUND-BACKLOG.md)"
+ },
+ {
+  "part": "E",
+  "id": "m:N3:わた",
+  "field": "answer",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "other levels: recorded for after 6 Dec (docs/QUICK-ROUND-BACKLOG.md)"
+ },
+ {
+  "part": "E",
+  "id": "m:N3:あら",
+  "field": "pattern",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "other levels: recorded for after 6 Dec (docs/QUICK-ROUND-BACKLOG.md)"
+ },
+ {
+  "part": "E",
+  "id": "d:N1:政策",
+  "field": "wrong",
+  "severity": "unfair",
+  "status": "not applied",
+  "note": "other levels: recorded for after 6 Dec (docs/QUICK-ROUND-BACKLOG.md)"
+ },
+ {
+  "part": "E",
+  "id": "d:N1:促進",
+  "field": "wrong",
+  "severity": "unfair",
+  "status": "not applied",
+  "note": "other levels: recorded for after 6 Dec (docs/QUICK-ROUND-BACKLOG.md)"
+ },
+ {
+  "part": "E",
+  "id": "d:N1:配給",
+  "field": "wrong",
+  "severity": "unfair",
+  "status": "not applied",
+  "note": "other levels: recorded for after 6 Dec (docs/QUICK-ROUND-BACKLOG.md)"
+ },
+ {
+  "part": "E",
+  "id": "d:N1:細工",
+  "field": "wrong",
+  "severity": "unfair",
+  "status": "not applied",
+  "note": "other levels: recorded for after 6 Dec (docs/QUICK-ROUND-BACKLOG.md)"
+ },
+ {
+  "part": "E",
+  "id": "d:N1:延べ",
+  "field": "answer",
+  "severity": "wrong",
+  "status": "not applied",
+  "note": "other levels: recorded for after 6 Dec (docs/QUICK-ROUND-BACKLOG.md)"
+ },
+ {
+  "part": "E",
+  "id": "r:N1:面目",
+  "field": "pattern",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "other levels: recorded for after 6 Dec (docs/QUICK-ROUND-BACKLOG.md)"
+ },
+ {
+  "part": "E",
+  "id": "r:N1:刃",
+  "field": "pattern",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "other levels: recorded for after 6 Dec (docs/QUICK-ROUND-BACKLOG.md)"
+ },
+ {
+  "part": "E",
+  "id": "m:N1:レンジ",
+  "field": "answer",
+  "severity": "weak",
+  "status": "not applied",
+  "note": "other levels: recorded for after 6 Dec (docs/QUICK-ROUND-BACKLOG.md)"
+ },
+ {
+  "part": "D",
+  "id": "n2-set-2#81",
+  "field": "lines",
+  "severity": "weak",
+  "status": "applied",
+  "note": "tools/boss-keys: lines or English replaced"
+ }
+]

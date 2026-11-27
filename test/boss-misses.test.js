@@ -285,7 +285,7 @@ test("a connective excerpt (no longer in rounds) keeps up to two sentences befor
 test("a connective is asked on its own: one word, its meaning to pick, nothing to read", async () => {
   const {CONNECTIVES, OVERLAP, JOBS} = await import("../n2-connectives.js");
   const {SECONDS, choicesFor, answerSpeech} = await import("../n2-game.js");
-  const {LINK_SHOWN, LINK_NOT_WRONG} = await import("../n2-game-review.js");
+  const {LINK_SHOWN, LINK_NOT_WRONG, LINK_WHY} = await import("../n2-game-review.js");
   const links = pool.filter(q => q.kind === "link");
   assert.equal(links.length, CONNECTIVES.length, "every connective of the table"); assert.ok(links.length >= 35);
   assert.equal(pool.filter(q => q.kind === "connective").length, 0, "no passage excerpt in a round");
@@ -296,7 +296,7 @@ test("a connective is asked on its own: one word, its meaning to pick, nothing t
     // The card shows the form the word is met in (それにもかかわらず, だとすれば); its id keeps the table's.
     const shown = LINK_SHOWN[word] || word;
     assert.equal(q.prompt, shown); assert.ok(shown.endsWith(word)); assert.equal(q.answer, meaning); assert.equal(q.sentence, "", "nothing to read but the word");
-    assert.equal(q.solution.why, JOBS[job]); assert.equal(q.solution.word, shown); assert.ok(!q.practice && q.target === null);
+    assert.equal(q.solution.why, LINK_WHY[word] || JOBS[job]); assert.equal(q.solution.word, shown); assert.ok(!q.practice && q.target === null);
     for (const m of LINK_NOT_WRONG[word] || []) assert.ok(!q.wrong.includes(m), word + ": " + m + " is fair for it too");
     // No wrong choice is the meaning of a connective that could do the same job.
     for (const w of q.wrong) assert.ok(!(OVERLAP[job] || [job]).includes(meaningOf.get(w)), word + " against " + w);
@@ -330,4 +330,38 @@ test("the review of 27 Nov is applied to the word parts: their meanings, and the
   // What can cost a learner points at N2 (parts A, C, D) is applied wherever the entry has a card.
   const open = done.filter(l => ["wrong", "unfair"].includes(l.severity) && ["A", "C", "D"].includes(l.part) && !["applied", "no change needed"].includes(l.status));
   assert.ok(open.length <= 5, open.map(l => l.id).join(", "));
+});
+
+test("the outside review of 27 Nov is applied: every finding has its line, and what could cost points at N2 is fixed", async () => {
+  const {AFFIX_GLOSS, AFFIX_SHOWN, AFFIX_READING, LINK_WHY, LINK_NOT_WRONG} = await import("../n2-game-review.js");
+  const found = read("../tools/scored-review/reviews/2026-11-27-outside.json"), done = read("../tools/scored-review/reviews/2026-11-27-outside-applied.json");
+  assert.equal(done.length, found.length); assert.ok(done.every(l => ["applied", "partly", "not applied", "no change needed"].includes(l.status) && l.note));
+  // In parts A to C every "wrong" and "unfair" finding is applied; in D only a change to a paper itself is left.
+  const open = done.filter(l => ["wrong", "unfair"].includes(l.severity) && l.part !== "E" && l.status !== "applied");
+  assert.deepEqual(open.map(l => l.id + " " + l.field), ["n2-set-2#71 answer", "n2-set-3#72 answer"], "these need a new edition of the paper");
+  const cards = pool.filter(q => q.kind === "affix"), card = t => cards.find(q => q.prompt === t);
+  assert.equal(card("前～").answer, "former; previous", "not 'late': the former president is still an adviser");
+  assert.equal(card("～室").answer, "room for ~"); assert.equal(card("～年生").answer, "student in year ~; ~ grader"); assert.equal(card("～島").answer, "~ island");
+  // The underline is the form the sentence writes; the reading is the one heard in compounds.
+  for (const [t, shown] of Object.entries(AFFIX_SHOWN)) { assert.equal(card(t).needle, shown, t); assert.equal(card(t).sentence.split(shown).length, 2, t); }
+  assert.equal(card("～済").needle, "済み"); assert.equal(card("～ぽい").needle, "っぽい"); assert.equal(card("我～").needle, "我が");
+  assert.equal(card("～沿い").solution.reading, "～ぞい"); assert.equal(AFFIX_READING["～口"], "～ぐち");
+  assert.ok(!card("～園").wrong.includes(card("～場").answer)); assert.ok(card("～過ぎる") && card("～続く"), "two parts gained a card");
+  assert.ok(!card("防～").sentence.includes("泳"), "防水 alone does not mean fit for swimming");
+  for (const m of Object.values(AFFIX_GLOSS)) assert.ok(m.length <= 40);
+  // Connectives: no second fair answer on the card, and a line after the answer that does not overstate.
+  const links = pool.filter(q => q.kind === "link"), link = w => links.find(q => q.id === "k:" + w);
+  assert.ok(!link("もっとも").wrong.includes("of course")); assert.ok(!link("確かに").wrong.some(m => /admittedly/.test(m)));
+  assert.equal(link("確かに").solution.why, LINK_WHY["確かに"]); assert.ok(!/will then turn/.test(link("確かに").solution.why)); assert.ok(!/must be true/.test(link("それなら").solution.why));
+  assert.equal(Object.keys(LINK_WHY).length, 8); assert.equal(Object.keys(LINK_NOT_WRONG).length, 3);
+  // Grammar: the glosses that contradicted their own example, and かねない no longer built from "could well" + "not".
+  const g = read("../n2-grammar-blocks.json");
+  assert.equal(g.blocks.wake.gloss, "reason; why"); assert.equal(g.blocks.ue.gloss, "top; above"); assert.equal(g.blocks.choudai.type, "noun");
+  assert.deepEqual(g.blocks.tsuujiru.forms, ["通じる", "通じて"], "通して is 通す, another verb");
+  assert.deepEqual(g.patterns["かねない"].parts.map(p => p.text), ["かねない"]); assert.equal(g.patterns["かねない"].transparency, "opaque");
+  assert.equal(g.patterns["ないではいられない"].parts[1].gloss, "without (negative link)");
+  // Deciding lines: the English says what the Japanese says.
+  const keys = read("../n2-sets/keys.json").keys;
+  assert.match(keys["n2-set-2#53"].en, /Thursday afternoon or Friday morning/); assert.ok(keys["n2-set-2#74"].lines.some(l => l.includes("番号")), "the line that names the number");
+  assert.ok(keys["n2-set-2#101"].lines[0].includes("やさしいパソコン"), "the ordinal is tied to the course's name");
 });

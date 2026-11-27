@@ -23,7 +23,7 @@
 import {recallItems, localDay} from "./n2-study.js";
 import {HELD_OUT} from "./n2-comprehension.js";
 import {connectiveSites, jobOf, glossOf, JOBS, OVERLAP, CHOICE_FOR_JOB, CONNECTIVES} from "./n2-connectives.js";
-import {ACCEPTED_READINGS, READING_KEY, EXCLUDED, GLOSS_FIX, GRAMMAR_SPANS, REVIEWED_LEVELS, REVIEWED_GRAMMAR_BLOCKS, REVIEWED_AFFIXES, AFFIX_GLOSS, AFFIX_CONFUSABLE, LINK_NOT_WRONG, LINK_SHOWN, SCORE_ALL, GRAMMAR_CONFUSABLE} from "./n2-game-review.js";
+import {ACCEPTED_READINGS, READING_KEY, EXCLUDED, GLOSS_FIX, GRAMMAR_SPANS, REVIEWED_LEVELS, REVIEWED_GRAMMAR_BLOCKS, REVIEWED_AFFIXES, AFFIX_GLOSS, AFFIX_CONFUSABLE, AFFIX_SHOWN, AFFIX_READING, LINK_NOT_WRONG, LINK_SHOWN, LINK_WHY, SCORE_ALL, GRAMMAR_CONFUSABLE} from "./n2-game-review.js";
 import {exampleSegments} from "./n2-delayed.js";
 import {LEVELS} from "./jlpt-levels.js";
 
@@ -270,15 +270,15 @@ function affixCards(affixes, sentenceOf) {
   const spellings = new Map(); for (const w of clean) spellings.set(w.text, (spellings.get(w.text) || 0) + 1);
   const practice = unscored(REVIEWED_AFFIXES);
   return clean.flatMap(w => {
-    const ex = sentenceOf(w.target), sentence = ex ? plain(ex.ja) : "", part = w.text.replace(/[〜～]/g, ""), own = meaningOf(w);
+    const ex = sentenceOf(w.target), sentence = ex ? plain(ex.ja) : "", bare = w.text.replace(/[〜～]/g, ""), part = AFFIX_SHOWN[w.text] || bare, own = meaningOf(w);
     if (!sentence || sentence.split(part).length !== 2) return [];
-    const others = clean.filter(o => o.text.replace(/[〜～]/g, "") !== part && !apart.get(w.text)?.has(o.text) && !sameSense(meaningOf(o), own));
+    const others = clean.filter(o => o.text.replace(/[〜～]/g, "") !== bare && !apart.get(w.text)?.has(o.text) && !sameSense(meaningOf(o), own));
     const near = [...new Set(others.filter(o => affixSide(o.text) === affixSide(w.text)).map(o => meaningOf(o)))];
     const wrong = [...new Set([...near, ...others.map(o => meaningOf(o))])];
     if (wrong.length < 3) return [];
     return [{...practice, id: "a:" + (spellings.get(w.text) > 1 ? w.text + "/" + w.reading : w.text), kind: "affix", target: w.target, dimension: "meaning", prompt: w.text,
       sentence, needle: part, answer: own, wrong, near, side: affixSide(w.text), seconds: SECONDS.affix,
-      solution: {word: w.text, reading: w.reading, meaning: reviewed(w) || w.answer, ja: ex.ja, en: ex.en || ""}}];
+      solution: {word: w.text, reading: AFFIX_READING[w.text] || w.reading, meaning: reviewed(w) || w.answer, ja: ex.ja, en: ex.en || ""}}];
   });
 }
 
@@ -367,7 +367,7 @@ function linkCards() {
     const shown = LINK_SHOWN[word] || word; // the form the word is met in (それにもかかわらず); the id keeps the table's
     if (wrong.length < 3 || !JOBS[job]) return [];
     return [{...(SCORE_ALL ? {} : {practice: true, record: true}), id: "k:" + word, kind: "link", target: null, dimension: null, prompt: shown,
-      sentence: "", answer: meaning, wrong, job, seconds: SECONDS.link, solution: {word: shown, meaning, why: JOBS[job], ja: "", en: ""}}];
+      sentence: "", answer: meaning, wrong, job, seconds: SECONDS.link, solution: {word: shown, meaning, why: LINK_WHY[word] || JOBS[job], ja: "", en: ""}}];
   });
 }
 

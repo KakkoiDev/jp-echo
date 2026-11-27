@@ -155,7 +155,7 @@ export const AFFIX_GLOSS = Object.freeze({
  "～刊": "edition, published ~",
  "～期": "period, term, stage",
  "～口": "entrance, exit, opening",
- "～系": "~ type, ~ stream, ~ origin",
+ "～系": "~ group, field, or lineage",
  "～圏": "sphere, zone, area",
  "重～": "heavy ~, serious ~",
  "～号": "No. ~, issue ~; ship name",
@@ -163,7 +163,7 @@ export const AFFIX_GLOSS = Object.freeze({
  "～園": "park, garden; place for ~",
  "～頭": "counter for large animals",
  "～等/～とう": "class, grade, prize rank",
- "～島": "island (in names)",
+ "～島": "~ island",
  "～道": "way, art of ~",
  "非～": "non-~, un-~",
  "～等/～ら": "plural marker (they, we ~)",
@@ -190,16 +190,41 @@ export const AFFIX_GLOSS = Object.freeze({
  "各～": "each ~ (separately)",
  "～毎": "every ~ (each time)",
  "～流": "way, school of ~",
- "～難い": "nearly impossible to ~",
+ "～難い": "hard to ~; difficult to ~",
  "～辛い": "awkward, painful to ~",
- "～通り": "as ~, in accordance with ~"
+ "～通り": "as ~, in accordance with ~",
+ "前～": "former; previous",
+ "～形": "~ shaped; ~ form",
+ "～室": "room for ~",
+ "～年生": "student in year ~; ~ grader",
+ "～論": "theory or study of ~",
+ "～番目": "~th in a sequence",
+ "～館": "hall, museum, dedicated facility",
+ "～産": "produced or grown in ~"
 });
 // AFFIX_CONFUSABLE: parts close enough in meaning that one's meaning would be a fair answer on another's card
 // (～器 and ～機, ～風 and ～式). No two of a group are ever each other's wrong choice.
-export const AFFIX_CONFUSABLE = Object.freeze([["～所", "～場"], ["～所", "～館", "～園", "～港", "～室", "～庁", "～口"], ["～器", "～機"], ["～外", "～切れ"], ["各～", "毎～", "～毎"], ["各～", "諸～"], ["現～", "今～"], ["明くる～", "翌～"], ["反～", "非～"], ["～風", "～流", "和～"], ["～位", "～着", "～等", "～番目", "第～", "～時間目", "～女"], ["～泊", "～夜", "～日"], ["～難い", "～辛い"], ["～がち", "～ぽい", "～気味"], ["～料", "～費"], ["～刊", "～紙", "～号", "～巻"], ["～団", "～科", "～系"], ["～羽", "～頭"], ["～手", "～者", "～家"], ["～通り", "～沿い"], ["～商", "～業"], ["～勝", "～戦"], ["～室", "室～"], ["～船", "～艘"]]);
+export const AFFIX_CONFUSABLE = Object.freeze([["～所", "～場"], ["～所", "～館", "～園", "～港", "～室", "～庁", "～口"], ["～器", "～機"], ["～外", "～切れ"], ["各～", "毎～", "～毎"], ["各～", "諸～"], ["現～", "今～"], ["明くる～", "翌～"], ["反～", "非～"], ["～風", "～流", "和～"], ["～位", "～着", "～等", "～番目", "第～", "～時間目", "～女"], ["～泊", "～夜", "～日"], ["～難い", "～辛い"], ["～がち", "～ぽい", "～気味"], ["～料", "～費"], ["～刊", "～紙", "～号", "～巻"], ["～団", "～科", "～系"], ["～羽", "～頭"], ["～手", "～者", "～家"], ["～通り", "～沿い"], ["～商", "～業"], ["～勝", "～戦"], ["～室", "室～"], ["～船", "～艘"], ["～園", "～場"]]);
 // The connective cards: a meaning that is also fair for the word is never offered against it, a word shown in the
 // form it is met in, and a job line of its own where the table's would mislead.
-export const LINK_NOT_WRONG = Object.freeze({"それなら": ["now, well then"]});
+export const LINK_NOT_WRONG = Object.freeze({"それなら": ["now, well then"],
+  // Outside review, 27 Nov: on its own the word does not show which side of a contrast it leads.
+  "もっとも": ["of course", "certainly, it is true that"], "確かに": ["though, admittedly (a qualification after the point)"]});
+// The line shown after the answer, where the job's general line would say too much for this word (outside review,
+// 27 Nov): 確かに need not be followed by a turn, それなら may bring a proposal, not a conclusion.
+export const LINK_WHY = Object.freeze({
+  "確かに": "Confirms or acknowledges a point; it can set up a contrast, but need not",
+  "もちろん": "Presents a point as obvious or expected; sometimes concedes it before a qualification",
+  "このように": "Refers to the manner just shown; can recap the preceding points",
+  "とすれば": "Takes the preceding point as a premise, then asks or says what follows",
+  "それなら": "Responds to the preceding situation with an inference, proposal, or decision",
+  "とはいえ": "Acknowledges the previous point and adds a reservation",
+  "ところが": "Introduces what happened contrary to the preceding expectation",
+  "さて": "Moves the discussion forward or opens a new topic"});
+// A part's card where the sentence writes more than the list's spelling (支払い済み, 朝食付き, 忘れっぽい, 我が社): what
+// is underlined, and the reading shown where the part is voiced in compounds (川沿い ぞい, 北口 ぐち).
+export const AFFIX_SHOWN = Object.freeze({"～済": "済み", "～付": "付き", "～ぽい": "っぽい", "我～": "我が"});
+export const AFFIX_READING = Object.freeze({"～沿い": "～ぞい", "～切れ": "～ぎれ", "～口": "～ぐち"});
 export const LINK_SHOWN = Object.freeze({"にもかかわらず": "それにもかかわらず", "とすれば": "だとすれば"});
 // The word-part cards (前～, ～気味): their meanings are the word list's and their sentences the deck's, neither read by
 // a reviewer as affix content. False: practice, no points. True only after that review.

@@ -304,6 +304,27 @@ they do not reach Today's checks, Evening recall or the Night Radio.
 
 ## After the exam: the rank becomes the level
 
+**From the outside review of 27 Nov, not applied (`tools/scored-review/reviews/2026-11-27-outside-applied.json`):**
+- **Two papers need their question revised** (then a new `SETS_EDITION`, which
+  also detaches earlier sittings from the deciding lines): set 2 #71 must say
+  the student does not work in the city, or ①と② is also right; set 3 #72
+  must say whether frozen purchases count toward free delivery. Set 2 #96:
+  a more natural reply (すぐ怒るところが惜しいよね).
+- **Six list entries are not labelled as a clean part** and so have no card:
+  〜(まる)ごと → ～ごと, 〜(日本)式 → ～式, ～いち(にほんいち) → ～一, ～もち →
+  ～持ち, and ～続ける as its own entry.
+- **Word parts to add** (both reviews): ～用, ～中, ～性, ～的, ～別, ～向き,
+  ～直す, ～抜く, 不～, 無～, ～上, ～率, ～制, ～員, ～学, ～家 (か), ～おき,
+  ～ずくめ, ～げ, ～め, 超～, 準～, 元～, 旧～, 新～, 全～, 真～.
+- **Ten weak grammar findings** (に, と, 思う, もの and others): cues per
+  sense, none false.
+- **Other levels, the outside verdict:** hold scoring for N5, N3 and N1; N4
+  closest to ready. The recurring fault: two Japanese words share one English
+  gloss, so a bare "which word" card has two right answers (促進 / 推進,
+  開始 / 始まり). Also 吝嗇 keyed ケチ (りんしょく), シャツ keyed "undershirt",
+  先輩 keyed "superior", 延べ keyed "futures". They are scored today
+  (`SCORE_ALL`) but appear only at those ranks.
+
 **To reassess after 6 Dec 2026 (owner, 27 Nov):**
 - **The other levels, from the sample review of 27 Nov** (41 findings, part E
   of `tools/scored-review/reviews/2026-11-27-sonnet.json`, none applied).

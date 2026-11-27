@@ -1,0 +1,1132 @@
+[
+  {
+    "part": "A",
+    "id": "a:前～",
+    "field": "answer",
+    "severity": "wrong",
+    "problem": "Late can mean deceased. The example explicitly says the former president is still an adviser.",
+    "evidence": "前社長は今も相談役。",
+    "suggestion": "former; previous",
+    "confidence": "high"
+  },
+  {
+    "part": "A",
+    "id": "a:～形",
+    "field": "answer",
+    "severity": "weak",
+    "problem": "Shape of ~ points the English the wrong way. The preceding element specifies what shape the object is.",
+    "evidence": "円形 is a circular shape; 四角形 is a four-sided shape.",
+    "suggestion": "~ shaped; ~ form",
+    "confidence": "high"
+  },
+  {
+    "part": "A",
+    "id": "a:～室",
+    "field": "answer",
+    "severity": "wrong",
+    "problem": "The card says counter for room, but the underlined element in this sentence names a type of room. No rooms are being counted.",
+    "evidence": "会議室 is a meeting room. There is no numeral.",
+    "suggestion": "room for ~",
+    "confidence": "high"
+  },
+  {
+    "part": "A",
+    "id": "a:～年生",
+    "field": "answer",
+    "severity": "wrong",
+    "problem": "The suffix identifies the pupil or student's year, not a count of years or an independent school-year counter.",
+    "evidence": "小学一年生になる means become a first-grader.",
+    "suggestion": "student in year ~; ~ grader",
+    "confidence": "high"
+  },
+  {
+    "part": "A",
+    "id": "a:～島",
+    "field": "answer",
+    "severity": "wrong",
+    "problem": "The example is the common noun 離島, not a place name. The qualification in names therefore excludes the actual usage.",
+    "evidence": "離島 is a remote island, unlike a proper name such as 桜島 (which also has a different suffix reading).",
+    "suggestion": "~ island",
+    "confidence": "high"
+  },
+  {
+    "part": "A",
+    "id": "a:～論",
+    "field": "answer",
+    "severity": "weak",
+    "problem": "Theory is only one use. The compound in the example can be a course on a subject, without asserting any particular theory.",
+    "evidence": "日本文化論の講義 can mean a lecture course on Japanese culture.",
+    "suggestion": "theory or study of ~",
+    "confidence": "high"
+  },
+  {
+    "part": "A",
+    "id": "a:～難い",
+    "field": "answer",
+    "severity": "weak",
+    "problem": "Nearly impossible overstates this example as a universal gloss. The suffix can mark strong subjective or practical difficulty without ruling something out.",
+    "evidence": "信じ難い means hard to believe; 忘れ難い means hard to forget.",
+    "suggestion": "hard to ~; difficult to ~",
+    "confidence": "high"
+  },
+  {
+    "part": "A",
+    "id": "a:防～",
+    "field": "sentence",
+    "severity": "wrong",
+    "problem": "The lexical example equates the generic label 防水 with suitability for swimming. The label by itself does not specify a level of water protection.",
+    "evidence": "防水なので、泳いでも大丈夫。",
+    "suggestion": "この腕時計【うでどけい】は防水【ぼうすい】仕様【しよう】だ。",
+    "confidence": "high"
+  },
+  {
+    "part": "A",
+    "id": "a:～済",
+    "field": "underlined",
+    "severity": "wrong",
+    "problem": "The sentence uses the full suffix 済み, but only 済 is marked. This can teach the abbreviated written form as the full surface form.",
+    "evidence": "支払い済み includes the final み.",
+    "suggestion": "Teach ～済み and underline 済み. If teaching the abbreviation ～済, use 確認済【かくにんずみ】の書類【しょるい】です。",
+    "confidence": "high"
+  },
+  {
+    "part": "A",
+    "id": "a:～付",
+    "field": "underlined",
+    "severity": "wrong",
+    "problem": "The sentence writes 付き, but the card marks only 付.",
+    "evidence": "朝食付き includes the final き.",
+    "suggestion": "Use ～付き and underline 付き; reserve ～付 for an example that writes the abbreviation.",
+    "confidence": "high"
+  },
+  {
+    "part": "A",
+    "id": "a:～ぽい",
+    "field": "underlined",
+    "severity": "wrong",
+    "problem": "The card leaves out the small っ in the suffix surface actually used with this verb stem.",
+    "evidence": "忘れっぽい = 忘れ + っぽい.",
+    "suggestion": "Underline っぽい in this sentence and teach ～っぽい.",
+    "confidence": "high"
+  },
+  {
+    "part": "A",
+    "id": "a:我～",
+    "field": "underlined",
+    "severity": "wrong",
+    "problem": "The item gives the reading わが but marks the graph that is explicitly annotated わ. The following が belongs to the prefix taught here.",
+    "evidence": "我【わ】が社【しゃ】.",
+    "suggestion": "Name and underline 我が in this example.",
+    "confidence": "high"
+  },
+  {
+    "part": "A",
+    "id": "a:～沿い",
+    "field": "reading",
+    "severity": "weak",
+    "problem": "The base reading そい and the compounded form ぞい are both useful. The example visibly uses ぞい and the note gives only そい.",
+    "evidence": "沿う【そう】 versus 川沿【かわぞ】い, 道沿【みちぞ】い.",
+    "suggestion": "List ～ぞい for the displayed suffix; note that standalone 沿い is そい.",
+    "confidence": "high"
+  },
+  {
+    "part": "A",
+    "id": "a:～切れ",
+    "field": "reading",
+    "severity": "weak",
+    "problem": "The reading field omits the voiced form shown in the example. Both are defensible for different compounds.",
+    "evidence": "期限切れ【きげんぎれ】 and 息切れ【いきぎれ】 voice. 一切れ【ひときれ】 does not.",
+    "suggestion": "Show ～ぎれ for expiration or depletion; teach ～きれ separately for a piece when relevant.",
+    "confidence": "high"
+  },
+  {
+    "part": "A",
+    "id": "a:～口",
+    "field": "reading",
+    "severity": "weak",
+    "problem": "The displayed example uses ぐち. Listing only the bare base くち can mislead when the learner reads the compounded form.",
+    "evidence": "北口【きたぐち】, 出口【でぐち】; independent 口【くち】.",
+    "suggestion": "Give the actual compounded ぐち for this item and note the base reading くち.",
+    "confidence": "high"
+  },
+  {
+    "part": "A",
+    "id": "a:～通り",
+    "field": "reading",
+    "severity": "weak",
+    "problem": "The selected example is the unvoiced の通り. Productive bare-noun compounds in the same sense often voice the initial sound.",
+    "evidence": "説明書の通り【とおり】 vs 予定通り【よていどおり】.",
+    "suggestion": "Teach both ～のとおり and ～どおり with one example each.",
+    "confidence": "high"
+  },
+  {
+    "part": "A",
+    "id": "a:～番目",
+    "field": "answer",
+    "severity": "weak",
+    "problem": "Bare ordinal ~th obscures what distinguishes 番目 from other ordinal markers and invites correct near-synonyms in the pool.",
+    "evidence": "前から三番目の席 means third position from the front.",
+    "suggestion": "~th in a sequence",
+    "confidence": "high"
+  },
+  {
+    "part": "A",
+    "id": "a:～位",
+    "field": "pair",
+    "severity": "note",
+    "problem": "Potential distractor overlap. The export does not show whether this pair can currently be drawn. ~th is also defensible if ～番目's gloss is offered. Keep the ranking-specific glossary wording and exclude generic ordinals.",
+    "evidence": "三位に入った means came third in a ranking; ～番目 currently keys ~th.",
+    "suggestion": "Exclude a:～番目 as a distractor for a:～位; also check a:～等/～とう and a:～着 for rank overlap.",
+    "confidence": "high"
+  },
+  {
+    "part": "A",
+    "id": "a:～器",
+    "field": "pair",
+    "severity": "note",
+    "problem": "Potential distractor overlap. The export does not show whether this pair can currently be drawn. Machine is a fair gloss in the pictured device context if offered as a distractor. Choosing device, equipment over machine would test the English taxonomy rather than the Japanese bound form.",
+    "evidence": "電気式の炊飯器 is a machine that cooks rice. a:～機 keys machine.",
+    "suggestion": "Exclude a:～機 from a:～器 for this context; review the reverse too.",
+    "confidence": "high"
+  },
+  {
+    "part": "A",
+    "id": "a:～機",
+    "field": "pair",
+    "severity": "note",
+    "problem": "Potential distractor overlap. The export does not show whether this pair can currently be drawn. Device, equipment is also fair for the depicted washing machine if offered.",
+    "evidence": "洗濯機 is both a machine and a device. a:～器 keys device, equipment.",
+    "suggestion": "Exclude a:～器 from a:～機.",
+    "confidence": "high"
+  },
+  {
+    "part": "A",
+    "id": "a:～園",
+    "field": "wrong",
+    "severity": "unfair",
+    "problem": "The shown candidate venue, ground for ~ also fits a zoo as a public site where animals are kept and exhibited. The key itself even includes place for ~.",
+    "evidence": "動物園 and the displayed a:～場 distractor venue, ground for ~.",
+    "suggestion": "Remove venue, ground for ~ when this card's key includes place for ~, or narrow the tested meaning to park or garden.",
+    "confidence": "medium"
+  },
+  {
+    "part": "A",
+    "id": "a:～館",
+    "field": "answer",
+    "severity": "weak",
+    "problem": "Hall or building misses dedicated institutions, including the art museum in this example.",
+    "evidence": "美術館 names a dedicated public facility.",
+    "suggestion": "hall, museum, or dedicated facility",
+    "confidence": "high"
+  },
+  {
+    "part": "A",
+    "id": "a:～商",
+    "field": "sentence",
+    "severity": "weak",
+    "problem": "貿易商をしていた is possible but a less natural occupational frame than ～として働いていた or 貿易の仕事をしていた.",
+    "evidence": "祖父は港町で貿易商をしていた。",
+    "suggestion": "祖父【そふ】は港町【みなとまち】で貿易商【ぼうえきしょう】として働【はたら】いていた。",
+    "confidence": "medium"
+  },
+  {
+    "part": "A",
+    "id": "a:～済",
+    "field": "sentence",
+    "severity": "weak",
+    "problem": "The English implies a payment was made for the documents. Japanese normally puts the charge or payment in the scope of 済み.",
+    "evidence": "支払い済みの書類 can mean paperwork for completed payments.",
+    "suggestion": "料金【りょうきん】は支払【しはら】い済【ず】みです。",
+    "confidence": "high"
+  },
+  {
+    "part": "A",
+    "id": "a:～産",
+    "field": "answer",
+    "severity": "weak",
+    "problem": "Made in sounds manufactured. The potatoes in the example are grown in Hokkaido.",
+    "evidence": "北海道産のじゃがいも.",
+    "suggestion": "produced or grown in ~",
+    "confidence": "high"
+  },
+  {
+    "part": "A",
+    "id": "a:～系",
+    "field": "answer",
+    "severity": "weak",
+    "problem": "Stream is ambiguous in English and does not help identify the academic grouping in this card.",
+    "evidence": "理系 contrasts with 文系; 日系 instead concerns origin.",
+    "suggestion": "~ group, field, or lineage",
+    "confidence": "high"
+  },
+  {
+    "part": "A",
+    "id": "a:～所/～じょ",
+    "field": "pair",
+    "severity": "note",
+    "problem": "The partner entry has the same core answer. Both can mean a physical facility, despite the reading difference.",
+    "evidence": "市役所, 研究所. The alternate is absent from the visible candidate list.",
+    "suggestion": "Keep the pair excluded in both directions and check facility nouns on each refresh.",
+    "confidence": "high"
+  },
+  {
+    "part": "A",
+    "id": "～過ぎる",
+    "field": "missing",
+    "severity": "weak",
+    "problem": "The useful V-stem suffix has no card. Its current example inflects it as 過ぎて instead of showing the literal target ending.",
+    "evidence": "働き過ぎて.",
+    "suggestion": "最近【さいきん】は夜【よる】に食【た】べ過【す】ぎる。",
+    "confidence": "high"
+  },
+  {
+    "part": "A",
+    "id": "〜 (まる) ごと",
+    "field": "missing",
+    "severity": "weak",
+    "problem": "This suffix has a good example already. The supplied label includes a notation for まる rather than the actual suffix shown.",
+    "evidence": "骨ごと means bones and all; this is different from interval 毎.",
+    "suggestion": "Use ～ごと with この魚【さかな】は骨【ほね】ごと食【た】べられます。",
+    "confidence": "high"
+  },
+  {
+    "part": "A",
+    "id": "〜(日本) 式",
+    "field": "missing",
+    "severity": "weak",
+    "problem": "The productive suffix is ～式, and the gloss custom is too loose for a style or method.",
+    "evidence": "日本式の家.",
+    "suggestion": "Use ～式, ~ style or method. Example: この部屋【へや】は日本式【にほんしき】だ。",
+    "confidence": "high"
+  },
+  {
+    "part": "A",
+    "id": "～いち (にほんいち)",
+    "field": "missing",
+    "severity": "weak",
+    "problem": "The current example is appropriate, but the label should match the suffix actually written.",
+    "evidence": "世界一 is best in the world.",
+    "suggestion": "Use ～一 / ～いち with 彼女【かのじょ】は世界一【せかいいち】速【はや】い。",
+    "confidence": "high"
+  },
+  {
+    "part": "A",
+    "id": "～もち",
+    "field": "missing",
+    "severity": "weak",
+    "problem": "The current example already has a productive possessor construction. The entry is in kana but the core character is written in the example.",
+    "evidence": "お金持ち; 子持ち; 家持ち.",
+    "suggestion": "Use ～持ち with 兄【あに】は子持【こも】ちです。",
+    "confidence": "high"
+  },
+  {
+    "part": "A",
+    "id": "～続く",
+    "field": "missing",
+    "severity": "weak",
+    "problem": "The example inflects the suffix as 続いている. The dictionary form 続く never appears literally. If the intended lesson is general continuation of a deliberate activity, ～続ける is a more widely usable separate target.",
+    "evidence": "雨が降り続いている is a form of 降り続く; 読み続ける and 働き続ける are productive.",
+    "suggestion": "For this entry use 雨【あめ】は明日【あした】まで降【ふ】り続【つづ】く。 Add ～続ける as a separate pattern.",
+    "confidence": "high"
+  },
+  {
+    "part": "A",
+    "id": "N2-prefix-suffix",
+    "field": "missing",
+    "severity": "note",
+    "problem": "Several productive parts are missing from this 167-entry export.",
+    "evidence": "非常用, 作業中, 安全性, 具体的, 年齢別, 初心者向き, 読み直す, 考え抜く.",
+    "suggestion": "Consider ～用, ～中, ～性, ～的, ～別, ～向き, ～直す, and ～抜く, with one sense per card.",
+    "confidence": "high"
+  },
+  {
+    "part": "B",
+    "id": "k:もっとも",
+    "field": "wrong",
+    "severity": "unfair",
+    "problem": "Of course in the offered list can be a fair rendering when the connective qualifies the preceding claim. The isolation of the prompt removes the difference in discourse role.",
+    "evidence": "行ってもいい。もっとも、予約は必要だ。 = You can go. Of course, you do need a reservation.",
+    "suggestion": "Remove of course and certainly, it is true that from the distractor pool for this card.",
+    "confidence": "high"
+  },
+  {
+    "part": "B",
+    "id": "k:確かに",
+    "field": "wrong",
+    "severity": "unfair",
+    "problem": "The offered though, admittedly can express a concession actually made by 確かに. A bare word does not show which side of the contrast it leads.",
+    "evidence": "彼の案にも問題はある。確かに、利点もある。 = Admittedly, it also has advantages.",
+    "suggestion": "Remove though, admittedly (a qualification after the point) from the distractors.",
+    "confidence": "medium"
+  },
+  {
+    "part": "B",
+    "id": "k:確かに",
+    "field": "meaning",
+    "severity": "wrong",
+    "problem": "The feedback asserts that the writer will then turn against the point. Certainty or acknowledgement can stand by itself.",
+    "evidence": "確かにここに置いた。 No reversal follows.",
+    "suggestion": "Confirms or acknowledges a point; it can set up a contrast, but need not.",
+    "confidence": "high"
+  },
+  {
+    "part": "B",
+    "id": "k:もちろん",
+    "field": "meaning",
+    "severity": "wrong",
+    "problem": "The feedback treats an optional concession as the meaning and even illustrates it with a different connective.",
+    "evidence": "もちろん参加します。 = Of course I'll take part.",
+    "suggestion": "Presents a point as obvious or expected; sometimes concedes it before a qualification.",
+    "confidence": "high"
+  },
+  {
+    "part": "B",
+    "id": "k:このように",
+    "field": "meaning",
+    "severity": "wrong",
+    "problem": "The feedback asserts a causal result or inference. The phrase refers to the manner just described and can sum up examples without asserting causation.",
+    "evidence": "このように書いてください。 = Please write it this way.",
+    "suggestion": "Refers to the manner just shown; can recap the preceding points.",
+    "confidence": "high"
+  },
+  {
+    "part": "B",
+    "id": "k:とすれば",
+    "field": "meaning",
+    "severity": "wrong",
+    "problem": "The feedback's must be true turns a conditional inference into a guarantee. The following observation may be a possibility, a question, or a decision.",
+    "evidence": "彼が来ないとすれば、どうする？ = If he isn't coming, what should we do?",
+    "suggestion": "Takes the preceding point as a premise, then asks or says what follows.",
+    "confidence": "high"
+  },
+  {
+    "part": "B",
+    "id": "k:それなら",
+    "field": "meaning",
+    "severity": "wrong",
+    "problem": "The feedback says the following proposition must be true. The connective can introduce a voluntary response or decision.",
+    "evidence": "それなら、明日にしよう。 = In that case, let's make it tomorrow.",
+    "suggestion": "Responds to the preceding situation with an inference, proposal, or decision.",
+    "confidence": "high"
+  },
+  {
+    "part": "B",
+    "id": "k:とはいえ",
+    "field": "meaning",
+    "severity": "weak",
+    "problem": "The feedback describes simple reversal. The connective typically accepts the previous point before qualifying it.",
+    "evidence": "便利だ。とはいえ、料金は高い。",
+    "suggestion": "Acknowledges the previous point and adds a reservation.",
+    "confidence": "high"
+  },
+  {
+    "part": "B",
+    "id": "k:ところが",
+    "field": "meaning",
+    "severity": "weak",
+    "problem": "The generic feedback omits the expectation that is central to this particular key.",
+    "evidence": "晴れると思った。ところが、雨が降った。",
+    "suggestion": "Introduces what happened contrary to the preceding expectation.",
+    "confidence": "high"
+  },
+  {
+    "part": "B",
+    "id": "k:さて",
+    "field": "meaning",
+    "severity": "weak",
+    "problem": "The feedback implies a new subject is necessary. The word may introduce the next stage of the same discussion.",
+    "evidence": "さて、次の例を見てみよう。",
+    "suggestion": "Moves the discussion forward or opens a new topic.",
+    "confidence": "high"
+  },
+  {
+    "part": "C",
+    "id": "ni",
+    "field": "meaning",
+    "severity": "weak",
+    "problem": "A basic particle can remain shared, but the default hint has little instructional value for degree, reference, or time.",
+    "evidence": "駅に着く, 以上に, 三日間にわたって.",
+    "suggestion": "Add cues per sense where they affect an unseen pattern. No split is needed for already-correct cues.",
+    "confidence": "high"
+  },
+  {
+    "part": "C",
+    "id": "te",
+    "field": "pattern",
+    "severity": "wrong",
+    "problem": "The current cue and split still associate negative connective ないで with ordinary voiced て. And so is especially misleading in this pattern.",
+    "evidence": "助けないではいられない = cannot refrain from helping. 読んで uses a different で.",
+    "suggestion": "Teach ないで as a unit meaning without doing, followed by は + いられない.",
+    "confidence": "high"
+  },
+  {
+    "part": "C",
+    "id": "suru-do",
+    "field": "pattern",
+    "severity": "wrong",
+    "problem": "Facing it is now assigned specifically to して, although the facing or occasion sense belongs to 際する. A learner could extract a false meaning of bare する.",
+    "evidence": "入学に際して vs 検査をして帰った.",
+    "suggestion": "Teach に + 際して, with 際する annotated as on the occasion of, or teach the full chunk.",
+    "confidence": "high"
+  },
+  {
+    "part": "C",
+    "id": "ue",
+    "field": "answer",
+    "severity": "wrong",
+    "problem": "The pattern cues distinguish the two constructions, but the standalone block answer still includes given that for a physical shelf example.",
+    "evidence": "棚の上に置いた = put it on top of the shelf. 引き受けた上は = now that I have accepted it.",
+    "suggestion": "For the shelf example use top; above. Retain the supplied construction-specific cues.",
+    "confidence": "high"
+  },
+  {
+    "part": "C",
+    "id": "につき",
+    "field": "meaning",
+    "severity": "weak",
+    "problem": "Partial is a reasonable rating, but the reason and rate are still candidates under one undifferentiated label.",
+    "evidence": "定休日につき vs 一人につき一枚.",
+    "suggestion": "Keep formal due to for the displayed notice. Add per or for each only in a rate example.",
+    "confidence": "high"
+  },
+  {
+    "part": "C",
+    "id": "da",
+    "field": "pattern",
+    "severity": "weak",
+    "problem": "Teaching past だった intact is now sound. Calling では and じゃ forms without noting で plus は blurs the difference between inflection and a composite.",
+    "evidence": "病気だ, 病気だった, 病気ではない, 病気じゃない.",
+    "suggestion": "Document では and じゃ as composites here, or reserve them for their own entries.",
+    "confidence": "high"
+  },
+  {
+    "part": "C",
+    "id": "to-when",
+    "field": "meaning",
+    "severity": "weak",
+    "problem": "The spatial-sequence example is natural, but the viewpoint patterns do not express an action and its chronological sequel.",
+    "evidence": "外国人から見ると and あの話し方からすると.",
+    "suggestion": "Give a viewpoint cue per affected pattern: if viewed or judged from there.",
+    "confidence": "high"
+  },
+  {
+    "part": "C",
+    "id": "omou",
+    "field": "pattern",
+    "severity": "weak",
+    "problem": "思ったら and 思うと include the ending that creates the rapid sequence, but the display still treats both as undifferentiated reaches a judgment.",
+    "evidence": "晴れたかと思ったら、急に雨が降り出した。",
+    "suggestion": "Show 思っ + たら / 思う + と as alternatives, and identify the following event.",
+    "confidence": "high"
+  },
+  {
+    "part": "C",
+    "id": "wake",
+    "field": "answer",
+    "severity": "wrong",
+    "problem": "The construction hints now work, but the standalone gloss mismatches the question in its example. The speaker asks why the other person is in a hurry, rather than asking for grounds to infer a conclusion.",
+    "evidence": "急ぐわけを教えて。",
+    "suggestion": "reason; why",
+    "confidence": "high"
+  },
+  {
+    "part": "C",
+    "id": "mono-thing",
+    "field": "meaning",
+    "severity": "weak",
+    "problem": "In というものだ and ものなら the generic thing clue still does not supply the evaluation or difficult hypothetical. Both are already partial, which limits the overclaim.",
+    "evidence": "本当の友情というものだ vs できるものなら戻りたい.",
+    "suggestion": "Add sense-specific cues for evaluation and unlikely feasibility. Keep thing or quality for ものがある.",
+    "confidence": "high"
+  },
+  {
+    "part": "C",
+    "id": "mono-explanation",
+    "field": "meaning",
+    "severity": "weak",
+    "problem": "Personal circumstance implies that the reason itself must be personal; what matters is that it is presented as an explanation or excuse.",
+    "evidence": "電車が止まっていたもので、遅れました。",
+    "suggestion": "sets up an explanation or excuse",
+    "confidence": "high"
+  },
+  {
+    "part": "C",
+    "id": "tsuki",
+    "field": "answer",
+    "severity": "wrong",
+    "problem": "The standalone gloss is still effectively unanswerable from the example and does not give the formal reason use.",
+    "evidence": "定休日につき is because it is our regular closing day, not an attached unit.",
+    "suggestion": "Teach につき as one unit in the example; key due to (formal). Add a separate per example.",
+    "confidence": "high"
+  },
+  {
+    "part": "C",
+    "id": "tsukeru",
+    "field": "answer",
+    "severity": "weak",
+    "problem": "The hint for につけ no longer relies on physical attachment. The standalone example still underlines part of 気をつける with a physical-sounding gloss.",
+    "evidence": "足元に気をつけて means watch your step.",
+    "suggestion": "Use a literal attachment example for fixes onto, or underline and key the whole phrase as watch out.",
+    "confidence": "high"
+  },
+  {
+    "part": "C",
+    "id": "kaneru",
+    "field": "pattern",
+    "severity": "wrong",
+    "problem": "The updated かね hint already conveys could well, then the next chip supplies ない. Together they suggest not likely, the opposite of the construction.",
+    "evidence": "事故を起こしかねない means there is a risk of causing an accident.",
+    "suggestion": "Use one かねない chip keyed risk of a bad result; keep かねる separate.",
+    "confidence": "high"
+  },
+  {
+    "part": "C",
+    "id": "tsuujiru",
+    "field": "pattern",
+    "severity": "wrong",
+    "problem": "通して still appears as a form of 通じる. It comes from a different verb.",
+    "evidence": "通じる → 通じて. 通す → 通して.",
+    "suggestion": "Use two entries with their own dictionary forms; link the overlapping constructions.",
+    "confidence": "high"
+  },
+  {
+    "part": "C",
+    "id": "choudai",
+    "field": "answer",
+    "severity": "wrong",
+    "problem": "The standalone card teaches that bare 頂戴 is a verb. The example uses a verbal noun with できます, while Vて頂戴 is a familiar request.",
+    "evidence": "お水を頂戴できますか vs 塩を取って頂戴。",
+    "suggestion": "Lexical entry: receiving (humble). Teach Vて頂戴 separately as a familiar request.",
+    "confidence": "high"
+  },
+  {
+    "part": "C",
+    "id": "hatashite",
+    "field": "answer",
+    "severity": "weak",
+    "problem": "As expected is a real sense elsewhere, but it cannot gloss the interrogative cue in this example. Bundling the senses makes the contextual distinction harder to learn.",
+    "evidence": "はたして予想は当たるだろうか = will it really come true?",
+    "suggestion": "For this example use really?; will it actually happen? Teach as expected separately.",
+    "confidence": "medium"
+  },
+  {
+    "part": "C",
+    "id": "tatte",
+    "field": "pattern",
+    "severity": "weak",
+    "problem": "The current surface covers the example. Adding a voiced example would stop learners treating the listed spelling as invariant after every verb.",
+    "evidence": "走ったって; 読んだって.",
+    "suggestion": "Show the colloquial voiced counterpart だって after relevant stems.",
+    "confidence": "high"
+  },
+  {
+    "part": "C",
+    "id": "お-願う",
+    "field": "pattern",
+    "severity": "weak",
+    "problem": "Underlining the complete request is fine. The parts explanation never identifies the verb stem between お and 願います, which is the productive hinge.",
+    "evidence": "お書き願います = お + 書き + 願います.",
+    "suggestion": "Label the pattern お + verb stem + 願う / 願います and keep the whole-span highlight.",
+    "confidence": "high"
+  },
+  {
+    "part": "C",
+    "id": "transparency-calibration",
+    "field": "pattern",
+    "severity": "note",
+    "problem": "The export note still says unscored practice, while the handoff says every card is scored. Forced choice from distant options still does not demonstrate compositional inference.",
+    "evidence": "Choosing an English gloss can bypass the Japanese parts.",
+    "suggestion": "Update the note. Retest clear ratings with a paraphrase before choices and with genuinely close distractors.",
+    "confidence": "high"
+  },
+  {
+    "part": "C",
+    "id": "pair-policy",
+    "field": "pair",
+    "severity": "note",
+    "problem": "The added exclusions are useful but do not prove that the remaining combinations are unique under the meaning actually tested.",
+    "evidence": "Equivalent English glosses can collapse different attachment, register, or nuance.",
+    "suggestion": "Use one contextual key per card and check each offered distractor against it.",
+    "confidence": "high"
+  },
+  {
+    "part": "D",
+    "id": "n2-set-2#53",
+    "field": "en",
+    "severity": "wrong",
+    "problem": "The English broadens the proposed appointment slots to Thursday or Friday without saying afternoon or morning.",
+    "evidence": "木曜日の午後か金曜日の午前であれば、こちらはいつでも伺えます。",
+    "suggestion": "We can come any time on Thursday afternoon or Friday morning. Please let Murata know a convenient time by the end of this week.",
+    "confidence": "high"
+  },
+  {
+    "part": "D",
+    "id": "n2-set-2#58",
+    "field": "lines",
+    "severity": "weak",
+    "problem": "The current first line starts with そうした and never supplies how the information comes to the learner. The key is still identifiable from lack of deliberate teaching.",
+    "evidence": "The previous sentences describe overhearing senior colleagues and glimpsing their work.",
+    "suggestion": "Include オフィスにいれば、隣の席の先輩が電話でどう話しているのかが自然に耳に入る。 and the sentence about learning from information nobody deliberately taught.",
+    "confidence": "high"
+  },
+  {
+    "part": "D",
+    "id": "n2-set-2#71",
+    "field": "answer",
+    "severity": "unfair",
+    "problem": "The key assumes that living and studying outside the city rules out course ①. The eligibility requires any one of living, working, or studying in the city. The 17-year-old could work there, so ①と② is also possible.",
+    "evidence": "市内に在住・在勤・在学の中学生以上. The question states 市外に住み、市外の高校に通っている, with no employment status.",
+    "suggestion": "Use 市外に住み、市外の高校に通い、市内では働いていない17歳のリンさんが参加できる講座はどれか。 Keep key 1.",
+    "confidence": "high"
+  },
+  {
+    "part": "D",
+    "id": "n2-set-2#71",
+    "field": "lines",
+    "severity": "weak",
+    "problem": "The lines only disqualify options. They never show why course ② admits the learner from outside the city.",
+    "evidence": "Course ② says 小学生以上, and the final note allows city nonresidents for ②③.",
+    "suggestion": "Give the three eligibility conditions plus the nonresident note, or label this as a multi-line decision.",
+    "confidence": "high"
+  },
+  {
+    "part": "D",
+    "id": "n2-set-2#74",
+    "field": "lines",
+    "severity": "unfair",
+    "problem": "The displayed utterance says only that he will check something at work tomorrow. The English supplies the answer-critical number, which the quoted Japanese never names.",
+    "evidence": "じゃあ、明日会社で確認して、また電話します。 The reference is established by 番号がお分かりになりましたら、もう一度お電話いただけますか。",
+    "suggestion": "Add the receptionist's request to call again once he has the number.",
+    "confidence": "high"
+  },
+  {
+    "part": "D",
+    "id": "n2-set-2#86",
+    "field": "lines",
+    "severity": "unfair",
+    "problem": "The question and key ask why the homework changed. The line states what changed and never gives the reason. This rewards topic matching.",
+    "evidence": "The contrast is 形をなぞるだけの作業 versus 字の形だけでなく、どんな場面で使うのかまで、一緒に覚えてほしい.",
+    "suggestion": "Use those two reason sentences. Alternatively change the question and key to ask what will change.",
+    "confidence": "high"
+  },
+  {
+    "part": "D",
+    "id": "n2-set-2#96",
+    "field": "answer",
+    "severity": "weak",
+    "problem": "The best answer is still choice 2, but すぐ怒るのがもったいない is less natural than regretting the effect of the temper on an otherwise good impression.",
+    "evidence": "怒りっぽいところさえなければ、いい人なんだけどね。",
+    "suggestion": "そうだね。すぐ怒るところが惜しいよね。",
+    "confidence": "high"
+  },
+  {
+    "part": "D",
+    "id": "n2-set-2#101",
+    "field": "lines",
+    "severity": "unfair",
+    "problem": "The English says fourth course, but the displayed evidence gives only an ordinal. The learner cannot map it to the named choice from the displayed Japanese.",
+    "evidence": "四つ目にしようかな; the opening announcement says 四つ目は「やさしいパソコン」。",
+    "suggestion": "Include the announcement for course four with his choice, or list the corresponding ordinals in the answer choices.",
+    "confidence": "high"
+  },
+  {
+    "part": "D",
+    "id": "n2-set-2#103",
+    "field": "lines",
+    "severity": "weak",
+    "problem": "The selection is the rooftop in good weather, with the meeting room as the fallback. The selection points to それ without preserving the condition and fallback that make the two choices distinct.",
+    "evidence": "天気がよければ…; 雨が降ったら…会議室に移れば…; じゃあ、それでいこう。",
+    "suggestion": "Show rooftop as Plan A, meeting room if it rains. Keep the primary venue as the key.",
+    "confidence": "high"
+  },
+  {
+    "part": "D",
+    "id": "n2-set-3#62",
+    "field": "lines",
+    "severity": "weak",
+    "problem": "The chosen sentence concerns cutting bamboo for income. The keyed conclusion is broader, about finding uses for bamboo and restoring grove maintenance.",
+    "evidence": "もう一度、竹を暮らしの中で使う方法を見つけることが、問題を解決する近道なのかもしれない。",
+    "suggestion": "Show that conclusion along with the current sentence about the incentive to keep tending groves.",
+    "confidence": "high"
+  },
+  {
+    "part": "D",
+    "id": "n2-set-3#72",
+    "field": "answer",
+    "severity": "unfair",
+    "problem": "The notice forbids accepting frozen food for delivery but does not say its receipt is excluded from the purchase total. All receipts total 3,500 yen; only deliverable goods total 2,700. The paid key relies on the narrower interpretation.",
+    "evidence": "複数の店のレシートを合計できます; 冷凍食品はお預かりできません. Neither specifies that undeliverable purchases do not count.",
+    "suggestion": "Add 配送をお申し込みになる商品の金額のみ合計します。 Keep key 3 after this clarification.",
+    "confidence": "high"
+  },
+  {
+    "part": "D",
+    "id": "n2-set-3#79",
+    "field": "en",
+    "severity": "weak",
+    "problem": "Elder care narrows 家族の介護 without textual support. The person receiving care need not be elderly.",
+    "evidence": "お子さんの送り迎えや、ご家族の介護をしている社員.",
+    "suggestion": "The main goal is to help employees who take children to or from school or care for family members keep working.",
+    "confidence": "high"
+  },
+  {
+    "part": "D",
+    "id": "n2-set-3#81",
+    "field": "lines",
+    "severity": "unfair",
+    "problem": "The selected lines reject personal health and say children visit. They omit both the exposure reason and the stated goal of letting children safely enter.",
+    "evidence": "農薬を使っていると、子どもを近づけるわけにいかないでしょう。子どもたちが安心して畑に入れるようにしたかったんです。",
+    "suggestion": "Use those two consecutive sentences as the deciding lines.",
+    "confidence": "high"
+  },
+  {
+    "part": "D",
+    "id": "n2-set-3#86",
+    "field": "lines",
+    "severity": "weak",
+    "problem": "The map announcement supports the expected answer, but the selected Japanese never says the objective is visitor dispersal. The English presents dispersal as an accomplished effect.",
+    "evidence": "観光客が分散すれば…と期待されています; the map was created to introduce other places.",
+    "suggestion": "Add the last sentence to the cues. Translate the dispersal as the aim or expected effect.",
+    "confidence": "high"
+  },
+  {
+    "part": "D",
+    "id": "n2-set-3#94",
+    "field": "en",
+    "severity": "weak",
+    "problem": "The English past tense can suggest the store may have closed. ありませんでしたっけ is a soft check of uncertain recollection about whether one is nearby now.",
+    "evidence": "The reply says あの角を曲がったところにありますよ。",
+    "suggestion": "Wasn't there a convenience store around here?",
+    "confidence": "high"
+  },
+  {
+    "part": "E",
+    "id": "l:N5:横",
+    "field": "answer",
+    "severity": "weak",
+    "problem": "The first dictionary sense is technically valid, but it suppresses the frequent learner sense side or next to which the bare spoken prompt cannot distinguish.",
+    "evidence": "横に座る = sit next to someone; 横になる = lie down.",
+    "suggestion": "Use side; beside in a sentence, and teach horizontal separately.",
+    "confidence": "high"
+  },
+  {
+    "part": "E",
+    "id": "r:N5:本当",
+    "field": "wrong",
+    "severity": "unfair",
+    "problem": "The offered ほんと is a conventional colloquial reading, especially in 本当？ Without a register cue this is a defensible choice.",
+    "evidence": "ほんとう and contracted ほんと.",
+    "suggestion": "Remove ほんと from the wrong pool, or ask for the standard uncontracted reading explicitly.",
+    "confidence": "high"
+  },
+  {
+    "part": "E",
+    "id": "r:N5:大丈夫",
+    "field": "wrong",
+    "severity": "unfair",
+    "problem": "The offered だいじょぶ is an intelligible conventional colloquial reduction, though the standard kana spelling is だいじょうぶ. The bare prompt gives no register instruction.",
+    "evidence": "大丈夫？ can be pronounced だいじょぶ in casual speech.",
+    "suggestion": "Remove colloquial reductions from the wrong pool or explicitly ask for standard kana.",
+    "confidence": "medium"
+  },
+  {
+    "part": "E",
+    "id": "l:N5:シャツ",
+    "field": "answer",
+    "severity": "wrong",
+    "problem": "The answer restricts the ordinary loanword to undergarments. シャツ is a generic shirt and is often visible outer clothing.",
+    "evidence": "白いシャツ can be a regular white shirt; undershirt is 肌着 or アンダーシャツ.",
+    "suggestion": "shirt",
+    "confidence": "high"
+  },
+  {
+    "part": "E",
+    "id": "m:N5:すぎ",
+    "field": "answer",
+    "severity": "wrong",
+    "problem": "The answer selects the zoological homograph instead of a likely beginner target. The kana prompt cannot distinguish a rare fish from the common suffix or 杉.",
+    "evidence": "食べすぎ = eating too much; 杉 = cedar; スギ is also a fish name.",
+    "suggestion": "Recover the intended source entry. For the suffix, show 食【た】べすぎ and key too much.",
+    "confidence": "high"
+  },
+  {
+    "part": "E",
+    "id": "l:N5:そう",
+    "field": "answer",
+    "severity": "wrong",
+    "problem": "The audio alone cannot identify suffixal appearance. The common standalone form means so, that way, or a response of acknowledgement.",
+    "evidence": "そうですか; 雨が降りそうだ.",
+    "suggestion": "Use そうです for so or that's right. Teach appearance with the attached verb or adjective.",
+    "confidence": "high"
+  },
+  {
+    "part": "E",
+    "id": "d:N5:杯",
+    "field": "pattern",
+    "severity": "weak",
+    "problem": "The sake-cup sense is valid, but it is a poor sole first exposure at this level. The learner needs the drink counter in context.",
+    "evidence": "水を一杯 vs 酒を杯に注ぐ.",
+    "suggestion": "Add a counter example with a numeral. Teach the vessel sense separately.",
+    "confidence": "high"
+  },
+  {
+    "part": "E",
+    "id": "l:N5:一日",
+    "field": "pattern",
+    "severity": "weak",
+    "problem": "Both readings are real and distinguish one day from the first of the month. The export repeats the written prompt rather than providing the audio or kana, so its spoken form could not be checked.",
+    "evidence": "一日【いちにち】 for duration, 一日【ついたち】 for the first.",
+    "suggestion": "Expose the reading in review and give a spoken sentence distinguishing duration from a date.",
+    "confidence": "high"
+  },
+  {
+    "part": "E",
+    "id": "d:N4:先輩",
+    "field": "answer",
+    "severity": "wrong",
+    "problem": "Superior wrongly implies rank or supervisory authority. A person who entered school or the workplace earlier is a senior even with no authority.",
+    "evidence": "同じ役職でも、先に入社した人は先輩。",
+    "suggestion": "senior peer at school or work",
+    "confidence": "high"
+  },
+  {
+    "part": "E",
+    "id": "d:N4:約束",
+    "field": "wrong",
+    "severity": "unfair",
+    "problem": "The prompt agreement is broad enough to include a booking or appointment if no context is supplied. Promise is distinctive, but the bundle invites 予約.",
+    "evidence": "約束する can mean make a promise or arrange to meet; 予約 is making a booking ahead.",
+    "suggestion": "Use promise; personal agreement to meet, or provide 約束を守る and remove 予約 where the prompt could mean an appointment.",
+    "confidence": "medium"
+  },
+  {
+    "part": "E",
+    "id": "m:N4:テキスト",
+    "field": "answer",
+    "severity": "weak",
+    "problem": "Text is legitimate but overly broad for the common classroom use at N4.",
+    "evidence": "授業のテキスト usually refers to the textbook or course material.",
+    "suggestion": "textbook; course material",
+    "confidence": "high"
+  },
+  {
+    "part": "E",
+    "id": "d:N4:売り場",
+    "field": "pattern",
+    "severity": "weak",
+    "problem": "Counter by itself has several meanings in English and selling area is awkward. The wrong choices in this sample remain distinct.",
+    "evidence": "靴売り場 is the shoe department or the area selling shoes.",
+    "suggestion": "sales section; department",
+    "confidence": "high"
+  },
+  {
+    "part": "E",
+    "id": "d:N4:式",
+    "field": "pattern",
+    "severity": "weak",
+    "problem": "The keyed way or style exists but skips the common standalone sense ceremony. In the absence of an example the fast card cannot teach which use is expected.",
+    "evidence": "入学式 = entrance ceremony; 日本式 = Japanese style.",
+    "suggestion": "Use ceremony with an example, or name the compound before testing style.",
+    "confidence": "high"
+  },
+  {
+    "part": "E",
+    "id": "r:N4:空く",
+    "field": "pattern",
+    "severity": "weak",
+    "problem": "Two accepted readings have different uses. Only one appears in the displayed choices, so the sample does not demonstrate false marking, but the card should anchor the reading.",
+    "evidence": "お腹が空く【すく】; 席が空く【あく】.",
+    "suggestion": "Add a sentence and retain both senses in separate cards.",
+    "confidence": "high"
+  },
+  {
+    "part": "E",
+    "id": "r:N4:寂しい",
+    "field": "pattern",
+    "severity": "weak",
+    "problem": "Both さびしい and さみしい are standard enough to accept. The alternate is absent from this sample's wrong list.",
+    "evidence": "寂しい can be read さびしい or さみしい.",
+    "suggestion": "Keep both out of each other's wrong list and teach both in the review.",
+    "confidence": "high"
+  },
+  {
+    "part": "E",
+    "id": "m:N4:なかなか",
+    "field": "pattern",
+    "severity": "note",
+    "problem": "The affirmative gloss is fine for the sampled word. A beginner needs the different very common negative construction as well.",
+    "evidence": "なかなか良い vs なかなか来ない.",
+    "suggestion": "Add a separate sentence for not readily or not for some time.",
+    "confidence": "medium"
+  },
+  {
+    "part": "E",
+    "id": "d:N3:開始",
+    "field": "wrong",
+    "severity": "unfair",
+    "problem": "The distractor 始まり also means start or commencement.",
+    "evidence": "授業の開始 and 授業の始まり can both translate as the start of the lesson.",
+    "suggestion": "Remove 始まり or provide a formal compound context that requires 開始.",
+    "confidence": "high"
+  },
+  {
+    "part": "E",
+    "id": "d:N3:直",
+    "field": "wrong",
+    "severity": "unfair",
+    "problem": "直ちに can mean immediately or very soon, so the highlighted prompt does not separate it from the keyed graph read じき.",
+    "evidence": "直に来る = will come soon; 直ちに来る = come at once.",
+    "suggestion": "Use shortly; before long in an example such as 直に分かる, or exclude 直ちに.",
+    "confidence": "high"
+  },
+  {
+    "part": "E",
+    "id": "d:N3:遅刻",
+    "field": "wrong",
+    "severity": "unfair",
+    "problem": "Lateness also fits the offered 遅れ when no scheduled arrival or class is specified.",
+    "evidence": "会議に遅刻した; 会議への遅れ.",
+    "suggestion": "Use being late for an appointment or class, and remove 遅れ from the distractors.",
+    "confidence": "high"
+  },
+  {
+    "part": "E",
+    "id": "r:N3:吝嗇",
+    "field": "answer",
+    "severity": "wrong",
+    "problem": "The normal reading is りんしょく. ケチ is the everyday synonym and is not the reading a standard kanji card should require.",
+    "evidence": "吝嗇【りんしょく】 means stinginess.",
+    "suggestion": "Key りんしょく, and put stingy or ケチ in the meaning review.",
+    "confidence": "high"
+  },
+  {
+    "part": "E",
+    "id": "d:N3:加味",
+    "field": "answer",
+    "severity": "weak",
+    "problem": "Seasoning is valid in a literal culinary context, but serving it alone as the N3 answer loses the highly useful meaning of taking another factor into account.",
+    "evidence": "経験を加味して判断する.",
+    "suggestion": "factor in; add as an ingredient",
+    "confidence": "high"
+  },
+  {
+    "part": "E",
+    "id": "d:N3:管/かん",
+    "field": "wrong",
+    "severity": "unfair",
+    "problem": "血管 is literally a vessel or tube, so a generic tube prompt gives a defensible interpretation of the offered specific option alongside the key.",
+    "evidence": "管 = tube; 血管 = tube carrying blood.",
+    "suggestion": "Remove 血管 from this definition card, or ask for the generic term in context.",
+    "confidence": "medium"
+  },
+  {
+    "part": "E",
+    "id": "m:N3:わた",
+    "field": "answer",
+    "severity": "weak",
+    "problem": "The species gloss chooses the plant rather than the familiar fiber or stuffing. Kana alone also does not disambiguate other homographs.",
+    "evidence": "布団に綿を入れる uses cotton batting or stuffing.",
+    "suggestion": "Use 綿 and key cotton fiber; batting in a sentence.",
+    "confidence": "high"
+  },
+  {
+    "part": "E",
+    "id": "m:N3:あら",
+    "field": "pattern",
+    "severity": "weak",
+    "problem": "The fish sense is real but arbitrary with no spelling or context. The same kana also represents a common interjection and a flaw.",
+    "evidence": "あら、そうなの？ vs 魚のあら vs 粗を探す.",
+    "suggestion": "Use 魚のあら for the fish sense, or add a separate interjection card.",
+    "confidence": "high"
+  },
+  {
+    "part": "E",
+    "id": "d:N1:政策",
+    "field": "wrong",
+    "severity": "unfair",
+    "problem": "Policy also fits the offered 方策 as a measure, course, or policy in many contexts. The broad English stem includes bare policy.",
+    "evidence": "政府の政策 vs 問題を解決するための方策.",
+    "suggestion": "Key public or government policy and remove 方策 unless the sentence genuinely disambiguates it.",
+    "confidence": "high"
+  },
+  {
+    "part": "E",
+    "id": "d:N1:促進",
+    "field": "wrong",
+    "severity": "unfair",
+    "problem": "The offered 推進 can mean promotion or advancement, one of the two keyed words.",
+    "evidence": "改革の促進 and 改革の推進 can both be the promotion of reform.",
+    "suggestion": "Block 推進, or use a sentence and ask for acceleration of a process rather than advancement of a program.",
+    "confidence": "high"
+  },
+  {
+    "part": "E",
+    "id": "d:N1:配給",
+    "field": "wrong",
+    "severity": "unfair",
+    "problem": "Distribution also fits 分配. The bracketed examples describe common domains for 配給 but don't disambiguate a bare general definition.",
+    "evidence": "米の配給 refers to allotting or rationing rice; 米の分配 is distribution of the rice.",
+    "suggestion": "Key rationed distribution; supply allotment, or remove 分配.",
+    "confidence": "high"
+  },
+  {
+    "part": "E",
+    "id": "d:N1:細工",
+    "field": "wrong",
+    "severity": "unfair",
+    "problem": "Work or workmanship is broad enough to include the offered 工作, especially a craft in school or making things by hand.",
+    "evidence": "木の細工 and 木工作 overlap in craft work.",
+    "suggestion": "Use detailed craftwork, or insert a sentence illustrating intricate workmanship and remove 工作.",
+    "confidence": "high"
+  },
+  {
+    "part": "E",
+    "id": "d:N1:延べ",
+    "field": "answer",
+    "severity": "wrong",
+    "problem": "Futures gives a specialized reading with no domain cue and fails to teach the productive aggregate-total use an N1 learner will meet.",
+    "evidence": "延べ一万人 means a cumulative total of 10,000 attendances, counting repeat visitors.",
+    "suggestion": "cumulative total, counting repeats",
+    "confidence": "high"
+  },
+  {
+    "part": "E",
+    "id": "r:N1:面目",
+    "field": "pattern",
+    "severity": "weak",
+    "problem": "The canonical readings めんぼく and めんもく are both defensible. The alternate is absent from the displayed wrong pool, but the bare card should teach both.",
+    "evidence": "面目を失う can be read めんぼく or めんもく.",
+    "suggestion": "Accept both wherever a reading is entered, and never offer either as wrong.",
+    "confidence": "high"
+  },
+  {
+    "part": "E",
+    "id": "r:N1:刃",
+    "field": "pattern",
+    "severity": "weak",
+    "problem": "The accepted bare readings は and やいば express closely related senses. The displayed ば is mainly a compound form, so it is not a clear second answer here.",
+    "evidence": "刃【は】が欠ける; 刃【やいば】を向ける.",
+    "suggestion": "Use a compound or an example with a sense cue and record both independent readings.",
+    "confidence": "high"
+  },
+  {
+    "part": "E",
+    "id": "m:N1:レンジ",
+    "field": "answer",
+    "severity": "weak",
+    "problem": "Kitchen range or stove is defensible but leaves out the especially common Japanese meaning microwave oven when used as a kitchen appliance.",
+    "evidence": "レンジで温める normally means heat it up in the microwave.",
+    "suggestion": "microwave or cooking range (contextual)",
+    "confidence": "high"
+  },
+  {
+    "part": "D",
+    "id": "n2-set-2#81",
+    "field": "lines",
+    "severity": "weak",
+    "problem": "The line gives the smaller size but omits the explanation that customers could then choose several varieties. The keyed choice includes both facts.",
+    "evidence": "半分の大きさにして、いろいろな種類を少しずつ選べるようにしたら、買ってくださる方がずいぶん増えました。",
+    "suggestion": "Use the sentence about halving the size and choosing a little of several varieties, or add it to the current cue.",
+    "confidence": "high"
+  }
+]

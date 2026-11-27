@@ -215,7 +215,7 @@
         "上"
       ],
       "type": "noun",
-      "gloss": "on top of; given that",
+      "gloss": "top; above",
       "ja": "棚【たな】の上【うえ】に置【お】いた。",
       "en": "I put it on top of the shelf.",
       "level": "N2"
@@ -282,7 +282,7 @@
         "もの"
       ],
       "type": "noun",
-      "gloss": "frames a personal circumstance",
+      "gloss": "sets up an explanation or excuse",
       "ja": "寒【さむ】いものだから、窓【まど】を閉【し】めた。",
       "en": "I shut the window because it was cold.",
       "level": "N3"
@@ -819,7 +819,7 @@
         "わけ"
       ],
       "type": "noun",
-      "gloss": "grounds for drawing a conclusion",
+      "gloss": "reason; why",
       "ja": "急【いそ】ぐわけを教【おし】えて。",
       "en": "Tell me why you're in a hurry.",
       "level": "N2"
@@ -1079,7 +1079,8 @@
       "forms": [
         "かねる",
         "かね",
-        "かねます"
+        "かねます",
+        "かねない"
       ],
       "type": "ending",
       "gloss": "signals reluctance or difficulty",
@@ -1360,7 +1361,7 @@
         "つき"
       ],
       "type": "noun",
-      "gloss": "an attached circumstance or unit",
+      "gloss": "due to (formal)",
       "ja": "本日【ほんじつ】は定休日【ていきゅうび】につき、お休【やす】みさせていただきます。",
       "en": "Because today is our regular holiday, we are closed.",
       "level": "N2",
@@ -1615,8 +1616,7 @@
       "form": "通じる",
       "forms": [
         "通じる",
-        "通じて",
-        "通して"
+        "通じて"
       ],
       "type": "verb",
       "gloss": "provides a channel or continuous span",
@@ -1703,8 +1703,8 @@
       "forms": [
         "頂戴"
       ],
-      "type": "verb",
-      "gloss": "verb for receiving from another",
+      "type": "noun",
+      "gloss": "receiving (humble)",
       "ja": "お水【みず】を頂戴【ちょうだい】できますか。",
       "en": "Could I have some water?",
       "level": "N2",
@@ -2837,12 +2837,13 @@
         },
         {
           "text": "際",
-          "block": "sai"
+          "block": "sai",
+          "gloss": "on the occasion of"
         },
         {
           "text": "して",
           "block": "suru-do",
-          "gloss": "facing it"
+          "gloss": "doing; at the time of"
         }
       ],
       "literal": "on the occasion of undertaking it",
@@ -3150,7 +3151,7 @@
         {
           "text": "で",
           "block": "te",
-          "gloss": "and so (negative connective)"
+          "gloss": "without (negative link)"
         },
         {
           "text": "は",
@@ -3162,7 +3163,7 @@
           "gloss": "cannot stay as one is"
         }
       ],
-      "literal": "cannot stay in the state of not doing it",
+      "literal": "cannot stay without doing it",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",
@@ -4109,21 +4110,13 @@
     "かねない": {
       "parts": [
         {
-          "text": "かね",
+          "text": "かねない",
           "block": "kaneru",
-          "gloss": "could well (do)"
-        },
-        {
-          "text": "ない",
-          "block": "nai"
+          "gloss": "risk of a bad result"
         }
       ],
-      "literal": "there is no obstacle to that result",
-      "transparency": "clear",
-      "solved": {
-        "by": "blocks-only",
-        "right": true
-      }
+      "literal": "a bad result could well happen",
+      "transparency": "opaque"
     },
     "-てこそ": {
       "parts": [

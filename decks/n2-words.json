@@ -231,8 +231,8 @@
    "id": "n2-word-32",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "My grandfather was a trader in a port town.",
-   "target": "祖父【そふ】は港町【みなとまち】で貿易商【ぼうえきしょう】をしていた。"
+   "source": "My grandfather worked as a trader in a port town.",
+   "target": "祖父【そふ】は港町【みなとまち】で貿易商【ぼうえきしょう】として働【はたら】いていた。"
   },
   {
    "id": "n2-word-33",
@@ -903,8 +903,8 @@
    "id": "n2-word-128",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "I worked too late into the night and ruined my health.",
-   "target": "夜遅【よるおそ】くまで働【はたら】き過【す】ぎて、体調【たいちょう】を崩【くず】した。"
+   "source": "Lately I eat too much at night.",
+   "target": "最近【さいきん】は夜【よる】に食【た】べ過【す】ぎる。"
   },
   {
    "id": "n2-word-129",
@@ -1029,8 +1029,8 @@
    "id": "n2-word-146",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "Please put documents that have been paid into this box.",
-   "target": "支払【しはら】い済【ず】みの書類【しょるい】はこの箱【はこ】に入【い】れてください。"
+   "source": "The fee has already been paid.",
+   "target": "料金【りょうきん】は支払【しはら】い済【ず】みです。"
   },
   {
    "id": "n2-word-147",
@@ -9695,8 +9695,8 @@
    "id": "n2-word-1384",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "This wristwatch is waterproof, so it's fine to swim with it.",
-   "target": "この腕時計【うでどけい】は防水【ぼうすい】なので、泳【およ】いでも大丈夫【だいじょうぶ】だ。"
+   "source": "This watch is water-resistant.",
+   "target": "この腕時計【うでどけい】は防水【ぼうすい】仕様【しよう】だ。"
   },
   {
    "id": "n2-word-1385",
@@ -11809,8 +11809,8 @@
    "id": "n2-word-1686",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "It has kept raining for a whole week.",
-   "target": "一週間【いっしゅうかん】も雨【あめ】が降【ふ】り続【つづ】いている。"
+   "source": "The rain will keep falling until tomorrow.",
+   "target": "雨【あめ】は明日【あした】まで降【ふ】り続【つづ】く。"
   },
   {
    "id": "n2-word-1687",

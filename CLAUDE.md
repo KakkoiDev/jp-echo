@@ -573,6 +573,16 @@ Before considering the change complete:
   applied: the other levels' 41 findings and the missing word parts (backlog).
   The `REVIEWED_*` flags stay false: the same model family drafted part of
   this content.
+- **An outside reviewer read the scored content on 27 Nov (v308).** 113
+  findings in `tools/scored-review/reviews/2026-11-27-outside.json`, each
+  with its line in `…-outside-applied.json`. All "wrong" and "unfair" ones in
+  word parts, connectives and grammar are applied (`AFFIX_SHOWN`,
+  `AFFIX_READING`, `LINK_WHY` added to n2-game-review.js; かねない is learned
+  whole; 通して is not a form of 通じる). Left: two findings that change a
+  paper's own question (set 2 #71, set 3 #72: a new `SETS_EDITION`), and the
+  other levels (the reviewer's verdict: hold scoring for N5, N3 and N1).
+  The `REVIEWED_*` flags are still false: the fixes themselves have not been
+  read back by a reviewer.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

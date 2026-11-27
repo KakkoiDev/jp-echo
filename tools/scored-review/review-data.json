@@ -63,7 +63,7 @@
    "word": "ところが",
    "answer": "however, contrary to expectation",
    "job": "turn",
-   "shownAfterAnswer": "Turn: what follows goes against what came before; the writer's point is usually after it",
+   "shownAfterAnswer": "Introduces what happened contrary to the preceding expectation",
    "wrong": [
     "in other words, that is",
     "namely, that is (formal)",
@@ -208,7 +208,7 @@
    "word": "とはいえ",
    "answer": "that said, even so",
    "job": "turn",
-   "shownAfterAnswer": "Turn: what follows goes against what came before; the writer's point is usually after it",
+   "shownAfterAnswer": "Acknowledges the previous point and adds a reservation",
    "wrong": [
     "in other words, that is",
     "namely, that is (formal)",
@@ -239,8 +239,6 @@
    "job": "exception",
    "shownAfterAnswer": "Exception: a condition or exception to what came before",
    "wrong": [
-    "certainly, it is true that",
-    "of course",
     "in other words, that is",
     "namely, that is (formal)",
     "in short",
@@ -270,9 +268,8 @@
    "word": "確かに",
    "answer": "certainly, it is true that",
    "job": "concede",
-   "shownAfterAnswer": "Concede: grants a point the writer will then turn against (確かに… しかし…)",
+   "shownAfterAnswer": "Confirms or acknowledges a point; it can set up a contrast, but need not",
    "wrong": [
-    "though, admittedly (a qualification after the point)",
     "in other words, that is",
     "namely, that is (formal)",
     "in short",
@@ -304,7 +301,7 @@
    "word": "もちろん",
    "answer": "of course",
    "job": "concede",
-   "shownAfterAnswer": "Concede: grants a point the writer will then turn against (確かに… しかし…)",
+   "shownAfterAnswer": "Presents a point as obvious or expected; sometimes concedes it before a qualification",
    "wrong": [
     "though, admittedly (a qualification after the point)",
     "in other words, that is",
@@ -600,7 +597,7 @@
    "word": "このように",
    "answer": "in this way (summing up)",
    "job": "conclude",
-   "shownAfterAnswer": "Conclude: what follows is the result or conclusion of what came before",
+   "shownAfterAnswer": "Refers to the manner just shown; can recap the preceding points",
    "wrong": [
     "however",
     "but (written)",
@@ -1072,7 +1069,7 @@
    "word": "さて",
    "answer": "now, well then",
    "job": "shift",
-   "shownAfterAnswer": "Shift: moves to a new topic",
+   "shownAfterAnswer": "Moves the discussion forward or opens a new topic",
    "wrong": [
     "however",
     "but (written)",
@@ -1113,7 +1110,7 @@
    "word": "だとすれば",
    "answer": "if so, then",
    "job": "infer",
-   "shownAfterAnswer": "Infer: what follows is what must be true if the point before holds",
+   "shownAfterAnswer": "Takes the preceding point as a premise, then asks or says what follows",
    "wrong": [
     "however",
     "but (written)",
@@ -1145,7 +1142,7 @@
    "word": "それなら",
    "answer": "in that case",
    "job": "infer",
-   "shownAfterAnswer": "Infer: what follows is what must be true if the point before holds",
+   "shownAfterAnswer": "Responds to the preceding situation with an inference, proposal, or decision",
    "wrong": [
     "however",
     "but (written)",
@@ -1176,7 +1173,7 @@
  "generated": "2026-11-27",
  "counts": {
   "parts": 167,
-  "partCards": 156,
+  "partCards": 158,
   "connectives": 228,
   "grammarOpen": 48,
   "lines": 106
@@ -1197,7 +1194,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~",
@@ -1219,7 +1216,7 @@
     "first ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~",
@@ -1285,7 +1282,7 @@
     "first ~",
     "various ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~",
@@ -1329,7 +1326,7 @@
     "first ~",
     "various ~",
     "female ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~",
@@ -1363,8 +1360,8 @@
    "text": "～商",
    "reading": "～しょう",
    "meaning": "merchant, business",
-   "sentence": "祖父【そふ】は港町【みなとまち】で貿易商【ぼうえきしょう】をしていた。",
-   "sentenceEn": "My grandfather was a trader in a port town.",
+   "sentence": "祖父【そふ】は港町【みなとまち】で貿易商【ぼうえきしょう】として働【はたら】いていた。",
+   "sentenceEn": "My grandfather worked as a trader in a port town.",
    "underlined": "商",
    "answer": "dealer, trader in ~",
    "side": "suffix",
@@ -1434,7 +1431,7 @@
    "underlined": "場",
    "answer": "venue, ground for ~",
    "side": "suffix",
-   "wrongChoices": 155,
+   "wrongChoices": 154,
    "sameSideWrong": [
     "~th daughter (birth order)",
     "~ Ministry (government)",
@@ -1500,22 +1497,35 @@
    "noCard": "the part is not written exactly once in the sentence, or the entry is not a clean prefix or suffix"
   },
   {
-   "id": null,
+   "id": "a:～過ぎる",
    "text": "～過ぎる",
    "reading": "～すぎる",
    "meaning": "too much ~",
-   "sentence": "夜遅【よるおそ】くまで働【はたら】き過【す】ぎて、体調【たいちょう】を崩【くず】した。",
-   "sentenceEn": "I worked too late into the night and ruined my health.",
-   "noCard": "the part is not written exactly once in the sentence, or the entry is not a clean prefix or suffix"
+   "sentence": "最近【さいきん】は夜【よる】に食【た】べ過【す】ぎる。",
+   "sentenceEn": "Lately I eat too much at night.",
+   "underlined": "過ぎる",
+   "answer": "too much ~",
+   "side": "suffix",
+   "wrongChoices": 157,
+   "sameSideWrong": [
+    "place, office (facility)",
+    "place",
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
+   ]
   },
   {
    "id": "a:～済",
    "text": "～済",
    "reading": "～ずみ",
    "meaning": "finished",
-   "sentence": "支払【しはら】い済【ず】みの書類【しょるい】はこの箱【はこ】に入【い】れてください。",
-   "sentenceEn": "Please put documents that have been paid into this box.",
-   "underlined": "済",
+   "sentence": "料金【りょうきん】は支払【しはら】い済【ず】みです。",
+   "sentenceEn": "The fee has already been paid.",
+   "underlined": "済み",
    "answer": "already ~ed, done",
    "side": "suffix",
    "wrongChoices": 157,
@@ -1540,7 +1550,7 @@
    "underlined": "席",
    "answer": "counter for seats",
    "side": "suffix",
-   "wrongChoices": 139,
+   "wrongChoices": 141,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -1604,7 +1614,7 @@
    "sentence": "前社長【ぜんしゃちょう】は今【いま】も相談役【そうだんやく】として残【のこ】っている。",
    "sentenceEn": "The former president still remains as an adviser.",
    "underlined": "前",
-   "answer": "former, late ~",
+   "answer": "former; previous",
    "side": "prefix",
    "wrongChoices": 156,
    "sameSideWrong": [
@@ -1678,7 +1688,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "ordinal prefix (~th)",
     "short ~",
     "foreign ~, outside ~"
@@ -1694,7 +1704,7 @@
    "underlined": "艘",
    "answer": "counter for ships",
    "side": "suffix",
-   "wrongChoices": 137,
+   "wrongChoices": 139,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -1716,7 +1726,7 @@
    "underlined": "足",
    "answer": "counter for pairs of footwear",
    "side": "suffix",
-   "wrongChoices": 139,
+   "wrongChoices": 141,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -1744,7 +1754,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "short ~",
     "foreign ~, outside ~"
@@ -1788,7 +1798,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "foreign ~, outside ~"
@@ -1826,7 +1836,7 @@
    "underlined": "日",
    "answer": "counter for days",
    "side": "suffix",
-   "wrongChoices": 138,
+   "wrongChoices": 140,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -1964,7 +1974,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~"
@@ -2007,7 +2017,7 @@
     "first ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~",
@@ -2119,7 +2129,7 @@
    "sentence": "今週末【こんしゅうまつ】は美術館【びじゅつかん】に行【い】く予定【よてい】だ。",
    "sentenceEn": "I'm going to the art museum this weekend.",
    "underlined": "館",
-   "answer": "~ hall, ~ building",
+   "answer": "hall, museum, dedicated facility",
    "side": "suffix",
    "wrongChoices": 150,
    "sameSideWrong": [
@@ -2297,7 +2307,7 @@
    "underlined": "業",
    "answer": "type of business",
    "side": "suffix",
-   "wrongChoices": 154,
+   "wrongChoices": 155,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -2325,7 +2335,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~"
@@ -2391,7 +2401,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~"
@@ -2449,7 +2459,7 @@
    "sentence": "この公園【こうえん】の広場【ひろば】は円形【えんけい】になっている。",
    "sentenceEn": "The square in this park is circular.",
    "underlined": "形",
-   "answer": "shape of ~",
+   "answer": "~ shaped; ~ form",
    "side": "suffix",
    "wrongChoices": 157,
    "sameSideWrong": [
@@ -2471,9 +2481,9 @@
    "sentence": "彼【かれ】は理系【りけい】の大学【だいがく】で勉強【べんきょう】している。",
    "sentenceEn": "He is studying at a science university.",
    "underlined": "系",
-   "answer": "~ type, ~ stream, ~ origin",
+   "answer": "~ group, field, or lineage",
    "side": "suffix",
-   "wrongChoices": 153,
+   "wrongChoices": 155,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -2523,7 +2533,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~"
@@ -2545,7 +2555,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~"
@@ -2567,7 +2577,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~"
@@ -2583,7 +2593,7 @@
    "underlined": "校",
    "answer": "counter for school",
    "side": "suffix",
-   "wrongChoices": 138,
+   "wrongChoices": 140,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -2708,7 +2718,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~"
@@ -2730,7 +2740,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~"
@@ -2752,7 +2762,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~"
@@ -2797,7 +2807,7 @@
    "sentence": "スーパーで北海道産【ほっかいどうさん】のじゃがいもを買【か】った。",
    "sentenceEn": "I bought potatoes from Hokkaido at the supermarket.",
    "underlined": "産",
-   "answer": "made in ~",
+   "answer": "produced or grown in ~",
    "side": "suffix",
    "wrongChoices": 157,
    "sameSideWrong": [
@@ -2843,7 +2853,7 @@
    "underlined": "紙",
    "answer": "newspaper, type of paper",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 153,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -2924,7 +2934,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~"
@@ -2938,9 +2948,9 @@
    "sentence": "会議室【かいぎしつ】はもう予約【よやく】でいっぱいだ。",
    "sentenceEn": "The meeting room is already fully booked.",
    "underlined": "室",
-   "answer": "counter for room",
+   "answer": "room for ~",
    "side": "suffix",
-   "wrongChoices": 131,
+   "wrongChoices": 149,
    "sameSideWrong": [
     "~th daughter (birth order)",
     "~ Ministry (government)",
@@ -3037,7 +3047,7 @@
    "underlined": "社",
    "answer": "counter for company",
    "side": "suffix",
-   "wrongChoices": 139,
+   "wrongChoices": 141,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -3131,7 +3141,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~"
@@ -3147,7 +3157,7 @@
    "underlined": "流",
    "answer": "way, school of ~",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 153,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -3175,7 +3185,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~"
@@ -3255,7 +3265,7 @@
    "sentence": "大学【だいがく】で日本文化論【にほんぶんかろん】の講義【こうぎ】を受【う】けている。",
    "sentenceEn": "I'm taking a lecture course on theories of Japanese culture at university.",
    "underlined": "論",
-   "answer": "theory",
+   "answer": "theory or study of ~",
    "side": "suffix",
    "wrongChoices": 157,
    "sameSideWrong": [
@@ -3285,7 +3295,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~"
@@ -3301,7 +3311,7 @@
    "underlined": "羽",
    "answer": "counter for rabbits, birds",
    "side": "suffix",
-   "wrongChoices": 139,
+   "wrongChoices": 141,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -3320,7 +3330,7 @@
    "meaning": "our ~",
    "sentence": "我【わ】が社【しゃ】は来年【らいねん】、創立【そうりつ】五十周年【ごじゅっしゅうねん】を迎【むか】える。",
    "sentenceEn": "Our company celebrates its fiftieth anniversary next year.",
-   "underlined": "我",
+   "underlined": "我が",
    "answer": "our ~",
    "side": "prefix",
    "wrongChoices": 157,
@@ -3329,7 +3339,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~"
@@ -3351,7 +3361,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~"
@@ -3395,7 +3405,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~"
@@ -3426,7 +3436,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~"
@@ -3442,16 +3452,16 @@
    "underlined": "園",
    "answer": "park, garden; place for ~",
    "side": "suffix",
-   "wrongChoices": 148,
+   "wrongChoices": 147,
    "sameSideWrong": [
     "~th daughter (birth order)",
     "~ Ministry (government)",
     "dealer, trader in ~",
     "~ wins (victories)",
     "article no. ~ (of a law)",
-    "venue, ground for ~",
     "count for tatami, mat",
-    "~ colour, colouring"
+    "~ colour, colouring",
+    "too much ~"
    ]
   },
   {
@@ -3470,7 +3480,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~"
@@ -3486,7 +3496,7 @@
    "underlined": "頭",
    "answer": "counter for large animals",
    "side": "suffix",
-   "wrongChoices": 139,
+   "wrongChoices": 141,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -3528,7 +3538,7 @@
    "sentence": "夏【なつ】に離島【りとう】へ旅行【りょこう】する予定【よてい】だ。",
    "sentenceEn": "I plan to travel to a remote island in the summer.",
    "underlined": "島",
-   "answer": "island (in names)",
+   "answer": "~ island",
    "side": "suffix",
    "wrongChoices": 157,
    "sameSideWrong": [
@@ -3558,7 +3568,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~"
@@ -3668,7 +3678,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~"
@@ -3682,7 +3692,7 @@
    "sentence": "彼【かれ】の言【い】うことは、どうも信【しん】じ難【がた】い。",
    "sentenceEn": "What he says is really hard to believe.",
    "underlined": "難い",
-   "answer": "nearly impossible to ~",
+   "answer": "hard to ~; difficult to ~",
    "side": "suffix",
    "wrongChoices": 156,
    "sameSideWrong": [
@@ -3704,9 +3714,9 @@
    "sentence": "娘【むすめ】は来年【らいねん】、小学【しょうがく】一年生【いちねんせい】になる。",
    "sentenceEn": "My daughter will be a first-grader in elementary school next year.",
    "underlined": "年生",
-   "answer": "counter for school year",
+   "answer": "student in year ~; ~ grader",
    "side": "suffix",
-   "wrongChoices": 138,
+   "wrongChoices": 157,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -3728,7 +3738,7 @@
    "underlined": "泊",
    "answer": "counter for staying (e.g., 2 nights)",
    "side": "suffix",
-   "wrongChoices": 138,
+   "wrongChoices": 140,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -3750,7 +3760,7 @@
    "underlined": "発",
    "answer": "counter for shots; departing from ~",
    "side": "suffix",
-   "wrongChoices": 139,
+   "wrongChoices": 141,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -3772,13 +3782,13 @@
    "underlined": "反",
    "answer": "anti ~, counter ~",
    "side": "prefix",
-   "wrongChoices": 138,
+   "wrongChoices": 140,
    "sameSideWrong": [
     "first ~",
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~"
@@ -3792,7 +3802,7 @@
    "sentence": "前【まえ】から三番目【さんばんめ】の席【せき】に座【すわ】ってください。",
    "sentenceEn": "Please sit in the third seat from the front.",
    "underlined": "番目",
-   "answer": "~th",
+   "answer": "~th in a sequence",
    "side": "suffix",
    "wrongChoices": 150,
    "sameSideWrong": [
@@ -3822,7 +3832,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~"
@@ -3866,7 +3876,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~"
@@ -3954,7 +3964,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~"
@@ -3998,7 +4008,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~"
@@ -4077,7 +4087,7 @@
    "meaning": "~ish",
    "sentence": "彼【かれ】は忘【わす】れっぽいので、メモを渡【わた】しておいた。",
    "sentenceEn": "He's forgetful, so I gave him a note.",
-   "underlined": "ぽい",
+   "underlined": "っぽい",
    "answer": "-ish; prone to ~",
    "side": "suffix",
    "wrongChoices": 155,
@@ -4106,8 +4116,8 @@
    "text": "防～",
    "reading": "ぼう～",
    "meaning": "~ prevention",
-   "sentence": "この腕時計【うでどけい】は防水【ぼうすい】なので、泳【およ】いでも大丈夫【だいじょうぶ】だ。",
-   "sentenceEn": "This wristwatch is waterproof, so it's fine to swim with it.",
+   "sentence": "この腕時計【うでどけい】は防水【ぼうすい】仕様【しよう】だ。",
+   "sentenceEn": "This watch is water-resistant.",
    "underlined": "防",
    "answer": "~proof; protection against ~",
    "side": "prefix",
@@ -4117,7 +4127,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~"
@@ -4139,7 +4149,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~"
@@ -4161,7 +4171,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~"
@@ -4183,7 +4193,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~"
@@ -4227,7 +4237,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~"
@@ -4271,7 +4281,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~"
@@ -4287,7 +4297,7 @@
    "underlined": "名",
    "answer": "counter for people",
    "side": "suffix",
-   "wrongChoices": 138,
+   "wrongChoices": 140,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -4318,7 +4328,7 @@
    "underlined": "問",
    "answer": "counter for questions",
    "side": "suffix",
-   "wrongChoices": 139,
+   "wrongChoices": 141,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -4340,7 +4350,7 @@
    "underlined": "夜",
    "answer": "counter for nights",
    "side": "suffix",
-   "wrongChoices": 138,
+   "wrongChoices": 140,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -4368,7 +4378,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~"
@@ -4406,7 +4416,7 @@
    "underlined": "着",
    "answer": "counter for clothes, finishing place",
    "side": "suffix",
-   "wrongChoices": 129,
+   "wrongChoices": 131,
    "sameSideWrong": [
     "~ Ministry (government)",
     "dealer, trader in ~",
@@ -4434,7 +4444,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~"
@@ -4560,7 +4570,7 @@
    "underlined": "通",
    "answer": "counter for letters",
    "side": "suffix",
-   "wrongChoices": 139,
+   "wrongChoices": 141,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -4601,7 +4611,7 @@
    "meaning": "with ~",
    "sentence": "この部屋【へや】は朝食付【ちょうしょくつ】きで一泊【いっぱく】八千円【はっせんえん】です。",
    "sentenceEn": "This room is eight thousand yen a night with breakfast.",
-   "underlined": "付",
+   "underlined": "付き",
    "answer": "with ~",
    "side": "suffix",
    "wrongChoices": 157,
@@ -4617,13 +4627,26 @@
    ]
   },
   {
-   "id": null,
+   "id": "a:～続く",
    "text": "～続く",
    "reading": "～つづく",
    "meaning": "follow, continue, go on",
-   "sentence": "一週間【いっしゅうかん】も雨【あめ】が降【ふ】り続【つづ】いている。",
-   "sentenceEn": "It has kept raining for a whole week.",
-   "noCard": "the part is not written exactly once in the sentence, or the entry is not a clean prefix or suffix"
+   "sentence": "雨【あめ】は明日【あした】まで降【ふ】り続【つづ】く。",
+   "sentenceEn": "The rain will keep falling until tomorrow.",
+   "underlined": "続く",
+   "answer": "keep ~ing, go on ~ing",
+   "side": "suffix",
+   "wrongChoices": 157,
+   "sameSideWrong": [
+    "place, office (facility)",
+    "place",
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
+   ]
   },
   {
    "id": "a:～辛い",
@@ -4663,7 +4686,7 @@
     "various ~",
     "female ~",
     "saving ~, conserving ~",
-    "former, late ~",
+    "former; previous",
     "total ~, whole ~",
     "ordinal prefix (~th)",
     "short ~"
@@ -4701,7 +4724,7 @@
    "underlined": "点",
    "answer": "counter for scores",
    "side": "suffix",
-   "wrongChoices": 139,
+   "wrongChoices": 141,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -9283,13 +9306,9 @@
    "lines": [
     "木曜日の午後か金曜日の午前であれば、こちらはいつでも伺えます。ご都合のよい日時を、今週中にお知らせいただけますと幸いです。"
    ],
-   "en": "Murata can come Thursday or Friday; please tell him your time this week",
-   "wrong": [
-    "Yamashita is asked to visit Murata's company on Thursday afternoon",
-    "Murata asks Yamashita to reply by next Tuesday with a time",
-    "Murata cannot meet before Friday morning, so Yamashita must wait"
-   ],
-   "solved": true
+   "en": "We can come any time Thursday afternoon or Friday morning; tell us this week",
+   "solved": true,
+   "by": "outside review 2026-11-27"
   },
   "n2-set-2#54": {
    "skill": "Reading",
@@ -9402,15 +9421,12 @@
    "key": 1,
    "why": "It refers to learning from overheard calls and glimpsed screens, information nobody deliberately taught.",
    "lines": [
-    "そうした、わざわざ教えられたわけではない情報から、若手は多くを学んでいたのだ。在宅勤務では、こうした「聞こえてくる学び」がほとんどなくなってしまう。"
+    "オフィスにいれば、隣の席の先輩が電話でどう話しているのかが自然に耳に入る。",
+    "そうした、わざわざ教えられたわけではない情報から、若手は多くを学んでいたのだ。"
    ],
-   "en": "Juniors learned much from information nobody deliberately taught them",
-   "wrong": [
-    "Juniors learned mainly from formal lessons given by seniors",
-    "Juniors learned by taking recorded training sessions at home",
-    "Juniors learned mostly from instructions given in meetings"
-   ],
-   "solved": true
+   "en": "At the office you overhear seniors; juniors learned from what nobody taught",
+   "solved": true,
+   "by": "outside review 2026-11-27"
   },
   "n2-set-2#59": {
    "skill": "Reading",
@@ -9778,15 +9794,12 @@
    "key": 4,
    "why": "He can't book without the number, which is on the sheet at his office, so he will check it there first.",
    "lines": [
+    "では、番号がお分かりになりましたら、もう一度お電話いただけますか。",
     "じゃあ、明日会社で確認して、また電話します。"
    ],
-   "en": "He will check the number at his office tomorrow and call again",
-   "wrong": [
-    "He will book the retest by phone now and check the number later",
-    "He will go back to the clinic to pick up his result sheet",
-    "He will stop eating from nine tonight and phone tomorrow"
-   ],
-   "solved": true
+   "en": "Call again once you have the number. — I'll check at work and call back",
+   "solved": true,
+   "by": "outside review 2026-11-27"
   },
   "n2-set-2#75": {
    "skill": "Listening",
@@ -9946,15 +9959,11 @@
    "key": 1,
    "why": "She credits halving the size so customers can choose several kinds; advertising helped only a little and the taste is unchanged.",
    "lines": [
-    "それも少しはあると思いますが、一番は、お菓子を小さくしたことですね。"
+    "半分の大きさにして、いろいろな種類を少しずつ選べるようにしたら、買ってくださる方がずいぶん増えました。"
    ],
-   "en": "Online ads helped a little; the main reason was making the sweets smaller",
-   "wrong": [
-    "The main reason was starting to advertise on the internet",
-    "The main reason was changing the flavor for young tastes",
-    "The main reason was making the sweets twice as large"
-   ],
-   "solved": true
+   "en": "Halving the size so people could pick several kinds brought many more buyers",
+   "solved": true,
+   "by": "outside review 2026-11-27"
   },
   "n2-set-2#82": {
    "skill": "Listening",
@@ -10067,15 +10076,12 @@
    "key": 3,
    "why": "The teacher accepts the parents' point and explains why the homework will change to writing short sentences.",
    "lines": [
-    "そこで来月からは、一つの字を書く回数を減らし、その代わりに、その字を使った短い文を自分で作る宿題に変えます。"
+    "確かに、ただ手を動かすだけでは、途中から形をなぞるだけの作業になってしまいます。",
+    "字の形だけでなく、どんな場面で使うのかまで、一緒に覚えてほしいと考えています。"
    ],
-   "en": "Next month, kanji homework switches to making short sentences with each kanji",
-   "wrong": [
-    "Homework will have more repetitions of each kanji, not fewer",
-    "The teacher keeps the homework unchanged, rejecting the complaint",
-    "Students will copy short model sentences every night instead"
-   ],
-   "solved": true
+   "en": "Copying turns into mere tracing; learn where each kanji is used as well",
+   "solved": true,
+   "by": "outside review 2026-11-27"
   },
   "n2-set-2#87": {
    "skill": "Listening",
@@ -10415,12 +10421,12 @@
    "key": 3,
    "why": "He decides on the fourth course so he can teach his father email; the album idea is dropped.",
    "lines": [
-    "四つ目にしようかな。",
-    "だから、僕が習って教えるよ。"
+    "四つ目は「やさしいパソコン」。",
+    "四つ目にしようかな。"
    ],
-   "en": "He leans to the fourth course, then decides to learn it and teach his father",
+   "en": "Course four is Easy Computing; he says he will take the fourth",
    "solved": true,
-   "by": "review 2026-11-27"
+   "by": "outside review 2026-11-27"
   },
   "n2-set-2#102": {
    "skill": "Listening",
@@ -10743,15 +10749,12 @@
    "key": 1,
    "why": "If cutting bamboo brings income, more people will maintain it; the writer says bamboo itself is not to blame.",
    "lines": [
-    "竹を切ることがそのまま収入につながれば、手入れを続ける人も増えるはずだ。"
+    "竹を切ることがそのまま収入につながれば、手入れを続ける人も増えるはずだ。",
+    "もう一度、竹を暮らしの中で使う方法を見つけることが、問題を解決する近道なのかもしれない。"
    ],
-   "en": "If cutting bamboo brings income, more people will keep tending the groves",
-   "wrong": [
-    "Bamboo is a bad plant, so all of it should be cut down",
-    "Bamboo grove problems will fix themselves as time passes",
-    "Bamboo products should be sold abroad to earn income"
-   ],
-   "solved": true
+   "en": "Income from cutting keeps groves tended; finding uses for bamboo is the answer",
+   "solved": true,
+   "by": "outside review 2026-11-27"
   },
   "n2-set-3#63": {
    "skill": "Reading",
@@ -11143,13 +11146,9 @@
    "lines": [
     "一番の目的は、お子さんの送り迎えや、ご家族の介護をしている社員が、仕事を続けやすくすることです。"
    ],
-   "en": "The main aim is to help staff with children or elder care keep working",
-   "wrong": [
-    "The main aim is to let staff avoid crowded trains",
-    "The main aim is to make meetings shorter",
-    "The main aim is to attract new employees"
-   ],
-   "solved": true
+   "en": "Main goal: help staff with school runs or family care to keep working",
+   "solved": true,
+   "by": "outside review 2026-11-27"
   },
   "n2-set-3#80": {
    "skill": "Listening",
@@ -11189,12 +11188,12 @@
    "key": 3,
    "why": "He denies the health reason; he wanted the schoolchildren next door to be able to come into the field safely.",
    "lines": [
-    "よく、健康のためですかと聞かれるんですが、実はそうじゃないんです。",
-    "うちの畑のそばに小学校がありまして、子どもたちがよく畑に虫を見に来るんですよ。"
+    "農薬を使っていると、子どもを近づけるわけにいかないでしょう。",
+    "子どもたちが安心して畑に入れるようにしたかったんです。"
    ],
-   "en": "Not for health: children from the school nearby come to see the insects",
+   "en": "With pesticides children can't come near; he wanted them to enter safely",
    "solved": true,
-   "by": "review 2026-11-27"
+   "by": "outside review 2026-11-27"
   },
   "n2-set-3#82": {
    "skill": "Listening",
@@ -11308,15 +11307,12 @@
    "key": 4,
    "why": "The report is about a map spreading visitors away from crowded spots.",
    "lines": [
-    "そこで市では、今年から、有名な場所以外の魅力も知ってもらおうと、地元の人がすすめる散歩コースを紹介する地図を作りました。"
+    "地元の人がすすめる散歩コースを紹介する地図を作りました。",
+    "観光客が分散すれば、混雑が和らぐ"
    ],
-   "en": "A map of locals' walking routes spreads tourists beyond famous spots",
-   "wrong": [
-    "A guide to the best autumn-leaf spots in the city",
-    "A fine for tourists who drop litter",
-    "A higher entrance fee for the popular temple"
-   ],
-   "solved": true
+   "en": "The city made a map of locals' walks, hoping tourists will spread out",
+   "solved": true,
+   "by": "outside review 2026-11-27"
   },
   "n2-set-3#87": {
    "skill": "Listening",
@@ -11496,13 +11492,9 @@
    "lines": [
     "このあたりに、コンビニってありませんでしたっけ。"
    ],
-   "en": "He asks whether there was a convenience store around here",
-   "wrong": [
-    "He says he bought something at a convenience store",
-    "He asks someone to go shopping for him",
-    "He says he did not go to the convenience store"
-   ],
-   "solved": true
+   "en": "Wasn't there a convenience store around here?",
+   "solved": true,
+   "by": "outside review 2026-11-27"
   },
   "n2-set-3#95": {
    "skill": "Listening",

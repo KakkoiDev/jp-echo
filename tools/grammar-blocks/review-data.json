@@ -4,7 +4,7 @@
   "blocks": 191,
   "basicBlocks": 26,
   "patterns": 221,
-  "oneBlockPatterns": 62
+  "oneBlockPatterns": 63
  },
  "blocks": [
   {
@@ -1157,7 +1157,7 @@
    ],
    "type": "noun",
    "level": "N2",
-   "gloss": "on top of; given that",
+   "gloss": "top; above",
    "example": {
     "ja": "棚【たな】の上【うえ】に置【お】いた。",
     "en": "I put it on top of the shelf."
@@ -1336,7 +1336,7 @@
    ],
    "type": "noun",
    "level": "N3",
-   "gloss": "frames a personal circumstance",
+   "gloss": "sets up an explanation or excuse",
    "example": {
     "ja": "寒【さむ】いものだから、窓【まど】を閉【し】めた。",
     "en": "I shut the window because it was cold."
@@ -2266,10 +2266,6 @@
      "meaning": "it does not necessarily mean that"
     },
     {
-     "pattern": "かねない",
-     "meaning": "there is a risk that something bad may happen"
-    },
-    {
      "pattern": "に越したことはない",
      "meaning": "it is best to"
     },
@@ -2607,7 +2603,7 @@
    ],
    "type": "noun",
    "level": "N2",
-   "gloss": "grounds for drawing a conclusion",
+   "gloss": "reason; why",
    "example": {
     "ja": "急【いそ】ぐわけを教【おし】えて。",
     "en": "Tell me why you're in a hurry."
@@ -3097,7 +3093,8 @@
    "forms": [
     "かねる",
     "かね",
-    "かねます"
+    "かねます",
+    "かねない"
    ],
    "type": "ending",
    "level": "N2",
@@ -3606,7 +3603,7 @@
    ],
    "type": "noun",
    "level": "N2",
-   "gloss": "an attached circumstance or unit",
+   "gloss": "due to (formal)",
    "example": {
     "ja": "本日【ほんじつ】は定休日【ていきゅうび】につき、お休【やす】みさせていただきます。",
     "en": "Because today is our regular holiday, we are closed."
@@ -4058,8 +4055,7 @@
    "form": "通じる",
    "forms": [
     "通じる",
-    "通じて",
-    "通して"
+    "通じて"
    ],
    "type": "verb",
    "level": "N2",
@@ -4219,9 +4215,9 @@
    "forms": [
     "頂戴"
    ],
-   "type": "verb",
+   "type": "noun",
    "level": "N2",
-   "gloss": "verb for receiving from another",
+   "gloss": "receiving (humble)",
    "example": {
     "ja": "お水【みず】を頂戴【ちょうだい】できますか。",
     "en": "Could I have some water?"
@@ -6335,7 +6331,7 @@
     {
      "text": "つき",
      "block": "tsuki",
-     "gloss": "an attached circumstance or unit"
+     "gloss": "due to (formal)"
     }
    ],
    "literal": "records what attaches to the unit or circumstance",
@@ -6535,19 +6531,14 @@
    },
    "parts": [
     {
-     "text": "かね",
+     "text": "かねない",
      "block": "kaneru",
-     "gloss": "could well (do)"
-    },
-    {
-     "text": "ない",
-     "block": "nai",
-     "gloss": "negative: no, not"
+     "gloss": "risk of a bad result"
     }
    ],
-   "literal": "there is no obstacle to that result",
-   "transparency": "clear",
-   "oneBlock": false
+   "literal": "a bad result could well happen",
+   "transparency": "opaque",
+   "oneBlock": true
   },
   {
    "key": "を除いて",
@@ -7043,7 +7034,7 @@
     {
      "text": "で",
      "block": "te",
-     "gloss": "and so (negative connective)"
+     "gloss": "without (negative link)"
     },
     {
      "text": "は",
@@ -7056,7 +7047,7 @@
      "gloss": "cannot stay as one is"
     }
    ],
-   "literal": "cannot stay in the state of not doing it",
+   "literal": "cannot stay without doing it",
    "transparency": "clear",
    "oneBlock": false
   },
@@ -7187,12 +7178,12 @@
     {
      "text": "際",
      "block": "sai",
-     "gloss": "occasion; time of an event"
+     "gloss": "on the occasion of"
     },
     {
      "text": "して",
      "block": "suru-do",
-     "gloss": "facing it"
+     "gloss": "doing; at the time of"
     }
    ],
    "literal": "on the occasion of undertaking it",
@@ -9041,7 +9032,7 @@
     {
      "text": "頂戴",
      "block": "choudai",
-     "gloss": "verb for receiving from another"
+     "gloss": "receiving (humble)"
     }
    ],
    "literal": "ask to receive the linked action",
@@ -9489,7 +9480,7 @@
     {
      "text": "もの",
      "block": "mono-explanation",
-     "gloss": "frames a personal circumstance"
+     "gloss": "sets up an explanation or excuse"
     },
     {
      "text": "だ",
@@ -9518,7 +9509,7 @@
     {
      "text": "もの",
      "block": "mono-explanation",
-     "gloss": "frames a personal circumstance"
+     "gloss": "sets up an explanation or excuse"
     },
     {
      "text": "で",

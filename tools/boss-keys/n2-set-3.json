@@ -115,15 +115,12 @@
  },
  "62": {
   "lines": [
-   "竹を切ることがそのまま収入につながれば、手入れを続ける人も増えるはずだ。"
+   "竹を切ることがそのまま収入につながれば、手入れを続ける人も増えるはずだ。",
+   "もう一度、竹を暮らしの中で使う方法を見つけることが、問題を解決する近道なのかもしれない。"
   ],
-  "en": "If cutting bamboo brings income, more people will keep tending the groves",
-  "wrong": [
-   "Bamboo is a bad plant, so all of it should be cut down",
-   "Bamboo grove problems will fix themselves as time passes",
-   "Bamboo products should be sold abroad to earn income"
-  ],
-  "solved": true
+  "en": "Income from cutting keeps groves tended; finding uses for bamboo is the answer",
+  "solved": true,
+  "by": "outside review 2026-11-27"
  },
  "63": {
   "lines": [
@@ -311,13 +308,9 @@
   "lines": [
    "一番の目的は、お子さんの送り迎えや、ご家族の介護をしている社員が、仕事を続けやすくすることです。"
   ],
-  "en": "The main aim is to help staff with children or elder care keep working",
-  "wrong": [
-   "The main aim is to let staff avoid crowded trains",
-   "The main aim is to make meetings shorter",
-   "The main aim is to attract new employees"
-  ],
-  "solved": true
+  "en": "Main goal: help staff with school runs or family care to keep working",
+  "solved": true,
+  "by": "outside review 2026-11-27"
  },
  "80": {
   "lines": [
@@ -333,12 +326,12 @@
  },
  "81": {
   "lines": [
-   "よく、健康のためですかと聞かれるんですが、実はそうじゃないんです。",
-   "うちの畑のそばに小学校がありまして、子どもたちがよく畑に虫を見に来るんですよ。"
+   "農薬を使っていると、子どもを近づけるわけにいかないでしょう。",
+   "子どもたちが安心して畑に入れるようにしたかったんです。"
   ],
-  "en": "Not for health: children from the school nearby come to see the insects",
+  "en": "With pesticides children can't come near; he wanted them to enter safely",
   "solved": true,
-  "by": "review 2026-11-27"
+  "by": "outside review 2026-11-27"
  },
  "82": {
   "lines": [
@@ -392,15 +385,12 @@
  },
  "86": {
   "lines": [
-   "そこで市では、今年から、有名な場所以外の魅力も知ってもらおうと、地元の人がすすめる散歩コースを紹介する地図を作りました。"
+   "地元の人がすすめる散歩コースを紹介する地図を作りました。",
+   "観光客が分散すれば、混雑が和らぐ"
   ],
-  "en": "A map of locals' walking routes spreads tourists beyond famous spots",
-  "wrong": [
-   "A guide to the best autumn-leaf spots in the city",
-   "A fine for tourists who drop litter",
-   "A higher entrance fee for the popular temple"
-  ],
-  "solved": true
+  "en": "The city made a map of locals' walks, hoping tourists will spread out",
+  "solved": true,
+  "by": "outside review 2026-11-27"
  },
  "87": {
   "lines": [
@@ -490,13 +480,9 @@
   "lines": [
    "このあたりに、コンビニってありませんでしたっけ。"
   ],
-  "en": "He asks whether there was a convenience store around here",
-  "wrong": [
-   "He says he bought something at a convenience store",
-   "He asks someone to go shopping for him",
-   "He says he did not go to the convenience store"
-  ],
-  "solved": true
+  "en": "Wasn't there a convenience store around here?",
+  "solved": true,
+  "by": "outside review 2026-11-27"
  },
  "95": {
   "lines": [
