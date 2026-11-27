@@ -12,7 +12,7 @@ const inventory = read("../n2-inventory.json");
 const plain = s => String(s || "").replace(/【[^】]*】/g, "");
 const seeded = (n = 1) => () => { n = (n * 16807) % 2147483647; return n / 2147483647; };
 const items = f => has(f) ? read(f).items : [];
-const extras = {paraphrase: items("../n2-paraphrase.json"), pairs: items("../n2-pairs.json"), ordering: items("../n2-ordering.json"), pieces: has("../n2-word-pieces.json") ? read("../n2-word-pieces.json").pieces : {}};
+const extras = {paraphrase: items("../n2-paraphrase.json"), pairs: items("../n2-pairs.json"), ordering: items("../n2-ordering.json"), pieces: has("../n2-word-pieces.json") ? read("../n2-word-pieces.json").pieces : {}, gapWrong: has("../n2-gap-wrong.json") ? read("../n2-gap-wrong.json").wrong : {}};
 const pool = gamePool({inventory, extras});
 
 test("sentence order (問題8): four tiles, the one on ★; only items a second reader rebuilt the same way", () => {
@@ -63,7 +63,7 @@ test("authored cards are answers like any other: scored, counted, and a miss com
   assert.ok(nextRound({pool, state: st, random: seeded(1)}).round[0].id === q.id);
   // Without the files the pool is what it was.
   assert.equal(gamePool({inventory}).filter(c => ["para", "pair", "order"].includes(c.kind)).length, 0);
-  assert.ok(src("../n2-mock.js").includes('["./n2-paraphrase.json", "./n2-pairs.json", "./n2-ordering.json", "./n2-sets/en.json", "./n2-word-pieces.json"]'));
+  assert.ok(src("../n2-mock.js").includes('["./n2-paraphrase.json", "./n2-pairs.json", "./n2-ordering.json", "./n2-sets/en.json", "./n2-word-pieces.json", "./n2-gap-wrong.json"]'));
   for (const f of ["./n2-ordering.json", "./n2-pairs.json", "./n2-sets/en.json", "./n2-word-pieces.json"]) assert.ok(src("../sw.js").includes('"' + f + '"'), f + " is precached");
 });
 
@@ -126,4 +126,38 @@ test("list entries with a note in their label are shown clean and get cards; the
   }
   assert.ok(full.some(q => q.id === "a:～ごと") && full.some(q => q.id === "p:～式") && full.some(q => q.id === "m:しわ"));
   assert.ok(!full.some(q => q.kind !== "definition" && /[()（）]/.test(q.prompt || "") && q.target?.[0] === "word"), "no Japanese prompt shows a note in its label");
+});
+
+test("N2 rounds give two places to kanji-first picking; without an order the round is as before", async () => {
+  const {kanjiOrderOf, KANJI_PLACES} = await import("../n2-game.js");
+  const examples = (await import("../day-radio.js")).examplesFromDecks(inventory, [read("../decks/n2-words.json"), read("../decks/n2-grammar.json")]);
+  const full = gamePool({inventory, examples, parts: read("../n2-kanji-parts.json")}), order = kanjiOrderOf(full);
+  assert.equal(KANJI_PLACES, 2); assert.ok(order.length > 600 && order[0] === "日", "kanji in the order of how many N2 words carry them");
+  for (let n = 1; n <= 10; n++) {
+    const {round} = nextRound({pool: full, state: {}, random: seeded(n), kanjiOrder: order});
+    assert.equal(round.length, 10); assert.equal(round.filter(q => q.focus).length, KANJI_PLACES);
+    assert.equal(new Set(round.map(q => q.id)).size, 10);
+  }
+  assert.deepEqual(nextRound({pool: full, state: {}, random: seeded(3)}).round.map(q => q.id), nextRound({pool: full, state: {}, random: seeded(3), kanjiOrder: ""}).round.map(q => q.id));
+  const slump = {history: [{at: "x", score: -500, right: 2, n: 10}]};
+  assert.equal(nextRound({pool: full, state: slump, random: seeded(2), kanjiOrder: order}).round.filter(q => q.focus).length, 0, "a recovery round is left alone");
+  assert.ok(src("../n2-mock.js").includes('kanjiOrder: pool === n2Pool ? n2KanjiOrder : "",'));
+});
+
+test("a grammar gap card takes the wrong choices written for its sentence, where they passed their blind test", async () => {
+  const authored = read("../n2-gap-wrong.json").wrong;
+  const examples = (await import("../day-radio.js")).examplesFromDecks(inventory, [read("../decks/n2-words.json"), read("../decks/n2-grammar.json")]);
+  const gaps = gamePool({inventory, examples, extras: {gapWrong: authored}}).filter(q => q.kind === "gap");
+  assert.equal(Object.keys(authored).length, 195, "196 written, one dropped: a choice failed on form");
+  assert.ok(!authored["とも"]);
+  let own = 0;
+  for (const q of gaps) {
+    const key = q.id.slice(2);
+    if (authored[key]) { own++; assert.ok(q.fixedWrong); assert.deepEqual(q.wrong, authored[key]); assert.deepEqual(q.near, []); assert.deepEqual([...choicesFor(q, seeded(4), .5).choices].sort(), [q.answer, ...authored[key]].sort()); }
+    else assert.ok(!q.fixedWrong && q.wrong.length >= 3, key + ": other sentences' forms, as before");
+  }
+  assert.ok(own >= 190);
+  // Without the file the cards are as they were.
+  assert.ok(gamePool({inventory, examples}).filter(q => q.kind === "gap").every(q => !q.fixedWrong));
+  assert.ok(src("../sw.js").includes('"./n2-gap-wrong.json"'));
 });

@@ -213,7 +213,7 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
       sentence: plain(ex.ja), needle: GRAMMAR_SPANS["g:" + g.target[1]] || piecesNeedle(plain(ex.ja), g.prompt) || surfaceNeedle(plain(ex.ja), g.prompt) || g.prompt.replace(/[〜～]/g, ""), answer: gAnswer, wrong: [...new Set(wrong)], seconds: SECONDS.grammar,
       solution: {word: g.prompt, meaning: gAnswer, ja: ex.ja, en: ex.en || ""}});
   }
-  if (!other) pool.push(...gapCards(pool.filter(q => q.kind === "grammar"), confusablePair));
+  if (!other) pool.push(...gapCards(pool.filter(q => q.kind === "grammar"), confusablePair, extras?.gapWrong || {}));
   if (!other) { const parts = affixCards(affixes, sentenceOf); pool.push(...parts, ...partGapCards(parts)); }
   if (!other && grammarBlocks) addGrammarBlocks(pool, grammarBlocks);
   // Connectives (問題9): from reading passages of sets already sat. The
@@ -274,14 +274,17 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
 // gives the sentence that meaning. The choices are forms as sentences write
 // them, never a near-twin of the answer (GRAMMAR_CONFUSABLE, AFFIX_CONFUSABLE).
 const GAP = "（　）";
-function gapCards(grammar, confusablePair) {
+// authored: pattern key → three wrong choices written for that sentence (n2-gap-wrong.json, blind-tested): forms that
+// attach in the gap and are wrong by meaning, as the exam writes them. Where there are none, other sentences' forms.
+function gapCards(grammar, confusablePair, authored = {}) {
   const usable = grammar.filter(q => typeof q.needle === "string" && q.needle.length >= 2 && q.sentence.split(q.needle).length === 2 && q.solution?.en && !EXCLUDED[q.id]);
   return usable.flatMap(q => {
     const key = q.id.slice(2);
     const wrong = [...new Set(usable.filter(o => o !== q && !confusablePair.has(key + "\n" + o.id.slice(2)) && !sameSense(o.answer, q.answer) && !o.needle.includes(q.needle) && !q.needle.includes(o.needle)).map(o => o.needle))];
-    if (wrong.length < 3) return [];
-    return [{id: "f:" + key, kind: "gap", target: q.target, dimension: "grammar", prompt: q.prompt, sentence: q.sentence.replace(q.needle, GAP), en: q.solution.en,
-      answer: q.needle, wrong, near: wrong.filter(w => Math.abs(w.length - q.needle.length) <= 1), seconds: SECONDS.gap, solution: q.solution, needle: q.needle}];
+    const own = Array.isArray(authored[key]) && authored[key].length === 3 ? authored[key] : null;
+    if (!own && wrong.length < 3) return [];
+    return [{id: "f:" + key, kind: "gap", ...(own ? {fixedWrong: true} : {}), target: q.target, dimension: "grammar", prompt: q.prompt, sentence: q.sentence.replace(q.needle, GAP), en: q.solution.en,
+      answer: q.needle, wrong: own || wrong, near: own ? [] : wrong.filter(w => Math.abs(w.length - q.needle.length) <= 1), seconds: SECONDS.gap, solution: q.solution, needle: q.needle}];
   });
 }
 function partGapCards(parts) {
@@ -868,7 +871,16 @@ export function inSlump(state = {}) {
 // picked exactly as it always was.
 // kanji: {order, examples} picks the rank's places by kanji (kanjiPick)
 // instead of by card: the way of every level whose cards are word cards only.
-export function nextRound({pool, review = [], kanji = null, grammarCards = null, boss = [], recall = [], state = {}, difficulty = "normal", random = Math.random, now = Date.now(), exams = true, weights = null}) {
+// N2 kanji (owner's backlog, 27 Nov): N2 rounds stay picked by card, but KANJI_PLACES of each go to kanji-first picking
+// over the same pool (kanjiPick): a missed reading first, then new kanji in the order of how many N2 words carry them,
+// then proving them in words not seen yet. `kanjiOrder` is that order; without it the round is picked as before.
+export const KANJI_PLACES = 2;
+export function kanjiOrderOf(pool = []) {
+  const count = new Map();
+  for (const q of pool) if (q.kind === "reading") for (const key of q.kanji || []) { const k = [...key][0]; count.set(k, (count.get(k) || 0) + 1); }
+  return [...count.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([k]) => k).join("");
+}
+export function nextRound({pool, review = [], kanji = null, grammarCards = null, boss = [], recall = [], state = {}, difficulty = "normal", random = Math.random, now = Date.now(), exams = true, weights = null, kanjiOrder = ""}) {
   // exams: false leaves a paper's own questions (the `e:` cards) out of the round. The game does (owner, 27 Nov).
   if (!exams) pool = pool.filter(q => q.kind !== "exam");
   // A flagged card rests (flagCard): it is in no round until the rest is over.
@@ -890,6 +902,12 @@ export function nextRound({pool, review = [], kanji = null, grammarCards = null,
     // The last boss's misses take the first places after the comebacks; a recovery round leaves them out.
     ...(slump ? {} : {first: boss, places: BOSS_PLACES})});
 
+  // Kanji places in an N2 round: the last places picked by card give way to kanji-first picks over the same pool.
+  if (kanjiOrder && !kanji?.order && !slump) {
+    const byKanji = kanjiPick({pool, order: kanjiOrder, state, size: KANJI_PLACES, skip: picked, random, now});
+    if (byKanji.length) { const keep = picked.filter(q => q.comeback || q.boss), rest = picked.filter(q => !q.comeback && !q.boss);
+      picked = [...keep, ...rest.slice(0, Math.max(0, rest.length - byKanji.length)), ...byKanji]; }
+  }
   if (grammarCards && !slump) {
     const slots = picked.filter(q => q.kind === "grammar" && !q.comeback && !q.boss);
     const replacements = grammarPick({pool: grammarCards, state, slots, skip: picked.filter(q => !slots.includes(q)), comeback, now});
