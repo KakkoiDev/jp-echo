@@ -1,0 +1,392 @@
+{
+ "52": {
+  "lines": [
+   "水が出始めたとき、しばらく濁った水が出ることがありますので、透明になるまで流してからお使いください。"
+  ],
+  "en": "When water returns, run it until clear before using it.",
+  "solved": true
+ },
+ "53": {
+  "lines": [
+   "先日ご依頼いただいた見積書ですが、部品の価格が変更になったため、金曜日までにお送りすることが難しくなりました。",
+   "お急ぎの場合は、変更前の価格をもとに概算をお出しすることもできますので、お知らせください。"
+  ],
+  "en": "Friday's quote will be late; I can send an estimate if you're in a hurry.",
+  "solved": true
+ },
+ "54": {
+  "lines": [
+   "相手の言葉をまず「ありがとうございます」と受け取り、そのうえで今後の目標を話す。"
+  ],
+  "en": "First say thank you for the compliment, then talk about future goals.",
+  "solved": true
+ },
+ "55": {
+  "lines": [
+   "体育館の利用者は、受付で駐車券に印を押してもらうと、3時間まで無料になります。",
+   "3時間を超えた分は、30分ごとに100円かかります。"
+  ],
+  "en": "With a stamped ticket, three hours are free; then it's ¥100 per half hour.",
+  "solved": true
+ },
+ "56": {
+  "lines": [
+   "つまり、30%で雨が降っても、予報が外れたことにはならないのである。"
+  ],
+  "en": "Rain with a 30% chance doesn't mean the forecast was wrong.",
+  "solved": true
+ },
+ "57": {
+  "lines": [
+   "店は車で二十分先にしかなく、バスは一日に三本しか来ない。"
+  ],
+  "en": "The shop was 20 minutes away by car, and there were three buses a day.",
+  "solved": true
+ },
+ "58": {
+  "lines": [
+   "お礼をしようとすると、「そのうち、あんたが次に来た若い人に教えてやればいい」と笑うだけだった。"
+  ],
+  "en": "When I offered thanks, they just said I could teach the next newcomer.",
+  "solved": true
+ },
+ "59": {
+  "lines": [
+   "誰かの助けがなければ暮らせないからこそ、自分も誰かの役に立ちたいと思うようになるのだ。"
+  ],
+  "en": "Needing help from others makes you want to help someone in turn.",
+  "solved": true
+ },
+ "60": {
+  "lines": [
+   "「新薬、効果なし」",
+   "そこだけを読めば、多くの人は薬がまったく役に立たないと受け取るだろう。"
+  ],
+  "en": "The headline said no effect; readers can take it to mean the drug never works.",
+  "solved": true
+ },
+ "61": {
+  "lines": [
+   "忙しい読者が短い言葉で済ませようとするから、作る側も短く強い言葉で応えようとする。",
+   "つまり、両者は互いに影響し合っているのである。"
+  ],
+  "en": "Busy readers want brevity, so writers use punchy words; both play a role.",
+  "solved": true
+ },
+ "62": {
+  "lines": [
+   "だが、自分の考えや行動に関わるニュースについては、少なくとも本文を一度読んでから判断する。"
+  ],
+  "en": "For news that affects you, read the article before deciding what to think.",
+  "solved": true
+ },
+ "63": {
+  "lines": [
+   "正直に言えば評価が下がるのではないかと心配になるからだろう。"
+  ],
+  "en": "They likely worry that an honest answer will count against them.",
+  "solved": true
+ },
+ "64": {
+  "lines": [
+   "大切なのは、自分の弱点をどれだけ客観的に理解し、それとどう付き合っているかだ、と知人は言う。"
+  ],
+  "en": "They want to see whether you understand your weakness and how you manage it.",
+  "solved": true
+ },
+ "65": {
+  "lines": [
+   "短所を隠そうとするより、それを含めて自分を説明できることのほうが、ずっと説得力があるのではないだろうか。"
+  ],
+  "en": "Explaining yourself, weaknesses included, is more persuasive.",
+  "solved": true
+ },
+ "66": {
+  "lines": [
+   "むしろ「やらされる勉強」という印象を与え、勉強嫌いの子どもを増やしているのではないか。量が多ければ、なおさらである。",
+   "ただし、量が多すぎれば子どもの負担になり、逆効果になるのも事実だ。"
+  ],
+  "en": "It feels like forced study, worse when there's a lot; too much is a burden",
+  "solved": true,
+  "enBy": "maintainer, after the blind reader's note"
+ },
+ "67": {
+  "lines": [
+   "むしろ「やらされる勉強」という印象を与え、勉強嫌いの子どもを増やしているのではないか。",
+   "宿題には、授業で習ったことを繰り返して定着させる役割がある。"
+  ],
+  "en": "A says homework can put kids off; B says repetition reinforces learning.",
+  "solved": true
+ },
+ "68": {
+  "lines": [
+   "登場人物が黙って窓の外を見ている数秒の間に、観客は人物の気持ちを想像し、自分の経験と重ね合わせる。"
+  ],
+  "en": "When a character falls silent, we imagine how they feel.",
+  "solved": true
+ },
+ "69": {
+  "lines": [
+   "効率を求めすぎると、こうした偶然の出会いが入り込む隙間がなくなってしまうのだ。"
+  ],
+  "en": "Pursuing efficiency too hard leaves no room for unexpected encounters.",
+  "solved": true
+ },
+ "70": {
+  "lines": [
+   "問題は、何のために見るのかを考えないまま、あらゆるものを同じように速く消費してしまうことだ。",
+   "情報として知りたいものは速く、心を動かされたいものはゆっくりと。"
+  ],
+  "en": "Match speed to purpose: fast for information, slow to savor the experience.",
+  "solved": true
+ },
+ "71": {
+  "skip": "The base rate, nonresident surcharge and rule allowing people who work locally are on three separate lines."
+ },
+ "72": {
+  "lines": [
+   "・初めて利用する方を優先します（今年度利用した方は、空きがあった場合のみ利用できます）",
+   "・Ｂ区画の利用者は、希望すれば月1回の野菜作り講習会（無料）に参加できます。"
+  ],
+  "en": "New users get priority; users of plot B can take the free class.",
+  "solved": true
+ },
+ "73": {
+  "lines": [
+   "ただ、グラフの数字は経理に確認してからにしてくれる？",
+   "経理の田中さんに聞いてみます。"
+  ],
+  "en": "Check the figures with accounting before graphing them. I'll ask Tanaka.",
+  "solved": true
+ },
+ "74": {
+  "lines": [
+   "まず、清掃センターに電話かインターネットで申し込んでください。",
+   "あ、今日は日曜日なので、電話は受け付けていないんです。インターネットなら大丈夫ですよ。"
+  ],
+  "en": "Apply first. The phone line is closed on Sundays, but online is fine.",
+  "solved": true
+ },
+ "75": {
+  "lines": [
+   "それなら、まず図書館のカウンターで相談してみてください。"
+  ],
+  "en": "First, try asking at the library desk.",
+  "solved": true
+ },
+ "76": {
+  "lines": [
+   "じゃあ、見積もりの前に、いらない物を処分しておいたほうがいいよ。"
+  ],
+  "en": "Get rid of what you don't need before the movers come to give a quote.",
+  "solved": true
+ },
+ "77": {
+  "lines": [
+   "では、まず問診票のほうをお願いします。"
+  ],
+  "en": "Please fill out the questionnaire first.",
+  "solved": true
+ },
+ "78": {
+  "lines": [
+   "最近シフトが夜遅くまでになることが多くて、朝の授業に出られなくなってきてさ。"
+  ],
+  "en": "Late shifts have been making me miss my morning classes.",
+  "solved": true
+ },
+ "79": {
+  "lines": [
+   "でもね、南向きで陽射しがすごく入るの。",
+   "前の部屋は一日中暗くて、洗濯物も乾かなくて困ってたから。"
+  ],
+  "en": "It faces south and gets sun; the old place was dark and laundry stayed wet.",
+  "solved": true
+ },
+ "80": {
+  "lines": [
+   "変更の理由は、駅前の再開発工事で、夜九時以降、店の前の道が通行止めになるためです。"
+  ],
+  "en": "Roadwork will close the street outside the shop after 9 p.m.",
+  "solved": true
+ },
+ "81": {
+  "lines": [
+   "お客様の声を見ると、重くて階段で持ち運びにくいという意見が一番多いんです。",
+   "音が大きいという声も少しありますが、それよりずっと多くて。"
+  ],
+  "en": "It's heavy on stairs, a far more common complaint than noise.",
+  "solved": true
+ },
+ "82": {
+  "lines": [
+   "ただ、新しい病院ができたでしょう。",
+   "お年寄りから、病院まで行くバスがなくて不便だって声が多くて、そっちを回るようにしたんだって。"
+  ],
+  "en": "Older riders asked for a bus to the new hospital, so the route goes there.",
+  "solved": true
+ },
+ "83": {
+  "lines": [
+   "発表のあとの質問なんです。今回は他の部署の人もたくさん来るので、専門外のことを聞かれたら、うまく答えられるかどうか…。"
+  ],
+  "en": "I'm worried I won't answer questions outside my field from other teams.",
+  "solved": true
+ },
+ "84": {
+  "lines": [
+   "このように、月は昔の人々にとって、生活に欠かせない時計だったのです。"
+  ],
+  "en": "The moon was an indispensable timekeeper in people's lives long ago.",
+  "solved": true
+ },
+ "85": {
+  "lines": [
+   "実は、能力を褒められた子どもは、失敗を恐れて難しい問題に挑戦しなくなる傾向があるそうです。",
+   "一方で、「よく頑張ったね」「工夫したね」と努力や過程を褒められた子どもは、難しい課題にも進んで取り組むと言われています。"
+  ],
+  "en": "Praising ability makes children fear failure; praising effort helps them try.",
+  "solved": true
+ },
+ "86": {
+  "lines": [
+   "ただ、新しく入った社員からは、気軽に質問できる相手がいなくて困るという意見が目立ちました。",
+   "そこで来月から、新入社員とその指導役は、週に二日出社することにします。"
+  ],
+  "en": "New hires lack support, so they and their mentors will come in twice a week.",
+  "solved": true
+ },
+ "87": {
+  "lines": [
+   "おすすめは、お風呂の水を、次に入るまで捨てずにためておくことです。",
+   "また、ペットボトルの水は普段から少し多めに買って、古いものから使っていくと、無駄になりません。"
+  ],
+  "en": "Keep bathwater for emergencies; stock bottled water and rotate it.",
+  "solved": true
+ },
+ "88": {
+  "lines": [
+   "話の流れや敬語、「あげる」「くれる」のような言葉から、誰の話か分かるようになっているのです。",
+   "主語を探すより、話の流れを追う練習をしてみてください。"
+  ],
+  "en": "Context reveals who's meant; practice following the flow of the conversation.",
+  "solved": true
+ },
+ "89": {
+  "lines": [
+   "お邪魔します。"
+  ],
+  "en": "Excuse me for coming in. (said on entering someone's home)",
+  "solved": true,
+  "enBy": "maintainer, after the blind reader's note"
+ },
+ "90": {
+  "lines": [
+   "遅くまで残っていただいて、ご苦労様でした。"
+  ],
+  "en": "Thanks for staying so late.",
+  "solved": true
+ },
+ "91": {
+  "lines": [
+   "昨日、財布を落としちゃってさ。"
+  ],
+  "en": "I lost my wallet yesterday.",
+  "solved": true
+ },
+ "92": {
+  "lines": [
+   "この書類、明日までに出せばいいんだったっけ？"
+  ],
+  "en": "Was this document due tomorrow?",
+  "solved": true
+ },
+ "93": {
+  "lines": [
+   "課長、今ちょっとよろしいでしょうか。"
+  ],
+  "en": "Could I have a moment, please?",
+  "solved": true
+ },
+ "94": {
+  "lines": [
+   "あの店、行ってみたけど、思ったほどじゃなかったよ。"
+  ],
+  "en": "I tried that restaurant, but it didn't live up to my expectations.",
+  "solved": true
+ },
+ "95": {
+  "lines": [
+   "何分初めてなもので、ご迷惑をおかけするかもしれませんが。"
+  ],
+  "en": "It's my first time, so I may cause you some trouble.",
+  "solved": true,
+  "enBy": "maintainer, after the blind reader's note"
+ },
+ "96": {
+  "lines": [
+   "この傘、誰のか心当たりない？"
+  ],
+  "en": "Any idea whose umbrella this is?",
+  "solved": true
+ },
+ "97": {
+  "lines": [
+   "せっかく作ったのに、誰も食べてくれないなんて。"
+  ],
+  "en": "I went to the trouble of making it, but no one's eating it.",
+  "solved": true
+ },
+ "98": {
+  "lines": [
+   "部長に言われるまでもなく、やるつもりでしたよ。"
+  ],
+  "en": "I was going to do it anyway, without being told by the manager.",
+  "solved": true
+ },
+ "99": {
+  "lines": [
+   "雨、降らないうちに帰ったほうがいいんじゃない？"
+  ],
+  "en": "Wouldn't it be better to go home before it starts raining?",
+  "solved": true
+ },
+ "100": {
+  "lines": [
+   "この料理、見た目はともかく、味は保証するよ。"
+  ],
+  "en": "It may not look great, but I guarantee it tastes good.",
+  "solved": true
+ },
+ "101": {
+  "lines": [
+   "じゃあ、往復は新幹線、現地はバスってことで。",
+   "その案で部長に相談してみよう。"
+  ],
+  "en": "Bullet train both ways and bus locally. Let's ask the manager about that.",
+  "solved": true
+ },
+ "102": {
+  "lines": [
+   "でも、バスだと片道五時間かかるでしょう。",
+   "前回バスで行ったとき、長く乗っていて疲れたっていう声がすごく多かったのよ。"
+  ],
+  "en": "It's five hours each way. Last time many said the bus ride wore them out.",
+  "solved": true
+ },
+ "103": {
+  "lines": [
+   "日曜日の午後、自分で打ったそばをその場で食べられます。",
+   "じゃあ僕は、食べられるほうにするよ。"
+  ],
+  "en": "On Sunday you eat the noodles you make. I'll take the one with food.",
+  "solved": true
+ },
+ "104": {
+  "lines": [
+   "私は歌うの好きだから、民謡にしようかな。"
+  ],
+  "en": "I like singing, so I think I'll do the folk-song class.",
+  "solved": true
+ }
+}

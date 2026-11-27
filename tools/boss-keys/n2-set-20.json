@@ -1,0 +1,389 @@
+{
+ "52": {
+  "lines": [
+   "また、点検の前に水をためておく必要はありませんが、作業中は洗濯機を使用しないでください。"
+  ],
+  "en": "You don't need to store water, but don't run a washer during the work.",
+  "solved": false,
+  "unsolved": "right, but not from the lines alone: lines do not rule out 2 or 4"
+ },
+ "53": {
+  "lines": [
+   "ご注文の本棚ですが、メーカーでの生産が遅れており、お届けが当初の予定より二週間ほど遅れる見込みです。",
+   "このままお待ちいただける場合は、特にご連絡は不要です。"
+  ],
+  "en": "Delivery is about two weeks late. If you'll wait, you don't need to reply.",
+  "solved": true
+ },
+ "54": {
+  "lines": [
+   "ある日、先生が私の作品から黙って三本抜いた。",
+   "すると、残った花がそれぞれ急に生き生きとして見えたのだ。"
+  ],
+  "en": "The teacher removed three stems, and each remaining flower stood out.",
+  "solved": true
+ },
+ "55": {
+  "lines": [
+   "ただし、次に当てはまる方は、引き続き提出が必要です。",
+   "・そのほか、区から提出のお願いが届いた方"
+  ],
+  "en": "Those who receive a request from the ward must submit the form.",
+  "solved": true
+ },
+ "56": {
+  "lines": [
+   "しかし、体が最もよく働く時間帯は人によって違うという研究もある。",
+   "大切なのは、一般によいとされる習慣に自分を合わせることではなく、自分の体の調子をよく観察することだ。"
+  ],
+  "en": "Peak times vary by person; pay attention to your own energy levels.",
+  "solved": true
+ },
+ "57": {
+  "lines": [
+   "特売日に来る客の多くは安い品物だけを買って帰り、ほかの日にはほとんど来ないというのだ。"
+  ],
+  "en": "Most visitors bought bargains and seldom came back on other days.",
+  "solved": true
+ },
+ "58": {
+  "lines": [
+   "始めた当初は客が減り、反対する店主もいた。",
+   "しかし、半年ほどたつと、教わった料理を作ってみたという客が、普段の日にも店を訪れるようになった。"
+  ],
+  "en": "At first fewer came, but after six months people came on ordinary days too.",
+  "solved": true
+ },
+ "59": {
+  "lines": [
+   "ある店主は「安さで来てもらうより、顔を覚えてもらうほうが長続きする」と話す。"
+  ],
+  "en": "People remembering your face keeps them coming back longer than discounts.",
+  "solved": true
+ },
+ "60": {
+  "lines": [
+   "もちろんそれらも大切だが、意外に見落とされているのが「寝る前の準備を毎日同じ順番で行うこと」である。"
+  ],
+  "en": "One thing people miss is doing the same bedtime steps in the same order.",
+  "solved": true
+ },
+ "61": {
+  "lines": [
+   "逆に、日によって着替えずに眠ったり、寝る直前まで仕事をしたりしていると、体は「これから眠る」という合図を受け取れない。"
+  ],
+  "en": "Skipping usual steps or working late prevents the body from taking its cue.",
+  "solved": true
+ },
+ "62": {
+  "lines": [
+   "専門家は、そうしたときでも寝巻に着替えるなど、一つか二つだけでも普段どおりにしておくとよいと勧めている。"
+  ],
+  "en": "Away from home, keep just one or two usual steps, like changing for bed.",
+  "solved": true
+ },
+ "63": {
+  "lines": [
+   "ところが最近は、昼間に家にいない世帯が増え、回覧板が一軒で何日も止まってしまうことが多くなった。",
+   "行事の案内が、行事が終わってから届いたこともある。"
+  ],
+  "en": "More were out in the daytime; notices sometimes arrived after the event.",
+  "solved": true
+ },
+ "64": {
+  "lines": [
+   "町内会は結局、回覧板を完全にはやめず、希望する家には紙のお知らせも配ることにした。"
+  ],
+  "en": "The association kept delivering paper versions to households that wanted them.",
+  "solved": true
+ },
+ "65": {
+  "lines": [
+   "回覧板を隣の家に届けるとき、ついでに一言二言交わす。",
+   "そうしたやりとりが、いざというときに互いを気にかける関係を支えてきたのではないか。"
+  ],
+  "en": "A few words exchanged at delivery helped neighbors look out for each other.",
+  "solved": true
+ },
+ "66": {
+  "lines": [
+   "小さな子どもを連れた親や、散歩をする高齢者にとって、勢いよく飛んでくるボールは危険だからだ。",
+   "安全を考えれば理解できなくはないが、子どもたちが気軽に体を動かせる場所は確実に減っている。"
+  ],
+  "en": "A calls flying balls a danger; B understands the safety concern.",
+  "solved": true
+ },
+ "67": {
+  "lines": [
+   "ボール遊びをしたいなら、学校の校庭や専用の運動場を使えばよい。",
+   "すべてを禁止するのではなく、時間帯や場所を分けるなどの工夫をすれば、小さな子どもや高齢者とも共存できるのではないか。"
+  ],
+  "en": "A would send players to a field; B would share the park by time or area.",
+  "solved": false,
+  "unsolved": "right, but not from the lines alone: A's view is only implied"
+ },
+ "68": {
+  "lines": [
+   "たとえば平均所得が上がったとしても、それは一部の人の所得が大きく伸びた結果かもしれない。",
+   "多くの人の所得が変わらなければ、平均の上昇は多くの人にとって実感のない話になる。"
+  ],
+  "en": "A few big gains can raise the average while most see no change.",
+  "solved": true
+ },
+ "69": {
+  "lines": [
+   "これは実感が間違っているということではない。",
+   "その人にとっては、全国の数字より、自分の町の出来事のほうがずっと切実なのである。"
+  ],
+  "en": "Their feeling isn't wrong; what's happening nearby matters more to them.",
+  "solved": true
+ },
+ "70": {
+  "lines": [
+   "数字と実感の食い違いは、どちらかの誤りではなく、社会をより深く知るための入り口なのである。"
+  ],
+  "en": "The gap between numbers and experience can help us understand society.",
+  "solved": true
+ },
+ "71": {
+  "skip": "The fees, local employment eligibility, B residency rule and discount qualifications are on separate lines."
+ },
+ "72": {
+  "skip": "The deadline, lottery, base fee and senior discount cannot all fit in two source lines."
+ },
+ "73": {
+  "lines": [
+   "新しいデータは人事部の山田さんが持ってるから。",
+   "じゃあ、すぐ山田さんに連絡してみます。"
+  ],
+  "en": "Yamada in HR has the new data. I'll contact Yamada now.",
+  "solved": true
+ },
+ "74": {
+  "lines": [
+   "でしたら、先に用紙だけご記入いただけますか。",
+   "そうします。"
+  ],
+  "en": "Could you fill out the form first? Okay, I'll do that.",
+  "solved": true
+ },
+ "75": {
+  "lines": [
+   "でも、いきなりインタビューは難しいから、その前に、話を聞ける人を紹介してもらえないか先生に聞いてみたら？",
+   "じゃ、明日先生の研究室に行ってみます。"
+  ],
+  "en": "Ask the teacher for an interview contact first. I'll visit tomorrow.",
+  "solved": true
+ },
+ "76": {
+  "lines": [
+   "お名前とお電話番号で、こちらでお調べできますよ。",
+   "じゃあ、お願いします。"
+  ],
+  "en": "I can look it up by name and phone number. Yes, please do.",
+  "solved": true
+ },
+ "77": {
+  "lines": [
+   "それ、お姉さんがもう用意してるんじゃない？",
+   "じゃ、今夜電話して聞いてみる。"
+  ],
+  "en": "Your sister may have decor already. I'll call her tonight to ask.",
+  "solved": false,
+  "unsolved": "right, but not from the lines alone: 'decor' is not in the lines; 'それ' is unspecified"
+ },
+ "78": {
+  "lines": [
+   "工事は一年ぐらいだから我慢できるんだけど、完成したら、うちのベランダ、一日中日が当たらなくなるんだよ。"
+  ],
+  "en": "I can stand the construction, but afterward our balcony will get no sun.",
+  "solved": true
+ },
+ "79": {
+  "lines": [
+   "ただね、乗り換えが多くて。前は電車一本だったのに、今は二回乗り換えなきゃいけないの。"
+  ],
+  "en": "I used to take one train; now I need to change trains twice.",
+  "solved": true
+ },
+ "80": {
+  "lines": [
+   "変えたのは、焼き上がりの時間を店の前の黒板に書くようにしたことです。"
+  ],
+  "en": "We started putting the baking times on the blackboard at the entrance.",
+  "solved": true
+ },
+ "81": {
+  "lines": [
+   "花を選んで、どこに入れようか考えてるとき、仕事のことを全部忘れられるのよ。"
+  ],
+  "en": "Choosing and arranging flowers lets me forget about work.",
+  "solved": true
+ },
+ "82": {
+  "lines": [
+   "撮るのはいいんだけど、写真屋さんでプリントしてもらうのに一日かかるらしくて。"
+  ],
+  "en": "I can get the photo taken, but the photo shop needs a day to print it.",
+  "solved": true
+ },
+ "83": {
+  "lines": [
+   "暗い中では、昼間は気にならない段差や看板が危険になりますし、街灯が少ない道もあります。",
+   "参加しやすさを考えると昼のほうがいいのですが、今回は、夜の町を実際に歩いて確かめていただくことを優先しました。"
+  ],
+  "en": "Steps and signs are hazards in the dark; we want everyone to see firsthand.",
+  "solved": true
+ },
+ "84": {
+  "lines": [
+   "でも最近の研究で、スポーツ選手が試合中に「大丈夫、できる」と自分に声をかけると、実際に成績が上がることがわかってきました。",
+   "そうすると、自分を少し外から見られるようになり、緊張が和らぐといいます。"
+  ],
+  "en": "Positive self-talk helps athletes perform and can reduce tension.",
+  "solved": true
+ },
+ "85": {
+  "lines": [
+   "ただ、私は、床の間の本当の役割は「何も置かない空間を家の中に持つこと」にあったと思うんです。",
+   "形は変わっても、その考え方は今の家にも生かせるのではないでしょうか。"
+  ],
+  "en": "The alcove's real role: a space with nothing in it. The idea still works now",
+  "solved": true,
+  "enBy": "maintainer, after the blind reader's note"
+ },
+ "86": {
+  "lines": [
+   "ただ、作業中でも、お客様と目が合ったら手を止めて、「何かお探しですか」と一言かけてください。"
+  ],
+  "en": "If you make eye contact with a customer, stop and ask if they need help.",
+  "solved": true
+ },
+ "87": {
+  "lines": [
+   "分類というのは、目的によって変わるものなのです。",
+   "ですから、ある分類を見たときには、「何のために分けたのか」を考えることが大切です。"
+  ],
+  "en": "Classification depends on the purpose; ask what the grouping is for.",
+  "solved": true
+ },
+ "88": {
+  "lines": [
+   "部屋着は一日中着ていて汗を吸っていることが多く、寝ている間の体温の調節を妨げることがあるからです。",
+   "また、着替えることで、体が「これから眠る時間だ」と気づくきっかけにもなるといいます。"
+  ],
+  "en": "Day clothes may interfere with temperature control; changing cues sleep.",
+  "solved": true
+ },
+ "89": {
+  "lines": [
+   "あのう、このコピー機、使い終わったら電源、切っておいたほうがいいですか。"
+  ],
+  "en": "Should I turn the copier off when I'm done?",
+  "solved": true
+ },
+ "90": {
+  "lines": [
+   "山田さん、明日の会議の資料、間に合いそう？"
+  ],
+  "en": "Yamada, will the materials for tomorrow's meeting be ready in time?",
+  "solved": true
+ },
+ "91": {
+  "lines": [
+   "せっかく来てくれたのに、何のおかまいもできなくて。"
+  ],
+  "en": "You've come all this way and I can't offer you anything.",
+  "solved": true
+ },
+ "92": {
+  "lines": [
+   "今度のプロジェクト、君のこれまでの経験を活かすいい機会だと思うんだけど。"
+  ],
+  "en": "I think this project could be a good chance to use your experience.",
+  "solved": true
+ },
+ "93": {
+  "lines": [
+   "駅前に新しくできたカフェ、行ってみた？割と静かでよかったよ。"
+  ],
+  "en": "Have you tried the new cafe by the station? It was nice and fairly quiet.",
+  "solved": true
+ },
+ "94": {
+  "lines": [
+   "部長、よろしければ、ご自宅までお送りしましょうか。"
+  ],
+  "en": "Manager, would you like a ride home?",
+  "solved": true
+ },
+ "95": {
+  "lines": [
+   "課長に直接頼まれたら、断れっこないじゃない。"
+  ],
+  "en": "You can't turn it down if the section manager asks you personally.",
+  "solved": true
+ },
+ "96": {
+  "lines": [
+   "今さら謝ったところで、許してもらえるとは思えないけど。"
+  ],
+  "en": "I doubt they'll forgive me if I apologize at this point.",
+  "solved": true
+ },
+ "97": {
+  "lines": [
+   "恐れ入ります。こちらのお皿、お下げしてもよろしいでしょうか。"
+  ],
+  "en": "Excuse me. May I take this plate?",
+  "solved": true
+ },
+ "98": {
+  "lines": [
+   "このレポート、もう少し早く出してくれたら、見てあげられたんだけどね。"
+  ],
+  "en": "If you'd submitted this sooner, I could have looked it over.",
+  "solved": true
+ },
+ "99": {
+  "lines": [
+   "せめて連絡ぐらいくれればよかったのに。"
+  ],
+  "en": "I wish you'd at least let me know.",
+  "solved": true
+ },
+ "100": {
+  "lines": [
+   "雨の中、わざわざお越しいただいて恐縮です。"
+  ],
+  "en": "Thank you for going to the trouble of coming out in the rain.",
+  "solved": true
+ },
+ "101": {
+  "skip": "The group favors the closer place and agrees to ask about the menu; the dialogue ends without explicitly confirming the booking."
+ },
+ "102": {
+  "lines": [
+   "ただ、駅からバスで二十分かかるのよね。",
+   "うーん、遠くから通っている人もいるし、帰りが遅くなるのはなあ。"
+  ],
+  "en": "It's 20 minutes by bus; people with long commutes would get home late.",
+  "solved": true
+ },
+ "103": {
+  "lines": [
+   "二つ目は「随筆を書こう」。",
+   "文章を書くのも前から興味あったし、そっちにするよ。"
+  ],
+  "en": "There's an essay-writing class. I've wanted to write, so I'll choose that.",
+  "solved": true
+ },
+ "104": {
+  "lines": [
+   "一つ目は「生け花入門」。",
+   "お花、やってみたいな。"
+  ],
+  "en": "There's an introductory flower-arranging class. I'd like to try flowers.",
+  "solved": true
+ }
+}

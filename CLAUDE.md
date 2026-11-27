@@ -611,6 +611,15 @@ Before considering the change complete:
   one gives that meaning. Never a near-twin (`GRAMMAR_CONFUSABLE`,
   `AFFIX_CONFUSABLE`, by written form). Same target as the meaning card, so
   one of the two in a round. Unreviewed, scored.
+- **All nineteen papers have their deciding lines (v312).** Sets 4–20 were
+  written by an outside AI from `docs/N2-PAPERS-LINES-HANDOFF.md`
+  (`tools/boss-keys/returned/` keeps what came back, findings included),
+  checked by `tools/boss-keys/check-return.mjs`, then solved blind by Sonnet
+  readers: 812 of 874 kept, 62 left out where the reader was right but not
+  from the lines alone (`unsolved` says why), 27 skipped by the writer.
+  `n2-sets/keys.json` holds 914 lines in all. This replaces "Sets 2 and 3 so
+  far" above. `tools/boss-keys/make-handoff.mjs` makes the input files for
+  any paper without lines.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

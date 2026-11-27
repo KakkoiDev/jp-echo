@@ -1,0 +1,390 @@
+{
+ "52": {
+  "lines": [
+   "工事は各階ごとに午前9時から午後4時までで、作業中はその階の廊下が一時的に暗くなります。"
+  ],
+  "en": "While each floor is being worked on, its shared hallway will go dark briefly.",
+  "solved": true
+ },
+ "53": {
+  "lines": [
+   "また、二日目のグループ作業で使う事前課題（Ａ４一枚）は、前日の正午までに担当者宛てにメールで提出してください。"
+  ],
+  "en": "Email your preparatory exercise to the organizer by noon the day before.",
+  "solved": true
+ },
+ "54": {
+  "lines": [
+   "しかし、人に聞くと、「その角のパン屋がおいしいですよ」といった、地図には載っていない情報が手に入ることがある。"
+  ],
+  "en": "Asking people can get you tips that aren't on the map, like a good bakery.",
+  "solved": true
+ },
+ "55": {
+  "lines": [
+   "購入日から1年間有効で、ご家族やご友人と一緒にお使いいただけます。"
+  ],
+  "en": "The pass lasts a year and you can use it together with family or friends.",
+  "solved": true
+ },
+ "56": {
+  "lines": [
+   "むしろ、とれたてのうちに加工するので、店に並ぶまでに何日もかかる生の食品より、味がよい場合さえある。"
+  ],
+  "en": "Packed fresh, canned food can taste better than produce shipped for days.",
+  "solved": true
+ },
+ "57": {
+  "lines": [
+   "数年前、参加者が五人まで減り、教室をやめようという話が出たことがある。"
+  ],
+  "en": "They considered ending the class when the number of children fell to five.",
+  "solved": false,
+  "unsolved": "right, but not from the lines alone: adds 'children'; lines say participants"
+ },
+ "58": {
+  "lines": [
+   "昔からの指導者の中には「それでは相撲ではない」と反対する人もいたが、まずは子どもが続けられることを優先したのだという。"
+  ],
+  "en": "They prioritized making it possible for children to keep coming.",
+  "solved": true
+ },
+ "59": {
+  "lines": [
+   "勝ち負けよりも、自分の体を思い通りに動かせる喜びを知ることこそ、この教室の一番の価値なのかもしれない。"
+  ],
+  "en": "The reward is the joy of moving as you want, beyond winning and losing.",
+  "solved": true
+ },
+ "60": {
+  "lines": [
+   "もし自由に値引きができるようになれば、大量に仕入れられる大型店やインターネットの店が売れる本を安く売り、小さな店は太刀打ちできなくなる。"
+  ],
+  "en": "Big retailers could discount popular books, leaving small shops outmatched.",
+  "solved": true
+ },
+ "61": {
+  "lines": [
+   "そうなれば、売れる本しか置かない店ばかりになり、発行部数の少ない専門書や詩集などは、手に取って選ぶ機会が失われてしまう、と彼は言う。"
+  ],
+  "en": "Shops would stock only popular books, so fewer niche books would be on hand.",
+  "solved": true
+ },
+ "62": {
+  "lines": [
+   "価格で競争できない分、書店は品ぞろえや店員の知識で客を引きつけるしかない。",
+   "それができない店は、定価販売に守られていても結局客が離れていく。"
+  ],
+  "en": "Fixed prices don't save shops that fail to attract readers in other ways.",
+  "solved": true
+ },
+ "63": {
+  "lines": [
+   "この時間を設けたのは、数年前に入社した新人の一人が、小さなミスを上司に報告できず、問題を大きくしてしまったことがきっかけだった。"
+  ],
+  "en": "A new hire didn't report a small mistake and let it turn into a big problem.",
+  "solved": true
+ },
+ "64": {
+  "lines": [
+   "先輩たちは、失敗した後に誰に、どのように報告し、どう対処したかを具体的に話す。",
+   "新人に必要なのは、失敗しないための注意よりも、失敗したときにどう動けばよいかという見通しなのではないだろうか。"
+  ],
+  "en": "New hires need to know who to tell and what to do after a mistake.",
+  "solved": true
+ },
+ "65": {
+  "lines": [
+   "上の立場の人が話せば、ほかの人も話しやすくなるからだ。"
+  ],
+  "en": "When someone senior speaks first, it's easier for others to open up.",
+  "solved": true
+ },
+ "66": {
+  "lines": [
+   "小学校の宿題は、必要最小限にするべきだと思う。",
+   "短い時間で終わる量にし、分からなかった問題は翌日の授業で先生が一緒に確認すればよい。"
+  ],
+  "en": "A wants minimal homework; B wants short tasks that can be reviewed in class.",
+  "solved": false,
+  "unsolved": "right, but not from the lines alone: assigns lines to A and B, which the lines do not show"
+ },
+ "67": {
+  "skip": "A links volume to inequality in one line; B's next-day review and its effect are stated on two separate lines."
+ },
+ "68": {
+  "lines": [
+   "窓口の人に、船便なら二か月近くかかるが料金は半分以下だと言われ、少し迷った末に船便を選んだ。",
+   "急ぐものではなかったし、友人も気長に待ってくれるだろうと思ったからだ。"
+  ],
+  "en": "Sea mail cost less than half as much, and there was no rush.",
+  "solved": true
+ },
+ "69": {
+  "lines": [
+   "待つ時間とは、手に入れるものの価値を自分の中で育てる時間なのかもしれない。"
+  ],
+  "en": "Waiting is time to build up the value of what we'll receive.",
+  "solved": true
+ },
+ "70": {
+  "lines": [
+   "急がないものは、急がずに待つ。",
+   "そんな選択肢を、生活の中に少し残しておきたいと思う。"
+  ],
+  "en": "Let things that can wait take their time. I'd like to keep that option.",
+  "solved": true
+ },
+ "71": {
+  "lines": [
+   "・市外の方は、12月15日以降、定員に空きのある講座に限り、窓口または電話で先着順に受け付けます。"
+  ],
+  "en": "From Dec. 15, nonresidents can book open spots at the desk or by phone.",
+  "solved": true
+ },
+ "72": {
+  "lines": [
+   "④手もみで作るうどん教室　1月24日（土）13:00〜15:30　受講料1,500円＋材料費500円　定員12名　※エプロン持参",
+   "・講座開始日の3日前を過ぎてからのキャンセルは、受講料の半額をいただきます（材料費は不要です）。"
+  ],
+  "en": "Tuition is ¥1,500; late cancellation costs half of tuition, no materials.",
+  "solved": true
+ },
+ "73": {
+  "lines": [
+   "ただ、ページ番号がずれてるところがあるらしくて、印刷の前に確認してほしいの。"
+  ],
+  "en": "Please check the page numbers before printing.",
+  "solved": true
+ },
+ "74": {
+  "lines": [
+   "こちらは事前のお申し込みが必要でして、お電話かインターネットで受け付けております。"
+  ],
+  "en": "This one needs applying in advance, by phone or online.",
+  "solved": true,
+  "enBy": "maintainer, after the blind reader's note"
+ },
+ "75": {
+  "lines": [
+   "あ、でも、送る前に、添付ファイルの名前の決まり、確認したほうがいいよ。",
+   "分かった、それを確認してからにするね。"
+  ],
+  "en": "Check the filename rules before sending it. I'll check those first.",
+  "solved": false,
+  "unsolved": "right, but not from the lines alone: where to check (teacher's email) not in lines"
+ },
+ "76": {
+  "lines": [
+   "はい、お申し込み確認のメールに記載がございます。",
+   "じゃあ、確認してからかけ直します。"
+  ],
+  "en": "The confirmation email has the number. I'll check and call back.",
+  "solved": false,
+  "unsolved": "right, but not from the lines alone: adds 'number'; lines do not say what is in the email"
+ },
+ "77": {
+  "lines": [
+   "それより、壁に貼ってある子どもの絵、剥がしておいてくれない？",
+   "じゃあ、絵のほうやるよ。"
+  ],
+  "en": "Take the children's pictures off the wall. I'll do those now.",
+  "solved": true
+ },
+ "78": {
+  "lines": [
+   "実はね、蛍光灯って、メーカーがだんだん作らなくなってるんだって。",
+   "切れたときに替えが手に入らなかったら困るでしょ。"
+  ],
+  "en": "Fewer tubes are being made, so a replacement may be hard to find.",
+  "solved": true
+ },
+ "79": {
+  "lines": [
+   "一番大きかったのは、寝る時間をきちんと取るようになったことです。"
+  ],
+  "en": "The biggest change was getting enough sleep.",
+  "solved": true
+ },
+ "80": {
+  "lines": [
+   "実はね、会議のあとで、資料をそのままシンガポールの支社に送ることになってるの。"
+  ],
+  "en": "We'll send the same handouts to the Singapore office after the meeting.",
+  "solved": true
+ },
+ "81": {
+  "lines": [
+   "ただ、困ったのは、話し合う内容が前もって知らされないことなんです。"
+  ],
+  "en": "The trouble is that we're not told in advance what will be discussed.",
+  "solved": true
+ },
+ "82": {
+  "lines": [
+   "でも、それより、音がすごかったんだ。",
+   "雨の音とか、遠くの電車の音とか、作者が文章で書いてた町の雰囲気が、音だけで伝わってきて。"
+  ],
+  "en": "The sound stood out. It conveyed the feel of the town from the novel.",
+  "solved": true
+ },
+ "83": {
+  "lines": [
+   "…いえ、来週の旅行に着ていきたいので、今日いただきます。"
+  ],
+  "en": "I want to wear it on next week's trip, so I'll buy it today.",
+  "solved": true
+ },
+ "84": {
+  "lines": [
+   "つまり、「うちは川から遠いから大丈夫」とは言えなくなってきているということです。",
+   "地図が届いたら、ご自宅の周りがどうなっているか、避難する道順と合わせて、ぜひご家族で確認してください。"
+  ],
+  "en": "Farther from the river isn't necessarily safe. Check your area on the map.",
+  "solved": true
+ },
+ "85": {
+  "lines": [
+   "でも、魚の缶詰は骨まで柔らかくなっていて、生の魚を料理するより、カルシウムをたくさんとることができるんです。",
+   "それに、すでに火が通っているので、調理の時間も短くて済みます。"
+  ],
+  "en": "Canned fish has soft bones for calcium and takes less time to cook.",
+  "solved": true
+ },
+ "86": {
+  "lines": [
+   "ですが、百年前に集められた標本から、当時の環境を知ることができるんです。"
+  ],
+  "en": "Specimens from a century ago can tell us what the environment was like.",
+  "solved": true
+ },
+ "87": {
+  "lines": [
+   "今月から、資料は会議の前日までに配りますので、参加者は目を通してから出席するようにしてください。"
+  ],
+  "en": "We'll send the handout the day before. Please read it before attending.",
+  "solved": true
+ },
+ "88": {
+  "lines": [
+   "手伝う側と手伝われる側という関係を超えて、互いに学び合う場になっているわけです。"
+  ],
+  "en": "It's become a place to learn from each other, beyond just giving help.",
+  "solved": true
+ },
+ "89": {
+  "lines": [
+   "田中さん、この書類、明日までに目を通しておいてもらえる？"
+  ],
+  "en": "Could you look over this document by tomorrow, Tanaka?",
+  "solved": true
+ },
+ "90": {
+  "lines": [
+   "お客様のご意見は、確かに承りました。"
+  ],
+  "en": "I've taken note of your feedback.",
+  "solved": true
+ },
+ "91": {
+  "lines": [
+   "あーあ、あと一問で満点だったのに。"
+  ],
+  "en": "Aw, I was one question away from a perfect score.",
+  "solved": true
+ },
+ "92": {
+  "lines": [
+   "課長、明日の会議、私も出たほうがよろしいでしょうか。"
+  ],
+  "en": "Manager, should I attend tomorrow's meeting as well?",
+  "solved": true
+ },
+ "93": {
+  "lines": [
+   "この荷物、船便で送ると、何日ぐらいかかりますか。"
+  ],
+  "en": "How long will it take if I send this by sea?",
+  "solved": true
+ },
+ "94": {
+  "lines": [
+   "せっかく来たのに、店が休みだなんて。"
+  ],
+  "en": "We made the trip, and the shop is closed.",
+  "solved": true
+ },
+ "95": {
+  "lines": [
+   "部長に話してみたら？案外分かってくれるかもしれないよ。"
+  ],
+  "en": "Why not talk to the boss? They might understand better than you think.",
+  "solved": true
+ },
+ "96": {
+  "lines": [
+   "雨が降らないうちに、洗濯物を取り込んでおいてくれる？"
+  ],
+  "en": "Could you bring in the laundry before it rains?",
+  "solved": true
+ },
+ "97": {
+  "lines": [
+   "山本さんって、何を言われても怒ったためしがないよね。"
+  ],
+  "en": "Yamamoto never gets angry, whatever people say.",
+  "solved": true
+ },
+ "98": {
+  "lines": [
+   "このプリンター、また紙が詰まっちゃったよ。"
+  ],
+  "en": "The printer's jammed again.",
+  "solved": true
+ },
+ "99": {
+  "lines": [
+   "このたびは、ご迷惑をおかけして、大変申し訳ございませんでした。"
+  ],
+  "en": "I'm very sorry for the trouble I've caused you.",
+  "solved": true
+ },
+ "100": {
+  "lines": [
+   "明日の説明会、資料は各自で印刷してくることになってるんだって。"
+  ],
+  "en": "I heard we're expected to print our own handouts for tomorrow.",
+  "solved": true
+ },
+ "101": {
+  "lines": [
+   "博物館の隣に、プラネタリウムがあったでしょう。",
+   "じゃあ、決まりだな。"
+  ],
+  "en": "There's a planetarium next to the museum. Okay, that's settled.",
+  "solved": false,
+  "unsolved": "right, but not from the lines alone: lines do not say planetarium is the decided place"
+ },
+ "102": {
+  "lines": [
+   "でも日曜は天気が崩れるらしいよ。風が強いと出ないんじゃないか。"
+  ],
+  "en": "The weather will turn on Sunday; the boat may not sail in high winds.",
+  "solved": true
+ },
+ "103": {
+  "lines": [
+   "駅前の貸し会議室は、三十人でも余裕がありますし、費用も予算内です。",
+   "そこにしよう。"
+  ],
+  "en": "The room by the station has space and fits the budget. Let's book it.",
+  "solved": true
+ },
+ "104": {
+  "lines": [
+   "研修センターは泊まることもできて安いんですけど、駅から遠くて、バスが一時間に一本しかないんです。"
+  ],
+  "en": "The training center is far from the station, and buses run only hourly.",
+  "solved": true
+ }
+}

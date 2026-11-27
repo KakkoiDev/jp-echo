@@ -1,0 +1,391 @@
+{
+ "52": {
+  "lines": [
+   "ご都合の悪い方は、11月13日までに管理室へお申し出ください。"
+  ],
+  "en": "If you cannot be home, notify the management office by November 13.",
+  "solved": true
+ },
+ "53": {
+  "lines": [
+   "ご都合のよい日時を二、三お知らせいただければ幸いです。"
+  ],
+  "en": "Please let me know two or three dates and times that work for you.",
+  "solved": true
+ },
+ "54": {
+  "lines": [
+   "だから読者は、書かれていない部分を自分で想像しなければならない。短いからこそ、読み手の力が試されるのである。"
+  ],
+  "en": "Readers must fill gaps with imagination; shortness puts them to the test.",
+  "solved": true
+ },
+ "55": {
+  "lines": [
+   "土や種はこちらで用意しますが、軍手とエプロンは各自お持ちください。"
+  ],
+  "en": "We provide soil and seeds. Bring your own gloves and apron.",
+  "solved": true
+ },
+ "56": {
+  "lines": [
+   "なぜその言い伝えが生まれたのかを考えることは、それ自体が立派な学びになる。"
+  ],
+  "en": "Thinking about why the tradition arose is a worthwhile lesson in itself.",
+  "solved": true
+ },
+ "57": {
+  "lines": [
+   "おかげで作業の速さは二倍近くになり、重い荷物を担いで腰を痛める人も減った。"
+  ],
+  "en": "Work nearly doubled in speed, and fewer workers hurt their backs lifting loads.",
+  "solved": true
+ },
+ "58": {
+  "lines": [
+   "何気ないやり取りの中で、現場の情報が共有されていた。",
+   "それがなくなると、小さなミスや異変に気づくのが遅れるようになった。"
+  ],
+  "en": "Casual talk shared information; without it, errors took longer to spot.",
+  "solved": true
+ },
+ "59": {
+  "lines": [
+   "機械に任せられる部分は任せ、人間にしかできないことに時間を使う。"
+  ],
+  "en": "Let machines do what they can; spend time on what only people can do.",
+  "solved": true
+ },
+ "60": {
+  "lines": [
+   "大学進学のために東京に出てきたとき、私は自分の方言が恥ずかしくてたまらなかった。",
+   "授業で発言すると、周りの学生がくすっと笑う。"
+  ],
+  "en": "I was deeply ashamed of my dialect. Students chuckled when I spoke in class.",
+  "solved": true
+ },
+ "61": {
+  "lines": [
+   "地元のお年寄りに話を聞いて回るうちに、私の方言には、標準語では表しにくい細かい気持ちの違いを表す言葉がたくさんあることに気づいた。"
+  ],
+  "en": "My dialect has words for feelings hard to express in standard Japanese.",
+  "solved": true
+ },
+ "62": {
+  "lines": [
+   "標準語と方言を場面によって使い分けられるのは、二つの道具を持っているようなものだと思う。どちらか一つを捨てる必要はないのだ。"
+  ],
+  "en": "Using each where it fits gives me two tools. Neither needs to be discarded.",
+  "solved": true
+ },
+ "63": {
+  "lines": [
+   "駅から遠く、近くに大きな病院もない。一人で暮らす高齢の父には不便だと思ったのだ。"
+  ],
+  "en": "Far from a station or hospital, it seemed inconvenient for Dad on his own.",
+  "solved": true
+ },
+ "64": {
+  "lines": [
+   "とれすぎた野菜は隣の家に分け、代わりに漬物をもらう。"
+  ],
+  "en": "He shares surplus vegetables next door and gets pickles in return.",
+  "solved": true
+ },
+ "65": {
+  "lines": [
+   "便利さだけで暮らしやすさが決まるわけではない。"
+  ],
+  "en": "Convenience alone does not determine how easy a place is to live in.",
+  "solved": true
+ },
+ "66": {
+  "lines": [
+   "確かに、どこの店も混む時間帯ではあるが、休みの質を考えれば、一斉に休むことの利点は大きいと思う。",
+   "十二時台の混雑を避けて食事ができるし、銀行や役所の用事も済ませやすい。"
+  ],
+  "en": "Lunch shops crowd up; choosing the time avoids the rush and eases errands.",
+  "solved": false,
+  "unsolved": "right, but not from the lines alone: omits that everyone rests at once (一斉); choosing the time misstated; unclear both speakers share it"
+ },
+ "67": {
+  "lines": [
+   "確かに、どこの店も混む時間帯ではあるが、休みの質を考えれば、一斉に休むことの利点は大きいと思う。",
+   "しかし、休み方を自分で決められることが、午後の仕事への意欲につながっていると思う。"
+  ],
+  "en": "Shared breaks improve rest; choosing when to rest motivates afternoon work.",
+  "solved": true
+ },
+ "68": {
+  "lines": [
+   "変化のないものは「いつものもの」として処理し、新しいものや変わったものにだけ注意を向ける。これは、限られた力を効率よく使うための優れた仕組みだと言える。"
+  ],
+  "en": "The brain ignores the unchanged to use its limited resources efficiently.",
+  "solved": true
+ },
+ "69": {
+  "lines": [
+   "職場で長年使ってきた手順に無駄があっても、誰も気づかない。家族の顔色が少しずつ悪くなっていても、毎日会っているからこそ見過ごしてしまう。"
+  ],
+  "en": "Flaws in familiar routines and changes in a family member can go unnoticed.",
+  "solved": true
+ },
+ "70": {
+  "lines": [
+   "大切なのは、時々立ち止まって、見慣れた景色を見直す時間を意識して作ることだ。"
+  ],
+  "en": "Make time now and then to stop and look again at familiar sights.",
+  "solved": true
+ },
+ "71": {
+  "lines": [
+   "Ｂ区画（20㎡）：10,000円",
+   "※市外在住の方は、各区画とも利用料が1.5倍になります。"
+  ],
+  "en": "Plot B costs 10,000 yen; nonresidents pay 1.5 times the fee.",
+  "solved": false,
+  "unsolved": "right, but not from the lines alone: worker in city may count as resident; hidden"
+ },
+ "72": {
+  "lines": [
+   "往復はがきに氏名・住所・電話番号・希望区画を書いて、2月10日（必着）までに郵送してください。",
+   "・初めて利用する方は、3月20日の説明会に必ず参加してください。"
+  ],
+  "en": "Mail a reply postcard to arrive by Feb 10; first-timers must attend on March 20.",
+  "solved": true
+ },
+ "73": {
+  "lines": [
+   "はい、パンフレットの原稿ができたので、これから印刷会社に送ろうと思っています。",
+   "前回、価格の表示で問題があったから、今回は必ず部長の確認を取ってから、って言われてるのよ。"
+  ],
+  "en": "He plans to send the draft, but must get the manager's approval first.",
+  "solved": true
+ },
+ "74": {
+  "lines": [
+   "ただ、こちらの住所変更が終わったら、その場で国民健康保険の手続きもしていただけますか。",
+   "隣の三番窓口です。"
+  ],
+  "en": "Once the address is changed, do health insurance at counter three next door.",
+  "solved": false,
+  "unsolved": "right, but not from the lines alone: unclear if 三番窓口 is for the next step"
+ },
+ "75": {
+  "lines": [
+   "あ、でも資料館は事前の予約が要るはずです。まずホームページで確認してから行きなさい。"
+  ],
+  "en": "The archive likely needs a booking. Check its website first, then go.",
+  "solved": true
+ },
+ "76": {
+  "lines": [
+   "コンビニで買って貼っておかないといけないんでしょう？",
+   "今から買ってくるよ。"
+  ],
+  "en": "Buy and attach the disposal stickers. He'll go buy them now.",
+  "solved": true
+ },
+ "77": {
+  "lines": [
+   "会議は三時に終わるはずだから、それまでに申請書を書いておいたら？",
+   "社内のサイトからダウンロードできるわよ。"
+  ],
+  "en": "Fill in the form before the meeting ends; download it from the intranet.",
+  "solved": true
+ },
+ "78": {
+  "lines": [
+   "それは慣れたんだけど……実は来年から留学することになって、語学学校に通い始めたの。",
+   "その授業が、ちょうど朝の時間なんだよね。"
+  ],
+  "en": "I started language school to study abroad; the class is right in the morning.",
+  "solved": true
+ },
+ "79": {
+  "lines": [
+   "ただ、パンを焼くのは朝早くからですから、夜遅くまで店を開けていると、職人が十分に休めないんです。",
+   "疲れがたまると、どうしても味が落ちてしまう。"
+  ],
+  "en": "Bakers start early and can't rest if open late. Tired bakers make worse bread.",
+  "solved": true
+ },
+ "80": {
+  "lines": [
+   "でもね、周りがすごく静かなの。",
+   "前の部屋は大通りに面してて、夜中までトラックの音がうるさくて、ちっとも眠れなかったんだよね。"
+  ],
+  "en": "It's quiet here. Trucks kept me awake in the old room on the main road.",
+  "solved": true
+ },
+ "81": {
+  "lines": [
+   "会場の公園で、急に工事をすることになってね。",
+   "水道管が古くなっていて、来月中に取り替えなければならないらしい。"
+  ],
+  "en": "The park suddenly needs work; the old water pipes must be replaced next month.",
+  "solved": true
+ },
+ "82": {
+  "lines": [
+   "引用した部分と、自分の意見の区別がはっきりしていないのよ。どこまでが資料に書いてあったことなのか、読んでいて分からないの。"
+  ],
+  "en": "Quotations and your own views blur; I can't tell what came from the sources.",
+  "solved": true
+ },
+ "83": {
+  "lines": [
+   "着物を着て古い町並みを歩くと、いつもの自分とは違う人になったような気がする、それが楽しいんだそうです。"
+  ],
+  "en": "They enjoy feeling like someone different in kimono in the old streets.",
+  "solved": true
+ },
+ "84": {
+  "lines": [
+   "最近、夜間の救急外来に、それほど急ぎではない患者さんが多く来られるようになりました。",
+   "迷ったときは、まず市の電話相談を利用してください。"
+  ],
+  "en": "Nonurgent visits to night emergency care are up. If unsure, call the city.",
+  "solved": true
+ },
+ "85": {
+  "lines": [
+   "植物を育てていて枯らしてしまう原因で一番多いのは、実は水のやりすぎなんです。",
+   "大切なのは、土の表面が乾いたのを確かめてから水をやることです。"
+  ],
+  "en": "Overwatering often kills plants. Check that the soil surface is dry first.",
+  "solved": true
+ },
+ "86": {
+  "lines": [
+   "この通りは昼間の交通量が非常に多いため、工事は主に夜間に行います。",
+   "そこで、音の大きい作業は夜十時までに終えること、また、音の小さい新しい機械を使うことにしました。"
+  ],
+  "en": "Day traffic means night work. Loud work ends by ten and uses quieter equipment.",
+  "solved": true
+ },
+ "87": {
+  "lines": [
+   "そんなときは、無理に我慢するより、十五分から二十分ほど短く眠るのがおすすめです。",
+   "ただし、三十分以上眠ってしまうと深い眠りに入ってしまい、起きたあと、かえってぼんやりしてしまいます。"
+  ],
+  "en": "Nap 15 to 20 minutes; over 30 can leave you groggy from deep sleep.",
+  "solved": true
+ },
+ "88": {
+  "lines": [
+   "正しい言葉遣いを覚えるのは、そのあとで構いません。まずは、相手の立場に立って考えることから始めてください。"
+  ],
+  "en": "Correct wording can wait. Start by putting yourself in the customer's place.",
+  "solved": true
+ },
+ "89": {
+  "lines": [
+   "あ、もうこんな時間。そろそろ失礼しないと。"
+  ],
+  "en": "Oh, look at the time. I'd better be going.",
+  "solved": true
+ },
+ "90": {
+  "lines": [
+   "この書類、明日の会議までに目を通しておいてもらえる？"
+  ],
+  "en": "Could you read this document before tomorrow's meeting?",
+  "solved": true
+ },
+ "91": {
+  "lines": [
+   "部長、お忙しいところ申し訳ないんですが、少しお時間よろしいでしょうか。"
+  ],
+  "en": "Sorry to interrupt, but do you have a moment, sir?",
+  "solved": true
+ },
+ "92": {
+  "lines": [
+   "駅前に新しくできたカフェ、行ってみたけど、思ったほどでもなかったよ。"
+  ],
+  "en": "I tried the new cafe by the station. It didn't live up to expectations.",
+  "solved": true
+ },
+ "93": {
+  "lines": [
+   "田中さんって、いつも締め切りぎりぎりにならないと動かないんだから。"
+  ],
+  "en": "Tanaka never gets moving until right before the deadline.",
+  "solved": true
+ },
+ "94": {
+  "lines": [
+   "明日の説明会は、雨が降ろうが降るまいが、予定どおり行いますので。"
+  ],
+  "en": "Tomorrow's briefing will go ahead as planned, rain or shine.",
+  "solved": true
+ },
+ "95": {
+  "lines": [
+   "ごめん、うっかりしてて、頼まれてた本、持ってくるの忘れちゃった。"
+  ],
+  "en": "Sorry, I forgot to bring the book you asked for.",
+  "solved": true
+ },
+ "96": {
+  "lines": [
+   "こちらの商品は、ただいまお取り寄せになりますが、よろしいでしょうか。"
+  ],
+  "en": "We would have to order this item in. Is that all right?",
+  "solved": true
+ },
+ "97": {
+  "lines": [
+   "この企画は、山田さんに任せておけば間違いないよ。"
+  ],
+  "en": "We can't go wrong if we leave this project to Yamada.",
+  "solved": true
+ },
+ "98": {
+  "lines": [
+   "課長がお戻りになったら、こちらからお電話するとお伝えいただけますか。"
+  ],
+  "en": "When the section chief returns, could you tell them I'll call?",
+  "solved": true
+ },
+ "99": {
+  "lines": [
+   "せっかく作ったのに、誰も食べてくれないなんて。"
+  ],
+  "en": "I went to the trouble of making it, and no one will eat it.",
+  "solved": true
+ },
+ "100": {
+  "lines": [
+   "今度の旅行、行けないこともないんだけど……。"
+  ],
+  "en": "It's not that I can't go on the trip, but...",
+  "solved": true
+ },
+ "101": {
+  "skip": "The restaurant choice depends on the budget, the private room and the final agreement."
+ },
+ "102": {
+  "lines": [
+   "予算は一人四千円までって言われてるから、和食は無理だね。"
+  ],
+  "en": "The limit is 4,000 yen each, so the Japanese place is out.",
+  "solved": true
+ },
+ "103": {
+  "lines": [
+   "僕は料理かな。いつも帰りが遅いから、簡単に作れるものを覚えたいんだ。"
+  ],
+  "en": "I'll go with cooking. I get home late and want to learn easy meals.",
+  "solved": true
+ },
+ "104": {
+  "lines": [
+   "三つ目は「園芸講座」。",
+   "この間ミニトマトを枯らしちゃったから、ちゃんと習いたいの。"
+  ],
+  "en": "Course three is gardening. I killed my cherry tomato plant and want lessons.",
+  "solved": true
+ }
+}

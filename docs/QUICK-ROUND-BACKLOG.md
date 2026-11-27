@@ -185,8 +185,8 @@ sentence, `.qr-en`, is new). Still to build, in the order agreed:
 - **Sentence ordering as a card (問題8)**: four pieces, the one at ★.
 - **Kanji-first picking for N2 rounds** (never decided).
 - **A reading sprint from Home**: one short passage, one question, 90 s.
-- Deciding lines for the other seventeen papers; section scores on Home; a
-  reason on a flag in one more tap.
+- Section scores on Home; a reason on a flag in one more tap. (Deciding lines
+  for all nineteen papers: done in v312.)
 - The gap cards' wrong choices are forms from other sentences: some are
   plainly ungrammatical in the gap, so a card can be solved by form alone.
   Authored distractors would fix it.
@@ -324,6 +324,20 @@ they do not reach Today's checks, Evening recall or the Night Radio.
 ## After the exam: the rank becomes the level
 
 **From the outside review of 27 Nov, not applied (`tools/scored-review/reviews/2026-11-27-outside-applied.json`):**
+- **Papers 4–20, the writer's findings (27 Nov; `tools/boss-keys/returned/`):
+  no wrong key in 1,785 questions; 51 "unfair", 16 weak.** The maintainer
+  agent read all 51 against the papers and agrees with eight, where a second
+  answer is really natural: the ordering items set 5 #46, set 8 #42 and #45,
+  set 9 #45 (a movable phrase changes the ★); set 20 #36 (を通して is a good
+  sentence with the opposite meaning); set 4 #33 (ものの); set 14 #39
+  (に先立って); set 10 #19 (交換). Minor: set 7 #43, set 9 #46, set 15 #64.
+  The other forty are the exam's own kind of wrong choice (possible to
+  defend, not what a careful reader picks). Fixing the eight changes the
+  papers: make the edition per paper first, so that revising one does not
+  detach sittings of the others.
+- **62 questions have lines that failed the blind solve** (right answer, but
+  not from the lines alone; mostly listening 問題1, where the decision runs
+  over several turns). They show without a line in the boss review.
 - **Two papers need their question revised** (then a new `SETS_EDITION`, which
   also detaches earlier sittings from the deciding lines): set 2 #71 must say
   the student does not work in the city, or ①と② is also right; set 3 #72

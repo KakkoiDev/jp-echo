@@ -465,16 +465,27 @@ test("grammar and word parts are also asked the exam's way: a gap in the sentenc
   assert.ok(js.includes('if (gapCard(q) && $("game-blank")) { $("game-blank").textContent = q.answer; $("game-blank").classList.add("filled"); }'));
 });
 
-test("the seventeen papers without deciding lines have an input file each, and a returned file is checked before use", () => {
-  const ids = Object.keys(read("../n2-sets/index.json")), done = ["n2-set-2", "n2-set-3"];
-  for (const id of ids.filter(x => !done.includes(x))) {
-    const input = read("../tools/boss-keys/handoff/" + id + ".input.json"), paper = read("../n2-sets/" + id + ".json");
-    assert.equal(input.set, id); assert.equal(Object.keys(input.questions).length, paper.questions.length);
-    assert.equal(Object.values(input.questions).filter(q => q.needsLines).length, 53, id);
-    for (const [i, q] of Object.entries(input.questions)) { assert.equal(q.key, paper.questions[i].key); assert.equal(q.needsLines, ["Reading", "Listening"].includes(q.skill)); if (q.needsLines) assert.equal(q.context, paper.questions[i].context); }
+test("all nineteen papers have their deciding lines: checked, solved blind, and only then used", () => {
+  const ids = Object.keys(read("../n2-sets/index.json")), keys = read("../n2-sets/keys.json").keys;
+  assert.equal(ids.length, 19);
+  let withLines = 0, skipped = 0, unsolved = 0;
+  for (const id of ids) {
+    const draft = read("../tools/boss-keys/" + id + ".json"), paper = read("../n2-sets/" + id + ".json");
+    const wanted = paper.questions.map((q, i) => ["Reading", "Listening"].includes(q.skill) ? i : -1).filter(i => i >= 0);
+    assert.equal(wanted.length, 53, id); assert.deepEqual(Object.keys(draft).map(Number).sort((a, b) => a - b), wanted, id + ": an entry for every reading and listening question");
+    for (const i of wanted) {
+      const e = draft[i], key = keys[id + "#" + i];
+      if (e.skip) { skipped++; assert.equal(key, undefined); continue; }
+      for (const l of e.lines) assert.ok(paper.questions[i].context.includes(l), id + "#" + i + ": word for word from the paper");
+      if (e.solved === true) { withLines++; assert.deepEqual(key, {lines: e.lines, en: e.en}, id + "#" + i); }
+      else { unsolved++; assert.equal(key, undefined, id + "#" + i + ": not used, the blind reader could not settle it from the lines"); assert.ok(e.unsolved); }
+    }
   }
-  assert.equal(ids.length - done.length, 17);
+  assert.equal(Object.keys(keys).length, withLines);
+  assert.deepEqual([withLines, skipped, unsolved], [914, 31, 62]);
+  // What came back from the writer is kept as it came, findings included.
+  for (let n = 4; n <= 20; n++) { const back = read("../tools/boss-keys/returned/n2-set-" + n + ".json"); assert.equal(back.set, "n2-set-" + n); assert.ok(Array.isArray(back.findings)); }
   const brief = src("../docs/N2-PAPERS-LINES-HANDOFF.md"), check = src("../tools/boss-keys/check-return.mjs");
   for (const s of ["character for character", "120 characters", "80 characters", "A blind solve", '"skip"', "findings"]) assert.ok(brief.includes(s), s);
-  assert.ok(check.includes('import {checkKey} from "../n2-build-keys.mjs";') && check.includes("no `solved` mark"), "the limits are the validator's, and nothing is used before the blind solve");
+  assert.ok(check.includes('import {checkKey} from "../n2-build-keys.mjs";') && check.includes("no `solved` mark"));
 });

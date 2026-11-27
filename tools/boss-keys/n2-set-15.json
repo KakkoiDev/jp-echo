@@ -1,0 +1,382 @@
+{
+ "52": {
+  "lines": [
+   "12月1日より、待合室の混雑を避けるため、ご予約時間の10分前以降にご来院くださいますようお願いいたします。"
+  ],
+  "en": "To avoid crowding, arrive no more than 10 minutes before your appointment.",
+  "solved": true
+ },
+ "53": {
+  "lines": [
+   "なお、12月分の給与は、これまでどおり12月25日に振り込みます。"
+  ],
+  "en": "December's pay will still be deposited on December 25.",
+  "solved": true
+ },
+ "54": {
+  "lines": [
+   "基礎の練習は退屈に見えるが、実は上達への一番の近道なのかもしれない。"
+  ],
+  "en": "Practicing the basics can be the quickest route to getting better.",
+  "solved": true
+ },
+ "55": {
+  "lines": [
+   "期間：3月3日（月）〜3月7日（金）の各日　23時〜翌朝5時",
+   "この時間帯は、約300メートル南の西町踏切をご利用ください。"
+  ],
+  "en": "Mar 3–7, 11 p.m. to 5 a.m.: use West Town crossing, about 300 m south",
+  "solved": true,
+  "enBy": "maintainer, after the blind reader's note"
+ },
+ "56": {
+  "lines": [
+   "あの時の驚きが、私が研究者の道を選んだ原点だったように思う。"
+  ],
+  "en": "That moment of wonder started me on the path to becoming a researcher.",
+  "solved": true
+ },
+ "57": {
+  "lines": [
+   "最近は工場で木材をあらかじめ加工しておく方法が主流で、現場では組み立てるだけ、ということも多い。",
+   "そのほうが早く、費用も安いので、父のやり方は時代遅れだと言う人もいる。"
+  ],
+  "en": "Factory cutting is faster and cheaper, so some call Dad's method outdated.",
+  "solved": true
+ },
+ "58": {
+  "lines": [
+   "柱や梁など、家を支える大事な部分は自分で木を選んで加工するが、床や壁の下地などには工場で加工したものを使う。"
+  ],
+  "en": "He cuts beams himself but uses factory-cut wood for bases under walls or floors.",
+  "solved": true
+ },
+ "59": {
+  "lines": [
+   "住む人が何十年も安心して暮らせる家を建てることだ」。"
+  ],
+  "en": "Build a home where people can live with peace of mind for decades.",
+  "solved": true
+ },
+ "60": {
+  "lines": [
+   "週末には予定を詰め込み、旅行や習い事に出かけた。",
+   "ところが、月曜の朝になると、かえって疲れが残っている。"
+  ],
+  "en": "I packed my weekends with activities and was still tired Monday morning.",
+  "solved": true
+ },
+ "61": {
+  "lines": [
+   "デスクワークが中心の人は、体よりも頭が疲れていることが多い。",
+   "逆に、軽い散歩や料理のように、体を適度に動かしながら頭を空にできる活動のほうが、休養になるというのだ。"
+  ],
+  "en": "Desk work tires the mind; a light walk or cooking can help it rest.",
+  "solved": true
+ },
+ "62": {
+  "lines": [
+   "自分が何に疲れているのかを知り、それに合った過ごし方を選ぶことなのだろう。"
+  ],
+  "en": "Know what has tired you and choose a way to rest that suits it.",
+  "solved": true
+ },
+ "63": {
+  "lines": [
+   "長時間労働の見直しにより、一人の運転手が一日に運転できる距離が短くなり、遠くまで荷物を運ぶことが難しくなっているのである。"
+  ],
+  "en": "Drivers can cover less ground in a day, making long-haul trucking harder.",
+  "solved": true
+ },
+ "64": {
+  "skip": "The key cannot be uniquely established when the claim about a fallback is read literally; the source says only that one is hard to find quickly."
+ },
+ "65": {
+  "lines": [
+   "鉄道かトラックか、という二者択一ではなく、それぞれの長所を組み合わせることが求められている。"
+  ],
+  "en": "Combine the strengths of rail and trucks rather than picking just one.",
+  "solved": true
+ },
+ "66": {
+  "lines": [
+   "図書館の閲覧室でも、ふたのある飲み物ぐらいは認めてよいのではないか。",
+   "閲覧室とは別に、飲み物を飲めるスペースを館内に設けるのが現実的ではないだろうか。"
+  ],
+  "en": "A would allow covered drinks; B favors a separate space for drinking.",
+  "solved": true
+ },
+ "67": {
+  "lines": [
+   "実際に飲み物を認めた図書館でも、本が汚れる被害はほとんど増えていないと聞く。",
+   "飲み物を認めれば、どんなに気をつけても、こぼす人は必ず出てくる。"
+  ],
+  "en": "A says damage barely rose; B says there's bound to be someone who spills.",
+  "solved": true
+ },
+ "68": {
+  "lines": [
+   "誰もが賛成できる言葉は、具体的に何をするのかを決めないまま、議論を終わらせてしまう危険がある。"
+  ],
+  "en": "Vague agreement can end discussion without a decision on what to do.",
+  "solved": true
+ },
+ "69": {
+  "lines": [
+   "私がこのごろ心がけているのは、抽象と具体を行き来することである。",
+   "まず「地域の活性化」という目的を掲げたら、それが実現したとき、町の誰が、何をしているのかを一つの場面として描いてみる。"
+  ],
+  "en": "I move between abstract aims and a concrete scene showing the result.",
+  "solved": true
+ },
+ "70": {
+  "lines": [
+   "目的と方法が、読む人の頭の中で一本の線につながる文章なのだと思う。"
+  ],
+  "en": "Good writing connects the aim and method in the reader's mind.",
+  "solved": true
+ },
+ "71": {
+  "skip": "The October sailing time, advance booking deadline, and adult and child fares are in three separate rows."
+ },
+ "72": {
+  "skip": "The fare table and the two separate sentences about children under school age are needed for the calculation."
+ },
+ "73": {
+  "lines": [
+   "先に予約の状況を確認してから、田中さんに連絡してみます。"
+  ],
+  "en": "I'll check the booking first, then contact Tanaka.",
+  "solved": true
+ },
+ "74": {
+  "lines": [
+   "あ、その前に、熱を測っていただけますか。"
+  ],
+  "en": "Oh, before that, could you take your temperature?",
+  "solved": true,
+  "enBy": "maintainer, after the blind reader's note"
+ },
+ "75": {
+  "lines": [
+   "じゃあ、資料を直す前に、まず時間を計ってごらん。"
+  ],
+  "en": "Time the talk before revising your material.",
+  "solved": true
+ },
+ "76": {
+  "lines": [
+   "それより、先に部屋の片付けをしなさい。"
+  ],
+  "en": "First, clean up your room.",
+  "solved": true
+ },
+ "77": {
+  "lines": [
+   "初めての方は、まず利用登録が必要です。",
+   "こちらの用紙にご記入いただいて、ご住所の確認できるものを見せてください。"
+  ],
+  "en": "Register first by filling out this form and showing proof of address.",
+  "solved": true
+ },
+ "78": {
+  "lines": [
+   "休みがね、ほとんど取れないらしいの。",
+   "面接で、忙しい時期は休日も出勤って言われて。"
+  ],
+  "en": "It's hard to get days off. In busy periods you're called in on those days.",
+  "solved": true
+ },
+ "79": {
+  "lines": [
+   "一番大切なのは、焼く前に魚の表面の水分をしっかりふき取ることなんです。"
+  ],
+  "en": "Most importantly, pat the fish dry before cooking it.",
+  "solved": true
+ },
+ "80": {
+  "lines": [
+   "いや、天気はよかったんだけど、灯台へ行く道が、崖崩れで通行止めになってて。"
+  ],
+  "en": "A landslide blocked the road to the lighthouse.",
+  "solved": true
+ },
+ "81": {
+  "lines": [
+   "でも、これ、インクが乾くのがすごく早いんだよ。",
+   "僕、左利きだから、書いた字を手でこすって汚しちゃうことが多かったんだけど、これなら大丈夫なんだ。"
+  ],
+  "en": "The fast-drying ink solves the smudging problem I have as a left-hander.",
+  "solved": true
+ },
+ "82": {
+  "lines": [
+   "大学生のとき、友人に頼まれて、彼女が作る短い映画に出たんです。",
+   "その映画がたまたま小さな賞をもらって、それを見た今の事務所の方から声をかけていただいたんです。"
+  ],
+  "en": "I acted in a friend's short film, which someone from my agency saw.",
+  "solved": true
+ },
+ "83": {
+  "lines": [
+   "ただいま、北町駅付近の踏切で、車が動けなくなっているとの連絡が入りました。",
+   "安全確認のため、上下線とも運転を見合わせております。"
+  ],
+  "en": "A car is stuck at the crossing, so trains are suspended in both directions.",
+  "solved": true
+ },
+ "84": {
+  "lines": [
+   "原因の多くは、スマートフォンです。",
+   "両手で持って操作する、あるいは机に置いて人差し指で操作する"
+  ],
+  "en": "Phones are a common cause; use both hands, or put it down and use a finger.",
+  "solved": false,
+  "unsolved": "right, but not from the lines alone: lines list ways of holding the phone as a cause, not advice"
+ },
+ "85": {
+  "lines": [
+   "雨だからと出かけるのをやめてしまう方も多いのですが、実は雨の日こそ、人も少なく、ゆっくり楽しめるんです。",
+   "足元が滑りやすいので、歩きやすい靴でお越しください。"
+  ],
+  "en": "Rainy days are quiet and good for visiting; come in shoes you can walk in.",
+  "solved": true
+ },
+ "86": {
+  "lines": [
+   "つまり、天然か人造かで良し悪しを決めるのではなく、作るときから捨てるときまでを通して、環境への影響を比べることが大切なのです。"
+  ],
+  "en": "Judge a material by its environmental impact from production to disposal.",
+  "solved": true
+ },
+ "87": {
+  "lines": [
+   "資格を持っていることより、資格の勉強を通して身につけた知識を、日々の仕事にどう生かすかを大切にしています。"
+  ],
+  "en": "What matters is how you use what you've learned in your everyday work.",
+  "solved": true
+ },
+ "88": {
+  "lines": [
+   "ですが、意外と見落とされがちなのが、その土地の地盤です。",
+   "市役所で古い地図を見たり、地盤の調査結果を確認したりすることができますから、契約の前にぜひ調べてください。"
+  ],
+  "en": "The ground gets overlooked; check old maps and ground surveys before signing.",
+  "solved": true
+ },
+ "89": {
+  "lines": [
+   "部長、明日の出張の件ですが、新幹線の切符はもうお取りしてあります。"
+  ],
+  "en": "Manager, I've already booked the bullet train tickets for tomorrow.",
+  "solved": true
+ },
+ "90": {
+  "lines": [
+   "あれ、まだ帰らないの？もう九時だよ。"
+  ],
+  "en": "Aren't you going home yet? It's already nine.",
+  "solved": true
+ },
+ "91": {
+  "lines": [
+   "図々しいお願いなんですが、駅まで車に乗せていただけませんか。"
+  ],
+  "en": "Sorry to impose, but could you give me a ride to the station?",
+  "solved": true
+ },
+ "92": {
+  "lines": [
+   "この資料、明日までにまとめておかないことには、会議が始められないんだ。"
+  ],
+  "en": "We can't start the meeting unless this material is ready by tomorrow.",
+  "solved": true
+ },
+ "93": {
+  "lines": [
+   "せっかく作ったのに、ケーキ焦がしちゃった。"
+  ],
+  "en": "I went to all that trouble to make a cake and then burned it.",
+  "solved": true
+ },
+ "94": {
+  "lines": [
+   "先日はお忙しいところ、わざわざお越しいただきまして。"
+  ],
+  "en": "Thank you for coming the other day despite your busy schedule.",
+  "solved": true
+ },
+ "95": {
+  "lines": [
+   "次の日に試験があるっていうのに、弟は夜中までゲームしてたのよ。"
+  ],
+  "en": "My brother gamed till midnight even though he had a test the next day.",
+  "solved": true
+ },
+ "96": {
+  "lines": [
+   "課長、この企画、もう一度考え直してみてはいかがでしょうか。"
+  ],
+  "en": "Would you consider revisiting this proposal?",
+  "solved": true
+ },
+ "97": {
+  "lines": [
+   "山田さんにしては、珍しくミスが多かったね。"
+  ],
+  "en": "That's an unusual number of mistakes for Yamada.",
+  "solved": true
+ },
+ "98": {
+  "lines": [
+   "雨、止みそうにないね。傘、持ってきてる？"
+  ],
+  "en": "It doesn't look as if the rain will stop. Did you bring an umbrella?",
+  "solved": true
+ },
+ "99": {
+  "lines": [
+   "お客様、こちらのお席でよろしいでしょうか。"
+  ],
+  "en": "Would you be happy with this seat?",
+  "solved": true
+ },
+ "100": {
+  "lines": [
+   "そのかばん、重そうだね。持とうか。"
+  ],
+  "en": "That bag looks heavy. Shall I carry it?",
+  "solved": true
+ },
+ "101": {
+  "lines": [
+   "じゃあ、アルバムにしようよ。",
+   "じゃあ、僕がクラスに連絡するよ。"
+  ],
+  "en": "Let's give an album. Okay, I'll contact the class.",
+  "solved": true
+ },
+ "102": {
+  "lines": [
+   "でも、名前を入れるのに三週間かかるらしいよ。",
+   "退職式は来週だから、間に合わない。"
+  ],
+  "en": "Engraving takes three weeks, so it won't be ready for next week's ceremony.",
+  "solved": true
+ },
+ "103": {
+  "lines": [
+   "だから和菓子にする。"
+  ],
+  "en": "So I'll take the Japanese sweets class.",
+  "solved": true
+ },
+ "104": {
+  "lines": [
+   "忙しい日でも十五分で作れる丼を三種類学びます。",
+   "平日の夜、帰ってすぐ作れるようになりたいし。"
+  ],
+  "en": "The rice bowls take 15 minutes; I want to cook quickly after work.",
+  "solved": true
+ }
+}

@@ -1,0 +1,383 @@
+{
+ "52": {
+  "lines": [
+   "学生の方は、当日受付で学生証をご提示ください。",
+   "ご提示がない場合は、一般の参加費との差額をいただきます。"
+  ],
+  "en": "Show your student ID at check-in or pay the difference to the standard fee.",
+  "solved": true
+ },
+ "53": {
+  "lines": [
+   "本社一階の売店は、改装工事のため、12月10日から20日まで休業します。",
+   "また、売店で予約していた文房具は、休業前日までに受け取ってください。"
+  ],
+  "en": "The shop closes on Dec. 10; collect your reserved supplies the day before.",
+  "solved": true
+ },
+ "54": {
+  "lines": [
+   "計算はできるのに、問題文を読むと何を求められているのか分からなくなる。",
+   "大人になって気づいたのは、あれは計算の問題である前に、読む力の問題だったということだ。"
+  ],
+  "en": "I could calculate but not read the question: it was a reading problem",
+  "solved": true,
+  "enBy": "maintainer, after the blind reader's note"
+ },
+ "55": {
+  "lines": [
+   "ただし、汚れた紙や、ビニールの窓がついた封筒は、これまでどおり燃えるゴミです。"
+  ],
+  "en": "Soiled paper and window envelopes still go out as burnable waste.",
+  "solved": true
+ },
+ "56": {
+  "lines": [
+   "けれども最近は、変わっていく故郷を残念に思うより、そこで今暮らしている人たちのことを考えるようになった。",
+   "私にとっての懐かしい景色は、彼らにとっては不便な古い町だったのかもしれない。"
+  ],
+  "en": "I think about today's residents: what I miss may have been inconvenient.",
+  "solved": true
+ },
+ "57": {
+  "lines": [
+   "普段自分が聞いている声は、空気を伝わる音に加えて、頭の骨を伝わる音が混ざっているため、他人が聞いている声とは違って聞こえるのだ。"
+  ],
+  "en": "Normally we hear our own voice through our skull as well as through air.",
+  "solved": true
+ },
+ "58": {
+  "lines": [
+   "「えー」「あの」が驚くほど多く、大事なところほど早口になっていたのである。"
+  ],
+  "en": "I used a lot of fillers and spoke faster at the key points.",
+  "solved": true
+ },
+ "59": {
+  "lines": [
+   "それ以来、話す前に要点を三つに絞り、大事なところでは一呼吸置くよう心がけている。",
+   "それでも、自分の話を客観的に知る方法として、これ以上のものはないと思っている。"
+  ],
+  "en": "Recordings helped me assess my speech and learn when to pause.",
+  "solved": true
+ },
+ "60": {
+  "lines": [
+   "ある生徒は「謝る」を調べたとき、すぐ近くにあった「誤る」の例文が気になり、二つの違いを質問しに来た。",
+   "こうした寄り道から、思いがけない知識が広がっていく。"
+  ],
+  "en": "A student found a nearby entry; these detours can teach unexpected things.",
+  "solved": true
+ },
+ "61": {
+  "lines": [
+   "選ぶ過程そのものが、言葉の感覚を育てるのだと思う。"
+  ],
+  "en": "Choosing among translations helps develop a feel for the language.",
+  "solved": true
+ },
+ "62": {
+  "lines": [
+   "目的によって道具を使い分けられること、それが本当の意味で辞書を使いこなすということだろう。"
+  ],
+  "en": "Knowing how to pick the tool for your purpose is what counts.",
+  "solved": true
+ },
+ "63": {
+  "lines": [
+   "職人に理由を尋ねると、「味がまろやかだと言ってくださる方が多いですね」と言う。",
+   "海水に含まれるさまざまな成分が、適度に残っているためだそうだ。"
+  ],
+  "en": "Buyers say it has a mild taste because some seawater minerals remain.",
+  "solved": true
+ },
+ "64": {
+  "lines": [
+   "「この技術を子孫に残すことが、自分の仕事だと思っています」と職人は話してくれた。"
+  ],
+  "en": "I see it as my job to hand this skill down to future generations.",
+  "solved": true
+ },
+ "65": {
+  "lines": [
+   "最近、この塩づくりを体験できる教室が始まり、町の子どもたちも参加しているという。"
+  ],
+  "en": "A salt-making class has started and local children have been taking part.",
+  "solved": true
+ },
+ "66": {
+  "lines": [
+   "夜遅くまで画面を見て睡眠時間が減ったりする心配がある。",
+   "確かに使いすぎや危険の問題はあるが、それは持たせないことで解決するものではない。"
+  ],
+  "en": "Late screen use can cut sleep; B also acknowledges overuse and safety risks.",
+  "solved": true
+ },
+ "67": {
+  "lines": [
+   "小学生のうちからスマートフォンを持たせることには反対だ。",
+   "親の目が届く小学生のうちに、使う時間や約束事を一緒に決め、正しい使い方を身につけさせるほうがいい。"
+  ],
+  "en": "A opposes phones in primary school; B wants to teach good habits then.",
+  "solved": true
+ },
+ "68": {
+  "lines": [
+   "二十四種類のほうが多くの客が足を止めたが、実際に買った人の割合は、六種類のほうがはるかに高かった。"
+  ],
+  "en": "Twenty-four jams drew more people; with six, a larger share bought some.",
+  "solved": true
+ },
+ "69": {
+  "lines": [
+   "選ばなかった他の選択肢の中に、もっといいものがあったのではないかと考えてしまうからだ。"
+  ],
+  "en": "You wonder whether something you passed up might have been better.",
+  "solved": true
+ },
+ "70": {
+  "lines": [
+   "自分にとって譲れない条件をいくつか決め、それを満たすものが見つかったら、そこで選ぶ。",
+   "それを探し続けることに時間を使うより、選んだものを大切にするほうがずっと豊かではないだろうか。"
+  ],
+  "en": "Choose what meets your must-haves and make the most of it.",
+  "solved": true
+ },
+ "71": {
+  "skip": "The adult base fare, the overtime rate, and the resident discount and its exception are in three distinct lines."
+ },
+ "72": {
+  "skip": "The holiday rule identifies the allowed visit, but both separate restrictions on children arriving alone are needed to rule out the other visits."
+ },
+ "73": {
+  "lines": [
+   "じゃあ、先にメールで、明日の朝こちらから電話しますって伝えておこう。"
+  ],
+  "en": "First I'll email to say that I'll call tomorrow morning.",
+  "solved": true
+ },
+ "74": {
+  "lines": [
+   "では、診断の前に、こちらの番号で問診票をインターネットで入力しておいてください。"
+  ],
+  "en": "Fill in the medical questionnaire online with this number before the exam.",
+  "solved": true
+ },
+ "75": {
+  "lines": [
+   "じゃあ、カードを選んでから払いますね。"
+  ],
+  "en": "I'll choose the card and then pay.",
+  "solved": true
+ },
+ "76": {
+  "lines": [
+   "申し込みには要旨が必要だから、まずそれを書いて僕に見せてくれる？"
+  ],
+  "en": "First write the abstract for the application and show it to me.",
+  "solved": true
+ },
+ "77": {
+  "lines": [
+   "お隣の佐藤さんが、余ってるのがあるから貸してくれるって言ってたよ。",
+   "じゃあ、そうする。"
+  ],
+  "en": "Sato next door said they'd lend a spare one. — Then I'll do that.",
+  "solved": true,
+  "enBy": "maintainer, after the blind reader's note"
+ },
+ "78": {
+  "lines": [
+   "新しい会社なら、海外の取引先と直接やりとりできるんだ。学生のときからやりたかったことだから。"
+  ],
+  "en": "I can deal with overseas customers directly, which I've long wanted to do.",
+  "solved": true
+ },
+ "79": {
+  "lines": [
+   "実は、故郷の祖母が入院することになって、様子を見に帰るの。"
+  ],
+  "en": "My grandmother is going into hospital, so I'm going home to check on her.",
+  "solved": true
+ },
+ "80": {
+  "lines": [
+   "実は、作品をお貸しくださっている個人の方とのお約束で、撮影はしないことになっております。"
+  ],
+  "en": "We agreed with the private lenders that visitors wouldn't take photos.",
+  "solved": true
+ },
+ "81": {
+  "lines": [
+   "それもあるけど、一番大きいのは置き場所を変えたことなんだって。",
+   "前は奥の棚にあったんだけど、レジの横に移したら、電車を待ってる人がついでに買うようになったんだって。"
+  ],
+  "en": "The main change was moving them near the register, where people buy them.",
+  "solved": true
+ },
+ "82": {
+  "lines": [
+   "最初の長い問題に時間をかけすぎて、最後の問題を解く時間がなくなっちゃったんだよ。"
+  ],
+  "en": "I spent too long on the first question and ran out of time for the last.",
+  "solved": true
+ },
+ "83": {
+  "lines": [
+   "それで今年は会場を広げる予定だったんだけど、警備をする人が十分に集まらなかったんだって。",
+   "安全が守れないなら中止にするしかない、ってことらしい。"
+  ],
+  "en": "They couldn't find enough security staff, so they had to cancel.",
+  "solved": true
+ },
+ "84": {
+  "lines": [
+   "大切なのは、寝る直前に食べないことです。",
+   "どうしても遅くなるときは、消化のいいものを少なめに食べるようにしましょう。"
+  ],
+  "en": "Avoid eating just before bed. If eating late, have a small, light meal.",
+  "solved": false,
+  "unsolved": "right, but not from the lines alone: Lines concern not eating right before bed; theme choice is a guess"
+ },
+ "85": {
+  "lines": [
+   "このような部首の意味を知っていると、初めて見る漢字でも、だいたいの意味が想像できます。",
+   "一つ一つの漢字をばらばらに覚えるより、ずっと効率がいいですよ。"
+  ],
+  "en": "Knowing radicals helps you infer meaning and remember characters efficiently.",
+  "solved": true
+ },
+ "86": {
+  "lines": [
+   "市では来月から、市内の主な施設を回る循環バスの運行を始めます。"
+  ],
+  "en": "The city will launch a loop bus serving major public sites next month.",
+  "solved": true
+ },
+ "87": {
+  "lines": [
+   "私たち消費者が、見た目より味や鮮度で選ぶようになれば、捨てられる野菜はもっと減るはずです。"
+  ],
+  "en": "If we pick vegetables for taste and freshness, fewer will be thrown away.",
+  "solved": true
+ },
+ "88": {
+  "lines": [
+   "担当の医師が急に学会に出ることになりまして、大変申し訳ないのですが、ご予約の日時を変更していただけないでしょうか。"
+  ],
+  "en": "Your dentist must attend a conference. Could you reschedule?",
+  "solved": true
+ },
+ "89": {
+  "lines": [
+   "このペン、お借りしても差し支えないでしょうか。"
+  ],
+  "en": "Would you mind if I borrowed this pen?",
+  "solved": true
+ },
+ "90": {
+  "lines": [
+   "あれ、山田さん、今日はもう帰ったんだっけ？"
+  ],
+  "en": "Has Yamada gone home already today?",
+  "solved": true
+ },
+ "91": {
+  "lines": [
+   "先日はわざわざお越しいただいて、ありがとうございました。"
+  ],
+  "en": "Thank you for taking the trouble to come the other day.",
+  "solved": true
+ },
+ "92": {
+  "lines": [
+   "部長に言付けをお願いしたいんですが。"
+  ],
+  "en": "I'd like to leave a message for the manager.",
+  "solved": true
+ },
+ "93": {
+  "lines": [
+   "この資料、コピーしておいてくれればよかったのに。"
+  ],
+  "en": "I wish you'd made copies of this handout beforehand.",
+  "solved": true
+ },
+ "94": {
+  "lines": [
+   "あの映画、見たかったんだけど、とうとう終わっちゃったよ。"
+  ],
+  "en": "I wanted to see that movie, but it finished its run.",
+  "solved": true
+ },
+ "95": {
+  "lines": [
+   "田中さんに限って、そんなミスをするはずがないよ。"
+  ],
+  "en": "Tanaka, of all people, wouldn't make that mistake.",
+  "solved": true
+ },
+ "96": {
+  "lines": [
+   "お待たせいたしました。こちら、ご注文の品でございます。"
+  ],
+  "en": "Sorry to keep you waiting. Here's your order.",
+  "solved": true
+ },
+ "97": {
+  "lines": [
+   "そんなに無理して食べなくてもいいのに。"
+  ],
+  "en": "You don't have to force yourself to eat so much.",
+  "solved": true
+ },
+ "98": {
+  "lines": [
+   "試験に受かったのは、先生のおかげです。"
+  ],
+  "en": "I passed the exam thanks to you.",
+  "solved": true
+ },
+ "99": {
+  "lines": [
+   "会議が始まるか始まらないかのうちに、部長が出て行っちゃったんだよ。"
+  ],
+  "en": "The manager left just as the meeting got underway.",
+  "solved": true
+ },
+ "100": {
+  "lines": [
+   "この仕事、明日までになんとかならないかな。"
+  ],
+  "en": "Is there any way to get this done by tomorrow?",
+  "solved": true
+ },
+ "101": {
+  "lines": [
+   "じゃあ、今回は箱根の温泉にして、京都はお父さんの膝が治ってから、また考えよう。"
+  ],
+  "en": "Let's do the Hakone hot springs and save Kyoto for when Dad's knee heals.",
+  "solved": true
+ },
+ "102": {
+  "lines": [
+   "それはいいけど、旅館とタクシーで、予算を超えちゃうよ。"
+  ],
+  "en": "The inn plus the taxi would put us over budget.",
+  "solved": true
+ },
+ "103": {
+  "lines": [
+   "私、将来は心理学を勉強したいから、Ｃは絶対出る。"
+  ],
+  "en": "I want to study psychology, so I'm definitely going to C.",
+  "solved": true
+ },
+ "104": {
+  "lines": [
+   "お父さんは石が好きだから、お前がＢに出ている間に、Ａに出てみるよ。"
+  ],
+  "en": "While you're in B, I'm going to A because I like rocks.",
+  "solved": true
+ }
+}

@@ -1,0 +1,390 @@
+{
+ "52": {
+  "lines": [
+   "11月18日（水）9時から15時まで、給水設備の点検を行います。",
+   "当日ご在宅でない方は、17日までに管理室へお知らせください。"
+  ],
+  "en": "Inspection is on the 18th; notify the office by the 17th if you will be out.",
+  "solved": true
+ },
+ "53": {
+  "lines": [
+   "大変申し訳ございませんが、木曜日か金曜日の午後に変更していただくことは可能でしょうか。",
+   "ご都合をお聞かせいただければ幸いです。"
+  ],
+  "en": "Can we move it to Thursday or Friday afternoon? Please let me know.",
+  "solved": false,
+  "unsolved": "right, but not from the lines alone: lines don't say what is being moved"
+ },
+ "54": {
+  "lines": [
+   "相手のことを考えながら言葉を選び、書き直し、ポストまで歩く。",
+   "受け取った人は、その手間の分だけ、書いた人の気持ちを感じ取るのだ。"
+  ],
+  "en": "Choosing words and posting the letter takes care the reader can feel.",
+  "solved": true
+ },
+ "55": {
+  "lines": [
+   "当日は保険証と、事前に記入した問診票をお持ちください。",
+   "問診票は受付で配っているほか、当院のホームページから印刷することもできます。"
+  ],
+  "en": "Bring a completed questionnaire; it can be printed from the clinic website.",
+  "solved": true
+ },
+ "56": {
+  "lines": [
+   "紙で配ると、会議が始まる前に資料を最後まで読んでしまい、説明を聞かない人が多かった。",
+   "画面で一枚ずつ見せれば、参加者の注意を話し手に集めることができる。"
+  ],
+  "en": "People ignored explanations after reading the handouts; slides focus them.",
+  "solved": true
+ },
+ "57": {
+  "lines": [
+   "それは、自分がとった魚がどこで、誰に食べられているのか分からないことへの寂しさだ。"
+  ],
+  "en": "They felt lonely not knowing who ate the fish they caught or where.",
+  "solved": true
+ },
+ "58": {
+  "lines": [
+   "直売所の売り上げは、町全体の水揚げから見ればわずかなものだ。"
+  ],
+  "en": "Direct sales are a small fraction of the town's overall catch.",
+  "solved": true
+ },
+ "59": {
+  "lines": [
+   "自分の仕事の意味を感じられる場があってこそ、人は仕事を続けられるのだと思う。"
+  ],
+  "en": "People keep working if they can feel that what they do matters.",
+  "solved": true
+ },
+ "60": {
+  "lines": [
+   "電車を待つ数分でさえ、気がつけばスマートフォンを開いている。",
+   "ニュースを読み、メッセージに返事をし、動画を眺める。"
+  ],
+  "en": "Even waiting for a train, I check my phone for news, messages, and videos.",
+  "solved": true
+ },
+ "61": {
+  "lines": [
+   "ある研究によると、人が何もしていないときにも脳の一部は活発に働いており、過去の記憶を整理したり、将来の計画を立てたりしているそうだ。"
+  ],
+  "en": "Part of the brain works on memories and plans even when we do nothing.",
+  "solved": true
+ },
+ "62": {
+  "lines": [
+   "退屈を恐れず、ときには頭を空っぽにしてみることも必要なのではないだろうか。"
+  ],
+  "en": "We shouldn't fear boredom; letting the mind go blank can be worthwhile.",
+  "solved": true
+ },
+ "63": {
+  "lines": [
+   "そのとき、入社二年目の社員が作業の順番を入れ替え、納期に間に合わせてくれた。"
+  ],
+  "en": "The second-year employee reordered the tasks and met the deadline.",
+  "solved": true
+ },
+ "64": {
+  "lines": [
+   "あの確認はお客さんの在庫を守るためにやるのだ"
+  ],
+  "en": "That check was done to protect the customer's stock.",
+  "solved": true
+ },
+ "65": {
+  "lines": [
+   "もちろん、説明には時間がかかる。",
+   "それでも、目的を伝えておくことは、いざという時の備えになるのだと思う。"
+  ],
+  "en": "It takes time to explain, but teaching the purpose helps when trouble comes.",
+  "solved": true
+ },
+ "66": {
+  "lines": [
+   "ただ、取引先に会う日に何を着ればいいか分からず、結局毎日スーツで来る人も少なくない。",
+   "しかし実際には、毎朝何を着るか考えるのが負担になったと感じる人もいる。"
+  ],
+  "en": "Some aren't sure what to wear; others find choosing clothes a burden.",
+  "solved": true
+ },
+ "67": {
+  "lines": [
+   "自由といっても、ある程度の目安は会社が示すべきだろう。",
+   "大切なのは、全員に自由を押し付けることではなく、スーツを着たい人も着たくない人も、それぞれが選べるようにすることだ。"
+  ],
+  "en": "A favors company guidelines; B wants each person free to decide.",
+  "solved": false,
+  "unsolved": "right, but not from the lines alone: lines are unlabeled; A/B assignment not given"
+ },
+ "68": {
+  "lines": [
+   "気持ちはわからなくもない。",
+   "だが、世の中の問題の多くは、一言で答えが出るようなものではない。"
+  ],
+  "en": "I understand the feeling, but most problems have no one-line answer.",
+  "solved": true
+ },
+ "69": {
+  "lines": [
+   "わかりやすい説明を聞いて「わかった」と思った瞬間、人はそれ以上考えるのをやめてしまう。"
+  ],
+  "en": "Once you think you've understood, you stop thinking further.",
+  "solved": true
+ },
+ "70": {
+  "lines": [
+   "私は、わからないことに耐える時間を大切にしたいと思う。",
+   "けれども、そうやって自分の頭で考えたことは、人から与えられた答えよりも、ずっと深く身につく。"
+  ],
+  "en": "Sit with uncertainty; what you work out yourself sinks in more deeply.",
+  "solved": true
+ },
+ "71": {
+  "skip": "The fees, permission for local employees, and the local residency rule for B are in separate rows."
+ },
+ "72": {
+  "skip": "The full B fee, half-price rule, and mail deadline are on three different lines."
+ },
+ "73": {
+  "lines": [
+   "じゃあ、三部追加しておきます。",
+   "じゃあ、先に資料のほうを済ませちゃいます。"
+  ],
+  "en": "I'll print three extra copies. I'll finish the handouts first.",
+  "solved": false,
+  "unsolved": "right, but not from the lines alone: what the 資料 task is isn't in the lines | EN: 'print' is not in the lines (三部追加)"
+ },
+ "74": {
+  "lines": [
+   "その間にこちらの用紙にご記入いただいてもかまいませんよ。",
+   "あ、じゃあ先にそれを書いちゃいます。"
+  ],
+  "en": "You can fill in this form meanwhile. Oh, I'll do that first.",
+  "solved": true
+ },
+ "75": {
+  "lines": [
+   "まずは図書館で最近の新聞記事をいくつか読んでみたら？",
+   "じゃあ、このあと図書館に行ってきます。"
+  ],
+  "en": "Read some newspaper articles first. I'll head to the library now.",
+  "solved": true
+ },
+ "76": {
+  "lines": [
+   "じゃあ、名前と電話番号を言いますね。"
+  ],
+  "en": "Okay, I'll give you my name and phone number.",
+  "solved": true
+ },
+ "77": {
+  "lines": [
+   "じゃあ、とりあえずベランダに移しておいて。",
+   "じゃ、さっそく運ぶよ。"
+  ],
+  "en": "Move the boxes onto the balcony for now. I'll carry them out right away.",
+  "solved": false,
+  "unsolved": "right, but not from the lines alone: what is moved isn't in the lines | EN: 'boxes' not in the lines"
+ },
+ "78": {
+  "lines": [
+   "実はね、会社の近くに引っ越して、歩いて通勤できるようになったの。往復で一時間ぐらい歩くから、それで十分かなって。"
+  ],
+  "en": "I can now walk to work. An hour round trip is enough exercise.",
+  "solved": true
+ },
+ "79": {
+  "lines": [
+   "きっかけは、一人暮らしのお年寄りのお客様から、「食べきれずに捨ててしまうのがもったいない」と言われたことです。"
+  ],
+  "en": "A customer who lives alone hated wasting the bread they couldn't finish.",
+  "solved": true
+ },
+ "80": {
+  "lines": [
+   "いや、仕事は休みなんだけど、実家の母が腰を痛めてね。",
+   "入院するほどじゃないんだけど、週末だけでも手伝いに帰ろうと思って。"
+  ],
+  "en": "My mother hurt her back, so I'll go home and help this weekend.",
+  "solved": true
+ },
+ "81": {
+  "lines": [
+   "実はね、試験をしてみたら、ふたの部分から少しだけ水が漏れることがわかったの。",
+   "お客様の手に渡ってからじゃ遅いから、部品を作り直すことにしたのよ。"
+  ],
+  "en": "Tests showed water leaking from the lid, so we're remaking the part.",
+  "solved": true
+ },
+ "82": {
+  "lines": [
+   "それもありますが、一番の理由は、書けない日でも机の前に座るためなんです。",
+   "だから、一行も書けなくても、その時間は必ず机に向かうようにしています。"
+  ],
+  "en": "I keep the routine by sitting at the desk even on days I can't write.",
+  "solved": true
+ },
+ "83": {
+  "lines": [
+   "今度のところは周りが静かで、ぐっすり眠れるんだよ。"
+  ],
+  "en": "It's quiet around the new place and I sleep soundly.",
+  "solved": true
+ },
+ "84": {
+  "lines": [
+   "空が急に暗くなったり、冷たい風が吹いてきたりしたら、それは強い雨の前ぶれです。",
+   "外にいる場合は、早めに丈夫な建物の中に入りましょう。"
+  ],
+  "en": "Dark skies or cold winds can signal a downpour. Get indoors early.",
+  "solved": true
+ },
+ "85": {
+  "lines": [
+   "そこで来月から、問い合わせの担当者を二人増やし、メールには必ず一日以内に返事をすることにします。"
+  ],
+  "en": "We'll add two staff to handle inquiries and reply within a day.",
+  "solved": true
+ },
+ "86": {
+  "lines": [
+   "歯ブラシは鉛筆を持つように軽く持ち、小刻みに動かすのがこつです。",
+   "それから、時間の長さより、一本一本に丁寧にブラシを当てることのほうが大切です。"
+  ],
+  "en": "Hold the brush lightly and use short strokes on each tooth.",
+  "solved": true
+ },
+ "87": {
+  "lines": [
+   "大きな地震で水道が止まったとき、これほど頼りになるものはありません。",
+   "そこで町内会としては、井戸を残し、ポンプを新しくすることに決めました。"
+  ],
+  "en": "The well would help in a quake; we're keeping it and replacing the pump.",
+  "solved": true
+ },
+ "88": {
+  "lines": [
+   "土を耕し、種をまき、毎週少しずつ育っていくのを見ていると、スーパーに並んでいる野菜一つ一つに、どれだけの手間がかかっているかがわかるようになったんです。",
+   "今では、形の悪い野菜を見ても、食べ物を大切にしようと自然に思えるようになりました。"
+  ],
+  "en": "Growing food showed me how much work it takes, so I value it more now.",
+  "solved": true
+ },
+ "89": {
+  "lines": [
+   "この書類、明日までに出していただけると助かるんですが。"
+  ],
+  "en": "It would help if you could turn in this document by tomorrow.",
+  "solved": true
+ },
+ "90": {
+  "lines": [
+   "田中さん、ちょっとお時間よろしいでしょうか。"
+  ],
+  "en": "Tanaka, can I have a moment?",
+  "solved": true
+ },
+ "91": {
+  "lines": [
+   "せっかく作ったのに、誰も食べてくれないなんて。"
+  ],
+  "en": "I went to the trouble of making it, and nobody's eating it.",
+  "solved": true
+ },
+ "92": {
+  "lines": [
+   "会議、もう始まってるかと思った。"
+  ],
+  "en": "I thought the meeting might have started already.",
+  "solved": true
+ },
+ "93": {
+  "lines": [
+   "あの店、行ってみたらそれほどでもなかったよ。"
+  ],
+  "en": "I tried that restaurant, and it wasn't that great.",
+  "solved": true
+ },
+ "94": {
+  "lines": [
+   "この荷物、ここに置かせてもらってもいいですか。"
+  ],
+  "en": "May I leave this luggage here?",
+  "solved": true
+ },
+ "95": {
+  "lines": [
+   "今日中に終わらせるなんて、とても無理ですよ。"
+  ],
+  "en": "There's no way I can finish this by the end of today.",
+  "solved": true
+ },
+ "96": {
+  "lines": [
+   "鈴木さんなら、さっきまでここにいたんだけど。"
+  ],
+  "en": "Suzuki was here until a minute ago.",
+  "solved": true
+ },
+ "97": {
+  "lines": [
+   "先生、明日の授業、休ませていただきたいんですが。"
+  ],
+  "en": "I'd like to be excused from class tomorrow.",
+  "solved": true
+ },
+ "98": {
+  "lines": [
+   "このままだと、電車に乗り遅れかねないよ。"
+  ],
+  "en": "At this rate we might miss the train.",
+  "solved": true
+ },
+ "99": {
+  "lines": [
+   "お先に失礼します。"
+  ],
+  "en": "I'm leaving while you're still here. See you.",
+  "solved": true
+ },
+ "100": {
+  "lines": [
+   "引っ越しの手伝い、よかったら行こうか。"
+  ],
+  "en": "Would you like me to come help you move?",
+  "solved": true
+ },
+ "101": {
+  "skip": "The option number, the daughter's museum suggestion and the family's acceptance occur in three separate spans."
+ },
+ "102": {
+  "lines": [
+   "でも、天気予報だと連休は雨みたいだぞ。",
+   "えー、雨じゃキャンプは無理だね。"
+  ],
+  "en": "The forecast says rain over the break. Oh, then we can't camp.",
+  "solved": true
+ },
+ "103": {
+  "lines": [
+   "メールや表計算の基本を学びます。",
+   "それより、仕事で表計算がうまく使えなくて困ってるんだ。水曜なら行けるし、これにするよ。"
+  ],
+  "en": "The class covers spreadsheets; I need that for work, so I'll take it.",
+  "solved": true
+ },
+ "104": {
+  "lines": [
+   "スマートフォンできれいな写真を撮るこつを教えます。",
+   "最近スマホで子どもの写真ばかり撮ってるのに、いつもぶれちゃうの。"
+  ],
+  "en": "The course teaches phone photography; my pictures keep coming out blurry.",
+  "solved": true
+ }
+}
