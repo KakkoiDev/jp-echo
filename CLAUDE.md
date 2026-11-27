@@ -563,6 +563,16 @@ Before considering the change complete:
   them for the audit and the reviewer. This replaces every earlier line here
   about connective cards in a round. Next: short clause pairs
   (docs/QUICK-ROUND-BACKLOG.md).
+- **The scored content had a second read on 27 Nov (v308), by Sonnet agents,
+  not by an outside reviewer.** 210 findings in
+  `tools/scored-review/reviews/2026-11-27-sonnet.json`, each with its line in
+  `…-sonnet-applied.json`. Applied: word-part meanings (`AFFIX_GLOSS`), parts
+  never offered against each other (`AFFIX_CONFUSABLE`), 18 deck sentences,
+  the connective fixes (`LINK_NOT_WRONG`, `LINK_SHOWN`, もっとも is an
+  exception), 従う's gloss and つつ(も)'s も, seven deciding lines. Not
+  applied: the other levels' 41 findings and the missing word parts (backlog).
+  The `REVIEWED_*` flags stay false: the same model family drafted part of
+  this content.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

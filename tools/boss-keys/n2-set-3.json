@@ -334,16 +334,11 @@
  "81": {
   "lines": [
    "よく、健康のためですかと聞かれるんですが、実はそうじゃないんです。",
-   "子どもたちが安心して畑に入れるようにしたかったんです。"
+   "うちの畑のそばに小学校がありまして、子どもたちがよく畑に虫を見に来るんですよ。"
   ],
-  "en": "Not for health; he wanted children to be able to enter the field safely",
-  "wrong": [
-   "He cut pesticide use to protect his own health",
-   "He cut pesticide use to reduce the work in his field",
-   "He cut pesticide use to sell his vegetables dearly"
-  ],
-  "solved": false,
-  "unsolved": "not sure: Choice 3 adds 'nearby elementary school', not in the lines; only children are mentioned. Other choices are clearly wrong."
+  "en": "Not for health: children from the school nearby come to see the insects",
+  "solved": true,
+  "by": "review 2026-11-27"
  },
  "82": {
   "lines": [
@@ -580,17 +575,12 @@
  },
  "102": {
   "lines": [
-   "この前膝を痛めたばかりだろう？果物狩りって、坂の多い畑を歩くんじゃないかな。",
+   "でも、お母さん、この前膝を痛めたばかりだろう？果物狩りって、坂の多い畑を歩くんじゃないかな。",
    "畑は山の斜面にございますので、少し歩いていただくことになります。"
   ],
-  "en": "Her knee is hurt and the fruit field is on a slope, so it means walking",
-  "wrong": [
-   "She does not like hot springs so they skip it",
-   "She dislikes fruit, so the fruit picking is out",
-   "The tour costs too much for them"
-  ],
-  "solved": false,
-  "unsolved": "not sure: Lines never say whose knee is hurt; 'mother' (choice 2, meaning 4 'her') is inferred from the hidden passage."
+  "en": "Mother just hurt her knee, and the orchard is on a slope with some walking",
+  "solved": true,
+  "by": "review 2026-11-27"
  },
  "103": {
   "lines": [

@@ -285,23 +285,49 @@ test("a connective excerpt (no longer in rounds) keeps up to two sentences befor
 test("a connective is asked on its own: one word, its meaning to pick, nothing to read", async () => {
   const {CONNECTIVES, OVERLAP, JOBS} = await import("../n2-connectives.js");
   const {SECONDS, choicesFor, answerSpeech} = await import("../n2-game.js");
+  const {LINK_SHOWN, LINK_NOT_WRONG} = await import("../n2-game-review.js");
   const links = pool.filter(q => q.kind === "link");
   assert.equal(links.length, CONNECTIVES.length, "every connective of the table"); assert.ok(links.length >= 35);
   assert.equal(pool.filter(q => q.kind === "connective").length, 0, "no passage excerpt in a round");
   assert.equal(SECONDS.link, 3); assert.equal(KIND_LABEL_OF.link, "Connective");
   const meaningOf = new Map(CONNECTIVES.map(([w, j, m]) => [m, j]));
   for (const q of links) {
-    const [word, job, meaning] = CONNECTIVES.find(c => c[0] === q.prompt);
-    assert.equal(q.id, "k:" + word); assert.equal(q.answer, meaning); assert.equal(q.sentence, "", "nothing to read but the word");
-    assert.equal(q.solution.why, JOBS[job]); assert.equal(q.solution.word, word); assert.ok(!q.practice && q.target === null);
+    const [word, job, meaning] = CONNECTIVES.find(c => "k:" + c[0] === q.id);
+    // The card shows the form the word is met in (それにもかかわらず, だとすれば); its id keeps the table's.
+    const shown = LINK_SHOWN[word] || word;
+    assert.equal(q.prompt, shown); assert.ok(shown.endsWith(word)); assert.equal(q.answer, meaning); assert.equal(q.sentence, "", "nothing to read but the word");
+    assert.equal(q.solution.why, JOBS[job]); assert.equal(q.solution.word, shown); assert.ok(!q.practice && q.target === null);
+    for (const m of LINK_NOT_WRONG[word] || []) assert.ok(!q.wrong.includes(m), word + ": " + m + " is fair for it too");
     // No wrong choice is the meaning of a connective that could do the same job.
     for (const w of q.wrong) assert.ok(!(OVERLAP[job] || [job]).includes(meaningOf.get(w)), word + " against " + w);
     assert.equal(new Set(choicesFor(q, seeded(5), .5).choices).size, 4, word);
-    assert.equal(answerSpeech(q), word);
+    assert.equal(answerSpeech(q), shown);
   }
+  // もっとも limits the point just made: an exception, not a turn (review, 27 Nov).
+  assert.match(links.find(q => q.id === "k:もっとも").solution.why, /^Exception: /);
   const mata = links.find(q => q.prompt === "また");
   assert.equal(mata.answer, "also, in addition"); assert.match(mata.solution.why, /^Add: /);
   // A miss comes back and is scored like any card; the job line shows after the answer.
   const st = rememberAnswer({}, {q: mata, outcome: "wrong", points: -200});
   assert.deepEqual(st.comeback, ["k:また"]); assert.equal(st.total, -200);
+});
+
+test("the review of 27 Nov is applied to the word parts: their meanings, and the parts kept apart", async () => {
+  const {AFFIX_GLOSS, AFFIX_CONFUSABLE} = await import("../n2-game-review.js");
+  const cards = pool.filter(q => q.kind === "affix"), by = t => cards.filter(q => q.prompt === t);
+  for (const [t, m] of [["～場", "venue, ground for ~"], ["非～", "non-~, un-~"], ["～道", "way, art of ~"], ["女～", "female ~"], ["～船", "ship, boat (type of ~)"]]) {
+    assert.equal(AFFIX_GLOSS[t], m); for (const q of by(t)) { assert.equal(q.answer, m); assert.equal(q.solution.meaning, m); }
+  }
+  for (const [k, m] of Object.entries(AFFIX_GLOSS)) assert.ok(m.length <= 40 && !/[ぁ-んァ-ヶ一-龯]/.test(m), k);
+  // No two parts of a group are ever each other's wrong choice.
+  assert.ok(AFFIX_CONFUSABLE.length >= 20);
+  const meaning = new Map(cards.map(q => [q.prompt, q.answer]));
+  for (const group of AFFIX_CONFUSABLE) for (const a of group) for (const q of by(a)) for (const b of group) if (b !== a && meaning.has(b)) assert.ok(!q.wrong.includes(meaning.get(b)), a + " against " + b);
+  assert.ok(!by("～器").some(q => q.wrong.includes(meaning.get("～機")))); assert.ok(by("～器").length && by("～機").length);
+  // Every finding has a line saying what was done.
+  const found = read("../tools/scored-review/reviews/2026-11-27-sonnet.json"), done = read("../tools/scored-review/reviews/2026-11-27-sonnet-applied.json");
+  assert.equal(done.length, found.length); assert.ok(done.every(l => ["applied", "partly", "not applied", "no change needed"].includes(l.status) && l.note));
+  // What can cost a learner points at N2 (parts A, C, D) is applied wherever the entry has a card.
+  const open = done.filter(l => ["wrong", "unfair"].includes(l.severity) && ["A", "C", "D"].includes(l.part) && !["applied", "no change needed"].includes(l.status));
+  assert.ok(open.length <= 5, open.map(l => l.id).join(", "));
 });

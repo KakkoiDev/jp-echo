@@ -903,8 +903,8 @@
    "id": "n2-word-128",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "I drank too much last night and have a headache.",
-   "target": "昨夜【さくや】は飲【の】み過【す】ぎて、頭【あたま】が痛【いた】い。"
+   "source": "I worked too late into the night and ruined my health.",
+   "target": "夜遅【よるおそ】くまで働【はたら】き過【す】ぎて、体調【たいちょう】を崩【くず】した。"
   },
   {
    "id": "n2-word-129",
@@ -1211,8 +1211,8 @@
    "id": "n2-word-172",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "I reserved two window seats.",
-   "target": "窓側【まどがわ】の席【せき】を二席【にせき】予約【よやく】した。"
+   "source": "This theatre has about a thousand seats.",
+   "target": "この劇場【げきじょう】には約千席【やくせんせき】ある。"
   },
   {
    "id": "n2-word-173",
@@ -2520,8 +2520,8 @@
    "id": "n2-word-359",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "At the ceremony, everyone sang the school song.",
-   "target": "式【しき】では全員【ぜんいん】で校歌【こうか】を歌【うた】った。"
+   "source": "When the national anthem played, the whole crowd stood up.",
+   "target": "国歌【こっか】が流【なが】れると、観客【かんきゃく】は全員【ぜんいん】立【た】ち上【あ】がった。"
   },
   {
    "id": "n2-word-360",
@@ -3717,8 +3717,8 @@
    "id": "n2-word-530",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "I ran the whole marathon to the end.",
-   "target": "マラソンを最後【さいご】まで走【はし】りきった。"
+   "source": "He has the stamina to run the full 42 km.",
+   "target": "彼【かれ】は四十二キロを走【はし】りきる体力【たいりょく】がある。"
   },
   {
    "id": "n2-word-531",
@@ -4347,8 +4347,8 @@
    "id": "n2-word-620",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "A puppy was wagging its tail in front of the shop.",
-   "target": "店【みせ】の前【まえ】で小犬【こいぬ】がしっぽを振【ふ】っていた。"
+   "source": "It started to drizzle, so I opened my umbrella.",
+   "target": "小雨【こさめ】が降【ふ】ってきたので、傘【かさ】を広【ひろ】げた。"
   },
   {
    "id": "n2-word-621",
@@ -4984,8 +4984,8 @@
    "id": "n2-word-711",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "This programme will be rebroadcast next week in the evening.",
-   "target": "この番組【ばんぐみ】は、来週【らいしゅう】の夜【よる】に再放送【さいほうそう】される。"
+   "source": "This programme will be rebroadcast next Sunday.",
+   "target": "この番組【ばんぐみ】は、来週【らいしゅう】の日曜日【にちようび】に再放送【さいほうそう】される。"
   },
   {
    "id": "n2-word-712",
@@ -5593,8 +5593,8 @@
    "id": "n2-word-798",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "This inn has twenty rooms in total.",
-   "target": "この旅館【りょかん】には、全部【ぜんぶ】で二十室【にじゅっしつ】ある。"
+   "source": "The meeting room is already fully booked.",
+   "target": "会議室【かいぎしつ】はもう予約【よやく】でいっぱいだ。"
   },
   {
    "id": "n2-word-799",
@@ -5810,8 +5810,8 @@
    "id": "n2-word-829",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "Most of the participants in this course are beginners.",
-   "target": "この講座【こうざ】の参加者【さんかしゃ】は、ほとんどが初心者【しょしんしゃ】だ。"
+   "source": "Applicants gathered from all over the country.",
+   "target": "全国【ぜんこく】から応募者【おうぼしゃ】が集【あつ】まった。"
   },
   {
    "id": "n2-word-830",
@@ -5936,8 +5936,8 @@
    "id": "n2-word-847",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "My father prefers fruit liqueur to sake.",
-   "target": "父【ちち】は日本酒【にほんしゅ】より、果実酒【かじつしゅ】のほうが好【す】きだ。"
+   "source": "This shop stocks sake from all over the country.",
+   "target": "この店【みせ】には各地【かくち】の日本酒【にほんしゅ】が並【なら】んでいる。"
   },
   {
    "id": "n2-word-848",
@@ -6055,7 +6055,7 @@
    "id": "n2-word-864",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "I held the baby firmly in both arms.",
+   "source": "I held the baby firmly with both hands.",
    "target": "赤【あか】ちゃんを両手【りょうて】でしっかりと抱【だ】いた。"
   },
   {
@@ -6727,8 +6727,8 @@
    "id": "n2-word-960",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "This town's ramen is said to be the best in Japan.",
-   "target": "この町【まち】のラーメンは日本一【にほんいち】だと言【い】われている。"
+   "source": "I think this shop's curry is the best in the world.",
+   "target": "この店【みせ】のカレーは世界一【せかいいち】おいしいと思【おも】う。"
   },
   {
    "id": "n2-word-961",
@@ -7105,8 +7105,8 @@
    "id": "n2-word-1014",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "It was cold, so I went out with a jacket over my sweater.",
-   "target": "寒【さむ】いので、セーターの上【うえ】に上着【うわぎ】を着【き】て出【で】かけた。"
+   "source": "It was cold, so I put on a jacket and went out.",
+   "target": "寒【さむ】いので、上着【うわぎ】を着【き】て出【で】かけた。"
   },
   {
    "id": "n2-word-1015",
@@ -7238,8 +7238,8 @@
    "id": "n2-word-1033",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "We offer our heartfelt thanks for everyone's cooperation.",
-   "target": "皆様【みなさま】の御協力【ごきょうりょく】に、心【こころ】より御礼【おんれい】申【もう】し上【あ】げます。"
+   "source": "I sent a thank-you gift to our business partner.",
+   "target": "取引先【とりひきさき】へ御礼【おんれい】の品【しな】を送【おく】った。"
   },
   {
    "id": "n2-word-1034",
@@ -7364,8 +7364,8 @@
    "id": "n2-word-1051",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "You can get to the Izu Islands by boat or by plane.",
-   "target": "伊豆諸島【いずしょとう】には、船【ふね】や飛行機【ひこうき】で行【い】くことができる。"
+   "source": "I plan to travel to a remote island in the summer.",
+   "target": "夏【なつ】に離島【りとう】へ旅行【りょこう】する予定【よてい】だ。"
   },
   {
    "id": "n2-word-1052",
@@ -10423,8 +10423,8 @@
    "id": "n2-word-1488",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "A great player doesn't necessarily become a great manager.",
-   "target": "名選手【めいせんしゅ】が必【かなら】ずしも名監督【めいかんとく】になれるとは限【かぎ】らない。"
+   "source": "He was a great player whom everyone acknowledged.",
+   "target": "彼【かれ】は誰【だれ】もが認【みと】める名選手【めいせんしゅ】だった。"
   },
   {
    "id": "n2-word-1489",
@@ -10668,8 +10668,8 @@
    "id": "n2-word-1523",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "If I become rich, I want to travel around the world.",
-   "target": "お金【かね】もちになったら、世界中【せかいじゅう】を旅【たび】したい。"
+   "source": "If I became rich, I would like to travel the world.",
+   "target": "お金持【かねも】ちになったら、世界中【せかいじゅう】を旅【たび】したい。"
   },
   {
    "id": "n2-word-1524",
@@ -11452,8 +11452,8 @@
    "id": "n2-word-1635",
    "sourceLang": "en",
    "targetLang": "ja",
-   "source": "He finished third in the marathon.",
-   "target": "彼【かれ】はマラソン大会【たいかい】で三着【さんちゃく】に入【はい】った。"
+   "source": "I bought two suits.",
+   "target": "スーツを二着【にちゃく】買【か】った。"
   },
   {
    "id": "n2-word-1636",

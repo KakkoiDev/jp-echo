@@ -180,9 +180,9 @@ test("audit: patterns a blind solver could not tell apart are never each other's
 
 test("audit: the solves on record; the index passes release validation", () => {
   const t = {}; for (const p of Object.values(draft.patterns)) t[p.transparency] = (t[p.transparency] || 0) + 1;
-  assert.deepEqual(t, {clear: 138, partial: 20, opaque: 63}, "after the content review of 27 Nov: 17 lowered to partial, two more learned whole");
+  assert.deepEqual(t, {clear: 138, partial: 21, opaque: 62}, "after the reviews of 27 Nov: 17 lowered to partial, two more learned whole, then つつ(も) given its も");
   for (const [key, p] of Object.entries(draft.patterns)) if (p.transparency === "clear") assert.deepEqual(p.solved, {by: "blocks-only", right: true}, key);
-  assert.equal(Object.values(draft.patterns).filter(p => p.solved?.by === "review").length, 17, "lowered by the reviewer, not by a failed solve");
+  assert.equal(Object.values(draft.patterns).filter(p => p.solved?.by === "review").length, 18, "set by a reviewer, not by a solve: 17 lowered on 27 Nov, and つつ(も)");
   const release = validateGrammarBlocks(draft);
   assert.deepEqual(release.errors, []);
   assert.ok(release.counts.singleShare > 40, "reported, not capped: " + release.counts.singleShare);
@@ -193,7 +193,7 @@ test("audit: the solves on record; the index passes release validation", () => {
 
 test("a pattern that is one block is learned by its block card: opaque, plain gloss, no build or infer card", () => {
   const one = Object.entries(draft.patterns).filter(([, p]) => p.parts.length === 1);
-  assert.equal(one.length, 63);
+  assert.equal(one.length, 62);
   for (const [key, p] of one) assert.equal(p.transparency, "opaque", key);
   const full = gamePool({...options, grammarBlocks: draft});
   for (const [key] of one) assert.ok(!full.some(q => q.id === "gb:" + key || q.id === "gi:" + key), key);
@@ -236,7 +236,7 @@ test("the released index is the validated draft, part of the app, and its cards 
 
 test("the review data handed to a reviewer is the released index, whole", () => {
   const review = read("../tools/grammar-blocks/review-data.json"), released = read("../n2-grammar-blocks.json");
-  assert.deepEqual(review.counts, {blocks: 191, basicBlocks: 26, patterns: 221, oneBlockPatterns: 63});
+  assert.deepEqual(review.counts, {blocks: 191, basicBlocks: 26, patterns: 221, oneBlockPatterns: 62});
   for (const b of review.blocks) assert.equal(b.gloss, released.blocks[b.id].gloss, b.id + ": run tools/grammar-blocks/make-review.mjs");
   for (const p of review.patterns) assert.deepEqual(p.parts.map(x => x.text), released.patterns[p.key].parts.map(x => x.text), p.key);
   assert.ok(review.patterns.every(p => p.meaning && p.sentence?.ja));

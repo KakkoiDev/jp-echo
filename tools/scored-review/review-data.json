@@ -147,7 +147,7 @@
   },
   {
    "id": "k:にもかかわらず",
-   "word": "にもかかわらず",
+   "word": "それにもかかわらず",
    "answer": "in spite of that",
    "job": "turn",
    "shownAfterAnswer": "Turn: what follows goes against what came before; the writer's point is usually after it",
@@ -236,9 +236,11 @@
    "id": "k:もっとも",
    "word": "もっとも",
    "answer": "though, admittedly (a qualification after the point)",
-   "job": "turn",
-   "shownAfterAnswer": "Turn: what follows goes against what came before; the writer's point is usually after it",
+   "job": "exception",
+   "shownAfterAnswer": "Exception: a condition or exception to what came before",
    "wrong": [
+    "certainly, it is true that",
+    "of course",
     "in other words, that is",
     "namely, that is (formal)",
     "in short",
@@ -252,9 +254,11 @@
     "what is more, and on top of that",
     "besides, in addition",
     "also, in addition",
+    "on the other hand, meanwhile",
+    "in contrast",
+    "rather, if anything",
     "for example",
     "because (the reason follows)",
-    "in addition, note that",
     "by the way",
     "now, well then",
     "if so, then",
@@ -268,6 +272,7 @@
    "job": "concede",
    "shownAfterAnswer": "Concede: grants a point the writer will then turn against (確かに… しかし…)",
    "wrong": [
+    "though, admittedly (a qualification after the point)",
     "in other words, that is",
     "namely, that is (formal)",
     "in short",
@@ -301,6 +306,7 @@
    "job": "concede",
    "shownAfterAnswer": "Concede: grants a point the writer will then turn against (確かに… しかし…)",
    "wrong": [
+    "though, admittedly (a qualification after the point)",
     "in other words, that is",
     "namely, that is (formal)",
     "in short",
@@ -780,6 +786,7 @@
    "job": "contrast",
    "shownAfterAnswer": "Contrast: sets another side or option beside the first",
    "wrong": [
+    "though, admittedly (a qualification after the point)",
     "certainly, it is true that",
     "of course",
     "namely, that is (formal)",
@@ -811,6 +818,7 @@
    "job": "contrast",
    "shownAfterAnswer": "Contrast: sets another side or option beside the first",
    "wrong": [
+    "though, admittedly (a qualification after the point)",
     "certainly, it is true that",
     "of course",
     "in other words, that is",
@@ -843,6 +851,7 @@
    "job": "rather",
    "shownAfterAnswer": "Rather: corrects or replaces the first view with a better one",
    "wrong": [
+    "though, admittedly (a qualification after the point)",
     "certainly, it is true that",
     "of course",
     "in other words, that is",
@@ -998,7 +1007,6 @@
     "in spite of that",
     "and yet, despite that",
     "that said, even so",
-    "though, admittedly (a qualification after the point)",
     "certainly, it is true that",
     "of course",
     "in other words, that is",
@@ -1102,7 +1110,7 @@
   },
   {
    "id": "k:とすれば",
-   "word": "とすれば",
+   "word": "だとすれば",
    "answer": "if so, then",
    "job": "infer",
    "shownAfterAnswer": "Infer: what follows is what must be true if the point before holds",
@@ -1161,15 +1169,14 @@
     "because (the reason follows)",
     "however, provided that, except",
     "in addition, note that",
-    "by the way",
-    "now, well then"
+    "by the way"
    ]
   }
  ],
  "generated": "2026-11-27",
  "counts": {
   "parts": 167,
-  "partCards": 149,
+  "partCards": 156,
   "connectives": 228,
   "grammarOpen": 48,
   "lines": 106
@@ -1185,14 +1192,14 @@
    "underlined": "初",
    "answer": "first ~",
    "side": "prefix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
     "various ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
-    "~th",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "short ~",
     "foreign ~, outside ~"
    ]
@@ -1207,14 +1214,14 @@
    "underlined": "諸",
    "answer": "various ~",
    "side": "prefix",
-   "wrongChoices": 152,
+   "wrongChoices": 156,
    "sameSideWrong": [
     "first ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
-    "~th",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "short ~",
     "foreign ~, outside ~"
    ]
@@ -1227,18 +1234,18 @@
    "sentence": "近【ちか】くの市役所【しやくしょ】で書類【しょるい】をもらってきた。",
    "sentenceEn": "I picked up the forms at the nearby city hall.",
    "underlined": "所",
-   "answer": "place",
+   "answer": "place, office (facility)",
    "side": "suffix",
-   "wrongChoices": 149,
+   "wrongChoices": 147,
    "sameSideWrong": [
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
     "count for tatami, mat",
-    "kind of color"
+    "~ colour, colouring",
+    "too much ~"
    ]
   },
   {
@@ -1251,16 +1258,16 @@
    "underlined": "所",
    "answer": "place",
    "side": "suffix",
-   "wrongChoices": 149,
+   "wrongChoices": 147,
    "sameSideWrong": [
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
     "count for tatami, mat",
-    "kind of color"
+    "~ colour, colouring",
+    "too much ~"
    ]
   },
   {
@@ -1271,16 +1278,16 @@
    "sentence": "この大学【だいがく】では女子学生【じょしがくせい】が半数【はんすう】を超【こ】えた。",
    "sentenceEn": "At this university, female students now make up more than half.",
    "underlined": "女",
-   "answer": "things done by women",
+   "answer": "female ~",
    "side": "prefix",
-   "wrongChoices": 151,
+   "wrongChoices": 156,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "economizing ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
-    "~th",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "short ~",
     "foreign ~, outside ~"
    ]
@@ -1293,18 +1300,18 @@
    "sentence": "姉【あね】の家【いえ】では先月【せんげつ】、次女【じじょ】が生【う】まれた。",
    "sentenceEn": "My older sister had her second daughter last month.",
    "underlined": "女",
-   "answer": "count for sisters",
+   "answer": "~th daughter (birth order)",
    "side": "suffix",
    "wrongChoices": 149,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "kind of ministry",
-    "merchant, business",
-    "counter for article",
-    "kind of field, ground",
-    "kind of color",
-    "too much ~",
-    "finished"
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~",
+    "count for tatami, mat"
    ]
   },
   {
@@ -1315,16 +1322,16 @@
    "sentence": "夏【なつ】は省【しょう】エネのため、冷房【れいぼう】を二十八度【にじゅうはちど】に設定【せってい】する。",
    "sentenceEn": "In summer we set the air conditioning to 28 degrees to save energy.",
    "underlined": "省",
-   "answer": "economizing ~",
+   "answer": "saving ~, conserving ~",
    "side": "prefix",
-   "wrongChoices": 151,
+   "wrongChoices": 156,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "things done by women",
+    "female ~",
     "former, late ~",
-    "gross, general",
-    "~th",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "short ~",
     "foreign ~, outside ~"
    ]
@@ -1337,18 +1344,18 @@
    "sentence": "文部科学省【もんぶかがくしょう】が新【あたら】しい方針【ほうしん】を発表【はっぴょう】した。",
    "sentenceEn": "The Ministry of Education announced a new policy.",
    "underlined": "省",
-   "answer": "kind of ministry",
+   "answer": "~ Ministry (government)",
    "side": "suffix",
-   "wrongChoices": 145,
+   "wrongChoices": 156,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "count for tatami, mat",
-    "too much ~",
-    "finished"
+    "~th daughter (birth order)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~",
+    "count for tatami, mat"
    ]
   },
   {
@@ -1359,18 +1366,18 @@
    "sentence": "祖父【そふ】は港町【みなとまち】で貿易商【ぼうえきしょう】をしていた。",
    "sentenceEn": "My grandfather was a trader in a port town.",
    "underlined": "商",
-   "answer": "merchant, business",
+   "answer": "dealer, trader in ~",
    "side": "suffix",
-   "wrongChoices": 151,
+   "wrongChoices": 156,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat",
-    "kind of color"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~",
+    "count for tatami, mat"
    ]
   },
   {
@@ -1381,18 +1388,18 @@
    "sentence": "我【わ】がチームは今季【こんき】、五勝【ごしょう】二敗【にはい】だ。",
    "sentenceEn": "Our team has five wins and two losses this season.",
    "underlined": "勝",
-   "answer": "count for victory",
+   "answer": "~ wins (victories)",
    "side": "suffix",
-   "wrongChoices": 150,
+   "wrongChoices": 156,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "kind of ministry",
-    "merchant, business",
-    "counter for article",
-    "kind of field, ground",
-    "kind of color",
-    "too much ~",
-    "finished"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "article no. ~ (of a law)",
+    "venue, ground for ~",
+    "count for tatami, mat"
    ]
   },
   {
@@ -1403,18 +1410,18 @@
    "sentence": "憲法【けんぽう】第九条【だいきゅうじょう】について授業【じゅぎょう】で議論【ぎろん】した。",
    "sentenceEn": "We discussed Article 9 of the Constitution in class.",
    "underlined": "条",
-   "answer": "counter for article",
+   "answer": "article no. ~ (of a law)",
    "side": "suffix",
-   "wrongChoices": 130,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "kind of field, ground",
-    "count for tatami, mat",
-    "kind of color"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "venue, ground for ~",
+    "count for tatami, mat"
    ]
   },
   {
@@ -1425,18 +1432,18 @@
    "sentence": "試合【しあい】は市内【しない】の野球場【やきゅうじょう】で行【おこな】われる。",
    "sentenceEn": "The game will be held at the baseball stadium in the city.",
    "underlined": "場",
-   "answer": "kind of field, ground",
+   "answer": "venue, ground for ~",
    "side": "suffix",
-   "wrongChoices": 146,
+   "wrongChoices": 155,
    "sameSideWrong": [
-    "place",
-    "count for sisters",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
     "count for tatami, mat",
-    "too much ~",
-    "finished"
+    "~ colour, colouring",
+    "too much ~"
    ]
   },
   {
@@ -1449,16 +1456,16 @@
    "underlined": "畳",
    "answer": "count for tatami, mat",
    "side": "suffix",
-   "wrongChoices": 150,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "kind of ministry",
-    "merchant, business",
-    "counter for article",
-    "kind of field, ground",
-    "kind of color",
-    "too much ~",
-    "finished"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -1469,18 +1476,18 @@
    "sentence": "この虫【むし】は保護色【ほごしょく】で葉【は】に紛【まぎ】れている。",
    "sentenceEn": "This insect blends in with the leaves thanks to its protective coloring.",
    "underlined": "色",
-   "answer": "kind of color",
+   "answer": "~ colour, colouring",
    "side": "suffix",
-   "wrongChoices": 146,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "count for tatami, mat",
-    "too much ~",
-    "finished"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -1497,8 +1504,8 @@
    "text": "～過ぎる",
    "reading": "～すぎる",
    "meaning": "too much ~",
-   "sentence": "昨夜【さくや】は飲【の】み過【す】ぎて、頭【あたま】が痛【いた】い。",
-   "sentenceEn": "I drank too much last night and have a headache.",
+   "sentence": "夜遅【よるおそ】くまで働【はたら】き過【す】ぎて、体調【たいちょう】を崩【くず】した。",
+   "sentenceEn": "I worked too late into the night and ruined my health.",
    "noCard": "the part is not written exactly once in the sentence, or the entry is not a clean prefix or suffix"
   },
   {
@@ -1509,28 +1516,41 @@
    "sentence": "支払【しはら】い済【ず】みの書類【しょるい】はこの箱【はこ】に入【い】れてください。",
    "sentenceEn": "Please put documents that have been paid into this box.",
    "underlined": "済",
-   "answer": "finished",
+   "answer": "already ~ed, done",
    "side": "suffix",
-   "wrongChoices": 151,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
-   "id": null,
+   "id": "a:～席",
    "text": "～席",
    "reading": "～せき",
    "meaning": "counter for seats",
-   "sentence": "窓側【まどがわ】の席【せき】を二席【にせき】予約【よやく】した。",
-   "sentenceEn": "I reserved two window seats.",
-   "noCard": "the part is not written exactly once in the sentence, or the entry is not a clean prefix or suffix"
+   "sentence": "この劇場【げきじょう】には約千席【やくせんせき】ある。",
+   "sentenceEn": "This theatre has about a thousand seats.",
+   "underlined": "席",
+   "answer": "counter for seats",
+   "side": "suffix",
+   "wrongChoices": 139,
+   "sameSideWrong": [
+    "place, office (facility)",
+    "place",
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
+   ]
   },
   {
    "id": "a:～船",
@@ -1540,18 +1560,18 @@
    "sentence": "港【みなと】には外国【がいこく】の貨物船【かもつせん】が停泊【ていはく】している。",
    "sentenceEn": "Foreign cargo ships are anchored in the harbor.",
    "underlined": "船",
-   "answer": "counter for ships",
+   "answer": "ship, boat (type of ~)",
    "side": "suffix",
-   "wrongChoices": 130,
+   "wrongChoices": 155,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "kind of field, ground",
-    "count for tatami, mat",
-    "kind of color"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -1562,18 +1582,18 @@
    "sentence": "決勝戦【けっしょうせん】は日曜日【にちようび】に行【おこな】われる。",
    "sentenceEn": "The final will be held on Sunday.",
    "underlined": "戦",
-   "answer": "counter for games, matches",
+   "answer": "match, contest, battle",
    "side": "suffix",
-   "wrongChoices": 130,
+   "wrongChoices": 156,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "kind of field, ground",
-    "count for tatami, mat",
-    "kind of color"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "article no. ~ (of a law)",
+    "venue, ground for ~",
+    "count for tatami, mat"
    ]
   },
   {
@@ -1586,14 +1606,14 @@
    "underlined": "前",
    "answer": "former, late ~",
    "side": "prefix",
-   "wrongChoices": 151,
+   "wrongChoices": 156,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "things done by women",
-    "economizing ~",
-    "gross, general",
-    "~th",
+    "female ~",
+    "saving ~, conserving ~",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "short ~",
     "foreign ~, outside ~"
    ]
@@ -1608,16 +1628,16 @@
    "underlined": "前",
    "answer": "before ~",
    "side": "suffix",
-   "wrongChoices": 151,
+   "wrongChoices": 156,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -1630,16 +1650,16 @@
    "underlined": "沿い",
    "answer": "along",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 156,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -1650,16 +1670,16 @@
    "sentence": "今回【こんかい】の工事【こうじ】の総額【そうがく】は三千万円【さんぜんまんえん】だ。",
    "sentenceEn": "The total cost of this construction is thirty million yen.",
    "underlined": "総",
-   "answer": "gross, general",
+   "answer": "total ~, whole ~",
    "side": "prefix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "~th",
+    "ordinal prefix (~th)",
     "short ~",
     "foreign ~, outside ~"
    ]
@@ -1674,16 +1694,16 @@
    "underlined": "艘",
    "answer": "counter for ships",
    "side": "suffix",
-   "wrongChoices": 130,
+   "wrongChoices": 137,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "kind of field, ground",
-    "count for tatami, mat",
-    "kind of color"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -1694,18 +1714,18 @@
    "sentence": "靴下【くつした】を三足【さんぞく】まとめて買【か】った。",
    "sentenceEn": "I bought three pairs of socks at once.",
    "underlined": "足",
-   "answer": "counter for shoes",
+   "answer": "counter for pairs of footwear",
    "side": "suffix",
-   "wrongChoices": 130,
+   "wrongChoices": 139,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "kind of field, ground",
-    "count for tatami, mat",
-    "kind of color"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -1716,16 +1736,16 @@
    "sentence": "第三回【だいさんかい】の会議【かいぎ】は来週【らいしゅう】の金曜日【きんようび】に開【ひら】かれる。",
    "sentenceEn": "The third meeting will be held next Friday.",
    "underlined": "第",
-   "answer": "~th",
+   "answer": "ordinal prefix (~th)",
    "side": "prefix",
-   "wrongChoices": 152,
+   "wrongChoices": 150,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
+    "total ~, whole ~",
     "short ~",
     "foreign ~, outside ~"
    ]
@@ -1740,16 +1760,16 @@
    "underlined": "だらけ",
    "answer": "be full of ~, be filled with ~",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -1762,15 +1782,15 @@
    "underlined": "短",
    "answer": "short ~",
    "side": "prefix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
-    "~th",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "foreign ~, outside ~"
    ]
   },
@@ -1784,16 +1804,16 @@
    "underlined": "団",
    "answer": "group, corps",
    "side": "suffix",
-   "wrongChoices": 151,
+   "wrongChoices": 155,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -1806,16 +1826,16 @@
    "underlined": "日",
    "answer": "counter for days",
    "side": "suffix",
-   "wrongChoices": 129,
+   "wrongChoices": 138,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "kind of field, ground",
-    "count for tatami, mat",
-    "kind of color"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -1828,16 +1848,16 @@
    "underlined": "下",
    "answer": "under ~",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -1848,18 +1868,18 @@
    "sentence": "市【し】は手続【てつづ】きのデジタル化【か】を進【すす】めている。",
    "sentenceEn": "The city is pushing ahead with digitalization of procedures.",
    "underlined": "化",
-   "answer": "action of making something",
+   "answer": "-ization, turning into ~",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -1870,28 +1890,41 @@
    "sentence": "娘【むすめ】は大学【だいがく】の看護科【かんごか】に入学【にゅうがく】した。",
    "sentenceEn": "My daughter entered the nursing course at a university.",
    "underlined": "科",
-   "answer": "family, group",
+   "answer": "department, course; family (biology)",
    "side": "suffix",
-   "wrongChoices": 150,
+   "wrongChoices": 154,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
-   "id": null,
+   "id": "a:～歌",
    "text": "～歌",
    "reading": "～か",
    "meaning": "song of ~",
-   "sentence": "式【しき】では全員【ぜんいん】で校歌【こうか】を歌【うた】った。",
-   "sentenceEn": "At the ceremony, everyone sang the school song.",
-   "noCard": "the part is not written exactly once in the sentence, or the entry is not a clean prefix or suffix"
+   "sentence": "国歌【こっか】が流【なが】れると、観客【かんきゃく】は全員【ぜんいん】立【た】ち上【あ】がった。",
+   "sentenceEn": "When the national anthem played, the whole crowd stood up.",
+   "underlined": "歌",
+   "answer": "song, anthem",
+   "side": "suffix",
+   "wrongChoices": 157,
+   "sameSideWrong": [
+    "place, office (facility)",
+    "place",
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
+   ]
   },
   {
    "id": "a:～画",
@@ -1903,16 +1936,16 @@
    "underlined": "画",
    "answer": "picture, painting",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -1925,15 +1958,15 @@
    "underlined": "外",
    "answer": "foreign ~, outside ~",
    "side": "prefix",
-   "wrongChoices": 152,
+   "wrongChoices": 156,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
-    "~th",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "short ~"
    ]
   },
@@ -1947,16 +1980,16 @@
    "underlined": "外",
    "answer": "out of ~",
    "side": "suffix",
-   "wrongChoices": 151,
+   "wrongChoices": 155,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -1967,18 +2000,18 @@
    "sentence": "大臣【だいじん】は各国【かっこく】の代表【だいひょう】と話【はな】し合【あ】った。",
    "sentenceEn": "The minister talked with the representatives of each country.",
    "underlined": "各",
-   "answer": "every ~, each ~",
+   "answer": "each ~ (separately)",
    "side": "prefix",
-   "wrongChoices": 151,
+   "wrongChoices": 154,
    "sameSideWrong": [
     "first ~",
-    "various ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
-    "~th",
-    "short ~"
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
+    "short ~",
+    "foreign ~, outside ~"
    ]
   },
   {
@@ -1991,16 +2024,16 @@
    "underlined": "がち",
    "answer": "tend to do ~",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 155,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -2020,18 +2053,18 @@
    "sentence": "毎日【まいにち】電車【でんしゃ】で朝刊【ちょうかん】を読【よ】む。",
    "sentenceEn": "I read the morning paper on the train every day.",
    "underlined": "刊",
-   "answer": "~ issued (magazine, newspaper)",
+   "answer": "edition, published ~",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 154,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -2044,16 +2077,16 @@
    "underlined": "間",
    "answer": "between, during",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -2066,16 +2099,16 @@
    "underlined": "巻",
    "answer": "volume",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 154,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -2088,16 +2121,16 @@
    "underlined": "館",
    "answer": "~ hall, ~ building",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 150,
    "sameSideWrong": [
-    "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~",
+    "count for tatami, mat",
+    "~ colour, colouring"
    ]
   },
   {
@@ -2110,16 +2143,16 @@
    "underlined": "感",
    "answer": "feeling, sense",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -2130,18 +2163,18 @@
    "sentence": "来週【らいしゅう】から新学期【しんがっき】が始【はじ】まる。",
    "sentenceEn": "The new semester starts next week.",
    "underlined": "期",
-   "answer": "~age, ~period",
+   "answer": "period, term, stage",
    "side": "suffix",
-   "wrongChoices": 151,
+   "wrongChoices": 156,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -2154,16 +2187,16 @@
    "underlined": "器",
    "answer": "device, equipment",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 156,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -2176,16 +2209,16 @@
    "underlined": "機",
    "answer": "machine",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 156,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -2198,16 +2231,16 @@
    "underlined": "気味",
    "answer": "slightly ~",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 155,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -2220,16 +2253,16 @@
    "underlined": "教",
    "answer": "religion",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -2242,16 +2275,16 @@
    "underlined": "行",
    "answer": "line, row",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -2264,16 +2297,16 @@
    "underlined": "業",
    "answer": "type of business",
    "side": "suffix",
-   "wrongChoices": 150,
+   "wrongChoices": 154,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat",
-    "kind of color"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~",
+    "count for tatami, mat"
    ]
   },
   {
@@ -2286,26 +2319,39 @@
    "underlined": "共産",
    "answer": "communist ~",
    "side": "prefix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
-    "~th",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "short ~"
    ]
   },
   {
-   "id": null,
+   "id": "a:～きる",
    "text": "～きる",
    "reading": "～きる",
    "meaning": "nevertheless, to carry through",
-   "sentence": "マラソンを最後【さいご】まで走【はし】りきった。",
-   "sentenceEn": "I ran the whole marathon to the end.",
-   "noCard": "the part is not written exactly once in the sentence, or the entry is not a clean prefix or suffix"
+   "sentence": "彼【かれ】は四十二キロを走【はし】りきる体力【たいりょく】がある。",
+   "sentenceEn": "He has the stamina to run the full 42 km.",
+   "underlined": "きる",
+   "answer": "do ~ completely, to the end",
+   "side": "suffix",
+   "wrongChoices": 157,
+   "sameSideWrong": [
+    "place, office (facility)",
+    "place",
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
+   ]
   },
   {
    "id": "a:～切れ",
@@ -2315,18 +2361,18 @@
    "sentence": "この牛乳【ぎゅうにゅう】は賞味期限切【しょうみきげんぎ】れだ。",
    "sentenceEn": "This milk is past its expiry date.",
    "underlined": "切れ",
-   "answer": "out of ~",
+   "answer": "expired, run out of ~",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 156,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -2339,15 +2385,15 @@
    "underlined": "空",
    "answer": "empty ~",
    "side": "prefix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
-    "~th",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "short ~"
    ]
   },
@@ -2359,18 +2405,18 @@
    "sentence": "駅【えき】の北口【きたぐち】で待【ま】ち合【あ】わせしよう。",
    "sentenceEn": "Let's meet at the north exit of the station.",
    "underlined": "口",
-   "answer": "~ opening, ~ entrance",
+   "answer": "entrance, exit, opening",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 150,
    "sameSideWrong": [
-    "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~",
+    "count for tatami, mat",
+    "~ colour, colouring"
    ]
   },
   {
@@ -2383,16 +2429,16 @@
    "underlined": "家",
    "answer": "~'s family, the house of ~",
    "side": "suffix",
-   "wrongChoices": 151,
+   "wrongChoices": 154,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -2405,16 +2451,16 @@
    "underlined": "形",
    "answer": "shape of ~",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -2425,18 +2471,18 @@
    "sentence": "彼【かれ】は理系【りけい】の大学【だいがく】で勉強【べんきょう】している。",
    "sentenceEn": "He is studying at a science university.",
    "underlined": "系",
-   "answer": "~ system, ~ lineage",
+   "answer": "~ type, ~ stream, ~ origin",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 153,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -2447,18 +2493,18 @@
    "sentence": "首都圏【しゅとけん】では、朝【あさ】の電車【でんしゃ】がとても混【こ】む。",
    "sentenceEn": "In the Tokyo metropolitan area, morning trains are very crowded.",
    "underlined": "圏",
-   "answer": "bloc, sphere",
+   "answer": "sphere, zone, area",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -2471,15 +2517,15 @@
    "underlined": "現",
    "answer": "present, incumbent",
    "side": "prefix",
-   "wrongChoices": 152,
+   "wrongChoices": 156,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
-    "~th",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "short ~"
    ]
   },
@@ -2488,20 +2534,20 @@
    "text": "小～",
    "reading": "こ～",
    "meaning": "small ~",
-   "sentence": "店【みせ】の前【まえ】で小犬【こいぬ】がしっぽを振【ふ】っていた。",
-   "sentenceEn": "A puppy was wagging its tail in front of the shop.",
+   "sentence": "小雨【こさめ】が降【ふ】ってきたので、傘【かさ】を広【ひろ】げた。",
+   "sentenceEn": "It started to drizzle, so I opened my umbrella.",
    "underlined": "小",
    "answer": "small ~",
    "side": "prefix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
-    "~th",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "short ~"
    ]
   },
@@ -2515,15 +2561,15 @@
    "underlined": "高",
    "answer": "high (level) ~",
    "side": "prefix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
-    "~th",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "short ~"
    ]
   },
@@ -2537,16 +2583,16 @@
    "underlined": "校",
    "answer": "counter for school",
    "side": "suffix",
-   "wrongChoices": 130,
+   "wrongChoices": 138,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "kind of field, ground",
-    "count for tatami, mat",
-    "kind of color"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -2559,16 +2605,16 @@
    "underlined": "港",
    "answer": "~ port",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 150,
    "sameSideWrong": [
-    "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~",
+    "count for tatami, mat",
+    "~ colour, colouring"
    ]
   },
   {
@@ -2579,18 +2625,18 @@
    "sentence": "雑誌【ざっし】の来月号【らいげつごう】に、私【わたし】の記事【きじ】が載【の】る予定【よてい】だ。",
    "sentenceEn": "My article is due to appear in next month's issue of the magazine.",
    "underlined": "号",
-   "answer": "counter for magazine, the name of ship",
+   "answer": "No. ~, issue ~; ship name",
    "side": "suffix",
-   "wrongChoices": 128,
+   "wrongChoices": 152,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "kind of field, ground",
-    "count for tatami, mat",
-    "kind of color"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -2603,16 +2649,16 @@
    "underlined": "国",
    "answer": "nation of ~",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -2623,18 +2669,18 @@
    "sentence": "このバスは十五分【じゅうごふん】毎【ごと】に駅【えき】から出【で】ている。",
    "sentenceEn": "This bus leaves the station every fifteen minutes.",
    "underlined": "毎",
-   "answer": "every ~, each ~",
+   "answer": "every ~ (each time)",
    "side": "suffix",
-   "wrongChoices": 151,
+   "wrongChoices": 155,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -2656,15 +2702,15 @@
    "underlined": "今",
    "answer": "this, current",
    "side": "prefix",
-   "wrongChoices": 152,
+   "wrongChoices": 156,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
-    "~th",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "short ~"
    ]
   },
@@ -2673,20 +2719,20 @@
    "text": "再～",
    "reading": "さい～",
    "meaning": "re ~",
-   "sentence": "この番組【ばんぐみ】は、来週【らいしゅう】の夜【よる】に再放送【さいほうそう】される。",
-   "sentenceEn": "This programme will be rebroadcast next week in the evening.",
+   "sentence": "この番組【ばんぐみ】は、来週【らいしゅう】の日曜日【にちようび】に再放送【さいほうそう】される。",
+   "sentenceEn": "This programme will be rebroadcast next Sunday.",
    "underlined": "再",
-   "answer": "re ~",
+   "answer": "again, re-~",
    "side": "prefix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
-    "~th",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "short ~"
    ]
   },
@@ -2700,15 +2746,15 @@
    "underlined": "最",
    "answer": "the most ~",
    "side": "prefix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
-    "~th",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "short ~"
    ]
   },
@@ -2729,18 +2775,18 @@
    "sentence": "夏休【なつやす】みに、家族【かぞく】で富士山【ふじさん】に登【のぼ】った。",
    "sentenceEn": "During the summer holidays my family climbed Mount Fuji.",
    "underlined": "山",
-   "answer": "the name of mountain",
+   "answer": "Mt. ~, mountain",
    "side": "suffix",
-   "wrongChoices": 150,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -2753,16 +2799,16 @@
    "underlined": "産",
    "answer": "made in ~",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -2775,16 +2821,16 @@
    "underlined": "史",
    "answer": "history of ~",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -2797,16 +2843,16 @@
    "underlined": "紙",
    "answer": "newspaper, type of paper",
    "side": "suffix",
-   "wrongChoices": 151,
+   "wrongChoices": 152,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -2817,18 +2863,18 @@
    "sentence": "奈良【なら】で東大寺【とうだいじ】の大仏【だいぶつ】を見【み】た。",
    "sentenceEn": "In Nara I saw the Great Buddha at Todaiji Temple.",
    "underlined": "寺",
-   "answer": "the name of temple",
+   "answer": "~ Temple",
    "side": "suffix",
-   "wrongChoices": 150,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -2841,15 +2887,15 @@
    "underlined": "時間目",
    "answer": "~th hour, ~th period",
    "side": "suffix",
-   "wrongChoices": 151,
+   "wrongChoices": 149,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~",
     "count for tatami, mat"
    ]
   },
@@ -2870,17 +2916,17 @@
    "sentence": "室温【しつおん】を二十五度【にじゅうごど】に保【たも】ってください。",
    "sentenceEn": "Please keep the room temperature at twenty-five degrees.",
    "underlined": "室",
-   "answer": "room",
+   "answer": "room, indoor ~",
    "side": "prefix",
-   "wrongChoices": 151,
+   "wrongChoices": 156,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
-    "~th",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "short ~"
    ]
   },
@@ -2889,21 +2935,21 @@
    "text": "～室",
    "reading": "～しつ",
    "meaning": "counter for room",
-   "sentence": "この旅館【りょかん】には、全部【ぜんぶ】で二十室【にじゅっしつ】ある。",
-   "sentenceEn": "This inn has twenty rooms in total.",
+   "sentence": "会議室【かいぎしつ】はもう予約【よやく】でいっぱいだ。",
+   "sentenceEn": "The meeting room is already fully booked.",
    "underlined": "室",
    "answer": "counter for room",
    "side": "suffix",
-   "wrongChoices": 129,
+   "wrongChoices": 131,
    "sameSideWrong": [
-    "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "kind of field, ground",
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~",
     "count for tatami, mat",
-    "kind of color"
+    "~ colour, colouring"
    ]
   },
   {
@@ -2916,16 +2962,16 @@
    "underlined": "日",
    "answer": "day",
    "side": "suffix",
-   "wrongChoices": 151,
+   "wrongChoices": 154,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -2947,26 +2993,39 @@
    "underlined": "車",
    "answer": "~ car",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
-   "id": null,
+   "id": "a:～者",
    "text": "～者",
    "reading": "～しゃ",
    "meaning": "person",
-   "sentence": "この講座【こうざ】の参加者【さんかしゃ】は、ほとんどが初心者【しょしんしゃ】だ。",
-   "sentenceEn": "Most of the participants in this course are beginners.",
-   "noCard": "the part is not written exactly once in the sentence, or the entry is not a clean prefix or suffix"
+   "sentence": "全国【ぜんこく】から応募者【おうぼしゃ】が集【あつ】まった。",
+   "sentenceEn": "Applicants gathered from all over the country.",
+   "underlined": "者",
+   "answer": "person",
+   "side": "suffix",
+   "wrongChoices": 154,
+   "sameSideWrong": [
+    "place, office (facility)",
+    "place",
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
+   ]
   },
   {
    "id": "a:～社",
@@ -2978,16 +3037,16 @@
    "underlined": "社",
    "answer": "counter for company",
    "side": "suffix",
-   "wrongChoices": 130,
+   "wrongChoices": 139,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "kind of field, ground",
-    "count for tatami, mat",
-    "kind of color"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -3000,26 +3059,39 @@
    "underlined": "手",
    "answer": "~ player, person who does ~",
    "side": "suffix",
-   "wrongChoices": 149,
+   "wrongChoices": 154,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
-   "id": null,
+   "id": "a:～酒",
    "text": "～酒",
    "reading": "～しゅ",
    "meaning": "kind of alcohol",
-   "sentence": "父【ちち】は日本酒【にほんしゅ】より、果実酒【かじつしゅ】のほうが好【す】きだ。",
-   "sentenceEn": "My father prefers fruit liqueur to sake.",
-   "noCard": "the part is not written exactly once in the sentence, or the entry is not a clean prefix or suffix"
+   "sentence": "この店【みせ】には各地【かくち】の日本酒【にほんしゅ】が並【なら】んでいる。",
+   "sentenceEn": "This shop stocks sake from all over the country.",
+   "underlined": "酒",
+   "answer": "kind of alcohol",
+   "side": "suffix",
+   "wrongChoices": 157,
+   "sameSideWrong": [
+    "place, office (facility)",
+    "place",
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
+   ]
   },
   {
    "id": "a:～集",
@@ -3031,16 +3103,16 @@
    "underlined": "集",
    "answer": "collection of ~",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -3051,17 +3123,17 @@
    "sentence": "事故【じこ】で、運転手【うんてんしゅ】が重傷【じゅうしょう】を負【お】った。",
    "sentenceEn": "The driver was seriously injured in the accident.",
    "underlined": "重",
-   "answer": "heavy ~",
+   "answer": "heavy ~, serious ~",
    "side": "prefix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
-    "~th",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "short ~"
    ]
   },
@@ -3073,18 +3145,18 @@
    "sentence": "彼【かれ】は何【なん】でも自分流【じぶんりゅう】にやりたがる。",
    "sentenceEn": "He always wants to do everything his own way.",
    "underlined": "流",
-   "answer": "fashion, manner",
+   "answer": "way, school of ~",
    "side": "suffix",
    "wrongChoices": 152,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -3093,19 +3165,19 @@
    "reading": "りょう～",
    "meaning": "both ~",
    "sentence": "赤【あか】ちゃんを両手【りょうて】でしっかりと抱【だ】いた。",
-   "sentenceEn": "I held the baby firmly in both arms.",
+   "sentenceEn": "I held the baby firmly with both hands.",
    "underlined": "両",
    "answer": "both ~",
    "side": "prefix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
-    "~th",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "short ~"
    ]
   },
@@ -3117,18 +3189,18 @@
    "sentence": "来月【らいげつ】から、この美術館【びじゅつかん】の入場料【にゅうじょうりょう】が上【あ】がる。",
    "sentenceEn": "From next month, this museum's admission fee goes up.",
    "underlined": "料",
-   "answer": "fare, charge",
+   "answer": "fee, charge for ~",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 156,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -3141,16 +3213,16 @@
    "underlined": "領",
    "answer": "territory",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -3163,16 +3235,16 @@
    "underlined": "力",
    "answer": "power of ~",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -3185,16 +3257,16 @@
    "underlined": "論",
    "answer": "theory",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -3207,15 +3279,15 @@
    "underlined": "和",
    "answer": "Japanese style",
    "side": "prefix",
-   "wrongChoices": 151,
+   "wrongChoices": 155,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
-    "~th",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "short ~"
    ]
   },
@@ -3229,16 +3301,16 @@
    "underlined": "羽",
    "answer": "counter for rabbits, birds",
    "side": "suffix",
-   "wrongChoices": 130,
+   "wrongChoices": 139,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "kind of field, ground",
-    "count for tatami, mat",
-    "kind of color"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -3251,15 +3323,15 @@
    "underlined": "我",
    "answer": "our ~",
    "side": "prefix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
-    "~th",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "short ~"
    ]
   },
@@ -3273,15 +3345,15 @@
    "underlined": "明くる",
    "answer": "next, following",
    "side": "prefix",
-   "wrongChoices": 149,
+   "wrongChoices": 156,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
-    "~th",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "short ~"
    ]
   },
@@ -3295,16 +3367,16 @@
    "underlined": "位",
    "answer": "~th place",
    "side": "suffix",
-   "wrongChoices": 149,
+   "wrongChoices": 147,
    "sameSideWrong": [
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~",
     "count for tatami, mat",
-    "kind of color"
+    "~ colour, colouring",
+    "too much ~"
    ]
   },
   {
@@ -3317,15 +3389,15 @@
    "underlined": "幾",
    "answer": "several ~",
    "side": "prefix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
-    "~th",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "short ~"
    ]
   },
@@ -3334,18 +3406,31 @@
    "text": "～いち (にほんいち)",
    "reading": "～いち (にほんいち)",
    "meaning": "No. 1 ~ (in)",
-   "sentence": "この町【まち】のラーメンは日本一【にほんいち】だと言【い】われている。",
-   "sentenceEn": "This town's ramen is said to be the best in Japan.",
+   "sentence": "この店【みせ】のカレーは世界一【せかいいち】おいしいと思【おも】う。",
+   "sentenceEn": "I think this shop's curry is the best in the world.",
    "noCard": "the part is not written exactly once in the sentence, or the entry is not a clean prefix or suffix"
   },
   {
-   "id": null,
+   "id": "a:上～",
    "text": "上～",
    "reading": "うわ～",
    "meaning": "upper ~",
-   "sentence": "寒【さむ】いので、セーターの上【うえ】に上着【うわぎ】を着【き】て出【で】かけた。",
-   "sentenceEn": "It was cold, so I went out with a jacket over my sweater.",
-   "noCard": "the part is not written exactly once in the sentence, or the entry is not a clean prefix or suffix"
+   "sentence": "寒【さむ】いので、上着【うわぎ】を着【き】て出【で】かけた。",
+   "sentenceEn": "It was cold, so I put on a jacket and went out.",
+   "underlined": "上",
+   "answer": "upper ~",
+   "side": "prefix",
+   "wrongChoices": 157,
+   "sameSideWrong": [
+    "first ~",
+    "various ~",
+    "female ~",
+    "saving ~, conserving ~",
+    "former, late ~",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
+    "short ~"
+   ]
   },
   {
    "id": "a:～園",
@@ -3355,28 +3440,41 @@
    "sentence": "週末【しゅうまつ】に子【こ】どもを連【つ】れて動物園【どうぶつえん】へ行【い】った。",
    "sentenceEn": "I took the kids to the zoo on the weekend.",
    "underlined": "園",
-   "answer": "~ garden (especially man made)",
+   "answer": "park, garden; place for ~",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 148,
    "sameSideWrong": [
-    "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~",
+    "count for tatami, mat",
+    "~ colour, colouring"
    ]
   },
   {
-   "id": null,
+   "id": "a:御～",
    "text": "御～",
    "reading": "おん～",
    "meaning": "honorific ~",
-   "sentence": "皆様【みなさま】の御協力【ごきょうりょく】に、心【こころ】より御礼【おんれい】申【もう】し上【あ】げます。",
-   "sentenceEn": "We offer our heartfelt thanks for everyone's cooperation.",
-   "noCard": "the part is not written exactly once in the sentence, or the entry is not a clean prefix or suffix"
+   "sentence": "取引先【とりひきさき】へ御礼【おんれい】の品【しな】を送【おく】った。",
+   "sentenceEn": "I sent a thank-you gift to our business partner.",
+   "underlined": "御",
+   "answer": "honorific ~",
+   "side": "prefix",
+   "wrongChoices": 157,
+   "sameSideWrong": [
+    "first ~",
+    "various ~",
+    "female ~",
+    "saving ~, conserving ~",
+    "former, late ~",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
+    "short ~"
+   ]
   },
   {
    "id": "a:～頭",
@@ -3386,18 +3484,18 @@
    "sentence": "牧場【ぼくじょう】には、牛【うし】が二十頭【にじゅっとう】ほどいた。",
    "sentenceEn": "There were about twenty cows at the ranch.",
    "underlined": "頭",
-   "answer": "counter for animals",
+   "answer": "counter for large animals",
    "side": "suffix",
-   "wrongChoices": 130,
+   "wrongChoices": 139,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "kind of field, ground",
-    "count for tatami, mat",
-    "kind of color"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -3408,18 +3506,18 @@
    "sentence": "商店街【しょうてんがい】の福引【ふくびき】で、二等【にとう】の自転車【じてんしゃ】が当【あ】たった。",
    "sentenceEn": "I won second prize, a bicycle, in the shopping street lottery.",
    "underlined": "等",
-   "answer": "level, place",
+   "answer": "class, grade, prize rank",
    "side": "suffix",
-   "wrongChoices": 148,
+   "wrongChoices": 150,
    "sameSideWrong": [
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat",
-    "kind of color"
+    "place, office (facility)",
+    "place",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~",
+    "count for tatami, mat"
    ]
   },
   {
@@ -3427,21 +3525,21 @@
    "text": "～島",
    "reading": "～とう",
    "meaning": "kind of islands",
-   "sentence": "伊豆諸島【いずしょとう】には、船【ふね】や飛行機【ひこうき】で行【い】くことができる。",
-   "sentenceEn": "You can get to the Izu Islands by boat or by plane.",
+   "sentence": "夏【なつ】に離島【りとう】へ旅行【りょこう】する予定【よてい】だ。",
+   "sentenceEn": "I plan to travel to a remote island in the summer.",
    "underlined": "島",
-   "answer": "kind of islands",
+   "answer": "island (in names)",
    "side": "suffix",
-   "wrongChoices": 146,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "count for tatami, mat",
-    "too much ~",
-    "finished"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -3454,15 +3552,15 @@
    "underlined": "同",
    "answer": "same ~",
    "side": "prefix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
-    "~th",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "short ~"
    ]
   },
@@ -3474,18 +3572,18 @@
    "sentence": "高校【こうこう】のころから、ずっと柔道【じゅうどう】を続【つづ】けている。",
    "sentenceEn": "I've kept doing judo ever since high school.",
    "underlined": "道",
-   "answer": "kind of path, road",
+   "answer": "way, art of ~",
    "side": "suffix",
-   "wrongChoices": 146,
+   "wrongChoices": 156,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "count for tatami, mat",
-    "too much ~",
-    "finished"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -3496,18 +3594,18 @@
    "sentence": "説明書【せつめいしょ】の通【とお】りに組【く】み立【た】てたのに、うまく動【うご】かない。",
    "sentenceEn": "I assembled it according to the instructions, but it doesn't work properly.",
    "underlined": "通り",
-   "answer": "in accordance with ~, following ~",
+   "answer": "as ~, in accordance with ~",
    "side": "suffix",
-   "wrongChoices": 150,
+   "wrongChoices": 156,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -3520,16 +3618,16 @@
    "underlined": "ところ",
    "answer": "about to do ~",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -3542,16 +3640,16 @@
    "underlined": "内",
    "answer": "inside ~",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -3564,15 +3662,15 @@
    "underlined": "長",
    "answer": "long ~",
    "side": "prefix",
-   "wrongChoices": 151,
+   "wrongChoices": 156,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
-    "~th",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "short ~"
    ]
   },
@@ -3584,18 +3682,18 @@
    "sentence": "彼【かれ】の言【い】うことは、どうも信【しん】じ難【がた】い。",
    "sentenceEn": "What he says is really hard to believe.",
    "underlined": "難い",
-   "answer": "hard (difficult) to do ~",
+   "answer": "nearly impossible to ~",
    "side": "suffix",
-   "wrongChoices": 151,
+   "wrongChoices": 156,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -3608,16 +3706,16 @@
    "underlined": "年生",
    "answer": "counter for school year",
    "side": "suffix",
-   "wrongChoices": 130,
+   "wrongChoices": 138,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "kind of field, ground",
-    "count for tatami, mat",
-    "kind of color"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -3630,16 +3728,16 @@
    "underlined": "泊",
    "answer": "counter for staying (e.g., 2 nights)",
    "side": "suffix",
-   "wrongChoices": 130,
+   "wrongChoices": 138,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "kind of field, ground",
-    "count for tatami, mat",
-    "kind of color"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -3650,18 +3748,18 @@
    "sentence": "夜中【よなか】に銃声【じゅうせい】が三発【さんぱつ】聞【き】こえた。",
    "sentenceEn": "Three gunshots were heard in the middle of the night.",
    "underlined": "発",
-   "answer": "counter for bullets",
+   "answer": "counter for shots; departing from ~",
    "side": "suffix",
-   "wrongChoices": 130,
+   "wrongChoices": 139,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "kind of field, ground",
-    "count for tatami, mat",
-    "kind of color"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -3674,15 +3772,15 @@
    "underlined": "反",
    "answer": "anti ~, counter ~",
    "side": "prefix",
-   "wrongChoices": 130,
+   "wrongChoices": 138,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
-    "~th",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "short ~"
    ]
   },
@@ -3696,15 +3794,15 @@
    "underlined": "番目",
    "answer": "~th",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 150,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~",
     "count for tatami, mat"
    ]
   },
@@ -3716,17 +3814,17 @@
    "sentence": "両国【りょうこく】の首脳【しゅのう】が非公式【ひこうしき】に会談【かいだん】した。",
    "sentenceEn": "The two countries' leaders held unofficial talks.",
    "underlined": "非",
-   "answer": "anti~, counter~",
+   "answer": "non-~, un-~",
    "side": "prefix",
-   "wrongChoices": 130,
+   "wrongChoices": 156,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
-    "~th",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "short ~"
    ]
   },
@@ -3740,16 +3838,16 @@
    "underlined": "費",
    "answer": "cost of ~",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 156,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -3762,15 +3860,15 @@
    "underlined": "一",
    "answer": "one ~",
    "side": "prefix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
-    "~th",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "short ~"
    ]
   },
@@ -3782,18 +3880,18 @@
    "sentence": "祖父【そふ】は心臓病【しんぞうびょう】で入院【にゅういん】している。",
    "sentenceEn": "My grandfather is in hospital with heart disease.",
    "underlined": "病",
-   "answer": "kind of disease",
+   "answer": "~ disease, ~ illness",
    "side": "suffix",
-   "wrongChoices": 146,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "count for tatami, mat",
-    "too much ~",
-    "finished"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -3806,16 +3904,16 @@
    "underlined": "部",
    "answer": "~ part",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -3828,16 +3926,16 @@
    "underlined": "風",
    "answer": "~ style",
    "side": "suffix",
-   "wrongChoices": 151,
+   "wrongChoices": 155,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -3850,15 +3948,15 @@
    "underlined": "副",
    "answer": "vice ~",
    "side": "prefix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
-    "~th",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "short ~"
    ]
   },
@@ -3872,16 +3970,16 @@
    "underlined": "振り",
    "answer": "after an interval of ~",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -3892,17 +3990,17 @@
    "sentence": "古本【ふるほん】屋【や】で珍【めずら】しい辞書【じしょ】を見【み】つけた。",
    "sentenceEn": "I found a rare dictionary at a secondhand bookshop.",
    "underlined": "古",
-   "answer": "old ~",
+   "answer": "old ~, used ~",
    "side": "prefix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
-    "~th",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "short ~"
    ]
   },
@@ -3914,18 +4012,18 @@
    "sentence": "同【おな】じ説明【せつめい】を何遍【なんべん】も繰【く】り返【かえ】した。",
    "sentenceEn": "I repeated the same explanation over and over.",
    "underlined": "遍",
-   "answer": "time",
+   "answer": "times (repetitions)",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -3938,16 +4036,16 @@
    "underlined": "弁",
    "answer": "speech, dialect",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -3960,16 +4058,16 @@
    "underlined": "歩",
    "answer": "step, pace",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -3980,18 +4078,18 @@
    "sentence": "彼【かれ】は忘【わす】れっぽいので、メモを渡【わた】しておいた。",
    "sentenceEn": "He's forgetful, so I gave him a note.",
    "underlined": "ぽい",
-   "answer": "~ish",
+   "answer": "-ish; prone to ~",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 155,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -4011,17 +4109,17 @@
    "sentence": "この腕時計【うでどけい】は防水【ぼうすい】なので、泳【およ】いでも大丈夫【だいじょうぶ】だ。",
    "sentenceEn": "This wristwatch is waterproof, so it's fine to swim with it.",
    "underlined": "防",
-   "answer": "~ prevention",
+   "answer": "~proof; protection against ~",
    "side": "prefix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
-    "~th",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "short ~"
    ]
   },
@@ -4035,15 +4133,15 @@
    "underlined": "ほんの",
    "answer": "mere, just",
    "side": "prefix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
-    "~th",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "short ~"
    ]
   },
@@ -4057,15 +4155,15 @@
    "underlined": "毎",
    "answer": "every ~",
    "side": "prefix",
-   "wrongChoices": 151,
+   "wrongChoices": 155,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
-    "~th",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "short ~"
    ]
   },
@@ -4079,15 +4177,15 @@
    "underlined": "未",
    "answer": "not yet ~",
    "side": "prefix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
-    "~th",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "short ~"
    ]
   },
@@ -4101,16 +4199,16 @@
    "underlined": "みたい",
    "answer": "looks like ~",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -4123,15 +4221,15 @@
    "underlined": "民主",
    "answer": "democratic",
    "side": "prefix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
-    "~th",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "short ~"
    ]
   },
@@ -4145,26 +4243,39 @@
    "underlined": "向け",
    "answer": "for ~",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
-   "id": null,
+   "id": "a:名～",
    "text": "名～",
    "reading": "めい～",
    "meaning": "famous ~",
-   "sentence": "名選手【めいせんしゅ】が必【かなら】ずしも名監督【めいかんとく】になれるとは限【かぎ】らない。",
-   "sentenceEn": "A great player doesn't necessarily become a great manager.",
-   "noCard": "the part is not written exactly once in the sentence, or the entry is not a clean prefix or suffix"
+   "sentence": "彼【かれ】は誰【だれ】もが認【みと】める名選手【めいせんしゅ】だった。",
+   "sentenceEn": "He was a great player whom everyone acknowledged.",
+   "underlined": "名",
+   "answer": "famous ~",
+   "side": "prefix",
+   "wrongChoices": 156,
+   "sameSideWrong": [
+    "first ~",
+    "various ~",
+    "female ~",
+    "saving ~, conserving ~",
+    "former, late ~",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
+    "short ~"
+   ]
   },
   {
    "id": "a:～名",
@@ -4176,39 +4287,26 @@
    "underlined": "名",
    "answer": "counter for people",
    "side": "suffix",
-   "wrongChoices": 129,
+   "wrongChoices": 138,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "kind of field, ground",
-    "count for tatami, mat",
-    "kind of color"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
-   "id": "a:～もち",
+   "id": null,
    "text": "～もち",
    "reading": "～もち",
    "meaning": "person who has ~",
-   "sentence": "お金【かね】もちになったら、世界中【せかいじゅう】を旅【たび】したい。",
-   "sentenceEn": "If I become rich, I want to travel around the world.",
-   "underlined": "もち",
-   "answer": "person who has ~",
-   "side": "suffix",
-   "wrongChoices": 149,
-   "sameSideWrong": [
-    "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
-   ]
+   "sentence": "お金持【かねも】ちになったら、世界中【せかいじゅう】を旅【たび】したい。",
+   "sentenceEn": "If I became rich, I would like to travel the world.",
+   "noCard": "the part is not written exactly once in the sentence, or the entry is not a clean prefix or suffix"
   },
   {
    "id": "a:～問",
@@ -4220,16 +4318,16 @@
    "underlined": "問",
    "answer": "counter for questions",
    "side": "suffix",
-   "wrongChoices": 130,
+   "wrongChoices": 139,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "kind of field, ground",
-    "count for tatami, mat",
-    "kind of color"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -4242,16 +4340,16 @@
    "underlined": "夜",
    "answer": "counter for nights",
    "side": "suffix",
-   "wrongChoices": 130,
+   "wrongChoices": 138,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "kind of field, ground",
-    "count for tatami, mat",
-    "kind of color"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -4264,15 +4362,15 @@
    "underlined": "翌",
    "answer": "next ~",
    "side": "prefix",
-   "wrongChoices": 151,
+   "wrongChoices": 156,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
-    "~th",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "short ~"
    ]
   },
@@ -4284,17 +4382,17 @@
    "sentence": "彼等【かれら】は毎週末【まいしゅうまつ】、公園【こうえん】でサッカーをしている。",
    "sentenceEn": "They play soccer in the park every weekend.",
    "underlined": "等",
-   "answer": "plural persons",
+   "answer": "plural marker (they, we ~)",
    "side": "suffix",
-   "wrongChoices": 148,
+   "wrongChoices": 150,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~",
     "count for tatami, mat"
    ]
   },
@@ -4303,20 +4401,20 @@
    "text": "～着",
    "reading": "～ちゃく",
    "meaning": "counter for clothes; finishing place",
-   "sentence": "彼【かれ】はマラソン大会【たいかい】で三着【さんちゃく】に入【はい】った。",
-   "sentenceEn": "He finished third in the marathon.",
+   "sentence": "スーツを二着【にちゃく】買【か】った。",
+   "sentenceEn": "I bought two suits.",
    "underlined": "着",
    "answer": "counter for clothes, finishing place",
    "side": "suffix",
-   "wrongChoices": 126,
+   "wrongChoices": 129,
    "sameSideWrong": [
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "kind of field, ground",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~",
     "count for tatami, mat",
-    "kind of color",
+    "~ colour, colouring",
     "too much ~"
    ]
   },
@@ -4330,15 +4428,15 @@
    "underlined": "長",
    "answer": "long ~",
    "side": "prefix",
-   "wrongChoices": 151,
+   "wrongChoices": 156,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
-    "~th",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "short ~"
    ]
   },
@@ -4350,18 +4448,18 @@
    "sentence": "気象庁【きしょうちょう】は明日【あした】、大雨【おおあめ】になると発表【はっぴょう】した。",
    "sentenceEn": "The Meteorological Agency announced that there will be heavy rain tomorrow.",
    "underlined": "庁",
-   "answer": "office, agency",
+   "answer": "government agency",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 150,
    "sameSideWrong": [
-    "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~",
+    "count for tatami, mat",
+    "~ colour, colouring"
    ]
   },
   {
@@ -4374,16 +4472,16 @@
    "underlined": "兆",
    "answer": "trillion",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -4396,16 +4494,16 @@
    "underlined": "長",
    "answer": "leader, head",
    "side": "suffix",
-   "wrongChoices": 151,
+   "wrongChoices": 156,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -4418,16 +4516,16 @@
    "underlined": "帳",
    "answer": "~ book, notebook",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -4438,18 +4536,18 @@
    "sentence": "私【わたし】の事務所【じむしょ】は三丁目【さんちょうめ】の交差点【こうさてん】の近【ちか】くにある。",
    "sentenceEn": "My office is near the intersection in 3-chome.",
    "underlined": "丁目",
-   "answer": "~ district (of a town; city, block)",
+   "answer": "-chome (block number)",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -4462,16 +4560,16 @@
    "underlined": "通",
    "answer": "counter for letters",
    "side": "suffix",
-   "wrongChoices": 130,
+   "wrongChoices": 139,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "kind of field, ground",
-    "count for tatami, mat",
-    "kind of color"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -4484,16 +4582,16 @@
    "underlined": "遣い",
    "answer": "use of ~",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -4506,16 +4604,16 @@
    "underlined": "付",
    "answer": "with ~",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -4535,18 +4633,18 @@
    "sentence": "この靴【くつ】は重【おも】くて歩【ある】き辛【づら】い。",
    "sentenceEn": "These shoes are heavy and hard to walk in.",
    "underlined": "辛い",
-   "answer": "hard to do ~",
+   "answer": "awkward, painful to ~",
    "side": "suffix",
-   "wrongChoices": 151,
+   "wrongChoices": 156,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -4559,15 +4657,15 @@
    "underlined": "低",
    "answer": "low ~",
    "side": "prefix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
     "first ~",
     "various ~",
-    "things done by women",
-    "economizing ~",
+    "female ~",
+    "saving ~, conserving ~",
     "former, late ~",
-    "gross, general",
-    "~th",
+    "total ~, whole ~",
+    "ordinal prefix (~th)",
     "short ~"
    ]
   },
@@ -4581,16 +4679,16 @@
    "underlined": "滴",
    "answer": "drop",
    "side": "suffix",
-   "wrongChoices": 152,
+   "wrongChoices": 157,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "counter for article",
-    "kind of field, ground",
-    "count for tatami, mat"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   },
   {
@@ -4603,16 +4701,16 @@
    "underlined": "点",
    "answer": "counter for scores",
    "side": "suffix",
-   "wrongChoices": 130,
+   "wrongChoices": 139,
    "sameSideWrong": [
+    "place, office (facility)",
     "place",
-    "count for sisters",
-    "kind of ministry",
-    "merchant, business",
-    "count for victory",
-    "kind of field, ground",
-    "count for tatami, mat",
-    "kind of color"
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
    ]
   }
  ],
@@ -7409,12 +7507,14 @@
    "excerpt": "完全な静けさの中では、かえって小さな物音が気になってしまうからだ。周りの話し声や食器の音も、内容が聞き取れない程度なら、むしろ集中を助けることがあるらしい。（　）、知っている言葉で話されると、つい耳を傾けてしまう。",
    "answer": "もっとも",
    "wrong": [
+    "確かに",
     "つまり",
     "そのため",
     "さらに",
+    "一方",
+    "むしろ",
     "例えば",
     "なぜなら",
-    "なお",
     "ところで",
     "とすれば"
    ],
@@ -7738,12 +7838,14 @@
    "excerpt": "もし自由に値引きができるようになれば、大量に仕入れられる大型店やインターネットの店が売れる本を安く売り、小さな店は太刀打ちできなくなる。そうなれば、売れる本しか置かない店ばかりになり、発行部数の少ない専門書や詩集などは、手に取って選ぶ機会が失われてしまう、と彼は言う。（　）、彼もこの仕組みを手放しで評価しているわけではない。",
    "answer": "もっとも",
    "wrong": [
+    "確かに",
     "つまり",
     "そのため",
     "さらに",
+    "一方",
+    "むしろ",
     "例えば",
     "なぜなら",
-    "なお",
     "ところで",
     "とすれば"
    ],
@@ -8467,12 +8569,14 @@
    "excerpt": "私も最近、置き配を利用するようになった。初めは盗まれないか心配だったが、今のところ問題はなく、時間を気にせず受け取れるので便利だ。（　）、こうした仕組みを整えるだけでは十分ではないだろう。",
    "answer": "もっとも",
    "wrong": [
+    "確かに",
     "つまり",
     "そのため",
     "さらに",
+    "一方",
+    "むしろ",
     "例えば",
     "なぜなら",
-    "なお",
     "ところで",
     "とすれば"
    ],
@@ -9489,7 +9593,13 @@
    ],
    "key": 3,
    "why": "Both mention the risk of books getting dirty (A says it's small with rules; B stresses it). The other points appear in only one text.",
-   "skip": "the shared point (books getting dirty) is spread across both texts A and B and must be matched in both"
+   "lines": [
+    "本が汚れる心配はそれほど大きくない",
+    "一冊の本が汚れれば、次に読む人が迷惑する"
+   ],
+   "en": "A: little worry of dirtying books; B: one dirty book troubles the next reader",
+   "solved": true,
+   "by": "review 2026-11-27"
   },
   "n2-set-2#67": {
    "skill": "Reading",
@@ -9504,7 +9614,13 @@
    ],
    "key": 2,
    "why": "A favours allowing drinks with rules such as lidded cups; B accepts it only if protective measures come first. The last option swaps their points.",
-   "skip": "the answer needs the stances of both texts A and B compared as wholes"
+   "lines": [
+    "ふたのある容器に限るなどのルールを決めておけば",
+    "本を守る工夫を先に考えなければならない"
+   ],
+   "en": "A: allow drinks under rules like lidded cups; B: protect the books first",
+   "solved": true,
+   "by": "review 2026-11-27"
   },
   "n2-set-2#68": {
    "skill": "Reading",
@@ -9592,17 +9708,12 @@
    "key": 1,
    "why": "① is only for people living, working or studying in the city, and ③ requires age 18+, so only ② is open to her.",
    "lines": [
-    "対象：１８歳以上",
-    "・②③は、市外にお住まいの方も参加できます。"
+    "対象：市内に在住・在勤・在学の中学生以上",
+    "対象：１８歳以上"
    ],
-   "en": "Courses 2 and 3 accept non-residents, but 3 is only for age 18 and up",
-   "wrong": [
-    "Courses 1 and 3 accept non-residents, and 3 is for under 18",
-    "All three courses accept non-residents of any age",
-    "Courses 2 and 3 accept non-residents, and 3 is open to age 17 up"
-   ],
-   "solved": false,
-   "unsolved": "not sure: Lines do not say which course the 18+ restriction belongs to; choice and meaning 2 assume it is course 3."
+   "en": "Course 1: city residents/workers/students only; course 3: 18 and over",
+   "solved": true,
+   "by": "review 2026-11-27"
   },
   "n2-set-2#72": {
    "skill": "Reading",
@@ -10304,15 +10415,12 @@
    "key": 3,
    "why": "He decides on the fourth course so he can teach his father email; the album idea is dropped.",
    "lines": [
-    "それより、メールもまともに送れない父に、僕が教えてあげられるようになりたいんだよね。四つ目にしようかな。"
+    "四つ目にしようかな。",
+    "だから、僕が習って教えるよ。"
    ],
-   "en": "He wants to teach his father email, so he leans toward the fourth course",
-   "wrong": [
-    "He wants to repair his father's old album, so he picks the first course",
-    "He will take the course together with his father on Saturday",
-    "He wants to fix his dark food photos, so he picks the third course"
-   ],
-   "solved": true
+   "en": "He leans to the fourth course, then decides to learn it and teach his father",
+   "solved": true,
+   "by": "review 2026-11-27"
   },
   "n2-set-2#102": {
    "skill": "Listening",
@@ -11082,16 +11190,11 @@
    "why": "He denies the health reason; he wanted the schoolchildren next door to be able to come into the field safely.",
    "lines": [
     "よく、健康のためですかと聞かれるんですが、実はそうじゃないんです。",
-    "子どもたちが安心して畑に入れるようにしたかったんです。"
+    "うちの畑のそばに小学校がありまして、子どもたちがよく畑に虫を見に来るんですよ。"
    ],
-   "en": "Not for health; he wanted children to be able to enter the field safely",
-   "wrong": [
-    "He cut pesticide use to protect his own health",
-    "He cut pesticide use to reduce the work in his field",
-    "He cut pesticide use to sell his vegetables dearly"
-   ],
-   "solved": false,
-   "unsolved": "not sure: Choice 3 adds 'nearby elementary school', not in the lines; only children are mentioned. Other choices are clearly wrong."
+   "en": "Not for health: children from the school nearby come to see the insects",
+   "solved": true,
+   "by": "review 2026-11-27"
   },
   "n2-set-3#82": {
    "skill": "Listening",
@@ -11568,17 +11671,12 @@
    "key": 2,
    "why": "The mother recently hurt her knee and the orchard is on a slope; she actually likes hot springs.",
    "lines": [
-    "この前膝を痛めたばかりだろう？果物狩りって、坂の多い畑を歩くんじゃないかな。",
+    "でも、お母さん、この前膝を痛めたばかりだろう？果物狩りって、坂の多い畑を歩くんじゃないかな。",
     "畑は山の斜面にございますので、少し歩いていただくことになります。"
    ],
-   "en": "Her knee is hurt and the fruit field is on a slope, so it means walking",
-   "wrong": [
-    "She does not like hot springs so they skip it",
-    "She dislikes fruit, so the fruit picking is out",
-    "The tour costs too much for them"
-   ],
-   "solved": false,
-   "unsolved": "not sure: Lines never say whose knee is hurt; 'mother' (choice 2, meaning 4 'her') is inferred from the hidden passage."
+   "en": "Mother just hurt her knee, and the orchard is on a slope with some walking",
+   "solved": true,
+   "by": "review 2026-11-27"
   },
   "n2-set-3#103": {
    "skill": "Listening",

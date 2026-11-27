@@ -23,7 +23,7 @@
 import {recallItems, localDay} from "./n2-study.js";
 import {HELD_OUT} from "./n2-comprehension.js";
 import {connectiveSites, jobOf, glossOf, JOBS, OVERLAP, CHOICE_FOR_JOB, CONNECTIVES} from "./n2-connectives.js";
-import {ACCEPTED_READINGS, READING_KEY, EXCLUDED, GLOSS_FIX, GRAMMAR_SPANS, REVIEWED_LEVELS, REVIEWED_GRAMMAR_BLOCKS, REVIEWED_AFFIXES, SCORE_ALL, GRAMMAR_CONFUSABLE} from "./n2-game-review.js";
+import {ACCEPTED_READINGS, READING_KEY, EXCLUDED, GLOSS_FIX, GRAMMAR_SPANS, REVIEWED_LEVELS, REVIEWED_GRAMMAR_BLOCKS, REVIEWED_AFFIXES, AFFIX_GLOSS, AFFIX_CONFUSABLE, LINK_NOT_WRONG, LINK_SHOWN, SCORE_ALL, GRAMMAR_CONFUSABLE} from "./n2-game-review.js";
 import {exampleSegments} from "./n2-delayed.js";
 import {LEVELS} from "./jlpt-levels.js";
 
@@ -262,19 +262,23 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
 // are reviewed (REVIEWED_AFFIXES): no points, but every answer counts.
 export const affixSide = text => /^[〜～]/.test(text) ? "suffix" : "prefix";
 function affixCards(affixes, sentenceOf) {
-  const clean = affixes.filter(w => /^[〜～]?[^〜～\s(（)）]+[〜～]?$/.test(w.text) && /^[〜～]/.test(w.text) !== /[〜～]$/.test(w.text) && gloss(w.answer));
+  const reviewed = w => AFFIX_GLOSS[w.text + "/" + w.reading] || AFFIX_GLOSS[w.text];
+  const meaningOf = w => reviewed(w) || gloss(w.answer);
+  const apart = new Map(); // part → the parts it must never stand against
+  for (const group of AFFIX_CONFUSABLE) for (const t of group) apart.set(t, new Set([...(apart.get(t) || []), ...group]));
+  const clean = affixes.filter(w => /^[〜～]?[^〜～\s(（)）]+[〜～]?$/.test(w.text) && /^[〜～]/.test(w.text) !== /[〜～]$/.test(w.text) && meaningOf(w));
   const spellings = new Map(); for (const w of clean) spellings.set(w.text, (spellings.get(w.text) || 0) + 1);
   const practice = unscored(REVIEWED_AFFIXES);
   return clean.flatMap(w => {
-    const ex = sentenceOf(w.target), sentence = ex ? plain(ex.ja) : "", part = w.text.replace(/[〜～]/g, ""), own = gloss(w.answer);
+    const ex = sentenceOf(w.target), sentence = ex ? plain(ex.ja) : "", part = w.text.replace(/[〜～]/g, ""), own = meaningOf(w);
     if (!sentence || sentence.split(part).length !== 2) return [];
-    const others = clean.filter(o => o.text.replace(/[〜～]/g, "") !== part && !sameSense(gloss(o.answer), own));
-    const near = [...new Set(others.filter(o => affixSide(o.text) === affixSide(w.text)).map(o => gloss(o.answer)))];
-    const wrong = [...new Set([...near, ...others.map(o => gloss(o.answer))])];
+    const others = clean.filter(o => o.text.replace(/[〜～]/g, "") !== part && !apart.get(w.text)?.has(o.text) && !sameSense(meaningOf(o), own));
+    const near = [...new Set(others.filter(o => affixSide(o.text) === affixSide(w.text)).map(o => meaningOf(o)))];
+    const wrong = [...new Set([...near, ...others.map(o => meaningOf(o))])];
     if (wrong.length < 3) return [];
     return [{...practice, id: "a:" + (spellings.get(w.text) > 1 ? w.text + "/" + w.reading : w.text), kind: "affix", target: w.target, dimension: "meaning", prompt: w.text,
       sentence, needle: part, answer: own, wrong, near, side: affixSide(w.text), seconds: SECONDS.affix,
-      solution: {word: w.text, reading: w.reading, meaning: w.answer, ja: ex.ja, en: ex.en || ""}}];
+      solution: {word: w.text, reading: w.reading, meaning: reviewed(w) || w.answer, ja: ex.ja, en: ex.en || ""}}];
   });
 }
 
@@ -359,10 +363,11 @@ export const levelOfCard = q => q?.level || "N2";
 function linkCards() {
   return CONNECTIVES.flatMap(([word, job, meaning]) => {
     const blocked = new Set(OVERLAP[job] || [job]);
-    const wrong = [...new Set(CONNECTIVES.filter(([w, j, m]) => w !== word && !blocked.has(j) && !sameSense(m, meaning)).map(([, , m]) => m))];
+    const wrong = [...new Set(CONNECTIVES.filter(([w, j, m]) => w !== word && !blocked.has(j) && !sameSense(m, meaning)).map(([, , m]) => m))].filter(m => !(LINK_NOT_WRONG[word] || []).includes(m));
+    const shown = LINK_SHOWN[word] || word; // the form the word is met in (それにもかかわらず); the id keeps the table's
     if (wrong.length < 3 || !JOBS[job]) return [];
-    return [{...(SCORE_ALL ? {} : {practice: true, record: true}), id: "k:" + word, kind: "link", target: null, dimension: null, prompt: word,
-      sentence: "", answer: meaning, wrong, job, seconds: SECONDS.link, solution: {word, meaning, why: JOBS[job], ja: "", en: ""}}];
+    return [{...(SCORE_ALL ? {} : {practice: true, record: true}), id: "k:" + word, kind: "link", target: null, dimension: null, prompt: shown,
+      sentence: "", answer: meaning, wrong, job, seconds: SECONDS.link, solution: {word: shown, meaning, why: JOBS[job], ja: "", en: ""}}];
   });
 }
 

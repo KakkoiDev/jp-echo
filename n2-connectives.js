@@ -29,7 +29,7 @@ export const CONNECTIVES = Object.freeze([
   ["にもかかわらず", "turn", "in spite of that"],
   ["それなのに", "turn", "and yet, despite that"],
   ["とはいえ", "turn", "that said, even so"],
-  ["もっとも", "turn", "though, admittedly (a qualification after the point)"],
+  ["もっとも", "exception", "though, admittedly (a qualification after the point)"], // a limit on the point just made, not a turn (review, 27 Nov)
   ["確かに", "concede", "certainly, it is true that"],
   ["もちろん", "concede", "of course"],
   ["つまり", "restate", "in other words, that is"],

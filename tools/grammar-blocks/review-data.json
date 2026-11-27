@@ -4,7 +4,7 @@
   "blocks": 191,
   "basicBlocks": 26,
   "patterns": 221,
-  "oneBlockPatterns": 63
+  "oneBlockPatterns": 62
  },
  "blocks": [
   {
@@ -623,6 +623,10 @@
    },
    "basic": true,
    "usedIn": [
+    {
+     "pattern": "つつ-も",
+     "meaning": "while, even though"
+    },
     {
      "pattern": "にしても-にしても",
      "meaning": "Regardless of whether"
@@ -3577,7 +3581,7 @@
    ],
    "type": "verb",
    "level": "N2",
-   "gloss": "keeps step as something changes",
+   "gloss": "follows; goes along with",
    "example": {
     "ja": "係員【かかりいん】の指示【しじ】にしたがって、順番【じゅんばん】に避難【ひなん】してください。",
     "en": "Please follow the staff's instructions and evacuate in order."
@@ -7154,12 +7158,17 @@
     {
      "text": "つつ",
      "block": "tsutsu",
-     "gloss": "while doing; in the middle of doing"
+     "gloss": "while (two states at once)"
+    },
+    {
+     "text": "も",
+     "block": "mo",
+     "gloss": "even; though"
     }
    ],
-   "literal": "two states hold in parallel",
-   "transparency": "opaque",
-   "oneBlock": true
+   "literal": "even while the first state holds",
+   "transparency": "partial",
+   "oneBlock": false
   },
   {
    "key": "に際して",
@@ -7717,7 +7726,7 @@
     {
      "text": "したがって",
      "block": "shitagau",
-     "gloss": "keeps step as something changes"
+     "gloss": "follows; goes along with"
     }
    ],
    "literal": "following on from that",
@@ -10942,6 +10951,18 @@
   }
  ],
  "confusablePairs": [
+  [
+   "つつ",
+   "つつ-も"
+  ],
+  [
+   "ものだから",
+   "ものですから-もので"
+  ],
+  [
+   "にしても-にしても",
+   "にしろ-にしろ"
+  ],
   [
    "からすると-からすれば",
    "から見ると"

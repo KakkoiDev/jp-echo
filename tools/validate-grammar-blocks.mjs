@@ -56,7 +56,8 @@ export function validateGrammarBlocks(index, {draft = false} = {}) {
     const point = grammar.get(key);
     if (!point || !object(pattern)) { add(key, "unknown grammar key or invalid pattern"); continue; }
     const {parts, literal, transparency: t, solved} = pattern;
-    const forms = patternNeedles(point.name);
+    // An optional piece in brackets (つつ(も)) may be written out as a part: the form with it is a surface form too.
+    const forms = [...new Set([...patternNeedles(point.name), point.name.replace(/[()（）]/g, "")])];
     if (!Array.isArray(parts) || !parts.length || parts.some(p => !object(p) || !text(p.text))) {
       add(key, "expected ordered parts");
       continue;

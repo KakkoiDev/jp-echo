@@ -1,0 +1,2024 @@
+[
+ {
+  "part": "A",
+  "id": "a:女～",
+  "field": "meaning",
+  "severity": "wrong",
+  "problem": "'things done by women' is not what the prefix means; 女子学生 means female students.",
+  "evidence": "女子学生, 女性, 女優",
+  "suggestion": "female ~",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "a:～女",
+  "field": "meaning",
+  "severity": "wrong",
+  "problem": "'count for sisters' is a dictionary artefact. 次女 is 'second daughter': ~女 marks which daughter by birth order.",
+  "evidence": "長女, 次女, 三女",
+  "suggestion": "~th daughter (birth order)",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "a:省～",
+  "field": "meaning",
+  "severity": "weak",
+  "problem": "'economizing ~' is stilted; 省エネ/省略 = saving, omitting.",
+  "evidence": "省エネ, 省力化",
+  "suggestion": "saving ~, conserving ~",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "a:～省",
+  "field": "meaning",
+  "severity": "weak",
+  "problem": "'kind of ministry' is odd phrasing.",
+  "evidence": "文部科学省, 外務省",
+  "suggestion": "~ Ministry (government)",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "a:～商",
+  "field": "meaning",
+  "severity": "weak",
+  "problem": "'merchant, business' overlaps 業 ('type of business'); 貿易商 is a dealer/trader.",
+  "evidence": "貿易商, 商社",
+  "suggestion": "dealer, trader in ~",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "a:～勝",
+  "field": "meaning",
+  "severity": "weak",
+  "problem": "'count for victory' is clumsy.",
+  "evidence": "五勝二敗",
+  "suggestion": "~ wins (victories)",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "a:～条",
+  "field": "meaning",
+  "severity": "weak",
+  "problem": "Counts articles/clauses of a law; as a choice it sits among many ordinal-like answers.",
+  "evidence": "第九条",
+  "suggestion": "article no. ~ (of a law)",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "a:～場",
+  "field": "meaning",
+  "severity": "wrong",
+  "problem": "'kind of field, ground' is a dictionary artefact. 場 as a suffix is a venue/site for an activity (運動場, 駐車場, 野球場).",
+  "evidence": "運動場, 駐車場, 野球場",
+  "suggestion": "venue, ground for ~",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "a:～色",
+  "field": "meaning",
+  "severity": "weak",
+  "problem": "'kind of color' is vague. 保護色 means protective colouring.",
+  "evidence": "保護色, 緑色",
+  "suggestion": "~ colour, colouring",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "a:～船",
+  "field": "meaning",
+  "severity": "wrong",
+  "problem": "'counter for ships' is wrong for ～船 (type of ship: 貨物船, 客船). 船 is not a counter here; the counter is 艘. Both cards now read 'counter for ships'.",
+  "evidence": "貨物船, 漁船, 客船",
+  "suggestion": "ship, boat (type of ~)",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "a:～戦",
+  "field": "meaning",
+  "severity": "wrong",
+  "problem": "決勝戦 is a match/contest, not a counted item; 'counter for games' misleads.",
+  "evidence": "決勝戦, 野球戦, 接戦",
+  "suggestion": "match, contest, battle",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "a:～足",
+  "field": "meaning",
+  "severity": "weak",
+  "problem": "Sentence is about socks; 'counter for shoes' mismatches. It counts pairs of footwear.",
+  "evidence": "靴二足, 靴下三足",
+  "suggestion": "counter for pairs of footwear",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "a:総～",
+  "field": "meaning",
+  "severity": "weak",
+  "problem": "'gross, general' does not fit 総額 (total amount); 総 means total/whole.",
+  "evidence": "総額, 総人口, 総選挙",
+  "suggestion": "total ~, whole ~",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "a:第～",
+  "field": "meaning",
+  "severity": "weak",
+  "problem": "'~th' is also the answer of 番目 and near 位/等; the prefix is an ordinal marker.",
+  "evidence": "第三回",
+  "suggestion": "ordinal prefix (~th)",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "a:～科",
+  "field": "answer",
+  "severity": "wrong",
+  "problem": "Answer 'family, group' does not fit the sentence: 看護科 is a department/course. 'family' is the biological sense.",
+  "evidence": "看護科, 外科, ネコ科",
+  "suggestion": "department, course; family (biology)",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "a:～化",
+  "field": "meaning",
+  "severity": "weak",
+  "problem": "'action of making something' is unclear; 化 means becoming/turning into (-ization).",
+  "evidence": "デジタル化, 少子化",
+  "suggestion": "-ization, turning into ~",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "a:～刊",
+  "field": "meaning",
+  "severity": "weak",
+  "problem": "Awkward; 朝刊 is an edition/publication.",
+  "evidence": "朝刊, 月刊, 創刊",
+  "suggestion": "edition, published ~",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "a:～期",
+  "field": "answer",
+  "severity": "wrong",
+  "problem": "'~age, ~period' misfits 新学期 (new term). No 'age' reading in the sentence; the core sense is period/term.",
+  "evidence": "新学期, 思春期, 学期",
+  "suggestion": "period, term, stage",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "a:～口",
+  "field": "answer",
+  "severity": "weak",
+  "problem": "Answer lists 'opening, entrance' but the sentence is 北口 (exit); exit is dropped from the answer.",
+  "evidence": "北口, 入口, 出口",
+  "suggestion": "entrance, exit, opening",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "a:～系",
+  "field": "meaning",
+  "severity": "weak",
+  "problem": "理系 means science stream; 'system, lineage' fits poorly.",
+  "evidence": "理系, 文系, 韓国系",
+  "suggestion": "~ type, ~ stream, ~ origin",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "a:～圏",
+  "field": "answer",
+  "severity": "weak",
+  "problem": "Answer 'bloc, sphere' omits 'area/zone', which is the sense of 首都圏.",
+  "evidence": "首都圏, 英語圏",
+  "suggestion": "sphere, zone, area",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "a:重～",
+  "field": "meaning",
+  "severity": "weak",
+  "problem": "重傷 is a serious injury; 'heavy' is a literal gloss.",
+  "evidence": "重傷, 重工業",
+  "suggestion": "heavy ~, serious ~",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "a:～号",
+  "field": "meaning",
+  "severity": "weak",
+  "problem": "Awkward gloss; 来月号 is an issue/number of a periodical, plus ship/room/typhoon number.",
+  "evidence": "来月号, 台風十号, のぞみ号",
+  "suggestion": "No. ~, issue ~; ship name",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "a:～料",
+  "field": "meaning",
+  "severity": "weak",
+  "problem": "'fare, charge': 入場料 is a fee. 'fare' is only one use.",
+  "evidence": "入場料, 授業料, 送料",
+  "suggestion": "fee, charge for ~",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "a:～園",
+  "field": "meaning",
+  "severity": "weak",
+  "problem": "'~ garden (especially man made)' is a dictionary leftover; 動物園/幼稚園 mean park/institution.",
+  "evidence": "動物園, 幼稚園, 公園",
+  "suggestion": "park, garden; place for ~",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "a:～頭",
+  "field": "meaning",
+  "severity": "weak",
+  "problem": "Counts large animals only; plain 'animals' invites confusion with 羽 (birds).",
+  "evidence": "牛二十頭, 馬三頭",
+  "suggestion": "counter for large animals",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "a:～等/～とう",
+  "field": "meaning",
+  "severity": "weak",
+  "problem": "'level, place' is vague and clashes with 位/着; 二等 is a class/prize rank.",
+  "evidence": "一等賞, 二等",
+  "suggestion": "class, grade, prize rank",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "a:～島",
+  "field": "meaning",
+  "severity": "wrong",
+  "problem": "'kind of islands' is wrong; 島(とう) is 'island'. The sentence 伊豆諸島 also contains the prefix 諸, so the underlined 島 competes with 諸～ in the same word; a clean 島 example would be better.",
+  "evidence": "離島, 無人島, 諸島",
+  "suggestion": "island (in names)",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "a:～島",
+  "field": "sentence",
+  "severity": "note",
+  "problem": "Replace 諸島 (which holds the 諸 part) with a word where 島 reads とう once.",
+  "evidence": "離島【りとう】",
+  "suggestion": "夏【なつ】に離島【りとう】へ旅行【りょこう】する予定【よてい】だ。 || I plan to travel to a remote island in the summer.",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "a:～道",
+  "field": "meaning",
+  "severity": "wrong",
+  "problem": "'kind of path, road' is wrong for 柔道; ～道 is a way/art (柔道, 茶道, 書道).",
+  "evidence": "柔道, 茶道, 書道",
+  "suggestion": "way, art of ~",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "a:非～",
+  "field": "answer",
+  "severity": "wrong",
+  "problem": "Answer 'anti~, counter~' is the same as 反～ and wrong: 非公式 means unofficial; 非 is non-/un-. The meaning field lists non~ but the answer drops it.",
+  "evidence": "非公式, 非常識, 非営利",
+  "suggestion": "non-~, un-~",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "a:～等/～ら",
+  "field": "meaning",
+  "severity": "weak",
+  "problem": "'plural persons' is unclear; ～ら makes pronouns/names plural.",
+  "evidence": "彼ら, 私たち; 彼女ら",
+  "suggestion": "plural marker (they, we ~)",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "a:再～",
+  "field": "meaning",
+  "severity": "weak",
+  "problem": "'re ~' is not a gloss; the meaning is 'again'.",
+  "evidence": "再放送, 再開, 再会",
+  "suggestion": "again, re-~",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "a:再～",
+  "field": "sentence",
+  "severity": "weak",
+  "problem": "'来週の夜に' is odd; use a named day.",
+  "evidence": "来週の夜",
+  "suggestion": "この番組【ばんぐみ】は、来週【らいしゅう】の日曜日【にちようび】に再放送【さいほうそう】される。 || This programme will be rebroadcast next Sunday.",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "a:～病",
+  "field": "meaning",
+  "severity": "weak",
+  "problem": "'kind of disease' is odd phrasing.",
+  "evidence": "心臓病, 糖尿病",
+  "suggestion": "~ disease, ~ illness",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "a:～山",
+  "field": "meaning",
+  "severity": "weak",
+  "problem": "'the name of mountain' is awkward.",
+  "evidence": "富士山, 阿蘇山",
+  "suggestion": "Mt. ~, mountain",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "a:～寺",
+  "field": "meaning",
+  "severity": "weak",
+  "problem": "'the name of temple' is awkward.",
+  "evidence": "東大寺, 清水寺",
+  "suggestion": "~ Temple",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "a:～ぽい",
+  "field": "meaning",
+  "severity": "weak",
+  "problem": "'~ish' hides the main use: 忘れっぽい means 'prone to forget'. That makes 'tend to do ~' a fair answer too (see pair). The part text should be ～っぽい.",
+  "evidence": "忘れっぽい, 子供っぽい, 怒りっぽい",
+  "suggestion": "-ish; prone to ~",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "a:～もち",
+  "field": "sentence",
+  "severity": "weak",
+  "problem": "'お金もち' is not the normal spelling (お金持ち), and the underlined part is 持ち. Meaning also covers 'covered by (会社持ち)'.",
+  "evidence": "お金持ち, 家族持ち",
+  "suggestion": "お金持【かねも】ちになったら、世界中【せかいじゅう】を旅【たび】したい。 || If I became rich, I would like to travel the world.",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "a:防～",
+  "field": "meaning",
+  "severity": "weak",
+  "problem": "防水 means waterproof; '~ prevention' is not what the learner sees.",
+  "evidence": "防水, 防犯, 防火",
+  "suggestion": "~proof; protection against ~",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "a:両～",
+  "field": "sentence",
+  "severity": "weak",
+  "problem": "English says 'both arms' but 両手 = both hands.",
+  "evidence": "両手",
+  "suggestion": "赤【あか】ちゃんを両手【りょうて】でしっかりと抱【だ】いた。 || I held the baby firmly with both hands.",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "a:～丁目",
+  "field": "meaning",
+  "severity": "weak",
+  "problem": "'~ district (of a town; city, block)' is garbled.",
+  "evidence": "三丁目",
+  "suggestion": "-chome (block number)",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "a:～室",
+  "field": "sentence",
+  "severity": "weak",
+  "problem": "Counting rooms with 室 is rare; the main use is a type of room (会議室, 研究室). Learners will not meet it as a counter.",
+  "evidence": "会議室, 研究室, 教室",
+  "suggestion": "会議室【かいぎしつ】はもう予約【よやく】でいっぱいだ。 || The meeting room is already fully booked.",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "a:室～",
+  "field": "meaning",
+  "severity": "weak",
+  "problem": "Bare 'room'; as a prefix it means indoor (室温, 室内).",
+  "evidence": "室温, 室内",
+  "suggestion": "room, indoor ~",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "a:～着",
+  "field": "sentence",
+  "severity": "weak",
+  "problem": "三着 for a marathon is not natural (marathon results use 位), and the English is identical to the 位 sentence, so a learner cannot tell them apart. Use clothes or a horse race.",
+  "evidence": "スーツ二着, 三着入賞",
+  "suggestion": "スーツを二着【にちゃく】買【か】った。 || I bought two suits.",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "a:～庁",
+  "field": "meaning",
+  "severity": "weak",
+  "problem": "'office, agency' overlaps 所 (市役所 is also an office). Government agency is the sense.",
+  "evidence": "気象庁, 警視庁",
+  "suggestion": "government agency",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "a:～発",
+  "field": "meaning",
+  "severity": "note",
+  "problem": "For N2 the common use of 発 is 'departing from ~' (東京発) and 'issued by'. The bullet-count use is niche.",
+  "evidence": "東京発, 九時発",
+  "suggestion": "counter for shots; departing from ~",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "a:～遍",
+  "field": "meaning",
+  "severity": "weak",
+  "problem": "'time' is too vague next to 回/度; it counts repetitions.",
+  "evidence": "何遍も, 一遍",
+  "suggestion": "times (repetitions)",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "a:古～",
+  "field": "meaning",
+  "severity": "weak",
+  "problem": "古本 means used/second-hand, which is the English given.",
+  "evidence": "古本, 古着, 古新聞",
+  "suggestion": "old ~, used ~",
+  "confidence": "low"
+ },
+ {
+  "part": "A",
+  "id": "a:～所/～しょ",
+  "field": "meaning",
+  "severity": "weak",
+  "problem": "Bare 'place' is a fair answer for 場, 館, 園, 港, 室 and 庁. 所 as a suffix is a facility/office (役所, 事務所, 研究所). The ～しょ and ～じょ cards have identical text.",
+  "evidence": "役所, 事務所, 研究所, 裁判所",
+  "suggestion": "place, office (facility)",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "a:～済",
+  "field": "meaning",
+  "severity": "weak",
+  "problem": "'finished' is vague; 済み means already done/paid.",
+  "evidence": "支払い済み, 提出済み",
+  "suggestion": "already ~ed, done",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "a:小～",
+  "field": "sentence",
+  "severity": "weak",
+  "problem": "小犬 is rarer than 子犬; learners may think the char is 子. Use a stock word.",
+  "evidence": "小雨, 小声, 小銭",
+  "suggestion": "小雨【こさめ】が降【ふ】ってきたので、傘【かさ】を広【ひろ】げた。 || It started to drizzle, so I opened my umbrella.",
+  "confidence": "low"
+ },
+ {
+  "part": "A",
+  "id": "a:～日/～か ⇄ a:～日/～じつ",
+  "field": "pair",
+  "severity": "unfair",
+  "problem": "Same character: 'counter for days' vs 'day'. Each is a fair answer to the other's sentence. Never use as wrong choices for each other.",
+  "evidence": "三日間 / 翌日",
+  "suggestion": "never pair",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "a:～日/～じつ ⇄ a:翌～",
+  "field": "sentence",
+  "severity": "note",
+  "problem": "Both cards use the word 翌日, one underlining 日 and one 翌, so one card gives away the other.",
+  "evidence": "翌日【よくじつ】",
+  "suggestion": "change one sentence",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "a:～所/～しょ ⇄ a:～所/～じょ",
+  "field": "pair",
+  "severity": "unfair",
+  "problem": "Two cards with identical meaning text; the same choice could be drawn twice or as the wrong choice for itself.",
+  "evidence": "市役所 / 研究所",
+  "suggestion": "never pair; consider merging",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "～所 ⇄ ～場",
+  "field": "pair",
+  "severity": "unfair",
+  "problem": "'place' fits the venue meaning of 場 (野球場), and 場 fits 所.",
+  "evidence": "野球場 / 市役所",
+  "suggestion": "never pair",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "～所 ⇄ ～館 / ～園 / ～港 / ～室 / ～庁 / ～口",
+  "field": "pair",
+  "severity": "unfair",
+  "problem": "All name kinds of place or facility. 'office, agency' (庁) also describes 市役所.",
+  "evidence": "美術館, 動物園, 横浜港, 気象庁",
+  "suggestion": "never pair",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "～器 ⇄ ～機",
+  "field": "pair",
+  "severity": "unfair",
+  "problem": "'device, equipment' and 'machine' both describe 炊飯器 and 洗濯機.",
+  "evidence": "炊飯器, 洗濯機",
+  "suggestion": "never pair; define 器 as appliance, instrument, container",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "～外 ⇄ ～切れ",
+  "field": "pair",
+  "severity": "unfair",
+  "problem": "Both answers read 'out of ~'. 時間外 is outside hours; 期限切れ is expired/run out.",
+  "evidence": "営業時間外, 賞味期限切れ",
+  "suggestion": "外: outside ~, beyond ~; 切れ: expired, run out of ~",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "各～ ⇄ 毎～ ⇄ ～毎",
+  "field": "pair",
+  "severity": "unfair",
+  "problem": "Answers 'every ~, each ~' (各, 毎) and 'every ~' (毎) overlap and are identical for 各 and ～毎. 各国 = each country; 毎朝 = every morning; 十五分毎 = every 15 minutes.",
+  "evidence": "各国, 毎朝, 十五分毎",
+  "suggestion": "各: each ~ (separately); 毎～: every ~ (each time)",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "各～ ⇄ 諸～",
+  "field": "pair",
+  "severity": "unfair",
+  "problem": "'each ~' vs 'various ~': 各国 can be rendered as 'various countries'.",
+  "evidence": "各国, 諸外国",
+  "suggestion": "never pair",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "現～ ⇄ 今～",
+  "field": "pair",
+  "severity": "unfair",
+  "problem": "'present, incumbent' and 'this, current' both give 'current'. 今学期 and 現社長 both suit.",
+  "evidence": "現社長, 今学期",
+  "suggestion": "never pair",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "明くる～ ⇄ 翌～",
+  "field": "pair",
+  "severity": "unfair",
+  "problem": "'next, following' vs 'next ~': the same meaning (the next day).",
+  "evidence": "明くる日, 翌日",
+  "suggestion": "never pair; 明くる~: next (narrative); 翌~: the following (formal)",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "反～ ⇄ 非～",
+  "field": "pair",
+  "severity": "unfair",
+  "problem": "Same answer 'anti~, counter~' on both; 非 should be 'non-'. Never pair 反 with 未 or 非.",
+  "evidence": "反政府, 非公式",
+  "suggestion": "fix 非 meaning; never pair",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "～風 ⇄ ～式 ⇄ ～流 ⇄ 和～",
+  "field": "pair",
+  "severity": "unfair",
+  "problem": "All mean a style/manner: 和風 can be 'Japanese style', 日本式 is also 'style', and 自分流 is 'own way/style'.",
+  "evidence": "和風, 日本式, 自分流, 和室",
+  "suggestion": "never pair; 流: way, school of ~",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "～位 ⇄ ～着 ⇄ ～等/～とう ⇄ ～番目 ⇄ 第～ ⇄ ～時間目 ⇄ ～女",
+  "field": "pair",
+  "severity": "unfair",
+  "problem": "Ordinal cluster. '~th place' and 'finishing place' are the same in 三位/三着; 二等 is also a place. '~th' fits 番目/第/時間目/次女.",
+  "evidence": "三位, 三着, 二等, 三番目",
+  "suggestion": "never pair any two of these",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "～泊 ⇄ ～夜 ⇄ ～日/～か",
+  "field": "pair",
+  "severity": "unfair",
+  "problem": "All count nights/days. 二泊 'counter for staying (2 nights)' is also 'counter for nights'.",
+  "evidence": "二泊, 一夜, 三日間",
+  "suggestion": "never pair",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "長～/なが～ ⇄ 長～/ちょう～",
+  "field": "pair",
+  "severity": "unfair",
+  "problem": "Same meaning text 'long ~' on both. Also ～長 shares the character.",
+  "evidence": "長そで, 長距離, 部長",
+  "suggestion": "never pair",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "～難い ⇄ ～辛い",
+  "field": "pair",
+  "severity": "unfair",
+  "problem": "Both read 'hard to do ~'. がたい = almost impossible (信じ難い); づらい = awkward, painful (歩き辛い).",
+  "evidence": "信じ難い, 歩き辛い",
+  "suggestion": "難い: nearly impossible to ~; 辛い: awkward, painful to ~",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "～がち ⇄ ～ぽい ⇄ ～気味",
+  "field": "pair",
+  "severity": "unfair",
+  "problem": "'tend to do ~' is also right for 忘れっぽい (prone to forget); 気味 ('slightly') is close.",
+  "evidence": "忘れっぽい, 風邪気味, こもりがち",
+  "suggestion": "never pair",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "～料 ⇄ ～費",
+  "field": "pair",
+  "severity": "unfair",
+  "problem": "'fare, charge' vs 'cost of ~': 交通費 is a cost/fare, and 入場料 is the cost of admission.",
+  "evidence": "入場料, 交通費",
+  "suggestion": "never pair",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "～刊 ⇄ ～紙 ⇄ ～号 ⇄ ～巻",
+  "field": "pair",
+  "severity": "unfair",
+  "problem": "'~ issued (magazine, newspaper)' also describes 朝刊/来月号; 'newspaper' fits 朝刊; 'volume' vs issue.",
+  "evidence": "朝刊, 地元紙, 来月号, 最終巻",
+  "suggestion": "never pair",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "～団 ⇄ ～科 ⇄ ～系",
+  "field": "pair",
+  "severity": "unfair",
+  "problem": "'group' appears in 団 ('group, corps'), 科 ('family, group') and 系 (meaning field: '~ group').",
+  "evidence": "観光団, 看護科, 理系",
+  "suggestion": "never pair",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "～羽 ⇄ ～頭",
+  "field": "pair",
+  "severity": "unfair",
+  "problem": "'counter for animals' also fits birds (羽), so the 羽 card has a second right choice.",
+  "evidence": "鳥三羽, 牛二十頭",
+  "suggestion": "never pair",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "～手 ⇄ ～者 ⇄ ～家",
+  "field": "pair",
+  "severity": "unfair",
+  "problem": "'person who does ~' vs 'person' vs expert; 投手 is also 'person'.",
+  "evidence": "投手, 参加者",
+  "suggestion": "never pair",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "～通り ⇄ ～沿い",
+  "field": "pair",
+  "severity": "unfair",
+  "problem": "'following ~' vs 'along': 川沿い is following the river.",
+  "evidence": "川沿い, 説明書の通り",
+  "suggestion": "通り: as ~, in accordance with ~",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "～商 ⇄ ～業",
+  "field": "pair",
+  "severity": "unfair",
+  "problem": "'merchant, business' and 'type of business' each fit the other's sentence (貿易商, サービス業).",
+  "evidence": "貿易商, サービス業",
+  "suggestion": "never pair",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "～勝 ⇄ ～戦",
+  "field": "pair",
+  "severity": "unfair",
+  "problem": "'count for victory' vs 'counter for games, matches': 五勝二敗 counts matches too.",
+  "evidence": "五勝二敗, 決勝戦",
+  "suggestion": "never pair",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "～室 ⇄ 室～",
+  "field": "pair",
+  "severity": "unfair",
+  "problem": "'counter for room' vs 'room': the same character with overlapping meanings.",
+  "evidence": "室温, 二十室",
+  "suggestion": "never pair",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "～等/～とう ⇄ ～等/～ら",
+  "field": "pair",
+  "severity": "unfair",
+  "problem": "The same character with different readings and meanings; the card shows only the character.",
+  "evidence": "二等, 彼等",
+  "suggestion": "never pair; show the reading",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "～船 ⇄ ～艘",
+  "field": "pair",
+  "severity": "unfair",
+  "problem": "Both are 'counter for ships' today; 船 is wrong (see meaning).",
+  "evidence": "貨物船, 三艘",
+  "suggestion": "fix 船",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "～ごと ⇄ ～毎",
+  "field": "pair",
+  "severity": "unfair",
+  "problem": "Same reading ごと, different meaning: 骨ごと 'together with' vs 十五分毎 'every'. Never pair if ごと gets a card.",
+  "evidence": "骨ごと, 十五分毎",
+  "suggestion": "never pair",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "しわ (かおの～)",
+  "field": "sentence",
+  "severity": "note",
+  "problem": "Not a prefix or suffix: a plain noun from a word-list. Drop it from the parts list.",
+  "evidence": "しわ",
+  "suggestion": "remove entry",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "かび (～がはえる)",
+  "field": "sentence",
+  "severity": "note",
+  "problem": "Not a prefix or suffix: a plain noun. Drop it.",
+  "evidence": "かび",
+  "suggestion": "remove entry",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "(かさを～) さす",
+  "field": "sentence",
+  "severity": "note",
+  "problem": "Not a prefix or suffix: a collocation verb. Drop it.",
+  "evidence": "傘をさす",
+  "suggestion": "remove entry",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "～おしまい (おわり)",
+  "field": "meaning",
+  "severity": "wrong",
+  "problem": "'end up ~' is wrong: おしまい means 'the end'. The 'end up ~' sense belongs to ～てしまう/ちゃう. Not a suffix either; drop it.",
+  "evidence": "これでおしまいです",
+  "suggestion": "remove entry",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "～きる",
+  "field": "meaning",
+  "severity": "wrong",
+  "problem": "'nevertheless, to carry through' is wrong. V-きる means 'do completely, to the end'. Entry is noCard; the sentence has the っ form.",
+  "evidence": "走りきった",
+  "suggestion": "do ~ completely, to the end",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "～きる",
+  "field": "sentence",
+  "severity": "note",
+  "problem": "Give it a card in plain form.",
+  "evidence": "走りきる",
+  "suggestion": "彼【かれ】は四十二キロを走【はし】りきる体力【たいりょく】がある。 || He has the stamina to run the full 42 km.",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "～過ぎる",
+  "field": "sentence",
+  "severity": "note",
+  "problem": "Worth a card. Text and reading should be ～すぎ; one use only.",
+  "evidence": "飲み過ぎて",
+  "suggestion": "夜遅【よるおそ】くまで働【はたら】き過【す】ぎて、体調【たいちょう】を崩【くず】した。 || I worked too late into the night and ruined my health.",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "～席",
+  "field": "sentence",
+  "severity": "note",
+  "problem": "席 appears twice in the sentence. Use a sentence with one.",
+  "evidence": "窓側の席を二席",
+  "suggestion": "この劇場【げきじょう】には約千席【やくせんせき】ある。 || This theatre has about a thousand seats.",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "～歌",
+  "field": "sentence",
+  "severity": "note",
+  "problem": "歌 appears twice (校歌 and 歌った). Meaning 'song of ~' is odd.",
+  "evidence": "校歌を歌った",
+  "suggestion": "国歌【こっか】が流【なが】れると、観客【かんきゃく】は全員【ぜんいん】立【た】ち上【あ】がった。 || When the national anthem played, the whole crowd stood up.",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "～歌",
+  "field": "meaning",
+  "severity": "weak",
+  "problem": "'song of ~' is stilted.",
+  "evidence": "校歌, 国歌",
+  "suggestion": "song, anthem",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "〜 (まる) ごと",
+  "field": "sentence",
+  "severity": "note",
+  "problem": "Worth a card as ～ごと, and the sentence has it once. The text format blocks the card.",
+  "evidence": "骨ごと食べられます",
+  "suggestion": "この魚【さかな】は骨【ほね】ごと食【た】べられます。 || You can eat this fish bones and all.",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "〜(日本) 式",
+  "field": "meaning",
+  "severity": "wrong",
+  "problem": "The meaning is cut off ('custom,'). Meaning: style, method; ceremony.",
+  "evidence": "日本式, 結婚式",
+  "suggestion": "style, method; ceremony",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "～者",
+  "field": "sentence",
+  "severity": "note",
+  "problem": "者 appears twice (参加者 and 初心者). Use one.",
+  "evidence": "参加者, 初心者",
+  "suggestion": "全国【ぜんこく】から応募者【おうぼしゃ】が集【あつ】まった。 || Applicants gathered from all over the country.",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "～酒",
+  "field": "sentence",
+  "severity": "note",
+  "problem": "酒 appears twice (日本酒, 果実酒). Use one.",
+  "evidence": "日本酒, 果実酒",
+  "suggestion": "この店【みせ】には各地【かくち】の日本酒【にほんしゅ】が並【なら】んでいる。 || This shop stocks sake from all over the country.",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "～いち (にほんいち)",
+  "field": "sentence",
+  "severity": "note",
+  "problem": "Can be a card as ～一; the sentence has 一 once. Meaning 'No. 1 ~ (in)': best in ~.",
+  "evidence": "日本一",
+  "suggestion": "この店【みせ】のカレーは世界一【せかいいち】おいしいと思【おも】う。 || I think this shop's curry is the best in the world.",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "上～",
+  "field": "sentence",
+  "severity": "note",
+  "problem": "上 appears twice (上 and 上着). Use a sentence with one.",
+  "evidence": "セーターの上に上着",
+  "suggestion": "寒【さむ】いので、上着【うわぎ】を着【き】て出【で】かけた。 || It was cold, so I put on a jacket and went out.",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "御～",
+  "field": "sentence",
+  "severity": "note",
+  "problem": "御 appears twice (御協力 ご and 御礼 おん). Use one; 御 reads ご/お/おん.",
+  "evidence": "御協力, 御礼",
+  "suggestion": "取引先【とりひきさき】へ御礼【おんれい】の品【しな】を送【おく】った。 || I sent a thank-you gift to our business partner.",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "名～",
+  "field": "sentence",
+  "severity": "note",
+  "problem": "名 appears twice (名選手, 名監督). Meaning 'famous' is weaker than 'great'.",
+  "evidence": "名選手, 名監督",
+  "suggestion": "彼【かれ】は誰【だれ】もが認【みと】める名選手【めいせんしゅ】だった。 || He was a great player whom everyone acknowledged.",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "～ほう (ひかく)",
+  "field": "meaning",
+  "severity": "weak",
+  "problem": "'(in comparison)' is not a meaning.",
+  "evidence": "行くほうが早い",
+  "suggestion": "the ~ one, the side that ~ (comparing)",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "～続く",
+  "field": "meaning",
+  "severity": "weak",
+  "problem": "As a suffix it is V-続ける/続く: keep ~ing. 'follow, continue, go on' glosses the verb.",
+  "evidence": "降り続く, 話し続ける",
+  "suggestion": "keep ~ing, go on ~ing",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "missing:不～/無～",
+  "field": "missing",
+  "severity": "note",
+  "problem": "Negating prefixes common on N2: 不 (不安, 不可能) and 無 (無関心, 無理).",
+  "evidence": "不安, 無関心",
+  "suggestion": "add 不～: not, un-~; 無～: without, -less",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "missing:～的",
+  "field": "missing",
+  "severity": "note",
+  "problem": "N2 suffix ～的 is missing.",
+  "evidence": "合理的, 具体的",
+  "suggestion": "add ～的: -like, ~ic",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "missing:～性",
+  "field": "missing",
+  "severity": "note",
+  "problem": "～性 is missing.",
+  "evidence": "可能性, 安全性",
+  "suggestion": "add ～性: nature, -ity",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "missing:～上",
+  "field": "missing",
+  "severity": "note",
+  "problem": "～上 (regarding) is missing; ～中 (じゅう/ちゅう) too.",
+  "evidence": "仕事上, 一日中, 会議中",
+  "suggestion": "add ～上: regarding ~; ～中: during, throughout",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "missing:～用/～率/～制/～員/～学",
+  "field": "missing",
+  "severity": "note",
+  "problem": "Frequent kanji suffixes in N2 reading: for use of, rate, system, member, study.",
+  "evidence": "家庭用, 成功率, 制度, 会員, 経済学",
+  "suggestion": "add ～用: for use of ~; ～率: rate; ～制: system",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "missing:～家",
+  "field": "missing",
+  "severity": "note",
+  "problem": "～家 (か) 'expert' is missing; only け is present.",
+  "evidence": "作家, 専門家",
+  "suggestion": "add ～家(か): specialist, -ist",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "missing:～おき/～ずくめ/～げ/～め",
+  "field": "missing",
+  "severity": "note",
+  "problem": "N2 patterns: every other (一日おき), full of (黒ずくめ), looking (悲しげ), -ish/ordinal (長め).",
+  "evidence": "一日おき, 悲しげ",
+  "suggestion": "add ～おき: every other ~",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "missing:超～/準～/元～/旧～/新～/全～/真～",
+  "field": "missing",
+  "severity": "note",
+  "problem": "Prefixes absent from the list: 超 (super), 準 (quasi), 元 (former), 旧 (old), 新 (new), 全 (all), 真っ (right in the middle of).",
+  "evidence": "超満員, 元社長, 全国, 真っ白",
+  "suggestion": "add 超～: super-; 元～: former ~",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "k:もっとも",
+  "field": "shownAfterAnswer",
+  "severity": "wrong",
+  "problem": "The text says the writer's point is usually after it. もっとも adds a qualification AFTER the main point, so the point comes before it. It contradicts the card's own answer.",
+  "evidence": "A。もっとも、B。 where A is the point",
+  "suggestion": "Qualify: adds a limit or exception to the point just made, which stays standing",
+  "confidence": "high"
+ },
+ {
+  "part": "A",
+  "id": "k:にもかかわらず",
+  "field": "word",
+  "severity": "weak",
+  "problem": "Not a sentence-initial connective on its own; it follows a noun or clause (雨にもかかわらず). The connective form is それにもかかわらず, so the card is unnatural.",
+  "evidence": "雨にもかかわらず, それにもかかわらず",
+  "suggestion": "word: それにもかかわらず",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "k:それなら",
+  "field": "wrong",
+  "severity": "unfair",
+  "problem": "The wrong list holds 'now, well then' (さて), but それなら is routinely 'well then'. Remove it for this card.",
+  "evidence": "それなら、私が行きます",
+  "suggestion": "drop 'now, well then' from wrong",
+  "confidence": "medium"
+ },
+ {
+  "part": "A",
+  "id": "k:とすれば",
+  "field": "word",
+  "severity": "weak",
+  "problem": "Bare とすれば is not the usual connective; it is だとすれば / そうだとすれば or a clause ending. 'if so, then' matches それなら more closely.",
+  "evidence": "だとすれば, そうだとすれば",
+  "suggestion": "word: だとすれば",
+  "confidence": "low"
+ },
+ {
+  "part": "C",
+  "id": "ni",
+  "field": "gloss",
+  "severity": "weak",
+  "problem": "Vague, but に is a basic block with no card of its own; it only shows as a part gloss and is not false.",
+  "suggestion": "",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "no",
+  "field": "gloss",
+  "severity": "weak",
+  "problem": "The genitive gloss is right for most patterns (の下で, のうちに, 結果の, いつの間にか) but misleading as a part gloss where の nominalizes (のも当然だ, のももっともだ, のではないだろうか).",
+  "suggestion": "Per-part gloss 'turns a clause into a noun' for のも当然だ, のももっともだ, のではないだろうか.",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "mo",
+  "field": "gloss",
+  "severity": "weak",
+  "problem": "'also; or even' covers the uses (も又, もかまわず, としても) and is acceptable.",
+  "suggestion": "",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "ka",
+  "field": "gloss",
+  "severity": "weak",
+  "problem": "The trailing 'some-' is cryptic, but the three uses are now named and the example is a plain question. Not false.",
+  "suggestion": "Optional: \"question; 'or'; indefinite 'some-'\" (37 chars).",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "te",
+  "field": "forms",
+  "severity": "weak",
+  "problem": "で as the voiced form of て is correct; ないで is a related but separate negative connective, hinted in ないではいられない. Not false.",
+  "suggestion": "",
+  "confidence": "low"
+ },
+ {
+  "part": "C",
+  "id": "ue",
+  "field": "gloss",
+  "severity": "ok",
+  "problem": "'on top of; given that' now covers 上に (additive) and 上は (given that) and matches the example.",
+  "suggestion": "",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "ijou",
+  "field": "gloss",
+  "severity": "weak",
+  "problem": "'a floor or threshold' is an odd label for 以上 and does not cover 'since / now that' (以上2) or 'more than' (以上に); the example is 'three or more'.",
+  "suggestion": "Gloss: 'this much or more; this being so' (35 chars).",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "tsutsu",
+  "field": "gloss",
+  "severity": "weak",
+  "problem": "'in the middle of doing' is true only of つつある; the concessive つつも is not covered. Acceptable because both pattern meanings are close to 'while'.",
+  "suggestion": "Gloss: 'while doing; in the process of' is no better; keep, and fix the つつ-も part list separately.",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "suru-do",
+  "field": "gloss",
+  "severity": "weak",
+  "problem": "'carries out an action' is plain する; in に際して it is 'faces / is at the point of', which is only hinted. Only one pattern uses it.",
+  "suggestion": "",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "douse",
+  "field": "gloss",
+  "severity": "weak",
+  "problem": "どうせ carries a resigned 'since it is bound to be so anyway' nuance; 'anyway' alone can be read as いずれにせよ.",
+  "suggestion": "Gloss: 'in any case, resignedly (it is so anyway)' (45, too long); use 'resigned: it is so anyway' (25 chars).",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "につき",
+  "field": "transparency",
+  "severity": "weak",
+  "problem": "One key joins two unrelated senses (reason 'because of' vs 'per/each'); the card sentence is the reason use. 'partial' is a fair rating and the sentence disambiguates.",
+  "suggestion": "Optionally split into につき (reason) and につき (per).",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "wa",
+  "field": "gloss",
+  "severity": "weak",
+  "problem": "'marks topic or contrast' is right for は in these patterns (ては, だけは, 上は); the conditional force belongs to the pattern, not to は.",
+  "suggestion": "",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "da",
+  "field": "forms",
+  "severity": "weak",
+  "problem": "では/じゃ are still listed under だ although they have their own block dewa, so an underlined では could be answered with either block's gloss.",
+  "suggestion": "Remove では and じゃ from da.forms.",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "dewa",
+  "field": "gloss",
+  "severity": "weak",
+  "problem": "The gloss is true of both uses (conditional 'if it is'; copula + は in ではない) but reads as jargon.",
+  "suggestion": "Gloss: \"'if it is', or copula で plus topic は\" (38 chars).",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "naru",
+  "field": "gloss",
+  "severity": "weak",
+  "problem": "'becomes a new state' does not describe ならない/ならず in ねばならない, てはならない, にほかならない, のみならず, where it is a fixed negative unit ('will not do', 'is not'). Per-pattern hints cover this, so it is unclear rather than false.",
+  "suggestion": "Optional split: なる 'becomes' and ならない 'will not do; is not' (20 chars).",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "suru-assume",
+  "field": "gloss",
+  "severity": "ok",
+  "problem": "'takes or treats something as' fits としたら, としては, としても, にしたら, からすると well enough.",
+  "suggestion": "",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "to-quote",
+  "field": "gloss",
+  "severity": "weak",
+  "problem": "'cites the content of a statement' is wrong for the role/supposition と in としては and としても.",
+  "suggestion": "Per-part gloss for としては/としても: 'as; supposing that'.",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "to-when",
+  "field": "gloss",
+  "severity": "weak",
+  "problem": "'links an action to its sequel' is acceptable for the when/if と in the viewpoint patterns and てからでないと.",
+  "suggestion": "",
+  "confidence": "low"
+ },
+ {
+  "part": "C",
+  "id": "omou",
+  "field": "forms",
+  "severity": "weak",
+  "problem": "思い covers 思います, but the gloss 'reaches a judgment' is abstract; in ばと思います it is a hope and in かと思ったら a thought.",
+  "suggestion": "Gloss: 'thinks, supposes, hopes' (25 chars).",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "miru",
+  "field": "gloss",
+  "severity": "ok",
+  "problem": "'sees, observes, or judges' fits から見ると and ところを見ると.",
+  "suggestion": "",
+  "confidence": "high"
+ },
+ {
+  "part": "C",
+  "id": "iru",
+  "field": "gloss",
+  "severity": "ok",
+  "problem": "'stays in a state' fits ている and いられない in the listed patterns.",
+  "suggestion": "",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "dake",
+  "field": "gloss",
+  "severity": "weak",
+  "problem": "'only; just that much' is the extent sense; だけに, だけのことはある and だけましだ build on extent, and the per-pattern meaning carries the rest.",
+  "suggestion": "",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "sugi",
+  "field": "forms",
+  "severity": "ok",
+  "problem": "過ぎる with すぎない as a listed form and gloss 'goes beyond a threshold' fits にすぎない ('does not go beyond').",
+  "suggestion": "",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "wake",
+  "field": "gloss",
+  "severity": "weak",
+  "problem": "'grounds for drawing a conclusion' is close to the example (reason) and to というわけではない, but わけにはいかない is more 'reasonable course'.",
+  "suggestion": "Gloss: 'reason; what logically follows' (30 chars).",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "mono-thing",
+  "field": "gloss",
+  "severity": "weak",
+  "problem": "'treats an idea as a thing' is vague; the example is the evaluative ものだ, while ものなら and ものがある differ. Not false.",
+  "suggestion": "",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "mono-explanation",
+  "field": "gloss",
+  "severity": "weak",
+  "problem": "'frames a personal circumstance' is jargon; in ものだから/もので, もの marks the clause as an explanation or excuse.",
+  "suggestion": "Gloss: 'marks the reason as an explanation' (36 chars).",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "mono-refusal",
+  "field": "gloss",
+  "severity": "weak",
+  "problem": "'frames the action as a proposition' is opaque for a learner choosing among glosses; the denial comes from もの+か together.",
+  "suggestion": "Gloss: 'makes the claim a thing to reject' (33 chars).",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "tokoro-degree",
+  "field": "gloss",
+  "severity": "weak",
+  "problem": "'the extent at issue' is abstract but not false for どころではない.",
+  "suggestion": "",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "iku-acceptable",
+  "field": "gloss",
+  "severity": "weak",
+  "problem": "'works as a course of action' reads positively while the form shown is いかない; the example 'won't work' fits the sense but the part gloss shows no negative.",
+  "suggestion": "Gloss: 'goes ahead; is acceptable as a course' (38 chars).",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "shitagau",
+  "field": "gloss",
+  "severity": "unfair",
+  "problem": "The gloss 'keeps step as something changes' contradicts the block's example, which is 'follow the staff's instructions' (obey), so the card shows an example of one sense and keys another. したがって (therefore) also uses this block.",
+  "suggestion": "Gloss: 'follows; goes along with' (24 chars).",
+  "confidence": "high"
+ },
+ {
+  "part": "C",
+  "id": "tsuki",
+  "field": "gloss",
+  "severity": "weak",
+  "problem": "'an attached circumstance or unit' covers both reason and per; the two senses are not split but the card sentence is the reason use.",
+  "suggestion": "",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "tsukeru",
+  "field": "gloss",
+  "severity": "weak",
+  "problem": "'fixes something onto a point' is a literal reading that fits 気をつける; につけ is a looser extension, covered by the per-pattern hint.",
+  "suggestion": "Gloss: 'attaches or applies to something' (33 chars).",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "kaneru",
+  "field": "gloss",
+  "severity": "ok",
+  "problem": "'signals reluctance or difficulty' fits かねる and, negated, かねない ('could well').",
+  "suggestion": "",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "tsuujiru",
+  "field": "forms",
+  "severity": "weak",
+  "problem": "通して belongs to 通す, not 通じる, so listing it as a form teaches false morphology; the pattern pairs the two spellings.",
+  "suggestion": "Drop 通して from forms and add a small block 通す ('passes through; by means of'), or note the pairing.",
+  "confidence": "high"
+ },
+ {
+  "part": "C",
+  "id": "choudai",
+  "field": "type",
+  "severity": "weak",
+  "problem": "頂戴 is a noun used with する, not a plain verb, and the example is polite 頂戴できますか while the pattern て頂戴 is a casual request.",
+  "suggestion": "Type 'noun' (する-noun); optionally an example showing the casual use, e.g. 早く来てちょうだい。",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "tamaranai",
+  "field": "forms",
+  "severity": "ok",
+  "problem": "'cannot bear the feeling' fits てたまらない and the example.",
+  "suggestion": "",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "yara",
+  "field": "gloss",
+  "severity": "ok",
+  "problem": "'leaves the matter unsettled' covers やら-やら, どうやら and なにやら adequately.",
+  "suggestion": "",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "demo",
+  "field": "gloss",
+  "severity": "ok",
+  "problem": "'concedes an extreme measure' fits てでも and the example.",
+  "suggestion": "",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "man",
+  "field": "type",
+  "severity": "ok",
+  "problem": "万 as 'ten thousand' is correct for 万が一; 'noun' for a numeral is harmless.",
+  "suggestion": "",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "hatashite",
+  "field": "gloss",
+  "severity": "weak",
+  "problem": "'really, as expected' leaves the question use (the example, 'I wonder whether really') unmentioned.",
+  "suggestion": "Gloss: \"as expected; 'really?' in questions\" (36 chars).",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "tatte",
+  "field": "forms",
+  "severity": "weak",
+  "problem": "The voiced variant だって (読んだって) is not listed, so a voiced example would not match the block.",
+  "suggestion": "forms: ['たって','だって'].",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "たまえ",
+  "field": "sentence",
+  "severity": "ok",
+  "problem": "君 and くれたまえ mark the senior-to-junior address, and the meaning matches.",
+  "suggestion": "",
+  "confidence": "high"
+ },
+ {
+  "part": "C",
+  "id": "つつ-も",
+  "field": "parts",
+  "severity": "unfair",
+  "problem": "も is missing and the only part is つつ glossed 'in the middle of doing', which is wrong for the concessive; the key 'while, even though' also overlaps the つつ key 'While, And', so the two cards can be confused.",
+  "suggestion": "Parts: つつ 'while (two states at once)' + も 'even; 'though'' (block mo). Keep つつ and つつ-も from appearing as each other's choices.",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "お-願う",
+  "field": "parts",
+  "severity": "weak",
+  "problem": "The verb stem (書き) is not a part, so お～願う reads as お + 願う only; the meaning 'Could you please' implies a question, but 願います is a polite request.",
+  "suggestion": "Meaning: 'please do (formal request)'; literal: 'humbly asks that you do'.",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "transparency-calibration",
+  "field": "transparency",
+  "severity": "weak",
+  "problem": "The note says the cards stay unscored, but they are now scored, so a mislabeled 'clear' or 'opaque' rating has weight.",
+  "suggestion": "Audit that 'clear' is used only where the parts determine the meaning.",
+  "confidence": "low"
+ },
+ {
+  "part": "C",
+  "id": "basic-in-context",
+  "field": "gloss",
+  "severity": "weak",
+  "problem": "Basic particles keep one general gloss that can mislead in a specific construction (の nominalizer, と role, は conditional).",
+  "suggestion": "Per-part glosses for the named constructions: のも当然だ, としては/としても, ては.",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "example-alignment",
+  "field": "example",
+  "severity": "weak",
+  "problem": "Known mismatches are shitagau (instruction example vs 'change' gloss) and choudai (polite vs casual); the rest were not checked.",
+  "suggestion": "Fix those two; spot check mono-thing and wake.",
+  "confidence": "medium"
+ },
+ {
+  "part": "C",
+  "id": "pair-policy",
+  "field": "pair",
+  "severity": "weak",
+  "problem": "Near-synonym patterns can appear as each other's wrong choices, which makes a scored card unfair; the guard list is not complete.",
+  "suggestion": "Add pairs: つつ/つつ-も, ものだから/ものですから, にしても/にしろ, に際して/にあたり, てならない/てたまらない/てしょうがない.",
+  "confidence": "medium"
+ },
+ {
+  "part": "D",
+  "id": "n2-set-2#71",
+  "field": "lines",
+  "severity": "unfair",
+  "problem": "The key is right (only course 2 is open to her), but the lines do not decide it. '対象：１８歳以上' sits under course 3 and the reader cannot tell which course it belongs to. The 'non-residents welcome' line only shows 2 and 3 are allowed. Nothing excludes course 1 (city residents, workers and students only). The two exclusions are what rule out 1 and 3.",
+  "suggestion": [
+   "対象：市内に在住・在勤・在学の中学生以上",
+   "対象：１８歳以上"
+  ],
+  "confidence": "high"
+ },
+ {
+  "part": "D",
+  "id": "n2-set-2#71",
+  "field": "en",
+  "severity": "weak",
+  "problem": "The en text follows the old lines and does not say that course 1 is closed to non-residents.",
+  "suggestion": "Course 1: city residents/workers/students only; course 3: 18 and over",
+  "confidence": "medium"
+ },
+ {
+  "part": "D",
+  "id": "n2-set-2#66",
+  "field": "skip",
+  "severity": "weak",
+  "problem": "A deciding pair exists. A says the worry about dirty books is small; B says a dirty book troubles the next reader. Both texts mention books getting dirty.",
+  "suggestion": [
+   "本が汚れる心配はそれほど大きくない",
+   "一冊の本が汚れれば、次に読む人が迷惑する"
+  ],
+  "confidence": "medium"
+ },
+ {
+  "part": "D",
+  "id": "n2-set-2#67",
+  "field": "skip",
+  "severity": "note",
+  "problem": "A pair does decide it. A allows drinks under rules such as lidded containers; B wants book-protection measures first.",
+  "suggestion": [
+   "ふたのある容器に限るなどのルールを決めておけば",
+   "本を守る工夫を先に考えなければならない"
+  ],
+  "confidence": "medium"
+ },
+ {
+  "part": "D",
+  "id": "n2-set-2#101",
+  "field": "lines",
+  "severity": "note",
+  "problem": "The line only has him leaning ('しようかな'). The firm decision comes at the end, when he says he will learn it and teach his father.",
+  "suggestion": [
+   "四つ目にしようかな。",
+   "だから、僕が習って教えるよ。"
+  ],
+  "confidence": "low"
+ },
+ {
+  "part": "D",
+  "id": "n2-set-3#81",
+  "field": "lines",
+  "severity": "weak",
+  "problem": "Choice 3 names the nearby elementary school, which neither line mentions; the second line only says children. The sentence about the school and the children coming to see insects is what links the choice to the talk.",
+  "suggestion": [
+   "よく、健康のためですかと聞かれるんですが、実はそうじゃないんです。",
+   "うちの畑のそばに小学校がありまして、子どもたちがよく畑に虫を見に来るんですよ。"
+  ],
+  "confidence": "medium"
+ },
+ {
+  "part": "D",
+  "id": "n2-set-3#102",
+  "field": "lines",
+  "severity": "weak",
+  "problem": "The first line starts after お母さん, so the lines never show whose knee is hurt; the learner has to infer that the mother is meant. Starting from でも、お母さん、 fixes that and also stays one exact stretch of the context.",
+  "suggestion": [
+   "でも、お母さん、この前膝を痛めたばかりだろう？果物狩りって、坂の多い畑を歩くんじゃないかな。",
+   "畑は山の斜面にございますので、少し歩いていただくことになります。"
+  ],
+  "confidence": "medium"
+ },
+ {
+  "part": "E",
+  "id": "r:N5:本当",
+  "field": "wrong",
+  "severity": "wrong",
+  "problem": "Listed wrong reading ほんと is an accepted (colloquial) reading of 本当; JMdict lists it as a variant.",
+  "suggestion": "Remove ほんと from wrong choices",
+  "confidence": "high"
+ },
+ {
+  "part": "E",
+  "id": "r:N5:大丈夫",
+  "field": "wrong",
+  "severity": "unfair",
+  "problem": "Wrong choice だいじょぶ is a widely written colloquial variant of だいじょうぶ; a learner who knows it is punished.",
+  "suggestion": "Remove だいじょぶ from wrong choices",
+  "confidence": "medium"
+ },
+ {
+  "part": "E",
+  "id": "m:N5:すぎ",
+  "field": "answer",
+  "severity": "wrong",
+  "problem": "すぎ is shown with the fish sense (cobia). A N5 learner meets すぎ as 過ぎ (past, after, too much) or 杉 (cedar); the card is both uncommon and misleading.",
+  "suggestion": "Drop the card (or: past, after; too much)",
+  "confidence": "high"
+ },
+ {
+  "part": "E",
+  "id": "l:N5:シャツ",
+  "field": "answer",
+  "severity": "weak",
+  "problem": "'shirt (undergarment), undershirt' is the dictionary's first sense; learners expect シャツ = shirt (ワイシャツ appears elsewhere as dress shirt).",
+  "suggestion": "shirt, undershirt",
+  "confidence": "medium"
+ },
+ {
+  "part": "E",
+  "id": "l:N5:そう",
+  "field": "answer",
+  "severity": "weak",
+  "problem": "Heard alone, そう is 'so, like that / that's right'. The key 'appearing that, seeming that' is the suffix sense (〜そう), not what a learner expects.",
+  "suggestion": "so, that way",
+  "confidence": "medium"
+ },
+ {
+  "part": "E",
+  "id": "d:N5:杯",
+  "field": "answer",
+  "severity": "weak",
+  "problem": "At N5, 杯 is met as the counter はい (cupfuls, glasses). 'sake cup' (さかずき) is the rare sense.",
+  "suggestion": "counter for cupfuls",
+  "confidence": "medium"
+ },
+ {
+  "part": "E",
+  "id": "l:N5:横",
+  "field": "answer",
+  "severity": "weak",
+  "problem": "'horizontal (as opposed to vertical)' is not the sense learners need; they meet 横 as side/beside (横に, 横断歩道).",
+  "suggestion": "side; beside; width",
+  "confidence": "medium"
+ },
+ {
+  "part": "E",
+  "id": "d:N5:其れから",
+  "field": "prompt",
+  "severity": "weak",
+  "problem": "The answer is shown in rare kanji 其れから; learners meet それから in kana, and the choice 其れでは is equally exotic. Tests kanji rarity, not the word.",
+  "suggestion": "Show/accept それから",
+  "confidence": "medium"
+ },
+ {
+  "part": "E",
+  "id": "d:N5:友達",
+  "field": "wrong",
+  "severity": "weak",
+  "problem": "Wrong choice 咖哩 (rare kanji for curry) is not a word an N5 learner meets; it is an obvious odd-one-out tell.",
+  "suggestion": "Filter wrong choices to words in the level list in common spelling",
+  "confidence": "low"
+ },
+ {
+  "part": "E",
+  "id": "N5",
+  "field": "pattern",
+  "severity": "note",
+  "problem": "9 of about 120 sample cards faulty (2 wrong, 1 unfair, 6 weak). Causes: readings that are variants of the answer (ほんと, だいじょぶ); a rare-sense or wrong-entry JMdict first sense for kana-only words (すぎ, そう, シャツ, 横, 杯); rare-kanji spellings (其れから, 咖哩) used as answers or distractors. Otherwise the level is clean: distractors are distinct and the keys are common meanings. Fit to be scored after the fixes below.",
+  "suggestion": "(1) Add a denylist of accepted variant readings (ほんと, だいじょぶ, ほんとに); (2) for kana-only prompts take the entry's usage-ranked/common sense, or skip cards whose first sense is a taxon, 'suffix' or 'appearing'; (3) skip prompts and wrong choices written in rare kanji (uk/rK-tagged forms).",
+  "confidence": "medium"
+ },
+ {
+  "part": "E",
+  "id": "r:N4:看護婦",
+  "field": "prompt",
+  "severity": "weak",
+  "problem": "Outdated word, replaced by 看護師 in standard use; a learner meets 看護師 now.",
+  "suggestion": "Drop the card or accept it as practice-only",
+  "confidence": "low"
+ },
+ {
+  "part": "E",
+  "id": "d:N4:式",
+  "field": "prompt",
+  "severity": "weak",
+  "problem": "'way, style' is the minor sense of the bare 式; the common senses a learner meets are ceremony (結婚式) and formula. The single-character prompt is also highly ambiguous.",
+  "suggestion": "ceremony; style; formula",
+  "confidence": "medium"
+ },
+ {
+  "part": "E",
+  "id": "m:N4:テキスト",
+  "field": "answer",
+  "severity": "weak",
+  "problem": "At N4 テキスト is met as 'textbook'. 'text' alone misleads.",
+  "suggestion": "textbook; text",
+  "confidence": "medium"
+ },
+ {
+  "part": "E",
+  "id": "m:N4:なかなか",
+  "field": "answer",
+  "severity": "weak",
+  "problem": "The learner's core use is なかなか+negative = '(not) easily'. 'very, considerably' covers only one use and a learner may read it as wrong.",
+  "suggestion": "quite; (not) easily",
+  "confidence": "medium"
+ },
+ {
+  "part": "E",
+  "id": "N4",
+  "field": "pattern",
+  "severity": "note",
+  "problem": "4 of about 110 sample cards faulty (0 wrong, 0 unfair, 4 weak). Reading distractors are clean: mostly voicing/long-vowel slips plus some unrelated words. Faults are only too-narrow first senses of loanwords and adverbs and one dated word. Fit to be scored as is; the weak ones cost little.",
+  "suggestion": "For kana adverbs and loanwords prefer a hand-set key, or show two senses; skip dated words (看護婦, 電報-type) for scored play.",
+  "confidence": "medium"
+ },
+ {
+  "part": "E",
+  "id": "d:N3:直",
+  "field": "prompt",
+  "severity": "wrong",
+  "problem": "Prompt is the bare 直, a bound form; the key 'soon, in a moment' is JMdict's rare じき reading. The wrong list holds 直ちに (immediately), which is the same meaning as the key, so a correct learner answer is penalised.",
+  "suggestion": "Drop the card (or answer: straight; direct)",
+  "confidence": "high"
+ },
+ {
+  "part": "E",
+  "id": "m:N3:あら",
+  "field": "answer",
+  "severity": "wrong",
+  "problem": "あら is almost always the interjection 'oh, my'. The key 'remaining bony parts (of a fish after filleting)' is a rare noun sense (粗); a learner cannot know which is meant from kana alone.",
+  "suggestion": "Drop the card (or: oh, my! (interjection))",
+  "confidence": "high"
+ },
+ {
+  "part": "E",
+  "id": "d:N3:助ける",
+  "field": "wrong",
+  "severity": "unfair",
+  "problem": "Wrong choices include 救助 (rescue) and 援助 (aid), which share the answer's meaning 'save, rescue/help'.",
+  "suggestion": "Answer: to help, to rescue; remove 救助 and 援助 from the wrong list",
+  "confidence": "high"
+ },
+ {
+  "part": "E",
+  "id": "d:N3:遅刻",
+  "field": "wrong",
+  "severity": "unfair",
+  "problem": "Wrong choice 遅れ means lateness/delay, near-identical to 'lateness, tardiness'.",
+  "suggestion": "Remove 遅れ from wrong choices",
+  "confidence": "high"
+ },
+ {
+  "part": "E",
+  "id": "d:N3:信じる",
+  "field": "wrong",
+  "severity": "unfair",
+  "problem": "Wrong choices 信用 and 信頼 mean trust/confidence, which overlap 'to believe (in)'. The reverse card d:N3:信用 lists 信じる among its wrong choices (same problem).",
+  "suggestion": "Remove 信用 and 信頼 here, and 信じる from d:N3:信用",
+  "confidence": "medium"
+ },
+ {
+  "part": "E",
+  "id": "m:N3:パス",
+  "field": "wrong",
+  "severity": "unfair",
+  "problem": "The wrong choice 'to pass, to elapse' also translates パス/'pass'; the key is the narrow exam sense, while the ball or ticket pass is common.",
+  "suggestion": "Answer: pass (exam, ball, ticket); remove 'to pass, to elapse'",
+  "confidence": "medium"
+ },
+ {
+  "part": "E",
+  "id": "d:N3:分/ぶ",
+  "field": "answer",
+  "severity": "unfair",
+  "problem": "Prompt shows only 分; the key '(one-tenth of a wari)' is the rare ぶ sense. The wrong list holds 部分 and 分野, whose meaning (part) is the usual sense of 分.",
+  "suggestion": "Drop the card, or show the reading and use 'part, share'",
+  "confidence": "high"
+ },
+ {
+  "part": "E",
+  "id": "r:N3:吝嗇",
+  "field": "answer",
+  "severity": "unfair",
+  "problem": "The answer is written in katakana (ケチ) while every wrong choice is hiragana, which gives it away. 吝嗇 also has the accepted reading りんしょく; the word is N1-level, not N3.",
+  "suggestion": "Drop the card (or store the answer as けち)",
+  "confidence": "medium"
+ },
+ {
+  "part": "E",
+  "id": "d:N3:要求",
+  "field": "wrong",
+  "severity": "unfair",
+  "problem": "Wrong choice 求める means to request or demand, which is the verb of the key 'demand, firm request'.",
+  "suggestion": "Remove 求める from wrong choices",
+  "confidence": "medium"
+ },
+ {
+  "part": "E",
+  "id": "d:N3:開始",
+  "field": "wrong",
+  "severity": "unfair",
+  "problem": "Wrong choice 始まり (beginning) overlaps 'start, commencement'.",
+  "suggestion": "Remove 始まり from wrong choices",
+  "confidence": "medium"
+ },
+ {
+  "part": "E",
+  "id": "d:N3:関連",
+  "field": "wrong",
+  "severity": "weak",
+  "problem": "Wrong choice 関する ('to relate to') overlaps 'relation, connection'.",
+  "suggestion": "Remove 関する from wrong choices",
+  "confidence": "low"
+ },
+ {
+  "part": "E",
+  "id": "m:N3:わた",
+  "field": "answer",
+  "severity": "weak",
+  "problem": "Key is the botanical 'cotton plant (Gossypium spp.)'; learners know わた (綿) as cotton, stuffing.",
+  "suggestion": "cotton (fiber, stuffing)",
+  "confidence": "medium"
+ },
+ {
+  "part": "E",
+  "id": "d:N3:加味",
+  "field": "answer",
+  "severity": "weak",
+  "problem": "'seasoning, flavoring' is the literal sense; the learner-relevant use is 'taking into account'. The word is also rare for N3.",
+  "suggestion": "adding; taking into account",
+  "confidence": "low"
+ },
+ {
+  "part": "E",
+  "id": "m:N3:ずっと",
+  "field": "answer",
+  "severity": "weak",
+  "problem": "The key 'continuously, the whole time' omits the commoner comparative sense 'far, much (more)'; a learner who knows that sense sees the key as incomplete.",
+  "suggestion": "much more; all along",
+  "confidence": "medium"
+ },
+ {
+  "part": "E",
+  "id": "d:N3:好み",
+  "field": "wrong",
+  "severity": "weak",
+  "problem": "Wrong choice 好む ('to like') is the verb of the key 'liking, taste'.",
+  "suggestion": "Remove 好む from wrong choices",
+  "confidence": "low"
+ },
+ {
+  "part": "E",
+  "id": "N3",
+  "field": "pattern",
+  "severity": "note",
+  "problem": "15 of about 110 sample cards faulty (2 wrong, 8 unfair, 5 weak). Recurring cause is the definition cards: wrong choices are picked by shared kanji, so they are often cognates or the same word in another form (助ける/救助, 遅刻/遅れ, 要求/求める, 開始/始まり, 信じる/信用), which share the key's meaning. Second cause is bare single kanji and kana prompts whose JMdict first sense is rare (直, 分/ぶ, あら, わた). Third, rare words with katakana or alternate readings (吝嗇). The level is not fit to be scored as it stands, because 'wrong choice that is also right' costs points.",
+  "suggestion": "(1) For definition cards drop distractors sharing a kanji with the answer when the distractor's gloss shares a content word with the key; (2) drop bound forms and kana prompts with several unrelated senses unless the key is set by hand; (3) accept only cards whose answer script matches the wrong choices.",
+  "confidence": "high"
+ },
+ {
+  "part": "E",
+  "id": "d:N1:延べ",
+  "field": "answer",
+  "severity": "wrong",
+  "problem": "Key 'futures' is a rare finance sense. 延べ is met as 'total, cumulative' (延べ人数, 延べ床面積). A learner who knows the word is penalised.",
+  "suggestion": "total, cumulative",
+  "confidence": "high"
+ },
+ {
+  "part": "E",
+  "id": "d:N1:促進",
+  "field": "wrong",
+  "severity": "unfair",
+  "problem": "Wrong choice 推進 means promotion/driving forward, which overlaps the key 'promotion, acceleration'.",
+  "suggestion": "Remove 推進 from wrong choices",
+  "confidence": "high"
+ },
+ {
+  "part": "E",
+  "id": "d:N1:配給",
+  "field": "wrong",
+  "severity": "unfair",
+  "problem": "Wrong choice 分配 means distribution, matching the key 'distribution'.",
+  "suggestion": "Remove 分配 from wrong choices",
+  "confidence": "high"
+ },
+ {
+  "part": "E",
+  "id": "d:N1:逃亡",
+  "field": "wrong",
+  "severity": "unfair",
+  "problem": "Wrong choice 逃げ出す means to run away, near-identical to 'escape, flight'.",
+  "suggestion": "Remove 逃げ出す from wrong choices",
+  "confidence": "medium"
+ },
+ {
+  "part": "E",
+  "id": "d:N1:追い込む",
+  "field": "answer",
+  "severity": "weak",
+  "problem": "'to herd, to drive' is the literal sense; the common use is to corner or drive into (a situation).",
+  "suggestion": "to corner, to drive into",
+  "confidence": "medium"
+ },
+ {
+  "part": "E",
+  "id": "d:N1:一面",
+  "field": "answer",
+  "severity": "weak",
+  "problem": "'one face, one surface' is a literal gloss; learners meet 一面 as 'one side (of a matter)', 'front page', 'whole surface'.",
+  "suggestion": "one side; front page; whole surface",
+  "confidence": "medium"
+ },
+ {
+  "part": "E",
+  "id": "d:N1:切実",
+  "field": "answer",
+  "severity": "weak",
+  "problem": "'earnest, sincere' misses the core sense 'acute, pressing'.",
+  "suggestion": "acute, pressing, earnest",
+  "confidence": "low"
+ },
+ {
+  "part": "E",
+  "id": "d:N1:留める",
+  "field": "answer",
+  "severity": "weak",
+  "problem": "First learner sense is 'to fasten, to fix, to keep'; 'to stop, to halt' is the less expected one.",
+  "suggestion": "to fasten; to fix in place",
+  "confidence": "low"
+ },
+ {
+  "part": "E",
+  "id": "d:N1:澄ます",
+  "field": "answer",
+  "severity": "weak",
+  "problem": "Key 'to clear, to make clear' is minor; learners meet 澄ます as 'to look prim' or 'to listen closely'.",
+  "suggestion": "to clear; to put on airs",
+  "confidence": "low"
+ },
+ {
+  "part": "E",
+  "id": "N1",
+  "field": "pattern",
+  "severity": "note",
+  "problem": "9 of about 110 sample cards faulty (1 wrong, 3 unfair, 5 weak). Reading cards are clean; all the unfair items are definition cards where a kanji-sharing neighbour is a synonym (促進/推進, 配給/分配, 逃亡/逃げ出す). Weak items are literal or secondary first senses (追い込む, 一面, 切実, 延べ). Fit to be scored after removing synonym distractors.",
+  "suggestion": "Same rule as N3: reject a distractor whose gloss shares a content word with the key. Hand-check keys for words where the JMdict first sense is a literal or finance/technical sense.",
+  "confidence": "medium"
+ }
+]

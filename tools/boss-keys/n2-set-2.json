@@ -169,10 +169,22 @@
   "solved": true
  },
  "66": {
-  "skip": "the shared point (books getting dirty) is spread across both texts A and B and must be matched in both"
+  "lines": [
+   "本が汚れる心配はそれほど大きくない",
+   "一冊の本が汚れれば、次に読む人が迷惑する"
+  ],
+  "en": "A: little worry of dirtying books; B: one dirty book troubles the next reader",
+  "solved": true,
+  "by": "review 2026-11-27"
  },
  "67": {
-  "skip": "the answer needs the stances of both texts A and B compared as wholes"
+  "lines": [
+   "ふたのある容器に限るなどのルールを決めておけば",
+   "本を守る工夫を先に考えなければならない"
+  ],
+  "en": "A: allow drinks under rules like lidded cups; B: protect the books first",
+  "solved": true,
+  "by": "review 2026-11-27"
  },
  "68": {
   "lines": [
@@ -212,17 +224,12 @@
  },
  "71": {
   "lines": [
-   "対象：１８歳以上",
-   "・②③は、市外にお住まいの方も参加できます。"
+   "対象：市内に在住・在勤・在学の中学生以上",
+   "対象：１８歳以上"
   ],
-  "en": "Courses 2 and 3 accept non-residents, but 3 is only for age 18 and up",
-  "wrong": [
-   "Courses 1 and 3 accept non-residents, and 3 is for under 18",
-   "All three courses accept non-residents of any age",
-   "Courses 2 and 3 accept non-residents, and 3 is open to age 17 up"
-  ],
-  "solved": false,
-  "unsolved": "not sure: Lines do not say which course the 18+ restriction belongs to; choice and meaning 2 assume it is course 3."
+  "en": "Course 1: city residents/workers/students only; course 3: 18 and over",
+  "solved": true,
+  "by": "review 2026-11-27"
  },
  "72": {
   "lines": [
@@ -576,15 +583,12 @@
  },
  "101": {
   "lines": [
-   "それより、メールもまともに送れない父に、僕が教えてあげられるようになりたいんだよね。四つ目にしようかな。"
+   "四つ目にしようかな。",
+   "だから、僕が習って教えるよ。"
   ],
-  "en": "He wants to teach his father email, so he leans toward the fourth course",
-  "wrong": [
-   "He wants to repair his father's old album, so he picks the first course",
-   "He will take the course together with his father on Saturday",
-   "He wants to fix his dark food photos, so he picks the third course"
-  ],
-  "solved": true
+  "en": "He leans to the fourth course, then decides to learn it and teach his father",
+  "solved": true,
+  "by": "review 2026-11-27"
  },
  "102": {
   "lines": [

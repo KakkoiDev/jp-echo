@@ -1349,7 +1349,7 @@
         "したがって"
       ],
       "type": "verb",
-      "gloss": "keeps step as something changes",
+      "gloss": "follows; goes along with",
       "ja": "係員【かかりいん】の指示【しじ】にしたがって、順番【じゅんばん】に避難【ひなん】してください。",
       "en": "Please follow the staff's instructions and evacuate in order.",
       "level": "N2"
@@ -2813,11 +2813,21 @@
       "parts": [
         {
           "text": "つつ",
-          "block": "tsutsu"
+          "block": "tsutsu",
+          "gloss": "while (two states at once)"
+        },
+        {
+          "text": "も",
+          "block": "mo",
+          "gloss": "even; though"
         }
       ],
-      "literal": "two states hold in parallel",
-      "transparency": "opaque"
+      "literal": "even while the first state holds",
+      "transparency": "partial",
+      "solved": {
+        "by": "review",
+        "right": true
+      }
     },
     "に際して": {
       "parts": [

@@ -132,6 +132,75 @@ export const REVIEWED_LEVELS = new Set(["N2"]);
 // paid nothing; a round with unpaid cards did not read as a game. The REVIEWED_ flags below are kept as the record of
 // what has been reviewed, and decide again if this is ever set to false.
 export const SCORE_ALL = true;
+// ---- Word parts (前～, ～気味): what the review of 27 Nov changed ----
+// AFFIX_GLOSS: the meaning a part has as a part, where the word list's (a dictionary's word entry) was wrong or odd.
+// Keyed by the part as the list writes it, with its reading after a slash where two entries share a spelling.
+export const AFFIX_GLOSS = Object.freeze({
+ "女～": "female ~",
+ "～女": "~th daughter (birth order)",
+ "省～": "saving ~, conserving ~",
+ "～省": "~ Ministry (government)",
+ "～商": "dealer, trader in ~",
+ "～勝": "~ wins (victories)",
+ "～条": "article no. ~ (of a law)",
+ "～場": "venue, ground for ~",
+ "～色": "~ colour, colouring",
+ "～船": "ship, boat (type of ~)",
+ "～戦": "match, contest, battle",
+ "～足": "counter for pairs of footwear",
+ "総～": "total ~, whole ~",
+ "第～": "ordinal prefix (~th)",
+ "～科": "department, course; family (biology)",
+ "～化": "-ization, turning into ~",
+ "～刊": "edition, published ~",
+ "～期": "period, term, stage",
+ "～口": "entrance, exit, opening",
+ "～系": "~ type, ~ stream, ~ origin",
+ "～圏": "sphere, zone, area",
+ "重～": "heavy ~, serious ~",
+ "～号": "No. ~, issue ~; ship name",
+ "～料": "fee, charge for ~",
+ "～園": "park, garden; place for ~",
+ "～頭": "counter for large animals",
+ "～等/～とう": "class, grade, prize rank",
+ "～島": "island (in names)",
+ "～道": "way, art of ~",
+ "非～": "non-~, un-~",
+ "～等/～ら": "plural marker (they, we ~)",
+ "再～": "again, re-~",
+ "～病": "~ disease, ~ illness",
+ "～山": "Mt. ~, mountain",
+ "～寺": "~ Temple",
+ "～ぽい": "-ish; prone to ~",
+ "防～": "~proof; protection against ~",
+ "～丁目": "-chome (block number)",
+ "室～": "room, indoor ~",
+ "～庁": "government agency",
+ "～発": "counter for shots; departing from ~",
+ "～遍": "times (repetitions)",
+ "古～": "old ~, used ~",
+ "～所/～しょ": "place, office (facility)",
+ "～済": "already ~ed, done",
+ "～きる": "do ~ completely, to the end",
+ "～歌": "song, anthem",
+ "〜(日本) 式": "style, method; ceremony",
+ "～ほう (ひかく)": "the ~ one, the side that ~ (comparing)",
+ "～続く": "keep ~ing, go on ~ing",
+ "～切れ": "expired, run out of ~",
+ "各～": "each ~ (separately)",
+ "～毎": "every ~ (each time)",
+ "～流": "way, school of ~",
+ "～難い": "nearly impossible to ~",
+ "～辛い": "awkward, painful to ~",
+ "～通り": "as ~, in accordance with ~"
+});
+// AFFIX_CONFUSABLE: parts close enough in meaning that one's meaning would be a fair answer on another's card
+// (～器 and ～機, ～風 and ～式). No two of a group are ever each other's wrong choice.
+export const AFFIX_CONFUSABLE = Object.freeze([["～所", "～場"], ["～所", "～館", "～園", "～港", "～室", "～庁", "～口"], ["～器", "～機"], ["～外", "～切れ"], ["各～", "毎～", "～毎"], ["各～", "諸～"], ["現～", "今～"], ["明くる～", "翌～"], ["反～", "非～"], ["～風", "～流", "和～"], ["～位", "～着", "～等", "～番目", "第～", "～時間目", "～女"], ["～泊", "～夜", "～日"], ["～難い", "～辛い"], ["～がち", "～ぽい", "～気味"], ["～料", "～費"], ["～刊", "～紙", "～号", "～巻"], ["～団", "～科", "～系"], ["～羽", "～頭"], ["～手", "～者", "～家"], ["～通り", "～沿い"], ["～商", "～業"], ["～勝", "～戦"], ["～室", "室～"], ["～船", "～艘"]]);
+// The connective cards: a meaning that is also fair for the word is never offered against it, a word shown in the
+// form it is met in, and a job line of its own where the table's would mislead.
+export const LINK_NOT_WRONG = Object.freeze({"それなら": ["now, well then"]});
+export const LINK_SHOWN = Object.freeze({"にもかかわらず": "それにもかかわらず", "とすれば": "だとすれば"});
 // The word-part cards (前～, ～気味): their meanings are the word list's and their sentences the deck's, neither read by
 // a reviewer as affix content. False: practice, no points. True only after that review.
 export const REVIEWED_AFFIXES = false;
@@ -143,6 +212,8 @@ export const REVIEWED_GRAMMAR_BLOCKS = false;
 // cards (`gb:`, `gi:`) neither is ever offered as the other's wrong choice.
 // The scored `g:` cards are not changed here: their pool is audited as it is.
 export const GRAMMAR_CONFUSABLE = Object.freeze([
+  // Near-synonyms named by the second review (27 Nov): never each other's wrong choice.
+  ["つつ", "つつ-も"], ["ものだから", "ものですから-もので"], ["にしても-にしても", "にしろ-にしろ"],
   ["からすると-からすれば", "から見ると"],
   ["からすると-からすれば", "にしたら"],
   ["からすると-からすれば", "からには"],

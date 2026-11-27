@@ -305,6 +305,19 @@ they do not reach Today's checks, Evening recall or the Night Radio.
 ## After the exam: the rank becomes the level
 
 **To reassess after 6 Dec 2026 (owner, 27 Nov):**
+- **The other levels, from the sample review of 27 Nov** (41 findings, part E
+  of `tools/scored-review/reviews/2026-11-27-sonnet.json`, none applied).
+  About 120 cards read per level: N4 fit to be scored as it is (4 weak);
+  N5 (9 faulty) and N1 (9 faulty) fit once fixed; **N3 not fit** (15 faulty
+  in 110: 2 wrong, 8 unfair). Rules that would remove most: on "which word"
+  cards drop a wrong choice that shares a kanji and a content word with the
+  answer (助ける against 救助); skip bare one-kanji and kana-only prompts with
+  several unrelated senses; accept variant readings (ほんと, だいじょぶ);
+  skip rare-kanji spellings (其れから).
+- **Word parts the N2 list lacks** (same review): 不～, 無～, ～的, ～性, ～上,
+  ～中, ～用, ～率, ～制, ～員, ～学, ～家 (か), ～おき, ～ずくめ, ～げ, ～め,
+  超～, 準～, 元～, 旧～, 新～, 全～, 真～. Each needs an entry, a sentence
+  and a card. Not waiting for 6 Dec if the owner wants them for N2.
 - **Word parts for N5, N4, N3 and N1.** Prefixes and suffixes exist at every
   level, but those lists (built from JMdict's word lists) hold none; only
   N2's list has them (167). Decide where each level's parts come from, give

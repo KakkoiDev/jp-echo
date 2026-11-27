@@ -38,8 +38,9 @@ export function checkKey(entry, q) {
   }
   const short = s => typeof s === "string" && s.trim().length >= 8 && s.length <= LIMITS.en && !JP.test(s);
   if (!short(en)) errors.push("en: English, 8 to " + LIMITS.en + " characters");
-  if (!Array.isArray(wrong) || wrong.length !== 3 || !wrong.every(short)) errors.push("wrong: three English lines, 8 to " + LIMITS.en + " characters");
-  else if (new Set([en, ...wrong].map(s => String(s).toLowerCase().trim())).size !== 4) errors.push("the four meanings must differ");
+  // `wrong` (three misreadings) dates from when the lines were asked as a card; the review only shows `en`. Optional now.
+  if (wrong !== undefined && (!Array.isArray(wrong) || wrong.length !== 3 || !wrong.every(short))) errors.push("wrong: three English lines, 8 to " + LIMITS.en + " characters");
+  else if (wrong && new Set([en, ...wrong].map(s => String(s).toLowerCase().trim())).size !== 4) errors.push("the four meanings must differ");
   return errors;
 }
 
@@ -57,7 +58,7 @@ if (process.argv[1] === new URL(import.meta.url).pathname) {
       if (entry.skip) { skipped++; continue; }
       // A card is made only where a blind solver, given the lines alone, picked the key.
       if (entry.solved !== true) { unsolved++; continue; }
-      keys[id + "#" + i] = {lines: entry.lines, en: entry.en, wrong: entry.wrong};
+      keys[id + "#" + i] = {lines: entry.lines, en: entry.en};
     }
     for (const k of Object.keys(draft)) if (!wanted.includes(Number(k))) { console.log(id + "#" + k + ": not a reading or listening question"); bad++; }
   }
