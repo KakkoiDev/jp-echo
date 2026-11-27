@@ -1163,7 +1163,11 @@ async function game() {
   ]);
   const activeGrammar = grammarIndex?.version === 1 && (previewGrammar
     || inventory.grammar.every(([key]) => ["clear", "partial", "opaque"].includes(grammarIndex.patterns?.[key]?.transparency)));
-  const n2Cards = gamePool({inventory, examples, sets, sat, parts, grammarBlocks: activeGrammar ? grammarIndex : null});
+  // Authored cards (paraphrase, clause pairs, sentence order) and the English of the papers' sentences: each a file
+  // of its own, absent until its content has passed its checks.
+  const [paraphrase, pairs, ordering, examEn] = await Promise.all(["./n2-paraphrase.json", "./n2-pairs.json", "./n2-ordering.json", "./n2-sets/en.json"].map(f => json(f).catch(() => null)));
+  const extras = {paraphrase: paraphrase?.items || [], pairs: pairs?.items || [], ordering: ordering?.items || []};
+  const n2Cards = gamePool({inventory, examples, sets, sat, parts, grammarBlocks: activeGrammar ? grammarIndex : null, extras});
   const grammarCards = n2Cards.filter(grammarBlockCard), n2Pool = n2Cards.filter(q => !grammarBlockCard(q));
   const levelPools = new Map([["N2", n2Pool]]);
   // The last boss's misses (bossCards): wrong or unsure answers of the latest
@@ -1591,7 +1595,7 @@ async function game() {
     stretchStrip();
     // Card layout per kind (board 3a): sentence kinds show the sentence alone;
     // word kinds the big word; listen a round play button; exam its question.
-    const listen = q.kind === "listen", sentenceKind = !!q.sentence && (["reading", "homophone", "grammar", "connective", "meaning", "affix"].includes(q.kind) || grammarBlockCard(q) || gapCard(q));
+    const listen = q.kind === "listen", sentenceKind = !!q.sentence && (["reading", "homophone", "grammar", "connective", "meaning", "affix"].includes(q.kind) || grammarBlockCard(q) || gapCard(q) || ["para", "pair", "order"].includes(q.kind));
     const prompt = $("game-prompt");
     prompt.hidden = listen || sentenceKind;
     prompt.textContent = q.prompt;
@@ -1617,6 +1621,10 @@ async function game() {
     else if (inContext) $("game-sentence").replaceChildren(...heard.flatMap((s, n) => !s.mark ? [s.text] : heard[n - 1]?.mark ? [] : [el("span", {class: "qr-blank", id: "game-blank"})]));
     // A gap card (the exam's direction): the sentence with its gap, and what the sentence means under it.
     if (gapCard(q)) { const [a, b] = q.sentence.split("（　）"); $("game-sentence").replaceChildren(a, el("span", {class: "qr-blank", id: "game-blank"}), b || "", el("span", {class: "qr-en", lang: "en", text: q.en})); }
+    // A clause pair: its gap, no English (it would name the relation). Sentence order: three slots and the ★.
+    if (q.kind === "pair") { const [a, b] = q.sentence.split("（　）"); $("game-sentence").replaceChildren(a, el("span", {class: "qr-blank", id: "game-blank"}), b || ""); }
+    if (q.kind === "order") $("game-sentence").replaceChildren(q.lead, ...[0, 1, 2, 3].flatMap(i => [el("span", {class: "qr-blank" + (i === 2 ? " star" : ""), ...(i === 2 ? {id: "game-blank"} : {}), text: i === 2 ? "★" : ""}), " "]), q.tail);
+    if (q.kind === "para") $("game-sentence").replaceChildren(q.sentence);
     const parts = $("game-grammar-parts");
     parts.hidden = !(q.kind === "build" || (q.kind === "link" && q.parts?.length));
     parts.replaceChildren(...partList(q.parts)); parts.dataset.rows = String(partRows(q.parts).length);
@@ -1681,6 +1689,9 @@ async function game() {
     // Board 11 · F: the blank fills with the answer, and its job shows under the card.
     if ((q.kind === "connective" || q.kind === "listen") && $("game-blank")) { $("game-blank").textContent = q.kind === "listen" ? q.gap || q.prompt : q.answer; $("game-blank").classList.add("filled"); }
     if (gapCard(q) && $("game-blank")) { $("game-blank").textContent = q.answer; $("game-blank").classList.add("filled"); }
+    if (q.kind === "pair" && $("game-blank")) { $("game-blank").textContent = q.answer; $("game-blank").classList.add("filled"); }
+    // Sentence order: the whole sentence, the ★ tile underlined.
+    if (q.kind === "order") $("game-sentence").replaceChildren(q.lead, ...q.tiles.map((t, i) => i === 2 ? el("u", {class: "n2-mark", text: t}) : t), q.tail);
     ribbon(null); stretchStrip();
     // Answer states (fix 7): right tinted with ✓, a wrong pick struck, the rest fade.
     const card = $("game-card"); card.dataset.state = outcome === "right" ? "right" : outcome === "wrong" ? "wrong" : outcome === "timeout" ? "timeout" : "";
@@ -1760,7 +1771,7 @@ async function game() {
       const voiceOf = () => card.kind === "grammar" ? grammarVoice(card, sol).speak : spokenWord(sol.word.replace(/[〜～]/g, ""), String(sol.reading || "").replace(/[〜～]/g, ""));
       if (sol) return {picked, q: {...base, say: voiceOf(), paperLine: usage ? it.answer.replace(it.ask, "【" + it.ask + "】") : it.ask, target: it.target,
         // The paper's answer, where the sentence does not already hold it (a synonym question).
-        solution: {word: sol.word, reading: sol.reading || "", meaning: sol.meaning, ja: "", en: usage || /（\s*）/.test(it.ask) || [sol.word, sol.reading].includes(it.answer) ? "" : "Answer: " + it.answer, why: it.why, source}}};
+        solution: {word: sol.word, reading: sol.reading || "", meaning: sol.meaning, ja: "", en: [usage || /（\s*）/.test(it.ask) || [sol.word, sol.reading].includes(it.answer) ? "" : "Answer: " + it.answer, examEn?.[source] || ""].filter(Boolean).join(" · "), why: it.why, source}}};
       return {picked, q: {...base, ask: it.ask, say: it.heard && it.lines.length ? it.lines.join("　") : it.answer,
         solution: {word: it.answer, meaning: "", ja: it.lines.join(""), en: it.en, why: it.why, source}}};
   }
@@ -1820,7 +1831,7 @@ async function game() {
     $("game-next").textContent = n === misses.length - 1 ? (paperReview ? "Done" : "Round end") : "Next";
     // A boss review card (bossReview): the question, the right choice, the pick; then the deciding lines and the why.
     const ask = $("game-review-ask"); ask.hidden = !q.ask; ask.replaceChildren(...(q.ask ? paperText(q.ask, q.answer) : []));
-    $("game-review-word").classList.toggle("line", !!paperReview && !q.paperLine && word.length > 10);
+    $("game-review-word").classList.toggle("line", !q.paperLine && word.length > 10 && (!!paperReview || q.kind === "para"));
     if (paperReview) $("game-sub-right").replaceChildren(el("a", {class: "qr-chip", href: paperReview.href, text: "Full paper"}));
     $("game-review-sentence").hidden = !sol.ja && !q.paperLine;
     if (q.paperLine) { $("game-review-ja").replaceChildren(...paperText(q.paperLine, q.answer)); $("game-review-en").textContent = sol.en || ""; }

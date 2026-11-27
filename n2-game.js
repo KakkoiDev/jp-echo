@@ -34,10 +34,11 @@ export const GAME_SOURCE = "game";
 // as it is given, so closing the page mid-round loses nothing.
 // Blitz chess, not shogi (owner, 26 Nov): seconds, not minutes, per question.
 export const ROUND_SIZE = 10, REVIEW_SECONDS = 5, DAILY_GOAL = 1000, RECENT_MS = 4 * 3600_000;
-export const SECONDS = Object.freeze({reading: 3, meaning: 3, meaningInSentence: 4, definition: 4, listen: 5, homophone: 5, grammar: 6, affix: 5, gap: 8, partgap: 6, link: 3, linkBuilt: 5, connective: 7, exam: {1: 4, 2: 5, 3: 5, 4: 7, 5: 6, 7: 8}});
+export const SECONDS = Object.freeze({reading: 3, meaning: 3, meaningInSentence: 4, definition: 4, listen: 5, homophone: 5, grammar: 6, affix: 5, gap: 8, partgap: 6, link: 3, linkBuilt: 5, para: 8, pair: 6, order: 8, connective: 7, exam: {1: 4, 2: 5, 3: 5, 4: 7, 5: 6, 7: 8}});
 // The pause after an answer before the next question, in milliseconds.
 export const PAUSE = Object.freeze({right: 250, miss: 800});
-export const KIND_LABEL = Object.freeze({reading: "Reading", meaning: "Meaning", definition: "Which word", listen: "Listen", connective: "Connective · 問題9", homophone: "Which kanji", grammar: "Grammar", block: "Grammar piece", build: "Grammar parts", infer: "New grammar", exam: "Exam question", affix: "Word part", link: "Connective", gap: "Grammar · fill the gap", partgap: "Word part · fill the gap"});
+export const KIND_LABEL = Object.freeze({reading: "Reading", meaning: "Meaning", definition: "Which word", listen: "Listen", connective: "Connective · 問題9", homophone: "Which kanji", grammar: "Grammar", block: "Grammar piece", build: "Grammar parts", infer: "New grammar", exam: "Exam question", affix: "Word part", link: "Connective", gap: "Grammar · fill the gap", partgap: "Word part · fill the gap",
+  para: "Same meaning", pair: "Connective · fill the gap", order: "Sentence order · ★"});
 const EXAM_MONDAI = new Set([1, 2, 3, 4, 5, 7]), WRITTEN = new Set(["Vocabulary", "Grammar"]);
 const KANJI = /[一-鿿々]/g;
 const plain = s => String(s || "").replace(/【[^】]*】/g, "");
@@ -123,7 +124,7 @@ export function nearMisses(reading = "") {
 // has read; with SCORE_ALL off, unread content goes back to practice: no
 // points, the answer recorded and counted.
 const unscored = reviewed => reviewed || SCORE_ALL ? {} : {practice: true, record: true};
-export function gamePool({inventory, examples = new Map(), sets = [], sat = new Set(), level = "N2", parts = null, grammarBlocks = null, excerpts = false}) {
+export function gamePool({inventory, examples = new Map(), sets = [], sat = new Set(), level = "N2", parts = null, grammarBlocks = null, excerpts = false, extras = null}) {
   const other = level !== "N2", tag = other ? level + ":" : "";
   const split = new Map(inventory.words.map(([w, r, , p]) => [w + "/" + r, p || parts?.[w + "/" + r] || ""]));
   const kanjiOf = w => { const ks = (w.text.match(KANJI) || []).filter(k => k !== "々"), bases = (split.get(w.target[1] + "/" + w.target[2]) || "").split("|");
@@ -223,6 +224,7 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
   // (owner, 27 Nov: long enough to be fair was too long to be fun, and shorter was unfair); `excerpts` still
   // builds them, for the audit and the reviewer.
   if (!other) pool.push(...linkCards());
+  if (!other && extras) pool.push(...extraCards(extras));
   for (const set of excerpts ? sets : []) {
     if (!set?.id || HELD_OUT.includes(set.id) || !sat.has(set.id)) continue;
     const seen = new Set();
@@ -399,6 +401,47 @@ function addGrammarBlocks(pool, {blocks = {}, patterns = {}}) {
 
 // The level a card belongs to: cards without one are N2's.
 export const levelOfCard = q => q?.level || "N2";
+
+// ---- Authored cards: paraphrase, clause pairs, sentence order ----
+// Three kinds whose content is written for them, not built by rule (owner's
+// list, 27 Nov), each in a file of its own:
+//   para   n2-paraphrase.json  one sentence, four to pick the one that says
+//                              the same: the heart of N2 reading (言い換え);
+//   pair   n2-pairs.json       two short clauses and a gap: the connective
+//                              that links them; wrong choices from jobs that
+//                              cannot stand in (OVERLAP), as for the excerpts;
+//   order  n2-ordering.json    問題8: four tiles, the one that lands on ★
+//                              (always the third slot).
+// Each item reaches the pool only if a blind solver settled it (the files
+// hold what passed). No English on the card: it would give the answer away.
+export const ORDER_STAR = 2;
+function extraCards({paraphrase = [], pairs = [], ordering = []}) {
+  const out = [];
+  for (const x of paraphrase) {
+    const choices = x.choices.map(plain);
+    out.push({id: "pp:" + x.id, kind: "para", target: null, dimension: null, prompt: plain(x.ja), sentence: plain(x.ja), needle: "",
+      answer: choices[x.key - 1], wrong: choices.filter((_, i) => i !== x.key - 1), seconds: SECONDS.para, say: x.ja,
+      solution: {word: choices[x.key - 1], meaning: x.en, ja: x.ja, en: "", why: x.why || ""}});
+  }
+  for (const x of pairs) {
+    const job = jobOf(x.answer); if (!job) continue;
+    const blocked = new Set(OVERLAP[job] || [job]);
+    const wrong = [...new Set(CONNECTIVES.filter(([w, j]) => w !== x.answer && !blocked.has(j)).map(([w]) => w))];
+    if (wrong.length < 3) continue;
+    const built = LINK_PARTS[x.answer];
+    out.push({id: "cp:" + x.id, kind: "pair", target: null, dimension: null, prompt: "（　）に入るのは？", sentence: plain(x.a) + "（　）、" + plain(x.b), needle: "（　）",
+      answer: x.answer, wrong, job, seconds: SECONDS.pair, say: x.a + x.answer + "、" + x.b, ...(built ? {pieces: {parts: built.parts.map(([text, g]) => ({text, gloss: g})), literal: built.literal}} : {}),
+      solution: {word: x.answer, meaning: glossOf(x.answer), why: LINK_WHY[x.answer] || JOBS[job], ja: x.a + x.answer + "、" + x.b, en: x.en}});
+  }
+  for (const x of ordering) {
+    const tiles = x.tiles.map(plain), whole = (x.lead || "") + x.tiles.join("") + (x.tail || "");
+    out.push({id: "or:" + x.id, kind: "order", target: null, dimension: null, prompt: plain(x.lead || "") + "＿＿ ＿＿ ★ ＿＿" + plain(x.tail || ""), sentence: plain(whole),
+      lead: plain(x.lead || ""), tail: plain(x.tail || ""), tiles, needle: tiles[ORDER_STAR],
+      answer: tiles[ORDER_STAR], wrong: tiles.filter((_, i) => i !== ORDER_STAR), seconds: SECONDS.order, say: whole,
+      solution: {word: tiles[ORDER_STAR], meaning: x.en, ja: whole, en: ""}});
+  }
+  return out;
+}
 
 // ---- The connective on its own ----
 // One word, large, nothing to read: とはいえ → "that said, even so". At N2 a
@@ -760,7 +803,8 @@ export const SKILLS_OF_PAPER = Object.freeze(["vocabulary", "grammar", "reading"
 const SKILL_NAMES = {Vocabulary: 0, Grammar: 1, Reading: 2, Listening: 3};
 // What each kind of card trains. A connective is a reading tool: it says where the writer's point is.
 export const KIND_SKILL = Object.freeze({reading: "vocabulary", meaning: "vocabulary", definition: "vocabulary", homophone: "vocabulary", affix: "vocabulary", partgap: "vocabulary",
-  grammar: "grammar", gap: "grammar", block: "grammar", build: "grammar", infer: "grammar", link: "reading", connective: "reading", listen: "listening"});
+  grammar: "grammar", gap: "grammar", block: "grammar", build: "grammar", infer: "grammar", order: "grammar",
+  link: "reading", connective: "reading", para: "reading", pair: "reading", listen: "listening"});
 export function skillWeights({paper, attempt} = {}) {
   const tally = SKILLS_OF_PAPER.map(() => [0, 0]);
   (paper?.questions || []).forEach((q, i) => { const s = typeof q.skill === "number" ? q.skill : SKILL_NAMES[q.skill]; if (!(s in tally) || !q.key) return; tally[s][1]++; if (attempt?.answers?.[i] !== q.key) tally[s][0]++; });
@@ -1357,6 +1401,7 @@ export function answerSpeech(q) {
   if (q.kind === "affix" || q.kind === "partgap") return word(pattern(q.solution?.word), pattern(q.solution?.reading)) || null;
   if (q.kind === "connective") return q.answer;
   if (q.kind === "link") return q.prompt;
+  if (q.kind === "pair") return q.answer;
   if (q.kind === "exam" && q.target) return q.target[0] === "grammar" ? pattern(q.target[1]) || null : word(q.target[1], q.target[2]).replace(/[〜～]/g, "") || null;
   return null;
 }

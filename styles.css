@@ -2542,6 +2542,8 @@ body[data-view=game] .n2-game{position:fixed;inset:0;box-sizing:border-box;width
 .qr-chip[data-tone=practice]{background:transparent;border:1.5px dashed var(--ink-muted);color:var(--ink-muted)}
 .qr-pips i.pr{background:transparent;box-shadow:inset 0 0 0 1.5px var(--ink-muted)}
 .qr-float.practice{color:var(--ink-muted);font-weight:700}
+/* Sentence order: the ★ slot. */
+.qr-sent .qr-blank.star{min-width:40px;text-align:center;color:var(--seal);font-family:var(--ui);font-size:14px;font-weight:700;line-height:1.6}
 /* A gap card: what the sentence means, under it. */
 .qr-sent .qr-en{display:block;margin-top:10px;font-family:var(--ui);font-size:13px;line-height:1.45;font-weight:500;color:var(--ink-muted);text-align:start}
 .qr-sent .qr-blank{display:inline-block;min-width:64px;border-bottom:2px solid var(--seal);margin:0 4px;line-height:1.2}

@@ -1,0 +1,35 @@
+しかし	turn	however
+だが	turn	but (written)
+ところが	turn	however, contrary to expectation
+けれども	turn	but, although
+それでも	turn	even so, still
+にもかかわらず	turn	in spite of that
+それなのに	turn	and yet, despite that
+とはいえ	turn	that said, even so
+もっとも	exception	though, admittedly (a qualification after the point)
+確かに	concede	certainly, it is true that
+もちろん	concede	of course
+つまり	restate	in other words, that is
+すなわち	restate	namely, that is (formal)
+要するに	restate	in short
+言い換えれば	restate	to put it another way
+したがって	conclude	therefore, accordingly
+だから	conclude	so, that is why
+そのため	conclude	for that reason, as a result
+その結果	conclude	as a result
+このように	conclude	in this way (summing up)
+さらに	add	moreover, further
+しかも	add	what is more, and on top of that
+そのうえ	add	besides, in addition
+また	add	also, in addition
+一方	contrast	on the other hand, meanwhile
+それに対して	contrast	in contrast
+むしろ	rather	rather, if anything
+例えば	example	for example
+なぜなら	reason	because (the reason follows)
+ただし	exception	however, provided that, except
+なお	aside	in addition, note that
+ところで	shift	by the way
+さて	shift	now, well then
+とすれば	infer	if so, then
+それなら	infer	in that case
