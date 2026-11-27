@@ -51,7 +51,14 @@ else if (kind === "ordering") for (const x of data) { const id = x.id || "?", L 
 else if (kind === "examen") { const want = JSON.parse(readFileSync(new URL("./exam-sentences.json", import.meta.url), "utf8"));
   for (const k of Object.keys(want)) if (!en(data[k], 140)) bad(k, "English translation, 6 to 140 characters, no Japanese");
   for (const k of Object.keys(data)) if (!(k in want)) bad(k, "not asked for"); }
-else { console.error("kind: paraphrase | pairs | ordering | examen"); process.exit(2); }
+else if (kind === "gapwrong") { const want = JSON.parse(readFileSync(new URL("./gap-input.json", import.meta.url), "utf8"));
+  for (const [k, q] of Object.entries(want)) { const w = data[k];
+    if (!Array.isArray(w) || w.length !== 3 || new Set(w).size !== 3) { bad(k, "three different wrong choices"); continue; }
+    for (const c of w) { if (typeof c !== "string" || !c.trim() || /[【】（）\s]/.test(c) || !JP.test(c)) bad(k, "a wrong choice is plain Japanese, no readings or spaces: " + c);
+      else if (c === q.answer || c.includes(q.answer) || q.answer.includes(c)) bad(k, "a wrong choice must not contain or be contained in the answer: " + c);
+      else if (c.length > Math.max(12, q.answer.length + 5)) bad(k, "a wrong choice about as long as the answer: " + c); } }
+  for (const k of Object.keys(data)) if (!(k in want)) bad(k, "not asked for"); }
+else { console.error("kind: paraphrase | pairs | ordering | examen | gapwrong"); process.exit(2); }
 console.log(kind + ": " + (Array.isArray(data) ? data.length : Object.keys(data).length) + " entries, " + errors.length + " problems");
 for (const e of errors.slice(0, 60)) console.log("  " + e);
 if (errors.length) process.exit(1);

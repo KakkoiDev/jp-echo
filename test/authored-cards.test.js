@@ -111,3 +111,19 @@ test("Home shows the last boss by section, and the round's end asks once why a c
   const why = js.match(/const FLAG_WHY = (\[.*\]);/)[1];
   for (const r of ["answer", "meaning", "reading", "voice", "unnatural", "other"]) assert.ok(why.includes('"' + r + '"'), r);
 });
+
+test("list entries with a note in their label are shown clean and get cards; their recall target stays the list's", async () => {
+  const {LIST_LABEL} = await import("../n2-game-review.js");
+  const examples = (await import("../day-radio.js")).examplesFromDecks(inventory, [read("../decks/n2-words.json"), read("../decks/n2-grammar.json")]);
+  const full = gamePool({inventory, examples});
+  assert.equal(Object.keys(LIST_LABEL).length, 17); assert.deepEqual(inventory.words.filter(w => /[()（）]/.test(w[0])).map(w => w[0]).sort(), Object.keys(LIST_LABEL).sort(), "every labelled entry");
+  for (const [label, clean] of Object.entries(LIST_LABEL)) {
+    assert.ok(inventory.words.some(w => w[0] === label), label + " is in the list");
+    const cards = full.filter(q => q.target?.[1] === label);
+    assert.ok(cards.length >= 1, label + " has a card");
+    for (const q of cards) assert.ok(q.prompt === clean.text || q.solution.word === clean.text || q.prompt === clean.answer, q.id);
+    assert.ok(!/[()（）\s]/.test(clean.text) && clean.answer.length <= 40);
+  }
+  assert.ok(full.some(q => q.id === "a:～ごと") && full.some(q => q.id === "p:～式") && full.some(q => q.id === "m:しわ"));
+  assert.ok(!full.some(q => q.kind !== "definition" && /[()（）]/.test(q.prompt || "") && q.target?.[0] === "word"), "no Japanese prompt shows a note in its label");
+});

@@ -310,6 +310,27 @@ export const WORD_PIECES = Object.freeze({
   "ばからしい": {parts: [["ばか", "fool"], ["らしい", "-like"]], literal: "like a fool: absurd"},
   "そのため": {parts: [["その", "that"], ["ため", "reason; sake"]], literal: "for that reason"},
   "それなら": {parts: [["それ", "that"], ["なら", "if it is"]], literal: "if that is so"}});
+// Every entry of the N2 list written with a note in its label (17: "〜 (まる) ごと", "しわ (かおの～)"): as the card shows it.
+// A part keeps its ～ and gets a word-part card; a plain word loses the note and gets word cards. The recall target stays
+// the list's own, so records already kept still match. (Backlog: six entries had no card because of their label.)
+export const LIST_LABEL = Object.freeze({
+  "〜 (まる) ごと": {text: "～ごと", reading: "～ごと", answer: "whole ~, ~ and all"},
+  "〜(日本) 式": {text: "～式", reading: "～しき", answer: "~ style, ~ method"},
+  "～いち (にほんいち)": {text: "～一", reading: "～いち", answer: "best in ~, No. 1 in ~"},
+  "～ほう (ひかく)": {text: "～ほう", reading: "～ほう", answer: "the ~ one (comparing)"},
+  "～おしまい (おわり)": {text: "おしまい", reading: "おしまい", answer: "the end; finished"},
+  "しわ (かおの～)": {text: "しわ", reading: "しわ", answer: "wrinkles, creases"},
+  "かび (～がはえる)": {text: "かび", reading: "かび", answer: "mold, mildew"},
+  "(かさを～) さす": {text: "さす", reading: "さす", answer: "to put up (an umbrella)"},
+  "それはいけませんね (かん)": {text: "それはいけませんね", reading: "それはいけませんね", answer: "That's too bad (sympathy)"},
+  "だいいち (とりわけ)": {text: "だいいち", reading: "だいいち", answer: "first of all, above all"},
+  "しいんと (する)": {text: "しいんと", reading: "しいんと", answer: "silent, hushed"},
+  "しつれいしました (かん)": {text: "しつれいしました", reading: "しつれいしました", answer: "excuse me; I'm sorry (for that)"},
+  "しめた (かん)": {text: "しめた", reading: "しめた", answer: "got it! that's it! (delight)"},
+  "じゅうたん (カーペット)": {text: "じゅうたん", reading: "じゅうたん", answer: "carpet, rug"},
+  "どういたしまして (かん)": {text: "どういたしまして", reading: "どういたしまして", answer: "you're welcome"},
+  "はい (かん)": {text: "はい", reading: "はい", answer: "yes; here (answering)"},
+  "ミリ (メートル)": {text: "ミリ", reading: "ミリ", answer: "millimetre; milli-"}});
 export const LINK_SHOWN = Object.freeze({"にもかかわらず": "それにもかかわらず", "とすれば": "だとすれば"});
 // The word-part cards (前～, ～気味): their meanings are the word list's and their sentences the deck's, neither read by
 // a reviewer as affix content. False: practice, no points. True only after that review.

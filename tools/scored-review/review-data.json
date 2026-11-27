@@ -4294,7 +4294,7 @@
     "空",
     "現"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:諸～",
@@ -4316,7 +4316,7 @@
     "小",
     "高"
    ],
-   "wrongChoices": 167
+   "wrongChoices": 170
   },
   {
    "id": "p:～所/～しょ",
@@ -4338,7 +4338,7 @@
     "船",
     "戦"
    ],
-   "wrongChoices": 161
+   "wrongChoices": 164
   },
   {
    "id": "p:～所/～じょ",
@@ -4360,7 +4360,7 @@
     "船",
     "戦"
    ],
-   "wrongChoices": 161
+   "wrongChoices": 164
   },
   {
    "id": "p:女～",
@@ -4382,7 +4382,7 @@
     "空",
     "現"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～女",
@@ -4404,7 +4404,7 @@
     "席",
     "船"
    ],
-   "wrongChoices": 164
+   "wrongChoices": 167
   },
   {
    "id": "p:省～",
@@ -4426,7 +4426,7 @@
     "空",
     "現"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～省",
@@ -4448,7 +4448,7 @@
     "席",
     "船"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～商",
@@ -4470,7 +4470,7 @@
     "席",
     "船"
    ],
-   "wrongChoices": 169
+   "wrongChoices": 172
   },
   {
    "id": "p:～勝",
@@ -4492,7 +4492,7 @@
     "席",
     "船"
    ],
-   "wrongChoices": 169
+   "wrongChoices": 172
   },
   {
    "id": "p:～条",
@@ -4514,7 +4514,7 @@
     "席",
     "船"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～場",
@@ -4536,7 +4536,7 @@
     "船",
     "戦"
    ],
-   "wrongChoices": 168
+   "wrongChoices": 171
   },
   {
    "id": "p:～畳",
@@ -4558,7 +4558,7 @@
     "席",
     "船"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～色",
@@ -4580,7 +4580,7 @@
     "席",
     "船"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～過ぎる",
@@ -4602,7 +4602,7 @@
     "席",
     "船"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～済",
@@ -4624,7 +4624,7 @@
     "席",
     "船"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～席",
@@ -4646,7 +4646,7 @@
     "済み",
     "船"
    ],
-   "wrongChoices": 156
+   "wrongChoices": 159
   },
   {
    "id": "p:～船",
@@ -4668,7 +4668,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 168
+   "wrongChoices": 171
   },
   {
    "id": "p:～戦",
@@ -4690,7 +4690,7 @@
     "席",
     "船"
    ],
-   "wrongChoices": 169
+   "wrongChoices": 172
   },
   {
    "id": "p:前～",
@@ -4712,7 +4712,7 @@
     "空",
     "現"
    ],
-   "wrongChoices": 167
+   "wrongChoices": 170
   },
   {
    "id": "p:～前",
@@ -4734,7 +4734,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～沿い",
@@ -4756,7 +4756,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 169
+   "wrongChoices": 172
   },
   {
    "id": "p:総～",
@@ -4778,7 +4778,7 @@
     "小",
     "高"
    ],
-   "wrongChoices": 167
+   "wrongChoices": 169
   },
   {
    "id": "p:～艘",
@@ -4800,7 +4800,7 @@
     "済み",
     "戦"
    ],
-   "wrongChoices": 154
+   "wrongChoices": 157
   },
   {
    "id": "p:～足",
@@ -4822,7 +4822,7 @@
     "済み",
     "船"
    ],
-   "wrongChoices": 156
+   "wrongChoices": 159
   },
   {
    "id": "p:第～",
@@ -4844,7 +4844,7 @@
     "現",
     "小"
    ],
-   "wrongChoices": 164
+   "wrongChoices": 167
   },
   {
    "id": "p:～だらけ",
@@ -4866,7 +4866,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:短～",
@@ -4888,7 +4888,7 @@
     "空",
     "現"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～団",
@@ -4910,7 +4910,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 168
+   "wrongChoices": 171
   },
   {
    "id": "p:～日/～か",
@@ -4932,7 +4932,7 @@
     "済み",
     "船"
    ],
-   "wrongChoices": 155
+   "wrongChoices": 158
   },
   {
    "id": "p:～下",
@@ -4954,7 +4954,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～化",
@@ -4976,7 +4976,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～科",
@@ -4998,7 +4998,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 166
+   "wrongChoices": 169
   },
   {
    "id": "p:～歌",
@@ -5020,7 +5020,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～画",
@@ -5042,7 +5042,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:外～",
@@ -5064,7 +5064,7 @@
     "空",
     "現"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～外",
@@ -5086,7 +5086,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 169
+   "wrongChoices": 172
   },
   {
    "id": "p:各～",
@@ -5108,7 +5108,7 @@
     "小",
     "高"
    ],
-   "wrongChoices": 166
+   "wrongChoices": 169
   },
   {
    "id": "p:～がち",
@@ -5130,7 +5130,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 166
+   "wrongChoices": 169
   },
   {
    "id": "p:～刊",
@@ -5152,7 +5152,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 167
+   "wrongChoices": 170
   },
   {
    "id": "p:～間",
@@ -5174,7 +5174,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 167
+   "wrongChoices": 170
   },
   {
    "id": "p:～巻",
@@ -5196,7 +5196,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 167
+   "wrongChoices": 170
   },
   {
    "id": "p:～館",
@@ -5218,7 +5218,7 @@
     "席",
     "船"
    ],
-   "wrongChoices": 164
+   "wrongChoices": 167
   },
   {
    "id": "p:～感",
@@ -5240,7 +5240,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～期",
@@ -5262,7 +5262,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 167
+   "wrongChoices": 170
   },
   {
    "id": "p:～器",
@@ -5284,7 +5284,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 169
+   "wrongChoices": 172
   },
   {
    "id": "p:～機",
@@ -5306,7 +5306,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 169
+   "wrongChoices": 172
   },
   {
    "id": "p:～気味",
@@ -5328,7 +5328,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 166
+   "wrongChoices": 169
   },
   {
    "id": "p:～教",
@@ -5350,7 +5350,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～行",
@@ -5372,7 +5372,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～業",
@@ -5394,7 +5394,7 @@
     "席",
     "船"
    ],
-   "wrongChoices": 168
+   "wrongChoices": 171
   },
   {
    "id": "p:共産～",
@@ -5416,7 +5416,7 @@
     "空",
     "現"
    ],
-   "wrongChoices": 169
+   "wrongChoices": 172
   },
   {
    "id": "p:～きる",
@@ -5438,7 +5438,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 169
+   "wrongChoices": 172
   },
   {
    "id": "p:～切れ",
@@ -5460,7 +5460,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 169
+   "wrongChoices": 172
   },
   {
    "id": "p:空～",
@@ -5482,7 +5482,7 @@
     "共産",
     "現"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～口",
@@ -5504,7 +5504,7 @@
     "席",
     "船"
    ],
-   "wrongChoices": 164
+   "wrongChoices": 167
   },
   {
    "id": "p:～家/～け",
@@ -5526,7 +5526,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 166
+   "wrongChoices": 169
   },
   {
    "id": "p:～形",
@@ -5548,7 +5548,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～系",
@@ -5570,7 +5570,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 167
+   "wrongChoices": 170
   },
   {
    "id": "p:～圏",
@@ -5592,7 +5592,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:現～",
@@ -5614,7 +5614,7 @@
     "共産",
     "空"
    ],
-   "wrongChoices": 168
+   "wrongChoices": 171
   },
   {
    "id": "p:小～",
@@ -5636,7 +5636,7 @@
     "共産",
     "空"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:高～",
@@ -5658,7 +5658,7 @@
     "共産",
     "空"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～校",
@@ -5680,7 +5680,7 @@
     "済み",
     "船"
    ],
-   "wrongChoices": 155
+   "wrongChoices": 158
   },
   {
    "id": "p:～港",
@@ -5702,7 +5702,7 @@
     "席",
     "船"
    ],
-   "wrongChoices": 164
+   "wrongChoices": 167
   },
   {
    "id": "p:～号",
@@ -5724,7 +5724,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 165
+   "wrongChoices": 168
   },
   {
    "id": "p:～国",
@@ -5746,7 +5746,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～毎",
@@ -5768,7 +5768,29 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 168
+   "wrongChoices": 171
+  },
+  {
+   "id": "p:～ごと",
+   "kind": "partgap",
+   "sentence": "この魚は骨（　）食べられます。",
+   "shownEnglish": "You can eat this fish bones and all.",
+   "answer": "ごと",
+   "likelyWrong": [
+    "所",
+    "女",
+    "省",
+    "商",
+    "勝",
+    "条",
+    "場",
+    "畳",
+    "色",
+    "過ぎる",
+    "済み",
+    "席"
+   ],
+   "wrongChoices": 170
   },
   {
    "id": "p:今～",
@@ -5790,7 +5812,7 @@
     "共産",
     "空"
    ],
-   "wrongChoices": 168
+   "wrongChoices": 171
   },
   {
    "id": "p:再～",
@@ -5812,7 +5834,7 @@
     "共産",
     "空"
    ],
-   "wrongChoices": 169
+   "wrongChoices": 172
   },
   {
    "id": "p:最～",
@@ -5834,7 +5856,7 @@
     "共産",
     "空"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～山",
@@ -5856,7 +5878,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～産",
@@ -5878,7 +5900,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 169
+   "wrongChoices": 172
   },
   {
    "id": "p:～史",
@@ -5900,7 +5922,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～紙",
@@ -5922,7 +5944,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 166
+   "wrongChoices": 169
   },
   {
    "id": "p:～寺",
@@ -5944,7 +5966,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～時間目",
@@ -5966,7 +5988,29 @@
     "席",
     "船"
    ],
-   "wrongChoices": 162
+   "wrongChoices": 165
+  },
+  {
+   "id": "p:～式",
+   "kind": "partgap",
+   "sentence": "彼女の家は、昔ながらの日本（　）の家だ。",
+   "shownEnglish": "Her home is a traditional Japanese-style house.",
+   "answer": "式",
+   "likelyWrong": [
+    "所",
+    "女",
+    "省",
+    "商",
+    "勝",
+    "条",
+    "場",
+    "畳",
+    "色",
+    "過ぎる",
+    "済み",
+    "席"
+   ],
+   "wrongChoices": 171
   },
   {
    "id": "p:室～",
@@ -5988,7 +6032,7 @@
     "共産",
     "空"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～室",
@@ -6010,7 +6054,7 @@
     "席",
     "船"
    ],
-   "wrongChoices": 164
+   "wrongChoices": 167
   },
   {
    "id": "p:～日/～じつ",
@@ -6032,7 +6076,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 168
+   "wrongChoices": 171
   },
   {
    "id": "p:～車",
@@ -6054,7 +6098,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～者",
@@ -6076,7 +6120,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 167
+   "wrongChoices": 170
   },
   {
    "id": "p:～社",
@@ -6098,7 +6142,7 @@
     "済み",
     "船"
    ],
-   "wrongChoices": 156
+   "wrongChoices": 159
   },
   {
    "id": "p:～手",
@@ -6120,7 +6164,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 167
+   "wrongChoices": 170
   },
   {
    "id": "p:～酒",
@@ -6142,7 +6186,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～集",
@@ -6164,7 +6208,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:重～",
@@ -6186,7 +6230,7 @@
     "共産",
     "空"
    ],
-   "wrongChoices": 169
+   "wrongChoices": 172
   },
   {
    "id": "p:～流",
@@ -6208,7 +6252,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 166
+   "wrongChoices": 169
   },
   {
    "id": "p:両～",
@@ -6230,7 +6274,7 @@
     "共産",
     "空"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～料",
@@ -6252,7 +6296,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 169
+   "wrongChoices": 172
   },
   {
    "id": "p:～領",
@@ -6274,7 +6318,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～力",
@@ -6296,7 +6340,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～論",
@@ -6318,7 +6362,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 168
+   "wrongChoices": 171
   },
   {
    "id": "p:和～",
@@ -6340,7 +6384,7 @@
     "共産",
     "空"
    ],
-   "wrongChoices": 168
+   "wrongChoices": 170
   },
   {
    "id": "p:～羽",
@@ -6362,7 +6406,7 @@
     "済み",
     "船"
    ],
-   "wrongChoices": 156
+   "wrongChoices": 159
   },
   {
    "id": "p:我～",
@@ -6384,7 +6428,7 @@
     "共産",
     "空"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:明くる～",
@@ -6406,7 +6450,7 @@
     "共産",
     "空"
    ],
-   "wrongChoices": 169
+   "wrongChoices": 172
   },
   {
    "id": "p:～位",
@@ -6428,7 +6472,7 @@
     "船",
     "戦"
    ],
-   "wrongChoices": 162
+   "wrongChoices": 165
   },
   {
    "id": "p:幾～",
@@ -6450,7 +6494,29 @@
     "共産",
     "空"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
+  },
+  {
+   "id": "p:～一",
+   "kind": "partgap",
+   "sentence": "この店のカレーは世界（　）おいしいと思う。",
+   "shownEnglish": "I think this shop's curry is the best in the world.",
+   "answer": "一",
+   "likelyWrong": [
+    "所",
+    "女",
+    "省",
+    "商",
+    "勝",
+    "条",
+    "場",
+    "畳",
+    "色",
+    "過ぎる",
+    "済み",
+    "席"
+   ],
+   "wrongChoices": 173
   },
   {
    "id": "p:上～",
@@ -6472,7 +6538,7 @@
     "共産",
     "空"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～園",
@@ -6494,7 +6560,7 @@
     "船",
     "戦"
    ],
-   "wrongChoices": 161
+   "wrongChoices": 164
   },
   {
    "id": "p:御～",
@@ -6516,7 +6582,7 @@
     "共産",
     "空"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～頭",
@@ -6538,7 +6604,7 @@
     "済み",
     "船"
    ],
-   "wrongChoices": 156
+   "wrongChoices": 159
   },
   {
    "id": "p:～等/～とう",
@@ -6560,7 +6626,7 @@
     "席",
     "船"
    ],
-   "wrongChoices": 163
+   "wrongChoices": 166
   },
   {
    "id": "p:～島",
@@ -6582,7 +6648,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:同～",
@@ -6604,7 +6670,7 @@
     "共産",
     "空"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～道",
@@ -6626,7 +6692,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 169
+   "wrongChoices": 172
   },
   {
    "id": "p:～通り",
@@ -6648,7 +6714,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 168
+   "wrongChoices": 171
   },
   {
    "id": "p:～ところ",
@@ -6670,7 +6736,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～内",
@@ -6692,7 +6758,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:長～/なが～",
@@ -6714,7 +6780,7 @@
     "共産",
     "空"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～難い",
@@ -6736,7 +6802,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 169
+   "wrongChoices": 172
   },
   {
    "id": "p:～年生",
@@ -6758,7 +6824,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～泊",
@@ -6780,7 +6846,7 @@
     "済み",
     "船"
    ],
-   "wrongChoices": 155
+   "wrongChoices": 158
   },
   {
    "id": "p:～発",
@@ -6802,7 +6868,7 @@
     "済み",
     "船"
    ],
-   "wrongChoices": 156
+   "wrongChoices": 159
   },
   {
    "id": "p:反～",
@@ -6824,7 +6890,7 @@
     "共産",
     "空"
    ],
-   "wrongChoices": 153
+   "wrongChoices": 156
   },
   {
    "id": "p:～番目",
@@ -6846,7 +6912,7 @@
     "席",
     "船"
    ],
-   "wrongChoices": 164
+   "wrongChoices": 167
   },
   {
    "id": "p:非～",
@@ -6868,7 +6934,7 @@
     "共産",
     "空"
    ],
-   "wrongChoices": 167
+   "wrongChoices": 170
   },
   {
    "id": "p:～費",
@@ -6890,7 +6956,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 169
+   "wrongChoices": 172
   },
   {
    "id": "p:一～",
@@ -6912,7 +6978,7 @@
     "共産",
     "空"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 172
   },
   {
    "id": "p:～病",
@@ -6934,7 +7000,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～部",
@@ -6956,7 +7022,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～風",
@@ -6978,7 +7044,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 166
+   "wrongChoices": 168
   },
   {
    "id": "p:副～",
@@ -7000,7 +7066,7 @@
     "共産",
     "空"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～振り",
@@ -7022,7 +7088,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 169
+   "wrongChoices": 172
   },
   {
    "id": "p:古～",
@@ -7044,7 +7110,7 @@
     "空",
     "現"
    ],
-   "wrongChoices": 167
+   "wrongChoices": 170
   },
   {
    "id": "p:～遍",
@@ -7066,7 +7132,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～弁",
@@ -7088,7 +7154,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～歩",
@@ -7110,7 +7176,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～ぽい",
@@ -7132,7 +7198,29 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 166
+   "wrongChoices": 169
+  },
+  {
+   "id": "p:～ほう",
+   "kind": "partgap",
+   "sentence": "電車で行く（　）がバスより早い。",
+   "shownEnglish": "Going by train is faster than taking the bus.",
+   "answer": "ほう",
+   "likelyWrong": [
+    "所",
+    "女",
+    "省",
+    "商",
+    "勝",
+    "条",
+    "場",
+    "畳",
+    "色",
+    "過ぎる",
+    "済み",
+    "席"
+   ],
+   "wrongChoices": 173
   },
   {
    "id": "p:防～",
@@ -7154,7 +7242,7 @@
     "共産",
     "空"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:ほんの～",
@@ -7176,7 +7264,7 @@
     "共産",
     "空"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:毎～",
@@ -7198,7 +7286,7 @@
     "空",
     "現"
    ],
-   "wrongChoices": 168
+   "wrongChoices": 171
   },
   {
    "id": "p:未～",
@@ -7220,7 +7308,7 @@
     "共産",
     "空"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～みたい",
@@ -7242,7 +7330,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 169
+   "wrongChoices": 172
   },
   {
    "id": "p:民主～",
@@ -7264,7 +7352,7 @@
     "共産",
     "空"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～向け",
@@ -7286,7 +7374,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:名～",
@@ -7308,7 +7396,7 @@
     "共産",
     "空"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～名",
@@ -7330,7 +7418,7 @@
     "済み",
     "船"
    ],
-   "wrongChoices": 155
+   "wrongChoices": 158
   },
   {
    "id": "p:～問",
@@ -7352,7 +7440,7 @@
     "済み",
     "船"
    ],
-   "wrongChoices": 156
+   "wrongChoices": 159
   },
   {
    "id": "p:～夜",
@@ -7374,7 +7462,7 @@
     "済み",
     "船"
    ],
-   "wrongChoices": 155
+   "wrongChoices": 158
   },
   {
    "id": "p:翌～",
@@ -7396,7 +7484,7 @@
     "共産",
     "空"
    ],
-   "wrongChoices": 169
+   "wrongChoices": 172
   },
   {
    "id": "p:～等/～ら",
@@ -7418,7 +7506,7 @@
     "席",
     "船"
    ],
-   "wrongChoices": 163
+   "wrongChoices": 166
   },
   {
    "id": "p:～着",
@@ -7440,7 +7528,7 @@
     "戦",
     "前"
    ],
-   "wrongChoices": 148
+   "wrongChoices": 151
   },
   {
    "id": "p:長～/ちょう～",
@@ -7462,7 +7550,7 @@
     "共産",
     "空"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～庁",
@@ -7484,7 +7572,7 @@
     "席",
     "船"
    ],
-   "wrongChoices": 164
+   "wrongChoices": 167
   },
   {
    "id": "p:～兆",
@@ -7506,7 +7594,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～長",
@@ -7528,7 +7616,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～帳",
@@ -7550,7 +7638,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～丁目",
@@ -7572,7 +7660,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～通",
@@ -7594,7 +7682,7 @@
     "済み",
     "船"
    ],
-   "wrongChoices": 155
+   "wrongChoices": 158
   },
   {
    "id": "p:～遣い",
@@ -7616,7 +7704,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 169
+   "wrongChoices": 172
   },
   {
    "id": "p:～付",
@@ -7638,7 +7726,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～続く",
@@ -7660,7 +7748,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～辛い",
@@ -7682,7 +7770,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 169
+   "wrongChoices": 172
   },
   {
    "id": "p:低～",
@@ -7704,7 +7792,7 @@
     "共産",
     "空"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～滴",
@@ -7726,7 +7814,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:～点",
@@ -7748,7 +7836,7 @@
     "済み",
     "船"
    ],
-   "wrongChoices": 156
+   "wrongChoices": 159
   },
   {
    "id": "p:不～",
@@ -7770,7 +7858,7 @@
     "共産",
     "空"
    ],
-   "wrongChoices": 167
+   "wrongChoices": 170
   },
   {
    "id": "p:無～",
@@ -7792,7 +7880,7 @@
     "共産",
     "空"
    ],
-   "wrongChoices": 167
+   "wrongChoices": 170
   },
   {
    "id": "p:～的",
@@ -7814,7 +7902,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 168
+   "wrongChoices": 171
   },
   {
    "id": "p:～性",
@@ -7836,7 +7924,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 168
+   "wrongChoices": 171
   },
   {
    "id": "p:～用",
@@ -7858,7 +7946,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 168
+   "wrongChoices": 171
   },
   {
    "id": "p:～中/～ちゅう",
@@ -7880,7 +7968,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 168
+   "wrongChoices": 171
   },
   {
    "id": "p:～中/～じゅう",
@@ -7902,7 +7990,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 166
+   "wrongChoices": 168
   },
   {
    "id": "p:～別",
@@ -7924,7 +8012,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 169
+   "wrongChoices": 172
   },
   {
    "id": "p:～向き",
@@ -7946,7 +8034,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 169
+   "wrongChoices": 172
   },
   {
    "id": "p:～直す",
@@ -7968,7 +8056,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 169
+   "wrongChoices": 172
   },
   {
    "id": "p:～抜く",
@@ -7990,7 +8078,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 169
+   "wrongChoices": 172
   },
   {
    "id": "p:～上",
@@ -8012,7 +8100,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 168
+   "wrongChoices": 171
   },
   {
    "id": "p:～率",
@@ -8034,7 +8122,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 169
+   "wrongChoices": 172
   },
   {
    "id": "p:～制",
@@ -8056,7 +8144,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 169
+   "wrongChoices": 172
   },
   {
    "id": "p:～員",
@@ -8078,7 +8166,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 167
+   "wrongChoices": 170
   },
   {
    "id": "p:～学",
@@ -8100,7 +8188,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 168
+   "wrongChoices": 171
   },
   {
    "id": "p:～家/～か",
@@ -8122,7 +8210,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 167
+   "wrongChoices": 170
   },
   {
    "id": "p:～おき",
@@ -8144,7 +8232,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 168
+   "wrongChoices": 171
   },
   {
    "id": "p:～ずくめ",
@@ -8166,7 +8254,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 168
+   "wrongChoices": 170
   },
   {
    "id": "p:～げ",
@@ -8188,7 +8276,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 165
+   "wrongChoices": 168
   },
   {
    "id": "p:～め",
@@ -8210,7 +8298,7 @@
     "済み",
     "席"
    ],
-   "wrongChoices": 165
+   "wrongChoices": 168
   },
   {
    "id": "p:超～",
@@ -8232,7 +8320,7 @@
     "共産",
     "空"
    ],
-   "wrongChoices": 169
+   "wrongChoices": 172
   },
   {
    "id": "p:準～",
@@ -8254,7 +8342,7 @@
     "共産",
     "空"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   },
   {
    "id": "p:元～",
@@ -8276,7 +8364,7 @@
     "空",
     "現"
    ],
-   "wrongChoices": 167
+   "wrongChoices": 170
   },
   {
    "id": "p:旧～",
@@ -8298,7 +8386,7 @@
     "空",
     "現"
    ],
-   "wrongChoices": 167
+   "wrongChoices": 170
   },
   {
    "id": "p:新～",
@@ -8320,7 +8408,7 @@
     "共産",
     "空"
    ],
-   "wrongChoices": 168
+   "wrongChoices": 171
   },
   {
    "id": "p:全～",
@@ -8342,7 +8430,7 @@
     "小",
     "高"
    ],
-   "wrongChoices": 166
+   "wrongChoices": 168
   },
   {
    "id": "p:真～",
@@ -8364,7 +8452,7 @@
     "共産",
     "空"
    ],
-   "wrongChoices": 170
+   "wrongChoices": 173
   }
  ],
  "links": [
@@ -9541,7 +9629,7 @@
  "generated": "2026-11-27",
  "counts": {
   "parts": 195,
-  "partCards": 186,
+  "partCards": 190,
   "connectives": 228,
   "grammarOpen": 48,
   "lines": 1007
@@ -9557,7 +9645,7 @@
    "underlined": "初",
    "answer": "first ~",
    "side": "prefix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "various ~",
     "female ~",
@@ -9579,7 +9667,7 @@
    "underlined": "諸",
    "answer": "various ~",
    "side": "prefix",
-   "wrongChoices": 182,
+   "wrongChoices": 186,
    "sameSideWrong": [
     "first ~",
     "female ~",
@@ -9601,7 +9689,7 @@
    "underlined": "所",
    "answer": "place, office (facility)",
    "side": "suffix",
-   "wrongChoices": 175,
+   "wrongChoices": 179,
    "sameSideWrong": [
     "~th daughter (birth order)",
     "~ Ministry (government)",
@@ -9623,7 +9711,7 @@
    "underlined": "所",
    "answer": "place",
    "side": "suffix",
-   "wrongChoices": 175,
+   "wrongChoices": 179,
    "sameSideWrong": [
     "~th daughter (birth order)",
     "~ Ministry (government)",
@@ -9645,7 +9733,7 @@
    "underlined": "女",
    "answer": "female ~",
    "side": "prefix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -9667,7 +9755,7 @@
    "underlined": "女",
    "answer": "~th daughter (birth order)",
    "side": "suffix",
-   "wrongChoices": 177,
+   "wrongChoices": 181,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -9689,7 +9777,7 @@
    "underlined": "省",
    "answer": "saving ~, conserving ~",
    "side": "prefix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -9711,7 +9799,7 @@
    "underlined": "省",
    "answer": "~ Ministry (government)",
    "side": "suffix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -9733,7 +9821,7 @@
    "underlined": "商",
    "answer": "dealer, trader in ~",
    "side": "suffix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -9755,7 +9843,7 @@
    "underlined": "勝",
    "answer": "~ wins (victories)",
    "side": "suffix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -9777,7 +9865,7 @@
    "underlined": "条",
    "answer": "article no. ~ (of a law)",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -9799,7 +9887,7 @@
    "underlined": "場",
    "answer": "venue, ground for ~",
    "side": "suffix",
-   "wrongChoices": 182,
+   "wrongChoices": 186,
    "sameSideWrong": [
     "~th daughter (birth order)",
     "~ Ministry (government)",
@@ -9821,7 +9909,7 @@
    "underlined": "畳",
    "answer": "count for tatami, mat",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -9843,7 +9931,7 @@
    "underlined": "色",
    "answer": "~ colour, colouring",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -9874,7 +9962,7 @@
    "underlined": "過ぎる",
    "answer": "too much ~",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -9896,7 +9984,7 @@
    "underlined": "済み",
    "answer": "already ~ed, done",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -9918,7 +10006,7 @@
    "underlined": "席",
    "answer": "counter for seats",
    "side": "suffix",
-   "wrongChoices": 169,
+   "wrongChoices": 173,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -9940,7 +10028,7 @@
    "underlined": "船",
    "answer": "ship, boat (type of ~)",
    "side": "suffix",
-   "wrongChoices": 183,
+   "wrongChoices": 187,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -9962,7 +10050,7 @@
    "underlined": "戦",
    "answer": "match, contest, battle",
    "side": "suffix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -9984,7 +10072,7 @@
    "underlined": "前",
    "answer": "former; previous",
    "side": "prefix",
-   "wrongChoices": 181,
+   "wrongChoices": 185,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -10006,7 +10094,7 @@
    "underlined": "前",
    "answer": "before ~",
    "side": "suffix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -10028,7 +10116,7 @@
    "underlined": "沿い",
    "answer": "along",
    "side": "suffix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -10050,7 +10138,7 @@
    "underlined": "総",
    "answer": "total ~, whole ~",
    "side": "prefix",
-   "wrongChoices": 182,
+   "wrongChoices": 185,
    "sameSideWrong": [
     "first ~",
     "female ~",
@@ -10072,7 +10160,7 @@
    "underlined": "艘",
    "answer": "counter for ships",
    "side": "suffix",
-   "wrongChoices": 167,
+   "wrongChoices": 171,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -10094,7 +10182,7 @@
    "underlined": "足",
    "answer": "counter for pairs of footwear",
    "side": "suffix",
-   "wrongChoices": 169,
+   "wrongChoices": 173,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -10116,7 +10204,7 @@
    "underlined": "第",
    "answer": "ordinal prefix (~th)",
    "side": "prefix",
-   "wrongChoices": 178,
+   "wrongChoices": 182,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -10138,7 +10226,7 @@
    "underlined": "だらけ",
    "answer": "be full of ~, be filled with ~",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -10160,7 +10248,7 @@
    "underlined": "短",
    "answer": "short ~",
    "side": "prefix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -10182,7 +10270,7 @@
    "underlined": "団",
    "answer": "group, corps",
    "side": "suffix",
-   "wrongChoices": 183,
+   "wrongChoices": 187,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -10204,7 +10292,7 @@
    "underlined": "日",
    "answer": "counter for days",
    "side": "suffix",
-   "wrongChoices": 168,
+   "wrongChoices": 172,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -10226,7 +10314,7 @@
    "underlined": "下",
    "answer": "under ~",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -10248,7 +10336,7 @@
    "underlined": "化",
    "answer": "-ization, turning into ~",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -10270,7 +10358,7 @@
    "underlined": "科",
    "answer": "department, course; family (biology)",
    "side": "suffix",
-   "wrongChoices": 180,
+   "wrongChoices": 184,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -10292,7 +10380,7 @@
    "underlined": "歌",
    "answer": "song, anthem",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -10314,7 +10402,7 @@
    "underlined": "画",
    "answer": "picture, painting",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -10336,7 +10424,7 @@
    "underlined": "外",
    "answer": "foreign ~, outside ~",
    "side": "prefix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -10358,7 +10446,7 @@
    "underlined": "外",
    "answer": "out of ~",
    "side": "suffix",
-   "wrongChoices": 183,
+   "wrongChoices": 187,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -10380,7 +10468,7 @@
    "underlined": "各",
    "answer": "each ~ (separately)",
    "side": "prefix",
-   "wrongChoices": 180,
+   "wrongChoices": 184,
    "sameSideWrong": [
     "first ~",
     "female ~",
@@ -10402,7 +10490,7 @@
    "underlined": "がち",
    "answer": "tend to do ~",
    "side": "suffix",
-   "wrongChoices": 181,
+   "wrongChoices": 185,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -10433,7 +10521,7 @@
    "underlined": "刊",
    "answer": "edition, published ~",
    "side": "suffix",
-   "wrongChoices": 182,
+   "wrongChoices": 186,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -10455,7 +10543,7 @@
    "underlined": "間",
    "answer": "between, during",
    "side": "suffix",
-   "wrongChoices": 182,
+   "wrongChoices": 186,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -10477,7 +10565,7 @@
    "underlined": "巻",
    "answer": "volume",
    "side": "suffix",
-   "wrongChoices": 182,
+   "wrongChoices": 186,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -10499,7 +10587,7 @@
    "underlined": "館",
    "answer": "hall, museum, dedicated facility",
    "side": "suffix",
-   "wrongChoices": 178,
+   "wrongChoices": 182,
    "sameSideWrong": [
     "~th daughter (birth order)",
     "~ Ministry (government)",
@@ -10521,7 +10609,7 @@
    "underlined": "感",
    "answer": "feeling, sense",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -10543,7 +10631,7 @@
    "underlined": "期",
    "answer": "period, term, stage",
    "side": "suffix",
-   "wrongChoices": 180,
+   "wrongChoices": 184,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -10565,7 +10653,7 @@
    "underlined": "器",
    "answer": "device, equipment",
    "side": "suffix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -10587,7 +10675,7 @@
    "underlined": "機",
    "answer": "machine",
    "side": "suffix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -10609,7 +10697,7 @@
    "underlined": "気味",
    "answer": "slightly ~",
    "side": "suffix",
-   "wrongChoices": 181,
+   "wrongChoices": 185,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -10631,7 +10719,7 @@
    "underlined": "教",
    "answer": "religion",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -10653,7 +10741,7 @@
    "underlined": "行",
    "answer": "line, row",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -10675,7 +10763,7 @@
    "underlined": "業",
    "answer": "type of business",
    "side": "suffix",
-   "wrongChoices": 183,
+   "wrongChoices": 187,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -10697,7 +10785,7 @@
    "underlined": "共産",
    "answer": "communist ~",
    "side": "prefix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -10719,7 +10807,7 @@
    "underlined": "きる",
    "answer": "do ~ completely, to the end",
    "side": "suffix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -10741,7 +10829,7 @@
    "underlined": "切れ",
    "answer": "expired, run out of ~",
    "side": "suffix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -10763,7 +10851,7 @@
    "underlined": "空",
    "answer": "empty ~",
    "side": "prefix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -10785,7 +10873,7 @@
    "underlined": "口",
    "answer": "entrance, exit, opening",
    "side": "suffix",
-   "wrongChoices": 178,
+   "wrongChoices": 182,
    "sameSideWrong": [
     "~th daughter (birth order)",
     "~ Ministry (government)",
@@ -10807,7 +10895,7 @@
    "underlined": "家",
    "answer": "~'s family, the house of ~",
    "side": "suffix",
-   "wrongChoices": 180,
+   "wrongChoices": 184,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -10829,7 +10917,7 @@
    "underlined": "形",
    "answer": "~ shaped; ~ form",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -10851,7 +10939,7 @@
    "underlined": "系",
    "answer": "~ group, field, or lineage",
    "side": "suffix",
-   "wrongChoices": 182,
+   "wrongChoices": 186,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -10873,7 +10961,7 @@
    "underlined": "圏",
    "answer": "sphere, zone, area",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -10895,7 +10983,7 @@
    "underlined": "現",
    "answer": "present, incumbent",
    "side": "prefix",
-   "wrongChoices": 183,
+   "wrongChoices": 187,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -10917,7 +11005,7 @@
    "underlined": "小",
    "answer": "small ~",
    "side": "prefix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -10939,7 +11027,7 @@
    "underlined": "高",
    "answer": "high (level) ~",
    "side": "prefix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -10961,7 +11049,7 @@
    "underlined": "校",
    "answer": "counter for school",
    "side": "suffix",
-   "wrongChoices": 168,
+   "wrongChoices": 172,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -10983,7 +11071,7 @@
    "underlined": "港",
    "answer": "~ port",
    "side": "suffix",
-   "wrongChoices": 178,
+   "wrongChoices": 182,
    "sameSideWrong": [
     "~th daughter (birth order)",
     "~ Ministry (government)",
@@ -11005,7 +11093,7 @@
    "underlined": "号",
    "answer": "No. ~, issue ~; ship name",
    "side": "suffix",
-   "wrongChoices": 180,
+   "wrongChoices": 184,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -11027,7 +11115,7 @@
    "underlined": "国",
    "answer": "nation of ~",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -11049,7 +11137,7 @@
    "underlined": "毎",
    "answer": "every ~ (each time)",
    "side": "suffix",
-   "wrongChoices": 182,
+   "wrongChoices": 186,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -11062,13 +11150,26 @@
    ]
   },
   {
-   "id": null,
+   "id": "a:～ごと",
    "text": "〜 (まる) ごと",
    "reading": "〜 (まる) ごと",
    "meaning": "whole ~, all of ~",
    "sentence": "この魚【さかな】は骨【ほね】ごと食【た】べられます。",
    "sentenceEn": "You can eat this fish bones and all.",
-   "noCard": "the part is not written exactly once in the sentence, or the entry is not a clean prefix or suffix"
+   "underlined": "ごと",
+   "answer": "whole ~, ~ and all",
+   "side": "suffix",
+   "wrongChoices": 185,
+   "sameSideWrong": [
+    "place, office (facility)",
+    "place",
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
+   ]
   },
   {
    "id": "a:今～",
@@ -11080,7 +11181,7 @@
    "underlined": "今",
    "answer": "this, current",
    "side": "prefix",
-   "wrongChoices": 183,
+   "wrongChoices": 187,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -11102,7 +11203,7 @@
    "underlined": "再",
    "answer": "again, re-~",
    "side": "prefix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -11124,7 +11225,7 @@
    "underlined": "最",
    "answer": "the most ~",
    "side": "prefix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -11155,7 +11256,7 @@
    "underlined": "山",
    "answer": "Mt. ~, mountain",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -11177,7 +11278,7 @@
    "underlined": "産",
    "answer": "produced or grown in ~",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -11199,7 +11300,7 @@
    "underlined": "史",
    "answer": "history of ~",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -11221,7 +11322,7 @@
    "underlined": "紙",
    "answer": "newspaper, type of paper",
    "side": "suffix",
-   "wrongChoices": 181,
+   "wrongChoices": 185,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -11243,7 +11344,7 @@
    "underlined": "寺",
    "answer": "~ Temple",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -11265,7 +11366,7 @@
    "underlined": "時間目",
    "answer": "~th hour, ~th period",
    "side": "suffix",
-   "wrongChoices": 177,
+   "wrongChoices": 181,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -11278,13 +11379,26 @@
    ]
   },
   {
-   "id": null,
+   "id": "a:～式",
    "text": "〜(日本) 式",
    "reading": "～(にほん) しき",
    "meaning": "custom,",
    "sentence": "彼女【かのじょ】の家【いえ】は、昔【むかし】ながらの日本式【にほんしき】の家【いえ】だ。",
    "sentenceEn": "Her home is a traditional Japanese-style house.",
-   "noCard": "the part is not written exactly once in the sentence, or the entry is not a clean prefix or suffix"
+   "underlined": "式",
+   "answer": "~ style, ~ method",
+   "side": "suffix",
+   "wrongChoices": 187,
+   "sameSideWrong": [
+    "place, office (facility)",
+    "place",
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
+   ]
   },
   {
    "id": "a:室～",
@@ -11296,7 +11410,7 @@
    "underlined": "室",
    "answer": "room, indoor ~",
    "side": "prefix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -11318,7 +11432,7 @@
    "underlined": "室",
    "answer": "room for ~",
    "side": "suffix",
-   "wrongChoices": 177,
+   "wrongChoices": 181,
    "sameSideWrong": [
     "~th daughter (birth order)",
     "~ Ministry (government)",
@@ -11340,7 +11454,7 @@
    "underlined": "日",
    "answer": "day",
    "side": "suffix",
-   "wrongChoices": 182,
+   "wrongChoices": 186,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -11371,7 +11485,7 @@
    "underlined": "車",
    "answer": "~ car",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -11393,7 +11507,7 @@
    "underlined": "者",
    "answer": "person",
    "side": "suffix",
-   "wrongChoices": 180,
+   "wrongChoices": 184,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -11415,7 +11529,7 @@
    "underlined": "社",
    "answer": "counter for company",
    "side": "suffix",
-   "wrongChoices": 169,
+   "wrongChoices": 173,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -11437,7 +11551,7 @@
    "underlined": "手",
    "answer": "~ player, person who does ~",
    "side": "suffix",
-   "wrongChoices": 180,
+   "wrongChoices": 184,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -11459,7 +11573,7 @@
    "underlined": "酒",
    "answer": "kind of alcohol",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -11481,7 +11595,7 @@
    "underlined": "集",
    "answer": "collection of ~",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -11503,7 +11617,7 @@
    "underlined": "重",
    "answer": "heavy ~, serious ~",
    "side": "prefix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -11525,7 +11639,7 @@
    "underlined": "流",
    "answer": "way, school of ~",
    "side": "suffix",
-   "wrongChoices": 181,
+   "wrongChoices": 185,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -11547,7 +11661,7 @@
    "underlined": "両",
    "answer": "both ~",
    "side": "prefix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -11569,7 +11683,7 @@
    "underlined": "料",
    "answer": "fee, charge for ~",
    "side": "suffix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -11591,7 +11705,7 @@
    "underlined": "領",
    "answer": "territory",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -11613,7 +11727,7 @@
    "underlined": "力",
    "answer": "power of ~",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -11635,7 +11749,7 @@
    "underlined": "論",
    "answer": "theory or study of ~",
    "side": "suffix",
-   "wrongChoices": 183,
+   "wrongChoices": 187,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -11657,7 +11771,7 @@
    "underlined": "和",
    "answer": "Japanese style",
    "side": "prefix",
-   "wrongChoices": 183,
+   "wrongChoices": 186,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -11679,7 +11793,7 @@
    "underlined": "羽",
    "answer": "counter for rabbits, birds",
    "side": "suffix",
-   "wrongChoices": 169,
+   "wrongChoices": 173,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -11701,7 +11815,7 @@
    "underlined": "我が",
    "answer": "our ~",
    "side": "prefix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -11723,7 +11837,7 @@
    "underlined": "明くる",
    "answer": "next, following",
    "side": "prefix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -11745,7 +11859,7 @@
    "underlined": "位",
    "answer": "~th place",
    "side": "suffix",
-   "wrongChoices": 175,
+   "wrongChoices": 179,
    "sameSideWrong": [
     "~ Ministry (government)",
     "dealer, trader in ~",
@@ -11767,7 +11881,7 @@
    "underlined": "幾",
    "answer": "several ~",
    "side": "prefix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -11780,13 +11894,26 @@
    ]
   },
   {
-   "id": null,
+   "id": "a:～一",
    "text": "～いち (にほんいち)",
    "reading": "～いち (にほんいち)",
    "meaning": "No. 1 ~ (in)",
    "sentence": "この店【みせ】のカレーは世界一【せかいいち】おいしいと思【おも】う。",
    "sentenceEn": "I think this shop's curry is the best in the world.",
-   "noCard": "the part is not written exactly once in the sentence, or the entry is not a clean prefix or suffix"
+   "underlined": "一",
+   "answer": "best in ~, No. 1 in ~",
+   "side": "suffix",
+   "wrongChoices": 188,
+   "sameSideWrong": [
+    "place, office (facility)",
+    "place",
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
+   ]
   },
   {
    "id": "a:上～",
@@ -11798,7 +11925,7 @@
    "underlined": "上",
    "answer": "upper ~",
    "side": "prefix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -11820,7 +11947,7 @@
    "underlined": "園",
    "answer": "park, garden; place for ~",
    "side": "suffix",
-   "wrongChoices": 175,
+   "wrongChoices": 179,
    "sameSideWrong": [
     "~th daughter (birth order)",
     "~ Ministry (government)",
@@ -11842,7 +11969,7 @@
    "underlined": "御",
    "answer": "honorific ~",
    "side": "prefix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -11864,7 +11991,7 @@
    "underlined": "頭",
    "answer": "counter for large animals",
    "side": "suffix",
-   "wrongChoices": 169,
+   "wrongChoices": 173,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -11886,7 +12013,7 @@
    "underlined": "等",
    "answer": "class, grade, prize rank",
    "side": "suffix",
-   "wrongChoices": 177,
+   "wrongChoices": 181,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -11908,7 +12035,7 @@
    "underlined": "島",
    "answer": "~ island",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -11930,7 +12057,7 @@
    "underlined": "同",
    "answer": "same ~",
    "side": "prefix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -11952,7 +12079,7 @@
    "underlined": "道",
    "answer": "way, art of ~",
    "side": "suffix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -11974,7 +12101,7 @@
    "underlined": "通り",
    "answer": "as ~, in accordance with ~",
    "side": "suffix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -11996,7 +12123,7 @@
    "underlined": "ところ",
    "answer": "about to do ~",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -12018,7 +12145,7 @@
    "underlined": "内",
    "answer": "inside ~",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -12040,7 +12167,7 @@
    "underlined": "長",
    "answer": "long ~",
    "side": "prefix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -12062,7 +12189,7 @@
    "underlined": "難い",
    "answer": "hard to ~; difficult to ~",
    "side": "suffix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -12084,7 +12211,7 @@
    "underlined": "年生",
    "answer": "student in year ~; ~ grader",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -12106,7 +12233,7 @@
    "underlined": "泊",
    "answer": "counter for staying (e.g., 2 nights)",
    "side": "suffix",
-   "wrongChoices": 168,
+   "wrongChoices": 172,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -12128,7 +12255,7 @@
    "underlined": "発",
    "answer": "counter for shots; departing from ~",
    "side": "suffix",
-   "wrongChoices": 169,
+   "wrongChoices": 173,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -12150,7 +12277,7 @@
    "underlined": "反",
    "answer": "anti ~, counter ~",
    "side": "prefix",
-   "wrongChoices": 166,
+   "wrongChoices": 170,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -12172,7 +12299,7 @@
    "underlined": "番目",
    "answer": "~th in a sequence",
    "side": "suffix",
-   "wrongChoices": 178,
+   "wrongChoices": 182,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -12194,7 +12321,7 @@
    "underlined": "非",
    "answer": "non-~, un-~",
    "side": "prefix",
-   "wrongChoices": 182,
+   "wrongChoices": 186,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -12216,7 +12343,7 @@
    "underlined": "費",
    "answer": "cost of ~",
    "side": "suffix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -12238,7 +12365,7 @@
    "underlined": "一",
    "answer": "one ~",
    "side": "prefix",
-   "wrongChoices": 185,
+   "wrongChoices": 187,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -12260,7 +12387,7 @@
    "underlined": "病",
    "answer": "~ disease, ~ illness",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -12282,7 +12409,7 @@
    "underlined": "部",
    "answer": "~ part",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -12304,7 +12431,7 @@
    "underlined": "風",
    "answer": "~ style",
    "side": "suffix",
-   "wrongChoices": 181,
+   "wrongChoices": 184,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -12326,7 +12453,7 @@
    "underlined": "副",
    "answer": "vice ~",
    "side": "prefix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -12348,7 +12475,7 @@
    "underlined": "振り",
    "answer": "after an interval of ~",
    "side": "suffix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -12370,7 +12497,7 @@
    "underlined": "古",
    "answer": "old ~, used ~",
    "side": "prefix",
-   "wrongChoices": 182,
+   "wrongChoices": 186,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -12392,7 +12519,7 @@
    "underlined": "遍",
    "answer": "times (repetitions)",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -12414,7 +12541,7 @@
    "underlined": "弁",
    "answer": "speech, dialect",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -12436,7 +12563,7 @@
    "underlined": "歩",
    "answer": "step, pace",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -12458,7 +12585,7 @@
    "underlined": "っぽい",
    "answer": "-ish; prone to ~",
    "side": "suffix",
-   "wrongChoices": 181,
+   "wrongChoices": 185,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -12471,13 +12598,26 @@
    ]
   },
   {
-   "id": null,
+   "id": "a:～ほう",
    "text": "～ほう (ひかく)",
    "reading": "～ほう (ひかく)",
    "meaning": "(in comparison)",
    "sentence": "電車【でんしゃ】で行【い】くほうがバスより早【はや】い。",
    "sentenceEn": "Going by train is faster than taking the bus.",
-   "noCard": "the part is not written exactly once in the sentence, or the entry is not a clean prefix or suffix"
+   "underlined": "ほう",
+   "answer": "the ~ one (comparing)",
+   "side": "suffix",
+   "wrongChoices": 188,
+   "sameSideWrong": [
+    "place, office (facility)",
+    "place",
+    "~th daughter (birth order)",
+    "~ Ministry (government)",
+    "dealer, trader in ~",
+    "~ wins (victories)",
+    "article no. ~ (of a law)",
+    "venue, ground for ~"
+   ]
   },
   {
    "id": "a:防～",
@@ -12489,7 +12629,7 @@
    "underlined": "防",
    "answer": "~proof; protection against ~",
    "side": "prefix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -12511,7 +12651,7 @@
    "underlined": "ほんの",
    "answer": "mere, just",
    "side": "prefix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -12533,7 +12673,7 @@
    "underlined": "毎",
    "answer": "every ~",
    "side": "prefix",
-   "wrongChoices": 182,
+   "wrongChoices": 186,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -12555,7 +12695,7 @@
    "underlined": "未",
    "answer": "not yet ~",
    "side": "prefix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -12577,7 +12717,7 @@
    "underlined": "みたい",
    "answer": "looks like ~",
    "side": "suffix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -12599,7 +12739,7 @@
    "underlined": "民主",
    "answer": "democratic",
    "side": "prefix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -12621,7 +12761,7 @@
    "underlined": "向け",
    "answer": "for ~",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -12643,7 +12783,7 @@
    "underlined": "名",
    "answer": "famous ~",
    "side": "prefix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -12665,7 +12805,7 @@
    "underlined": "名",
    "answer": "counter for people",
    "side": "suffix",
-   "wrongChoices": 168,
+   "wrongChoices": 172,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -12696,7 +12836,7 @@
    "underlined": "問",
    "answer": "counter for questions",
    "side": "suffix",
-   "wrongChoices": 169,
+   "wrongChoices": 173,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -12718,7 +12858,7 @@
    "underlined": "夜",
    "answer": "counter for nights",
    "side": "suffix",
-   "wrongChoices": 168,
+   "wrongChoices": 172,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -12740,7 +12880,7 @@
    "underlined": "翌",
    "answer": "next ~",
    "side": "prefix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -12762,7 +12902,7 @@
    "underlined": "等",
    "answer": "plural marker (they, we ~)",
    "side": "suffix",
-   "wrongChoices": 177,
+   "wrongChoices": 181,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -12784,7 +12924,7 @@
    "underlined": "着",
    "answer": "counter for clothes, finishing place",
    "side": "suffix",
-   "wrongChoices": 159,
+   "wrongChoices": 163,
    "sameSideWrong": [
     "~ Ministry (government)",
     "dealer, trader in ~",
@@ -12806,7 +12946,7 @@
    "underlined": "長",
    "answer": "long ~",
    "side": "prefix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -12828,7 +12968,7 @@
    "underlined": "庁",
    "answer": "government agency",
    "side": "suffix",
-   "wrongChoices": 178,
+   "wrongChoices": 182,
    "sameSideWrong": [
     "~th daughter (birth order)",
     "~ Ministry (government)",
@@ -12850,7 +12990,7 @@
    "underlined": "兆",
    "answer": "trillion",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -12872,7 +13012,7 @@
    "underlined": "長",
    "answer": "leader, head",
    "side": "suffix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -12894,7 +13034,7 @@
    "underlined": "帳",
    "answer": "~ book, notebook",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -12916,7 +13056,7 @@
    "underlined": "丁目",
    "answer": "-chome (block number)",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -12938,7 +13078,7 @@
    "underlined": "通",
    "answer": "counter for letters",
    "side": "suffix",
-   "wrongChoices": 169,
+   "wrongChoices": 173,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -12960,7 +13100,7 @@
    "underlined": "遣い",
    "answer": "use of ~",
    "side": "suffix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -12982,7 +13122,7 @@
    "underlined": "付き",
    "answer": "with ~",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -13004,7 +13144,7 @@
    "underlined": "続く",
    "answer": "keep ~ing, go on ~ing",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -13026,7 +13166,7 @@
    "underlined": "辛い",
    "answer": "awkward, painful to ~",
    "side": "suffix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -13048,7 +13188,7 @@
    "underlined": "低",
    "answer": "low ~",
    "side": "prefix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -13070,7 +13210,7 @@
    "underlined": "滴",
    "answer": "drop",
    "side": "suffix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -13092,7 +13232,7 @@
    "underlined": "点",
    "answer": "counter for scores",
    "side": "suffix",
-   "wrongChoices": 169,
+   "wrongChoices": 173,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -13114,7 +13254,7 @@
    "underlined": "不",
    "answer": "not ~, un-~",
    "side": "prefix",
-   "wrongChoices": 182,
+   "wrongChoices": 186,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -13136,7 +13276,7 @@
    "underlined": "無",
    "answer": "without ~, -less",
    "side": "prefix",
-   "wrongChoices": 182,
+   "wrongChoices": 186,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -13158,7 +13298,7 @@
    "underlined": "的",
    "answer": "-ic, -al",
    "side": "suffix",
-   "wrongChoices": 183,
+   "wrongChoices": 187,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -13180,7 +13320,7 @@
    "underlined": "性",
    "answer": "-ity, -ness",
    "side": "suffix",
-   "wrongChoices": 183,
+   "wrongChoices": 187,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -13202,7 +13342,7 @@
    "underlined": "用",
    "answer": "for ~ use",
    "side": "suffix",
-   "wrongChoices": 183,
+   "wrongChoices": 187,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -13224,7 +13364,7 @@
    "underlined": "中",
    "answer": "in the middle of ~, during ~",
    "side": "suffix",
-   "wrongChoices": 182,
+   "wrongChoices": 186,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -13246,7 +13386,7 @@
    "underlined": "中",
    "answer": "throughout ~, all over ~",
    "side": "suffix",
-   "wrongChoices": 180,
+   "wrongChoices": 183,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -13268,7 +13408,7 @@
    "underlined": "別",
    "answer": "by ~, sorted by ~",
    "side": "suffix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -13290,7 +13430,7 @@
    "underlined": "向き",
    "answer": "suited to ~, meant for ~",
    "side": "suffix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -13312,7 +13452,7 @@
    "underlined": "直す",
    "answer": "do ~ again, redo",
    "side": "suffix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -13334,7 +13474,7 @@
    "underlined": "抜く",
    "answer": "do ~ through to the end",
    "side": "suffix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -13356,7 +13496,7 @@
    "underlined": "上",
    "answer": "in terms of ~, as regards ~",
    "side": "suffix",
-   "wrongChoices": 182,
+   "wrongChoices": 186,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -13378,7 +13518,7 @@
    "underlined": "率",
    "answer": "rate of ~, ~ ratio",
    "side": "suffix",
-   "wrongChoices": 183,
+   "wrongChoices": 187,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -13400,7 +13540,7 @@
    "underlined": "制",
    "answer": "~ system",
    "side": "suffix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -13422,7 +13562,7 @@
    "underlined": "員",
    "answer": "member, staff of ~",
    "side": "suffix",
-   "wrongChoices": 181,
+   "wrongChoices": 185,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -13444,7 +13584,7 @@
    "underlined": "学",
    "answer": "study of ~, -logy",
    "side": "suffix",
-   "wrongChoices": 183,
+   "wrongChoices": 187,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -13466,7 +13606,7 @@
    "underlined": "家",
    "answer": "specialist, person who does ~",
    "side": "suffix",
-   "wrongChoices": 180,
+   "wrongChoices": 184,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -13488,7 +13628,7 @@
    "underlined": "おき",
    "answer": "every other ~, at intervals of ~",
    "side": "suffix",
-   "wrongChoices": 182,
+   "wrongChoices": 186,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -13510,7 +13650,7 @@
    "underlined": "ずくめ",
    "answer": "nothing but ~, all ~",
    "side": "suffix",
-   "wrongChoices": 183,
+   "wrongChoices": 186,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -13532,7 +13672,7 @@
    "underlined": "げ",
    "answer": "with a ~ look, seeming ~",
    "side": "suffix",
-   "wrongChoices": 180,
+   "wrongChoices": 184,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -13554,7 +13694,7 @@
    "underlined": "め",
    "answer": "on the ~ side, somewhat ~",
    "side": "suffix",
-   "wrongChoices": 181,
+   "wrongChoices": 185,
    "sameSideWrong": [
     "place, office (facility)",
     "place",
@@ -13576,7 +13716,7 @@
    "underlined": "超",
    "answer": "super-, ultra-",
    "side": "prefix",
-   "wrongChoices": 184,
+   "wrongChoices": 188,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -13598,7 +13738,7 @@
    "underlined": "準",
    "answer": "semi-, quasi-",
    "side": "prefix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -13620,7 +13760,7 @@
    "underlined": "元",
    "answer": "former ~, ex-",
    "side": "prefix",
-   "wrongChoices": 182,
+   "wrongChoices": 186,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -13642,7 +13782,7 @@
    "underlined": "旧",
    "answer": "old ~, former ~ (replaced)",
    "side": "prefix",
-   "wrongChoices": 182,
+   "wrongChoices": 186,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -13664,7 +13804,7 @@
    "underlined": "新",
    "answer": "new ~",
    "side": "prefix",
-   "wrongChoices": 183,
+   "wrongChoices": 187,
    "sameSideWrong": [
     "first ~",
     "various ~",
@@ -13686,7 +13826,7 @@
    "underlined": "全",
    "answer": "all ~, the whole ~",
    "side": "prefix",
-   "wrongChoices": 180,
+   "wrongChoices": 183,
    "sameSideWrong": [
     "first ~",
     "female ~",
@@ -13708,7 +13848,7 @@
    "underlined": "真",
    "answer": "right ~, pure ~",
    "side": "prefix",
-   "wrongChoices": 185,
+   "wrongChoices": 189,
    "sameSideWrong": [
     "first ~",
     "various ~",

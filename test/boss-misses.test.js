@@ -192,7 +192,7 @@ test("a vocabulary or grammar review card shows the word, its reading and its me
 
 test("prefixes and suffixes have a card: the part underlined in a sentence, its meaning to pick", async () => {
   const {affixSide, recallsMiss, choicesFor, SECONDS} = await import("../n2-game.js");
-  const {REVIEWED_AFFIXES} = await import("../n2-game-review.js");
+  const {REVIEWED_AFFIXES, LIST_LABEL: LIST_LABEL_OF} = await import("../n2-game-review.js");
   const cards = pool.filter(q => q.kind === "affix");
   assert.ok(cards.length >= 140, "most of the list's 167 word parts");
   const gimi = cards.find(q => q.id === "a:～気味"), zen = cards.find(q => q.id === "a:前～");
@@ -205,7 +205,7 @@ test("prefixes and suffixes have a card: the part underlined in a sentence, its 
     assert.ok(/^[〜～]?[^〜～\s(（]+[〜～]?$/.test(q.prompt), q.id);
     assert.ok(q.wrong.length >= 3 && !q.wrong.includes(q.answer), q.id);
     assert.equal(new Set(choicesFor(q, seeded(7), .5).choices).size, 4, q.id);
-    assert.deepEqual(q.target.slice(0, 2), ["word", q.prompt]);
+    assert.ok(q.target[0] === "word" && (q.target[1] === q.prompt || LIST_LABEL_OF[q.target[1]]?.text === q.prompt), q.id + ": the list's own target, under a clean label where it has one");
     // Unreviewed, and scored all the same (owner, 27 Nov): points both ways, and a miss is recall evidence.
     assert.equal(REVIEWED_AFFIXES, false); assert.ok(!q.practice);
     assert.equal(recallsMiss(q, "wrong"), true); assert.equal(recallsMiss({...q, practice: true}, "wrong"), false);
@@ -372,7 +372,7 @@ test("the word parts the list lacked are in it, each with a sentence and a card"
   assert.equal(added.length, 28); assert.equal(deck.length, inventory.words.length);
   assert.deepEqual(added.slice(0, 4).map(w => w[0]), ["不～", "無～", "～的", "～性"]);
   const cards = pool.filter(q => q.kind === "affix");
-  assert.equal(cards.length, 186);
+  assert.equal(cards.length, 190, "186, and four list entries under a clean label (～ごと, ～式, ～一, ～ほう)");
   for (const [i, [text, reading, meaning]] of added.entries()) {
     const s = deck[1748 + i], q = cards.find(c => c.target[1] === text && c.target[2] === reading);
     assert.equal(s.id, "n2-word-" + (1748 + i)); assert.ok(q, text + " has a card");

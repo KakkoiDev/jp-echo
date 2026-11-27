@@ -1,0 +1,1374 @@
+{
+ "得る-得る": {
+  "pattern": "得る（える・うる）",
+  "meaning": "It can happen or be done, is possible",
+  "sentence": "この方法なら、問題は解決し（　）。",
+  "answer": "得る",
+  "english": "With this method, the problem could be solved."
+ },
+ "得ない": {
+  "pattern": "〜得ない",
+  "meaning": "Unable to, Cannot",
+  "sentence": "普通ならあり（　）ミスが起きた。",
+  "answer": "得ない",
+  "english": "A mistake that would normally be impossible happened."
+ },
+ "ざるを得ない": {
+  "pattern": "ざるを得ない",
+  "meaning": "have no choice but to, be forced to",
+  "sentence": "雨がひどいので、旅行は中止せ（　）。",
+  "answer": "ざるを得ない",
+  "english": "The rain is so heavy that we have no choice but to cancel the trip."
+ },
+ "ざる": {
+  "pattern": "～ざる",
+  "meaning": "To not ~, Un~",
+  "sentence": "彼は見え（　）努力を続けてきた。",
+  "answer": "ざる",
+  "english": "He has kept up unseen efforts."
+ },
+ "つもりで": {
+  "pattern": "つもりで",
+  "meaning": "acting as if or with the intention of",
+  "sentence": "旅行に行った（　）、そのお金を貯金した。",
+  "answer": "つもりで",
+  "english": "I saved that money, telling myself I'd been on the trip."
+ },
+ "どうせ": {
+  "pattern": "どうせ",
+  "meaning": "anyway, after all",
+  "sentence": "（　）間に合わないから、ゆっくり行こう。",
+  "answer": "どうせ",
+  "english": "We won't make it anyway, so let's go slowly."
+ },
+ "せめて": {
+  "pattern": "せめて",
+  "meaning": "At least",
+  "sentence": "（　）一日だけでも休みが欲しい。",
+  "answer": "せめて",
+  "english": "I want at least one day off."
+ },
+ "どうやら": {
+  "pattern": "どうやら",
+  "meaning": "Apparently, Looks Like, Seems like",
+  "sentence": "（　）明日は雨になりそうだ。",
+  "answer": "どうやら",
+  "english": "It looks like it's going to rain tomorrow."
+ },
+ "なにやら": {
+  "pattern": "なにやら",
+  "meaning": "Something (or other), Some kind of",
+  "sentence": "隣の部屋から、（　）変な音がする。",
+  "answer": "なにやら",
+  "english": "Some kind of strange noise is coming from the next room."
+ },
+ "よりほかない": {
+  "pattern": "よりほかない",
+  "meaning": "To have no choice but, No other way than, Have to",
+  "sentence": "終電を逃したので、歩いて帰る（　）。",
+  "answer": "よりほかない",
+  "english": "I missed the last train, so I have no choice but to walk home."
+ },
+ "確かに": {
+  "pattern": "確かに",
+  "meaning": "Surely, Certainly",
+  "sentence": "鍵は（　）ここに置いたはずだ。",
+  "answer": "確かに",
+  "english": "I'm sure I left the key right here."
+ },
+ "一応1": {
+  "pattern": "一応",
+  "meaning": "Just in case, Just to be sure",
+  "sentence": "雨は降らないと思うが、（　）傘を持っていこう。",
+  "answer": "一応",
+  "english": "I don't think it'll rain, but let's take an umbrella just in case."
+ },
+ "一応2": {
+  "pattern": "一応",
+  "meaning": "more or less, for the time being, tentatively, roughly",
+  "sentence": "報告書は（　）できたが、まだ見直しが必要だ。",
+  "answer": "一応",
+  "english": "The report is more or less done, but it still needs a review."
+ },
+ "に相違ない": {
+  "pattern": "に相違ない",
+  "meaning": "Without a doubt, Certainly, Surely, Not mistaken",
+  "sentence": "毎日あれほど練習したのだから、彼は合格する（　）。",
+  "answer": "に相違ない",
+  "english": "He practiced that much every day, so he will pass without a doubt."
+ },
+ "万が一": {
+  "pattern": "万が一",
+  "meaning": "in the unlikely event that",
+  "sentence": "（　）地震が起きたら、この公園に集まってください。",
+  "answer": "万が一",
+  "english": "In the unlikely event of an earthquake, please gather in this park."
+ },
+ "ようがない・ようもない": {
+  "pattern": "ようがない・ようもない",
+  "meaning": "There's no way to, It's impossible to",
+  "sentence": "連絡先がわからないので、知らせ（　）。",
+  "answer": "ようがない",
+  "english": "I don't know how to contact them, so there's no way to let them know."
+ },
+ "にほかならない": {
+  "pattern": "にほかならない",
+  "meaning": "Nothing but, None other than, Simply",
+  "sentence": "今回の成功は、皆さんの努力の結果（　）。",
+  "answer": "にほかならない",
+  "english": "This success is nothing but the result of everyone's hard work."
+ },
+ "っこない": {
+  "pattern": "っこない",
+  "meaning": "there's no way it will happen (emphatic, casual)",
+  "sentence": "こんな量の仕事、一日で終わり（　）。",
+  "answer": "っこない",
+  "english": "There's no way this much work will be finished in one day."
+ },
+ "それなら": {
+  "pattern": "それなら",
+  "meaning": "Then, If that's the case",
+  "sentence": "雨が降っているの？（　）、今日は家で映画を見よう。",
+  "answer": "それなら",
+  "english": "It's raining? In that case, let's watch a film at home today."
+ },
+ "ものなら①": {
+  "pattern": "ものなら",
+  "meaning": "If, If one could, If something would be possible",
+  "sentence": "できる（　）、もう一度学生時代に戻りたい。",
+  "answer": "ものなら",
+  "english": "If only I could, I'd like to go back to my student days once more."
+ },
+ "活かす": {
+  "pattern": "活かす",
+  "meaning": "put a skill or experience to use",
+  "sentence": "留学の経験を仕事に（　）したい。",
+  "answer": "活か",
+  "english": "I want to put my experience studying abroad to use in my work."
+ },
+ "おおよそ": {
+  "pattern": "おおよそ",
+  "meaning": "approximately, roughly",
+  "sentence": "駅から会場まで、（　）十分かかります。",
+  "answer": "おおよそ",
+  "english": "It takes roughly ten minutes from the station to the venue."
+ },
+ "まい": {
+  "pattern": "まい",
+  "meaning": "Won't, Intend not to, Probably not",
+  "sentence": "あんな店には二度と行く（　）。",
+  "answer": "まい",
+  "english": "I will never go to that shop again."
+ },
+ "上に": {
+  "pattern": "上に",
+  "meaning": "As well, Besides, In addition to",
+  "sentence": "この店は安い（　）、料理もおいしい。",
+  "answer": "上に",
+  "english": "This restaurant is cheap, and on top of that the food is good."
+ },
+ "以上2": {
+  "pattern": "以上",
+  "meaning": "Since, Now that, As long as, If",
+  "sentence": "約束した（　）、最後まで責任を持つ。",
+  "answer": "以上",
+  "english": "Now that I've promised, I'll take responsibility to the end."
+ },
+ "以上に": {
+  "pattern": "以上に",
+  "meaning": "More than, No less than, Even more",
+  "sentence": "試験は思っていた（　）難しかった。",
+  "answer": "以上に",
+  "english": "The exam was even harder than I had expected."
+ },
+ "途中に・途中で": {
+  "pattern": "途中に・途中で",
+  "meaning": "On the way, Partway, In the middle of",
+  "sentence": "会社へ行く（　）、財布を忘れたことに気づいた。",
+  "answer": "途中で",
+  "english": "On the way to work, I realized I had forgotten my wallet."
+ },
+ "中を": {
+  "pattern": "中を",
+  "meaning": "through the midst of, passing through",
+  "sentence": "激しい雨の（　）、彼は駅まで走った。",
+  "answer": "中を",
+  "english": "He ran to the station through the heavy rain."
+ },
+ "を中心に": {
+  "pattern": "を中心に",
+  "meaning": "Focused on, Centered on or around, Mainly, Most notably",
+  "sentence": "この祭りは、若者（　）人気が広がっている。",
+  "answer": "を中心に",
+  "english": "This festival is growing popular, mainly among young people."
+ },
+ "その上": {
+  "pattern": "その上",
+  "meaning": "Besides, In addition, Furthermore",
+  "sentence": "この部屋は広くて明るく、（　）家賃も安い。",
+  "answer": "その上",
+  "english": "This room is spacious and bright, and besides, the rent is cheap."
+ },
+ "上は": {
+  "pattern": "上は",
+  "meaning": "Once, Since, Now that, As long as",
+  "sentence": "引き受けた（　）、最後までやり抜くつもりだ。",
+  "answer": "上は",
+  "english": "Now that I've taken it on, I intend to see it through to the end."
+ },
+ "の下で": {
+  "pattern": "の下で",
+  "meaning": "Under, Under the supervision of, On the basis of",
+  "sentence": "新しい監督（　）、チームは大きく変わった。",
+  "answer": "の下で",
+  "english": "Under the new manager, the team changed greatly."
+ },
+ "手前": {
+  "pattern": "手前",
+  "meaning": "given what one has said or done, one feels obliged to follow through",
+  "sentence": "約束した（　）、今さら断れない。",
+  "answer": "手前",
+  "english": "Having made a promise, I can't turn it down now."
+ },
+ "を巡って": {
+  "pattern": "を巡って",
+  "meaning": "Concerning, In regard to, About, (Split) over",
+  "sentence": "新しい空港の建設（　）、住民の意見が分かれている。",
+  "answer": "を巡って",
+  "english": "Residents are divided over the construction of the new airport."
+ },
+ "にわたって": {
+  "pattern": "にわたって",
+  "meaning": "spanning a period or area",
+  "sentence": "会議は三日間（　）行われた。",
+  "answer": "にわたって",
+  "english": "The conference was held over three days."
+ },
+ "に沿って": {
+  "pattern": "に沿って",
+  "meaning": "Along, In accordance with, In line with",
+  "sentence": "川（　）、桜の木が並んでいる。",
+  "answer": "に沿って",
+  "english": "Cherry trees line the river."
+ },
+ "た末-の末": {
+  "pattern": "た末・の末",
+  "meaning": "After, As a conclusion of",
+  "sentence": "何度も話し合っ（　）、計画を中止することにした。",
+  "answer": "た末",
+  "english": "After discussing it many times, we decided to cancel the plan."
+ },
+ "にしたがって": {
+  "pattern": "にしたがって",
+  "meaning": "As, Following, As then, According to, In accordance with",
+  "sentence": "係員の指示（　）、順番に避難してください。",
+  "answer": "にしたがって",
+  "english": "Please follow the staff's instructions and evacuate in order."
+ },
+ "に伴って-に伴い": {
+  "pattern": "に伴って・に伴い",
+  "meaning": "along with a related change",
+  "sentence": "人口の増加（　）、住宅が不足している。",
+  "answer": "に伴って",
+  "english": "Along with the population increase, there is a housing shortage."
+ },
+ "につき": {
+  "pattern": "につき",
+  "meaning": "Due to, On account of, Each or every",
+  "sentence": "本日は定休日（　）、お休みさせていただきます。",
+  "answer": "につき",
+  "english": "Because today is our regular holiday, we are closed."
+ },
+ "につけ": {
+  "pattern": "につけ",
+  "meaning": "Whenever, Every time something happens",
+  "sentence": "この写真を見る（　）、故郷を思い出す。",
+  "answer": "につけ",
+  "english": "Every time I see this photo, I think of my hometown."
+ },
+ "にかかわる": {
+  "pattern": "にかかわる",
+  "meaning": "concern, be related to",
+  "sentence": "これは命（　）問題だから、すぐに対応すべきだ。",
+  "answer": "にかかわる",
+  "english": "This is a matter of life and death, so it should be dealt with at once."
+ },
+ "に向かって-に向けて": {
+  "pattern": "に向かって・に向けて",
+  "meaning": "Towards, To face, To head to",
+  "sentence": "試験（　）、毎日三時間勉強している。",
+  "answer": "に向けて",
+  "english": "I'm studying three hours a day toward the exam."
+ },
+ "が気になる": {
+  "pattern": "が気になる",
+  "meaning": "To be interested in, To be concerned about",
+  "sentence": "隣の人の話し声（　）って、集中できない。",
+  "answer": "が気にな",
+  "english": "The voices of the people next to me bother me, and I can't concentrate."
+ },
+ "に気をつける": {
+  "pattern": "に気をつける",
+  "meaning": "Take care, Be careful, Pay attention, Make sure, Watch out",
+  "sentence": "夜道では車（　）て歩いてください。",
+  "answer": "に気をつけ",
+  "english": "Please watch out for cars when walking at night."
+ },
+ "もかまわず": {
+  "pattern": "も構わず",
+  "meaning": "Without worrying about",
+  "sentence": "彼女は人目（　）、大声で泣いた。",
+  "answer": "も構わず",
+  "english": "She cried loudly without caring who was watching."
+ },
+ "かねる": {
+  "pattern": "かねる",
+  "meaning": "Cannot, Be unable to, Hard to, Hesitant to",
+  "sentence": "申し訳ありませんが、そのご要望にはお応えし（　）ます。",
+  "answer": "かね",
+  "english": "We're sorry, but we are unable to meet that request."
+ },
+ "を除いて": {
+  "pattern": "を除いて",
+  "meaning": "except for, excluding",
+  "sentence": "日曜日（　）、毎日営業しています。",
+  "answer": "を除いて",
+  "english": "We are open every day except Sunday."
+ },
+ "にかかわらず": {
+  "pattern": "にかかわらず",
+  "meaning": "Regardless of, Whether or, No matter, With or without",
+  "sentence": "経験があるかないか（　）、誰でも応募できます。",
+  "answer": "にかかわらず",
+  "english": "Anyone can apply, whether or not they have experience."
+ },
+ "にもかかわらず": {
+  "pattern": "にもかかわらず",
+  "meaning": "despite, even though",
+  "sentence": "大雨（　）、試合は予定通り行われた。",
+  "answer": "にもかかわらず",
+  "english": "Despite the heavy rain, the match went ahead as planned."
+ },
+ "に限って": {
+  "pattern": "に限って",
+  "meaning": "precisely on that occasion, of all people or times",
+  "sentence": "傘を持っていない日（　）、雨が降る。",
+  "answer": "に限って",
+  "english": "It always rains on precisely the days I don't have an umbrella."
+ },
+ "に限らず": {
+  "pattern": "に限らず",
+  "meaning": "not limited to",
+  "sentence": "この歌は若者（　）、お年寄りにも人気がある。",
+  "answer": "に限らず",
+  "english": "This song is popular not only with young people but also with the elderly."
+ },
+ "なお1": {
+  "pattern": "なお",
+  "meaning": "Still, Even, Yet",
+  "sentence": "薬を飲んだが、熱は（　）下がらない。",
+  "answer": "なお",
+  "english": "I took medicine, but my fever still won't go down."
+ },
+ "なお2": {
+  "pattern": "なお",
+  "meaning": "In addition, Incidentally, Furthermore, Moreover",
+  "sentence": "（　）、詳しい日程は後日お知らせします。",
+  "answer": "なお",
+  "english": "In addition, we will announce the detailed schedule at a later date."
+ },
+ "限り": {
+  "pattern": "限り",
+  "meaning": "as long as, to the extent that",
+  "sentence": "体が動く（　）、この仕事を続けたい。",
+  "answer": "限り",
+  "english": "As long as my body can move, I want to continue this work."
+ },
+ "次第だ-次第で": {
+  "pattern": "次第だ・次第で",
+  "meaning": "depends on, depending on",
+  "sentence": "明日の天気（　）、出発の時間を決めます。",
+  "answer": "次第で",
+  "english": "We'll decide the departure time depending on tomorrow's weather."
+ },
+ "次第に": {
+  "pattern": "次第に",
+  "meaning": "Gradually",
+  "sentence": "夕方になって、風が（　）強くなってきた。",
+  "answer": "次第に",
+  "english": "As evening came, the wind gradually grew stronger."
+ },
+ "を問わず": {
+  "pattern": "を問わず",
+  "meaning": "Regardless of, Whether or not, No matter, With or without",
+  "sentence": "この大会には、年齢（　）誰でも参加できる。",
+  "answer": "を問わず",
+  "english": "Anyone can enter this competition, regardless of age."
+ },
+ "よりしかたがない": {
+  "pattern": "よりしかたがない",
+  "meaning": "There is no choice but, Can't be helped, Inevitable",
+  "sentence": "バスが来ないので、タクシーで行く（　）。",
+  "answer": "よりしかたがない",
+  "english": "The bus isn't coming, so there's no choice but to go by taxi."
+ },
+ "に越したことはない": {
+  "pattern": "に越したことはない",
+  "meaning": "it is best to",
+  "sentence": "健康のためには、早寝早起きする（　）。",
+  "answer": "に越したことはない",
+  "english": "For your health, it's best to go to bed early and get up early."
+ },
+ "要するに": {
+  "pattern": "要するに",
+  "meaning": "To sum up, In summary, In short",
+  "sentence": "（　）、予算が足りないということですね。",
+  "answer": "要するに",
+  "english": "In short, what you're saying is that the budget isn't enough."
+ },
+ "てからでないと": {
+  "pattern": "てからでないと",
+  "meaning": "(Not) unless ~ cannot, (Not) until ~ cannot",
+  "sentence": "部長に相談し（　）、お返事できません。",
+  "answer": "てからでないと",
+  "english": "I can't give you an answer until I've consulted the department manager."
+ },
+ "なくはない": {
+  "pattern": "なくはない",
+  "meaning": "not entirely untrue or impossible, a qualified yes",
+  "sentence": "少し高いが、買え（　）値段だ。",
+  "answer": "なくはない",
+  "english": "It's a bit expensive, but it's not an impossible price for me."
+ },
+ "ないではいられない": {
+  "pattern": "ないではいられない",
+  "meaning": "Cannot help doing something, Cannot resist doing something",
+  "sentence": "困っている人を見ると、助け（　）。",
+  "answer": "ないではいられない",
+  "english": "When I see someone in trouble, I can't help but help them."
+ },
+ "ねばならない": {
+  "pattern": "ねばならない",
+  "meaning": "Must, Have to, Should",
+  "sentence": "締め切りまでに、この報告書を仕上げ（　）。",
+  "answer": "ねばならない",
+  "english": "I must finish this report by the deadline."
+ },
+ "たまえ": {
+  "pattern": "たまえ",
+  "meaning": "command directed at a subordinate",
+  "sentence": "君、この書類をすぐにコピーしてくれ（　）。",
+  "answer": "たまえ",
+  "english": "You there, copy these documents right away."
+ },
+ "-のうち-で": {
+  "pattern": "～のうち(で)",
+  "meaning": "Of the, Among(st)",
+  "sentence": "四季（　）で、秋が一番好きだ。",
+  "answer": "のうち",
+  "english": "Of the four seasons, I like autumn best."
+ },
+ "つつ": {
+  "pattern": "つつ",
+  "meaning": "While, And",
+  "sentence": "景色を楽しみ（　）、ゆっくりと山道を歩いた。",
+  "answer": "つつ",
+  "english": "I walked slowly along the mountain path while enjoying the scenery."
+ },
+ "つつ-も": {
+  "pattern": "つつ(も)",
+  "meaning": "while, even though",
+  "sentence": "体に悪いと知り（　）も、夜中にラーメンを食べてしまう。",
+  "answer": "つつ",
+  "english": "Even though I know it's bad for me, I end up eating ramen in the middle of the night."
+ },
+ "に際して": {
+  "pattern": "に際して",
+  "meaning": "On the occasion of, At the time of",
+  "sentence": "入学（　）、必要な書類を提出してください。",
+  "answer": "に際して",
+  "english": "Upon enrollment, please submit the required documents."
+ },
+ "際に": {
+  "pattern": "際に",
+  "meaning": "When, At the time of, In case of, On the occasion of",
+  "sentence": "お降りの（　）は、お忘れ物のないようご注意ください。",
+  "answer": "際に",
+  "english": "When getting off, please make sure you haven't left anything behind."
+ },
+ "にあたり-にあたって": {
+  "pattern": "にあたり・にあたって",
+  "meaning": "When, When doing something, On the occasion, At the time",
+  "sentence": "新しい事業を始める（　）、市場を調査した。",
+  "answer": "にあたって",
+  "english": "When starting the new business, we researched the market."
+ },
+ "を契機に": {
+  "pattern": "を契機に",
+  "meaning": "taking an event as a turning point",
+  "sentence": "結婚（　）、たばこをやめた。",
+  "answer": "を契機に",
+  "english": "I quit smoking when I got married."
+ },
+ "つつある": {
+  "pattern": "つつある",
+  "meaning": "in the process of, gradually becoming or doing",
+  "sentence": "地球の気温は年々上昇し（　）。",
+  "answer": "つつある",
+  "english": "The earth's temperature is rising year by year."
+ },
+ "～ところに・～ところへ": {
+  "pattern": "～ところに・～ところへ",
+  "meaning": "just as, at that point something occurs",
+  "sentence": "出かけようとしている（　）、友達から電話がかかってきた。",
+  "answer": "ところに",
+  "english": "Just as I was about to go out, a friend called me."
+ },
+ "がけに": {
+  "pattern": "がけに",
+  "meaning": "On the way to, As you go",
+  "sentence": "帰り（　）、スーパーで牛乳を買ってきてくれる？",
+  "answer": "がけに",
+  "english": "Could you pick up some milk at the supermarket on your way home?"
+ },
+ "ていては": {
+  "pattern": "ていては",
+  "meaning": "If one keeps doing something, When, If something is...",
+  "sentence": "文句ばかり言っ（　）、何も変わらないよ。",
+  "answer": "ていては",
+  "english": "If you keep doing nothing but complain, nothing will change."
+ },
+ "ところだった2": {
+  "pattern": "ところだった",
+  "meaning": "Was just about to do something, Was in the middle of...",
+  "sentence": "ちょうど出かける（　）ので、電話に出られなかった。",
+  "answer": "ところだった",
+  "english": "I was just about to go out, so I couldn't answer the phone."
+ },
+ "どころではない": {
+  "pattern": "どころではない",
+  "meaning": "in no position to do something",
+  "sentence": "仕事が忙しくて、旅行（　）。",
+  "answer": "どころではない",
+  "english": "I'm so busy with work that a trip is out of the question."
+ },
+ "ぶりに": {
+  "pattern": "ぶりに",
+  "meaning": "For the first time in, Haven't done for some time",
+  "sentence": "十年（　）、高校の同級生に会った。",
+  "answer": "ぶりに",
+  "english": "I met a high school classmate for the first time in ten years."
+ },
+ "ては": {
+  "pattern": "ては",
+  "meaning": "if things are like this, a negative result follows",
+  "sentence": "こんなに寒く（　）、外で遊べない。",
+  "answer": "ては",
+  "english": "When it's this cold, we can't play outside."
+ },
+ "も又": {
+  "pattern": "も又",
+  "meaning": "also, likewise",
+  "sentence": "失敗（　）、大切な経験の一つだ。",
+  "answer": "も又",
+  "english": "Failure, too, is one of our important experiences."
+ },
+ "結果・の結果": {
+  "pattern": "結果・の結果",
+  "meaning": "As a result of",
+  "sentence": "話し合いの（　）、計画を見直すことになった。",
+  "answer": "結果",
+  "english": "As a result of the discussion, we decided to review the plan."
+ },
+ "以来": {
+  "pattern": "以来",
+  "meaning": "Since, Henceforth",
+  "sentence": "日本に来て（　）、毎朝納豆を食べている。",
+  "answer": "以来",
+  "english": "Ever since I came to Japan, I've eaten natto every morning."
+ },
+ "に先立ち": {
+  "pattern": "に先立ち",
+  "meaning": "before, prior to",
+  "sentence": "開会（　）、市長が挨拶をした。",
+  "answer": "に先立ち",
+  "english": "Prior to the opening, the mayor gave a speech."
+ },
+ "はたして": {
+  "pattern": "はたして",
+  "meaning": "really, as expected, or whether it will happen",
+  "sentence": "（　）、彼の予想は当たるだろうか。",
+  "answer": "はたして",
+  "english": "I wonder whether his prediction will really come true."
+ },
+ "甲斐がある": {
+  "pattern": "甲斐がある",
+  "meaning": "to be worth doing, to pay off",
+  "sentence": "苦労した（　）って、試験に合格できた。",
+  "answer": "甲斐があ",
+  "english": "My hard work paid off, and I passed the exam."
+ },
+ "やがて": {
+  "pattern": "やがて",
+  "meaning": "Before long, All too soon, In the end, Eventually",
+  "sentence": "夜になると、雨は（　）雪に変わった。",
+  "answer": "やがて",
+  "english": "When night fell, the rain eventually turned to snow."
+ },
+ "したがって": {
+  "pattern": "したがって",
+  "meaning": "Therefore, Thus, As a result",
+  "sentence": "この道は狭く、（　）大型車は通れない。",
+  "answer": "したがって",
+  "english": "This road is narrow, and therefore large vehicles can't pass."
+ },
+ "あげく": {
+  "pattern": "あげく",
+  "meaning": "after a long process, ended up (often negatively)",
+  "sentence": "一時間も迷った（　）、何も買わずに帰った。",
+  "answer": "あげく",
+  "english": "After dithering for a whole hour, I ended up going home without buying anything."
+ },
+ "きっかけ": {
+  "pattern": "きっかけ",
+  "meaning": "an opportunity or trigger",
+  "sentence": "一冊の本が（　）で、医者を目指すようになった。",
+  "answer": "きっかけ",
+  "english": "A single book was what made me start aiming to become a doctor."
+ },
+ "にかけては": {
+  "pattern": "にかけては",
+  "meaning": "When it comes to, Regarding, Concerning",
+  "sentence": "料理（　）、彼はクラスの誰にも負けない。",
+  "answer": "にかけては",
+  "english": "When it comes to cooking, he is second to no one in the class."
+ },
+ "とっくに": {
+  "pattern": "とっくに",
+  "meaning": "Already, A long time ago, Long ago",
+  "sentence": "駅に着いたときには、電車は（　）出ていた。",
+  "answer": "とっくに",
+  "english": "By the time I got to the station, the train had long since left."
+ },
+ "未だに": {
+  "pattern": "未だに",
+  "meaning": "Still, Not yet, Even now",
+  "sentence": "三年前のことを、（　）覚えている。",
+  "answer": "未だに",
+  "english": "I still remember what happened three years ago."
+ },
+ "をもとに": {
+  "pattern": "をもとに",
+  "meaning": "Based on, From, According to",
+  "sentence": "実際の事件（　）、この映画は作られた。",
+  "answer": "をもとに",
+  "english": "This film was made based on a real incident."
+ },
+ "からには": {
+  "pattern": "からには",
+  "meaning": "As long as, Since, Given",
+  "sentence": "試合に出る（　）、絶対に勝ちたい。",
+  "answer": "からには",
+  "english": "Since I'm playing in the match, I absolutely want to win."
+ },
+ "いつの間にか": {
+  "pattern": "いつの間にか",
+  "meaning": "before one knew it, without one noticing",
+  "sentence": "本を読んでいたら、（　）夜が明けていた。",
+  "answer": "いつの間にか",
+  "english": "I was reading a book, and before I knew it, dawn had broken."
+ },
+ "一旦": {
+  "pattern": "一旦",
+  "meaning": "once, for the time being",
+  "sentence": "（　）家に帰ってから、また出かけます。",
+  "answer": "一旦",
+  "english": "I'll go home once, then head out again."
+ },
+ "はもとより": {
+  "pattern": "はもとより",
+  "meaning": "not only X, but also Y, with X taken as a given",
+  "sentence": "この店は、味（　）、サービスも素晴らしい。",
+  "answer": "はもとより",
+  "english": "At this restaurant, not only the food but also the service is wonderful."
+ },
+ "そうにない": {
+  "pattern": "そうにない",
+  "meaning": "Unlikely to, Showing no signs of",
+  "sentence": "この雨は、今日中にはやみ（　）。",
+  "answer": "そうにない",
+  "english": "This rain doesn't look like it will stop today."
+ },
+ "に反して": {
+  "pattern": "に反して",
+  "meaning": "Go against, Contrary to",
+  "sentence": "予想（　）、売り上げは大きく伸びた。",
+  "answer": "に反して",
+  "english": "Contrary to expectations, sales grew significantly."
+ },
+ "逆に": {
+  "pattern": "逆に",
+  "meaning": "On the contrary",
+  "sentence": "薬を飲んだら、（　）具合が悪くなった。",
+  "answer": "逆に",
+  "english": "When I took the medicine, I actually felt worse."
+ },
+ "反面": {
+  "pattern": "反面",
+  "meaning": "on the other hand",
+  "sentence": "都会の生活は便利な（　）、物価が高い。",
+  "answer": "反面",
+  "english": "City life is convenient, but on the other hand prices are high."
+ },
+ "抜きで": {
+  "pattern": "抜きで",
+  "meaning": "without, leaving out",
+  "sentence": "今日は堅い話は（　）、楽しく飲みましょう。",
+  "answer": "抜きで",
+  "english": "Let's skip the serious talk today and enjoy our drinks."
+ },
+ "いよいよ": {
+  "pattern": "いよいよ",
+  "meaning": "At last, Finally, More and more",
+  "sentence": "（　）明日から夏休みだ。",
+  "answer": "いよいよ",
+  "english": "Summer vacation finally starts tomorrow."
+ },
+ "ずに済む": {
+  "pattern": "ずに済む",
+  "meaning": "Get by without doing something, To get away with",
+  "sentence": "友達が車で送ってくれたので、タクシーを使わ（　）んだ。",
+  "answer": "ずに済",
+  "english": "A friend drove me, so I got by without using a taxi."
+ },
+ "に応じて": {
+  "pattern": "に応じて",
+  "meaning": "according to a need or in response to it",
+  "sentence": "予算（　）、旅行のプランを選べます。",
+  "answer": "に応じて",
+  "english": "You can choose a travel plan according to your budget."
+ },
+ "を通じて-を通して": {
+  "pattern": "を通じて・を通して",
+  "meaning": "Through, Via, Throughout",
+  "sentence": "この島は一年（　）暖かい。",
+  "answer": "を通じて",
+  "english": "This island is warm throughout the year."
+ },
+ "に応えて": {
+  "pattern": "に応えて",
+  "meaning": "In response to, Meet",
+  "sentence": "ファンの声（　）、歌手はもう一曲歌った。",
+  "answer": "に応えて",
+  "english": "In response to the fans, the singer sang one more song."
+ },
+ "それとも": {
+  "pattern": "それとも",
+  "meaning": "or (introducing the alternative in a question)",
+  "sentence": "コーヒーにしますか、（　）紅茶にしますか。",
+  "answer": "それとも",
+  "english": "Would you like coffee, or would you prefer tea?"
+ },
+ "にしたら": {
+  "pattern": "にしたら",
+  "meaning": "From the point of view of",
+  "sentence": "親（　）、子どもの一人暮らしは心配なものだ。",
+  "answer": "にしたら",
+  "english": "From a parent's point of view, a child living alone is a worry."
+ },
+ "としては": {
+  "pattern": "としては",
+  "meaning": "As a, For a, As for",
+  "sentence": "私（　）、この案に賛成です。",
+  "answer": "としては",
+  "english": "As for me, I'm in favor of this proposal."
+ },
+ "としても": {
+  "pattern": "としても",
+  "meaning": "even if we suppose that",
+  "sentence": "たとえ反対された（　）、自分の夢をあきらめない。",
+  "answer": "としても",
+  "english": "Even if people oppose me, I won't give up on my dream."
+ },
+ "ことなく": {
+  "pattern": "ことなく",
+  "meaning": "Without ~ing",
+  "sentence": "彼は一日も休む（　）、練習を続けた。",
+  "answer": "ことなく",
+  "english": "He kept practicing without taking a single day off."
+ },
+ "にて": {
+  "pattern": "にて",
+  "meaning": "In, At, With, Using, By",
+  "sentence": "説明会は、本社の会議室（　）行います。",
+  "answer": "にて",
+  "english": "The briefing will be held in the conference room at head office."
+ },
+ "には": {
+  "pattern": "には",
+  "meaning": "In order to, In regard to, For",
+  "sentence": "駅に行く（　）、この道をまっすぐ進んでください。",
+  "answer": "には",
+  "english": "To get to the station, go straight along this road."
+ },
+ "思うように": {
+  "pattern": "思うように",
+  "meaning": "As one hopes, As desired, As one thought",
+  "sentence": "雨のせいで、工事が（　）進まない。",
+  "answer": "思うように",
+  "english": "Because of the rain, the construction isn't progressing as hoped."
+ },
+ "かと思ったら-かと思うと": {
+  "pattern": "かと思ったら・かと思うと",
+  "meaning": "just when it seemed that X, Y immediately followed",
+  "sentence": "晴れた（　）、急に雨が降り出した。",
+  "answer": "かと思ったら",
+  "english": "Just when I thought it had cleared up, it suddenly started to rain."
+ },
+ "～ばと思います": {
+  "pattern": "～ばと思います",
+  "meaning": "I hope that",
+  "sentence": "この資料が皆様のお役に立て（　）。",
+  "answer": "ばと思います",
+  "english": "I hope these materials will be of use to you all."
+ },
+ "というものでもない": {
+  "pattern": "というものでもない",
+  "meaning": "it is not necessarily true that, X does not always imply Y",
+  "sentence": "値段が高ければ品質がいい（　）。",
+  "answer": "というものでもない",
+  "english": "A higher price doesn't necessarily mean better quality."
+ },
+ "と考えられる": {
+  "pattern": "と考えられる",
+  "meaning": "it can reasonably be thought that",
+  "sentence": "事故の原因は、運転手の不注意（　）。",
+  "answer": "と考えられる",
+  "english": "The cause of the accident is thought to be the driver's carelessness."
+ },
+ "という点から考えると": {
+  "pattern": "という点から考えると",
+  "meaning": "considering it from the standpoint of",
+  "sentence": "安全（　）、この計画には問題がある。",
+  "answer": "という点から考えると",
+  "english": "Considering it from a safety standpoint, this plan has problems."
+ },
+ "ということは": {
+  "pattern": "ということは",
+  "meaning": "That means, That is to say",
+  "sentence": "電気が消えている（　）、もう寝たのだろう。",
+  "answer": "ということは",
+  "english": "The lights being off means they've probably gone to bed."
+ },
+ "ふうに": {
+  "pattern": "ふうに",
+  "meaning": "~ way, In a way that suggests, Like ~",
+  "sentence": "こんな（　）、毎日少しずつ練習すれば上達します。",
+  "answer": "ふうに",
+  "english": "If you practice a little every day like this, you'll improve."
+ },
+ "という風に": {
+  "pattern": "という風に",
+  "meaning": "in such a way",
+  "sentence": "月曜は英語、火曜は数学（　）、毎日違う科目を勉強する。",
+  "answer": "という風に",
+  "english": "I study a different subject each day, in such a way that Monday is English and Tuesday is maths."
+ },
+ "ものの": {
+  "pattern": "ものの",
+  "meaning": "Although, But, Even Though",
+  "sentence": "免許は取った（　）、まだ一度も運転していない。",
+  "answer": "ものの",
+  "english": "Although I got my license, I haven't driven even once."
+ },
+ "というものだ": {
+  "pattern": "というものだ",
+  "meaning": "Speaker's impression, Criticism or conclusion",
+  "sentence": "困っている友人を助けるのが、本当の友情（　）。",
+  "answer": "というものだ",
+  "english": "Helping a friend in trouble is what true friendship is."
+ },
+ "から見ると": {
+  "pattern": "から見ると",
+  "meaning": "From the point of view of, By the look of",
+  "sentence": "外国人（　）、日本の習慣は不思議に思えるらしい。",
+  "answer": "から見ると",
+  "english": "From a foreigner's point of view, Japanese customs apparently seem strange."
+ },
+ "ところを見ると": {
+  "pattern": "ところを見ると",
+  "meaning": "Judging from, Seeing that",
+  "sentence": "笑っている（　）、試験はうまくいったようだ。",
+  "answer": "ところを見ると",
+  "english": "Judging from the way they're smiling, the exam seems to have gone well."
+ },
+ "からすると-からすれば": {
+  "pattern": "からすると・からすれば",
+  "meaning": "Judging from, Considering",
+  "sentence": "あの話し方（　）、彼は関西の出身だろう。",
+  "answer": "からすると",
+  "english": "Judging from the way he talks, he's probably from the Kansai region."
+ },
+ "からして": {
+  "pattern": "からして",
+  "meaning": "Even..., Judging from, Based on",
+  "sentence": "この店は入り口（　）、高級な雰囲気がある。",
+  "answer": "からして",
+  "english": "Even from the entrance, this restaurant has an upscale atmosphere."
+ },
+ "からといって": {
+  "pattern": "からといって",
+  "meaning": "Just because",
+  "sentence": "安い（　）、必要のない物を買うべきではない。",
+  "answer": "からといって",
+  "english": "Just because something is cheap doesn't mean you should buy things you don't need."
+ },
+ "そういえば": {
+  "pattern": "そういえば",
+  "meaning": "Speaking of which, By the way, Come to think of it",
+  "sentence": "（　）、駅前に新しいカフェができたらしいよ。",
+  "answer": "そういえば",
+  "english": "Come to think of it, I heard a new café opened in front of the station."
+ },
+ "て頂戴": {
+  "pattern": "～て頂戴",
+  "meaning": "please do (familiar request)",
+  "sentence": "ちょっと、その塩を取っ（　）。",
+  "answer": "て頂戴",
+  "english": "Hey, pass me that salt, would you?"
+ },
+ "とか": {
+  "pattern": "とか",
+  "meaning": "reportedly, or among other examples",
+  "sentence": "来月、駅前に大きな本屋ができる（　）。",
+  "answer": "とか",
+  "english": "I hear a big bookstore is opening in front of the station next month."
+ },
+ "ようではないか": {
+  "pattern": "〜ようではないか",
+  "meaning": "Let's do something, Why don't we",
+  "sentence": "困っている人がいるなら、皆で助け（　）。",
+  "answer": "ようではないか",
+  "english": "If there are people in trouble, let us all help them."
+ },
+ "かのようだ": {
+  "pattern": "かのようだ",
+  "meaning": "As if, Just like",
+  "sentence": "四月なのに、まるで冬に戻った（　）。",
+  "answer": "かのようだ",
+  "english": "It's April, yet it is just as if winter had come back."
+ },
+ "のではないだろうか": {
+  "pattern": "のではないだろうか",
+  "meaning": "might it be that",
+  "sentence": "この計画は、少し無理がある（　）。",
+  "answer": "のではないだろうか",
+  "english": "Might this plan be a little unrealistic?"
+ },
+ "て当然だ": {
+  "pattern": "て当然だ",
+  "meaning": "Natural, As a matter of course",
+  "sentence": "あれだけ練習したのだから、勝っ（　）。",
+  "answer": "て当然だ",
+  "english": "After practicing that much, it's only natural that they won."
+ },
+ "たった-の": {
+  "pattern": "たった(の)",
+  "meaning": "Only, Just, No more than",
+  "sentence": "（　）五分で、宿題を終わらせた。",
+  "answer": "たった",
+  "english": "I finished my homework in just five minutes."
+ },
+ "恐れがある": {
+  "pattern": "恐れがある",
+  "meaning": "there is a risk that",
+  "sentence": "台風が近づいているので、電車が止まる（　）。",
+  "answer": "恐れがある",
+  "english": "A typhoon is approaching, so there is a risk the trains will stop."
+ },
+ "おそらく": {
+  "pattern": "おそらく",
+  "meaning": "probably, most likely",
+  "sentence": "（　）、彼は今日の会議には来ないだろう。",
+  "answer": "おそらく",
+  "english": "He probably won't come to today's meeting."
+ },
+ "ものか": {
+  "pattern": "ものか",
+  "meaning": "emphatic refusal or denial",
+  "sentence": "あんなまずい店、二度と行く（　）。",
+  "answer": "ものか",
+  "english": "That awful restaurant? As if I'd ever go there again!"
+ },
+ "おまけに": {
+  "pattern": "おまけに",
+  "meaning": "on top of that",
+  "sentence": "道に迷い、（　）雨まで降ってきた。",
+  "answer": "おまけに",
+  "english": "I got lost, and on top of that it started raining."
+ },
+ "に決まっている": {
+  "pattern": "に決まっている",
+  "meaning": "Surely, Bound to, Certainly, Be decided",
+  "sentence": "そんな高い物、売れない（　）。",
+  "answer": "に決まっている",
+  "english": "Something that expensive is bound not to sell."
+ },
+ "ことになっている": {
+  "pattern": "ことになっている",
+  "meaning": "is arranged, scheduled, or prescribed to",
+  "sentence": "会議は毎週月曜日に開く（　）。",
+  "answer": "ことになっている",
+  "english": "The meeting is supposed to be held every Monday."
+ },
+ "ことだから": {
+  "pattern": "ことだから",
+  "meaning": "knowing what this person is like, one can expect that",
+  "sentence": "真面目な彼の（　）、きっと時間通りに来るだろう。",
+  "answer": "ことだから",
+  "english": "He's so conscientious that he'll surely arrive on time."
+ },
+ "ものだから": {
+  "pattern": "ものだから",
+  "meaning": "Because, The reason is",
+  "sentence": "道が混んでいた（　）、約束に遅れてしまった。",
+  "answer": "ものだから",
+  "english": "The roads were so crowded that I ended up late for my appointment."
+ },
+ "ものですから-もので": {
+  "pattern": "ものですから・もので",
+  "meaning": "Because, My excuse is, My explanation is",
+  "sentence": "すみません、電車が止まっていた（　）、遅れてしまいました。",
+  "answer": "もので",
+  "english": "I'm sorry, the trains had stopped, so I'm late."
+ },
+ "ものがある": {
+  "pattern": "ものがある",
+  "meaning": "there is something about it that, it has a noticeable quality",
+  "sentence": "彼の演奏には、人の心を動かす（　）。",
+  "answer": "ものがある",
+  "english": "There is something in his playing that moves people's hearts."
+ },
+ "傾向がある": {
+  "pattern": "傾向がある",
+  "meaning": "Tendency, Trend, Inclination",
+  "sentence": "最近の若者は、車を買わない（　）。",
+  "answer": "傾向がある",
+  "english": "Young people these days tend not to buy cars."
+ },
+ "に値する": {
+  "pattern": "～に値する",
+  "meaning": "is worthy of, merits",
+  "sentence": "彼の努力は、尊敬（　）。",
+  "answer": "に値する",
+  "english": "His effort is worthy of respect."
+ },
+ "てしょうがない": {
+  "pattern": "てしょうがない",
+  "meaning": "extremely, so much that one cannot help feeling it",
+  "sentence": "昨日あまり寝ていないので、眠く（　）。",
+  "answer": "てしょうがない",
+  "english": "I barely slept last night, so I'm terribly sleepy."
+ },
+ "だけましだ": {
+  "pattern": "だけましだ",
+  "meaning": "at least X, that makes it better than it could be",
+  "sentence": "給料は安いが、仕事がある（　）。",
+  "answer": "だけましだ",
+  "english": "The pay is low, but at least I have a job."
+ },
+ "幸い-幸いなことに": {
+  "pattern": "幸い・幸いなことに",
+  "meaning": "Luckily, Fortunately",
+  "sentence": "（　）、けがをした人はいなかった。",
+  "answer": "幸い",
+  "english": "Fortunately, nobody was injured."
+ },
+ "ようでは-ようじゃ": {
+  "pattern": "ようでは・ようじゃ",
+  "meaning": "if things are such that X, the outlook is poor",
+  "sentence": "こんな簡単な問題ができない（　）、合格は難しい。",
+  "answer": "ようでは",
+  "english": "If you can't solve a problem this simple, passing will be difficult."
+ },
+ "さらに": {
+  "pattern": "更に",
+  "meaning": "Even more or further, Again, More and more",
+  "sentence": "駅から（　）十分ほど歩くと、海が見えます。",
+  "answer": "更に",
+  "english": "If you walk a further ten minutes from the station, you'll see the sea."
+ },
+ "精々": {
+  "pattern": "精々",
+  "meaning": "(At) most , (At) best, No more than, Barely",
+  "sentence": "頑張っても、（　）三十点しか取れないだろう。",
+  "answer": "精々",
+  "english": "Even if I try hard, I'll probably get thirty points at most."
+ },
+ "僅かに": {
+  "pattern": "僅かに",
+  "meaning": "Only, Slightly, A little, Barely, Merely",
+  "sentence": "試験では、合格点に（　）届かなかった。",
+  "answer": "僅かに",
+  "english": "In the exam, I fell just slightly short of the passing mark."
+ },
+ "および": {
+  "pattern": "および",
+  "meaning": "And, As well as",
+  "sentence": "氏名（　）住所を、こちらにご記入ください。",
+  "answer": "および",
+  "english": "Please fill in your name and address here."
+ },
+ "たちまち": {
+  "pattern": "たちまち",
+  "meaning": "Immediately, Quickly, Suddenly, In a moment or flash",
+  "sentence": "新しいゲームは、発売されると（　）売り切れた。",
+  "answer": "たちまち",
+  "english": "The new game sold out the moment it was released."
+ },
+ "いきなり": {
+  "pattern": "いきなり",
+  "meaning": "For no reason, Suddenly, All of a sudden",
+  "sentence": "前を歩いていた人が、（　）立ち止まった。",
+  "answer": "いきなり",
+  "english": "The person walking in front of me suddenly stopped."
+ },
+ "といった": {
+  "pattern": "といった",
+  "meaning": "such as, of the kind exemplified by",
+  "sentence": "京都や奈良（　）古い町が好きだ。",
+  "answer": "といった",
+  "english": "I love old towns such as Kyoto and Nara."
+ },
+ "を込めて": {
+  "pattern": "を込めて",
+  "meaning": "with a feeling put into an action",
+  "sentence": "母のために、心（　）ケーキを焼いた。",
+  "answer": "を込めて",
+  "english": "I put my heart into baking a cake for my mother."
+ },
+ "に加えて": {
+  "pattern": "に加えて",
+  "meaning": "Not only...but also, In addition, Not to mention",
+  "sentence": "強い風（　）、雨も激しくなってきた。",
+  "answer": "に加えて",
+  "english": "On top of the strong wind, the rain has also grown heavy."
+ },
+ "何から何まで": {
+  "pattern": "何から何まで",
+  "meaning": "absolutely everything",
+  "sentence": "引っ越しでは、（　）お世話になりました。",
+  "answer": "何から何まで",
+  "english": "You helped me with absolutely everything during the move."
+ },
+ "は別として": {
+  "pattern": "は別として",
+  "meaning": "leaving an issue aside",
+  "sentence": "好き嫌い（　）、野菜は食べたほうがいい。",
+  "answer": "は別として",
+  "english": "Whether you like them or not, you should eat your vegetables."
+ },
+ "だけに": {
+  "pattern": "だけに",
+  "meaning": "precisely because of a circumstance",
+  "sentence": "期待していた（　）、負けたときのショックは大きかった。",
+  "answer": "だけに",
+  "english": "Precisely because I had high hopes, the shock of losing was great."
+ },
+ "だけは": {
+  "pattern": "だけは",
+  "meaning": "To do all that one can, As much or many ~ as one could",
+  "sentence": "やる（　）やったので、結果がどうでも後悔はない。",
+  "answer": "だけは",
+  "english": "I did all I could, so whatever the result, I have no regrets."
+ },
+ "だけあって": {
+  "pattern": "だけあって",
+  "meaning": "as one would expect given a quality",
+  "sentence": "十年も住んでいた（　）、彼はこの町に詳しい。",
+  "answer": "だけあって",
+  "english": "As you'd expect from someone who lived here ten years, he knows this town well."
+ },
+ "何より": {
+  "pattern": "何より",
+  "meaning": "above all",
+  "sentence": "（　）大切なのは、毎日続けることだ。",
+  "answer": "何より",
+  "english": "Above all, what matters is keeping it up every day."
+ },
+ "何といっても": {
+  "pattern": "何といっても",
+  "meaning": "above all, the standout point is",
+  "sentence": "日本の夏の楽しみは、（　）花火だ。",
+  "answer": "何といっても",
+  "english": "The highlight of a Japanese summer is, without doubt, the fireworks."
+ },
+ "か何か": {
+  "pattern": "か何か",
+  "meaning": "Or something, Or something like that",
+  "sentence": "喉が渇いたから、お茶（　）飲みたい。",
+  "answer": "か何か",
+  "english": "I'm thirsty, so I'd like some tea or something."
+ },
+ "てならない": {
+  "pattern": "てならない",
+  "meaning": "Very, Extremely, Can't help but do",
+  "sentence": "あと一点で負けてしまい、悔しく（　）。",
+  "answer": "てならない",
+  "english": "We lost by a single point, and I can't help feeling bitter about it."
+ },
+ "のみ": {
+  "pattern": "のみ",
+  "meaning": "Only (formal)",
+  "sentence": "応募は、インターネットで（　）受け付けます。",
+  "answer": "のみ",
+  "english": "Applications are accepted online only."
+ },
+ "のみならず": {
+  "pattern": "のみならず",
+  "meaning": "Not only...but, Not just...but, What is more",
+  "sentence": "この問題は日本（　）、世界中で起きている。",
+  "answer": "のみならず",
+  "english": "This problem is happening not only in Japan but all over the world."
+ },
+ "それなのに": {
+  "pattern": "それなのに",
+  "meaning": "And yet, Despite this",
+  "sentence": "毎日練習してきた。（　）、一度も勝てない。",
+  "answer": "それなのに",
+  "english": "I've practiced every day, and yet I can't win even once."
+ },
+ "いわゆる": {
+  "pattern": "いわゆる",
+  "meaning": "What is called, So-called, Generally known",
+  "sentence": "彼は三歳で字が読めた。（　）天才だ。",
+  "answer": "いわゆる",
+  "english": "He could read at three; he is what people call a genius."
+ },
+ "にすぎない": {
+  "pattern": "にすぎない",
+  "meaning": "No more than, Just, Merely",
+  "sentence": "これは私の個人的な意見（　）。",
+  "answer": "にすぎない",
+  "english": "This is merely my personal opinion."
+ },
+ "でしかない": {
+  "pattern": "でしかない",
+  "meaning": "Merely, Nothing but, No more than",
+  "sentence": "どんなに有名でも、家ではただの父親（　）。",
+  "answer": "でしかない",
+  "english": "However famous he is, at home he's nothing but an ordinary father."
+ },
+ "てたまらない": {
+  "pattern": "てたまらない",
+  "meaning": "Can't help but want to, Very, Extremely",
+  "sentence": "試験が終わって、早く遊びに行きたく（　）。",
+  "answer": "てたまらない",
+  "english": "The exam is over, and I'm dying to go out and have fun."
+ },
+ "にせよ-にしろ": {
+  "pattern": "にせよ・にしろ",
+  "meaning": "even assuming that",
+  "sentence": "どんな理由がある（　）、暴力は許されない。",
+  "answer": "にせよ",
+  "english": "Whatever the reason may be, violence cannot be tolerated."
+ },
+ "何しろ": {
+  "pattern": "何しろ",
+  "meaning": "No wonder, After all, In fact, Because, At any rate",
+  "sentence": "（　）初めての海外旅行なので、緊張している。",
+  "answer": "何しろ",
+  "english": "After all, it's my first trip abroad, so I'm nervous."
+ },
+ "はともかく": {
+  "pattern": "はともかく",
+  "meaning": "Setting aside, Apart from",
+  "sentence": "見た目（　）、味はとてもいい。",
+  "answer": "はともかく",
+  "english": "Looks aside, it tastes very good."
+ },
+ "ならともかく": {
+  "pattern": "ならともかく",
+  "meaning": "If it's (A), sure, but (B), Putting aside (A), (B)",
+  "sentence": "子ども（　）、大人がそんなことをするなんて。",
+  "answer": "ならともかく",
+  "english": "A child, maybe, but I can't believe an adult would do something like that."
+ },
+ "ことにはならない": {
+  "pattern": "ことにはならない",
+  "meaning": "it does not amount to",
+  "sentence": "一度謝っただけでは、責任を果たした（　）。",
+  "answer": "ことにはならない",
+  "english": "Apologizing once doesn't amount to taking responsibility."
+ },
+ "だけのことはある": {
+  "pattern": "だけのことはある",
+  "meaning": "lives up to X, proves worth the price, effort, or reputation",
+  "sentence": "この料理は本当においしい。値段が高い（　）。",
+  "answer": "だけのことはある",
+  "english": "This dish is really delicious. No wonder the price is high."
+ },
+ "てはならない": {
+  "pattern": "てはならない",
+  "meaning": "Must not, Cannot, Should not",
+  "sentence": "試験中に、隣の人と話し（　）。",
+  "answer": "てはならない",
+  "english": "You must not talk to the person next to you during the exam."
+ },
+ "てはいられない": {
+  "pattern": "てはいられない",
+  "meaning": "Can't afford to, Unable to",
+  "sentence": "試験まであと一週間だから、のんびりし（　）。",
+  "answer": "てはいられない",
+  "english": "There's only a week until the exam, so I can't afford to take it easy."
+ },
+ "しかも": {
+  "pattern": "しかも",
+  "meaning": "Moreover, Furthermore",
+  "sentence": "このかばんは軽くて、（　）丈夫だ。",
+  "answer": "しかも",
+  "english": "This bag is light, and what's more, it's sturdy."
+ },
+ "てでも": {
+  "pattern": "てでも",
+  "meaning": "even if it means doing X, even by resorting to X",
+  "sentence": "借金をし（　）、この店を続けたい。",
+  "answer": "てでも",
+  "english": "I want to keep this shop going, even if I have to borrow money."
+ },
+ "とも": {
+  "pattern": "とも",
+  "meaning": "Even if, No matter",
+  "sentence": "どんなに辛く（　）、最後まであきらめない。",
+  "answer": "とも",
+  "english": "No matter how hard it gets, I won't give up until the end."
+ },
+ "ないわけにはいかない": {
+  "pattern": "ないわけにはいかない",
+  "meaning": "cannot reasonably refrain from doing, have to do",
+  "sentence": "明日は大事な会議があるので、行か（　）。",
+  "answer": "ないわけにはいかない",
+  "english": "There's an important meeting tomorrow, so I can't not go."
+ },
+ "というわけではない": {
+  "pattern": "というわけではない",
+  "meaning": "it does not necessarily mean that",
+  "sentence": "嫌い（　）が、あまり肉は食べない。",
+  "answer": "というわけではない",
+  "english": "It's not that I dislike it, but I don't eat much meat."
+ },
+ "のももっともだ": {
+  "pattern": "のももっともだ",
+  "meaning": "it is understandable that",
+  "sentence": "あんなにひどいことを言われたら、彼が怒る（　）。",
+  "answer": "のももっともだ",
+  "english": "After being told something that awful, it's understandable that he's angry."
+ },
+ "たって": {
+  "pattern": "たって",
+  "meaning": "even if (colloquial)",
+  "sentence": "今から走っ（　）、もう間に合わないよ。",
+  "answer": "たって",
+  "english": "Even if you run now, you won't make it in time."
+ }
+}

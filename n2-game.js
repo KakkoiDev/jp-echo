@@ -23,7 +23,7 @@
 import {recallItems, localDay} from "./n2-study.js";
 import {HELD_OUT} from "./n2-comprehension.js";
 import {connectiveSites, jobOf, glossOf, JOBS, OVERLAP, CHOICE_FOR_JOB, CONNECTIVES} from "./n2-connectives.js";
-import {ACCEPTED_READINGS, READING_KEY, EXCLUDED, GLOSS_FIX, GRAMMAR_SPANS, REVIEWED_LEVELS, REVIEWED_GRAMMAR_BLOCKS, REVIEWED_AFFIXES, AFFIX_GLOSS, AFFIX_CONFUSABLE, AFFIX_SHOWN, AFFIX_READING, LINK_NOT_WRONG, LINK_SHOWN, LINK_WHY, LINK_PARTS, WORD_PIECES, SCORE_ALL, GRAMMAR_CONFUSABLE} from "./n2-game-review.js";
+import {ACCEPTED_READINGS, READING_KEY, EXCLUDED, GLOSS_FIX, GRAMMAR_SPANS, REVIEWED_LEVELS, REVIEWED_GRAMMAR_BLOCKS, REVIEWED_AFFIXES, AFFIX_GLOSS, AFFIX_CONFUSABLE, AFFIX_SHOWN, AFFIX_READING, LINK_NOT_WRONG, LINK_SHOWN, LINK_WHY, LINK_PARTS, WORD_PIECES, LIST_LABEL, SCORE_ALL, GRAMMAR_CONFUSABLE} from "./n2-game-review.js";
 import {exampleSegments} from "./n2-delayed.js";
 import {LEVELS} from "./jlpt-levels.js";
 
@@ -132,8 +132,8 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
   const items = recallItems(inventory), pool = [];
   // Affixes such as ～発 are left out: they are not words to pick or read alone.
   // READING_KEY and GLOSS_FIX correct the N2 list; they are not applied elsewhere.
-  const allWords = items.meaning.map(it => { const text = it.target[1], reading = (!other && READING_KEY[text]) || it.reading || it.target[2];
-    return {target: it.target, text, reading, answer: (!other && (GLOSS_FIX[text + "/" + reading] || GLOSS_FIX[text])) || it.answer}; });
+  const allWords = items.meaning.map(it => (!other && LIST_LABEL[it.target[1]]) ? {target: it.target, ...LIST_LABEL[it.target[1]]} : (() => { const text = it.target[1], reading = (!other && READING_KEY[text]) || it.reading || it.target[2];
+    return {target: it.target, text, reading, answer: (!other && (GLOSS_FIX[text + "/" + reading] || GLOSS_FIX[text])) || it.answer}; })());
   // The prefixes and suffixes of the list (前～, ～気味): not words, but word parts with a card of their own (affixCards).
   const affixes = allWords.filter(w => /[〜～]/.test(w.text)), words = allWords.filter(w => !/[〜～]/.test(w.text));
   // Stable ids: a word written the same way twice (紅葉 こうよう / もみじ) carries its reading.
