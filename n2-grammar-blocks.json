@@ -2342,19 +2342,21 @@
       "parts": [
         {
           "text": "ざる",
-          "block": "zaru"
+          "block": "zaru",
+          "gloss": "not doing (literary negative)"
         },
         {
           "text": "を",
-          "block": "wo"
+          "block": "wo",
+          "gloss": "marks the alternative ruled out"
         },
         {
           "text": "得ない",
           "block": "enai",
-          "gloss": "cannot manage to"
+          "gloss": "cannot obtain or manage"
         }
       ],
-      "literal": "cannot succeed in not doing it",
+      "literal": "cannot choose not to do it: must do it",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",
@@ -2460,18 +2462,21 @@
       "parts": [
         {
           "text": "万",
-          "block": "man"
+          "block": "man",
+          "gloss": "ten thousand"
         },
         {
           "text": "が",
-          "block": "ga"
+          "block": "ga",
+          "gloss": "of or in (old genitive)"
         },
         {
           "text": "一",
-          "block": "ichi"
+          "block": "ichi",
+          "gloss": "one"
         }
       ],
-      "literal": "one case in ten thousand",
+      "literal": "one in ten thousand: in the unlikely event",
       "transparency": "partial",
       "solved": {
         "by": "review",
@@ -2482,18 +2487,21 @@
       "parts": [
         {
           "text": "よう",
-          "block": "you-way"
+          "block": "you-way",
+          "gloss": "available means or method"
         },
         {
           "text": "が",
-          "block": "ga"
+          "block": "ga",
+          "gloss": "marks the absent thing"
         },
         {
           "text": "ない",
-          "block": "nai"
+          "block": "nai",
+          "gloss": "there is none"
         }
       ],
-      "literal": "there is no available method",
+      "literal": "there is no way, or not even one way, to do it",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",
@@ -2534,14 +2542,15 @@
         {
           "text": "以上",
           "block": "ijou",
-          "gloss": "more than that level"
+          "gloss": "beyond the stated level"
         },
         {
           "text": "に",
-          "block": "ni"
+          "block": "ni",
+          "gloss": "marks the degree of comparison"
         }
       ],
-      "literal": "at or beyond the threshold",
+      "literal": "more than the stated level",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",
@@ -2999,18 +3008,21 @@
       "parts": [
         {
           "text": "こと",
-          "block": "koto"
+          "block": "koto",
+          "gloss": "the person or situation in question"
         },
         {
           "text": "だ",
-          "block": "da"
+          "block": "da",
+          "gloss": "is so"
         },
         {
           "text": "から",
-          "block": "kara-cause"
+          "block": "kara-cause",
+          "gloss": "because or given that"
         }
       ],
-      "literal": "gives the fact as a source",
+      "literal": "given what we know about that person",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",
@@ -3050,7 +3062,7 @@
           "block": "da"
         }
       ],
-      "literal": "uses a personal circumstance as a reason",
+      "literal": "because that is the circumstance",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",
@@ -3078,7 +3090,7 @@
           "block": "de"
         }
       ],
-      "literal": "at an intermediate point",
+      "literal": "at some point partway through",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",
@@ -3267,19 +3279,21 @@
       "parts": [
         {
           "text": "て",
-          "block": "te"
+          "block": "te",
+          "gloss": "links the first action"
         },
         {
           "text": "いて",
           "block": "iru",
-          "gloss": "keeps on being"
+          "gloss": "keeps doing or remains in the state"
         },
         {
           "text": "は",
-          "block": "wa"
+          "block": "wa",
+          "gloss": "sets an unwelcome condition"
         }
       ],
-      "literal": "given that the state continues",
+      "literal": "if you keep doing that, trouble will follow",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",
@@ -3309,19 +3323,21 @@
       "parts": [
         {
           "text": "どころ",
-          "block": "tokoro-degree"
+          "block": "tokoro-degree",
+          "gloss": "stage or scope in question"
         },
         {
           "text": "では",
           "block": "dewa",
-          "gloss": "is (not)"
+          "gloss": "as the situation in question"
         },
         {
           "text": "ない",
-          "block": "nai"
+          "block": "nai",
+          "gloss": "negative"
         }
       ],
-      "literal": "it is outside the degree at issue",
+      "literal": "this is no time or situation for that",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",
@@ -3332,14 +3348,16 @@
       "parts": [
         {
           "text": "て",
-          "block": "te"
+          "block": "te",
+          "gloss": "links the action to what follows"
         },
         {
           "text": "は",
-          "block": "wa"
+          "block": "wa",
+          "gloss": "sets the action as a condition"
         }
       ],
-      "literal": "takes the connected action as the topic",
+      "literal": "if that is done, expect the stated result",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",
@@ -3455,18 +3473,20 @@
         {
           "text": "か",
           "block": "ka",
-          "gloss": "was it? (it seemed so)"
+          "gloss": "uncertain: perhaps it happened"
         },
         {
           "text": "と",
-          "block": "to-quote"
+          "block": "to-quote",
+          "gloss": "quotes that impression"
         },
         {
           "text": "思ったら",
-          "block": "omou"
+          "block": "omou",
+          "gloss": "just when one thought that"
         }
       ],
-      "literal": "after thinking that might be so",
+      "literal": "just when it seemed so, the situation changed",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",
@@ -3503,18 +3523,21 @@
       "parts": [
         {
           "text": "という",
-          "block": "toiu"
+          "block": "toiu",
+          "gloss": "puts a label on the situation"
         },
         {
           "text": "もの",
-          "block": "mono-thing"
+          "block": "mono-thing",
+          "gloss": "what counts as that kind of thing"
         },
         {
           "text": "だ",
-          "block": "da"
+          "block": "da",
+          "gloss": "asserts the judgment"
         }
       ],
-      "literal": "asserts that it is such a thing",
+      "literal": "that really is what you would call it",
       "transparency": "partial",
       "solved": {
         "by": "blocks+sentence",
@@ -3598,14 +3621,16 @@
       "parts": [
         {
           "text": "もの",
-          "block": "mono-refusal"
+          "block": "mono-refusal",
+          "gloss": "frames the proposition"
         },
         {
           "text": "か",
-          "block": "ka"
+          "block": "ka",
+          "gloss": "rhetorical question"
         }
       ],
-      "literal": "challenges whether one would do such a thing",
+      "literal": "could that possibly be so? certainly not",
       "transparency": "partial",
       "solved": {
         "by": "blocks+sentence",
@@ -3688,15 +3713,16 @@
       "parts": [
         {
           "text": "よう",
-          "block": "you-appearance"
+          "block": "you-appearance",
+          "gloss": "condition or way things appear"
         },
         {
           "text": "では",
           "block": "dewa",
-          "gloss": "if it is like"
+          "gloss": "if that is the condition"
         }
       ],
-      "literal": "with a situation of this sort as the premise",
+      "literal": "if things are like that, trouble is likely",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",
@@ -3754,14 +3780,15 @@
         {
           "text": "だけ",
           "block": "dake",
-          "gloss": "to just that degree"
+          "gloss": "that much or exactly for that reason"
         },
         {
           "text": "に",
-          "block": "ni"
+          "block": "ni",
+          "gloss": "links degree or reason to a result"
         }
       ],
-      "literal": "because of exactly that extent",
+      "literal": "all the more for that reason",
       "transparency": "partial",
       "solved": {
         "by": "review",
@@ -4015,24 +4042,26 @@
       "parts": [
         {
           "text": "という",
-          "block": "toiu"
+          "block": "toiu",
+          "gloss": "quotes the stated conclusion"
         },
         {
           "text": "わけ",
           "block": "wake",
-          "gloss": "the conclusion one would draw"
+          "gloss": "conclusion one would draw"
         },
         {
           "text": "では",
           "block": "dewa",
-          "gloss": "is (not)"
+          "gloss": "sets up the proposed conclusion"
         },
         {
           "text": "ない",
-          "block": "nai"
+          "block": "nai",
+          "gloss": "negates it"
         }
       ],
-      "literal": "the stated conclusion does not follow",
+      "literal": "that does not mean the conclusion follows",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",
@@ -4063,14 +4092,16 @@
       "parts": [
         {
           "text": "に",
-          "block": "ni"
+          "block": "ni",
+          "gloss": "points to a destination or goal"
         },
         {
           "text": "向かって",
-          "block": "mukau"
+          "block": "mukau",
+          "gloss": "facing or going toward"
         }
       ],
-      "literal": "orient the action toward a point",
+      "literal": "facing or directing something toward a goal",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",
@@ -4462,18 +4493,21 @@
       "parts": [
         {
           "text": "から",
-          "block": "kara"
+          "block": "kara",
+          "gloss": "because of that fact"
         },
         {
           "text": "と",
-          "block": "to-quote"
+          "block": "to-quote",
+          "gloss": "quotes the stated reason"
         },
         {
           "text": "いって",
-          "block": "iu"
+          "block": "iu",
+          "gloss": "even on the claim just made"
         }
       ],
-      "literal": "quote that starting point as a reason",
+      "literal": "just because that is so does not mean it follows",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",
@@ -4484,23 +4518,26 @@
       "parts": [
         {
           "text": "よう",
-          "block": "you-volition"
+          "block": "you-volition",
+          "gloss": "volitional: let's do it"
         },
         {
           "text": "では",
-          "block": "dewa"
+          "block": "dewa",
+          "gloss": "sets up a negative question"
         },
         {
           "text": "ない",
-          "block": "nai"
+          "block": "nai",
+          "gloss": "negative"
         },
         {
           "text": "か",
           "block": "ka",
-          "gloss": "shall we? (question)"
+          "gloss": "question marker"
         }
       ],
-      "literal": "why do we not do it together?",
+      "literal": "why don't we do it?",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",
@@ -4954,14 +4991,16 @@
       "parts": [
         {
           "text": "に",
-          "block": "ni"
+          "block": "ni",
+          "gloss": "marks the circumstance or unit"
         },
         {
           "text": "つき",
-          "block": "tsuki"
+          "block": "tsuki",
+          "gloss": "attaches something to that basis"
         }
       ],
-      "literal": "records what attaches to the unit or circumstance",
+      "literal": "because of that; or per that unit",
       "transparency": "partial",
       "solved": {
         "by": "review",
@@ -4972,15 +5011,16 @@
       "parts": [
         {
           "text": "に",
-          "block": "ni"
+          "block": "ni",
+          "gloss": "links to the occasion"
         },
         {
           "text": "つけ",
           "block": "tsukeru",
-          "gloss": "in connection with (each time)"
+          "gloss": "as it comes up (fixed usage)"
         }
       ],
-      "literal": "attach a reaction to that occasion",
+      "literal": "each time that happens",
       "transparency": "partial",
       "solved": {
         "by": "review",
@@ -5087,7 +5127,7 @@
           "block": "de"
         }
       ],
-      "literal": "in the setting governed by the development",
+      "literal": "it depends on that factor",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",
@@ -5377,27 +5417,31 @@
       "parts": [
         {
           "text": "いつ",
-          "block": "itsu"
+          "block": "itsu",
+          "gloss": "when, unspecified"
         },
         {
           "text": "の",
-          "block": "no"
+          "block": "no",
+          "gloss": "links the time to the interval"
         },
         {
           "text": "間",
-          "block": "ma"
+          "block": "ma",
+          "gloss": "interval"
         },
         {
           "text": "に",
-          "block": "ni"
+          "block": "ni",
+          "gloss": "within that interval"
         },
         {
           "text": "か",
           "block": "ka",
-          "gloss": "some- (indefinite)"
+          "gloss": "marks uncertainty"
         }
       ],
-      "literal": "somewhere in an unspecified interval",
+      "literal": "at some point without anyone noticing",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",
@@ -5436,14 +5480,16 @@
       "parts": [
         {
           "text": "を",
-          "block": "wo"
+          "block": "wo",
+          "gloss": "marks the channel or span"
         },
         {
           "text": "通じて",
-          "block": "tsuujiru"
+          "block": "tsuujiru",
+          "gloss": "through, via, throughout"
         }
       ],
-      "literal": "through it, from end to end",
+      "literal": "through a channel or over an entire span",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",
@@ -5476,27 +5522,31 @@
       "parts": [
         {
           "text": "という",
-          "block": "toiu"
+          "block": "toiu",
+          "gloss": "quotes the general claim"
         },
         {
           "text": "もの",
-          "block": "mono-thing"
+          "block": "mono-thing",
+          "gloss": "the sort of thing one can say"
         },
         {
           "text": "で",
-          "block": "da"
+          "block": "da",
+          "gloss": "links to the implied judgment"
         },
         {
           "text": "も",
           "block": "mo",
-          "gloss": "(not) necessarily"
+          "gloss": "softens the categorical denial"
         },
         {
           "text": "ない",
-          "block": "nai"
+          "block": "nai",
+          "gloss": "negates the judgment"
         }
       ],
-      "literal": "it does not amount to the stated kind of thing",
+      "literal": "you cannot necessarily generalize that way",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",
@@ -5671,27 +5721,30 @@
         {
           "text": "の",
           "block": "no",
-          "gloss": "makes the clause a thing"
+          "gloss": "packages the proposition"
         },
         {
           "text": "では",
-          "block": "dewa"
+          "block": "dewa",
+          "gloss": "as a proposed judgment"
         },
         {
           "text": "ない",
-          "block": "nai"
+          "block": "nai",
+          "gloss": "negative"
         },
         {
           "text": "だろう",
-          "block": "darou"
+          "block": "darou",
+          "gloss": "tentative supposition"
         },
         {
           "text": "か",
           "block": "ka",
-          "gloss": "I wonder (question)"
+          "gloss": "marks the question"
         }
       ],
-      "literal": "could it be that it is so?",
+      "literal": "might that be the explanation?",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",
@@ -5868,22 +5921,26 @@
       "parts": [
         {
           "text": "て",
-          "block": "te"
+          "block": "te",
+          "gloss": "links to the ongoing feeling"
         },
         {
           "text": "しょう",
-          "block": "shiyou"
+          "block": "shiyou",
+          "gloss": "a way to deal with it"
         },
         {
           "text": "が",
-          "block": "ga"
+          "block": "ga",
+          "gloss": "marks what is absent"
         },
         {
           "text": "ない",
-          "block": "nai"
+          "block": "nai",
+          "gloss": "does not exist"
         }
       ],
-      "literal": "a response to the linked state is unavailable",
+      "literal": "cannot help feeling it; feel it intensely",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",
@@ -6027,22 +6084,26 @@
       "parts": [
         {
           "text": "何",
-          "block": "nani"
+          "block": "nani",
+          "gloss": "one thing in a range"
         },
         {
           "text": "から",
-          "block": "kara"
+          "block": "kara",
+          "gloss": "from"
         },
         {
           "text": "何",
-          "block": "nani"
+          "block": "nani",
+          "gloss": "another thing in that range"
         },
         {
           "text": "まで",
-          "block": "made"
+          "block": "made",
+          "gloss": "all the way to"
         }
       ],
-      "literal": "from whatever to whatever",
+      "literal": "from one end to the other: everything",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",
@@ -6090,23 +6151,26 @@
       "parts": [
         {
           "text": "何",
-          "block": "nani"
+          "block": "nani",
+          "gloss": "anything one might name"
         },
         {
           "text": "と",
-          "block": "to-quote"
+          "block": "to-quote",
+          "gloss": "marks what is said"
         },
         {
           "text": "いって",
-          "block": "iu"
+          "block": "iu",
+          "gloss": "say"
         },
         {
           "text": "も",
           "block": "mo",
-          "gloss": "even"
+          "gloss": "even if"
         }
       ],
-      "literal": "no matter which case one mentions",
+      "literal": "whatever else you say: above all",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",
@@ -6141,15 +6205,16 @@
       "parts": [
         {
           "text": "て",
-          "block": "te"
+          "block": "te",
+          "gloss": "links the feeling or state"
         },
         {
           "text": "ならない",
           "block": "naru",
-          "gloss": "it is unbearable"
+          "gloss": "fixed intensifier for strong feelings"
         }
       ],
-      "literal": "feeling it, and it is unbearable",
+      "literal": "cannot help feeling it; feel it intensely",
       "transparency": "partial",
       "solved": {
         "by": "review",
@@ -6178,14 +6243,16 @@
       "parts": [
         {
           "text": "に",
-          "block": "ni"
+          "block": "ni",
+          "gloss": "marks a case to grant"
         },
         {
           "text": "せよ",
-          "block": "shiro"
+          "block": "shiro",
+          "gloss": "grant it (formal imperative)"
         }
       ],
-      "literal": "grant that case as a premise",
+      "literal": "even if one grants that case",
       "transparency": "clear",
       "solved": {
         "by": "blocks-only",

@@ -1,0 +1,555 @@
+[
+ {
+  "word": "とはいえ",
+  "field": "parts",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "pieces and reading replaced"
+ },
+ {
+  "word": "だとすれば",
+  "field": "parts",
+  "severity": "weak",
+  "status": "applied",
+  "note": "pieces and reading replaced"
+ },
+ {
+  "word": "言い換えれば",
+  "field": "parts",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "pieces and reading replaced"
+ },
+ {
+  "word": "要するに",
+  "field": "literal",
+  "severity": "weak",
+  "status": "applied",
+  "note": "pieces and reading replaced"
+ },
+ {
+  "word": "ところが",
+  "field": "parts",
+  "severity": "weak",
+  "status": "applied",
+  "note": "pieces and reading replaced"
+ },
+ {
+  "word": "ところで",
+  "field": "parts",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "retired: one piece, learned whole"
+ },
+ {
+  "word": "しかも",
+  "field": "parts",
+  "severity": "weak",
+  "status": "applied",
+  "note": "pieces and reading replaced"
+ },
+ {
+  "word": "それとも",
+  "field": "parts",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "retired: one piece, learned whole"
+ },
+ {
+  "word": "しかしながら",
+  "field": "literal",
+  "severity": "weak",
+  "status": "applied",
+  "note": "pieces and reading replaced"
+ },
+ {
+  "word": "以上",
+  "field": "literal",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "pieces and reading replaced"
+ },
+ {
+  "word": "未だに",
+  "field": "literal",
+  "severity": "weak",
+  "status": "applied",
+  "note": "pieces and reading replaced"
+ },
+ {
+  "word": "はたして",
+  "field": "parts",
+  "severity": "weak",
+  "status": "applied",
+  "note": "retired: one piece, learned whole"
+ },
+ {
+  "word": "いきなり",
+  "field": "parts",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "retired: one piece, learned whole"
+ },
+ {
+  "word": "手前",
+  "field": "literal",
+  "severity": "weak",
+  "status": "applied",
+  "note": "pieces and reading replaced"
+ },
+ {
+  "word": "っこない",
+  "field": "parts",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "pieces and reading replaced"
+ },
+ {
+  "word": "精々",
+  "field": "parts",
+  "severity": "weak",
+  "status": "applied",
+  "note": "retired: one piece, learned whole"
+ },
+ {
+  "word": "やむをえない",
+  "field": "parts",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "pieces and reading replaced"
+ },
+ {
+  "word": "しょうがない",
+  "field": "parts",
+  "severity": "weak",
+  "status": "applied",
+  "note": "pieces and reading replaced"
+ },
+ {
+  "word": "もしかしたら",
+  "field": "parts",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "pieces and reading replaced"
+ },
+ {
+  "word": "なんとなく",
+  "field": "literal",
+  "severity": "weak",
+  "status": "applied",
+  "note": "pieces and reading replaced"
+ },
+ {
+  "word": "なんとも",
+  "field": "literal",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "pieces and reading replaced"
+ },
+ {
+  "word": "ひとりでに",
+  "field": "parts",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "pieces and reading replaced"
+ },
+ {
+  "word": "ともかく",
+  "field": "parts",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "retired: one piece, learned whole"
+ },
+ {
+  "word": "なにしろ",
+  "field": "parts",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "retired: one piece, learned whole"
+ },
+ {
+  "word": "くれぐれも",
+  "field": "parts",
+  "severity": "weak",
+  "status": "applied",
+  "note": "retired: one piece, learned whole"
+ },
+ {
+  "word": "おかげさまで",
+  "field": "parts",
+  "severity": "weak",
+  "status": "applied",
+  "note": "pieces and reading replaced"
+ },
+ {
+  "word": "みっともない",
+  "field": "parts",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "retired: one piece, learned whole"
+ },
+ {
+  "word": "くだらない",
+  "field": "parts",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "retired: one piece, learned whole"
+ },
+ {
+  "word": "すまない",
+  "field": "literal",
+  "severity": "weak",
+  "status": "applied",
+  "note": "pieces and reading replaced"
+ },
+ {
+  "word": "にもかかわらず",
+  "field": "literal",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "pieces and reading replaced"
+ },
+ {
+  "word": "ざるを得ない",
+  "field": "parts",
+  "severity": "weak",
+  "status": "applied",
+  "note": "literal replaced; each part glossed as suggested"
+ },
+ {
+  "word": "万が一",
+  "field": "parts",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "literal replaced; each part glossed as suggested"
+ },
+ {
+  "word": "以上に",
+  "field": "literal",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "literal replaced; each part glossed as suggested"
+ },
+ {
+  "word": "ことだから",
+  "field": "literal",
+  "severity": "weak",
+  "status": "applied",
+  "note": "literal replaced; each part glossed as suggested"
+ },
+ {
+  "word": "ていては",
+  "field": "literal",
+  "severity": "weak",
+  "status": "applied",
+  "note": "literal replaced; each part glossed as suggested"
+ },
+ {
+  "word": "どころではない",
+  "field": "parts",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "literal replaced; each part glossed as suggested"
+ },
+ {
+  "word": "ては",
+  "field": "literal",
+  "severity": "weak",
+  "status": "applied",
+  "note": "literal replaced; each part glossed as suggested"
+ },
+ {
+  "word": "というものだ",
+  "field": "literal",
+  "severity": "weak",
+  "status": "applied",
+  "note": "literal replaced; each part glossed as suggested"
+ },
+ {
+  "word": "ものか",
+  "field": "literal",
+  "severity": "weak",
+  "status": "applied",
+  "note": "literal replaced; each part glossed as suggested"
+ },
+ {
+  "word": "だけに",
+  "field": "literal",
+  "severity": "weak",
+  "status": "applied",
+  "note": "literal replaced; each part glossed as suggested"
+ },
+ {
+  "word": "というわけではない",
+  "field": "parts",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "literal replaced; each part glossed as suggested"
+ },
+ {
+  "word": "からといって",
+  "field": "literal",
+  "severity": "weak",
+  "status": "applied",
+  "note": "literal replaced; each part glossed as suggested"
+ },
+ {
+  "word": "につき",
+  "field": "parts",
+  "severity": "weak",
+  "status": "applied",
+  "note": "literal replaced; each part glossed as suggested"
+ },
+ {
+  "word": "につけ",
+  "field": "literal",
+  "severity": "weak",
+  "status": "applied",
+  "note": "literal replaced; each part glossed as suggested"
+ },
+ {
+  "word": "いつの間にか",
+  "field": "literal",
+  "severity": "weak",
+  "status": "applied",
+  "note": "literal replaced; each part glossed as suggested"
+ },
+ {
+  "word": "というものでもない",
+  "field": "literal",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "literal replaced; each part glossed as suggested"
+ },
+ {
+  "word": "のではないだろうか",
+  "field": "literal",
+  "severity": "weak",
+  "status": "applied",
+  "note": "literal replaced; each part glossed as suggested"
+ },
+ {
+  "word": "てしょうがない",
+  "field": "literal",
+  "severity": "weak",
+  "status": "applied",
+  "note": "literal replaced; each part glossed as suggested"
+ },
+ {
+  "word": "何から何まで",
+  "field": "literal",
+  "severity": "weak",
+  "status": "applied",
+  "note": "literal replaced; each part glossed as suggested"
+ },
+ {
+  "word": "何といっても",
+  "field": "literal",
+  "severity": "weak",
+  "status": "applied",
+  "note": "literal replaced; each part glossed as suggested"
+ },
+ {
+  "word": "てならない",
+  "field": "literal",
+  "severity": "weak",
+  "status": "applied",
+  "note": "literal replaced; each part glossed as suggested"
+ },
+ {
+  "word": "ようがない・ようもない",
+  "field": "parts",
+  "severity": "weak",
+  "status": "applied",
+  "note": "literal replaced; each part glossed as suggested"
+ },
+ {
+  "word": "ものですから・もので",
+  "field": "parts",
+  "severity": "wrong",
+  "status": "partly",
+  "note": "literal replaced; the suggested split does not match the index's parts: kept"
+ },
+ {
+  "word": "途中に・途中で",
+  "field": "parts",
+  "severity": "weak",
+  "status": "partly",
+  "note": "literal replaced; the suggested split does not match the index's parts: kept"
+ },
+ {
+  "word": "かと思ったら・かと思うと",
+  "field": "parts",
+  "severity": "weak",
+  "status": "applied",
+  "note": "literal replaced; each part glossed as suggested"
+ },
+ {
+  "word": "ようでは・ようじゃ",
+  "field": "parts",
+  "severity": "weak",
+  "status": "applied",
+  "note": "literal replaced; each part glossed as suggested"
+ },
+ {
+  "word": "に向かって・に向けて",
+  "field": "parts",
+  "severity": "weak",
+  "status": "applied",
+  "note": "literal replaced; each part glossed as suggested"
+ },
+ {
+  "word": "〜ようではないか",
+  "field": "parts",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "literal replaced; each part glossed as suggested"
+ },
+ {
+  "word": "次第だ・次第で",
+  "field": "parts",
+  "severity": "weak",
+  "status": "partly",
+  "note": "literal replaced; the suggested split does not match the index's parts: kept"
+ },
+ {
+  "word": "を通じて・を通して",
+  "field": "parts",
+  "severity": "weak",
+  "status": "applied",
+  "note": "literal replaced; each part glossed as suggested"
+ },
+ {
+  "word": "にせよ・にしろ",
+  "field": "parts",
+  "severity": "weak",
+  "status": "applied",
+  "note": "literal replaced; each part glossed as suggested"
+ },
+ {
+  "word": "小数",
+  "field": "meaning",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "GLOSS_FIX"
+ },
+ {
+  "word": "人文科学",
+  "field": "meaning",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "GLOSS_FIX"
+ },
+ {
+  "word": "政党",
+  "field": "meaning",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "GLOSS_FIX"
+ },
+ {
+  "word": "西暦",
+  "field": "meaning",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "GLOSS_FIX"
+ },
+ {
+  "word": "卒直",
+  "field": "sentence",
+  "severity": "wrong",
+  "status": "not applied",
+  "note": "the list's own spelling or the deck sentence: see the backlog"
+ },
+ {
+  "word": "だらしない",
+  "field": "meaning",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "GLOSS_FIX"
+ },
+ {
+  "word": "伯父さん",
+  "field": "meaning",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "GLOSS_FIX"
+ },
+ {
+  "word": "叔父さん",
+  "field": "meaning",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "GLOSS_FIX"
+ },
+ {
+  "word": "ご苦労様",
+  "field": "sentence",
+  "severity": "wrong",
+  "status": "not applied",
+  "note": "the list's own spelling or the deck sentence: see the backlog"
+ },
+ {
+  "word": "コンセント",
+  "field": "meaning",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "GLOSS_FIX"
+ },
+ {
+  "word": "四捨五入",
+  "field": "meaning",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "GLOSS_FIX"
+ },
+ {
+  "word": "締め切る",
+  "field": "meaning",
+  "severity": "weak",
+  "status": "applied",
+  "note": "GLOSS_FIX"
+ },
+ {
+  "word": "宛名",
+  "field": "meaning",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "GLOSS_FIX"
+ },
+ {
+  "word": "統計",
+  "field": "meaning",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "GLOSS_FIX"
+ },
+ {
+  "word": "何分",
+  "field": "meaning",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "GLOSS_FIX"
+ },
+ {
+  "word": "鈍い",
+  "field": "meaning",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "GLOSS_FIX"
+ },
+ {
+  "word": "水着",
+  "field": "meaning",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "GLOSS_FIX"
+ },
+ {
+  "word": "潜る",
+  "field": "meaning",
+  "severity": "wrong",
+  "status": "applied",
+  "note": "GLOSS_FIX"
+ }
+]

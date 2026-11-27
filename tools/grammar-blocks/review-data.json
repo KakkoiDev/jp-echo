@@ -5391,20 +5391,20 @@
     {
      "text": "ざる",
      "block": "zaru",
-     "gloss": "negative: without doing; literary forms"
+     "gloss": "not doing (literary negative)"
     },
     {
      "text": "を",
      "block": "wo",
-     "gloss": "marks an object or a route"
+     "gloss": "marks the alternative ruled out"
     },
     {
      "text": "得ない",
      "block": "enai",
-     "gloss": "cannot manage to"
+     "gloss": "cannot obtain or manage"
     }
    ],
-   "literal": "cannot succeed in not doing it",
+   "literal": "cannot choose not to do it: must do it",
    "transparency": "clear",
    "oneBlock": false
   },
@@ -5669,15 +5669,15 @@
     {
      "text": "が",
      "block": "ga",
-     "gloss": "marks the subject"
+     "gloss": "of or in (old genitive)"
     },
     {
      "text": "一",
      "block": "ichi",
-     "gloss": "a single one"
+     "gloss": "one"
     }
    ],
-   "literal": "one case in ten thousand",
+   "literal": "one in ten thousand: in the unlikely event",
    "transparency": "partial",
    "oneBlock": false
   },
@@ -5693,20 +5693,20 @@
     {
      "text": "よう",
      "block": "you-way",
-     "gloss": "a manner or available method"
+     "gloss": "available means or method"
     },
     {
      "text": "が",
      "block": "ga",
-     "gloss": "marks the subject"
+     "gloss": "marks the absent thing"
     },
     {
      "text": "ない",
      "block": "nai",
-     "gloss": "negative: no, not"
+     "gloss": "there is none"
     }
    ],
-   "literal": "there is no available method",
+   "literal": "there is no way, or not even one way, to do it",
    "transparency": "clear",
    "oneBlock": false
   },
@@ -5966,15 +5966,15 @@
     {
      "text": "以上",
      "block": "ijou",
-     "gloss": "more than that level"
+     "gloss": "beyond the stated level"
     },
     {
      "text": "に",
      "block": "ni",
-     "gloss": "marks an endpoint or link"
+     "gloss": "marks the degree of comparison"
     }
    ],
-   "literal": "at or beyond the threshold",
+   "literal": "more than the stated level",
    "transparency": "clear",
    "oneBlock": false
   },
@@ -5998,7 +5998,7 @@
      "gloss": "marks the means or setting"
     }
    ],
-   "literal": "at an intermediate point",
+   "literal": "at some point partway through",
    "transparency": "clear",
    "oneBlock": false
   },
@@ -6326,15 +6326,15 @@
     {
      "text": "に",
      "block": "ni",
-     "gloss": "marks an endpoint or link"
+     "gloss": "marks the circumstance or unit"
     },
     {
      "text": "つき",
      "block": "tsuki",
-     "gloss": "due to (formal)"
+     "gloss": "attaches something to that basis"
     }
    ],
-   "literal": "records what attaches to the unit or circumstance",
+   "literal": "because of that; or per that unit",
    "transparency": "partial",
    "oneBlock": false
   },
@@ -6350,15 +6350,15 @@
     {
      "text": "に",
      "block": "ni",
-     "gloss": "marks an endpoint or link"
+     "gloss": "links to the occasion"
     },
     {
      "text": "つけ",
      "block": "tsukeru",
-     "gloss": "in connection with (each time)"
+     "gloss": "as it comes up (fixed usage)"
     }
    ],
-   "literal": "attach a reaction to that occasion",
+   "literal": "each time that happens",
    "transparency": "partial",
    "oneBlock": false
   },
@@ -6398,15 +6398,15 @@
     {
      "text": "に",
      "block": "ni",
-     "gloss": "marks an endpoint or link"
+     "gloss": "points to a destination or goal"
     },
     {
      "text": "向かって",
      "block": "mukau",
-     "gloss": "faces a destination"
+     "gloss": "facing or going toward"
     }
    ],
-   "literal": "orient the action toward a point",
+   "literal": "facing or directing something toward a goal",
    "transparency": "clear",
    "oneBlock": false
   },
@@ -6742,7 +6742,7 @@
      "gloss": "marks the means or setting"
     }
    ],
-   "literal": "in the setting governed by the development",
+   "literal": "it depends on that factor",
    "transparency": "clear",
    "oneBlock": false
   },
@@ -7395,20 +7395,20 @@
     {
      "text": "て",
      "block": "te",
-     "gloss": "links a predicate to what follows"
+     "gloss": "links the first action"
     },
     {
      "text": "いて",
      "block": "iru",
-     "gloss": "keeps on being"
+     "gloss": "keeps doing or remains in the state"
     },
     {
      "text": "は",
      "block": "wa",
-     "gloss": "marks topic or contrast"
+     "gloss": "sets an unwelcome condition"
     }
    ],
-   "literal": "given that the state continues",
+   "literal": "if you keep doing that, trouble will follow",
    "transparency": "clear",
    "oneBlock": false
   },
@@ -7448,20 +7448,20 @@
     {
      "text": "どころ",
      "block": "tokoro-degree",
-     "gloss": "the extent at issue"
+     "gloss": "stage or scope in question"
     },
     {
      "text": "では",
      "block": "dewa",
-     "gloss": "is (not)"
+     "gloss": "as the situation in question"
     },
     {
      "text": "ない",
      "block": "nai",
-     "gloss": "negative: no, not"
+     "gloss": "negative"
     }
    ],
-   "literal": "it is outside the degree at issue",
+   "literal": "this is no time or situation for that",
    "transparency": "clear",
    "oneBlock": false
   },
@@ -7501,15 +7501,15 @@
     {
      "text": "て",
      "block": "te",
-     "gloss": "links a predicate to what follows"
+     "gloss": "links the action to what follows"
     },
     {
      "text": "は",
      "block": "wa",
-     "gloss": "marks topic or contrast"
+     "gloss": "sets the action as a condition"
     }
    ],
-   "literal": "takes the connected action as the topic",
+   "literal": "if that is done, expect the stated result",
    "transparency": "clear",
    "oneBlock": false
   },
@@ -7899,30 +7899,30 @@
     {
      "text": "いつ",
      "block": "itsu",
-     "gloss": "an unspecified time"
+     "gloss": "when, unspecified"
     },
     {
      "text": "の",
      "block": "no",
-     "gloss": "links a noun to a modifier"
+     "gloss": "links the time to the interval"
     },
     {
      "text": "間",
      "block": "ma",
-     "gloss": "a gap or interval"
+     "gloss": "interval"
     },
     {
      "text": "に",
      "block": "ni",
-     "gloss": "marks an endpoint or link"
+     "gloss": "within that interval"
     },
     {
      "text": "か",
      "block": "ka",
-     "gloss": "some- (indefinite)"
+     "gloss": "marks uncertainty"
     }
    ],
-   "literal": "somewhere in an unspecified interval",
+   "literal": "at some point without anyone noticing",
    "transparency": "clear",
    "oneBlock": false
   },
@@ -8192,15 +8192,15 @@
     {
      "text": "を",
      "block": "wo",
-     "gloss": "marks an object or a route"
+     "gloss": "marks the channel or span"
     },
     {
      "text": "通じて",
      "block": "tsuujiru",
-     "gloss": "provides a channel or continuous span"
+     "gloss": "through, via, throughout"
     }
    ],
-   "literal": "through it, from end to end",
+   "literal": "through a channel or over an entire span",
    "transparency": "clear",
    "oneBlock": false
   },
@@ -8534,20 +8534,20 @@
     {
      "text": "か",
      "block": "ka",
-     "gloss": "was it? (it seemed so)"
+     "gloss": "uncertain: perhaps it happened"
     },
     {
      "text": "と",
      "block": "to-quote",
-     "gloss": "cites the content of a statement"
+     "gloss": "quotes that impression"
     },
     {
      "text": "思ったら",
      "block": "omou",
-     "gloss": "reaches a judgment"
+     "gloss": "just when one thought that"
     }
    ],
-   "literal": "after thinking that might be so",
+   "literal": "just when it seemed so, the situation changed",
    "transparency": "clear",
    "oneBlock": false
   },
@@ -8597,30 +8597,30 @@
     {
      "text": "という",
      "block": "toiu",
-     "gloss": "introduces the content or label"
+     "gloss": "quotes the general claim"
     },
     {
      "text": "もの",
      "block": "mono-thing",
-     "gloss": "treats an idea as a thing"
+     "gloss": "the sort of thing one can say"
     },
     {
      "text": "で",
      "block": "da",
-     "gloss": "asserts an identity or state"
+     "gloss": "links to the implied judgment"
     },
     {
      "text": "も",
      "block": "mo",
-     "gloss": "(not) necessarily"
+     "gloss": "softens the categorical denial"
     },
     {
      "text": "ない",
      "block": "nai",
-     "gloss": "negative: no, not"
+     "gloss": "negates the judgment"
     }
    ],
-   "literal": "it does not amount to the stated kind of thing",
+   "literal": "you cannot necessarily generalize that way",
    "transparency": "clear",
    "oneBlock": false
   },
@@ -8800,20 +8800,20 @@
     {
      "text": "という",
      "block": "toiu",
-     "gloss": "introduces the content or label"
+     "gloss": "puts a label on the situation"
     },
     {
      "text": "もの",
      "block": "mono-thing",
-     "gloss": "treats an idea as a thing"
+     "gloss": "what counts as that kind of thing"
     },
     {
      "text": "だ",
      "block": "da",
-     "gloss": "asserts an identity or state"
+     "gloss": "asserts the judgment"
     }
    ],
-   "literal": "asserts that it is such a thing",
+   "literal": "that really is what you would call it",
    "transparency": "partial",
    "oneBlock": false
   },
@@ -8945,20 +8945,20 @@
     {
      "text": "から",
      "block": "kara",
-     "gloss": "introduces the source"
+     "gloss": "because of that fact"
     },
     {
      "text": "と",
      "block": "to-quote",
-     "gloss": "cites the content of a statement"
+     "gloss": "quotes the stated reason"
     },
     {
      "text": "いって",
      "block": "iu",
-     "gloss": "puts something into words"
+     "gloss": "even on the claim just made"
     }
    ],
-   "literal": "quote that starting point as a reason",
+   "literal": "just because that is so does not mean it follows",
    "transparency": "clear",
    "oneBlock": false
   },
@@ -9070,25 +9070,25 @@
     {
      "text": "よう",
      "block": "you-volition",
-     "gloss": "volitional: let's do it, or I will"
+     "gloss": "volitional: let's do it"
     },
     {
      "text": "では",
      "block": "dewa",
-     "gloss": "if it is; or the copula with a topic"
+     "gloss": "sets up a negative question"
     },
     {
      "text": "ない",
      "block": "nai",
-     "gloss": "negative: no, not"
+     "gloss": "negative"
     },
     {
      "text": "か",
      "block": "ka",
-     "gloss": "shall we? (question)"
+     "gloss": "question marker"
     }
    ],
-   "literal": "why do we not do it together?",
+   "literal": "why don't we do it?",
    "transparency": "clear",
    "oneBlock": false
   },
@@ -9138,30 +9138,30 @@
     {
      "text": "の",
      "block": "no",
-     "gloss": "makes the clause a thing"
+     "gloss": "packages the proposition"
     },
     {
      "text": "では",
      "block": "dewa",
-     "gloss": "if it is; or the copula with a topic"
+     "gloss": "as a proposed judgment"
     },
     {
      "text": "ない",
      "block": "nai",
-     "gloss": "negative: no, not"
+     "gloss": "negative"
     },
     {
      "text": "だろう",
      "block": "darou",
-     "gloss": "presents a supposition"
+     "gloss": "tentative supposition"
     },
     {
      "text": "か",
      "block": "ka",
-     "gloss": "I wonder (question)"
+     "gloss": "marks the question"
     }
    ],
-   "literal": "could it be that it is so?",
+   "literal": "might that be the explanation?",
    "transparency": "clear",
    "oneBlock": false
   },
@@ -9307,15 +9307,15 @@
     {
      "text": "もの",
      "block": "mono-refusal",
-     "gloss": "frames the action as a proposition"
+     "gloss": "frames the proposition"
     },
     {
      "text": "か",
      "block": "ka",
-     "gloss": "question, alternative, or some-"
+     "gloss": "rhetorical question"
     }
    ],
-   "literal": "challenges whether one would do such a thing",
+   "literal": "could that possibly be so? certainly not",
    "transparency": "partial",
    "oneBlock": false
   },
@@ -9451,20 +9451,20 @@
     {
      "text": "こと",
      "block": "koto",
-     "gloss": "turns an action or clause into a noun"
+     "gloss": "the person or situation in question"
     },
     {
      "text": "だ",
      "block": "da",
-     "gloss": "asserts an identity or state"
+     "gloss": "is so"
     },
     {
      "text": "から",
      "block": "kara-cause",
-     "gloss": "gives the cause of a situation"
+     "gloss": "because or given that"
     }
    ],
-   "literal": "gives the fact as a source",
+   "literal": "given what we know about that person",
    "transparency": "clear",
    "oneBlock": false
   },
@@ -9517,7 +9517,7 @@
      "gloss": "asserts an identity or state"
     }
    ],
-   "literal": "uses a personal circumstance as a reason",
+   "literal": "because that is the circumstance",
    "transparency": "clear",
    "oneBlock": false
   },
@@ -9615,25 +9615,25 @@
     {
      "text": "て",
      "block": "te",
-     "gloss": "links a predicate to what follows"
+     "gloss": "links to the ongoing feeling"
     },
     {
      "text": "しょう",
      "block": "shiyou",
-     "gloss": "a way forward"
+     "gloss": "a way to deal with it"
     },
     {
      "text": "が",
      "block": "ga",
-     "gloss": "marks the subject"
+     "gloss": "marks what is absent"
     },
     {
      "text": "ない",
      "block": "nai",
-     "gloss": "negative: no, not"
+     "gloss": "does not exist"
     }
    ],
-   "literal": "a response to the linked state is unavailable",
+   "literal": "cannot help feeling it; feel it intensely",
    "transparency": "clear",
    "oneBlock": false
   },
@@ -9697,15 +9697,15 @@
     {
      "text": "よう",
      "block": "you-appearance",
-     "gloss": "the shape or appearance of a case"
+     "gloss": "condition or way things appear"
     },
     {
      "text": "では",
      "block": "dewa",
-     "gloss": "if it is like"
+     "gloss": "if that is the condition"
     }
    ],
-   "literal": "with a situation of this sort as the premise",
+   "literal": "if things are like that, trouble is likely",
    "transparency": "clear",
    "oneBlock": false
   },
@@ -9998,25 +9998,25 @@
     {
      "text": "何",
      "block": "nani",
-     "gloss": "an unspecified thing"
+     "gloss": "one thing in a range"
     },
     {
      "text": "から",
      "block": "kara",
-     "gloss": "introduces the source"
+     "gloss": "from"
     },
     {
      "text": "何",
      "block": "nani",
-     "gloss": "an unspecified thing"
+     "gloss": "another thing in that range"
     },
     {
      "text": "まで",
      "block": "made",
-     "gloss": "marks an inclusive endpoint"
+     "gloss": "all the way to"
     }
    ],
-   "literal": "from whatever to whatever",
+   "literal": "from one end to the other: everything",
    "transparency": "clear",
    "oneBlock": false
   },
@@ -10066,15 +10066,15 @@
     {
      "text": "だけ",
      "block": "dake",
-     "gloss": "to just that degree"
+     "gloss": "that much or exactly for that reason"
     },
     {
      "text": "に",
      "block": "ni",
-     "gloss": "marks an endpoint or link"
+     "gloss": "links degree or reason to a result"
     }
    ],
-   "literal": "because of exactly that extent",
+   "literal": "all the more for that reason",
    "transparency": "partial",
    "oneBlock": false
   },
@@ -10162,25 +10162,25 @@
     {
      "text": "何",
      "block": "nani",
-     "gloss": "an unspecified thing"
+     "gloss": "anything one might name"
     },
     {
      "text": "と",
      "block": "to-quote",
-     "gloss": "cites the content of a statement"
+     "gloss": "marks what is said"
     },
     {
      "text": "いって",
      "block": "iu",
-     "gloss": "puts something into words"
+     "gloss": "say"
     },
     {
      "text": "も",
      "block": "mo",
-     "gloss": "even"
+     "gloss": "even if"
     }
    ],
-   "literal": "no matter which case one mentions",
+   "literal": "whatever else you say: above all",
    "transparency": "clear",
    "oneBlock": false
   },
@@ -10225,15 +10225,15 @@
     {
      "text": "て",
      "block": "te",
-     "gloss": "links a predicate to what follows"
+     "gloss": "links the feeling or state"
     },
     {
      "text": "ならない",
      "block": "naru",
-     "gloss": "it is unbearable"
+     "gloss": "fixed intensifier for strong feelings"
     }
    ],
-   "literal": "feeling it, and it is unbearable",
+   "literal": "cannot help feeling it; feel it intensely",
    "transparency": "partial",
    "oneBlock": false
   },
@@ -10436,15 +10436,15 @@
     {
      "text": "に",
      "block": "ni",
-     "gloss": "marks an endpoint or link"
+     "gloss": "marks a case to grant"
     },
     {
      "text": "せよ",
      "block": "shiro",
-     "gloss": "posits a case by imperative"
+     "gloss": "grant it (formal imperative)"
     }
    ],
-   "literal": "grant that case as a premise",
+   "literal": "even if one grants that case",
    "transparency": "clear",
    "oneBlock": false
   },
@@ -10865,25 +10865,25 @@
     {
      "text": "という",
      "block": "toiu",
-     "gloss": "introduces the content or label"
+     "gloss": "quotes the stated conclusion"
     },
     {
      "text": "わけ",
      "block": "wake",
-     "gloss": "the conclusion one would draw"
+     "gloss": "conclusion one would draw"
     },
     {
      "text": "では",
      "block": "dewa",
-     "gloss": "is (not)"
+     "gloss": "sets up the proposed conclusion"
     },
     {
      "text": "ない",
      "block": "nai",
-     "gloss": "negative: no, not"
+     "gloss": "negates it"
     }
    ],
-   "literal": "the stated conclusion does not follow",
+   "literal": "that does not mean the conclusion follows",
    "transparency": "clear",
    "oneBlock": false
   },

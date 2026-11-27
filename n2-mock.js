@@ -1165,8 +1165,8 @@ async function game() {
     || inventory.grammar.every(([key]) => ["clear", "partial", "opaque"].includes(grammarIndex.patterns?.[key]?.transparency)));
   // Authored cards (paraphrase, clause pairs, sentence order) and the English of the papers' sentences: each a file
   // of its own, absent until its content has passed its checks.
-  const [paraphrase, pairs, ordering, examEn] = await Promise.all(["./n2-paraphrase.json", "./n2-pairs.json", "./n2-ordering.json", "./n2-sets/en.json"].map(f => json(f).catch(() => null)));
-  const extras = {paraphrase: paraphrase?.items || [], pairs: pairs?.items || [], ordering: ordering?.items || []};
+  const [paraphrase, pairs, ordering, examEn, wordPieces] = await Promise.all(["./n2-paraphrase.json", "./n2-pairs.json", "./n2-ordering.json", "./n2-sets/en.json", "./n2-word-pieces.json"].map(f => json(f).catch(() => null)));
+  const extras = {paraphrase: paraphrase?.items || [], pairs: pairs?.items || [], ordering: ordering?.items || [], pieces: wordPieces?.pieces || {}};
   const n2Cards = gamePool({inventory, examples, sets, sat, parts, grammarBlocks: activeGrammar ? grammarIndex : null, extras});
   const grammarCards = n2Cards.filter(grammarBlockCard), n2Pool = n2Cards.filter(q => !grammarBlockCard(q));
   const levelPools = new Map([["N2", n2Pool]]);
@@ -1771,7 +1771,7 @@ async function game() {
       const voiceOf = () => card.kind === "grammar" ? grammarVoice(card, sol).speak : spokenWord(sol.word.replace(/[〜～]/g, ""), String(sol.reading || "").replace(/[〜～]/g, ""));
       if (sol) return {picked, q: {...base, say: voiceOf(), paperLine: usage ? it.answer.replace(it.ask, "【" + it.ask + "】") : it.ask, target: it.target,
         // The paper's answer, where the sentence does not already hold it (a synonym question).
-        solution: {word: sol.word, reading: sol.reading || "", meaning: sol.meaning, ja: "", en: [usage || /（\s*）/.test(it.ask) || [sol.word, sol.reading].includes(it.answer) ? "" : "Answer: " + it.answer, examEn?.[source] || ""].filter(Boolean).join(" · "), why: it.why, source}}};
+        solution: {word: sol.word, reading: sol.reading || "", meaning: sol.meaning, ja: "", en: [usage || /（\s*）/.test(it.ask) || [sol.word, sol.reading].includes(it.answer) ? "" : "Answer: " + it.answer, examEn?.en?.[source] || ""].filter(Boolean).join(" · "), why: it.why, source}}};
       return {picked, q: {...base, ask: it.ask, say: it.heard && it.lines.length ? it.lines.join("　") : it.answer,
         solution: {word: it.answer, meaning: "", ja: it.lines.join(""), en: it.en, why: it.why, source}}};
   }

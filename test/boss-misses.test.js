@@ -543,7 +543,8 @@ test("words and patterns made of pieces carry them, and the pieces join up to th
   const {WORD_PIECES, LINK_PARTS, LINK_SHOWN} = await import("../n2-game-review.js");
   const {pieceKey} = await import("../n2-game.js");
   const blocks = read("../n2-grammar-blocks.json"), full = gamePool({inventory, examples, grammarBlocks: blocks});
-  assert.ok(Object.keys(WORD_PIECES).length >= 40 && Object.keys(LINK_PARTS).length >= 25);
+  assert.ok(Object.keys(WORD_PIECES).length >= 30 && Object.keys(LINK_PARTS).length >= 24, "after the audit retired ten that were one piece");
+  for (const gone of ["いきなり", "みっともない", "くだらない", "ともかく", "なにしろ"]) assert.ok(!WORD_PIECES[gone], gone + ": the audit found its pieces taught no rule a learner could reuse");
   for (const [word, p] of Object.entries(WORD_PIECES)) {
     assert.equal(p.parts.map(x => x[0]).join(""), word, word + ": the pieces make the word");
     assert.ok(p.parts.length >= 2 && p.parts.every(([t, g]) => t && g && g.length <= 40 && !/[ぁ-んァ-ヶ一-龯]/.test(g)), word);
@@ -555,7 +556,7 @@ test("words and patterns made of pieces carry them, and the pieces join up to th
   // Never on a card that already shows parts, and never on the card itself: after the answer and in the review.
   for (const q of full) if (q.pieces) { assert.ok(!q.parts, q.id); assert.ok(["grammar", "gap", "block", "meaning", "definition", "listen"].includes(q.kind), q.id); }
   const yamu = full.find(q => q.id === "m:やむをえない");
-  assert.deepEqual(yamu.pieces.parts.map(p => p.text), ["やむ", "を", "えない"]); assert.equal(yamu.pieces.literal, "cannot stop it: unavoidable");
+  assert.deepEqual(yamu.pieces.parts.map(p => p.text), ["やむ", "を", "えない"]); assert.equal(yamu.pieces.literal, "there's no stopping it: unavoidable");
   assert.ok(full.find(q => q.id === "g:以来").pieces && full.find(q => q.id === "f:以来").pieces);
   const js = src("../n2-mock.js");
   assert.ok(js.includes('if (q.pieces) { line.replaceChildren(el("small", {text: "piece by piece"}), q.pieces.literal);'));

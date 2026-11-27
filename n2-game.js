@@ -251,8 +251,9 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
   // A word or pattern asked whole that is made of plain pieces carries them (WORD_PIECES): said together after the
   // answer and listed in the review of a miss. Cards that already show parts (build, infer, a built connective) keep theirs.
   if (!other) for (const q of pool) {
-    if (q.parts || !["grammar", "gap", "block", "meaning", "definition", "listen"].includes(q.kind)) continue;
-    const built = WORD_PIECES[pieceKey(q.solution?.word)];
+    if (q.parts || !["grammar", "gap", "block", "meaning", "definition", "listen", "reading", "homophone"].includes(q.kind)) continue;
+    // extras.pieces: the audited dissections of the word list (n2-word-pieces.json), kept apart from the code.
+    const key = pieceKey(q.solution?.word), built = WORD_PIECES[key] || extras?.pieces?.[key];
     if (built) q.pieces = {parts: built.parts.map(([text, g]) => ({text, gloss: g})), literal: built.literal};
   }
   // The bar for every item: not excluded, and four distinct choices.

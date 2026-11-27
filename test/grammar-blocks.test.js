@@ -261,8 +261,8 @@ test("board 13: the parts are a ruled list in sentence order; repeats merge, a p
 
 test("board 13: 得ない is hinted with its negative on the card (designer's note)", () => {
   const card = gamePool({...options, grammarBlocks: draft}).find(q => q.id === "gb:ざるを得ない");
-  assert.deepEqual(card.parts.map(p => p.gloss), ["negative: without doing; literary forms", "marks an object or a route", "cannot manage to"]);
-  assert.equal(card.literal, "cannot succeed in not doing it");
+  assert.deepEqual(card.parts.map(p => p.gloss), ["not doing (literary negative)", "marks the alternative ruled out", "cannot obtain or manage"]);
+  assert.equal(card.literal, "cannot choose not to do it: must do it"); // the pieces audit's wording, 27 Nov
   assert.equal(draft.blocks.eru.gloss, "can happen or be done"); assert.equal(draft.blocks.enai.gloss, "cannot happen or be done", "得る and 得ない are two things to learn (review, 27 Nov)");
   const bad = structuredClone(draft); bad.patterns["ざるを得ない"].parts[2].gloss = "得られない";
   assert.ok(validateGrammarBlocks(bad).errors.some(e => /gloss of part 得ない must be short English/.test(e)));
@@ -309,7 +309,7 @@ test("review: a hint says what the form shown does, negation included; the rule 
   assert.equal(hint("ねばならない", "ならない"), "it will not do");
   assert.equal(hint("にほかならない", "ならない"), "is not (negative of the copula)");
   assert.equal(hint("にもかかわらず", "かかわらず"), "without regard to");
-  assert.equal(hint("いつの間にか", "か"), "some- (indefinite)");
+  assert.equal(hint("いつの間にか", "か"), "marks uncertainty");
   assert.equal(hint("抜きで", "抜き"), "leaving something out", "a plain hint may share the answer's words: the infer card is the test");
   assert.deepEqual(validateGrammarBlocks(draft).errors, []);
   assert.ok(!readFileSync(new URL("../tools/validate-grammar-blocks.mjs", import.meta.url), "utf8").includes("overlaps the answer\`"));
