@@ -648,7 +648,9 @@ export function pickRound({pool, also = [], recall = [], seen = {}, wins = {}, l
   take(first, places);
   take(groups.weak, mix.weak); take(groups.fresh, mix.fresh); take(groups.known, mix.known);
   // Cards actually seen, least recently first; then cards never shown whose word rests (they are new, not familiar).
-  const seenFirst = [...recent.filter(q => seen[q.id]).sort((a, b) => seen[a.id] - seen[b.id]), ...recent.filter(q => !seen[q.id])];
+  // A mastered card (極) inside its three days comes last of all: only when nothing else is left.
+  const mastered = q => itemLevelOf(lv[q.id]) >= ITEM_LEVEL.max && now - (seen[q.id] || 0) < restFor(lv[q.id]);
+  const seenFirst = [...recent.filter(q => seen[q.id] && !mastered(q)).sort((a, b) => seen[a.id] - seen[b.id]), ...recent.filter(q => !seen[q.id]), ...recent.filter(mastered)];
   take(calm ? [...groups.known, ...seenFirst, ...groups.weak, ...groups.fresh] : [...groups.fresh, ...groups.weak, ...groups.known, ...seenFirst], size - out.length);
   const rest = interleave(shuffle(out.slice(backCount, size), random));
   return [...out.slice(0, backCount).map(q => ({...q, comeback: true})), ...rest].slice(0, Math.max(size, backCount));
