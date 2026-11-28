@@ -3,7 +3,7 @@ import {bookIds,bookName,EDITION,SETS_EDITION,editionOf,form,realisticRows,reali
 import {access,currentAttempts,download,prefix,report,scored,n2Adapter} from "./n2-progress.js";
 import {startAutoSync,markDirty,gistSettings} from "./sync.js";
 import {LEVEL_EXAM,examOf as examRules,SKILLS,SKILL_JA,SECTIONS,PASS_TOTAL,SECTION_MIN,SECTION_MAX,estimate,sprintCheckpoint,nextExamDate,daysUntil,recallQueue,recallRecord,recallId,dailyGoal,coverage,localDay,todayPlan,measuredPace,capMinutes,DAY_MINUTES,EXAM_CHECKLIST,goalDates,formatMinutes,shortenPlan,maintenancePlan,resultsMonth,doneToday,markDone,scoreSeries,scoreCaption,examHeadLine,nextKicker,checkpointLine,mockTileState,historyKind,answering,resultPractice} from "./n2-study.js";
-import {collapseRow,collapseChevronSvg,scoreChart,flagSvg,chevronLeftSvg,chevronRightSvg,replaySvg,planSteps,loadMeter,evidenceRow,pauseRing,openReportSheet,mountReportButtons} from "./components.js";
+import {mountTransport,setTransport,collapseRow,collapseChevronSvg,scoreChart,flagSvg,chevronLeftSvg,chevronRightSvg,replaySvg,planSteps,loadMeter,evidenceRow,pauseRing,openReportSheet,mountReportButtons} from "./components.js";
 import {screenSnapshot,REPORT_REASONS,createReport,fileReport,reportSyncLine,reportsAdapter,reportHistory,screenOf,appVersion,deviceInfo} from "./reports.js";
 import {recognitionFactory} from "./speech.js";
 import {speakOnce,speakAndWait,japaneseVoices,RadioPlayer,NoiseBed} from "./speech.js";
@@ -91,7 +91,7 @@ function offlineNotice() {
 function voiceCheck() {
   if (!window.speechSynthesis) return;
   // In Quick round the game shows its own one-line notice on Home (board 12 · D), never Echo's panel.
-  const draw = () => { const none = !japaneseVoices("ja").length, inGame = params.get("view") === "game"; $("game-notice").hidden = !(none && inGame); setNotice("voice", !none || inGame ? null : el("div", {class: "notice"},
+  const draw = () => { const none = !japaneseVoices("ja").length, inGame = params.get("view") === "game", skinned = params.get("from") === "game" || params.get("boss") === "1"; $("game-notice").hidden = !(none && inGame); setNotice("voice", !none || inGame || skinned ? null : el("div", {class: "notice"},
     el("p", {text: "No Japanese voice on this device. Day Radio, listening checks and Echo’s own listening papers need one to speak."}),
     el("p", {class: "hint", text: "Add a Japanese voice in your phone’s settings, or choose another voice in Settings. The official sample papers still play: they are recordings."}),
     el("div", {class: "notice-actions"}, el("a", {class: "button outline", href: "./settings", text: "Open Settings → Voice"})))); };
@@ -112,6 +112,8 @@ addEventListener("online", offlineNotice); addEventListener("offline", offlineNo
 // Bar icons come from components.js, so the page never owns a copy.
 const BAR_ICONS = {prev: chevronLeftSvg, next: chevronRightSvg, replay: replaySvg, flag: flagSvg};
 for (const button of document.querySelectorAll("[data-icon]")) button.insertAdjacentHTML("afterbegin", BAR_ICONS[button.dataset.icon] || "");
+// Every play, pause, stop and start control is the Transport component (board 14): no screen draws its own.
+mountTransport();
 function show(id) { for (const s of ["hub", "recall", "check", "game", "day", "intro", "exam", "rest", "results"]) $(s).hidden = s !== id; document.body.dataset.view = id; }
 // Opened from Quick round, Day Radio and Evening recall wear the game's look
 // (the skin after the Quick round block in styles.css) and its chevron; nothing else changes.
@@ -1090,8 +1092,10 @@ async function openEvidence(item, why = "") {
 // Quick round (n2-game.js): ten fast mixed questions, a timed look at each
 // miss, then the next round opens with those misses. It opens straight on a
 // question, and every answer is saved as it is given.
-const ALOUD = {reading: "Say the sentence out loud", meaning: "Say the word out loud", definition: "Say your pick out loud",
-  listen: "Say it back as you hear it", kana: "Say it out loud", homophone: "Say the sentence out loud", grammar: "Say the sentence out loud", exam: "Read it out loud", connective: "Read it out loud"};
+// The voice line (map 14): one wording on a card, "Say it out loud"; the review and the radio say "Say it with the
+// voice". A kind with no line (a kanji card) shows none.
+const SAY_ALOUD = "Say it out loud";
+const ALOUD = Object.fromEntries(["reading", "meaning", "definition", "listen", "kana", "homophone", "grammar", "exam", "connective"].map(k => [k, SAY_ALOUD]));
 // The beat ribbons (board 4): glyph, title, sub-line and colour per beat.
 const BEATS = {hook: ["始", "Welcome back", "An easy start", "right"], first: ["始", "First round", "An easy start", "right"], breather: ["息", "Breather", "", "track"],
   peak: ["峰", "Peak round · bonuses ×2", "The hardest of the wave. Go fast.", "gold"], stretch: ["鬼", "Final stretch", "Bonuses ×2 until the boss opens", "seal"],
@@ -1234,7 +1238,7 @@ async function game() {
     mode("settings"); $("game-title").textContent = "Settings";
     $("game-back").href = "?view=game"; $("game-back").setAttribute("aria-label", "Back to Quick round home"); $("game-back").onclick = e => { e.preventDefault(); home(); };
     // The rank has no setting (owner, 27 Nov): it starts at N5 for a new player and only the boss moves it.
-    setSeg("game-set-difficulty", difficulty()); $("game-set-bedtime").value = settings.gameBedtime || "23:30";
+    setSeg("game-set-difficulty", difficulty()); $("game-set-bedtime").value = settings.gameBedtime || "23:30"; $("game-set-bedtime-shown").textContent = $("game-set-bedtime").value;
     setSwitch("game-set-sound", sound()); setSwitch("game-set-start", !!settings.startGame); $("game-set-status").textContent = "";
     checkUpdate();
   }
@@ -1265,11 +1269,13 @@ async function game() {
     setSeg("game-night-hours", hours); setSwitch("game-night-noise", settings.radioNoise !== false); setSwitch("game-night-compare", settings.radioCompare !== false);
     const examples = await deckExamples();
     tonight = nightPlan({inventory, recall: data.recall, evidence: scored(data), events: data.events, examples, compare: settings.radioCompare !== false});
-    $("game-night-count").textContent = tonight.cued.length ? tonight.cued.length + " tonight" + (tonight.compare ? " · " + tonight.held.length + " held back for tomorrow’s comparison" : "") : "Nothing from today yet: play a few rounds first.";
+    $("game-night-count").textContent = tonight.cued.length ? tonight.cued.length + " tonight" + (tonight.compare ? " · " + tonight.held.length + " held back for tomorrow’s comparison" : "") : "Nothing from today yet";
     const left = eveningRecall({inventory, recall: data.recall, evidence: scored(data), events: data.events, examples}).length;
     $("game-night-evening").hidden = !left; $("game-night-evening-label").textContent = "Evening recall first · " + left + " item" + (left === 1 ? "" : "s");
+    // The disabled rule (map 7): a control that cannot be used says why, under it.
     $("game-night-start").disabled = !tonight.cued.length;
-    $("game-night-until").textContent = tonight.cued.length ? "Until " + clockAt(Date.now() + hours * 3600_000) + " · keep the phone on its charger, screen on" : "Play a few rounds first";
+    $("game-night-why").textContent = tonight.cued.length ? "" : "Play a few rounds first: the night only replays today.";
+    $("game-night-until").textContent = tonight.cued.length ? "Until " + clockAt(Date.now() + hours * 3600_000) + " · keep the phone on its charger, screen on" : "";
   }
   function startNight() {
     if (!tonight?.cued.length) return;
@@ -1295,7 +1301,8 @@ async function game() {
   document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && nightPlayer.running) navigator.wakeLock?.request("screen").then(w => { nightWake = w; }).catch(() => {}); });
   segClick("game-set-difficulty", v => savePreference("gameDifficulty", difficultyOf(v)));
   // The rank, set by hand until the owner fixes how it is won and lost.
-  $("game-set-bedtime").onchange = e => savePreference("gameBedtime", e.target.value || "23:30");
+  // The phone's time picker may show 12 h; the field reads 24 h (map 16), the picker opening over it.
+  $("game-set-bedtime").onchange = e => { $("game-set-bedtime-shown").textContent = e.target.value || "23:30"; savePreference("gameBedtime", e.target.value || "23:30"); };
   switchClick("game-set-start", on => savePreference("startGame", on));
   switchClick("game-set-sound", on => setSound(on));
   // Board 11: Report a problem opens Echo's report sheet (bugs that aren't one card).
@@ -1664,19 +1671,21 @@ async function game() {
     if (q.bonus && sound()) sfx.bonus();
     const token = ++askToken;
     voiceWait = false;
-    const startClock = () => { voiceWait = false; shownAt = performance.now(); runBar(q.seconds, {gold: !!q.bonus}); timer = setTimeout(() => answer(-1, "timeout"), q.seconds * 1000); };
+    // The hero disc (board 14 F): its ring runs while the word plays, and the line under it says the clock waits.
+    const voicing = playing => { setTransport($("game-say"), {state: playing ? "playing" : "ready", progress: playing ? 1 : 0}); $("game-say-hint").textContent = playing ? "Playing · the clock starts when it ends" : "Tap to hear it again"; };
+    const startClock = () => { voiceWait = false; if (listen) voicing(false); shownAt = performance.now(); runBar(q.seconds, {gold: !!q.bonus}); timer = setTimeout(() => answer(-1, "timeout"), q.seconds * 1000); };
     if (!listen) { startClock(); return; }
     // Listen (re-audit): the clock starts once the word has played; if it can't
     // play, the card doesn't count and the game moves on.
     // The bar waits full until the voice ends (board 3a · Listen).
     // Until it has, no answer is taken and Hear it again is inert (re-audit: a choice could score before the word was heard).
-    voiceWait = true;
+    voiceWait = true; voicing(true);
     shownAt = performance.now(); clearInterval(ticker); bar.style.transition = "none"; bar.style.width = "100%"; $("game-clock").dataset.state = ""; $("game-sec").textContent = q.seconds.toFixed(1);
     speakAndWait(spokenWord(q.prompt, q.say), {voice: voice(), rate: Number(settings.rate) || 1}).then(ok => {
       if (token !== askToken || current !== q || locked) return;
       // The voice ended while the tab was hidden: the clock starts when it is seen again, once.
       if (ok) { if (document.visibilityState === "hidden") hiddenResume = startClock; else startClock(); return; }
-      voiceWait = false; listenFails++;
+      voiceWait = false; voicing(false); listenFails++;
       locked = true; marks[index] = "pr"; practiced++; head();
       $("game-combo").textContent = "The audio didn’t play: this one doesn’t count.";
       timer = setTimeout(() => { index++; saveRound(); ask(); }, PAUSE.miss);
@@ -1829,7 +1838,7 @@ async function game() {
     if (!paperReview) clearRound();
     root.dataset.paper = String(!!paperReview);
     $("game-review-back").hidden = !paperReview;
-    $("game-sub").textContent = (paperReview ? "Boss review · " : "Review · ") + (n + 1) + " of " + misses.length;
+    $("game-sub").textContent = (paperReview ? "Boss review · " : "Review · ") + (n + 1) + " of " + misses.length + (paperReview ? "" : " · back next round");
     $("game-sub-right").replaceChildren(...(misses[n].from > misses[n].to ? [el("span", {class: "qr-chip", "data-tone": "seal", text: "Lv " + misses[n].from + " → " + misses[n].to})] : []));
     $("game-review-kind").textContent = KIND_LABEL[q.kind];
     const word = sol.word || q.answer;
@@ -1924,7 +1933,8 @@ async function game() {
     if (late) deckExamples().then(examples => {
       const left = eveningRecall({inventory, recall: data.recall, evidence: scored(data), events: data.events, examples}).length;
       $("game-sleep").href = left ? "?view=evening&from=game" : "?view=game&panel=radio";
-      $("game-sleep").querySelector("span").textContent = left ? "Evening recall, then sleep" : "Start the Night Radio";
+      $("game-sleep-label").textContent = left ? "Evening recall, then sleep" : "Start the Night Radio";
+      $("game-sleep-sub").textContent = left ? left + " item" + (left === 1 ? "" : "s") + " · then the Night Radio" : "";
       // The line and the button agree (review C16): "saved for tonight" only with Evening recall.
       if (!left) $("game-done-line").textContent = rights + " of " + round.length;
       $("game-bedtime-line").textContent = left ? left + " items to recall, then the Night Radio plays them while you sleep." : "Nothing left to recall: the Night Radio plays today’s work while you sleep.";
@@ -2058,7 +2068,11 @@ async function checks(mode = "check") {
   const sourceOf = evening ? EVENING_SOURCE : CHECK_SOURCE;
   $("check-title").textContent = evening ? "Evening recall" : "Today's checks";
   $("check-seal").textContent = evening ? "夕" : "確";
-  $("check-done-go").textContent = evening ? "Start the Night Radio" : "Back to today's plan";
+  // In the game's skin the evening's way to the night is the start bar (board 14 G); elsewhere a plain link.
+  const toNight = evening && params.get("from") === "game", go = $("check-done-go");
+  go.classList.toggle("tp-start", toNight);
+  if (toNight) { go.dataset.tpGlyph = "play"; go.innerHTML = '<span class="tp-disc" aria-hidden="true"></span><span class="tp-label">Start the Night Radio</span>'; setTransport(go); }
+  else go.textContent = evening ? "Start the Night Radio" : "Back to today's plan";
   const fromGame = params.get("from") === "game";
   $("check-done-go").href = evening ? (fromGame ? "?view=game&panel=radio" : "./radio") : "./n2-mock.html";
   if (fromGame) $("check-back").href = evening ? "?view=game&panel=radio" : "?view=game";
@@ -2241,7 +2255,22 @@ async function dayRadio() {
       listen: "Each item: the word, its meaning, a natural sentence, the word again. Leave it playing while you walk, cook or tidy. Keep Echo open — a locked phone stops speech.",
       recall: "Echo says a sentence, pauses, then reveals. Say the meaning aloud in the pause. Tap Got it or Not yet if you can — that is a listening check; otherwise it counts as listening only. Tomorrow, Today's checks tests what you heard.",
     }[mode];
-    $("day-play").textContent = player.running ? "Pause" : "Play";
+    dayTransport();
+  }
+  // The player bar's states (board 14 C–D): ready, playing (the ring shows how far through the queue), paused (the
+  // ring holds), finished (the main disc in outline with replay, "Again" under it; the others inert).
+  let dayStarted = false;
+  function dayTransport() {
+    const done = !$("day-done").hidden && queue.length > 0;
+    if (player.running) dayStarted = true;
+    const state = done ? "finished" : player.running ? "playing" : dayStarted ? "paused" : "ready";
+    setTransport($("day-play"), done ? {glyph: "replay", state, label: "Play again from the start"}
+      : {glyph: player.running ? "pause" : "play", state, progress: queue.length ? (index + 1) / queue.length : 0});
+    if (done) for (const id of ["day-repeat", "day-later", "day-next"]) $(id).disabled = true;
+    $("day-again-caption").hidden = !done;
+    // One pushed-screen head (map 10): the count is the head's sub-line, "Listen · 12 of 40".
+    const of = queue.length ? (done ? queue.length : index + 1) + " of " + queue.length : "";
+    $("day-sub").textContent = [mode === "recall" ? "Recall" : "Listen", of, done ? "done" : state === "paused" ? "paused" : ""].filter(Boolean).join(" · ");
   }
   async function build(resume = false) {
     player.stop(); release();
@@ -2260,7 +2289,7 @@ async function dayRadio() {
       $("day-note").textContent = "";
       $("day-progress").textContent = ""; $("day-bar-actions").hidden = true; return;
     }
-    $("day-sub").textContent = queue.length + " items · " + queue.filter(q => q.why === "weak").length + " weak · " + queue.filter(q => q.why === "new").length + " new";
+    dayStarted = false;
     draw(queue[index], index);
   }
   let index = 0;
@@ -2269,7 +2298,7 @@ async function dayRadio() {
     current = item; index = i; revealed = false;
     clearInterval(ringTimer); $("day-ring").hidden = true;
     const example = exampleFor(item);
-    $("day-progress").textContent = (i + 1) + " / " + queue.length;
+    dayTransport();
     $("day-bar").style.width = (i / queue.length * 100) + "%";
     $("day-why").textContent = WHY[item.why] || "";
     const hide = mode !== "listen";
@@ -2284,7 +2313,7 @@ async function dayRadio() {
     $("day-rate").hidden = true;
     $("day-note").textContent = !example ? (mode === "listen" ? "No example sentence for this one yet — the word and its meaning only." : "No sentence for this one yet — you will hear the word itself.") : "";
     $("day-later").setAttribute("aria-pressed", String(later.includes(JSON.stringify(item.target))));
-    $("day-prev").disabled = i === 0; $("day-next").disabled = i >= queue.length - 1;
+    $("day-prev").disabled = i === 0; $("day-next").disabled = i >= queue.length - 1; $("day-repeat").disabled = false; $("day-later").disabled = false;
   }
   function reveal() {
     if (!current) return; revealed = true;
@@ -2301,7 +2330,8 @@ async function dayRadio() {
     await record(radioEvent({target: current.target, kind: "recall", grade, source: "day-radio", mode, exampleId: exampleFor(current)?.id}));
   }
   function finish() {
-    $("day-card").hidden = true; $("day-bar-actions").hidden = true; $("day-done").hidden = false;
+    // The bar stays: its main disc becomes "Again" (board 14 D).
+    $("day-card").hidden = true; $("day-done").hidden = false;
     $("day-bar").style.width = "100%";
     const today = localDay(), mine = data.events.filter(e => localDay(new Date(e.at)) === today);
     $("day-done-title").textContent = "Queue played through";
@@ -2316,7 +2346,7 @@ async function dayRadio() {
     player.start(queue, {index, steps: item => daySteps(mode, item, exampleFor(item), {pause}), rate: Number(settings.rate) || 1});
     sync();
   }
-  $("day-play").onclick = play;
+  $("day-play").onclick = () => $("day-play").dataset.state === "finished" ? $("day-again").click() : play();
   $("day-next").onclick = () => { if (index >= queue.length - 1) return; if (player.running) player.jump(index + 1); else draw(queue[++index], index); };
   $("day-prev").onclick = () => { if (index <= 0) return; if (player.running) player.jump(index - 1); else draw(queue[--index], index); };
   $("day-repeat").onclick = () => { if (player.running) player.jump(index); else play(); };

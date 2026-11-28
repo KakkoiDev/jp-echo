@@ -244,15 +244,10 @@ test("the hub head names the standard exam date when no goal is saved, never 'no
 });
 
 test("Day Radio's five bar buttons fit a 375px phone with 44px targets",()=>{
+  // The Transport bar (board 14): 52 · 52 · 64 · 52 · 52 discs, spaced between, padding 12 16 22.
   const css=readFileSync(new URL("../styles.css",import.meta.url),"utf8");
-  const rule=css.match(/\.n2-day-bar\{grid-template-columns:([^;]+);gap:(\d+)px/);
-  assert.ok(rule,"the Day Radio bar sets its columns and gap");
-  const cols=rule[1].trim().split(/\s+(?![^(]*\))/);
-  assert.equal(cols.length,5);
-  const fixed=cols.filter(c=>/^\d+px$/.test(c)).map(c=>parseInt(c));
-  for(const w of fixed) assert.ok(w>=44,"icon buttons are at least 44px");
-  // Play takes the free width; Later (icon + word) is about 90px.
-  const used=fixed.reduce((a,b)=>a+b,0)+90+4*Number(rule[2]);
-  assert.ok(used+60<=375-44,"leaves Play at least 60px inside the gutters");
-  assert.match(css,/\.n2-day-bar button,\.n2-exam-bar button\{min-height:44px;height:44px/);
+  const side=Number(css.match(/\.tp-side\{width:(\d+)px;height:(\d+)px/)[1]),main=Number(css.match(/\.tp-main\{width:(\d+)px;height:(\d+)px/)[1]);
+  assert.ok(side>=44&&main>=44,"targets of at least 44px");
+  assert.match(css,/\.tp-bar\{display:flex;align-items:center;justify-content:space-between;padding:12px 16px 22px\}/);
+  assert.ok(4*side+main+2*16<=375,"five discs and the gutters fit 375px");
 });

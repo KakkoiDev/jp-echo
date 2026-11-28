@@ -16,8 +16,11 @@ test("bottom bars: SVG icon buttons from components.js, never text arrows; disab
   for (const name of ["chevronLeftSvg", "chevronRightSvg", "replaySvg", "flagSvg"]) assert.match(components, new RegExp("export const " + name + "="));
   const bars = page.slice(page.indexOf('id="day-bar-actions"'), page.indexOf("</section>", page.indexOf('id="day-bar-actions"'))) + page.slice(page.indexOf('class="review-actions n2-exam-bar"'), page.indexOf("</div>", page.indexOf('class="review-actions n2-exam-bar"')));
   assert.doesNotMatch(bars, /[‹›⟲]/, "no text glyph arrows in a bar");
-  for (const id of ["day-prev", "day-repeat", "day-next", "prev", "next"]) assert.match(page, new RegExp('id="' + id + '"[^>]*aria-label="[^"]+"[^>]*data-icon='));
-  assert.match(page, /id="day-later"[^>]*aria-pressed="false" data-icon="flag"/);
+  for (const id of ["prev", "next"]) assert.match(page, new RegExp('id="' + id + '"[^>]*aria-label="[^"]+"[^>]*data-icon='));
+  // Day Radio's bar is the Transport bar (board 14): each disc names itself through the component.
+  for (const id of ["day-prev", "day-repeat", "day-next"]) assert.match(page, new RegExp('class="tp-side" id="' + id + '"[^>]*data-tp data-tp-glyph="[a-z]+" data-tp-label="[^"]+"'));
+  assert.match(page, /id="day-later" type="button" aria-pressed="false" data-tp data-tp-glyph="later"/);
+  assert.match(css, /\.tp-side\[aria-pressed=true\] svg path\{fill:currentColor\}/, "ON shows the filled flag");
   assert.match(mock, /const BAR_ICONS = \{prev: chevronLeftSvg, next: chevronRightSvg, replay: replaySvg, flag: flagSvg\}/);
   assert.match(css, /\.review-actions button:disabled\{opacity:\.45;border-color:var\(--hairline\)/);
   assert.match(css, /\.review-actions \[aria-pressed=true\]\{background:var\(--seal-tint\);border-color:var\(--seal-edge\);color:var\(--seal-deep\)\}/);

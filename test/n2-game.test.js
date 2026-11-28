@@ -233,7 +233,7 @@ test("bedtime: from the learner's hour until 5 am the round's end points to slee
   assert.match(mock, /const late = atBedtime\(new Date\(\), settings\.gameBedtime\), warm = inSlumpNext\(\), crown = best && !late;/);
   assert.match(mock, /\$\("game-again-label"\)\.textContent = late \? "One more round" : warm \? "Recovery round" : "Next round";/);
   assert.match(mock, /\$\("game-sleep"\)\.href = left \? "\?view=evening&from=game" : "\?view=game&panel=radio";/);
-  assert.match(html, /id="game-sleep" href="\?view=evening&amp;from=game" hidden>[\s\S]*?Evening recall, then sleep<\/span><\/a>/);
+  assert.match(html, /class="tp-start" id="game-sleep" href="\?view=evening&amp;from=game" data-tp data-tp-glyph="play" hidden>[\s\S]*?Evening recall, then sleep<\/span>/, "the start bar, not a seal button (board 14 G)");
   assert.match(index, /id="settings-game-bedtime" type="time" value="23:30"/);
 });
 
@@ -427,7 +427,7 @@ test("the game follows the boards (Blitz on washi): tokens, clock, head, cards, 
   assert.match(css, /\.qr-play\{[^}]*height:96px;border-radius:24px/, "board 1: Play, 96 px");
   assert.match(css, /\.qr-btn\{[^}]*height:72px;border-radius:22px/, "board 6: Next round, 72 px");
   assert.match(css, /\.qr-next\{flex:1;height:52px;border-radius:14px;border:0;background:var\(--sumi\)/, "board 5: Next, ink");
-  assert.match(css, /\.qr-listen\{[^}]*width:96px;height:96px;border-radius:50%/, "board 3a: the listen button");
+  assert.match(css, /\.tp-hero\{width:96px;height:96px;border:0;margin:14px auto 0;background:var\(--sumi\)/, "board 14 F: the listen card's hero disc");
   assert.match(html, /class="qr-ib qr-q" id="game-flag"/); assert.match(mock, /toast\("Flagged, saved as shown", "no points"\)/);
   // Measured against the boards at 375 px (v280): Home's four states, the loop, the review, the round end, board 11.
   assert.match(css, /\.n2-game\[data-mode=home\] \.qr-hd,[^{]*\{padding-bottom:8px;min-height:64px\}/, "boards 1, 11: a 64 px head outside the loop");
@@ -652,11 +652,11 @@ test("Radio from the game: Day and Night start alike, and Day Radio and Evening 
   const html = src("../n2-mock.html"), css = src("../styles.css"), mock = src("../n2-mock.js");
   const radio = html.slice(html.indexOf('id="game-radio"'), html.indexOf('id="game-play"'));
   assert.match(radio, /id="game-day-mode" role="radiogroup"[\s\S]*?id="game-day-start" href="\?view=radio&amp;mode=listen&amp;from=game"/, "Day has its own start");
-  assert.match(radio, /class="qr-btn qr-btn60 qr-mt12" id="game-night-start"/); assert.doesNotMatch(radio, /class="qr-dock"/, "no bottom button for the night alone");
+  assert.match(radio, /class="tp-start qr-mt12" id="game-night-start"/); assert.match(radio, /class="tp-start qr-mt12" id="game-day-start"/, "Day and Night are the same start bar (board 14 B)"); assert.doesNotMatch(radio, /class="qr-dock"/, "no bottom button for the night alone");
   assert.match(mock, /if \(FROM_GAME\) \{ document\.body\.dataset\.from = "game";/);
   assert.match(css, /body\[data-from=game\]\{background-image:none;background:var\(--washi\);font-family:var\(--ui\)\}/);
   assert.match(css, /body\[data-from=game\] \.drill-title\{font-family:var\(--ui\);font-size:20px;font-weight:900/);
-  assert.match(css, /body\[data-from=game\] #day-howto\{margin-top:12px;padding:0 16px;border:1px solid var\(--hairline\)/, "the how-to card keeps its gap and top edge (Echo's first-row rule zeroed both)");
+  assert.match(css, /body\[data-from=game\] #day-howto\{margin-top:12px;padding:0 18px;border:1px solid var\(--hairline\)/, "the how-to card keeps its gap and top edge (Echo's first-row rule zeroed both)");
   assert.doesNotMatch(css.slice(css.indexOf("body[data-from=game]{"), css.indexOf("/* Day Radio */")), /#[0-9A-Fa-f]{6}\b/, "tokens only in the skin");
   assert.match(mock, /\$\("day-done-back"\)\.href = "\?view=game&panel=radio"/, "the end of Day Radio leads back to the game's Radio");
 });

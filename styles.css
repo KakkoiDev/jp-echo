@@ -2094,7 +2094,7 @@ body.n2-is-paused #exam>:not(.n2-exam-head):not(.n2-paused){display:none}
 .n2-booklet audio{width:100%}
 .n2-exam-bar{grid-template-columns:44px 44px minmax(0,1fr) minmax(44px,auto);gap:8px;align-items:center}
 .n2-exam-bar #next:not(.bar-icon-button){padding:0 14px;font-size:15px}
-.n2-day-bar button,.n2-exam-bar button{min-height:44px;height:44px;font-size:15px}
+.n2-exam-bar button{min-height:44px;height:44px;font-size:15px}
 .n2-exam-bar .icon-button{width:44px}
 .n2-grid{display:grid;grid-template-columns:repeat(6,minmax(44px,1fr));gap:6px}
 .n2-grid-groups{margin-top:12px;max-height:50dvh;overflow:auto}
@@ -2190,7 +2190,7 @@ body[data-view=game] .n2-game{position:fixed;inset:0;box-sizing:border-box;width
 .n2-game :where(label){display:block}
 /* Echo's a:hover (seal) outranks the reset, and on a phone a tapped link stays hovered: Home's back chevron went red. */
 .n2-game a.qr-ib:hover,.n2-game a.qr-btn2:hover,.n2-game a.qr-it:hover,.n2-game a.qr-strip:hover,.n2-game .qr-notice a:hover{color:var(--sumi)}
-.n2-game a.qr-play:hover,.n2-game a.qr-btn:hover{color:var(--seal-on)}.n2-game a.qr-btn-night:hover{color:var(--panel)}.n2-game a.qr-evening:hover{color:var(--right)}
+.n2-game a.qr-play:hover,.n2-game a.qr-btn:hover{color:var(--seal-on)}.n2-game a.tp-start:hover{color:var(--washi)}.n2-game a.qr-evening:hover{color:var(--right)}
 .n2-game label>span:first-child{font-size:inherit;color:inherit}
 .n2-game button:disabled{background:none;color:inherit;border-color:transparent;cursor:default}
 .n2-game .qr-btn:disabled{background:var(--seal);color:var(--seal-on);opacity:.45}
@@ -2317,7 +2317,6 @@ body[data-view=game] .n2-game{position:fixed;inset:0;box-sizing:border-box;width
 .qr-bossrow strong{display:block;font-size:22px;font-weight:900;line-height:1.2}.qr-bossrow div span{display:block;margin-top:4px;font-size:14px;color:var(--ink-muted)}
 .qr-rest{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;padding:40px 8px 0}
 .qr-rest[hidden]{display:none}
-.qr-restglyph{font-family:var(--display);font-size:64px;font-weight:700;color:var(--ink-muted);line-height:1}
 .qr-rest strong{font-size:26px;font-weight:900}.qr-rest p{font-size:15px;line-height:1.55;color:var(--ink-muted);max-width:280px}
 .qr-sect{padding-top:16px}
 .qr-sect>.qr-row{margin-bottom:4px}
@@ -2390,8 +2389,7 @@ body[data-view=game] .n2-game{position:fixed;inset:0;box-sizing:border-box;width
 .qr-sent[data-lines="2"],.qr-sent[data-lines="3"]{text-align:start}.qr-sent[data-lines="3"]{font-size:19px}
 .qr-sent u{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:7px;text-decoration-color:var(--seal)}
 .qr-sent[hidden]{display:none}
-.qr-listen{display:flex;align-items:center;justify-content:center;width:96px;height:96px;border-radius:50%;border:0;margin:14px auto 0;background:var(--sumi);color:var(--washi)}
-.qr-listen[hidden],.qr-hint[hidden]{display:none}
+.tp-hero[hidden],.qr-hint[hidden]{display:none}
 .qr-hint{margin:10px 0 4px;text-align:center;font-size:13px;color:var(--ink-muted)}
 .qr-say{display:flex;align-items:center;gap:6px;margin:14px 0 0;font-size:12px;color:var(--ink-muted)}
 .qr-say b{font-family:var(--display);font-size:14px;color:var(--seal);font-weight:800}
@@ -2483,7 +2481,6 @@ body[data-view=game] .n2-game{position:fixed;inset:0;box-sizing:border-box;width
 #game-done{padding-bottom:calc(14px + env(safe-area-inset-bottom))}
 .qr-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;height:72px;border-radius:22px;border:0;background:var(--seal);color:var(--seal-on);font-family:inherit;font-size:20px;font-weight:900;text-decoration:none}
 .qr-btn[hidden]{display:none}
-.qr-btn-night{background:var(--right);color:var(--panel);margin-bottom:0}
 .qr-lnk{display:flex;align-items:center;justify-content:center;width:100%;height:48px;border:0;background:transparent;color:var(--sumi);font-family:inherit;font-size:15px;font-weight:700}
 /* Board 11: the Home head's Sound icon, Settings, Radio, the night screen,
    practice cards. */
@@ -2511,13 +2508,16 @@ body[data-view=game] .n2-game{position:fixed;inset:0;box-sizing:border-box;width
 .qr-seghint{margin:8px 0 0;padding:0 4px}
 .qr-time{padding:8px 12px;border-radius:10px;background:var(--track);color:var(--sumi);border:0;font:inherit;font-size:14px;font-weight:700;line-height:20px;height:36px;min-height:0;font-variant-numeric:tabular-nums}
 .qr-time::-webkit-calendar-picker-indicator{display:none}
+.qr-timewrap{position:relative;display:inline-flex;flex:none}
+.qr-timewrap .qr-time{display:inline-flex;align-items:center}
+.qr-timefield{position:absolute;inset:0;width:100%;height:100%;opacity:0;border:0;padding:0;margin:0;font-size:16px}
 .qr-time::-webkit-datetime-edit,.qr-time::-webkit-datetime-edit-fields-wrapper{padding:0}
 #game-set-status{margin:12px 0 0;text-align:center}
 .qr-radiohead{display:flex;align-items:center;gap:12px}
-.qr-radiohead strong{display:block;font-size:17px;font-weight:900}.qr-radiohead span:not(.qr-glyph){display:block;font-size:12px;color:var(--ink-muted)}
+.qr-radiohead strong{display:block;font-size:17px;font-weight:900}.qr-radiohead span:not(.qr-glyph):not(.qr-sign){display:block;font-size:12px;color:var(--ink-muted)}
 .qr-glyph{font-family:var(--display);font-size:26px;font-weight:800}
 /* A glyph inside a secondary button (音 Radio), at the size the line icons have. */
-.qr-btn2 .qr-glyph{font-size:19px;line-height:1}.qr-glyph-day{color:var(--right)}.qr-glyph-night{color:var(--seal)}
+.qr-btn2 .qr-glyph{font-size:18px;line-height:1}
 .qr-pair .qr-btn2{flex:1;text-decoration:none}
 .qr-evening{display:flex;align-items:center;gap:10px;margin-top:14px;min-height:48px;padding:0 12px;border-radius:12px;background:var(--right-tint);color:var(--right);text-decoration:none;font-size:14px;font-weight:700}
 .qr-evening span{flex:1}.qr-evening svg{color:var(--right)}
@@ -2536,7 +2536,38 @@ body[data-view=game] .n2-game{position:fixed;inset:0;box-sizing:border-box;width
 .qr-nightmid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px}
 .qr-nightmid p:first-child{margin:0;font-family:var(--display);font-size:26px;line-height:1.7;color:#9A9184}
 .qr-nightmid p:last-child{margin:0;font-size:12px;color:#857D70}
-#game-night-stop{width:100%;height:56px;border-radius:18px;border:1px solid #3A342B;background:transparent;color:#9A9184;font-family:inherit;font-size:16px;font-weight:700}
+/* Transport (board 14, designer, 28 Nov; Transport in COMPONENTS.md): one way to play sound. Playback is ink:
+   --sumi ground and --washi glyph. Seal stays for starting something scored, indigo for the answer. */
+.tp-start{display:flex;align-items:center;gap:14px;width:100%;height:60px;padding:0 10px 0 8px;border-radius:18px;border:0;background:var(--sumi);color:var(--washi);font-family:var(--ui);font-size:17px;font-weight:900;text-align:left;text-decoration:none;line-height:1.2}
+.tp-start .tp-disc{width:44px;height:44px;flex:none;border-radius:22px;background:var(--washi);color:var(--sumi);display:flex;align-items:center;justify-content:center}
+.tp-start .tp-label{flex:1;min-width:0}
+.tp-start small{display:block;font-size:12px;font-weight:500;opacity:.75}
+.tp-start small:empty{display:none}
+.tp-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px 22px}
+.tp-main,.tp-side,.tp-hero,.tp-night{display:flex;align-items:center;justify-content:center;flex:none;padding:0;border-radius:50%;font-family:var(--ui);position:relative}
+.tp-main{width:64px;height:64px;border:0;background:var(--sumi);color:var(--washi)}
+.tp-side{width:52px;height:52px;border:1.5px solid var(--hairline);background:transparent;color:var(--sumi)}
+.tp-side[aria-pressed=true]{border-color:var(--sumi)}.tp-side[aria-pressed=true] svg path{fill:currentColor}
+body .tp-side:disabled,body .tp-side:disabled:hover{color:var(--hairline);border-color:var(--hairline);border-style:solid;background:transparent;opacity:1}
+.tp-hero{width:96px;height:96px;border:0;margin:14px auto 0;background:var(--sumi);color:var(--washi)}
+/* The progress ring: 3 px, 5 px outside the disc, --rule track and --sumi arc. It holds where it stopped when paused. */
+:is(.tp-main,.tp-hero):is([data-state=playing],[data-state=paused])::before{content:"";position:absolute;inset:-8px;border-radius:50%;
+  background:conic-gradient(var(--sumi) calc(var(--tp-progress, 0) * 360deg), var(--rule) 0);
+  -webkit-mask:radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));mask:radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px))}
+.tp-main[data-state=finished]{background:transparent;color:var(--sumi);border:2px solid var(--sumi)}
+.tp-caption{display:block;text-align:center;font-size:12px;font-weight:700;color:var(--sumi);margin:-14px 0 18px}
+.tp-caption[hidden]{display:none}
+/* The disabled rule (map 7): --rule ground, --ink-muted at full opacity, the disc dashed, and a reason line under it. */
+body .tp-start:disabled,body .tp-start[aria-disabled=true]{background:var(--rule);color:var(--ink-muted);opacity:1;pointer-events:none}
+body .tp-start:disabled .tp-disc,body .tp-start[aria-disabled=true] .tp-disc{background:transparent;border:1.5px dashed var(--ink-muted);color:var(--ink-muted)}
+.tp-why{font-size:12px;color:var(--ink-muted);text-align:center;margin:8px 0 0}
+.tp-why:empty,.tp-why[hidden]{display:none}
+/* The Night player's stop: the family's main disc in outline, on black, with three fixed greys in both themes. */
+.qr-night{--night-line:#9A9184;--night-text:#857D70;--night-ring:#3A342B}
+.qr-nightstop{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:13px;color:var(--night-text)}
+.tp-night{width:72px;height:72px;border:1.5px solid var(--night-ring);background:transparent;color:var(--night-text)}
+/* Signs (map 12): a Mincho kanji in a 40 px hairline square, in ink. 速 stays seal-filled, 鬼 stays seal. */
+.qr-sign{width:40px;height:40px;flex:none;border-radius:10px;border:1px solid var(--hairline);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:24px;font-weight:800;color:var(--sumi);line-height:1}
 .qr-card[data-practice=true]{border-style:dashed}
 .n2-game[data-practice=true] .qr-bar span{opacity:.5}.n2-game[data-practice=true] .qr-clk[data-state=idle] .qr-bar span{opacity:.25}.n2-game[data-practice=true] .qr-sec{color:var(--ink-muted)}
 .qr-chip[data-tone=practice]{background:transparent;border:1.5px dashed var(--ink-muted);color:var(--ink-muted)}
@@ -2588,7 +2619,7 @@ html.motion-off .n2-game *{animation:none !important}html.motion-off .n2-game *:
   body[data-view=game] .qr-card{margin-top:10px;padding:14px 16px 12px}
   body[data-view=game] .qr-big{font-size:38px;margin:10px 0 4px}body[data-view=game] .qr-big.mid{font-size:28px}body[data-view=game] .qr-big:lang(en){font-size:22px;margin:12px 0 4px}body[data-view=game] .qr-big.exam{font-size:18px;margin:10px 0 0}
   body[data-view=game] .qr-sent{font-size:19px;margin-top:10px}body[data-view=game] .qr-sent.passage{font-size:16px;line-height:1.7}
-  body[data-view=game] .qr-listen{width:76px;height:76px;margin-top:10px}body[data-view=game] .qr-hint{margin:6px 0 2px}
+  body[data-view=game] .tp-hero{width:76px;height:76px;margin-top:10px}body[data-view=game] .qr-hint{margin:6px 0 2px}
   body[data-view=game] .qr-say{margin-top:10px}
   /* Board 13 · F: a build card gives up the "say it" line first, then its rows tighten. */
   body[data-view=game] .qr-card[data-kind=build] .qr-say{display:none}
@@ -2617,7 +2648,7 @@ body[data-from=game] #n2-main{max-width:480px;padding:0 16px calc(104px + env(sa
 body[data-from=game] :is(#day,#check) :is(button,.button){font-family:var(--ui);letter-spacing:normal;text-transform:none;box-shadow:none}
 body[data-from=game] .drill-head{gap:10px;padding:calc(12px + env(safe-area-inset-top)) 0 8px;min-height:64px;box-sizing:border-box}
 body[data-from=game] .drill-head .icon-button{border-radius:12px;background:transparent;border:1px solid var(--hairline);color:var(--sumi)}
-body[data-from=game] .drill-head .report-button{border-color:transparent;color:var(--ink-muted)}
+body[data-from=game] .report-button,body[data-from=game] .drill-head .report-button,body[data-from=game] :is(.tool-head,.drill-head,header) .icon-button.report-button{border-color:transparent;background:transparent;color:var(--ink-muted)}
 body[data-from=game] .tool-titles{gap:0}
 body[data-from=game] .drill-title{font-family:var(--ui);font-size:20px;font-weight:900;line-height:1.2}
 body[data-from=game] .tool-titles .overline{font-size:12px;letter-spacing:normal;text-transform:none;color:var(--ink-muted)}
@@ -2627,7 +2658,7 @@ body[data-from=game] .drill-bar span{height:8px;border-radius:4px;background:var
 body[data-from=game] .segmented{gap:4px;margin-top:14px;padding:4px;border:0;border-radius:14px;background:var(--rule);overflow:visible}
 body[data-from=game] .segmented [role=tab]{border:0;border-radius:10px;color:var(--sumi);font-size:14px;font-weight:700;letter-spacing:normal;box-shadow:none}
 body[data-from=game] .segmented [role=tab][aria-selected=true]{background:var(--panel);color:var(--sumi);box-shadow:0 1px 2px rgba(0,0,0,.12)}
-body[data-from=game] #day-howto{margin-top:12px;padding:0 16px;border:1px solid var(--hairline);border-radius:18px;background:var(--panel)}
+body[data-from=game] #day-howto{margin-top:12px;padding:0 18px;border:1px solid var(--hairline);border-radius:20px;background:var(--panel)}
 body[data-from=game] .n2-day-howto .collapse-title{font-family:var(--ui);font-size:15px;font-weight:700}
 body[data-from=game] .chips{gap:6px;margin-top:12px}
 body[data-from=game] .chips button{height:32px;min-height:32px;padding:0 12px;border:0;border-radius:16px;background:var(--rule);color:var(--sumi);font-size:12px;font-weight:700}
@@ -2675,12 +2706,10 @@ body[data-from=game] .n2-day-rate .again,body[data-from=game] .n2-grades .again{
 body[data-from=game] .n2-day-rate [data-rate=got],body[data-from=game] .n2-grades [data-check-grade=instant]{border-color:var(--chip-learn-fg);background:var(--chip-learn-fg);color:var(--panel)}
 body[data-from=game] .review-actions{width:min(480px,100%);gap:8px;padding:12px 16px calc(22px + env(safe-area-inset-bottom));border-top:0;background:var(--washi)}
 body[data-from=game] .review-actions .primary{border:0;background:var(--sumi);color:var(--washi);font-size:16px;font-weight:900}
-body[data-from=game] #day-play{background:var(--seal);color:var(--seal-on)}
 body[data-from=game] .review-actions .bar-icon-button{width:52px;min-width:52px}
 body[data-from=game] .review-actions [aria-pressed=true]{background:var(--seal-tint);border-color:var(--seal);color:var(--seal)}
 body[data-from=game] .review-actions button:disabled{opacity:.4;background:transparent;color:var(--sumi);border-color:var(--hairline)}
 body[data-from=game] .review-actions .primary:disabled{background:var(--rule);color:var(--ink-muted);opacity:1}
-body[data-from=game] .n2-day-bar{grid-template-columns:52px 52px minmax(0,1fr) auto 52px}
 body[data-from=game] .n2-provenance{font-size:12px;color:var(--ink-muted)}
 body[data-from=game] .n2-help{border-radius:12px;border:1px solid var(--hairline);background:transparent}
 body[data-from=game] .drill-done{margin-top:44px;align-items:center;text-align:center}
@@ -2690,8 +2719,8 @@ body[data-from=game] .drill-done>.hint{margin:8px 0 0;font-size:14px;line-height
 body[data-from=game] .drill-missed{align-self:stretch;margin-top:18px;border-top:0;text-align:left}
 body[data-from=game] .drill-missed li{border-bottom:1px solid var(--hairline)}
 body[data-from=game] .drill-done-actions{align-self:stretch;gap:0;margin-top:28px}
-body[data-from=game] .drill-done-actions :is(.primary,.button.primary){display:flex;align-items:center;justify-content:center;min-height:72px;border:0;border-radius:22px;background:var(--seal);color:var(--seal-on);font-size:20px;font-weight:900;text-decoration:none}
-body[data-from=game] #check[data-evening=true] .drill-done-actions .primary{background:var(--chip-learn-fg);color:var(--panel)}
+body[data-from=game] .drill-done-actions :is(.primary,.button.primary):not(.tp-start){display:flex;align-items:center;justify-content:center;min-height:72px;border:0;border-radius:22px;background:var(--seal);color:var(--seal-on);font-size:20px;font-weight:900;text-decoration:none}
+body[data-from=game] #check[data-evening=true] .drill-done-actions .primary:not(.tp-start){background:var(--chip-learn-fg);color:var(--panel)}
 body[data-from=game] .drill-done-actions .outline{display:flex;align-items:center;justify-content:center;min-height:48px;border:0;background:transparent;color:var(--sumi);font-size:15px;font-weight:700;text-decoration:none}
 /* Day Radio */
 .n2-day-lede{margin-top:12px}
@@ -2703,8 +2732,11 @@ body[data-from=game] .drill-done-actions .outline{display:flex;align-items:cente
 .n2-day-example:has(p:empty:first-child){display:none}
 .n2-day-rate{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-top:14px}
 .n2-day-rate button{min-height:52px}
-.n2-day-bar{grid-template-columns:44px 44px minmax(0,1fr) auto 44px;gap:8px;align-items:center}
-.n2-day-bar button{min-width:0}
+/* Day Radio's player bar is the Transport bar (board 14 C–D), fixed at the bottom; its count lives in the head. */
+.n2-day-bar.tp-bar{position:fixed;z-index:4;left:50%;bottom:0;transform:translateX(-50%);width:min(480px,100%);padding:12px 16px calc(22px + env(safe-area-inset-bottom));background:var(--washi)}
+.n2-day-bar.tp-bar[hidden]{display:none}
+#day-again-caption{position:fixed;z-index:5;left:50%;transform:translateX(-50%);bottom:calc(4px + env(safe-area-inset-bottom));margin:0}
+#day-progress,#day-again{display:none}
 /* Radio opens on Day and Night as equals, with a resume bar (RadioEntrances). */
 .radio-entrances{display:flex;flex-direction:column;margin-top:8px}
 .radio-entrances a.library-tool{text-decoration:none;color:inherit;border-bottom:1px solid var(--rule)}

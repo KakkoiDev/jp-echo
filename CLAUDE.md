@@ -762,6 +762,18 @@ Before considering the change complete:
   a kana seen again after `KANA_REST` until `KANA_LEARNED` right answers,
   then new ones in order. Its review says the kana and quotes words that begin
   with it. A missed one comes back.
+- **One way to play sound in Quick round (designer, 28 Nov, v328).** The
+  Transport component (components.js, COMPONENTS.md; board 14) draws every
+  start, play, pause, replay, next, later and stop: the Radio screen's Day and
+  Night start bars (signs 昼 夜 on the cards, no ▶/☾), Day Radio's player bar
+  (in both looks: it is shared markup), the Night player's stop, the listen
+  card's hero disc, the bedtime round end, Home's rest and Evening recall's way
+  to the night. Colour rule: seal starts something scored, ink plays or moves
+  on, indigo is the answer and never a button fill. From the consistency map:
+  one voice line ("Say it out loud" on a card, "Say it with the voice" in the
+  review), 24-hour times (`clockAt`, the bedtime field), signs in a 40 px
+  hairline square, Settings' 設 in the dock, no Echo voice panel in the skins,
+  a disabled control always says why. Board files: docs/design/consistency/.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

@@ -407,3 +407,42 @@ export function mountReportButtons(root=document,onOpen){
     search?head.insertBefore(b,search):close?head.insertBefore(b,close):head.append(b);
   }
 }
+
+// ---- Transport (board 14, designer, 28 Nov): one way to play sound in Quick round ----
+// State glyphs (play, pause, stop) are filled shapes; moves (replay, previous, next, later, voice) are 2 px strokes
+// with round caps, on a 24 px grid. Playback is always ink; seal is for starting something scored, indigo for the
+// answer. Markup marks a control with data-tp and its first glyph (data-tp-glyph); mountTransport draws them and
+// setTransport changes a control's glyph and state. Variants by class: tp-start (60 px bar, its disc holds the
+// glyph), tp-main (64), tp-side (52), tp-hero (96, a listen card), tp-night (72, the Night player).
+const TP_FILLED = {
+  play: '<path d="M8 5.6v12.8a1 1 0 0 0 1.5.86l10.2-6.4a1 1 0 0 0 0-1.72L9.5 4.74A1 1 0 0 0 8 5.6z" fill="currentColor"/>',
+  pause: '<rect x="6.5" y="5" width="3.6" height="14" rx="1.2" fill="currentColor"/><rect x="13.9" y="5" width="3.6" height="14" rx="1.2" fill="currentColor"/>',
+  stop: '<rect x="6" y="6" width="12" height="12" rx="2.4" fill="currentColor"/>'};
+const TP_STROKE = {
+  replay: '<path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3"/><path d="M4.5 4v4h4"/>',
+  previous: '<path d="M16 6l-6 6 6 6"/><path d="M7 6v12"/>',
+  next: '<path d="M8 6l6 6-6 6"/><path d="M17 6v12"/>',
+  later: '<path d="M6 21V4h11l-2 4 2 4H6"/>',
+  voice: '<path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M17 9a4 4 0 0 1 0 6"/>'};
+export const TRANSPORT_GLYPHS = Object.freeze([...Object.keys(TP_FILLED), ...Object.keys(TP_STROKE)]);
+export const TRANSPORT_LABEL = Object.freeze({play: "Play", pause: "Pause", stop: "Stop the Night Radio", replay: "Replay", previous: "Previous", next: "Next", later: "Later", voice: "Hear it again"});
+export const TRANSPORT_SIZE = Object.freeze({"tp-start": 20, "tp-main": 26, "tp-side": 22, "tp-hero": 40, "tp-night": 24});
+export function transportGlyph(name, size = 24) {
+  if (TP_FILLED[name]) return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" aria-hidden="true">${TP_FILLED[name]}</svg>`;
+  if (TP_STROKE[name]) return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${TP_STROKE[name]}</svg>`;
+  return "";
+}
+const tpVariant = el => Object.keys(TRANSPORT_SIZE).find(c => el.classList.contains(c)) || "tp-side";
+// state: ready · playing · paused · finished. progress (0–1) draws the ring of a main or hero disc.
+// A start bar keeps its visible label; every disc carries an aria-label (its own, or the glyph's).
+export function setTransport(el, {glyph, state, label, progress} = {}) {
+  if (!el) return;
+  if (glyph) el.dataset.tpGlyph = glyph;
+  if (state) el.dataset.state = state;
+  if (progress !== undefined) el.style.setProperty("--tp-progress", String(Math.max(0, Math.min(1, Number(progress) || 0))));
+  const variant = tpVariant(el), holder = el.querySelector(".tp-disc") || el.querySelector(".tp-glyph") || el;
+  const svg = transportGlyph(el.dataset.tpGlyph, TRANSPORT_SIZE[variant]);
+  if (holder === el) { el.querySelector(":scope > svg")?.remove(); el.insertAdjacentHTML("afterbegin", svg); } else holder.innerHTML = svg;
+  if (variant !== "tp-start") el.setAttribute("aria-label", label || el.dataset.tpLabel || TRANSPORT_LABEL[el.dataset.tpGlyph] || "");
+}
+export function mountTransport(root = document) { for (const el of root.querySelectorAll("[data-tp]")) setTransport(el); }

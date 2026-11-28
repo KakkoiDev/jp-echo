@@ -97,5 +97,6 @@ export const RADIO_PHASE_COPY = Object.freeze({
 // "6:40" — when the phase or the night ends, on the person's clock.
 export function clockAt(ms) {
   const d = new Date(ms);
-  return d.getHours() + ":" + String(d.getMinutes()).padStart(2, "0");
+  // 24-hour, tabular (map 16): "06:30", never "6:30".
+  return String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
 }

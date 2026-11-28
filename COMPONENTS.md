@@ -367,3 +367,25 @@ The hub's `.n2-next` holds the screen's one filled Start, above the open plan;
 an over-budget day is one `.n2-budget` line whose Choose opens the choices.
 `.n2-tiles` shows one tile per set with `data-state` over / below / live /
 held / new (`mockTileState`, n2-study.js), with the legend under it.
+
+### Transport (board 14, Quick round)
+
+One way to play sound in Quick round and the screens it opens in its skin.
+`components.js`: `TRANSPORT_GLYPHS`, `transportGlyph(name, size)`,
+`setTransport(el, {glyph, state, label, progress})`, `mountTransport(root)`.
+Markup marks a control with `data-tp` and `data-tp-glyph`; the class picks the
+variant:
+
+- `tp-start`: the 60 px start bar, ink ground, a 44 px disc holding play, a
+  label and an optional 12 px sub-line (`<small>`). Disabled: `--rule` ground,
+  dashed disc, and a `.tp-why` reason line under it, always.
+- `tp-main` 64 px and `tp-side` 52 px discs in a `.tp-bar` (Day Radio's player).
+- `tp-hero` 96 px (a listen card), `tp-night` 72 px (the Night player's stop).
+
+States on `data-state`: `ready`, `playing` (a 3 px ring 5 px outside the disc
+shows `progress`), `paused` (the ring holds), `finished` (outline disc with
+replay, "Again" under it). Every disc carries an aria-label: its own
+(`data-tp-label`) or the glyph's. Colour rule: playback is ink; seal is for
+starting something scored; indigo for the answer, never a button fill. No
+screen draws its own play, pause, stop or moon.
+
