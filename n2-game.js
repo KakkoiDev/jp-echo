@@ -34,10 +34,10 @@ export const GAME_SOURCE = "game";
 // as it is given, so closing the page mid-round loses nothing.
 // Blitz chess, not shogi (owner, 26 Nov): seconds, not minutes, per question.
 export const ROUND_SIZE = 10, REVIEW_SECONDS = 5, DAILY_GOAL = 1000, RECENT_MS = 4 * 3600_000;
-export const SECONDS = Object.freeze({reading: 3, meaning: 3, meaningInSentence: 4, definition: 4, listen: 5, homophone: 5, grammar: 6, affix: 5, gap: 8, partgap: 6, link: 3, linkBuilt: 5, para: 8, pair: 6, order: 8, connective: 7, exam: {1: 4, 2: 5, 3: 5, 4: 7, 5: 6, 7: 8}});
+export const SECONDS = Object.freeze({kanji: 3, reading: 3, meaning: 3, meaningInSentence: 4, definition: 4, listen: 5, homophone: 5, grammar: 6, affix: 5, gap: 8, partgap: 6, link: 3, linkBuilt: 5, para: 8, pair: 6, order: 8, connective: 7, exam: {1: 4, 2: 5, 3: 5, 4: 7, 5: 6, 7: 8}});
 // The pause after an answer before the next question, in milliseconds.
 export const PAUSE = Object.freeze({right: 250, miss: 800});
-export const KIND_LABEL = Object.freeze({reading: "Reading", meaning: "Meaning", definition: "Which word", listen: "Listen", connective: "Connective · 問題9", homophone: "Which kanji", grammar: "Grammar", block: "Grammar piece", build: "Grammar parts", infer: "New grammar", exam: "Exam question", affix: "Word part", link: "Connective", gap: "Grammar · fill the gap", partgap: "Word part · fill the gap",
+export const KIND_LABEL = Object.freeze({kanji: "Kanji", reading: "Reading", meaning: "Meaning", definition: "Which word", listen: "Listen", connective: "Connective · 問題9", homophone: "Which kanji", grammar: "Grammar", block: "Grammar piece", build: "Grammar parts", infer: "New grammar", exam: "Exam question", affix: "Word part", link: "Connective", gap: "Grammar · fill the gap", partgap: "Word part · fill the gap",
   para: "Same meaning", pair: "Connective · fill the gap", order: "Sentence order · ★", sprint: "Reading sprint"});
 const EXAM_MONDAI = new Set([1, 2, 3, 4, 5, 7]), WRITTEN = new Set(["Vocabulary", "Grammar"]);
 const KANJI = /[一-鿿々]/g;
@@ -593,7 +593,7 @@ export function readFirst(pool, seen = {}) {
   for (const q of pool) if (q.kind === "reading") reading.set(cardItem(q), q.id);
   return q => ASKED_AFTER_READING.has(q.kind) && reading.has(cardItem(q)) && !seen[reading.get(cardItem(q))];
 }
-export function pickRound({pool, recall = [], seen = {}, wins = {}, lv = {}, size = ROUND_SIZE, random = Math.random, mix = {weak: 4, fresh: 4, known: 2}, comeback = [], now = Date.now(), calm = false, first = [], places = 0, weights = null}) {
+export function pickRound({pool, also = [], recall = [], seen = {}, wins = {}, lv = {}, size = ROUND_SIZE, random = Math.random, mix = {weak: 4, fresh: 4, known: 2}, comeback = [], now = Date.now(), calm = false, first = [], places = 0, weights = null}) {
 
   const last = new Map();
   for (const r of recall) last.set(r.dimension + keyOf(r.target), r.last);
@@ -617,7 +617,8 @@ export function pickRound({pool, recall = [], seen = {}, wins = {}, lv = {}, siz
   for (const [name, g] of Object.entries(groups)) groups[name] = byKindInTurn(g.sort((a, b) => (seen[a.id] || 0) - (seen[b.id] || 0)), random, weights);
   const out = [], used = new Set(), targets = new Set();
   const take = (list, n) => { for (const q of list) { if (n <= 0) break; const t = cardItem(q); if (used.has(q.id) || targets.has(t)) continue; used.add(q.id); targets.add(t); out.push(q); n--; } };
-  const byId = new Map(pool.map(q => [q.id, q]));
+  // also: cards asked only as comebacks (a missed kanji card), never picked here.
+  const byId = new Map([...pool, ...also].map(q => [q.id, q]));
   const back = shuffle(comeback.map(id => byId.get(id)).filter(Boolean), random).slice(0, size);
   take(back, back.length);
   const backCount = out.length;
@@ -852,7 +853,7 @@ export const SKILL_WEIGHT = Object.freeze({min: .5, max: 2});
 export const SKILLS_OF_PAPER = Object.freeze(["vocabulary", "grammar", "reading", "listening"]);
 const SKILL_NAMES = {Vocabulary: 0, Grammar: 1, Reading: 2, Listening: 3};
 // What each kind of card trains. A connective is a reading tool: it says where the writer's point is.
-export const KIND_SKILL = Object.freeze({reading: "vocabulary", meaning: "vocabulary", definition: "vocabulary", homophone: "vocabulary", affix: "vocabulary", partgap: "vocabulary",
+export const KIND_SKILL = Object.freeze({kanji: "vocabulary", reading: "vocabulary", meaning: "vocabulary", definition: "vocabulary", homophone: "vocabulary", affix: "vocabulary", partgap: "vocabulary",
   grammar: "grammar", gap: "grammar", block: "grammar", build: "grammar", infer: "grammar", order: "grammar",
   link: "reading", connective: "reading", para: "reading", sprint: "reading", pair: "reading", listen: "listening"});
 export function skillWeights({paper, attempt} = {}) {
@@ -936,7 +937,7 @@ export function kanjiOrderOf(pool = []) {
 }
 // Kinds whose card is a block of text (Same meaning: a sentence and four sentence-long choices).
 export const LONG_KINDS = new Set(["para"]);
-export function nextRound({pool, review = [], kanji = null, grammarCards = null, boss = [], recall = [], state = {}, difficulty = "normal", random = Math.random, now = Date.now(), exams = true, long = false, weights = null, kanjiOrder = ""}) {
+export function nextRound({pool, review = [], kanji = null, grammarCards = null, boss = [], recall = [], state = {}, difficulty = "normal", random = Math.random, now = Date.now(), exams = true, long = false, weights = null, kanjiOrder = "", glyphs = []}) {
   // exams: false leaves a paper's own questions (the `e:` cards) out of the round.
   if (!exams) pool = pool.filter(q => q.kind !== "exam");
   // Long cards stay out of a round (owner, 28 Nov: "long text blocks in the fast rounds slow down and only invite
@@ -952,18 +953,18 @@ export function nextRound({pool, review = [], kanji = null, grammarCards = null,
   let picked;
   // After a hard round the recovery round comes first, at every rank: kanji-first picking waits a round.
   if (kanji?.order && !slump) {
-    const byId = new Map(pool.map(q => [q.id, q])), places = ROUND_SIZE - share;
+    const byId = new Map([...pool, ...glyphs].map(q => [q.id, q])), places = ROUND_SIZE - share;
     const back = shuffle(comeback.map(id => byId.get(id)).filter(Boolean), random).slice(0, places).map(q => ({...q, comeback: true}));
-    picked = [...back, ...kanjiPick({pool, examples: kanji.examples || [], order: kanji.order, state, size: places - back.length, skip: back, random, now})];
+    picked = [...back, ...kanjiPick({pool, examples: kanji.examples || [], order: kanji.order, state, size: places - back.length, skip: back, random, now, glyphs})];
     // Kanji with nothing left to ask: the places left are picked by card, so a round is always full.
     if (picked.length < places) { const words = new Set(picked.map(q => q.item)); picked.push(...pickRound({...memory, pool: pool.filter(q => !words.has(q.item)), size: places - picked.length, mix: flowMix(level)})); }
-  } else picked = pickRound({...memory, pool, size: ROUND_SIZE - share, comeback, mix: slump ? WARM_UP.mix : flowMix(level), calm: slump, weights,
+  } else picked = pickRound({...memory, pool, also: glyphs, size: ROUND_SIZE - share, comeback, mix: slump ? WARM_UP.mix : flowMix(level), calm: slump, weights,
     // The last boss's misses take the first places after the comebacks; a recovery round leaves them out.
     ...(slump ? {} : {first: boss, places: BOSS_PLACES})});
 
   // Kanji places in an N2 round: the last places picked by card give way to kanji-first picks over the same pool.
   if (kanjiOrder && !kanji?.order && !slump) {
-    const byKanji = kanjiPick({pool, order: kanjiOrder, state, size: KANJI_PLACES, skip: picked, random, now});
+    const byKanji = kanjiPick({pool, order: kanjiOrder, state, size: KANJI_PLACES, skip: picked, random, now, glyphs});
     if (byKanji.length) { const keep = picked.filter(q => q.comeback || q.boss), rest = picked.filter(q => !q.comeback && !q.boss);
       picked = [...keep, ...rest.slice(0, Math.max(0, rest.length - byKanji.length)), ...byKanji]; }
   }
@@ -1041,7 +1042,7 @@ export function kanjiCoverage(order = "", state = {}) {
 // single word of that level). No word twice; nothing shown in the last four
 // hours unless nothing else is left.
 export const KANJI_MIX = Object.freeze({weak: 3, fresh: 3, prove: 2});
-export function kanjiPick({pool = [], examples = [], order = "", state = {}, size = ROUND_SIZE, skip = [], random = Math.random, now = Date.now()}) {
+export function kanjiPick({pool = [], examples = [], order = "", state = {}, size = ROUND_SIZE, skip = [], random = Math.random, now = Date.now(), glyphs = []}) {
   const states = kanjiStates(state), seen = state.seen || {}, cards = new Map();
   for (const q of [...pool, ...examples]) for (const key of q.kanji || []) { const k = [...key][0]; if (!cards.has(k)) cards.set(k, []); cards.get(k).push(q); }
   const wordOf = q => q.item || (q.target ? keyOf(q.target) : q.id), used = new Set(skip.map(wordOf)), out = [];
@@ -1055,7 +1056,12 @@ export function kanjiPick({pool = [], examples = [], order = "", state = {}, siz
     // round after round, 訴訟 five times in a session). The places left go to other kanji or to cards.
     return null;
   };
+  // A new kanji is met first as itself, with its meaning (kanjiCards; owner, 28 Nov: "to help pattern recognition
+  // when encountering a new word"); once met, its reading is proved in words.
+  const glyphOf = new Map(glyphs.map(q => [q.prompt, q]));
   const place = (k, group) => {
+    const glyph = group === "fresh" && glyphOf.get(k);
+    if (glyph && !seen[glyph.id] && !used.has(glyph.id)) { used.add(glyph.id); out.push({...glyph, focus: k, why: group}); return true; }
     const unseen = q => newWord(state, q);
     // A new kanji comes in with its reading (owner, 28 Nov: 軍隊 came as meaning and listen cards, never read).
     const q = group === "fresh" ? choose(k, [q => metAll(q, k), () => true]) || choose(k, [() => true], ["meaning", "definition", "listen"])
@@ -1072,6 +1078,38 @@ export function kanjiPick({pool = [], examples = [], order = "", state = {}, siz
   // Places left over go to proving before anything new: consolidate, then move on.
   for (const group of ["prove", "fresh", "weak", "known"]) fill(group, size - out.length);
   return shuffle(out, random);
+}
+
+// ---- Kanji by meaning ----
+// One card a kanji (owner, 28 Nov): the kanji large, its meaning to pick among other kanji's meanings. KANJIDIC's
+// English (kanji-readings.js: up to four), the first three shown. No wrong choice shares a word with the answer's
+// meanings, so 恐 "fear, dread" never stands against 畏 "fear". Its review lists words that carry it.
+// readings: {kanji: {on, kun, en, freq}}; order: the kanji wanted; words: [{word, reading, level}] to quote.
+export const KANJI_MEANINGS = 3, KANJI_WRONG = 8, KANJI_WORDS = 3;
+const meaningWords = en => new Set(en.flatMap(m => m.toLowerCase().replace(/\([^)]*\)/g, "").split(/[^a-z]+/).filter(w => w.length > 2 && !["the", "and", "for", "one"].includes(w))));
+// KANJIDIC names a kanji's radical among its meanings ("one radical (no.1)", "door radical (no. 63)"): not a meaning.
+const plainMeanings = en => { const kept = (en || []).filter(m => !/radical \(no\.\s*\d+\)/i.test(m)); return kept.length ? kept : en || []; };
+export function kanjiCards(readings = {}, order = "", words = []) {
+  readings = Object.fromEntries(Object.entries(readings).map(([k, r]) => [k, {...r, en: plainMeanings(r.en)}]));
+  const all = [...new Set(order)].filter(k => readings[k]?.en?.length);
+  const byFreq = [...all].sort((a, b) => (readings[a].freq || 3000) - (readings[b].freq || 3000));
+  return all.map(k => {
+    const r = readings[k], answer = r.en.slice(0, KANJI_MEANINGS).join(", "), mine = meaningWords(r.en);
+    // Wrong choices from kanji of about the same frequency, none sharing a meaning word.
+    const at = byFreq.indexOf(k), wrong = [], taken = new Set(mine);
+    for (let d = 1; wrong.length < KANJI_WRONG && d < byFreq.length; d++) for (const j of [at - d, at + d]) {
+      const o = byFreq[j]; if (!o || wrong.length >= KANJI_WRONG) continue;
+      const theirs = readings[o].en, text = theirs.slice(0, KANJI_MEANINGS).join(", ");
+      // Nor with one another: two "fear" choices would point at each other.
+      const words_ = meaningWords(theirs);
+      if ([...words_].some(w => taken.has(w)) || wrong.includes(text) || text === answer) continue;
+      wrong.push(text); for (const w of words_) taken.add(w);
+    }
+    const carry = words.filter(w => w.word.includes(k)).slice(0, KANJI_WORDS);
+    const reading = [...(r.on || []), ...(r.kun || []).map(x => x.replace(/\..*$/, "").replace(/-/g, ""))].filter((x, i, a) => x && a.indexOf(x) === i).slice(0, 4).join("・");
+    return {id: "kj:" + k, kind: "kanji", item: "kj:" + k, prompt: k, answer, wrong, kanji: [k], target: null, seconds: SECONDS.kanji,
+      solution: {word: k, reading, meaning: r.en.join(", "), why: carry.length ? "In " + carry.map(w => w.word + (w.reading ? "（" + w.reading + "）" : "")).join(" · ") : ""}};
+  });
 }
 
 // ---- Grammar from its parts on the screen (board 13) ----

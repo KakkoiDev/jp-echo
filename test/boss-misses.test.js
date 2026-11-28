@@ -500,7 +500,7 @@ test("a round's review speaks every kind of card, and shows an exam card as the 
   assert.equal(answerSpeech(pool.find(q => q.id === "a:～気味")), "気味【ぎみ】"); assert.equal(answerSpeech(pool.find(q => q.id === "k:このように")), "このように");
   const js = src("../n2-mock.js");
   assert.ok(js.includes('const pattern = q.kind === "grammar" || q.kind === "gap" || grammarBlockCard(q) ? grammarVoice(q, sol) : null;'));
-  assert.ok(js.includes('const voiced = (["pair", "order"].includes(q.kind) ? q.answer : q.say) || (["affix", "partgap"].includes(q.kind) ? answerSpeech(q) : spoken || answerSpeech(q)) || "";'));
+  assert.ok(js.includes('const voiced = q.kind === "kanji" ? "" : (["pair", "order"].includes(q.kind) ? q.answer : q.say) || (["affix", "partgap"].includes(q.kind) ? answerSpeech(q) : spoken || answerSpeech(q)) || "";'));
   // An exam card missed in a round: the word and its meaning large, the paper's sentence with its answer, the why.
   assert.ok(js.includes('const q = asked.kind === "exam" ? paperCardOf({target: asked.target, ask: asked.prompt, answer: asked.answer,'));
   assert.ok(js.includes('$("game-review-meaning").textContent = sol.meaning || "";'), "never the answer a second time");

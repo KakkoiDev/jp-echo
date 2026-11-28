@@ -301,7 +301,7 @@ test("the voice says the key word, and an English voice never reads a tilde (own
   const speech = src("../speech.js");
   assert.ok(!speech.includes('lang==="ja"?speechText(text):text'), "every utterance goes through spokenText");
   const js = src("../n2-mock.js");
-  assert.ok(js.includes('const voiced = (["pair", "order"].includes(q.kind) ? q.answer : q.say) ||'), "a clause pair or an order card says its key word in the review");
+  assert.ok(js.includes('const voiced = q.kind === "kanji" ? "" : (["pair", "order"].includes(q.kind) ? q.answer : q.say) ||'), "a clause pair or an order card says its key word in the review");
   assert.ok(js.includes('const keyWord = it.target ? examWord(it.target) : it.answer.length <= KEY_WORD_MAX ? it.answer : "";') && js.includes("const KEY_WORD_MAX = 12;"), "a paper question says its word, never a sentence-long choice");
   assert.equal(plainSpoken("Bonjour, tout le monde !"), "Bonjour, tout le monde !", "other text is left as it is");
 });

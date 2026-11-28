@@ -740,6 +740,17 @@ Before considering the change complete:
   (訴訟 came five times in a session). Comebacks still return a miss next
   round. Replay of the owner's state: distinct words in 40 rounds 282 → 316
   at N2, 240 → 344 at N1.
+- **A kanji is met first as itself (owner, 28 Nov, v326: "to help pattern
+  recognition when encountering a new word").** `kanjiCards` (n2-game.js):
+  kind `kanji`, id `kj:<kanji>`, the kanji large and its meaning (KANJIDIC's
+  first three, from the precached kanji-readings.js; radical names dropped)
+  among other kanji's meanings of about the same frequency, none sharing a
+  meaning word with it or with each other. 1,803 of the levels' 1,916 kanji
+  (the rest are rare non-jōyō with no KANJIDIC English). In kanji-first
+  picking (every rank's kanji places, N2's two included) a new kanji's place
+  is its kanji card; once met, its reading is proved in words. A missed one
+  comes back (`glyphs` / `also`). Its review shows readings, meanings and
+  up to three words that carry it, and is silent. No recall record.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 
