@@ -796,6 +796,14 @@ Before considering the change complete:
   ×1.25). The hidden level (`FLOW_STEP`, about 80% right), the mix and the
   wrong choices are the same for every setting. This replaces "Easy 90% right
   ×0.75, Normal the adaptive 80%, Hard 65% ×1.25" above.
+- **The Sprint is the mini-boss (owner, 28 Nov, v332: "I never want it … I
+  need to be forced into doing it").** Home has no Sprint button. Every
+  `MINI.every` (10) rounds the Sprint is due (`miniDue`, `miniAt` in the game
+  state): the round end leads with the seal "鬼 Mini-boss" button and "Next
+  round" becomes the link under it. It can be skipped, but stays due and
+  leads every round end until played (`miniDone`). It pays ×`MINI.points`
+  (1.5) and counts toward the day and the 1,000 before the boss like any
+  round. Its first card shows the 鬼 "Mini-boss" ribbon. Not at bedtime.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

@@ -2567,6 +2567,10 @@ body .tp-start:disabled .tp-disc,body .tp-start[aria-disabled=true] .tp-disc{bac
 .qr-nightstop{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:13px;color:var(--night-text)}
 .tp-night{width:72px;height:72px;border:1.5px solid var(--night-ring);background:transparent;color:var(--night-text)}
 /* Signs (map 12): a Mincho kanji in a 40 px hairline square, in ink. 速 stays seal-filled, 鬼 stays seal. */
+/* The mini-boss button at a round's end (MINI): the seal start, its line under the label. */
+#game-mini{flex-wrap:wrap;row-gap:2px;height:auto;min-height:72px;padding:10px 16px}
+#game-mini .qr-glyph{font-size:22px;line-height:1}
+.qr-minisub{flex-basis:100%;text-align:center;font-size:12px;font-weight:500;opacity:.8}
 .qr-sign{width:40px;height:40px;flex:none;border-radius:10px;border:1px solid var(--hairline);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:24px;font-weight:800;color:var(--sumi);line-height:1}
 .qr-card[data-practice=true]{border-style:dashed}
 .n2-game[data-practice=true] .qr-bar span{opacity:.5}.n2-game[data-practice=true] .qr-clk[data-state=idle] .qr-bar span{opacity:.25}.n2-game[data-practice=true] .qr-sec{color:var(--ink-muted)}

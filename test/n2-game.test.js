@@ -312,7 +312,7 @@ test("difficulty changes the speed only: the clock and the boss's written time; 
   assert.deepEqual([bossWritten(105, "easy"), bossWritten(105, "normal"), bossWritten(105, "hard")], [105, 53, 35], "N2's 105 written minutes");
   const index = src("../index.html"), mock = src("../n2-mock.js");
   assert.match(index, /id="settings-game-difficulty"><option value="easy">/);
-  assert.match(mock, /factor: DIFFICULTY\[difficulty\(\)\]\.points, choices: q\.choices\.length/);
+  assert.match(mock, /factor: DIFFICULTY\[difficulty\(\)\]\.points \* \(miniRound \? MINI\.points : 1\), choices: q\.choices\.length/);
   assert.match(mock, /state\.bossDifficulty = difficultyOf\(settings\.gameDifficulty\);/, "a boss keeps the setting it began with");
 });
 
@@ -720,7 +720,7 @@ test("a round survives a closed app or a trip Home for 30 minutes; a recovery ro
   assert.match(mock, /const ROUND_KEY = "echo-n2-round", ROUND_KEEP_MS = 30 \* 60_000;/);
   assert.match(mock, /if \(!s \|\| Date\.now\(\) - s\.at > ROUND_KEEP_MS \|\| !\(s\.index >= 1 && s\.index < s\.items\.length\)\)/, "1 to 9 answers, under 30 minutes");
   assert.match(mock, /kept \? "Resume round" : "Play"/); assert.match(html, /id="game-play-pips" hidden>/, "board 12 · B: the pips sit inside Play");
-  assert.match(mock, /state = rememberRound\([^\n]*\n    clearRound\(\);/, "the round's end drops it");
+  assert.match(mock, /state = rememberRound\([\s\S]{0,300}?\n    clearRound\(\);/, "the round's end drops it");
   assert.equal(inSlump({history: [{score: -800, right: 6, n: 10}]}), false, "a score below zero alone is not a slump");
   assert.equal(inSlump({history: [{score: 300, right: 4, n: 10}]}), true);
   assert.equal(inSlump({history: [{score: 0, right: 0, n: 0}]}), false, "a round with nothing scored is not a slump");

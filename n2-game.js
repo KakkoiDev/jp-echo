@@ -491,6 +491,13 @@ export function sprintRound({passages = [], pool = [], state = {}, recall = [], 
   return out;
 }
 
+// The mini-boss (owner, 28 Nov: "I never want it … I need to be forced into doing it"): every MINI.every rounds the
+// Sprint is due. The round end leads with it; it can be skipped, but it stays due until played. It pays MINI.points
+// times the points, and its answers count toward the day and the 1,000 before the boss like any round's.
+export const MINI = Object.freeze({every: 10, points: 1.5});
+export const miniDue = (state = {}) => (state.rounds || 0) - (state.miniAt || 0) >= MINI.every;
+export const miniDone = (state = {}) => ({...state, miniAt: state.rounds || 0});
+
 // ---- The connective on its own ----
 // One word, large, nothing to read: とはいえ → "that said, even so". At N2 a
 // connective says where the writer's point is, and it has to be known on

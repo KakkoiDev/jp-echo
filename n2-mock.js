@@ -9,7 +9,7 @@ import {recognitionFactory} from "./speech.js";
 import {speakOnce,speakAndWait,japaneseVoices,RadioPlayer,NoiseBed} from "./speech.js";
 import {RADIO_DEFAULTS,RADIO_PHASE_COPY,clockAt,radioPhase,radioPlan,radioSteps} from "./radio.js";
 import {readNights, nightComparison, comparisonLine, eveningRecall, EVENING_SOURCE, nightPlan, nightRecord, keepNight, NIGHT_KEY} from "./n2-night.js";
-import {speedSeconds, bossWritten, kanaCards, kanjiCards, askableKanji, SPRINT, sprintCards, sprintRound, kanjiOrderOf, skillWeights, kindWeights, flagCard, endRest, bossCards, bossQueue, bossReview, partRows, cutUnderline, provedBy, PROVED_MS, heardGap, grammarBlockCard, grammarCoverage, kanjiCoverage, levelCoverage, isCovered, aheadLevel, applyBoss, verdictLine, rankOf, setRank, rankLevels, hasBoss, RANKS, inSlump, itemLevel, levelAfter, ITEM_LEVEL, gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, patternVoice, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
+import {MINI, miniDue, miniDone, speedSeconds, bossWritten, kanaCards, kanjiCards, askableKanji, SPRINT, sprintCards, sprintRound, kanjiOrderOf, skillWeights, kindWeights, flagCard, endRest, bossCards, bossQueue, bossReview, partRows, cutUnderline, provedBy, PROVED_MS, heardGap, grammarBlockCard, grammarCoverage, kanjiCoverage, levelCoverage, isCovered, aheadLevel, applyBoss, verdictLine, rankOf, setRank, rankLevels, hasBoss, RANKS, inSlump, itemLevel, levelAfter, ITEM_LEVEL, gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, patternVoice, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
 import {createLevels} from "./jlpt-levels.js";
 import {createSets, levelRows, SET_LEVELS, setLevel, heldOut} from "./jlpt-sets.js";
 import {spokenWord,radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
@@ -1099,7 +1099,8 @@ const ALOUD = Object.fromEntries(["reading", "meaning", "definition", "listen", 
 // The beat ribbons (board 4): glyph, title, sub-line and colour per beat.
 const BEATS = {hook: ["始", "Welcome back", "An easy start", "right"], first: ["始", "First round", "An easy start", "right"], breather: ["息", "Breather", "", "track"],
   peak: ["峰", "Peak round · bonuses ×2", "The hardest of the wave. Go fast.", "gold"], stretch: ["鬼", "Final stretch", "Bonuses ×2 until the boss opens", "seal"],
-  warm: ["復", "Recovery round: things you know", "After a hard round", "right"], jackpot: ["五", "Jackpot", "Five in a row.", "gold"]};
+  warm: ["復", "Recovery round: things you know", "After a hard round", "right"], jackpot: ["五", "Jackpot", "Five in a row.", "gold"],
+  mini: ["鬼", "Mini-boss", "×1.5 points · counts toward the boss", "seal"]};
 // Game sounds and haptics (docs/design/game, Motion board), made on the
 // device: WebAudio, no files, offline. One Sound switch silences them, the
 // spoken answer and the vibration.
@@ -1565,7 +1566,7 @@ async function game() {
     mode("play");
     ask();
   }
-  let listenFails = 0, voiceWait = false, ups = [];
+  let listenFails = 0, voiceWait = false, ups = [], miniRound = false;
   const hears = () => sound() && japaneseVoices("ja").length > 0 && listenFails < 2;
   // The round in progress, kept on this device so a closed app or a trip Home
   // doesn't lose it. Dropped after 30 minutes, at the round's end, or if a
@@ -1704,7 +1705,7 @@ async function game() {
     // Easy pays less, Hard more, bonus ×3 — all inside the guessing cap.
     // Practice questions (connectives, until reviewed) score nothing and
     // leave the combo alone.
-    const paid = q.practice ? {points: 0, jackpot: 0} : bonusPoints({points: result.points, bonus: q.bonus, streak: result.streak, factor: DIFFICULTY[difficulty()].points, choices: q.choices.length});
+    const paid = q.practice ? {points: 0, jackpot: 0} : bonusPoints({points: result.points, bonus: q.bonus, streak: result.streak, factor: DIFFICULTY[difficulty()].points * (miniRound ? MINI.points : 1), choices: q.choices.length});
     if (q.practice) result.streak = streak;
     if (outcome === "right" && !q.practice) rights++;
     if (q.practice) practiced++;
@@ -1898,7 +1899,10 @@ async function game() {
     const before = readGame().best || 0;
     // Accuracy over scored answers only: flags and practice are not evidence.
     const scoredN = round.length - flagged - practiced;
-    state = rememberRound(readGame(), {score, questions: round, misses: scoredN - rights, scored: scoredN}); writeGame(state);
+    state = rememberRound(readGame(), {score, questions: round, misses: scoredN - rights, scored: scoredN});
+    // A mini-boss played resets its count; one not yet played stays due (miniDue) and leads every round end.
+    if (miniRound) { state = miniDone(state); miniRound = false; }
+    writeGame(state);
     clearRound();
     const best = score > before && score > 0;
     if (sound()) { best ? sfx.best() : sfx.round(); buzz(best ? [30, 50, 30] : 20); }
@@ -1927,9 +1931,11 @@ async function game() {
     $("game-lvstrip").hidden = late || warm || !ups.length;
     $("game-lvups").replaceChildren(...ups.slice(0, 3).map(u => el("span", {lang: "ja", text: u.word + " " + u.from + "→" + u.to})));
     $("game-warm-line").textContent = "Next: a recovery round of things you know, with " + Math.min(2, back) + " of these " + back + " back.";
-    $("game-again").className = late ? "qr-lnk" : "qr-btn";
+    const mini = !late && miniDue(state);
+    $("game-mini").hidden = !mini;
+    $("game-again").className = late || mini ? "qr-lnk" : "qr-btn";
     $("game-again-label").textContent = late ? "One more round" : warm ? "Recovery round" : "Next round";
-    $("game-again").querySelector("svg").style.display = late ? "none" : "";
+    $("game-again").querySelector("svg").style.display = late || mini ? "none" : "";
     $("game-home-btn").hidden = late;
     if (late) deckExamples().then(examples => {
       const left = eveningRecall({inventory, recall: data.recall, evidence: scored(data), events: data.events, examples}).length;
@@ -2016,8 +2022,9 @@ async function game() {
   $("game-home-play").onclick = start;
   $("game-home-play2").onclick = start;
   $("game-home-play3").onclick = start;
-  // The Sprint: three short passages from papers not sat (90 seconds each) among seven long cards, through the round's own screens.
-  $("game-sprint").onclick = async () => {
+  // The mini-boss: the Sprint (three short passages from papers not sat, 90 seconds each, among seven long cards),
+  // offered at a round's end every MINI.every rounds and through the round's own screens.
+  $("game-mini").onclick = async () => {
     sfx.unlock();
     const unsat = bookIds.filter(realistic).filter(id => !sat.has(id) && !HELD_OUT.includes(id));
     const loaded = (await Promise.all(unsat.map(id => json(setFile(id)).catch(() => null)))).filter(Boolean);
@@ -2028,7 +2035,7 @@ async function game() {
     clearRound(); state = readGame();
     $("game-back").href = "?view=game"; $("game-back").setAttribute("aria-label", "Back to home"); $("game-back").dataset.end = "false";
     $("game-back").onclick = e => { e.preventDefault(); clearTimeout(timer); home(); };
-    round = cards; roundLevel = levelOf(state); warmUp = false; beat = null; rights = 0; flagged = 0; practiced = 0; bestCombo = 0;
+    round = cards; roundLevel = levelOf(state); warmUp = false; beat = {name: "mini"}; miniRound = true; rights = 0; flagged = 0; practiced = 0; bestCombo = 0;
     index = 0; score = 0; streak = 0; misses = []; marks = []; ups = []; roundFlags = [];
     mode("play"); ask();
   };

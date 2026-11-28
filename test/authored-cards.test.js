@@ -179,7 +179,7 @@ test("the reading sprint: short passages from papers not sat, ninety seconds, ne
   const first = cards[0].id, later = sprintCards({sets, sat: new Set(["n2-set-2"]), keys, seen: {[first]: 5}, random: seeded(2)});
   assert.notEqual(later[0].id, first);
   const js = src("../n2-mock.js"), html = src("../n2-mock.html");
-  assert.ok(html.includes('id="game-sprint"') && js.includes('$("game-sprint").onclick = async () => {'));
+  assert.ok(!html.includes('id="game-sprint"') && html.includes('id="game-mini"') && js.includes('$("game-mini").onclick = async () => {'), "the Sprint is the mini-boss, not a Home button");
   assert.ok(js.includes("const passages = sprintCards({sets: loaded, sat, keys: bossKeys, seen: readGame().seen || {}}).slice(0, SPRINT.size);"));
   assert.ok(js.includes("const cards = sprintRound({passages, pool: n2Pool, state: readGame(), recall: data.recall}).map(q => ({...q, seconds: speedSeconds(q.seconds, difficulty())}));"));
   assert.equal(KIND_LABEL.sprint, "Reading sprint"); assert.equal(KIND_SKILL.sprint, "reading");
@@ -320,4 +320,18 @@ test("the Sprint holds the long cards: its passages among seven long cards, a lo
   for (let n = 1; n <= 10; n++) assert.ok(!nextRound({pool, state: {}, random: seeded(n), now: 1e12}).round.some(q => LONG_KINDS.has(q.kind)), "never in a round");
   const q = pool.find(c => c.kind === "order"), st = rememberAnswer({}, {q, outcome: "wrong", now: 1e12});
   assert.equal(sprintRound({passages, pool, state: st, random: seeded(5), now: 1e12 + 60_000})[0].id, q.id);
+});
+
+test("the mini-boss: due every ten rounds, leading the round end until played, ×1.5 points (owner, 28 Nov)", async () => {
+  const {MINI, miniDue, miniDone} = await import("../n2-game.js");
+  assert.deepEqual(MINI, {every: 10, points: 1.5});
+  assert.equal(miniDue({rounds: 9}), false); assert.equal(miniDue({rounds: 10}), true);
+  assert.equal(miniDue({rounds: 14, miniAt: 0}), true, "skipped, it stays due");
+  const played = miniDone({rounds: 14}); assert.equal(played.miniAt, 14); assert.equal(miniDue({...played, rounds: 23}), false); assert.equal(miniDue({...played, rounds: 24}), true);
+  const js = src("../n2-mock.js"), html = src("../n2-mock.html");
+  assert.ok(html.includes('class="qr-btn" id="game-mini" type="button" hidden>'), "the seal start: something scored");
+  assert.ok(js.includes("const mini = !late && miniDue(state);") && js.includes('$("game-again").className = late || mini ? "qr-lnk" : "qr-btn";'), "Next round becomes the link under it");
+  assert.ok(js.includes("if (miniRound) { state = miniDone(state); miniRound = false; }"));
+  assert.ok(js.includes('beat = {name: "mini"}; miniRound = true;'));
+  assert.ok(js.includes('mini: ["鬼", "Mini-boss", "×1.5 points · counts toward the boss", "seal"]'));
 });
