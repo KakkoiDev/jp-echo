@@ -9,9 +9,9 @@ n2-set-2#6	2	工事の音が、子どもの眠りを【さまたげる】こと�
 n2-set-2#7	2	この植物は、日本の南の地域に広く【ぶんぷ】している。	分歩	文布	分布	分付	3	分布 (distribution) uses 布, cloth/spread.
 n2-set-2#8	2	市は来年度、駅前の道路を【せいび】する予定だ。	整美	正備	製備	整備	4	整備 means maintaining/improving; 整 (arrange) + 備 (equip).
 n2-set-2#9	2	合格の【きじゅん】は、学校によって異なる。	基順	期準	基準	規順	3	Standard/criteria is written 基準 (基 base + 準 level); 順 and 期 are same- or similar-sound traps.
-n2-set-2#10	3	最近、仕事が忙しくて少し疲れ（　）なので、週末はゆっくり休むつもりだ。	感	気味	状	式	2	～気味 attaches to nouns/stems for 'slightly ~': 疲れ気味. 疲れ感 and 疲れ状 are not used.
+n2-set-2#10	3	最近、仕事が忙しくて少し疲れ（　）なので、週末はゆっくり休むつもりだ。	感	気味	状	式	2	～気味 attaches to stems for 'slightly ~': 疲れ気味. 疲れ感 is the feeling of tiredness itself, which 少し…なので does not take; 疲れ状 is not used.
 n2-set-2#11	3	東京・大阪（　）を、新幹線で月に二回往復している。	間	中	内	帯	1	～間 (かん) marks the stretch between two places: 東京・大阪間.
-n2-set-2#12	3	（　）年度の決算と比べると、今年度は売り上げが一割ほど伸びた。	先	旧	前	元	3	前年度 is the fixed compound for the previous fiscal year; 先年度, 旧年度 and 元年度 are not used.
+n2-set-2#12	3	（　）年度の決算と比べると、今年度は売り上げが一割ほど伸びた。	先	旧	前	元	3	前年度 is the previous fiscal year. 元年度 is an era's first year (令和元年度), not the year before; 先年度 and 旧年度 are not used.
 n2-set-2#13	4	姉は会社に勤めながら、趣味で小説の（　）を続けている。	創立	創作	制定	造成	2	創作 is creative writing; 創立 is founding an organization, 造成 is preparing land.
 n2-set-2#14	4	国語の授業で漢字の（　）テストがあり、送り仮名を間違えてしまった。	書評	下書き	写生	書き取り	4	書き取り is a dictation/writing test; 書評 is a book review, 写生 is sketching.
 n2-set-2#15	4	長い話し合いの末、ようやく両社の間で契約が（　）した。	成立	完成	達成	発生	1	契約が成立する is the collocation for a contract being concluded; 完成 is for things built.
@@ -72,7 +72,7 @@ n2-set-3#39	7	展示会は、東京、大阪（　）名古屋の三会場で開
 n2-set-3#40	7	新しい監督の指導（　）、チームは見違えるほど強くなった。	の上で	の際に	にかけて	の下で	4	Noun + の下で = under (someone's guidance).
 n2-set-3#41	7	日本人だ（　）、敬語を正しく使えるとは限らない。	からこそ	からといって	からには	ばかりに	2	からといって～とは限らない = just because ... doesn't mean.
 n2-set-4#0	1	駅前の駐車場を【拡張】する計画が発表された。	かくちょう	かくちょ	かっちょう	こうちょう	1	拡張 is read かくちょう (expansion); かくちょ drops the long vowel and かっちょう adds a small っ.
-n2-set-4#1	1	このシャツは熱いお湯で洗うと【縮む】ので注意してください。	ちぢむ	ちじむ	しぼむ	ちずむ	1	縮む is ちぢむ, with ぢ by rendaku from ちぢ; ちじむ is the common spelling slip, and しぼむ is a different verb.
+n2-set-4#1	1	このシャツは熱いお湯で洗うと【縮む】ので注意してください。	ちぢむ	ちじむ	しぼむ	ちずむ	1	縮む is ちぢむ: ぢ is kept where the second sound repeats the first (ちぢむ, つづく). ちじむ is a spelling slip, しぼむ another verb.
 n2-set-4#2	1	毎朝起きたら、血圧を【測定】して記録している。	そくてい	そくじょう	しょくてい	そってい	1	測定 is そくてい (measurement); the distractors change the vowel or insert っ.
 n2-set-4#3	1	子どものころから、お年寄りを【敬う】ようにと言われて育った。	けいう	うやまう	うまやう	おやまう	2	敬う is read うやまう (to respect); けいう wrongly applies the on-reading けい.
 n2-set-4#4	1	新しい鉄道ができ、沿線の町は大きな【恩恵】を受けた。	おんえ	おんけい	おんけ	いんけい	2	恩恵 is おんけい; 恵 is read え in 知恵, which makes おんえ a tempting trap.
@@ -100,7 +100,7 @@ n2-set-4#30	7	申込書には、氏名、住所（　）電話番号を記入し
 n2-set-4#31	7	館内では、携帯電話の電源をお切り（　）。	なさいます	になります	願います	いたします	3	お＋stem＋願います is a polite request in notices; お切りになります is an honorific statement, not a request.
 n2-set-4#32	7	新しい監督（　）、チームは一から練習方法を見直した。	に沿って	をもとに	に先立って	の下で	4	Nの下で means under someone's guidance; に沿って follows a plan or line, not a person.
 n2-set-4#33	7	値段が高い（　）、品質がいいとは限らない。	からには	からこそ	につれて	からといって	4	からといって pairs with とは限らない: just because X does not guarantee Y.
-n2-set-4#34	7	駅前の再開発工事は、3年（　）続けられる予定だ。	にかけて	において	にわたって	に沿って	3	期間＋にわたって means over a whole span; にかけて needs から (AからBにかけて).
+n2-set-4#34	7	駅前の再開発工事は、3年（　）続けられる予定だ。	にかけて	において	にわたって	に沿って	3	期間＋にわたって spans a whole period. にかけて takes an end point (来週にかけて, AからBにかけて), not a length like 3年.
 n2-set-4#35	7	途中で何度もやめたいと思ったが、42キロを最後まで走り（　）。	出した	込んだ	抜いた	損ねた	3	走り抜く means running all the way through to the end; 走り出す only means to start running.
 n2-set-4#36	7	月曜は英語、水曜は数学（　）、曜日ごとに勉強する科目を決めている。	というより	というものの	という風に	といっても	3	という風に presents examples of the way something is done; the others express correction or concession.
 n2-set-4#37	7	説明会に参加する（　）しない（　）、明日までに返事をください。	ばかりか／ばかりか	にしても／にしても	ものの／ものの	ことか／ことか	2	AにしてもBにしても means 'whether A or B'; it fits a pair of opposites like する and しない.
@@ -140,7 +140,7 @@ n2-set-5#34	7	そんなに無理をしていたら、体を壊し（　）よ。
 n2-set-5#35	7	寒くなるとは聞いていたが、（　）今朝の寒さは厳しかった。	それにしても	それとも	そのため	それどころか	1	それにしても means 'even so': the cold was harsher than the forecast suggested.
 n2-set-5#36	7	長男の誕生（　）、父はたばこをやめた。	を契機に	をめぐって	を問わず	をもとに	1	を契機に marks an event as the turning point for a change.
 n2-set-5#37	7	実際に自分でやってみ（　）、その仕事の大変さが分かるものだ。	てさえ	ても	てこそ	てまで	3	てこそ means 'only by doing': only by trying it yourself do you understand.
-n2-set-5#38	7	新しい計画は、（　）うまくいくのだろうか。	ぜひ	かならず	はたして	どうか	3	はたして…だろうか expresses real doubt about whether something will happen.
+n2-set-5#38	7	新しい計画は、（　）うまくいくのだろうか。	ぜひ	あいにく	はたして	どうか	3	はたして…だろうか expresses real doubt about whether something will happen.
 n2-set-5#39	7	この奨学金には、成績が優秀な学生（　）が申し込める。	まで	のみ	さえ	ほど	2	のみ is formal 'only': only excellent students may apply.
 n2-set-5#40	7	私（　）、この案には賛成できません。	にしては	にかけては	に限っては	としては	4	としては states a view from one's standpoint; にしては means 'for a…' and makes a comparison.
 n2-set-5#41	7	家族で何度も話し合った（　）、店を閉めることに決めた。	次第	末に	一方で	たびに	2	た末に means a decision reached after long effort; 次第 needs the stem form (話し合い次第).
@@ -159,7 +159,7 @@ n2-set-6#11	3	この先の道路は（　）料なので、通行券を受け取
 n2-set-6#12	3	道で、父と同じくらいの（　）年の男性に駅までの道を聞かれた。	中	央	半	間	1	中年 means middle-aged; the other kanji do not form a word with 年 in this sense.
 n2-set-6#13	4	子どもを（　）すぎると、自分では何もできない大人になってしまう。	見逃し	甘やかし	引き止め	追い込み	2	甘やかしすぎる means to spoil a child too much, which leads to dependence.
 n2-set-6#14	4	地震のあと、隣の古い家が少し（　）いるように見える。	偏って	曲げて	倒して	傾いて	4	A house that leans is 傾いている; 偏る is for bias or imbalance, and 曲げる/倒す are transitive.
-n2-set-6#15	4	説明書を読まずに、このボタンを押せば電源が切れると（　）いた。	思い込んで	考え込んで	落ち込んで	打ち込んで	1	思い込む means to wrongly believe something; 考え込む is to brood, 落ち込む is to feel down.
+n2-set-6#15	4	説明書を読まずに、このボタンを押せば電源が切れると（　）いた。	思い込んで	考え込んで	落ち込んで	打ち込んで	1	思い込む is to become convinced of something, here without reading the instructions; 考え込む is to brood, 落ち込む to feel down.
 n2-set-6#16	4	お風呂に入っていたら、新しい企画のアイデアがふと頭に（　）。	映った	浮かんだ	起きた	上がった	2	An idea comes to mind: 頭に浮かぶ. 映る is for reflections or screens.
 n2-set-6#17	4	窓口での丁寧な（　）が評価され、店長から表彰された。	応対	対照	接続	応用	1	応対 is how staff deal with customers; 応用 is application and 対照 is contrast.
 n2-set-6#18	4	今月は雨の日が多く、店の（　）が前年より二割も落ちた。	売上	見積	領収	定価	1	売上が落ちる means sales fell; the list price or an estimate does not 'fall' because of rain.
@@ -204,18 +204,18 @@ n2-set-7#21	5	平日の午前中は、この店は【比較的】すいている
 n2-set-7#22	5	開店の日、社長【自ら】が店の前で客を出迎えた。	急いで	喜んで	何度も	本人が	4	自ら means personally, the president himself.
 n2-set-7#23	5	どの料理もおいしい。【流石】プロの料理人だ。	意外にも	少しは	かえって	やはり	4	流石 (さすが) means 'as expected', close to やはり.
 n2-set-7#24	5	留学生との交流会は、【相互】の理解を深めるよい機会だ。	一方的な	正確な	長期的な	お互いの	4	相互 means mutual.
-n2-set-7#30	7	西の空が暗くなってきた。（　）午後からは雨になるだろう。	せっかく	けっして	まさか	おそらく	4	おそらく…だろう expresses a likely guess; まさか and けっして need negative endings.
+n2-set-7#30	7	西の空が暗くなってきた。（　）午後からは雨になるだろう。	せっかく	けっして	まさか	おそらく	4	おそらく…だろう is a likely guess. けっして needs a negative; まさか voices surprise or disbelief, which a plain prediction does not; せっかく needs a chance wasted.
 n2-set-7#31	7	今日の会議は堅い話（　）で、気軽に意見を出し合いましょう。	次第	ばかり	抜き	限り	3	堅い話抜きで means 'without the formal talk'; ばかり would contradict 気軽に.
 n2-set-7#32	7	（　）一度の失敗で、あきらめることはないよ。	たとえ	まさに	せめて	たった	4	たった一度 stresses 'just once'; たとえ needs ても.
 n2-set-7#33	7	この映画は、実際に起きた事件（　）作られた。	を通じて	をめぐって	を問わず	をもとに	4	をもとに means 'based on' a source.
 n2-set-7#34	7	どんなに遅く（　）、今夜中にこの報告書を仕上げなければならない。	なったら	なるなら	なろうとも	なるより	3	どんなに…（よ）うとも means 'no matter how late it gets'.
 n2-set-7#35	7	あの人は話し方（　）、いかにも自信がありそうだ。	どころか	からして	だけに	にしては	2	からして means 'judging just from' a typical feature such as the way of speaking.
-n2-set-7#36	7	結果（　）、最後まであきらめずに走りきったことが大切だ。	はもちろん	に限らず	にかけては	はともかく	4	はともかく sets the result aside to stress the effort.
+n2-set-7#36	7	結果（　）、最後まであきらめずに走りきったことが大切だ。	となれば	によって	にかけては	はともかく	4	はともかく sets the result aside to stress the effort.
 n2-set-7#37	7	引っ越しの前は、荷造り（　）役所の手続き（　）で、本当に忙しかった。	なり／なり	やら／やら	といい／といい	にしろ／にしろ	2	～やら～やら lists a jumble of things causing busyness; なり～なり offers options and といい～といい evaluates.
 n2-set-7#38	7	このマラソン大会は、年齢や経験（　）、誰でも参加できる。	を問わず	に沿って	をこめて	をはじめ	1	を問わず means 'regardless of'.
 n2-set-7#39	7	財布は落としたが、カード類が入っていなかった（　）。	わけがない	にすぎない	だけましだ	どころではない	3	だけましだ finds one consolation in a bad situation.
 n2-set-7#40	7	実際に使ってみ（　）、この機械が本当に便利かどうかはわからない。	ないことには	ないうちに	ずにはいられず	ないまでも	1	ないことには…ない: unless you try it, you can't tell.
-n2-set-7#41	7	この仕事は給料が高い（　）、休みが少なくて体力的にきつい。	だけあって	反面	うえに	ばかりか	2	反面 contrasts a good point with a bad one; うえに and ばかりか add in the same direction.
+n2-set-7#41	7	この仕事は給料が高い（　）、休みが少なくて体力的にきつい。	にあたって	反面	うえに	ばかりか	2	反面 contrasts a good point with a bad one; うえに and ばかりか add in the same direction.
 n2-set-8#0	1	大雨の際は、何よりも【人命】を優先して避難の指示を出す。	にんめい	じんみょう	にんみょう	じんめい	4	人命 is read じんめい (human life). にんめい is 任命 (appointment), a voicing/on-reading trap.
 n2-set-8#1	1	この地域は【水産】業が盛んで、港には毎朝多くの漁船が戻ってくる。	すいざん	すいさん	みずさん	すいせん	2	水産 is すいさん (fisheries). The traps add voicing (ざん), use the kun reading みず, or confuse it with 水仙 すいせん.
 n2-set-8#2	1	彼女は地域の図書館づくりに大きな【功績】を残した。	こうせき	こうせい	こうぜき	こうしき	1	功績 is こうせき (achievement). こうぜき adds false voicing; こうせい and こうしき are other words (構成, 公式).
@@ -236,7 +236,7 @@ n2-set-8#17	4	工事のため、午後八時（　）は正面玄関が使えま
 n2-set-8#18	4	空港の（　）店では、外国人旅行者は消費税を払わずに買い物ができる。	減税	納税	課税	免税	4	A shop where tax is not paid is a 免税店 (duty-free shop). 減税 is a tax cut, 納税 paying tax, 課税 imposing tax.
 n2-set-8#19	4	夜空に（　）の星がまたたいていた。	無数	莫大	頻繁	濃厚	1	無数 is a noun that takes の (countless stars). 莫大, 頻繁 and 濃厚 are な-adjectives and do not mean countless.
 n2-set-8#20	5	三時間待って、【ようやく】順番が回ってきた。	すぐに	突然	やっと	何度も	3	ようやく means at last, after a long wait, the same as やっと. すぐに (immediately) contradicts the three-hour wait.
-n2-set-8#21	5	この件については、後日【改めて】ご連絡いたします。	初めて	もう一度	急いで	直接	2	改めて連絡する means to contact again on another occasion, i.e. もう一度. It does not mean first time or directly.
+n2-set-8#21	5	この件については、後日【改めて】ご連絡いたします。	初めて	もう一度	急いで	直接	2	改めて連絡する is to contact on a separate, later occasion: もう一度 is the closest. A full earlier contact is not required.
 n2-set-8#22	5	荷物を【乱暴に】扱わないでください。	荒っぽく	丁寧に	急いで	こっそり	1	乱暴に means roughly, the same as 荒っぽく. 丁寧に is the opposite.
 n2-set-8#23	5	弟はいつも一言多くて、本当に【憎らしい】。	かわいそうだ	うらやましい	情けない	腹が立つ	4	憎らしい expresses irritation or dislike at someone, closest to 腹が立つ. 情けない is pity or shame, not anger.
 n2-set-8#24	5	駅からは【なだらかな】坂が続いている。	急な	ゆるやかな	細い	曲がりくねった	2	なだらか describes a gentle slope, the same as ゆるやか. 急な is the opposite; 細い and 曲がりくねった describe width and shape.

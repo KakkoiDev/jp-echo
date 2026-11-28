@@ -1316,11 +1316,10 @@ test("reading cards are fair: the exam's traps only, time by length, the rule af
   const {readingSeconds, readingRule} = await import("../n2-game.js");
   const pool = gamePool({inventory, examples, parts: n2Parts}), r = id => pool.find(q => q.id === id);
   for (const q of pool.filter(c => c.kind === "reading")) {
-    // No wrong choice is the answer with a small kana made big (しゃ→しや, っ→つ): the eye, not the reading.
-    const big = s => s.replace(/[ゃゅょっぁぃぅぇぉ]/g, c => ({ゃ: "や", ゅ: "ゆ", ょ: "よ", っ: "つ", ぁ: "あ", ぃ: "い", ぅ: "う", ぇ: "え", ぉ: "お"})[c]);
-    // The one exception is the sound change left undone, which the exam uses (出勤 しゅっきん: しゅつきん).
-    const undone = (n2Parts[q.solution.word + "/" + q.answer] || "").split("|").join("");
-    for (const w of q.wrong) assert.ok(w === undone || big(w) !== big(q.answer), q.id + ": " + w);
+    // No wrong choice is the answer with a small ゃゅょ made big (しゃ→しや): the eye, not the reading. A small っ
+    // against つ, く or ち is the exam's own trap (出勤 しゅっきん: しゅつきん) and stays.
+    const big = s => s.replace(/[ゃゅょ]/g, c => ({ゃ: "や", ゅ: "ゆ", ょ: "よ"})[c]);
+    for (const w of q.wrong) assert.ok(big(w) !== big(q.answer), q.id + ": " + w);
   }
   assert.ok(!r("r:社会科学").wrong.includes("しやかいかがく"));
   assert.ok(r("r:学会").wrong.includes("がくかい"), "the sound change left undone");
