@@ -1483,3 +1483,9 @@ test("a word under way comes before brand-new words; a missed recall heals once 
   assert.ok(weakRound({}).some(q => q.id === m.id), "weak while not won again");
   assert.ok(!weakRound({lvAt: {[m.id]: t0 - 3600_000}}).some(q => q.id === m.id), "won again after the miss: no longer weak");
 });
+
+test("the picker audit handoff and its replay tool are in the repo, with no learner's data", () => {
+  const brief = src("../docs/PICKER-AUDIT-HANDOFF.md"), tool = src("../tools/picker-audit/replay.mjs");
+  for (const s of ["nextRound", "pickRound", "ladderGate", "node tools/picker-audit/replay.mjs", "Open questions", "picker-audit-findings.md"]) assert.ok(brief.includes(s), s);
+  assert.ok(tool.includes('process.argv.indexOf("--state")') && !/Users\/|scratchpad/.test(tool), "no personal paths");
+});

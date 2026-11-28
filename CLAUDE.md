@@ -892,6 +892,12 @@ Before considering the change complete:
   never long; passage misses are not kept; a flag clears `sprintBack`;
   grammar-piece cards rest by level. Known limit: with sound off, a word
   passed its listen rung is not asked listen later.
+- **Words under way first (owner, 29 Nov, v344: "the ojisan card is still
+  stuck").** `pickRound` puts a card never shown of an item already asked in a
+  `climb` group that takes the new places before brand-new items, oldest item
+  first. A missed recall makes a card weak only until it levels up after the
+  miss (`lvAt` later than the record). The picker's handoff for an outside
+  audit: `docs/PICKER-AUDIT-HANDOFF.md`, with `tools/picker-audit/replay.mjs`.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 
