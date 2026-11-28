@@ -1371,7 +1371,7 @@ test("every card of a word with kanji is taken apart in the review; grammar by i
   const blocks = read("../n2-grammar-blocks.json");
   const pool = gamePool({inventory, examples, parts: n2Parts, grammarBlocks: blocks});
   const card = id => pool.find(q => q.id === id);
-  assert.deepEqual(card("m:算盤").compound, {parts: [{text: "算 そろ", gloss: "calculate, divining"}, {text: "盤 ばん", gloss: "tray, shallow bowl"}], literal: "そろ + ばん → そろばん"});
+  assert.deepEqual(card("m:算盤").compound, {parts: [{text: "算 そろ", gloss: "calculate, divining"}, {text: "盤 ばん", gloss: "tray, shallow bowl"}], literal: ""}, "a plain join needs no line under the rows");
   assert.equal(card("r:学会").compound.literal, "がく + かい → がっかい: く → っ before か");
   assert.deepEqual(card("g:ざるを得ない").pieces.parts.map(p => p.text), ["ざる", "を", "得ない"]);
   // Every word card whose word has kanji, at every kind, is explained (pieces or kanji rows).

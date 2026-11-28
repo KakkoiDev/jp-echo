@@ -116,13 +116,13 @@ export function readingRule(text = "", reading = "", base = "") {
   const pieces = base ? base.split("|") : [], kanji = (text.match(/[一-龯々]/g) || []);
   if (!pieces.length || pieces.length !== kanji.length || kanji.length < 2 || kanji.join("") !== text) return null;
   const joined = pieces.join(""), parts = kanji.map((k, i) => k + " " + pieces[i]).join(" · ");
-  if (joined === reading) return {parts, literal: pieces.join(" + ") + " → " + reading};
+  if (joined === reading) return {parts, literal: pieces.join(" + ") + " → " + reading, change: ""};
   const changes = [];
   for (let i = 0; i + 1 < pieces.length; i++) { const end = pieces[i].slice(-1), next = pieces[i + 1][0];
     if (["く", "つ", "ち", "き"].includes(end) && reading.includes(pieces[i].slice(0, -1) + "っ" + next)) changes.push(end + " → っ before " + next);
     if (VOICE[next] && reading.includes(VOICE[next] + pieces[i + 1].slice(1))) changes.push(next + " → " + VOICE[next]);
     if (HALF[next] && reading.includes(HALF[next] + pieces[i + 1].slice(1))) changes.push(next + " → " + HALF[next]); }
-  return {parts, literal: pieces.join(" + ") + " → " + reading + (changes.length ? ": " + changes.join(", ") : "")};
+  return {parts, literal: pieces.join(" + ") + " → " + reading + (changes.length ? ": " + changes.join(", ") : ""), change: changes.join(", ")};
 }
 
 // A long reading needs time to be read, not only recalled: 3 s, and half a second a kana past four, up to 6 s.
@@ -137,8 +137,10 @@ export function compoundOf(text = "", reading = "", base = "", readings = null) 
   const parts = kanji.map((k, i) => { const en = (readings[k]?.en || []).filter(m => !/radical \(no\.\s*\d+\)/i.test(m));
     return {text: k + (split ? " " + pieces[i] : ""), gloss: en.slice(0, 2).join(", ")}; }).filter(p => p.gloss);
   if (!parts.length) return null;
+  // The rows already break the word down: the line under them says only what they cannot, a sound change (owner,
+  // 29 Nov: "がく + じゅつ → がくじゅつ" was redundant). 学会 keeps "がく + かい → がっかい: く → っ before か".
   const rule = readingRule(text, reading, base);
-  return {parts, literal: rule ? rule.literal : ""};
+  return {parts, literal: rule?.change ? rule.literal : ""};
 }
 
 // ---- The pool ----

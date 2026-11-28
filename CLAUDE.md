@@ -874,7 +874,9 @@ Before considering the change complete:
   ladder; the grammar fallback rests by level; flags apply to the Sprint,
   kanji cards and kana. Kanji cards only for the rank's level and above;
   connectives and word parts take half a turn (`KIND_SHARE`). The review's
-  breakdown says the reading rule once (no line at the bottom).
+  breakdown says the reading rule once (no line at the bottom). Since v341 a
+  kanji breakdown has a "piece by piece" line only for a sound change (学会:
+  く → っ before か): a plain join (がく + じゅつ) is what the rows already say.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 
