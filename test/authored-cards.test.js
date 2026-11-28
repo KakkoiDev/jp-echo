@@ -333,7 +333,7 @@ test("the mini-boss: due every ten rounds, leading the round end until played, �
   assert.ok(js.includes("mini = !late && !reading && miniDue(state);") && js.includes('$("game-again").className = late || mini || reading ? "qr-lnk" : "qr-btn";'), "Next round becomes the link under it");
   assert.ok(js.includes("if (miniRound) { const won = miniBonus(miniDone(state), {right: rights}); state = won.state; cleared = won.bonus; score += cleared; miniRound = false; }"));
   assert.ok(js.includes('beat = {name: "mini"}; miniRound = true;'));
-  assert.ok(js.includes('mini: ["鬼", "Mini-boss", "×2 points · 7 right clears it: +1,000", "seal"]'));
+  assert.ok(js.includes('mini: ["砦", "Mini-boss", "×2 points · 7 right clears it: +1,000", "seal"]'));
 });
 
 test("a cleared mini-boss pays its bonus into the total and the day; Today's reading is one passage a day at exam pace", async () => {
@@ -353,4 +353,12 @@ test("a cleared mini-boss pays its bonus into the total and the day; Today's rea
   const js = src("../n2-mock.js"), html = src("../n2-mock.html");
   assert.ok(html.includes('class="qr-btn" id="game-reading" type="button" hidden>') && js.includes('$("game-reading").onclick = async () => {'));
   assert.ok(js.includes("const reading = !late && readingDue(state, localDay())"), "it leads the first round end of the day");
+});
+
+test("the boss is 城 and the mini-boss 砦, never 鬼 (owner, 28 Nov)", () => {
+  const html = src("../n2-mock.html"), js = src("../n2-mock.js");
+  assert.ok(!html.includes("鬼") && !js.includes("鬼"));
+  assert.ok(html.includes('<span class="qr-onitile" lang="ja" aria-hidden="true">城</span>') && html.includes('<span lang="ja">城</span>Face the boss'));
+  assert.ok(html.includes('id="game-mini" type="button" hidden><span class="qr-glyph" lang="ja" aria-hidden="true">砦</span>'));
+  assert.ok(js.includes('stretch: ["城", "Final stretch"') && js.includes('g.textContent = "城";'));
 });

@@ -824,6 +824,12 @@ Before considering the change complete:
   The mini-boss now pays ×2 (`MINI.points`), and seven right of ten clears it
   for +1,000 (`miniBonus`: into the total and the day, `miniCleared`), with the
   jackpot's sound and "Mini-boss cleared" on the round end.
+- **The boss is 城, the mini-boss 砦 (owner, 28 Nov, v335).** The owner did
+  not want 鬼: a run is a march on a castle (城), the mini-boss a fort on the
+  way (砦). Every sign that was 鬼 (Home's run and boss cards, the round-end
+  strips, Face the boss, the final-stretch ribbon, the boss exam's intro) is
+  城; the mini-boss button and ribbon are 砦. Earlier lines here that say 鬼
+  mean 城.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

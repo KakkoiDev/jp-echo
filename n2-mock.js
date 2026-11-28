@@ -1098,9 +1098,9 @@ const SAY_ALOUD = "Say it out loud";
 const ALOUD = Object.fromEntries(["reading", "meaning", "definition", "listen", "kana", "homophone", "grammar", "exam", "connective"].map(k => [k, SAY_ALOUD]));
 // The beat ribbons (board 4): glyph, title, sub-line and colour per beat.
 const BEATS = {hook: ["始", "Welcome back", "An easy start", "right"], first: ["始", "First round", "An easy start", "right"], breather: ["息", "Breather", "", "track"],
-  peak: ["峰", "Peak round · bonuses ×2", "The hardest of the wave. Go fast.", "gold"], stretch: ["鬼", "Final stretch", "Bonuses ×2 until the boss opens", "seal"],
+  peak: ["峰", "Peak round · bonuses ×2", "The hardest of the wave. Go fast.", "gold"], stretch: ["城", "Final stretch", "Bonuses ×2 until the boss opens", "seal"],
   warm: ["復", "Recovery round: things you know", "After a hard round", "right"], jackpot: ["五", "Jackpot", "Five in a row.", "gold"],
-  mini: ["鬼", "Mini-boss", "×2 points · 7 right clears it: +1,000", "seal"],
+  mini: ["砦", "Mini-boss", "×2 points · 7 right clears it: +1,000", "seal"],
   reading: ["読", "Today’s reading", "One passage at the exam’s pace", "seal"]};
 // Game sounds and haptics (docs/design/game, Motion board), made on the
 // device: WebAudio, no files, offline. One Sound switch silences them, the
@@ -2435,7 +2435,7 @@ async function exam() {
   // (body[data-from=game]); every way out leads back to Quick round.
   if (state.boss) {
     document.body.dataset.from = "game"; document.body.dataset.boss = "true";
-    for (const g of document.querySelectorAll("#intro .mode-intro .glyph")) g.textContent = "鬼";
+    for (const g of document.querySelectorAll("#intro .mode-intro .glyph")) g.textContent = "城";
     for (const a of document.querySelectorAll("#intro .tool-head a.icon-button, #exam .n2-exam-head a.icon-button, #results .tool-head a.icon-button")) { a.href = "?view=game"; a.innerHTML = GAME_CHEVRON; }
     $("result-next").href = "?view=game"; $("result-next").textContent = "Back to Quick round";
     for (const a of document.querySelectorAll('#rest a.button.quiet')) { a.href = "?view=game"; a.textContent = "Later · back to Quick round"; }

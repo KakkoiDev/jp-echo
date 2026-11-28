@@ -152,7 +152,7 @@
   </div>
   <div class="qr-topline"><button data-ui="button" class="qr-ib" id="game-review-back" type="button" aria-label="Back to home" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><span id="game-sub"></span><span class="qr-n" id="game-sub-right"></span></div>
   <div id="game-ribbon" class="qr-ribbon" hidden><span class="g" lang="ja" aria-hidden="true" id="game-ribbon-glyph"></span><div><span id="game-ribbon-title"></span><small id="game-ribbon-sub"></small></div></div>
-  <div class="qr-stretch" id="game-stretch" hidden><span lang="ja" aria-hidden="true">鬼</span><div><i id="game-stretch-fill"></i></div><b class="qr-n" id="game-stretch-left"></b></div>
+  <div class="qr-stretch" id="game-stretch" hidden><span lang="ja" aria-hidden="true">城</span><div><i id="game-stretch-fill"></i></div><b class="qr-n" id="game-stretch-left"></b></div>
   <div class="qr-clk" id="game-clock"><div class="qr-bar"><span id="game-bar"></span></div><span class="qr-sec" id="game-sec"></span></div>
 
   <div id="game-home" class="qr-panel" hidden>
@@ -162,14 +162,14 @@
     <div class="qr-run" id="game-runcard">
       <div class="qr-row"><span class="qr-lbl" id="game-run-name"></span><span class="qr-chip" data-tone="seal" id="game-run-clock"></span></div>
       <div class="qr-runbig"><span class="qr-n" id="game-run-big"></span><span id="game-run-of"></span></div>
-      <div class="qr-row qr-meterrow"><div class="qr-meter"><i id="game-run-fill"></i></div><span class="qr-oni" lang="ja" aria-hidden="true">鬼</span></div>
+      <div class="qr-row qr-meterrow"><div class="qr-meter"><i id="game-run-fill"></i></div><span class="qr-oni" lang="ja" aria-hidden="true">城</span></div>
       <div class="qr-row qr-small" id="game-run-row"><span class="qr-n" id="game-run-points"></span><span id="game-run-waits"></span></div>
       <div class="qr-countdown" id="game-countdown" hidden><div class="qr-row"><span id="game-count-label"></span><b class="qr-n" id="game-count-time"></b></div><div class="qr-tiers"><i id="game-tier-a"></i><i id="game-tier-b"></i><i id="game-tier-c"></i></div><div class="qr-row qr-tiercaps"><span>×1.5 · 24 h</span><span>×1.2 · 48 h</span><span>×1</span></div></div>
       <p class="qr-runline" id="game-run-line"></p>
     </div>
     <div class="qr-run qr-bosscard" id="game-bosscard" hidden>
       <div class="qr-row"><span class="qr-lbl" id="game-boss-name"></span><span class="qr-chip" data-tone="seal" id="game-boss-clock2"></span></div>
-      <div class="qr-bossrow"><span class="qr-onitile" lang="ja" aria-hidden="true">鬼</span><div><strong id="game-boss-title"></strong><span id="game-boss-mins"></span></div></div>
+      <div class="qr-bossrow"><span class="qr-onitile" lang="ja" aria-hidden="true">城</span><div><strong id="game-boss-title"></strong><span id="game-boss-mins"></span></div></div>
       <div class="qr-meter qr-meter-seal"><i style="width:100%"></i></div>
       <p class="qr-small" id="game-boss-points"></p>
       <p class="qr-runline" id="game-boss-note"></p>
@@ -180,7 +180,7 @@
     <p class="qr-tiny qr-level" id="game-home-level"></p>
     <p class="qr-tiny qr-level qr-sections" id="game-home-sections" hidden></p>
     <div class="qr-dock">
-      <a class="qr-play" id="game-home-boss" href="#" hidden><b><span lang="ja">鬼</span>Face the boss</b><span>Pause is honest: it shows on the result</span></a>
+      <a class="qr-play" id="game-home-boss" href="#" hidden><b><span lang="ja">城</span>Face the boss</b><span>Pause is honest: it shows on the result</span></a>
       <button data-ui="button" class="tp-start" id="game-home-radio" type="button" data-tp data-tp-glyph="play" hidden><span class="tp-disc" aria-hidden="true"></span><span class="tp-label">Start the Night Radio</span></button>
       <button data-ui="button" class="qr-play" id="game-home-play" type="button"><b><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4l13 8-13 8z"/></svg>Play</b><span class="qr-playpips" id="game-play-pips" hidden></span><span id="game-play-sub">10 questions · about a minute</span></button>
       <button data-ui="button" class="qr-btn2" id="game-home-play2" type="button" hidden>Play a round first</button>
@@ -271,13 +271,13 @@
       <div class="qr-strip qr-flagwhy" id="game-flagwhy" hidden><span class="qr-chip">Flagged</span><span class="qr-flagword" id="game-flagwhy-word" lang="ja"></span><span class="qr-flagchips" id="game-flagwhy-chips"></span></div>
       <div class="qr-strip" id="game-lvstrip" hidden><span class="qr-chip" data-tone="right">Lv up</span><span class="qr-lvups" id="game-lvups"></span></div>
       <div class="qr-strip qr-warm" id="game-warm" hidden><span lang="ja" aria-hidden="true">復</span><span id="game-warm-line"></span></div>
-      <a class="qr-strip qr-bossopen" id="game-boss" href="#" hidden><span class="qr-oni" lang="ja" aria-hidden="true">鬼</span><span id="game-boss-line"></span></a>
-      <div class="qr-strip" id="game-boss-strip"><span class="qr-oni" lang="ja" aria-hidden="true">鬼</span><div class="qr-meter qr-meter-thin"><i id="game-boss-fill"></i></div><span class="qr-n" id="game-boss-progress"></span><span class="qr-chip" data-tone="seal" id="game-boss-clock"></span></div>
+      <a class="qr-strip qr-bossopen" id="game-boss" href="#" hidden><span class="qr-oni" lang="ja" aria-hidden="true">城</span><span id="game-boss-line"></span></a>
+      <div class="qr-strip" id="game-boss-strip"><span class="qr-oni" lang="ja" aria-hidden="true">城</span><div class="qr-meter qr-meter-thin"><i id="game-boss-fill"></i></div><span class="qr-n" id="game-boss-progress"></span><span class="qr-chip" data-tone="seal" id="game-boss-clock"></span></div>
     </div>
     <div class="qr-donedock">
       <a class="tp-start" id="game-sleep" href="?view=evening&amp;from=game" data-tp data-tp-glyph="play" hidden><span class="tp-disc" aria-hidden="true"></span><span class="tp-label"><span id="game-sleep-label">Evening recall, then sleep</span><small id="game-sleep-sub"></small></span></a>
       <button data-ui="button" class="qr-btn" id="game-reading" type="button" hidden><span class="qr-glyph" lang="ja" aria-hidden="true">読</span><span>Today’s reading</span><small class="qr-minisub">one passage at exam pace · counts toward the boss</small></button>
-      <button data-ui="button" class="qr-btn" id="game-mini" type="button" hidden><span class="qr-glyph" lang="ja" aria-hidden="true">鬼</span><span>Mini-boss</span><small class="qr-minisub">×2 points · 7 right clears it: +1,000</small></button>
+      <button data-ui="button" class="qr-btn" id="game-mini" type="button" hidden><span class="qr-glyph" lang="ja" aria-hidden="true">砦</span><span>Mini-boss</span><small class="qr-minisub">×2 points · 7 right clears it: +1,000</small></button>
       <button data-ui="button" class="qr-btn" id="game-again" type="button"><span id="game-again-label">Next round</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
       <button data-ui="button" class="qr-lnk" id="game-home-btn" type="button">Home</button>
     </div>
