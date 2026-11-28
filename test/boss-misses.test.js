@@ -259,7 +259,7 @@ test("every boss review card is spoken once: the word, the pattern, a listening 
   const js = src("../n2-mock.js");
   assert.ok(js.includes('const voiceOf = () => card.kind === "grammar" ? grammarVoice(card, sol).speak : spokenWord(sol.word.replace(/[〜～]/g, ""), String(sol.reading || "").replace(/[〜～]/g, ""));'));
   assert.ok(js.includes('if (sol) return {picked, q: {...base, say: voiceOf(), paperLine:'));
-  assert.ok(js.includes('say: it.heard && it.lines.length ? it.lines.join("　") : it.answer,'));
+  assert.ok(js.includes('say: it.heard && it.lines.length ? it.lines.join("　") : keyWord,'), "a listening line, else the tested word (owner, 28 Nov)");
   assert.ok(js.includes("if (sound() && voiced) setTimeout(() => { if (reviewToken === askToken && !$(\"game-review\").hidden) say(voiced); }, 150);"));
 });
 
@@ -482,7 +482,7 @@ test("all nineteen papers have their deciding lines: checked, solved blind, and 
     }
   }
   assert.equal(Object.keys(keys).length, withLines);
-  assert.deepEqual([withLines, skipped, unsolved], [914, 31, 62]);
+  assert.deepEqual([withLines, skipped, unsolved], [913, 32, 62], "set 9 #101 skipped after the outside review (28 Nov)");
   // What came back from the writer is kept as it came, findings included.
   for (let n = 4; n <= 20; n++) { const back = read("../tools/boss-keys/returned/n2-set-" + n + ".json"); assert.equal(back.set, "n2-set-" + n); assert.ok(Array.isArray(back.findings)); }
   const brief = src("../docs/N2-PAPERS-LINES-HANDOFF.md"), check = src("../tools/boss-keys/check-return.mjs");
@@ -500,7 +500,7 @@ test("a round's review speaks every kind of card, and shows an exam card as the 
   assert.equal(answerSpeech(pool.find(q => q.id === "a:～気味")), "気味【ぎみ】"); assert.equal(answerSpeech(pool.find(q => q.id === "k:このように")), "このように");
   const js = src("../n2-mock.js");
   assert.ok(js.includes('const pattern = q.kind === "grammar" || q.kind === "gap" || grammarBlockCard(q) ? grammarVoice(q, sol) : null;'));
-  assert.ok(js.includes('const voiced = q.say || (["affix", "partgap"].includes(q.kind) ? answerSpeech(q) : spoken || answerSpeech(q)) || "";'));
+  assert.ok(js.includes('const voiced = (["pair", "order"].includes(q.kind) ? q.answer : q.say) || (["affix", "partgap"].includes(q.kind) ? answerSpeech(q) : spoken || answerSpeech(q)) || "";'));
   // An exam card missed in a round: the word and its meaning large, the paper's sentence with its answer, the why.
   assert.ok(js.includes('const q = asked.kind === "exam" ? paperCardOf({target: asked.target, ask: asked.prompt, answer: asked.answer,'));
   assert.ok(js.includes('$("game-review-meaning").textContent = sol.meaning || "";'), "never the answer a second time");

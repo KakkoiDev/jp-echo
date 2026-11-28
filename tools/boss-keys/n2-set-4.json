@@ -269,7 +269,7 @@
    "そんなときは、無理に我慢するより、十五分から二十分ほど短く眠るのがおすすめです。",
    "ただし、三十分以上眠ってしまうと深い眠りに入ってしまい、起きたあと、かえってぼんやりしてしまいます。"
   ],
-  "en": "Nap 15 to 20 minutes; over 30 can leave you groggy from deep sleep.",
+  "en": "Nap 15 to 20 minutes; 30 or more can leave you groggy from deep sleep.",
   "solved": true
  },
  "88": {
@@ -330,9 +330,9 @@
  },
  "96": {
   "lines": [
-   "こちらの商品は、ただいまお取り寄せになりますが、よろしいでしょうか。"
+   "こちらの商品は、ただいま在庫がなく、お取り寄せになりますが、よろしいでしょうか。"
   ],
-  "en": "We would have to order this item in. Is that all right?",
+  "en": "It's out of stock and would have to be ordered in. Is that all right?",
   "solved": true
  },
  "97": {

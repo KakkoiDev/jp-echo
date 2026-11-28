@@ -19,7 +19,7 @@
    "大人になって通訳の仕事を始めてから、その「言葉を選ぶ時間」がむしろ大切だとわかった。",
    "すぐに話せないことは、欠点ではなく、慎重さの表れなのかもしれない。"
   ],
-  "en": "I came to value the time it took to choose my words. It showed care.",
+  "en": "I came to value the time spent choosing words; it may have shown care.",
   "solved": true
  },
  "55": {
@@ -115,10 +115,10 @@
  },
  "67": {
   "lines": [
-   "私はこの流れに賛成だ。",
+   "会社員の副業を認める企業が増えている。私はこの流れに賛成だ。",
    "そうであれば、まず考えるべきは、本業の給与を十分に上げることではないか。"
   ],
-  "en": "I support it; shouldn't the first step be to raise pay in the main job?",
+  "en": "More firms allow side jobs and A supports it; B: shouldn't main pay rise first?",
   "solved": true
  },
  "68": {
@@ -364,12 +364,7 @@
   "solved": true
  },
  "101": {
-  "lines": [
-   "Ａプランの宿は、駅から送迎バスが出ておりますので、ご心配いりませんよ。",
-   "ま、送迎があるなら、今回は君の希望にしよう。"
-  ],
-  "en": "Plan A has a shuttle from the station. If there's a shuttle, let's do it.",
-  "solved": true
+  "skip": "the plan needs three details from separate turns: Plan A's open-air bath, the wife's wish for one, and the shuttle"
  },
  "102": {
   "lines": [

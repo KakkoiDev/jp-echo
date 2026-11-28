@@ -44,7 +44,7 @@
   "lines": [
    "文学や歴史を学んでも、すぐに役に立つ技術が身につくわけではない。就職に有利な資格が取れるわけでもない。"
   ],
-  "en": "Literature and history give no immediately useful skills or job credentials.",
+  "en": "Literature and history don't necessarily give quick skills or job credentials",
   "solved": true
  },
  "58": {
@@ -164,7 +164,7 @@
    "部長、今日は外出してるから、メールより電話のほうが早いと思う。",
    "印刷が終わるまで待たないで、先に連絡しますね。"
   ],
-  "en": "Phone him since he's out. I'll contact him before the printing's done.",
+  "en": "Calling may be faster than email; I'll contact him before printing's done",
   "solved": true
  },
  "74": {
@@ -379,7 +379,7 @@
    "電車なら寝ていけるよ。駅から水族館まではバスがあるはずだ。",
    "電車の時間を調べておくよ。"
   ],
-  "en": "Take the train, then a bus to the aquarium; I'll check the train times.",
+  "en": "Take the train; there should be a bus to the aquarium. I'll check times.",
   "solved": true
  },
  "103": {

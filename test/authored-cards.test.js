@@ -88,7 +88,7 @@ test("the papers' sentences have their English, shown in the review of a paper's
 test("a paper revised on its own has its own edition; the others keep theirs and their sittings", () => {
   assert.equal(editionOf("n2-set-11"), SETS_EDITION); assert.equal(realisticPaperId("n2-set-11"), "n2-set-11@" + SETS_EDITION, "Mock 11 sittings stay attached to their lines");
   assert.deepEqual(Object.keys(SET_EDITIONS).sort(), ["n2-set-10", "n2-set-14", "n2-set-15", "n2-set-2", "n2-set-20", "n2-set-3", "n2-set-4", "n2-set-5", "n2-set-6", "n2-set-7", "n2-set-8", "n2-set-9"]);
-  assert.equal(realisticPaperId("n2-set-8"), "n2-set-8@2026.11-r5");
+  assert.equal(realisticPaperId("n2-set-8"), "n2-set-8@2026.11-r6");
   const q = (n, i) => read("../n2-sets/n2-set-" + n + ".json").questions[i];
   // A second natural answer is gone from each of the eight.
   assert.ok(!q(4, 33).choices.includes("ものの")); assert.ok(!q(10, 19).choices.includes("交換")); assert.ok(!q(14, 39).choices.includes("に先立って")); assert.ok(!q(20, 36).choices.includes("を通して"));
@@ -264,7 +264,7 @@ test("the last open findings on the N2 papers are fixed, each paper in a new edi
   assert.ok(q(3, 72).context.includes("冷凍食品はお預かりできません（配送料の計算にも含みません）。"), "frozen goods do not count toward the total");
   assert.ok(q(9, 46).prompt.startsWith("明日の試合は雨が"), "雨が in the frame: 予定どおり cannot lead, so only 関係なく is on ★");
   assert.equal(q(15, 64).choices[3], "線路が止まると代わりの手段がすぐに見つからないこと");
-  for (const n of [2, 9, 15]) assert.equal(editionOf("n2-set-" + n), "2026.11-r5");
+  assert.equal(editionOf("n2-set-15"), "2026.11-r5");
   const brief = src("../docs/PAPERS-REVIEW-HANDOFF.md"), maker = src("../tools/paper-review/make-inputs.mjs");
   assert.ok(brief.includes("tools/paper-review/input/<paper>.json") && brief.includes("<paper>.review.json") && maker.includes("sets/<level>/"));
 });
@@ -279,6 +279,29 @@ test("the outside review of sets 2–9: 18 of 46 unfair findings applied, each d
   for (const [n, i, gone] of [[3, 14, "割合"], [3, 36, "ことにしている"], [3, 47, "それで"], [5, 32, "何かにつけ"], [5, 38, "かならず"], [6, 35, "いけない"], [7, 36, "はもちろん"], [7, 36, "に限らず"], [7, 41, "だけあって"], [8, 38, "について"]])
     assert.ok(!q(n, i).choices.includes(gone), n + "#" + i + ": " + gone);
   assert.deepEqual([q(7, 43).choices[q(7, 43).key - 1], q(7, 43).prompt.startsWith("地図で自宅から")], ["経路", true]);
-  for (const [n, r] of [[3, "r6"], [5, "r5"], [6, "r4"], [7, "r6"], [8, "r5"]]) assert.equal(editionOf("n2-set-" + n), "2026.11-" + r);
+  for (const [n, r] of [[2, "r6"], [3, "r7"], [4, "r5"], [5, "r5"], [6, "r4"], [7, "r7"], [8, "r6"], [9, "r6"]]) assert.equal(editionOf("n2-set-" + n), "2026.11-" + r);
   assert.equal(read("../n2-sets/keys.json").keys["n2-set-3#100"].lines[0], "これから晩ご飯、食べに行こうよ。今日は僕がごちそうするよ。");
+});
+
+test("the review's weak findings: 38 of 46 applied, each changed question and line solved blind (28 Nov)", () => {
+  const d = read("../tools/paper-review/reviews/2026-11-28/decisions.json"), q = (n, i) => read("../n2-sets/n2-set-" + n + ".json").questions[i], keys = read("../n2-sets/keys.json").keys;
+  assert.equal(d.weak.length, 46); assert.equal(d.weak.filter(x => x.decision === "applied").length, 38); assert.ok(d.weak.every(x => x.reason));
+  assert.ok(q(2, 71).context.includes("１月２６日（日）") && !q(2, 72).context.includes("１月２５日（日）"), "January 25 was a Saturday");
+  assert.ok(q(3, 71).context.includes("１３:００を過ぎてからの受付") && !q(3, 72).context.includes("１３:００以降"), "13:00 sits in one range");
+  assert.ok(q(2, 78).prompt.includes("一番の理由") && q(4, 96).context.includes("在庫がなく") && !q(8, 75).context.includes("少し少ない"));
+  assert.ok(!/needs negative endings/.test(q(7, 30).why) && /choice 1 makes the manager/i.test(q(8, 91).why), "explanations say what is true");
+  assert.ok(keys["n2-set-7#85"].lines[0].startsWith("今日は、中世に") && keys["n2-set-9#67"].lines[0].startsWith("会社員の副業") && !keys["n2-set-9#101"], "lines that name their referent; none where three turns are needed");
+  assert.ok(!/over 30/.test(keys["n2-set-4#87"].en) && /may/.test(keys["n2-set-9#54"].en), "the English keeps the Japanese hedges and boundaries");
+});
+
+test("the voice says the key word, and an English voice never reads a tilde (owner, 28 Nov)", async () => {
+  const {plainSpoken, spokenText} = await import("../speech.js");
+  assert.equal(plainSpoken("slightly ~"), "slightly"); assert.equal(plainSpoken("former ~, ex-~"), "former, ex-"); assert.equal(plainSpoken("in the manner of ～"), "in the manner of");
+  assert.equal(spokenText("~ or not", "en"), "or not");
+  const speech = src("../speech.js");
+  assert.ok(!speech.includes('lang==="ja"?speechText(text):text'), "every utterance goes through spokenText");
+  const js = src("../n2-mock.js");
+  assert.ok(js.includes('const voiced = (["pair", "order"].includes(q.kind) ? q.answer : q.say) ||'), "a clause pair or an order card says its key word in the review");
+  assert.ok(js.includes('const keyWord = it.target ? examWord(it.target) : it.answer.length <= KEY_WORD_MAX ? it.answer : "";') && js.includes("const KEY_WORD_MAX = 12;"), "a paper question says its word, never a sentence-long choice");
+  assert.equal(plainSpoken("Bonjour, tout le monde !"), "Bonjour, tout le monde !", "other text is left as it is");
 });

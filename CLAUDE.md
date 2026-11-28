@@ -720,7 +720,16 @@ Before considering the change complete:
   natural, or the stem left a condition open), 28 rejected with a reason,
   each in `tools/paper-review/reviews/2026-11-28/decisions.json`; the 18
   were solved blind (choices shuffled) with no second answer. Sets 3, 5, 6,
-  7, 8 have new editions. The 46 weak findings are not yet read.
+  7, 8 have new editions. Its 46 weak findings (v324): 38 applied (explanations,
+  English of deciding lines, two notice dates, four sets of lines), 8 rejected;
+  every changed question and line solved blind. Editions: sets 2, 3, 4, 7, 8, 9.
+- **The voice says the key word (owner, 28 Nov, v324).** In a round's review a
+  clause pair or a sentence order says its answer, not its sentence; a paper
+  question with no word card says the word it tests or a short answer
+  (`KEY_WORD_MAX`, n2-mock.js), never a sentence-long choice; a listening
+  question keeps its deciding line. Every utterance goes through
+  `spokenText` (speech.js): Japanese gets its readings, any other language
+  loses the ～ an English voice reads aloud (`plainSpoken`).
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

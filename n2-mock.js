@@ -225,6 +225,8 @@ function voice() {
   if (pick === "random") return voices[Math.floor(Math.random() * voices.length)] || null;
   return voices[Number(pick)] || null;
 }
+// The longest answer the review voice reads as it is; a longer one is a sentence, and the tested word speaks instead.
+const KEY_WORD_MAX = 12;
 function say(text) {
   if (!window.speechSynthesis) { warn("Japanese speech is unavailable in this browser. Open Echo on a device with a Japanese voice."); return false; }
   return speakOnce(text, {voice: voice(), rate: Number(settings.rate) || 1});
@@ -1780,7 +1782,10 @@ async function game() {
       if (sol) return {picked, q: {...base, say: voiceOf(), paperLine: usage ? it.answer.replace(it.ask, "【" + it.ask + "】") : it.ask, target: it.target,
         // The paper's answer, where the sentence does not already hold it (a synonym question).
         solution: {word: sol.word, reading: sol.reading || "", meaning: sol.meaning, ja: "", en: [usage || /（\s*）/.test(it.ask) || [sol.word, sol.reading].includes(it.answer) ? "" : "Answer: " + it.answer, examEn?.en?.[source] || ""].filter(Boolean).join(" · "), why: it.why, source}}};
-      return {picked, q: {...base, ask: it.ask, say: it.heard && it.lines.length ? it.lines.join("　") : it.answer,
+      // A listening question says its deciding line; any other says the word it tests, or a short answer, never a
+      // sentence-long choice (owner, 28 Nov: "the voice reads the whole sentence, not just the key word").
+      const keyWord = it.target ? examWord(it.target) : it.answer.length <= KEY_WORD_MAX ? it.answer : "";
+      return {picked, q: {...base, ask: it.ask, say: it.heard && it.lines.length ? it.lines.join("　") : keyWord,
         solution: {word: it.answer, meaning: "", ja: it.lines.join(""), en: it.en, why: it.why, source}}};
   }
   function startPaperReview(sitting, paper) {
@@ -1853,7 +1858,8 @@ async function game() {
     // Every review card is spoken (owner, 27 Nov: gap, connective and word-part cards were silent): the pattern as its
     // sentence reads it, the word with its reading (a part without its ～), or what answerSpeech gives the kind (`voiced`).
     const spoken = pattern ? pattern.speak : sol.word && sol.reading ? spokenWord(sol.word, sol.reading) : "";
-    const voiced = q.say || (["affix", "partgap"].includes(q.kind) ? answerSpeech(q) : spoken || answerSpeech(q)) || "";
+    // A clause pair or a sentence order says its key word, never the whole sentence (owner, 28 Nov).
+    const voiced = (["pair", "order"].includes(q.kind) ? q.answer : q.say) || (["affix", "partgap"].includes(q.kind) ? answerSpeech(q) : spoken || answerSpeech(q)) || "";
     if (sound() && voiced) setTimeout(() => { if (reviewToken === askToken && !$("game-review").hidden) say(voiced); }, 150);
     held = false; root.dataset.held = "false"; $("game-hold").setAttribute("aria-pressed", "false"); $("game-hold").setAttribute("aria-label", "Hold");
     $("game-hold").innerHTML = PAUSE_SVG;
@@ -1861,6 +1867,8 @@ async function game() {
     timer = setTimeout(() => review(n + 1), (q.seconds && paperReview ? q.seconds : REVIEW_SECONDS) * 1000);
   }
   // A grammar point is spoken and shown with its reading too (report bc70f913).
+  // The word or pattern a paper question tests, as the voice says it.
+  const examWord = target => answerSpeech({kind: "exam", target}) || "";
   const grammarVoice = (q, sol) => { const text = answerSpeech(q) || ""; return patternVoice(text, sol.ja ? exampleSegments(sol.ja, [q.needle || "", text].filter(Boolean)) : []); };
   // Round end (fix 8): the number, the pips, one line, one big button.
   function done() {
