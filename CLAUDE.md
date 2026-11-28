@@ -774,6 +774,14 @@ Before considering the change complete:
   review), 24-hour times (`clockAt`, the bedtime field), signs in a 40 px
   hairline square, Settings' 設 in the dock, no Echo voice panel in the skins,
   a disabled control always says why. Board files: docs/design/consistency/.
+- **Long cards live in the Sprint (owner, 28 Nov, v329: "it just breaks the
+  flow of the round … we can have those in the sprints instead").**
+  `LONG_KINDS` (n2-game.js) is Same meaning, sentence order (★), clause pairs
+  and the paper's own questions: never in a round, a missed one included.
+  The Sprint (Home's 読) is a round of ten: its three passages spread among
+  seven long cards (`sprintRound`, at most `SPRINT.perKind` of a kind; a long
+  miss comes back first in the next Sprint). This replaces v310's "Exam cards
+  stay in rounds" and v321's para-only rule.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

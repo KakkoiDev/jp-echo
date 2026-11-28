@@ -389,14 +389,14 @@ test("the word parts the list lacked are in it, each with a sentence and a card"
   
 });
 
-test("a round may still ask a sat paper's short question; the picker can leave them out", () => {
-  // Taken out for one build on a wrong reading of two flags (they were about the brackets), and put back.
-  const js = src("../n2-mock.js");
-  assert.ok(!js.includes("exams: false"));
+test("a sat paper's short questions are asked in the Sprint, not in a round (owner, 28 Nov)", async () => {
+  // Kept in rounds on 27 Nov (the flags were about the brackets); moved to the Sprint with the other long cards on
+  // 28 Nov: "I don't like having long exercises … in the rounds".
+  const {sprintRound} = await import("../n2-game.js");
   const sat = gamePool({inventory, examples, sets: [set], sat: new Set([set.id])}), exams = sat.filter(q => q.kind === "exam");
   assert.ok(exams.length > 30);
-  assert.ok([1, 2, 3, 4, 5, 6].some(n => nextRound({pool: sat, state: {}, random: seeded(n)}).round.some(q => q.kind === "exam")));
-  for (let n = 1; n <= 10; n++) assert.ok(!nextRound({pool: sat, state: {comeback: [exams[0].id]}, random: seeded(n), exams: false}).round.some(q => q.kind === "exam"));
+  for (let n = 1; n <= 10; n++) assert.ok(!nextRound({pool: sat, state: {comeback: [exams[0].id]}, random: seeded(n)}).round.some(q => q.kind === "exam"));
+  assert.ok([1, 2, 3, 4, 5, 6].some(n => sprintRound({pool: sat, random: seeded(n)}).some(q => q.kind === "exam")));
 });
 
 test("a paper's 【word】 mark is never shown raw: it is an underline, not a reading left in the text", () => {

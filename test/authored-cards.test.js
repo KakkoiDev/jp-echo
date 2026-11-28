@@ -60,7 +60,7 @@ test("authored cards are answers like any other: scored, counted, and a miss com
   const q = pool.find(c => c.kind === "order");
   const st = rememberAnswer({}, {q, outcome: "wrong", points: -200});
   assert.equal(st.total, -200); assert.equal(st.answered, 1); assert.deepEqual(st.comeback, [q.id]);
-  assert.ok(nextRound({pool, state: st, random: seeded(1)}).round[0].id === q.id);
+  assert.ok(nextRound({pool, state: st, random: seeded(1), long: true}).round[0].id === q.id, "with long cards allowed, the miss leads");
   // Without the files the pool is what it was.
   assert.equal(gamePool({inventory}).filter(c => ["para", "pair", "order"].includes(c.kind)).length, 0);
   assert.ok(src("../n2-mock.js").includes('["./n2-paraphrase.json", "./n2-pairs.json", "./n2-ordering.json", "./n2-sets/en.json", "./n2-word-pieces.json", "./n2-gap-wrong.json"]'));
@@ -167,7 +167,7 @@ test("the reading sprint: short passages from papers not sat, ninety seconds, ne
   const {HELD_OUT} = await import("../n2-comprehension.js");
   const ids = Object.keys(read("../n2-sets/index.json")), sets = ids.map(id => read("../n2-sets/" + id + ".json")), keys = read("../n2-sets/keys.json").keys;
   const cards = sprintCards({sets, sat: new Set(["n2-set-2"]), keys, random: seeded(2)});
-  assert.deepEqual(SPRINT, {size: 3, seconds: 90, mondai: [10]});
+  assert.deepEqual(SPRINT, {size: 3, seconds: 90, mondai: [10], long: 7, perKind: 2});
   assert.ok(cards.length > 60);
   for (const q of cards) {
     const [set, i] = q.id.slice(3).split("#"), src = read("../n2-sets/" + set + ".json").questions[i];
@@ -180,7 +180,8 @@ test("the reading sprint: short passages from papers not sat, ninety seconds, ne
   assert.notEqual(later[0].id, first);
   const js = src("../n2-mock.js"), html = src("../n2-mock.html");
   assert.ok(html.includes('id="game-sprint"') && js.includes('$("game-sprint").onclick = async () => {'));
-  assert.ok(js.includes("const cards = sprintCards({sets: loaded, sat, keys: bossKeys, seen: readGame().seen || {}}).slice(0, SPRINT.size);"));
+  assert.ok(js.includes("const passages = sprintCards({sets: loaded, sat, keys: bossKeys, seen: readGame().seen || {}}).slice(0, SPRINT.size);"));
+  assert.ok(js.includes("const cards = sprintRound({passages, pool: n2Pool, state: readGame(), recall: data.recall});"));
   assert.equal(KIND_LABEL.sprint, "Reading sprint"); assert.equal(KIND_SKILL.sprint, "reading");
 });
 
@@ -250,7 +251,7 @@ test("the handoffs: one for the designer, one for a native reader with its data"
 });
 
 test("long cards stay out of the rounds, a missed one too; the pool still builds them (owner, 28 Nov)", () => {
-  assert.deepEqual([...LONG_KINDS], ["para"]);
+  assert.deepEqual([...LONG_KINDS], ["para", "order", "pair", "exam"]);
   const para = pool.filter(q => q.kind === "para");
   assert.ok(para.length >= 230, "built for the audit and the reviewer");
   for (let n = 1; n <= 20; n++) assert.ok(!nextRound({pool, state: {comeback: [para[0].id]}, random: seeded(n)}).round.some(q => LONG_KINDS.has(q.kind)));
@@ -304,4 +305,19 @@ test("the voice says the key word, and an English voice never reads a tilde (own
   assert.ok(js.includes('const voiced = q.kind === "kanji" ? "" : (["pair", "order"].includes(q.kind) ? q.answer : q.say) ||'), "a clause pair or an order card says its key word in the review");
   assert.ok(js.includes('const keyWord = it.target ? examWord(it.target) : it.answer.length <= KEY_WORD_MAX ? it.answer : "";') && js.includes("const KEY_WORD_MAX = 12;"), "a paper question says its word, never a sentence-long choice");
   assert.equal(plainSpoken("Bonjour, tout le monde !"), "Bonjour, tout le monde !", "other text is left as it is");
+});
+
+test("the Sprint holds the long cards: its passages among seven long cards, a long miss first next time (owner, 28 Nov)", async () => {
+  const {sprintRound, LONG_KINDS, SPRINT} = await import("../n2-game.js");
+  const passages = [1, 2, 3].map(i => ({id: "sp:" + i, kind: "sprint"}));
+  const r = sprintRound({passages, pool, random: seeded(4), now: 1e12});
+  assert.equal(r.length, 10); assert.equal(r.filter(q => q.kind === "sprint").length, SPRINT.size);
+  assert.ok(r.filter(q => q.kind !== "sprint").every(q => LONG_KINDS.has(q.kind)));
+  assert.ok(r[0].kind !== "sprint" && r.at(-1).kind === "sprint", "passages spread through it");
+  const kinds = {}; for (const q of r) if (q.kind !== "sprint") kinds[q.kind] = (kinds[q.kind] || 0) + 1;
+  // Two of a kind at most, unless fewer kinds than places leave no choice (this pool has no exam cards).
+  assert.ok(Object.values(kinds).every(n => n <= Math.max(SPRINT.perKind, Math.ceil(SPRINT.long / Object.keys(kinds).length))), JSON.stringify(kinds));
+  for (let n = 1; n <= 10; n++) assert.ok(!nextRound({pool, state: {}, random: seeded(n), now: 1e12}).round.some(q => LONG_KINDS.has(q.kind)), "never in a round");
+  const q = pool.find(c => c.kind === "order"), st = rememberAnswer({}, {q, outcome: "wrong", now: 1e12});
+  assert.equal(sprintRound({passages, pool, state: st, random: seeded(5), now: 1e12 + 60_000})[0].id, q.id);
 });

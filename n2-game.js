@@ -458,7 +458,7 @@ function extraCards({paraphrase = [], pairs = [], ordering = []}) {
 // One short passage, its question, 90 seconds (owner's backlog): the game's one long card, started from Home as a round
 // of SPRINT.size, from 問題10 (short passages) of papers not yet sat and never HELD_OUT. The review shows the deciding
 // lines (n2-sets/keys.json) where they exist.
-export const SPRINT = Object.freeze({size: 3, seconds: 90, mondai: [10]});
+export const SPRINT = Object.freeze({size: 3, seconds: 90, mondai: [10], long: 7, perKind: 2});
 export function sprintCards({sets = [], sat = new Set(), keys = {}, seen = {}, random = Math.random} = {}) {
   const out = [];
   for (const set of sets) {
@@ -473,6 +473,22 @@ export function sprintCards({sets = [], sat = new Set(), keys = {}, seen = {}, r
   }
   // Least recently seen first, then at random.
   return shuffle(out, random).sort((a, b) => (seen[a.id] || 0) - (seen[b.id] || 0));
+}
+
+// The Sprint (owner, 28 Nov): its passages spread among the long cards a round no longer asks, ten in all. The long
+// cards are picked like a round's (least recently seen, the kinds in turn, resting); a long card missed comes back
+// first in the next Sprint.
+export function sprintRound({passages = [], pool = [], state = {}, recall = [], random = Math.random, now = Date.now()}) {
+  const longs = pool.filter(q => LONG_KINDS.has(q.kind));
+  const ids = new Set(longs.map(q => q.id)), comeback = (state.comeback || []).filter(id => ids.has(id));
+  // At most SPRINT.perKind of a kind, so the many exam questions never crowd out the order, pair and meaning cards.
+  const many = pickRound({pool: longs, recall, seen: state.seen || {}, wins: state.wins || {}, lv: state.lv || {}, size: SPRINT.long * 3, comeback, random, now});
+  const count = {}, cards = [];
+  for (const q of many) { if (cards.length >= SPRINT.long) break; if (!q.comeback && (count[q.kind] || 0) >= SPRINT.perKind) continue; count[q.kind] = (count[q.kind] || 0) + 1; cards.push(q); }
+  for (const q of many) { if (cards.length >= SPRINT.long) break; if (!cards.includes(q)) cards.push(q); }
+  const out = [...cards], step = Math.max(1, Math.floor((cards.length + passages.length) / Math.max(1, passages.length)));
+  passages.slice(0, SPRINT.size).forEach((p, n) => out.splice(Math.min(out.length, n * step + 1 + n), 0, p));
+  return out;
 }
 
 // ---- The connective on its own ----
@@ -935,8 +951,10 @@ export function kanjiOrderOf(pool = []) {
   for (const q of pool) if (q.kind === "reading") for (const key of q.kanji || []) { const k = [...key][0]; count.set(k, (count.get(k) || 0) + 1); }
   return [...count.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([k]) => k).join("");
 }
-// Kinds whose card is a block of text (Same meaning: a sentence and four sentence-long choices).
-export const LONG_KINDS = new Set(["para"]);
+// Kinds whose card is a block of text or a puzzle: Same meaning (a sentence and four sentence-long choices), sentence
+// order (★), clause pairs and the paper's own questions. They break a round's flow (owner, 28 Nov: "it just breaks
+// the flow of the round"), so they live in the Sprint (sprintRound) and never in a round.
+export const LONG_KINDS = new Set(["para", "order", "pair", "exam"]);
 export function nextRound({pool, review = [], kanji = null, grammarCards = null, boss = [], recall = [], state = {}, difficulty = "normal", random = Math.random, now = Date.now(), exams = true, long = false, weights = null, kanjiOrder = "", glyphs = [], kana = []}) {
   // exams: false leaves a paper's own questions (the `e:` cards) out of the round.
   if (!exams) pool = pool.filter(q => q.kind !== "exam");
