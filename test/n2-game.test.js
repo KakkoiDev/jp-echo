@@ -1382,3 +1382,16 @@ test("every card of a word with kanji is taken apart in the review; grammar by i
   const js = src("../n2-mock.js");
   assert.ok(js.includes("const apart = q.pieces || q.compound ||") && js.includes('const literal = apart?.literal || q.literal || "";'));
 });
+
+test("the next rung comes after ten minutes, not four hours, and a right answer says what it will ask (owner, 28 Nov: 未～)", async () => {
+  const {STEP_REST, nextRung, stepAfter, stepKey} = await import("../n2-game.js");
+  assert.equal(STEP_REST, 600_000);
+  const pool = gamePool({inventory, examples, parts: n2Parts}), affix = pool.find(q => q.id === "a:未～"), gap = pool.find(q => q.id === "p:未～");
+  assert.ok(affix && gap);
+  const t0 = 1.8e12, st = {step: {[stepKey(affix)]: 1}, seen: {[affix.id]: t0}, wins: {[affix.id]: 1}};
+  const sees = now => [1, 2, 3, 4, 5, 6, 7, 8].some(n => pickRound({pool, step: st.step, seen: st.seen, wins: st.wins, random: seeded(n), now, size: 40}).some(q => q.id === gap.id));
+  assert.equal(sees(t0 + 5 * 60_000), false, "not five minutes after its meaning");
+  assert.equal(sees(t0 + 20 * 60_000), true, "twenty minutes later the gap card may come, not four hours");
+  assert.equal(nextRung({step: stepAfter({}, affix, true)}, affix), "partgap");
+  assert.ok(src("../n2-mock.js").includes('$("game-lvup").textContent = "Next: " + STEP_LABEL[after];'));
+});

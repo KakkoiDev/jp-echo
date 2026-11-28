@@ -579,9 +579,12 @@ export const readingDone = (state = {}, day = "") => ({...state, readDay: day});
 // Sprint is due. The round end leads with it; it can be skipped, but it stays due until played. It pays MINI.points
 // times the points, and its answers count toward the day and the 1,000 before the boss like any round's.
 // More rewarding (owner, 28 Nov): ×2 points, and a clear (MINI.clear of ten right) pays MINI.bonus more.
-export const MINI = Object.freeze({every: 10, points: 2, clear: 7, bonus: 1000});
+// credit: a finished mini-boss counts MINI.credit more answers toward the boss (owner, 28 Nov: "it takes so long").
+export const MINI = Object.freeze({every: 10, points: 2, clear: 7, bonus: 1000, credit: 10});
 export const miniDue = (state = {}) => (state.rounds || 0) - (state.miniAt || 0) >= MINI.every;
 export const miniDone = (state = {}) => ({...state, miniAt: state.rounds || 0});
+// Played: its count restarts and its credit moves the boss closer. Skipped: it waits for the next interval.
+export const miniPlayed = (state = {}) => ({...miniDone(state), bossFrom: (state.bossFrom || 0) - MINI.credit});
 // A cleared mini-boss: its bonus joins the total and the day's points.
 export function miniBonus(state = {}, {right = 0, now = Date.now()} = {}) {
   if (right < MINI.clear) return {state, bonus: 0};
@@ -697,6 +700,15 @@ export function choicesFor(q, random = Math.random, level = .5) {
 const cardItem = q => q.target ? keyOf(q.target) : q.item || q.id;
 // The rest of a won card in a recovery round (pickRound's calm).
 export const CALM_REST = 60 * 60_000;
+// The least time between two cards of the same word or pattern (one rung, then the next).
+export const STEP_REST = 10 * 60_000;
+// What the next rung asks, said after a right answer that climbed (owner, 28 Nov: "propose me the next level").
+export const STEP_LABEL = Object.freeze({meaning: "its meaning", reading: "its reading", listen: "hearing it", definition: "which word", homophone: "which kanji", grammar: "its meaning", gap: "the gap", affix: "its meaning", partgap: "the gap"});
+export function nextRung(state = {}, q) {
+  const ladder = ladderOf(q.kind); if (!ladder) return null;
+  const at = state.step?.[stepKey(q)];
+  return at === undefined || at >= ladder.length ? null : ladder[at];
+}
 const itemLevelOf = level => Math.min(5, Math.max(0, Math.floor(Number(level) || 0)));
 // When each word was last shown, by any of its cards.
 function wordSeen(pool, seen) {
@@ -763,12 +775,14 @@ export function pickRound({pool, also = [], recall = [], seen = {}, wins = {}, l
   // The rest is the word's, not the card's (owner, 28 Nov: 小学生 came back round after round as its meaning,
   // definition, listen and reading cards in turn, each resting on its own clock).
   const lastOf = wordSeen(pool, seen);
-  const resting = q => now - Math.max(seen[q.id] || 0, lastOf.get(cardItem(q)) || 0) < restFor(lv[q.id]);
+  // Each card rests by its level; the word as a whole only STEP_REST, now that the ladder offers one kind of it at a
+  // time (owner, 28 Nov: 未～'s meaning, shown in every recovery round, kept its gap card resting for ever).
+  const resting = q => now - (seen[q.id] || 0) < restFor(lv[q.id]) || now - (lastOf.get(cardItem(q)) || 0) < STEP_REST;
   // Each item is asked at its own rung of its ladder (ladderGate), never another kind of it.
   const onRung = ladderGate(pool, step, {calm, history: {tried, missed, wins}});
   // A recovery round takes won cards after a short rest only (owner, 28 Nov: 結果, それなら, 一旦 came back in nearly
   // every recovery round, a kind with few won cards taking its turn each time); a mastered card (極) keeps its days.
-  const calmResting = q => now - Math.max(seen[q.id] || 0, lastOf.get(cardItem(q)) || 0) < (itemLevelOf(lv[q.id]) >= ITEM_LEVEL.max ? restFor(lv[q.id]) : CALM_REST);
+  const calmResting = q => now - (seen[q.id] || 0) < (itemLevelOf(lv[q.id]) >= ITEM_LEVEL.max ? restFor(lv[q.id]) : CALM_REST) || now - (lastOf.get(cardItem(q)) || 0) < STEP_REST;
   for (const q of shuffle(pool, random)) { const s = state(q); if (!onRung(q)) continue; (calm && s === "known" ? (calmResting(q) ? recent : groups.known) : resting(q) ? recent : groups[s]).push(q); }
   // Least recently seen first, then the kinds taken in turn, so grammar,
   // readings and exam questions are not drowned by the many word questions.

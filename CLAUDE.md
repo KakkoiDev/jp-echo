@@ -852,6 +852,15 @@ Before considering the change complete:
   (WORD_PIECES, n2-word-pieces.json) come first. The review shows whichever
   the card has (`apart`). Coverage: over 97% of word cards with kanji; 170 of
   215 grammar cards (the rest are single blocks such as せめて).
+- **The ladder moves, the mini-boss waits (owner, 28 Nov, v339).** A word's
+  whole-item rest is now `STEP_REST` (10 minutes); each card keeps its own
+  rest by level. The 4-hour word rest, with recovery rounds re-showing the
+  won rung hourly, kept 未～'s gap card resting for ever. A right answer that
+  climbs shows "Next: its reading" (`nextRung`, `STEP_LABEL`) in the level
+  chip. "Next round" past the mini-boss skips it until its next interval
+  (`miniDone`) and past Today's reading until tomorrow: this replaces v332's
+  "stays due until played". A finished mini-boss counts `MINI.credit` (10)
+  more answers toward the boss (`miniPlayed`): 20 in all.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

@@ -322,16 +322,20 @@ test("the Sprint holds the long cards: its passages among seven long cards, a lo
   assert.equal(sprintRound({passages, pool, state: st, random: seeded(5), now: 1e12 + 60_000})[0].id, q.id);
 });
 
-test("the mini-boss: due every ten rounds, leading the round end until played, ×2 points and a clear bonus (owner, 28 Nov)", async () => {
+test("the mini-boss: due every ten rounds, skipped until the next interval, ×2 points, a clear bonus and 20 toward the boss (owner, 28 Nov)", async () => {
   const {MINI, miniDue, miniDone} = await import("../n2-game.js");
-  assert.deepEqual(MINI, {every: 10, points: 2, clear: 7, bonus: 1000});
+  assert.deepEqual(MINI, {every: 10, points: 2, clear: 7, bonus: 1000, credit: 10});
   assert.equal(miniDue({rounds: 9}), false); assert.equal(miniDue({rounds: 10}), true);
   assert.equal(miniDue({rounds: 14, miniAt: 0}), true, "skipped, it stays due");
   const played = miniDone({rounds: 14}); assert.equal(played.miniAt, 14); assert.equal(miniDue({...played, rounds: 23}), false); assert.equal(miniDue({...played, rounds: 24}), true);
   const js = src("../n2-mock.js"), html = src("../n2-mock.html");
   assert.ok(html.includes('class="qr-btn" id="game-mini" type="button" hidden>'), "the seal start: something scored");
   assert.ok(js.includes("mini = !late && !reading && miniDue(state);") && js.includes('$("game-again").className = late || mini || reading ? "qr-lnk" : "qr-btn";'), "Next round becomes the link under it");
-  assert.ok(js.includes("if (miniRound) { const won = miniBonus(miniDone(state), {right: rights}); state = won.state; cleared = won.bonus; score += cleared; miniRound = false; }"));
+  assert.ok(js.includes("if (miniRound) { const won = miniBonus(miniPlayed(state), {right: rights}); state = won.state; cleared = won.bonus; score += cleared; miniRound = false; }"));
+  const {miniPlayed, bossProgress} = await import("../n2-game.js");
+  const before = {answered: 500, bossFrom: 0, rounds: 30}, after = miniPlayed({...before, answered: 510});
+  assert.equal(bossProgress(after).done - bossProgress(before).done, 20, "ten answers and ten more of credit");
+  assert.ok(js.includes('if (!$("game-mini").hidden) st = miniDone(st);') && js.includes('if (!$("game-reading").hidden) st = readingDone(st, localDay());'), "Next round past it skips it");
   assert.ok(js.includes('beat = {name: "mini"}; miniRound = true;'));
   assert.ok(js.includes('mini: ["砦", "Mini-boss", "×2 points · 7 right clears it: +1,000", "seal"]'));
 });

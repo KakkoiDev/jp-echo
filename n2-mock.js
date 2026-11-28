@@ -9,7 +9,7 @@ import {recognitionFactory} from "./speech.js";
 import {speakOnce,speakAndWait,japaneseVoices,RadioPlayer,NoiseBed} from "./speech.js";
 import {RADIO_DEFAULTS,RADIO_PHASE_COPY,clockAt,radioPhase,radioPlan,radioSteps} from "./radio.js";
 import {readNights, nightComparison, comparisonLine, eveningRecall, EVENING_SOURCE, nightPlan, nightRecord, keepNight, NIGHT_KEY} from "./n2-night.js";
-import {READING, readingBlock, readingDue, readingDone, MINI, miniDue, miniDone, miniBonus, speedSeconds, bossWritten, kanaCards, kanjiCards, askableKanji, SPRINT, sprintCards, sprintRound, kanjiOrderOf, skillWeights, kindWeights, flagCard, endRest, bossCards, bossQueue, bossReview, partRows, cutUnderline, provedBy, PROVED_MS, heardGap, grammarBlockCard, grammarCoverage, kanjiCoverage, levelCoverage, isCovered, aheadLevel, applyBoss, verdictLine, rankOf, setRank, rankLevels, hasBoss, RANKS, inSlump, itemLevel, levelAfter, ITEM_LEVEL, gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, patternVoice, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
+import {stepAfter, STEP_LABEL, nextRung, miniPlayed, READING, readingBlock, readingDue, readingDone, MINI, miniDue, miniDone, miniBonus, speedSeconds, bossWritten, kanaCards, kanjiCards, askableKanji, SPRINT, sprintCards, sprintRound, kanjiOrderOf, skillWeights, kindWeights, flagCard, endRest, bossCards, bossQueue, bossReview, partRows, cutUnderline, provedBy, PROVED_MS, heardGap, grammarBlockCard, grammarCoverage, kanjiCoverage, levelCoverage, isCovered, aheadLevel, applyBoss, verdictLine, rankOf, setRank, rankLevels, hasBoss, RANKS, inSlump, itemLevel, levelAfter, ITEM_LEVEL, gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, patternVoice, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
 import {createLevels} from "./jlpt-levels.js";
 import {createSets, levelRows, SET_LEVELS, setLevel, heldOut} from "./jlpt-sets.js";
 import {spokenWord,radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
@@ -1608,7 +1608,7 @@ async function game() {
     const tag = q.bonus ? ["Bonus ×3 · up to " + most.toLocaleString(), "goldfill"] : q.practice ? [(q.review ? q.level + " review" : q.level ? q.level + " practice" : "Practice") + " · not scored", "practice"] : q.kind === "exam" ? ["Mock " + String(bookIds.indexOf(String(q.solution?.source || "").split("#")[0]) + 1).padStart(2, "0"), ""] : null;
     $("game-tag").hidden = !tag; if (tag) { $("game-tag").textContent = tag[0]; $("game-tag").dataset.tone = tag[1]; }
     // Where no chip claims the corner, the item's level sits there (board 9).
-    $("game-lvup").hidden = true;
+    $("game-lvup").hidden = true; $("game-lvup").textContent = "Level up";
     if (tag) { $("game-lv").hidden = true; $("game-master").hidden = true; card.dataset.master = "false"; } else paintLevel(itemLevel(readGame(), q.id));
     // A beat ribbon on question 1 (pace), or the warm-up; it leaves on the first answer.
     const left = bossProgress(state).left;
@@ -1761,7 +1761,10 @@ async function game() {
     if (q.kind === "link" && q.literal) { line.replaceChildren(el("small", {text: "piece by piece"}), q.literal); line.className = "qr-line literal"; line.dataset.tone = outcome === "right" ? "right" : ""; }
     // Item strength: a fast right answer stamps a square in; a miss takes one away (boards 9, 2).
     const lvFrom = q.practice && !q.record ? 0 : itemLevel(readGame(), q.id), lvTo = q.practice && !q.record ? 0 : levelAfter(readGame(), {id: q.id, outcome, fast: result.fast});
-    if (lvTo > lvFrom) { ups.push({word: String(q.solution?.word || q.prompt).replace(/[〜～]/g, ""), from: lvFrom, to: lvTo}); if (!$("game-lv").hidden || !$("game-master").hidden) { paintLevel(lvTo, true); $("game-lvup").hidden = false; } }
+    // A right answer that climbed the ladder says what the next rung asks ("Next: its reading").
+    const after = outcome === "right" && nextRung({step: stepAfter(readGame(), q, true)}, q);
+    if (after && after !== q.kind && STEP_LABEL[after]) { $("game-lvup").textContent = "Next: " + STEP_LABEL[after]; $("game-lvup").hidden = false; }
+    if (lvTo > lvFrom) { ups.push({word: String(q.solution?.word || q.prompt).replace(/[〜～]/g, ""), from: lvFrom, to: lvTo}); if ((!$("game-lv").hidden || !$("game-master").hidden) && $("game-lvup").hidden) { paintLevel(lvTo, true); $("game-lvup").textContent = "Level up"; $("game-lvup").hidden = false; } }
     else if (lvTo < lvFrom && $("game-tag").hidden) { $("game-lv").hidden = true; $("game-master").hidden = true; $("game-tag").hidden = false; $("game-tag").textContent = "Lv " + lvFrom + " → " + lvTo; $("game-tag").dataset.tone = "seal"; }
     if (outcome !== "right") misses.push({q, picked: i >= 0 ? q.choices[i] : outcome === "timeout" ? "Time ran out" : "I don’t know", from: lvFrom, to: lvTo});
     const beforeAnswer = readGame();
@@ -1909,7 +1912,7 @@ async function game() {
     // A mini-boss played resets its count; one not yet played stays due (miniDue) and leads every round end.
     // A mini-boss cleared (MINI.clear right) pays its bonus, with the jackpot's sound and the line saying so.
     let cleared = 0;
-    if (miniRound) { const won = miniBonus(miniDone(state), {right: rights}); state = won.state; cleared = won.bonus; score += cleared; miniRound = false; }
+    if (miniRound) { const won = miniBonus(miniPlayed(state), {right: rights}); state = won.state; cleared = won.bonus; score += cleared; miniRound = false; }
     if (readingRound) { state = readingDone(state, localDay()); readingRound = false; }
     writeGame(state);
     clearRound();
@@ -2028,7 +2031,15 @@ async function game() {
     $("game-hold").innerHTML = held ? PLAY_SVG : PAUSE_SVG; // board 5: held, Hold becomes Play
     if (held) { clearTimeout(timer); stopBar(); } else review(reviewAt);
   };
-  $("game-again").onclick = start;
+  // Taking "Next round" past a mini-boss or Today's reading skips it (owner, 28 Nov: being asked again was annoying):
+  // the mini-boss waits for its next interval, the reading for tomorrow.
+  $("game-again").onclick = () => {
+    let st = readGame();
+    if (!$("game-mini").hidden) st = miniDone(st);
+    if (!$("game-reading").hidden) st = readingDone(st, localDay());
+    if (st !== readGame()) writeGame(st);
+    start();
+  };
   $("game-home-play").onclick = start;
   $("game-home-play2").onclick = start;
   $("game-home-play3").onclick = start;
