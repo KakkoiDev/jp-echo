@@ -767,14 +767,22 @@ export function readFirst(pool, seen = {}) {
   for (const q of pool) if (q.kind === "reading") reading.set(cardItem(q), q.id);
   return q => ASKED_AFTER_READING.has(q.kind) && reading.has(cardItem(q)) && !seen[reading.get(cardItem(q))];
 }
-export function pickRound({pool, also = [], recall = [], seen = {}, wins = {}, lv = {}, step = {}, tried = {}, missed = {}, size = ROUND_SIZE, random = Math.random, mix = {weak: 4, fresh: 4, known: 2}, comeback = [], now = Date.now(), calm = false, first = [], places = 0, weights = null}) {
+export function pickRound({pool, also = [], recall = [], seen = {}, wins = {}, lv = {}, lvAt = {}, step = {}, tried = {}, missed = {}, size = ROUND_SIZE, random = Math.random, mix = {weak: 4, fresh: 4, known: 2}, comeback = [], now = Date.now(), calm = false, first = [], places = 0, weights = null}) {
 
-  const last = new Map();
-  for (const r of recall) last.set(r.dimension + keyOf(r.target), r.last);
-  const state = q => { const g = q.target && last.get(q.dimension + keyOf(q.target)); return g && g !== "instant" ? "weak" : g === "instant" || wins[q.id] ? "known" : "fresh"; };
+  const last = new Map(), lastAt = new Map();
+  for (const r of recall) { last.set(r.dimension + keyOf(r.target), r.last); lastAt.set(r.dimension + keyOf(r.target), Date.parse(r.updatedAt || r.day || 0) || 0); }
+  // A missed recall makes a card weak only until it is answered right and fast again (a level won after the miss):
+  // the record itself changes only with a next-day check, so weak cards used to hold four places a round long after
+  // they were won (owner, 29 Nov: "the ojisan card is still stuck": started words waited behind them).
+  const state = q => { const k = q.target && q.dimension + keyOf(q.target), g = k && last.get(k);
+    const healed = g && g !== "instant" && (lvAt[q.id] || 0) > (lastAt.get(k) || 0);
+    return g && g !== "instant" && !healed ? "weak" : g === "instant" || wins[q.id] ? "known" : "fresh"; };
   // Seen in the last four hours: only if nothing else is left (a small kind
   // such as the homophones would otherwise come round several times a day).
-  const groups = {weak: [], fresh: [], known: []}, recent = [];
+  // climb: a card never shown of an item already under way (its word was asked before). It goes before brand-new
+  // items in the new places (owner, 29 Nov: "the ojisan card is still stuck": a word's next rung waited behind a
+  // thousand unseen cards, picked by lottery).
+  const groups = {weak: [], climb: [], fresh: [], known: []}, recent = [];
   // A mastered item (極) rests three days between visits: it comes up less.
   // The rest doubles with each level (4 h, 8 h, 16 h, 32 h, 64 h, then three days): a card known better comes
   // back later. Without it a small kind looped: eleven connective excerpts came round every four hours until the
@@ -790,10 +798,14 @@ export function pickRound({pool, also = [], recall = [], seen = {}, wins = {}, l
   // A recovery round takes won cards after a short rest only (owner, 28 Nov: 結果, それなら, 一旦 came back in nearly
   // every recovery round, a kind with few won cards taking its turn each time); a mastered card (極) keeps its days.
   const calmResting = q => now - (seen[q.id] || 0) < (itemLevelOf(lv[q.id]) >= ITEM_LEVEL.max ? restFor(lv[q.id]) : CALM_REST) || now - (lastOf.get(cardItem(q)) || 0) < STEP_REST;
-  for (const q of shuffle(pool, random)) { const s = state(q); if (!onRung(q)) continue; (calm && s === "known" ? (calmResting(q) ? recent : groups.known) : resting(q) ? recent : groups[s]).push(q); }
+  const underWay = q => !seen[q.id] && (lastOf.get(cardItem(q)) || 0) > 0;
+  for (const q of shuffle(pool, random)) { const s0 = state(q); if (!onRung(q)) continue; const s = s0 === "fresh" && underWay(q) ? "climb" : s0;
+    (calm && s === "known" ? (calmResting(q) ? recent : groups.known) : resting(q) ? recent : groups[s]).push(q); }
   // Least recently seen first, then the kinds taken in turn, so grammar,
   // readings and exam questions are not drowned by the many word questions.
-  for (const [name, g] of Object.entries(groups)) groups[name] = byKindInTurn(g.sort((a, b) => (seen[a.id] || 0) - (seen[b.id] || 0)), random, weights);
+  // Under way: the item asked longest ago first. Otherwise least recently seen first.
+  const order = (name, a, b) => name === "climb" ? (lastOf.get(cardItem(a)) || 0) - (lastOf.get(cardItem(b)) || 0) : (seen[a.id] || 0) - (seen[b.id] || 0);
+  for (const [name, g] of Object.entries(groups)) groups[name] = byKindInTurn(g.sort((a, b) => order(name, a, b)), random, weights);
   const out = [], used = new Set(), targets = new Set();
   const take = (list, n) => { for (const q of list) { if (n <= 0) break; const t = cardItem(q); if (used.has(q.id) || targets.has(t)) continue; used.add(q.id); targets.add(t); out.push(q); n--; } };
   // also: cards asked only as comebacks (a missed kanji card), never picked here.
@@ -808,7 +820,8 @@ export function pickRound({pool, also = [], recall = [], seen = {}, wins = {}, l
   // The mix shares the places left after comebacks and boss places, so fresh and known cards are not cut off the end.
   const room = Math.max(0, size - out.length), total = (mix.weak + mix.fresh + mix.known) || 1, scale = Math.min(1, room / total);
   const n = {weak: Math.round(mix.weak * scale), fresh: Math.round(mix.fresh * scale), known: Math.round(mix.known * scale)};
-  take(groups.weak, n.weak); take(groups.fresh, n.fresh); take(groups.known, n.known);
+  // The new places go first to items under way (climb), then to brand-new items.
+  take(groups.weak, n.weak); const climbing = out.length; take(groups.climb, n.fresh); take(groups.fresh, n.fresh - (out.length - climbing)); take(groups.known, n.known);
   // Cards actually seen, least recently first; then cards never shown whose word rests (they are new, not familiar).
   // A mastered card (極) inside its three days comes last of all: only when nothing else is left.
   const mastered = q => itemLevelOf(lv[q.id]) >= ITEM_LEVEL.max && now - (seen[q.id] || 0) < restFor(lv[q.id]);
@@ -817,7 +830,7 @@ export function pickRound({pool, also = [], recall = [], seen = {}, wins = {}, l
   const settled = q => now - Math.max(seen[q.id] || 0, lastOf.get(cardItem(q)) || 0) >= JUST_PLAYED;
   const seenFirst = [...recent.filter(q => seen[q.id] && !mastered(q) && settled(q)).sort((a, b) => seen[a.id] - seen[b.id]), ...recent.filter(q => !seen[q.id] && !mastered(q) && settled(q))],
     restingMastered = [...recent.filter(q => !mastered(q) && !settled(q)).sort((a, b) => (seen[a.id] || 0) - (seen[b.id] || 0)), ...recent.filter(mastered)];
-  take(calm ? [...groups.known, ...seenFirst, ...groups.weak, ...groups.fresh, ...restingMastered] : [...groups.fresh, ...groups.weak, ...groups.known, ...seenFirst, ...restingMastered], size - out.length);
+  take(calm ? [...groups.known, ...seenFirst, ...groups.weak, ...groups.climb, ...groups.fresh, ...restingMastered] : [...groups.climb, ...groups.fresh, ...groups.weak, ...groups.known, ...seenFirst, ...restingMastered], size - out.length);
   const rest = interleave(shuffle(out.slice(backCount, size), random));
   return [...out.slice(0, backCount).map(q => ({...q, comeback: true})), ...rest].slice(0, Math.max(size, backCount));
 }
@@ -1155,7 +1168,7 @@ export function nextRound({pool, review = [], kanji = null, grammarCards = null,
     pool = live(pool); review = live(review); boss = live(boss); grammarCards = live(grammarCards); glyphs = live(glyphs); kana = live(kana); if (kanji?.examples) kanji = {...kanji, examples: live(kanji.examples)}; }
   const slump = inSlump(state), beat = pace(state, now);
   const level = Math.min(1, Math.max(0, levelOf(state) + beat.offset));
-  const share = review.length && pool.length ? REVIEW_SHARE : 0, memory = {recall, seen: state.seen || {}, wins: state.wins || {}, lv: state.lv || {}, step: state.step || {}, tried: state.tried || {}, missed: state.missed || {}, random, now};
+  const share = review.length && pool.length ? REVIEW_SHARE : 0, memory = {recall, seen: state.seen || {}, wins: state.wins || {}, lv: state.lv || {}, lvAt: state.lvAt || {}, step: state.step || {}, tried: state.tried || {}, missed: state.missed || {}, random, now};
   // A recovery round keeps its last two misses that can be asked (second audit: dead ids used to take both places).
   const askable = new Set([...pool, ...review, ...glyphs, ...kana, ...(grammarCards || []), ...(kanji?.examples || [])].map(q => q.id));
   const comeback = slump ? (state.comeback || []).filter(id => askable.has(id)).slice(-WARM_UP.comeback) : state.comeback || [];

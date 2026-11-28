@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
-import {LADDER_PLACES, ladderGate, fairMisses, CALM_REST, kanaCards, kanaPick, KANA_LEARNED, KANA_PLACES, kanjiCards, readFirst, payoutCap, sameSense, answerSpeech, runClock, RUN_CLOCK, DIFFICULTY, difficultyOf, pace, WAVE, HOOK, STRETCH, bossProgress, takeBoss, resting, runTable, BOSS_EVERY, EXAM_POINT, atBedtime, BEDTIME, FLOW, BONUS, flowStep, flowMix, flowSeconds, levelOf, bonusPoints, SECONDS, PAUSE, REVIEW_SECONDS, inSlump, nextRound, WARM_UP, gamePool, choicesFor, pickRound, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, nearMisses, gloss, today, lastDays, ranking, bossSet,
+import {stepKey, LADDER_PLACES, ladderGate, fairMisses, CALM_REST, kanaCards, kanaPick, KANA_LEARNED, KANA_PLACES, kanjiCards, readFirst, payoutCap, sameSense, answerSpeech, runClock, RUN_CLOCK, DIFFICULTY, difficultyOf, pace, WAVE, HOOK, STRETCH, bossProgress, takeBoss, resting, runTable, BOSS_EVERY, EXAM_POINT, atBedtime, BEDTIME, FLOW, BONUS, flowStep, flowMix, flowSeconds, levelOf, bonusPoints, SECONDS, PAUSE, REVIEW_SECONDS, inSlump, nextRound, WARM_UP, gamePool, choicesFor, pickRound, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, nearMisses, gloss, today, lastDays, ranking, bossSet,
   ROUND_SIZE, DAILY_GOAL, RANKS, DEFAULT_RANK, REVIEW_SHARE, rankOf, setRank, rankLevels, hasBoss, levelOfCard,
   itemRecord, itemLevel, ITEM_LEVEL, levelCoverage, KNOWN_LEVEL, COVERED, isCovered, aheadLevel, EXAM_PASS, RANK_RULES, bossVerdict, applyBoss, verdictLine,
   heardGap, piecesNeedle, KANJI_KNOWN, KANJI_MIX, newWord, kanjiAfter, kanjiStates, kanjiCoverage, kanjiPick} from "../n2-game.js";
@@ -1233,9 +1233,12 @@ test("the algorithm helps learning: reading first, the rest is the word's, and n
   assert.ok(!readFirst(pool, {["r:" + word]: 1})(cards.find(q => q.kind === "meaning")), "once read, the other cards may come");
   // Since the ladder (28 Nov) a new word is met in its sentence first: never its reading, listen or which-word card.
   for (let n = 1; n <= 8; n++) assert.ok(!pickRound({pool, random: seeded(n), now: 1e12}).some(q => q.item === item && q.kind !== "meaning"));
-  // The rest is the word's: a word shown an hour ago, by any card, waits, unless it is a comeback.
-  const shown = {["r:" + word]: 1e12 - 3600_000};
+  // The word as a whole rests STEP_REST (v339): shown five minutes ago, it waits; an hour later, a word under way
+  // comes before brand-new ones (29 Nov).
+  const shown = {["r:" + word]: 1e12 - 5 * 60_000};
   for (let n = 1; n <= 8; n++) assert.ok(!pickRound({pool, seen: shown, random: seeded(n), now: 1e12}).some(q => q.item === item));
+  const hourAgo = {["r:" + word]: 1e12 - 3600_000}, step = {[stepKey(cards[0])]: 2};
+  assert.ok([1, 2, 3, 4].some(n => pickRound({pool, seen: hourAgo, step, random: seeded(n), now: 1e12}).some(q => q.item === item)), "under way, it comes back first");
   assert.ok(pickRound({pool, seen: shown, comeback: ["m:" + word], random: seeded(1), now: 1e12}).some(q => q.id === "m:" + word), "a miss still comes back");
   // A kanji with a single word does not bring that word back within the rest: it waits.
   const mini = [{id: "r:N3:一般", kind: "reading", item: "N3:一般", kanji: ["一いち", "般はん"]}];
@@ -1465,4 +1468,18 @@ test("second audit, part two (29 Nov): half-turn kinds are reached, a left mini-
   assert.deepEqual(G.flagCard({sprintBack: ["or:or-1"]}, "or:or-1", 1).sprintBack, []);
   const js = src("../n2-mock.js");
   assert.ok(js.includes("miniRound = false; readingRound = false;"), "a normal round or Home ends a left special round");
+});
+
+test("a word under way comes before brand-new words; a missed recall heals once the card is won again (owner, 29 Nov)", async () => {
+  const G = await import("../n2-game.js");
+  const pool = gamePool({inventory, examples}), t0 = 1.8e12;
+  // One word under way (its meaning shown yesterday, step 1): its next card takes a new place before unseen words.
+  const m = pool.find(q => q.kind === "meaning" && pool.some(c => c.kind === "reading" && G.stepKey(c) === G.stepKey(q))), key = G.stepKey(m);
+  const st = {seen: {[m.id]: t0 - 86400_000}, step: {[key]: 1}};
+  for (let n = 1; n <= 5; n++) assert.ok(pickRound({pool, ...st, random: seeded(n), now: t0}).some(q => G.stepKey(q) === key), "under way: first of the new places");
+  // A recall miss makes a card weak until it levels up after the miss.
+  const rec = [{target: m.target, dimension: m.dimension, last: "missed", updatedAt: new Date(t0 - 86400_000).toISOString()}];
+  const weakRound = s => pickRound({pool, recall: rec, seen: {[m.id]: t0 - 30 * 3600_000}, ...s, random: seeded(1), now: t0, size: 4, mix: {weak: 4, fresh: 0, known: 0}});
+  assert.ok(weakRound({}).some(q => q.id === m.id), "weak while not won again");
+  assert.ok(!weakRound({lvAt: {[m.id]: t0 - 3600_000}}).some(q => q.id === m.id), "won again after the miss: no longer weak");
 });
