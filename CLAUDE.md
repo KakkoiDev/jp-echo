@@ -702,6 +702,12 @@ Before considering the change complete:
   spellings. Handoffs: `docs/design/game/UNBOARDED-HANDOFF.md` (everything
   built without boards) and `docs/NATIVE-REVIEW-HANDOFF.md` with
   `tools/scored-review/make-native.mjs` (everything an AI wrote).
+- **No long cards in a round (owner, 28 Nov, v321).** "Long text blocks in
+  the fast rounds slow down and only invite me to memorize": `LONG_KINDS`
+  (n2-game.js, Same meaning `para`) never enters a round, a missed one
+  included; `gamePool` still builds them for the audit and the native reader
+  (`nextRound({long: true})` lets them in). The reading sprint stays, opt-in
+  from Home.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

@@ -916,9 +916,14 @@ export function kanjiOrderOf(pool = []) {
   for (const q of pool) if (q.kind === "reading") for (const key of q.kanji || []) { const k = [...key][0]; count.set(k, (count.get(k) || 0) + 1); }
   return [...count.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([k]) => k).join("");
 }
-export function nextRound({pool, review = [], kanji = null, grammarCards = null, boss = [], recall = [], state = {}, difficulty = "normal", random = Math.random, now = Date.now(), exams = true, weights = null, kanjiOrder = ""}) {
-  // exams: false leaves a paper's own questions (the `e:` cards) out of the round. The game does (owner, 27 Nov).
+// Kinds whose card is a block of text (Same meaning: a sentence and four sentence-long choices).
+export const LONG_KINDS = new Set(["para"]);
+export function nextRound({pool, review = [], kanji = null, grammarCards = null, boss = [], recall = [], state = {}, difficulty = "normal", random = Math.random, now = Date.now(), exams = true, long = false, weights = null, kanjiOrder = ""}) {
+  // exams: false leaves a paper's own questions (the `e:` cards) out of the round.
   if (!exams) pool = pool.filter(q => q.kind !== "exam");
+  // Long cards stay out of a round (owner, 28 Nov: "long text blocks in the fast rounds slow down and only invite
+  // me to memorize"): the pool still builds them for the audit and the reviewer; long: true lets them in.
+  if (!long) pool = pool.filter(q => !LONG_KINDS.has(q.kind));
   // A flagged card rests (flagCard): it is in no round until the rest is over.
   if (Object.keys(state.flags || {}).length) { const live = list => list && list.filter(q => !flagRests(state, q.id, now));
     pool = live(pool); review = live(review); boss = live(boss); grammarCards = live(grammarCards); if (kanji?.examples) kanji = {...kanji, examples: live(kanji.examples)}; }

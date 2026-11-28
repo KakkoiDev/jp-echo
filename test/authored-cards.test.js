@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync, existsSync} from "node:fs";
-import {gamePool, choicesFor, nextRound, rememberAnswer, answerSpeech, SECONDS, KIND_LABEL, KIND_SKILL, ORDER_STAR} from "../n2-game.js";
+import {gamePool, choicesFor, nextRound, rememberAnswer, answerSpeech, SECONDS, KIND_LABEL, KIND_SKILL, ORDER_STAR, LONG_KINDS} from "../n2-game.js";
 import {CONNECTIVES, OVERLAP, jobOf} from "../n2-connectives.js";
 import {SET_EDITIONS, SETS_EDITION, editionOf, realisticPaperId} from "../n2-forms.js";
 
@@ -247,4 +247,12 @@ test("the handoffs: one for the designer, one for a native reader with its data"
     assert.ok(native.includes("`" + part + "`"), part); assert.ok(Object.keys(data[part] || {}).length > 0, part);
   }
   assert.equal(data.paraphrase.length, read("../n2-paraphrase.json").items.length);
+});
+
+test("long cards stay out of the rounds, a missed one too; the pool still builds them (owner, 28 Nov)", () => {
+  assert.deepEqual([...LONG_KINDS], ["para"]);
+  const para = pool.filter(q => q.kind === "para");
+  assert.ok(para.length >= 230, "built for the audit and the reviewer");
+  for (let n = 1; n <= 20; n++) assert.ok(!nextRound({pool, state: {comeback: [para[0].id]}, random: seeded(n)}).round.some(q => LONG_KINDS.has(q.kind)));
+  assert.ok([1, 2, 3, 4, 5, 6, 7, 8].some(n => nextRound({pool, state: {}, random: seeded(n), long: true}).round.some(q => q.kind === "para")));
 });
