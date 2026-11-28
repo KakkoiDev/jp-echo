@@ -44,8 +44,10 @@ export function instructionFor(q) {
 }
 // A paper revised on its own carries its own edition, so that revising one does not detach every sitting of the
 // others from its review lines (27 Nov: eight questions with a second natural answer, found by an outside review).
-export const SET_EDITIONS = Object.freeze({"n2-set-4": "2026.11-r4", "n2-set-5": "2026.11-r4", "n2-set-8": "2026.11-r4", "n2-set-9": "2026.11-r4",
-  "n2-set-10": "2026.11-r4", "n2-set-14": "2026.11-r4", "n2-set-20": "2026.11-r4"});
+// 28 Nov: set 2 #71 and #96, set 3 #72, set 7 #43, set 9 #46, set 15 #64 (the last open findings on the papers).
+export const SET_EDITIONS = Object.freeze({"n2-set-2": "2026.11-r5", "n2-set-3": "2026.11-r5", "n2-set-4": "2026.11-r4", "n2-set-5": "2026.11-r4",
+  "n2-set-7": "2026.11-r5", "n2-set-8": "2026.11-r4", "n2-set-9": "2026.11-r5", "n2-set-10": "2026.11-r4", "n2-set-14": "2026.11-r4",
+  "n2-set-15": "2026.11-r5", "n2-set-20": "2026.11-r4"});
 export const editionOf = id => SET_EDITIONS[id] || SETS_EDITION;
 export const realisticPaperId = id => id + "@" + editionOf(id);
 export const setFile = id => "./n2-sets/" + id + ".json";

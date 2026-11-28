@@ -9,3 +9,5 @@ data/jmdict/
 
 # Working drafts and private blind-solve ledgers.
 .grammar-blocks/
+
+tools/paper-review/input/

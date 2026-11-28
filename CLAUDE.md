@@ -708,6 +708,13 @@ Before considering the change complete:
   included; `gamePool` still builds them for the audit and the native reader
   (`nextRound({long: true})` lets them in). The reading sprint stays, opt-in
   from Home.
+- **The papers' last open findings were fixed on 28 Nov (v322).** Set 2 #71
+  (she does not work in the city) and #96, set 3 #72 (frozen goods do not
+  count toward free delivery), set 7 #43 and set 9 #46 (rebuilt to one
+  natural order), set 15 #64: those papers are r5 in `SET_EDITIONS`. A full
+  review of every paper is handed to a reviewer AI:
+  `docs/PAPERS-REVIEW-HANDOFF.md`, inputs from
+  `tools/paper-review/make-inputs.mjs` (not committed).
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

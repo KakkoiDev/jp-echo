@@ -86,13 +86,13 @@ test("the papers' sentences have their English, shown in the review of a paper's
 });
 
 test("a paper revised on its own has its own edition; the others keep theirs and their sittings", () => {
-  assert.equal(editionOf("n2-set-2"), SETS_EDITION); assert.equal(realisticPaperId("n2-set-2"), "n2-set-2@" + SETS_EDITION, "Mock 02 sittings stay attached to their lines");
-  assert.deepEqual(Object.keys(SET_EDITIONS).sort(), ["n2-set-10", "n2-set-14", "n2-set-20", "n2-set-4", "n2-set-5", "n2-set-8", "n2-set-9"]);
+  assert.equal(editionOf("n2-set-6"), SETS_EDITION); assert.equal(realisticPaperId("n2-set-6"), "n2-set-6@" + SETS_EDITION, "Mock 06 sittings stay attached to their lines");
+  assert.deepEqual(Object.keys(SET_EDITIONS).sort(), ["n2-set-10", "n2-set-14", "n2-set-15", "n2-set-2", "n2-set-20", "n2-set-3", "n2-set-4", "n2-set-5", "n2-set-7", "n2-set-8", "n2-set-9"]);
   assert.equal(realisticPaperId("n2-set-8"), "n2-set-8@2026.11-r4");
   const q = (n, i) => read("../n2-sets/n2-set-" + n + ".json").questions[i];
   // A second natural answer is gone from each of the eight.
   assert.ok(!q(4, 33).choices.includes("ものの")); assert.ok(!q(10, 19).choices.includes("交換")); assert.ok(!q(14, 39).choices.includes("に先立って")); assert.ok(!q(20, 36).choices.includes("を通して"));
-  for (const [n, i, lead] of [[5, 46, "母が"], [8, 42, "ここ十年で"], [8, 45, "ついでにこの手紙を"], [9, 45, "今日は"]]) {
+  for (const [n, i, lead] of [[5, 46, "母が"], [8, 42, "ここ十年で"], [8, 45, "ついでにこの手紙を"], [9, 45, "今日は"], [7, 43, "道を確認"], [9, 46, "明日の試合は雨が"]]) {
     const x = q(n, i); assert.ok(x.prompt.includes(lead), n + "#" + i + ": the movable phrase is fixed in the frame"); assert.equal(new Set(x.choices).size, 4);
     assert.ok(x.why.includes(x.choices[x.key - 1]) && /★ = /.test(x.why), n + "#" + i);
     assert.ok(!x.choices.includes("ここ十年で") && !x.choices.includes("今日は") && !x.choices.includes("田舎から"));
@@ -255,4 +255,16 @@ test("long cards stay out of the rounds, a missed one too; the pool still builds
   assert.ok(para.length >= 230, "built for the audit and the reviewer");
   for (let n = 1; n <= 20; n++) assert.ok(!nextRound({pool, state: {comeback: [para[0].id]}, random: seeded(n)}).round.some(q => LONG_KINDS.has(q.kind)));
   assert.ok([1, 2, 3, 4, 5, 6, 7, 8].some(n => nextRound({pool, state: {}, random: seeded(n), long: true}).round.some(q => q.kind === "para")));
+});
+
+test("the last open findings on the N2 papers are fixed, each paper in a new edition (28 Nov)", () => {
+  const q = (n, i) => read("../n2-sets/n2-set-" + n + ".json").questions[i];
+  assert.ok(q(2, 71).prompt.includes("市内で働いてもいない"), "she is not a city worker either: only ② is open");
+  assert.ok(q(2, 96).choices.includes("そうだね。すぐ怒るところが惜しいよね。"));
+  assert.ok(q(3, 72).context.includes("冷凍食品はお預かりできません（配送料の計算にも含みません）。"), "frozen goods do not count toward the total");
+  assert.ok(q(9, 46).prompt.startsWith("明日の試合は雨が"), "雨が in the frame: 予定どおり cannot lead, so only 関係なく is on ★");
+  assert.equal(q(15, 64).choices[3], "線路が止まると代わりの手段がすぐに見つからないこと");
+  for (const n of [2, 3, 7, 9, 15]) assert.equal(editionOf("n2-set-" + n), "2026.11-r5");
+  const brief = src("../docs/PAPERS-REVIEW-HANDOFF.md"), maker = src("../tools/paper-review/make-inputs.mjs");
+  assert.ok(brief.includes("tools/paper-review/input/<paper>.json") && brief.includes("<paper>.review.json") && maker.includes("sets/<level>/"));
 });
