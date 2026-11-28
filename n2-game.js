@@ -580,6 +580,19 @@ export function choicesFor(q, random = Math.random, level = .5) {
 // recent, and the four-hour rest used to leave the round to new cards: owner's
 // report, 27 Nov), and the places left go to the familiar before the new.
 const cardItem = q => q.target ? keyOf(q.target) : q.item || q.id;
+// When each word was last shown, by any of its cards.
+function wordSeen(pool, seen) {
+  const last = new Map();
+  for (const q of pool) { const t = seen[q.id]; if (!t) continue; const w = cardItem(q); if (t > (last.get(w) || 0)) last.set(w, t); }
+  return last;
+}
+// The reading-first rule: a meaning, definition or listen card whose word has a reading card never answered.
+const ASKED_AFTER_READING = new Set(["meaning", "definition", "listen"]);
+export function readFirst(pool, seen = {}) {
+  const reading = new Map();
+  for (const q of pool) if (q.kind === "reading") reading.set(cardItem(q), q.id);
+  return q => ASKED_AFTER_READING.has(q.kind) && reading.has(cardItem(q)) && !seen[reading.get(cardItem(q))];
+}
 export function pickRound({pool, recall = [], seen = {}, wins = {}, lv = {}, size = ROUND_SIZE, random = Math.random, mix = {weak: 4, fresh: 4, known: 2}, comeback = [], now = Date.now(), calm = false, first = [], places = 0, weights = null}) {
 
   const last = new Map();
@@ -592,8 +605,13 @@ export function pickRound({pool, recall = [], seen = {}, wins = {}, lv = {}, siz
   // The rest doubles with each level (4 h, 8 h, 16 h, 32 h, 64 h, then three days): a card known better comes
   // back later. Without it a small kind looped: eleven connective excerpts came round every four hours until the
   // answer was known by the look of the card, not by reading it (owner's flags, 27 Nov).
-  const resting = q => now - (seen[q.id] || 0) < restFor(lv[q.id]);
-  for (const q of shuffle(pool, random)) { const s = state(q); (calm && s === "known" ? groups.known : resting(q) ? recent : groups[s]).push(q); }
+  // The rest is the word's, not the card's (owner, 28 Nov: 小学生 came back round after round as its meaning,
+  // definition, listen and reading cards in turn, each resting on its own clock).
+  const lastOf = wordSeen(pool, seen);
+  const resting = q => now - Math.max(seen[q.id] || 0, lastOf.get(cardItem(q)) || 0) < restFor(lv[q.id]);
+  // A word with a reading card is read before it is asked any other way: its kanji are what is learned.
+  const unread = readFirst(pool, seen);
+  for (const q of shuffle(pool, random)) { const s = state(q); if (unread(q)) continue; (calm && s === "known" ? groups.known : resting(q) ? recent : groups[s]).push(q); }
   // Least recently seen first, then the kinds taken in turn, so grammar,
   // readings and exam questions are not drowned by the many word questions.
   for (const [name, g] of Object.entries(groups)) groups[name] = byKindInTurn(g.sort((a, b) => (seen[a.id] || 0) - (seen[b.id] || 0)), random, weights);
@@ -1027,16 +1045,20 @@ export function kanjiPick({pool = [], examples = [], order = "", state = {}, siz
   const states = kanjiStates(state), seen = state.seen || {}, cards = new Map();
   for (const q of [...pool, ...examples]) for (const key of q.kanji || []) { const k = [...key][0]; if (!cards.has(k)) cards.set(k, []); cards.get(k).push(q); }
   const wordOf = q => q.item || (q.target ? keyOf(q.target) : q.id), used = new Set(skip.map(wordOf)), out = [];
-  const recent = q => now - (seen[q.id] || 0) < RECENT_MS, metAll = (q, k) => q.kanji.every(key => [...key][0] === k || states.get([...key][0])?.met);
+  const lastOf = wordSeen(pool.concat(examples), seen);
+  const recent = q => now - Math.max(seen[q.id] || 0, lastOf.get(cardItem(q)) || 0) < RECENT_MS, metAll = (q, k) => q.kanji.every(key => [...key][0] === k || states.get([...key][0])?.met);
   // The first card that fits, by the tests in turn; a reading card unless `kinds` says otherwise.
   const choose = (k, tests, kinds = ["reading"]) => {
     const list = (cards.get(k) || []).filter(q => kinds.includes(q.kind) && !used.has(wordOf(q)));
     for (const test of tests) { const hit = list.find(q => !recent(q) && test(q)) ; if (hit) return hit; }
-    return list.sort((a, b) => (seen[a.id] || 0) - (seen[b.id] || 0))[0] || null;
+    // Nothing rested: the kanji waits (owner, 28 Nov: a kanji with one or two words brought the same card back
+    // round after round, 訴訟 five times in a session). The places left go to other kanji or to cards.
+    return null;
   };
   const place = (k, group) => {
     const unseen = q => newWord(state, q);
-    const q = group === "fresh" ? choose(k, [q => metAll(q, k), () => true], [["reading"], ["meaning"], ["reading"], ["listen", "meaning"]][out.length % 4]) || choose(k, [() => true], ["reading", "meaning", "definition", "listen"])
+    // A new kanji comes in with its reading (owner, 28 Nov: 軍隊 came as meaning and listen cards, never read).
+    const q = group === "fresh" ? choose(k, [q => metAll(q, k), () => true]) || choose(k, [() => true], ["meaning", "definition", "listen"])
       : group === "weak" ? choose(k, [q => unseen(q) && metAll(q, k), unseen, () => true])
       : choose(k, [q => unseen(q) && metAll(q, k), unseen, () => true]);
     if (!q || (group === "known" && !unseen(q))) return false;

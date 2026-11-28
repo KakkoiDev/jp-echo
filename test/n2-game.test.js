@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
-import {payoutCap, sameSense, answerSpeech, runClock, RUN_CLOCK, DIFFICULTY, difficultyOf, pace, WAVE, HOOK, STRETCH, bossProgress, takeBoss, resting, runTable, BOSS_EVERY, EXAM_POINT, atBedtime, BEDTIME, FLOW, BONUS, flowStep, flowMix, flowSeconds, levelOf, bonusPoints, SECONDS, PAUSE, REVIEW_SECONDS, inSlump, nextRound, WARM_UP, gamePool, choicesFor, pickRound, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, nearMisses, gloss, today, lastDays, ranking, bossSet,
+import {readFirst, payoutCap, sameSense, answerSpeech, runClock, RUN_CLOCK, DIFFICULTY, difficultyOf, pace, WAVE, HOOK, STRETCH, bossProgress, takeBoss, resting, runTable, BOSS_EVERY, EXAM_POINT, atBedtime, BEDTIME, FLOW, BONUS, flowStep, flowMix, flowSeconds, levelOf, bonusPoints, SECONDS, PAUSE, REVIEW_SECONDS, inSlump, nextRound, WARM_UP, gamePool, choicesFor, pickRound, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, nearMisses, gloss, today, lastDays, ranking, bossSet,
   ROUND_SIZE, DAILY_GOAL, RANKS, DEFAULT_RANK, REVIEW_SHARE, rankOf, setRank, rankLevels, hasBoss, levelOfCard,
   itemRecord, itemLevel, ITEM_LEVEL, levelCoverage, KNOWN_LEVEL, COVERED, isCovered, aheadLevel, EXAM_PASS, RANK_RULES, bossVerdict, applyBoss, verdictLine,
   heardGap, piecesNeedle, KANJI_KNOWN, KANJI_MIX, newWord, kanjiAfter, kanjiStates, kanjiCoverage, kanjiPick} from "../n2-game.js";
@@ -1008,7 +1008,7 @@ test("a kanji-first round: new kanji in level order, then proving them in words 
   assert.ok(first.every(q => q.why === "fresh" && order.includes(q.focus) && q.kanji.some(key => key.startsWith(q.focus))), "a new player meets new kanji");
   assert.deepEqual(first.map(q => q.focus).sort(), [...order].filter(k => pool.some(q => q.kanji?.some(key => key.startsWith(k)))).slice(0, 8).sort(), "the level's first eight, in its order");
   assert.equal(new Set(first.map(q => q.item)).size, 8, "no word twice");
-  assert.ok(new Set(first.map(q => q.kind)).size > 1, "not all one kind of card");
+  assert.ok(first.every(q => q.kind === "reading"), "a new kanji comes in with its reading (owner, 28 Nov)");
   // Answer them (one reading missed), then the next round proves and repairs.
   let st = {};
   const missed = first.find(q => q.kind === "reading");
@@ -1027,7 +1027,8 @@ test("a kanji-first round: new kanji in level order, then proving them in words 
   assert.ok(second.every(q => !first.some(f => f.item && f.item === q.item) || !newWord(st, q)));
   // A word may come from another level when the rank's own list has no second one.
   let far = st; const seenAll = {...st.seen}; for (const q of pool) seenAll[q.id] = 1; far = {...st, seen: seenAll};
-  assert.ok(kanjiPick({pool, examples, order, state: far, size: 8, random: seeded(3), now: 1e12}).some(q => q.level !== "N3"), "examples from other levels");
+  const metKanji = [...new Set(first.flatMap(q => q.kanji.map(key => [...key][0])))].find(k => [...pool, ...examples].some(q => q.level !== "N3" && q.kind === "reading" && q.kanji?.some(key => key.startsWith(k))));
+  assert.ok(kanjiPick({pool, examples, order: metKanji, state: far, size: 1, random: seeded(3), now: 1e12}).every(q => q.level !== "N3"), "examples from other levels: " + metKanji);
 });
 
 test("at a rank of word cards the round is kanji first, with the comebacks first and the review places kept", () => {
@@ -1210,4 +1211,23 @@ test("the rank waits when the next level has no papers on the device", () => {
   assert.equal(rankOf(applyBoss({answered: 1000}, {key: "r1", rank: "N2", total: 130, now: 5})), "N1", "with every level's papers there, it moves");
   const js = src("../n2-mock.js");
   assert.match(js, /sectionsOk: exam\.sections\.every\(x => x\.ok\), levels: bossLevels\}\)/);
+});
+
+test("the algorithm helps learning: reading first, the rest is the word's, and no card back before its rest (owner, 28 Nov)", () => {
+  const pool = levelPool("N3"), word = "N3:軍隊", cards = pool.filter(q => q.id.slice(2) === word), item = cards[0].item;
+  assert.deepEqual(cards.map(q => q.kind).sort(), ["definition", "listen", "meaning", "reading"]);
+  // Before its reading card is answered, a word is never asked by meaning, definition or listen.
+  const unread = readFirst(pool, {});
+  assert.ok(cards.filter(q => q.kind !== "reading").every(unread) && !unread(cards.find(q => q.kind === "reading")));
+  assert.ok(!readFirst(pool, {["r:" + word]: 1})(cards.find(q => q.kind === "meaning")), "once read, the other cards may come");
+  for (let n = 1; n <= 8; n++) assert.ok(!pickRound({pool, random: seeded(n), now: 1e12}).some(q => q.item === item && q.kind !== "reading"));
+  // The rest is the word's: a word shown an hour ago, by any card, waits, unless it is a comeback.
+  const shown = {["r:" + word]: 1e12 - 3600_000};
+  for (let n = 1; n <= 8; n++) assert.ok(!pickRound({pool, seen: shown, random: seeded(n), now: 1e12}).some(q => q.item === item));
+  assert.ok(pickRound({pool, seen: shown, comeback: ["m:" + word], random: seeded(1), now: 1e12}).some(q => q.id === "m:" + word), "a miss still comes back");
+  // A kanji with a single word does not bring that word back within the rest: it waits.
+  const mini = [{id: "r:N3:一般", kind: "reading", item: "N3:一般", kanji: ["一いち", "般はん"]}];
+  const st = rememberAnswer({}, {q: mini[0], outcome: "right", now: 1e12 - 600_000});
+  assert.deepEqual(kanjiPick({pool: mini, order: "般", state: st, size: 1, now: 1e12}), []);
+  assert.equal(kanjiPick({pool: mini, order: "般", state: st, size: 1, now: 1e12 + 5 * 3600_000}).length, 1, "after its rest it comes back to be proved");
 });

@@ -730,6 +730,16 @@ Before considering the change complete:
   question keeps its deciding line. Every utterance goes through
   `spokenText` (speech.js): Japanese gets its readings, any other language
   loses the ～ an English voice reads aloud (`plainSpoken`).
+- **The picker is for learning (owner, 28 Nov, v325: "I want the algorithm to
+  help me learn").** A word with a reading card is read before it is asked
+  any other way (`readFirst`, n2-game.js); a new kanji comes in with its
+  reading (kanjiPick, no kind rotation). The rest is the word's: a word shown
+  by any card rests as long as the card's level says (`wordSeen`), so 小学生
+  no longer returns round after round as its four kinds. A kanji whose words
+  all rest waits; kanjiPick never falls back to a card seen within its rest
+  (訴訟 came five times in a session). Comebacks still return a miss next
+  round. Replay of the owner's state: distinct words in 40 rounds 282 → 316
+  at N2, 240 → 344 at N1.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 
