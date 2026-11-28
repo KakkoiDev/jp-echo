@@ -843,6 +843,15 @@ Before considering the change complete:
   (02:30) as the stretch from then until 05:00; one after (23:30) runs over
   midnight to 05:00. It used to read "after bedtime or before 5 am", which at
   02:30 made every round end of the day point to sleep (owner's report).
+- **The review takes every missed card apart (owner, 28 Nov, v338).** A word
+  card with kanji, at every level and kind, carries `compound` (`compoundOf`,
+  n2-game.js): each kanji with its reading in the word and its first KANJIDIC
+  meanings, and the reading put back together with its sound change (そろ + ばん
+  → そろばん). A grammar or gap card carries its glossed blocks from
+  n2-grammar-blocks.json as `pieces` (ざる + を + 得ない). Audited pieces
+  (WORD_PIECES, n2-word-pieces.json) come first. The review shows whichever
+  the card has (`apart`). Coverage: over 97% of word cards with kanji; 170 of
+  215 grammar cards (the rest are single blocks such as せめて).
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

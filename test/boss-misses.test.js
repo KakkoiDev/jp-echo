@@ -529,7 +529,7 @@ test("a connective built of plain pieces shows them; a word is met in its senten
   const js = src("../n2-mock.js");
   assert.ok(js.includes('parts.hidden = !(q.kind === "build" || (q.kind === "link" && q.parts?.length));'));
   assert.ok(js.includes('if (q.kind === "link" && q.literal) { line.replaceChildren(el("small", {text: "piece by piece"}), q.literal);'));
-  assert.ok(js.includes('if (q.kind === "link" && q.parts) { $("game-review-parts").hidden = false;'));
+  assert.ok(js.includes('const apart = q.pieces || q.compound || (q.kind === "link" && q.parts ? {parts: q.parts, literal: q.literal || ""} : null);'), "a built connective's pieces in the review");
   // Meaning cards: the deck sentence with the word underlined, in the form the sentence writes it.
   const meaning = pool.filter(q => q.kind === "meaning");
   assert.ok(meaning.every(q => q.sentence && q.sentence.includes(q.needle)), "every N2 meaning card shows its sentence");
@@ -562,7 +562,7 @@ test("words and patterns made of pieces carry them, and the pieces join up to th
   assert.ok(full.find(q => q.id === "g:以来").pieces && full.find(q => q.id === "f:以来").pieces);
   const js = src("../n2-mock.js");
   assert.ok(js.includes('if (q.pieces) { line.replaceChildren(el("small", {text: "piece by piece"}), q.pieces.literal);'));
-  assert.ok(js.includes('if (q.pieces) { $("game-review-parts").hidden = false; $("game-review-partlist").replaceChildren(...partList(q.pieces.parts));'));
+  assert.ok(js.includes('if (apart) { $("game-review-parts").hidden = false; $("game-review-partlist").replaceChildren(...partList(apart.parts)); }'), "the pieces in the review");
   // The auditor's data lists every dissection and everything still asked whole.
   const data = read("../tools/scored-review/pieces-data.json");
   assert.equal(data.dissected.length, data.counts.dissected); assert.ok(data.whole.length > 1500);

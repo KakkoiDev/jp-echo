@@ -977,7 +977,7 @@ test("every word card names its kanji, with the base reading where the word spli
   assert.ok(n3.filter(q => q.kind === "reading").every(q => q.kanji?.length));
   // Stripping the tag leaves the N2 pool as it was, reading cards apart: the parts give them the undone sound change
   // as a trap and the rule after an answer (28 Nov).
-  const strip = pool => pool.filter(q => q.kind !== "reading").map(({kanji, ...q}) => q);
+  const strip = pool => pool.filter(q => q.kind !== "reading").map(({kanji, compound, ...q}) => q);
   assert.deepEqual(strip(n2), strip(gamePool({inventory, examples})));
 });
 
@@ -1363,4 +1363,22 @@ test("a bedtime after midnight is the stretch until 5 am, not the whole day (own
   for (const [h, m, late] of [[1, 0, false], [2, 30, true], [4, 59, true], [5, 0, false], [12, 0, false], [23, 0, false]]) assert.equal(atBedtime(at(h, m), "02:30"), late, h + ":" + m);
   for (const [h, late] of [[23, false], [0, true], [3, true], [5, false], [14, false]]) assert.equal(atBedtime(at(h, h === 23 ? 0 : 0), "23:30"), late, "23:30 at " + h);
   assert.equal(atBedtime(at(23, 45), "23:30"), true);
+});
+
+test("every card of a word with kanji is taken apart in the review; grammar by its blocks (owner, 28 Nov)", () => {
+  const blocks = read("../n2-grammar-blocks.json");
+  const pool = gamePool({inventory, examples, parts: n2Parts, grammarBlocks: blocks});
+  const card = id => pool.find(q => q.id === id);
+  assert.deepEqual(card("m:算盤").compound, {parts: [{text: "算 そろ", gloss: "calculate, divining"}, {text: "盤 ばん", gloss: "tray, shallow bowl"}], literal: "そろ + ばん → そろばん"});
+  assert.equal(card("r:学会").compound.literal, "がく + かい → がっかい: く → っ before か");
+  assert.deepEqual(card("g:ざるを得ない").pieces.parts.map(p => p.text), ["ざる", "を", "得ない"]);
+  // Every word card whose word has kanji, at every kind, is explained (pieces or kanji rows).
+  const hasKanji = q => /[一-龯]/.test(q.solution?.word || q.prompt || "");
+  for (const kind of ["reading", "meaning", "definition", "listen", "homophone"]) {
+    const cards = pool.filter(q => q.kind === kind && hasKanji(q)), explained = cards.filter(q => q.pieces || q.compound);
+    assert.ok(explained.length / cards.length > .97, kind + ": " + explained.length + " of " + cards.length);
+  }
+  assert.ok(pool.filter(q => q.kind === "grammar" && q.pieces).length >= 150, "grammar patterns with glossed blocks");
+  const js = src("../n2-mock.js");
+  assert.ok(js.includes("const apart = q.pieces || q.compound ||") && js.includes('const literal = apart?.literal || q.literal || "";'));
 });

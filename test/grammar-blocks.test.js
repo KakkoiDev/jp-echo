@@ -66,7 +66,8 @@ const build = cards.find(c => c.id === "gb:ざるを得ない");
 test("index adds three kinds while preserving the existing cards", () => {
   const baseline = gamePool(options);
   assert.deepEqual(gamePool({...options, grammarBlocks: null}), baseline);
-  assert.deepEqual(pool.filter(q => !grammarBlockCard(q)).map(({blocks, basics, ...q}) => q), baseline);
+  // The index also gives a grammar card its glossed pieces (28 Nov): set those aside, the cards are the same.
+  assert.deepEqual(pool.filter(q => !grammarBlockCard(q)).map(({blocks, basics, pieces, ...q}) => q), baseline.map(({pieces, ...q}) => q));
   assert.ok(block && build && infer);
   // Infer cards exist only for patterns with a recorded solve (clear or partial).
   for (const q of cards.filter(q => q.kind === "infer" && q !== infer)) assert.ok(["clear", "partial"].includes(draft.patterns[q.patternKey].transparency) && draft.patterns[q.patternKey].solved.right, q.id);

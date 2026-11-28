@@ -128,6 +128,19 @@ export function readingRule(text = "", reading = "", base = "") {
 // A long reading needs time to be read, not only recalled: 3 s, and half a second a kana past four, up to 6 s.
 export const readingSeconds = (reading = "") => Math.min(6, SECONDS.reading + Math.max(0, [...reading].length - 4) * .5);
 
+// A word's kanji, one row each: the kanji with its reading in this word (from the split, when the word splits) and
+// its first meanings (KANJIDIC, radical names left out), then the reading put back together (readingRule).
+export function compoundOf(text = "", reading = "", base = "", readings = null) {
+  const kanji = (text.match(/[一-龯]/g) || []), pieces = base ? base.split("|") : [];
+  if (!kanji.length || !readings) return null;
+  const split = pieces.length === kanji.length;
+  const parts = kanji.map((k, i) => { const en = (readings[k]?.en || []).filter(m => !/radical \(no\.\s*\d+\)/i.test(m));
+    return {text: k + (split ? " " + pieces[i] : ""), gloss: en.slice(0, 2).join(", ")}; }).filter(p => p.gloss);
+  if (!parts.length) return null;
+  const rule = readingRule(text, reading, base);
+  return {parts, literal: rule ? rule.literal : ""};
+}
+
 // ---- The pool ----
 // examples: the deck sentences by target (examplesFromDecks). sets: authored
 // N2 sets; only those in `sat` give exam questions, never HELD_OUT.
@@ -293,11 +306,25 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
     // extras.pieces: the audited dissections of the word list (n2-word-pieces.json), kept apart from the code.
     const key = pieceKey(q.solution?.word), built = WORD_PIECES[key] || extras?.pieces?.[key];
     if (built) q.pieces = {parts: built.parts.map(([text, g]) => ({text, gloss: g})), literal: built.literal};
+    // A grammar pattern built of glossed blocks (n2-grammar-blocks.json: ざる + を + 得ない) carries them too.
+    const pattern = !q.pieces && (q.kind === "grammar" || q.kind === "gap") ? grammarBlocks?.patterns?.[q.target?.[1]] : null;
+    const glossed = pattern?.parts?.map(p => ({text: p.text, gloss: p.gloss || grammarBlocks.blocks?.[p.block]?.gloss || ""}));
+    if (glossed?.length > 1 && glossed.every(p => p.gloss)) q.pieces = {parts: glossed, literal: pattern.literal || ""};
   }
   // The bar for every item: not excluded, and four distinct choices.
   // The kanji a word card exercises; grammar, connective and exam cards have none.
   const byTarget = new Map(words.map(w => [w.target, kanjiOf(w)]));
   for (const q of pool) { const ks = byTarget.get(q.target); if (ks?.length) q.kanji = ks; }
+  // Every card of a word with kanji, at every level: its kanji taken apart for the review (owner, 28 Nov: "check all
+  // the cards and add explanation of the compounds"): each kanji with its reading in the word and its meaning, and
+  // the reading put back together with its sound change. Audited pieces (引き + 出す) say more and stay first.
+  const wordOf = new Map(words.map(w => [w.target, w]));
+  for (const q of pool) {
+    if (q.pieces || q.parts || !["meaning", "definition", "listen", "reading", "homophone", "affix", "partgap"].includes(q.kind)) continue;
+    const w = wordOf.get(q.target) || allWords.find(x => x.target === q.target);
+    const compound = w && compoundOf(w.text, w.reading, split.get(w.target[1] + "/" + w.target[2]) || "", kanjiReadings);
+    if (compound) q.compound = compound;
+  }
   const fit = pool.filter(q => !EXCLUDED[q.id] && (q.fixed ? new Set(q.fixed).size === 4 : new Set(q.wrong.filter(w => w !== q.answer)).size >= 3));
   if (!other) return fit;
   // item: what a round counts as one thing, where N2 cards use their target.

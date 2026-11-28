@@ -1860,11 +1860,13 @@ async function game() {
     // Board 13 · G: a missed build or infer card shows its parts and their literal reading, between the pick and the sentence.
     const rows = (q.kind === "build" || q.kind === "infer") && q.parts ? partList(q.parts) : [];
     $("game-review-parts").hidden = !rows.length; $("game-review-partlist").replaceChildren(...rows);
-    // A word or pattern made of pieces shows them here, with the pieces read together.
-    if (q.pieces) { $("game-review-parts").hidden = false; $("game-review-partlist").replaceChildren(...partList(q.pieces.parts)); $("game-review-literal").hidden = false; $("game-review-literal").replaceChildren(el("small", {text: "piece by piece"}), q.pieces.literal); }
-    // A built connective shows its pieces here too.
-    if (q.kind === "link" && q.parts) { $("game-review-parts").hidden = false; $("game-review-partlist").replaceChildren(...partList(q.parts)); }
-    $("game-review-literal").hidden = !q.literal; $("game-review-literal").replaceChildren(...(q.literal ? [el("small", {text: "piece by piece"}), q.literal] : []));
+    // Every missed card is taken apart here when it can be (owner, 28 Nov): a word or pattern's pieces (やむ + を + えない,
+    // ざる + を + 得ない), else a word's kanji with their readings and meanings (算 そろ · calculate; 盤 ばん · tray),
+    // with the whole read back together (そろ + ばん → そろばん; がく + かい → がっかい: く → っ before か).
+    const apart = q.pieces || q.compound || (q.kind === "link" && q.parts ? {parts: q.parts, literal: q.literal || ""} : null);
+    if (apart) { $("game-review-parts").hidden = false; $("game-review-partlist").replaceChildren(...partList(apart.parts)); }
+    const literal = apart?.literal || q.literal || "";
+    $("game-review-literal").hidden = !literal; $("game-review-literal").replaceChildren(...(literal ? [el("small", {text: "piece by piece"}), literal] : []));
     $("game-next").textContent = n === misses.length - 1 ? (paperReview ? "Done" : "Round end") : "Next";
     // A boss review card (bossReview): the question, the right choice, the pick; then the deciding lines and the why.
     const ask = $("game-review-ask"); ask.hidden = !q.ask; ask.replaceChildren(...(q.ask ? paperText(q.ask, q.answer) : []));
