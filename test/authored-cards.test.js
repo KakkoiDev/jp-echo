@@ -213,7 +213,7 @@ test("every word of the other levels was read by a reviewer: their meanings, acc
   assert.ok(!n5.some(q => q.item === "N5:イクラ/イクラ"), "dropped: the N5 word is いくら");
   assert.ok(!n5.find(q => q.id === "r:N5:七")?.wrong.includes("なな"), "a second reading is never a wrong choice");
   assert.ok(n3.length < gamePool({inventory: read("../levels/" + m.version + "/n3.json"), level: "N3"}).length);
-  assert.ok(src("../n2-mock.js").includes("gamePool({inventory: inv, level: l, review: levelReview})"));
+  assert.ok(src("../n2-mock.js").includes("gamePool({inventory: inv, level: l, review: levelReview, kanjiReadings: kanjiTable})"));
   assert.ok(src("../sw.js").includes('"./level-review.json"'));
 });
 

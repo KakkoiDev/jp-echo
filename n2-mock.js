@@ -1174,7 +1174,9 @@ async function game() {
   // of its own, absent until its content has passed its checks.
   const [paraphrase, pairs, ordering, examEn, wordPieces, gapWrong] = await Promise.all(["./n2-paraphrase.json", "./n2-pairs.json", "./n2-ordering.json", "./n2-sets/en.json", "./n2-word-pieces.json", "./n2-gap-wrong.json"].map(f => json(f).catch(() => null)));
   const extras = {paraphrase: paraphrase?.items || [], pairs: pairs?.items || [], ordering: ordering?.items || [], pieces: wordPieces?.pieces || {}, gapWrong: gapWrong?.wrong || {}};
-  const n2Cards = gamePool({inventory, examples, sets, sat, parts, grammarBlocks: activeGrammar ? grammarIndex : null, extras});
+  // KANJIDIC (kanji-readings.js): the kanji cards' meanings and the reading cards' other-reading traps.
+  const kanjiTable = (await import("./kanji-readings.js").catch(() => null))?.READINGS || {};
+  const n2Cards = gamePool({inventory, examples, sets, sat, parts, grammarBlocks: activeGrammar ? grammarIndex : null, extras, kanjiReadings: kanjiTable});
   const grammarCards = n2Cards.filter(grammarBlockCard), n2Pool = n2Cards.filter(q => !grammarBlockCard(q));
   const levelPools = new Map([["N2", n2Pool]]);
   // The other levels' word lists as a reviewer read them (level-review.json): meanings, accepted readings, drops.
@@ -1191,12 +1193,11 @@ async function game() {
     missed: bossPaper.questions.map((q, i) => lastBoss.answers?.[i] !== q.key || lastBoss.guesses?.[i] ? i : -1).filter(i => i >= 0)}) : [];
   // kanjiFirst: the rank's kanji in order and, as examples, the cards of the other levels at hand.
   let pool = n2Pool, lower = [], missing = [], kanjiFirst = null, rankKanji = "", bossIds = [], bossLevels = ["N2"], glyphs = [], kana = [];
-  // Kanji by meaning (kanjiCards): every kanji the levels bring, KANJIDIC's English, loaded with the game.
-  const kanjiTable = (await import("./kanji-readings.js").catch(() => null))?.READINGS || {};
+  // Kanji by meaning (kanjiCards): every kanji the levels bring, KANJIDIC's English (kanjiTable, above).
   async function loadRank() {
     const {level, review} = rankLevels(rankOf(readGame())), wanted = [level, ...review];
     const pools = await Promise.all(wanted.map(async l => {
-      if (!levelPools.has(l)) { const inv = await gameLevels.inventory(l); if (inv) levelPools.set(l, gamePool({inventory: inv, level: l, review: levelReview})); }
+      if (!levelPools.has(l)) { const inv = await gameLevels.inventory(l); if (inv) levelPools.set(l, gamePool({inventory: inv, level: l, review: levelReview, kanjiReadings: kanjiTable})); }
       return levelPools.get(l) || null;
     }));
     missing = wanted.filter((_, i) => !pools[i]);
@@ -1219,7 +1220,7 @@ async function game() {
     // The rank's words nearly all met: the level above joins the review places as a preview.
     const ahead = aheadLevel(level);
     if (pools[0] && ahead && isCovered(levelCoverage(pool, readGame()))) {
-      if (!levelPools.has(ahead)) { const inv = await gameLevels.inventory(ahead); if (inv) levelPools.set(ahead, gamePool({inventory: inv, level: ahead, review: levelReview})); }
+      if (!levelPools.has(ahead)) { const inv = await gameLevels.inventory(ahead); if (inv) levelPools.set(ahead, gamePool({inventory: inv, level: ahead, review: levelReview, kanjiReadings: kanjiTable})); }
       lower = [...lower, ...(levelPools.get(ahead) || [])];
     }
   }
@@ -1751,6 +1752,8 @@ async function game() {
     else if (outcome === "dontknow") line.textContent = "Fine. Keep going.";
     // Board 13 · D–E: after any answer on a build card, the parts read together, in the line's slot.
     if (q.kind === "build" && q.literal) { line.replaceChildren(el("small", {text: "piece by piece"}), q.literal); line.className = "qr-line literal"; line.dataset.tone = outcome === "right" ? "right" : ""; }
+    // A reading is taken apart, kanji by kanji, with the sound change named: がく + かい → がっかい: く → っ before か.
+    if (q.kind === "reading" && q.rule && !q.pieces) { line.replaceChildren(el("small", {text: "piece by piece"}), q.rule.literal); line.className = "qr-line literal"; line.dataset.tone = outcome === "right" ? "right" : ""; }
     // So does a word or pattern asked whole that is made of pieces (やむ + を + えない: "cannot stop it").
     if (q.pieces) { line.replaceChildren(el("small", {text: "piece by piece"}), q.pieces.literal); line.className = "qr-line literal"; line.dataset.tone = outcome === "right" ? "right" : ""; }
     // A built connective says its pieces together the same way (それ + な + のに: "even though that is so").

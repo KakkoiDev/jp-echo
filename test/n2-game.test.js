@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
-import {CALM_REST, kanaCards, kanaPick, KANA_LEARNED, KANA_PLACES, kanjiCards, readFirst, payoutCap, sameSense, answerSpeech, runClock, RUN_CLOCK, DIFFICULTY, difficultyOf, pace, WAVE, HOOK, STRETCH, bossProgress, takeBoss, resting, runTable, BOSS_EVERY, EXAM_POINT, atBedtime, BEDTIME, FLOW, BONUS, flowStep, flowMix, flowSeconds, levelOf, bonusPoints, SECONDS, PAUSE, REVIEW_SECONDS, inSlump, nextRound, WARM_UP, gamePool, choicesFor, pickRound, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, nearMisses, gloss, today, lastDays, ranking, bossSet,
+import {fairMisses, CALM_REST, kanaCards, kanaPick, KANA_LEARNED, KANA_PLACES, kanjiCards, readFirst, payoutCap, sameSense, answerSpeech, runClock, RUN_CLOCK, DIFFICULTY, difficultyOf, pace, WAVE, HOOK, STRETCH, bossProgress, takeBoss, resting, runTable, BOSS_EVERY, EXAM_POINT, atBedtime, BEDTIME, FLOW, BONUS, flowStep, flowMix, flowSeconds, levelOf, bonusPoints, SECONDS, PAUSE, REVIEW_SECONDS, inSlump, nextRound, WARM_UP, gamePool, choicesFor, pickRound, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, nearMisses, gloss, today, lastDays, ranking, bossSet,
   ROUND_SIZE, DAILY_GOAL, RANKS, DEFAULT_RANK, REVIEW_SHARE, rankOf, setRank, rankLevels, hasBoss, levelOfCard,
   itemRecord, itemLevel, ITEM_LEVEL, levelCoverage, KNOWN_LEVEL, COVERED, isCovered, aheadLevel, EXAM_PASS, RANK_RULES, bossVerdict, applyBoss, verdictLine,
   heardGap, piecesNeedle, KANJI_KNOWN, KANJI_MIX, newWord, kanjiAfter, kanjiStates, kanjiCoverage, kanjiPick} from "../n2-game.js";
@@ -24,7 +24,10 @@ test("reading traps are the 問題1 ones: voicing, vowel length, small っ", () 
   assert.ok(nearMisses("せんぞ").includes("ぜんぞ"));
   assert.ok(nearMisses("しゅうにん").includes("しゅにん"));
   assert.ok(nearMisses("がっこう").includes("がくこう"));
-  assert.ok(nearMisses("いっさい").includes("いちさい"));
+  // The sound change left undone comes from the kanji's own reading (いち|さい), never a guess (owner's data, 28 Nov).
+  assert.ok(fairMisses("いっさい", {base: "いち|さい"}).includes("いちさい")); assert.ok(fairMisses("がっかい", {base: "がく|かい"}).includes("がくかい"));
+  assert.ok(!nearMisses("しゃかいかがく").includes("しやかいかがく") && !nearMisses("がっかい").includes("がつかい"), "never a small kana made big");
+  assert.ok(fairMisses("しゅうにん", {base: "しゅう|にん", kanji: ["就", "任"], readings: {就: {on: ["シュウ", "ジュ"]}, 任: {on: ["ニン"]}}}).includes("じゅにん"), "the kanji's other reading");
   for (const r of ["せんぞ", "けいこうとう", "すきとおる", "がっこう"]) assert.ok(!nearMisses(r).includes(r) && nearMisses(r).every(m => !/うう|っっ|^っ|っ$/.test(m)), r);
 });
 
@@ -741,7 +744,7 @@ test("the N2 pool is the same pool with or without a level named: ids, order and
   assert.deepEqual(gamePool({inventory, examples, sets, sat, level: "N2"}), gamePool({inventory, examples, sets, sat}));
   const pool = gamePool({inventory, examples});
   assert.ok(pool.every(q => !("level" in q) && !("item" in q) && levelOfCard(q) === "N2"));
-  assert.ok(pool.some(q => q.id === "r:就任") && pool.some(q => q.id === "m:就任") && pool.some(q => q.kind === "grammar"), "today's ids are untouched");
+  assert.ok(pool.some(q => q.id === "r:受験") && pool.some(q => q.id === "m:就任") && pool.some(q => q.kind === "grammar"), "today's ids are untouched");
 });
 
 test("another level gives word cards only, under ids no other level can have", () => {
@@ -965,15 +968,16 @@ const n2Parts = read("../n2-kanji-parts.json");
 
 test("every word card names its kanji, with the base reading where the word splits", () => {
   const n2 = gamePool({inventory, examples, parts: n2Parts});
-  assert.deepEqual(n2.find(q => q.id === "r:就任").kanji, ["就しゅう", "任にん"]);
+  assert.deepEqual(n2.find(q => q.id === "r:受験").kanji, ["受じゅ", "験けん"]);
   assert.deepEqual(n2.find(q => q.id === "m:就任").kanji, ["就しゅう", "任にん"]);
   assert.ok(n2.filter(q => q.kind === "grammar").every(q => !q.kanji));
-  assert.deepEqual(gamePool({inventory, examples}).find(q => q.id === "r:就任").kanji, ["就", "任"], "without the split, the bare kanji");
+  assert.deepEqual(gamePool({inventory, examples}).find(q => q.id === "r:受験").kanji, ["受", "験"], "without the split, the bare kanji");
   const n3 = levelPool("N3");
   assert.deepEqual(n3.find(q => q.id === "r:N3:一般").kanji, ["一いち", "般はん"], "the base reading, not the sound change (いっぱん)");
   assert.ok(n3.filter(q => q.kind === "reading").every(q => q.kanji?.length));
-  // Stripping the tag leaves the N2 pool exactly as it was.
-  const strip = pool => pool.map(({kanji, ...q}) => q);
+  // Stripping the tag leaves the N2 pool as it was, reading cards apart: the parts give them the undone sound change
+  // as a trap and the rule after an answer (28 Nov).
+  const strip = pool => pool.filter(q => q.kind !== "reading").map(({kanji, ...q}) => q);
   assert.deepEqual(strip(n2), strip(gamePool({inventory, examples})));
 });
 
@@ -1066,8 +1070,8 @@ test("every kanji of a level can be asked: each has a reading card, with wrong r
   // 委員 いいん has no voicing or long-vowel trap: words that share a kanji give the wrong readings.
   const q = levelPool("N3").find(q => q.id === "r:N3:委員");
   assert.equal(q.answer, "いいん"); assert.ok(q.wrong.includes("かいいん"));
-  // N2's reading cards are not widened: its pool is audited as it is.
-  assert.equal(gamePool({inventory, examples}).filter(q => q.kind === "reading").length, gamePool({inventory, examples, parts: n2Parts}).filter(q => q.kind === "reading").length);
+  // N2's reading cards are widened with fair traps (28 Nov): the undone sound change needs the kanji parts.
+  assert.ok(gamePool({inventory, examples, parts: n2Parts}).filter(q => q.kind === "reading").length >= gamePool({inventory, examples}).filter(q => q.kind === "reading").length);
 });
 
 // ---- A boss at every level ----
@@ -1306,4 +1310,23 @@ test("a recovery round takes won cards after an hour's rest, never the same few 
   // A mastered card (極) keeps its three days, even in a recovery round.
   const q = pool.find(c => c.kind === "grammar"), mastered = {wins: {[q.id]: 9}, seen: {[q.id]: t0 - 7200_000}, lv: {[q.id]: 5}, history: [{n: 10, right: 2}]};
   for (let n = 1; n <= 10; n++) assert.ok(!nextRound({pool, state: mastered, random: seeded(n), now: t0}).round.some(c => c.id === q.id));
+});
+
+test("reading cards are fair: the exam's traps only, time by length, the rule after the answer (owner's data, 28 Nov)", async () => {
+  const {readingSeconds, readingRule} = await import("../n2-game.js");
+  const pool = gamePool({inventory, examples, parts: n2Parts}), r = id => pool.find(q => q.id === id);
+  for (const q of pool.filter(c => c.kind === "reading")) {
+    // No wrong choice is the answer with a small kana made big (しゃ→しや, っ→つ): the eye, not the reading.
+    const big = s => s.replace(/[ゃゅょっぁぃぅぇぉ]/g, c => ({ゃ: "や", ゅ: "ゆ", ょ: "よ", っ: "つ", ぁ: "あ", ぃ: "い", ぅ: "う", ぇ: "え", ぉ: "お"})[c]);
+    // The one exception is the sound change left undone, which the exam uses (出勤 しゅっきん: しゅつきん).
+    const undone = (n2Parts[q.solution.word + "/" + q.answer] || "").split("|").join("");
+    for (const w of q.wrong) assert.ok(w === undone || big(w) !== big(q.answer), q.id + ": " + w);
+  }
+  assert.ok(!r("r:社会科学").wrong.includes("しやかいかがく"));
+  assert.ok(r("r:学会").wrong.includes("がくかい"), "the sound change left undone");
+  assert.ok(r("r:就任").wrong.includes("じゅにん"), "the kanji's other reading");
+  assert.equal(readingSeconds("がっかい"), 3); assert.equal(readingSeconds("しゃかいかがく"), 4.5); assert.equal(readingSeconds("あいうえおかきくけこさし"), 6);
+  assert.equal(readingRule("学会", "がっかい", "がく|かい").literal, "がく + かい → がっかい: く → っ before か");
+  assert.equal(r("r:学会").solution.why, "がく + かい → がっかい: く → っ before か", "the review says it too");
+  assert.ok(src("../n2-mock.js").includes('if (q.kind === "reading" && q.rule && !q.pieces)'), "after the answer, in the line's slot");
 });

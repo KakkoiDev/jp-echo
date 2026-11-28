@@ -20,6 +20,7 @@
 // timeout or "I don't know" saves a missed recall check (source "game"), so
 // game misses join Today's checks, Evening recall and the Night Radio.
 // Pure (no DOM, no storage): test/n2-game.test.js holds it.
+import {READINGS as KANJI_READINGS} from "./kanji-readings.js";
 import {recallItems, localDay} from "./n2-study.js";
 import {HELD_OUT} from "./n2-comprehension.js";
 import {connectiveSites, jobOf, glossOf, JOBS, OVERLAP, CHOICE_FOR_JOB, CONNECTIVES} from "./n2-connectives.js";
@@ -72,8 +73,10 @@ export function shuffle(list, random = Math.random) {
 }
 
 // ---- Reading near misses ----
-// The traps 問題1 sets: a voiced or unvoiced sound, a long or short vowel, a
-// small っ added or dropped, a small ゃゅょ made big.
+// The traps 問題1 sets: a voiced or unvoiced sound, a long or short vowel, a small っ added or dropped. A small ゃゅょ
+// made big, or a small っ written big, is not one (owner's data, 28 Nov: reading cards missed 68%, 社会科学 10 of 10,
+// against しやかいかがく: at three seconds it tested the eye, not the reading). fairMisses adds the sound change left
+// undone (学会: がくかい) and the kanji's other readings (就任: じゅにん).
 const VOICE = {か:"が",き:"ぎ",く:"ぐ",け:"げ",こ:"ご",さ:"ざ",し:"じ",す:"ず",せ:"ぜ",そ:"ぞ",た:"だ",ち:"ぢ",つ:"づ",て:"で",と:"ど",は:"ば",ひ:"び",ふ:"ぶ",へ:"べ",ほ:"ぼ"};
 const UNVOICE = Object.fromEntries(Object.entries(VOICE).map(([a, b]) => [b, a]));
 const HALF = {ば:"ぱ",び:"ぴ",ぶ:"ぷ",べ:"ぺ",ぼ:"ぽ",ぱ:"ば",ぴ:"び",ぷ:"ぶ",ぺ:"べ",ぽ:"ぼ"};
@@ -87,16 +90,43 @@ export function nearMisses(reading = "") {
   r.forEach((ch, i) => {
     const next = r[i + 1], swap = c => put([...r.slice(0, i), c, ...r.slice(i + 1)]);
     for (const map of [VOICE, UNVOICE, HALF]) if (map[ch]) swap(map[ch]);
-    if (SMALL[ch]) swap(SMALL[ch]);
     // Long and short vowels: こう/こ, しゅう/しゅ, しょう/しょ.
     if (ch === "う" && i > 0 && (O_ROW.has(r[i - 1]) || r[i - 1] === "ゅ" || r[i - 1] === "ょ")) put([...r.slice(0, i), ...r.slice(i + 1)]);
     if ((O_ROW.has(ch) || ch === "ゅ" || ch === "ょ") && next && next !== "う" && next !== "ゃ" && next !== "ゅ" && next !== "ょ") put([...r.slice(0, i + 1), "う", ...r.slice(i + 1)]);
     // Small っ where two kanji meet: がっこう/がくこう, いっさい/いちさい.
-    if (ch === "っ") { swap("く"); swap("つ"); swap("ち"); }
+    if (ch === "っ") swap("く");
     if (STOP_FROM[ch] && next && STOP_AFTER.has(next) && i > 0) swap("っ");
   });
   return [...out];
 }
+
+// base: the word's reading kanji by kanji, before sound changes (n2-kanji-parts.json: "がく|かい"); kanji: the word's
+// kanji; readings: KANJIDIC (kanji-readings.js), for each kanji's other on'yomi.
+const toHira = text => String(text || "").replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60));
+export function fairMisses(reading = "", {base = "", kanji = [], readings = null} = {}) {
+  const out = nearMisses(reading), pieces = base ? base.split("|") : [];
+  const add = m => { if (m && m !== reading && !out.includes(m)) out.push(m); };
+  if (pieces.length) add(pieces.join(""));
+  if (readings && pieces.length && pieces.length === kanji.length)
+    pieces.forEach((piece, i) => { for (const on of (readings[kanji[i]]?.on || []).map(toHira)) if (on && on !== piece) add([...pieces.slice(0, i), on, ...pieces.slice(i + 1)].join("")); });
+  return out;
+}
+// The reading taken apart after an answer: 学 がく + 会 かい → がっかい, and the change named when there is one.
+export function readingRule(text = "", reading = "", base = "") {
+  const pieces = base ? base.split("|") : [], kanji = (text.match(/[一-龯々]/g) || []);
+  if (!pieces.length || pieces.length !== kanji.length || kanji.length < 2 || kanji.join("") !== text) return null;
+  const joined = pieces.join(""), parts = kanji.map((k, i) => k + " " + pieces[i]).join(" · ");
+  if (joined === reading) return {parts, literal: pieces.join(" + ") + " → " + reading};
+  const changes = [];
+  for (let i = 0; i + 1 < pieces.length; i++) { const end = pieces[i].slice(-1), next = pieces[i + 1][0];
+    if (["く", "つ", "ち", "き"].includes(end) && reading.includes(pieces[i].slice(0, -1) + "っ" + next)) changes.push(end + " → っ before " + next);
+    if (VOICE[next] && reading.includes(VOICE[next] + pieces[i + 1].slice(1))) changes.push(next + " → " + VOICE[next]);
+    if (HALF[next] && reading.includes(HALF[next] + pieces[i + 1].slice(1))) changes.push(next + " → " + HALF[next]); }
+  return {parts, literal: pieces.join(" + ") + " → " + reading + (changes.length ? ": " + changes.join(", ") : "")};
+}
+
+// A long reading needs time to be read, not only recalled: 3 s, and half a second a kana past four, up to 6 s.
+export const readingSeconds = (reading = "") => Math.min(6, SECONDS.reading + Math.max(0, [...reading].length - 4) * .5);
 
 // ---- The pool ----
 // examples: the deck sentences by target (examplesFromDecks). sets: authored
@@ -124,7 +154,7 @@ export function nearMisses(reading = "") {
 // has read; with SCORE_ALL off, unread content goes back to practice: no
 // points, the answer recorded and counted.
 const unscored = reviewed => reviewed || SCORE_ALL ? {} : {practice: true, record: true};
-export function gamePool({inventory, examples = new Map(), sets = [], sat = new Set(), level = "N2", parts = null, grammarBlocks = null, excerpts = false, extras = null, review = null}) {
+export function gamePool({inventory, examples = new Map(), sets = [], sat = new Set(), level = "N2", parts = null, grammarBlocks = null, excerpts = false, extras = null, review = null, kanjiReadings = KANJI_READINGS}) {
   const other = level !== "N2", tag = other ? level + ":" : "";
   const split = new Map(inventory.words.map(([w, r, , p]) => [w + "/" + r, p || parts?.[w + "/" + r] || ""]));
   const kanjiOf = w => { const ks = (w.text.match(KANJI) || []).filter(k => k !== "々"), bases = (split.get(w.target[1] + "/" + w.target[2]) || "").split("|");
@@ -157,7 +187,8 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
     const ex = sentenceOf(w.target), kanji = w.text.match(KANJI), own = gloss(w.answer), id = idOf(w);
     if (kanji && w.reading && w.reading !== w.text) {
       const accepted = new Set([w.reading, ...(ACCEPTED_READINGS[w.text] || []), ...(w.also || [])]);
-      const misses = nearMisses(w.reading).filter(m => !accepted.has(m));
+      const base = split.get(w.target[1] + "/" + w.target[2]) || "", kanjiChars = (w.text.match(KANJI) || []).filter(k => k !== "々");
+      const misses = fairMisses(w.reading, {base, kanji: kanjiChars, readings: kanjiReadings}).filter(m => !accepted.has(m));
       // A reading with no trap of its own (委員 いいん) would have no card, and its
       // kanji could never be asked. In the levels played kanji first, the
       // readings of words that share a kanji stand in (会員 かいいん, 委任 いにん).
@@ -166,8 +197,8 @@ export function gamePool({inventory, examples = new Map(), sets = [], sat = new 
       if (other && misses.length < 3) for (let step = 1; step < words.length && misses.length < 5; step++) { const o = words[(i + step * 37) % words.length];
         if (o.text.match(KANJI) && Math.abs(o.reading.length - w.reading.length) <= 1 && !accepted.has(o.reading) && !misses.includes(o.reading)) misses.push(o.reading); }
       if (misses.length >= 3) pool.push({id: "r:" + id, kind: "reading", target: w.target, dimension: "reading", prompt: w.text,
-        sentence: ex && plain(ex.ja).includes(w.text) ? plain(ex.ja) : "", needle: w.text, answer: w.reading, wrong: misses, seconds: SECONDS.reading,
-        solution: {word: w.text, reading: w.reading, meaning: w.answer, ja: ex?.ja || "", en: ex?.en || ""}});
+        sentence: ex && plain(ex.ja).includes(w.text) ? plain(ex.ja) : "", needle: w.text, answer: w.reading, wrong: misses, seconds: readingSeconds(w.reading), rule: readingRule(w.text, w.reading, base),
+        solution: {word: w.text, reading: w.reading, meaning: w.answer, ja: ex?.ja || "", en: ex?.en || "", ...(readingRule(w.text, w.reading, base) ? {why: readingRule(w.text, w.reading, base).literal} : {})}});
     }
     // Meaning: confusable words share a kanji; the rest come from anywhere.
     // Never a word written the same way (紅葉: autumn leaves / maple) or sharing the meaning.

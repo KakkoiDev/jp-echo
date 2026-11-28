@@ -804,6 +804,16 @@ Before considering the change complete:
   leads every round end until played (`miniDone`). It pays ×`MINI.points`
   (1.5) and counts toward the day and the 1,000 before the boss like any
   round. Its first card shows the 鬼 "Mini-boss" ribbon. Not at bedtime.
+- **Reading cards are fair (owner's audit, 28 Nov, v333).** They were missed 68%
+  of the time: their wrong choices were the answer with a small kana made big
+  (しやかいかがく), which tests the eye at three seconds. `nearMisses` keeps the
+  exam's traps (voicing, vowel length, small っ added or dropped); `fairMisses`
+  adds the sound change left undone (学会: がくかい, from n2-kanji-parts.json)
+  and the kanji's other on'yomi (就任: じゅにん, KANJIDIC via kanji-readings.js,
+  now `gamePool`'s default `kanjiReadings`). A reading's clock grows with its
+  length (`readingSeconds`, 3 to 6 s), and after the answer and in the review
+  the reading is taken apart with its rule (`readingRule`: がく + かい → がっかい:
+  く → っ before か). N2 reading cards: 909 → 1,103.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 
