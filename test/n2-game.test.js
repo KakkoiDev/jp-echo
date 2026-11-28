@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
-import {kanaCards, kanaPick, KANA_LEARNED, KANA_PLACES, kanjiCards, readFirst, payoutCap, sameSense, answerSpeech, runClock, RUN_CLOCK, DIFFICULTY, difficultyOf, pace, WAVE, HOOK, STRETCH, bossProgress, takeBoss, resting, runTable, BOSS_EVERY, EXAM_POINT, atBedtime, BEDTIME, FLOW, BONUS, flowStep, flowMix, flowSeconds, levelOf, bonusPoints, SECONDS, PAUSE, REVIEW_SECONDS, inSlump, nextRound, WARM_UP, gamePool, choicesFor, pickRound, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, nearMisses, gloss, today, lastDays, ranking, bossSet,
+import {CALM_REST, kanaCards, kanaPick, KANA_LEARNED, KANA_PLACES, kanjiCards, readFirst, payoutCap, sameSense, answerSpeech, runClock, RUN_CLOCK, DIFFICULTY, difficultyOf, pace, WAVE, HOOK, STRETCH, bossProgress, takeBoss, resting, runTable, BOSS_EVERY, EXAM_POINT, atBedtime, BEDTIME, FLOW, BONUS, flowStep, flowMix, flowSeconds, levelOf, bonusPoints, SECONDS, PAUSE, REVIEW_SECONDS, inSlump, nextRound, WARM_UP, gamePool, choicesFor, pickRound, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, nearMisses, gloss, today, lastDays, ranking, bossSet,
   ROUND_SIZE, DAILY_GOAL, RANKS, DEFAULT_RANK, REVIEW_SHARE, rankOf, setRank, rankLevels, hasBoss, levelOfCard,
   itemRecord, itemLevel, ITEM_LEVEL, levelCoverage, KNOWN_LEVEL, COVERED, isCovered, aheadLevel, EXAM_PASS, RANK_RULES, bossVerdict, applyBoss, verdictLine,
   heardGap, piecesNeedle, KANJI_KNOWN, KANJI_MIX, newWord, kanjiAfter, kanjiStates, kanjiCoverage, kanjiPick} from "../n2-game.js";
@@ -1283,4 +1283,22 @@ test("kana are learned at N5: each kana large, its romaji among look-alikes, in 
   const missed = rememberAnswer({}, {q: card("ぬ"), outcome: "wrong", now: 1e12});
   assert.equal(nextRound({pool: [], kana: cards, state: missed, now: 1e12 + 60_000}).round[0].id, "kn:ぬ");
   assert.ok(src("../n2-mock.js").includes('kana = level === "N5" ? kanaCards('));
+});
+
+test("a recovery round takes won cards after an hour's rest, never the same few every time (owner, 28 Nov: 結果, それなら)", () => {
+  const pool = gamePool({inventory, examples}), t0 = 1.8e12;
+  assert.equal(CALM_REST, 3600_000);
+  // A player who has won every card: twenty recovery rounds in a row, two minutes apart.
+  let st = {wins: {}, seen: {}};
+  for (const q of pool) { st.wins[q.id] = 1; st.seen[q.id] = t0 - 86400_000; }
+  const count = new Map();
+  for (let r = 0; r < 20; r++) {
+    st = {...st, history: [...(st.history || []), {n: 10, right: 3, at: r}]};
+    const now = t0 + r * 120_000, {round} = nextRound({pool, state: st, random: seeded(r + 1), now});
+    for (const q of round) { count.set(q.id, (count.get(q.id) || 0) + 1); st = rememberAnswer(st, {q, outcome: "right", fast: true, now}); }
+  }
+  assert.ok(Math.max(...count.values()) <= 1, "no card twice within the hour");
+  // A mastered card (極) keeps its three days, even in a recovery round.
+  const q = pool.find(c => c.kind === "grammar"), mastered = {wins: {[q.id]: 9}, seen: {[q.id]: t0 - 7200_000}, lv: {[q.id]: 5}, history: [{n: 10, right: 2}]};
+  for (let n = 1; n <= 10; n++) assert.ok(!nextRound({pool, state: mastered, random: seeded(n), now: t0}).round.some(c => c.id === q.id));
 });

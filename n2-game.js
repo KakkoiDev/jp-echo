@@ -596,6 +596,9 @@ export function choicesFor(q, random = Math.random, level = .5) {
 // recent, and the four-hour rest used to leave the round to new cards: owner's
 // report, 27 Nov), and the places left go to the familiar before the new.
 const cardItem = q => q.target ? keyOf(q.target) : q.item || q.id;
+// The rest of a won card in a recovery round (pickRound's calm).
+export const CALM_REST = 60 * 60_000;
+const itemLevelOf = level => Math.min(5, Math.max(0, Math.floor(Number(level) || 0)));
 // When each word was last shown, by any of its cards.
 function wordSeen(pool, seen) {
   const last = new Map();
@@ -627,7 +630,10 @@ export function pickRound({pool, also = [], recall = [], seen = {}, wins = {}, l
   const resting = q => now - Math.max(seen[q.id] || 0, lastOf.get(cardItem(q)) || 0) < restFor(lv[q.id]);
   // A word with a reading card is read before it is asked any other way: its kanji are what is learned.
   const unread = readFirst(pool, seen);
-  for (const q of shuffle(pool, random)) { const s = state(q); if (unread(q)) continue; (calm && s === "known" ? groups.known : resting(q) ? recent : groups[s]).push(q); }
+  // A recovery round takes won cards after a short rest only (owner, 28 Nov: 結果, それなら, 一旦 came back in nearly
+  // every recovery round, a kind with few won cards taking its turn each time); a mastered card (極) keeps its days.
+  const calmResting = q => now - Math.max(seen[q.id] || 0, lastOf.get(cardItem(q)) || 0) < (itemLevelOf(lv[q.id]) >= ITEM_LEVEL.max ? restFor(lv[q.id]) : CALM_REST);
+  for (const q of shuffle(pool, random)) { const s = state(q); if (unread(q)) continue; (calm && s === "known" ? (calmResting(q) ? recent : groups.known) : resting(q) ? recent : groups[s]).push(q); }
   // Least recently seen first, then the kinds taken in turn, so grammar,
   // readings and exam questions are not drowned by the many word questions.
   for (const [name, g] of Object.entries(groups)) groups[name] = byKindInTurn(g.sort((a, b) => (seen[a.id] || 0) - (seen[b.id] || 0)), random, weights);
@@ -641,7 +647,8 @@ export function pickRound({pool, also = [], recall = [], seen = {}, wins = {}, l
   // first: cards that go ahead of the mix whatever their rest (the boss's misses), `places` of them.
   take(first, places);
   take(groups.weak, mix.weak); take(groups.fresh, mix.fresh); take(groups.known, mix.known);
-  const seenFirst = recent.sort((a, b) => (seen[a.id] || 0) - (seen[b.id] || 0));
+  // Cards actually seen, least recently first; then cards never shown whose word rests (they are new, not familiar).
+  const seenFirst = [...recent.filter(q => seen[q.id]).sort((a, b) => seen[a.id] - seen[b.id]), ...recent.filter(q => !seen[q.id])];
   take(calm ? [...groups.known, ...seenFirst, ...groups.weak, ...groups.fresh] : [...groups.fresh, ...groups.weak, ...groups.known, ...seenFirst], size - out.length);
   const rest = interleave(shuffle(out.slice(backCount, size), random));
   return [...out.slice(0, backCount).map(q => ({...q, comeback: true})), ...rest].slice(0, Math.max(size, backCount));

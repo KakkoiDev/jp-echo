@@ -782,6 +782,12 @@ Before considering the change complete:
   seven long cards (`sprintRound`, at most `SPRINT.perKind` of a kind; a long
   miss comes back first in the next Sprint). This replaces v310's "Exam cards
   stay in rounds" and v321's para-only rule.
+- **A recovery round rests what it takes (owner, 28 Nov, v330: "結果 and ピストル
+  come back way too often").** v294's recovery round took won cards "even if
+  seen minutes ago"; with few won cards of a kind (grammar, connectives) the
+  same ones filled every recovery round: 〜の結果 was asked 19 times, a 極 card.
+  Now a won card rests `CALM_REST` (an hour) in a recovery round and a 極 card
+  keeps its three days; the familiar fallback lists cards actually seen first.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 
