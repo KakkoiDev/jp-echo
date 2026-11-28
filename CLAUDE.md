@@ -879,6 +879,19 @@ Before considering the change complete:
   く → っ before か): a plain join (がく + じゅつ) is what the rows already say.
   Since v342 the review shows no "piece by piece" line on any card (owner):
   the rows are the breakdown. The line after an answer in play stays.
+- **The picker's second audit (29 Nov, v343).** A replay of four players (the
+  owner at N2, a new N2 player at 40% right, a new N3 player kanji first, a new
+  N5 player with kana) and a second review fixed: a mini-boss or reading left
+  half-way no longer makes the next round special (`start`/`home` reset it);
+  half-turn kinds start with a random credit (`byKindInTurn`) so they are
+  reached; kanji-first ranks leave `LADDER_PLACES` (3) to picking by card so
+  upper rungs and kana-only words come; comebacks are found in review places
+  and kanji examples, one per item, and a recovery round keeps two askable
+  ones; a recovery round never re-asks the round just played (`JUST_PLAYED`);
+  a beginner's recovery round at N5 keeps kana already met; boss cards are
+  never long; passage misses are not kept; a flag clears `sprintBack`;
+  grammar-piece cards rest by level. Known limit: with sound off, a word
+  passed its listen rung is not asked listen later.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

@@ -1365,6 +1365,7 @@ async function game() {
     return (days === 0 ? "today" : days === 1 ? "yesterday" : "on " + d.toLocaleDateString("en-GB", {day: "numeric", month: "short"})) + " at " + clockAt(d.getTime()); };
   // Home (fix 12): the run card, best runs, 14 days, then Play in the thumb zone.
   function home() {
+    miniRound = false; readingRound = false;
     clearTimeout(timer); clearInterval(ticker); window.speechSynthesis?.cancel(); askToken++;
     mode("home"); $("game-sub").textContent = ""; $("game-sub-right").textContent = ""; $("game-score").textContent = ""; $("game-combo-chip").textContent = "";
     // Board 11 · A: back to Echo's last screen, or Echo's start when Echo opened straight here.
@@ -1549,6 +1550,8 @@ async function game() {
   window.addEventListener("pagehide", rememberOpenPattern);
   function start() {
     sfx.unlock();
+    // A normal round is never a mini-boss or Today's reading, even after one was left half-way (audit, 29 Nov).
+    miniRound = false; readingRound = false;
     // During a round the top-left chevron goes back to Home (board 2 · "Back to home").
     $("game-back").href = "?view=game"; $("game-back").setAttribute("aria-label", "Back to home"); $("game-back").dataset.end = "false";
     $("game-back").onclick = e => { e.preventDefault(); rememberOpenPattern(); window.speechSynthesis?.cancel(); home(); };

@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
-import {ladderGate, fairMisses, CALM_REST, kanaCards, kanaPick, KANA_LEARNED, KANA_PLACES, kanjiCards, readFirst, payoutCap, sameSense, answerSpeech, runClock, RUN_CLOCK, DIFFICULTY, difficultyOf, pace, WAVE, HOOK, STRETCH, bossProgress, takeBoss, resting, runTable, BOSS_EVERY, EXAM_POINT, atBedtime, BEDTIME, FLOW, BONUS, flowStep, flowMix, flowSeconds, levelOf, bonusPoints, SECONDS, PAUSE, REVIEW_SECONDS, inSlump, nextRound, WARM_UP, gamePool, choicesFor, pickRound, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, nearMisses, gloss, today, lastDays, ranking, bossSet,
+import {LADDER_PLACES, ladderGate, fairMisses, CALM_REST, kanaCards, kanaPick, KANA_LEARNED, KANA_PLACES, kanjiCards, readFirst, payoutCap, sameSense, answerSpeech, runClock, RUN_CLOCK, DIFFICULTY, difficultyOf, pace, WAVE, HOOK, STRETCH, bossProgress, takeBoss, resting, runTable, BOSS_EVERY, EXAM_POINT, atBedtime, BEDTIME, FLOW, BONUS, flowStep, flowMix, flowSeconds, levelOf, bonusPoints, SECONDS, PAUSE, REVIEW_SECONDS, inSlump, nextRound, WARM_UP, gamePool, choicesFor, pickRound, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, nearMisses, gloss, today, lastDays, ranking, bossSet,
   ROUND_SIZE, DAILY_GOAL, RANKS, DEFAULT_RANK, REVIEW_SHARE, rankOf, setRank, rankLevels, hasBoss, levelOfCard,
   itemRecord, itemLevel, ITEM_LEVEL, levelCoverage, KNOWN_LEVEL, COVERED, isCovered, aheadLevel, EXAM_PASS, RANK_RULES, bossVerdict, applyBoss, verdictLine,
   heardGap, piecesNeedle, KANJI_KNOWN, KANJI_MIX, newWord, kanjiAfter, kanjiStates, kanjiCoverage, kanjiPick} from "../n2-game.js";
@@ -1048,7 +1048,8 @@ test("at a rank of word cards the round is kanji first, with the comebacks first
   assert.equal(round.length, ROUND_SIZE);
   assert.equal(round[0].id, back.id); assert.equal(round[0].comeback, true);
   assert.equal(round.filter(q => q.review).length, REVIEW_SHARE);
-  assert.equal(round.filter(q => q.focus).length, ROUND_SIZE - REVIEW_SHARE - 1);
+  // LADDER_PLACES go to picking by card (second audit, 29 Nov), the rest to kanji places.
+  assert.equal(round.filter(q => q.focus).length, ROUND_SIZE - REVIEW_SHARE - 1 - LADDER_PLACES);
   assert.equal(new Set(round.map(q => q.item)).size, ROUND_SIZE, "no word twice, the review places included");
   // Without `kanji` nothing changes: the round is picked by card, as N2's is.
   assert.ok(nextRound({pool, review, state: {}, random: seeded(4), now: 1e12}).round.every(q => !q.focus));
@@ -1427,4 +1428,41 @@ test("the picker's invariants after the 29 Nov audit", async () => {
   const longs = gamePool({inventory, extras: {ordering: read("../n2-ordering.json").items}});
   const flagged = longs.filter(q => q.kind === "order").map(q => q.id), flags = Object.fromEntries(flagged.map(id => [id, t0]));
   assert.ok(!G.sprintRound({pool: longs, state: {flags}, random: seeded(4), now: t0 + 60_000}).some(q => q.kind === "order"));
+});
+
+test("second audit (29 Nov): comebacks from any place, one per item; recovery never re-asks the round just played", async () => {
+  const G = await import("../n2-game.js");
+  const n3 = levelPool("N3"), review = [...levelPool("N5"), ...levelPool("N4")], t0 = 1.8e12, order = levelsManifest.kanji.N3;
+  // A review card missed comes back, at a kanji-first rank too.
+  const old = review.find(q => q.kind === "meaning");
+  const kanjiRound = nextRound({pool: n3, review, kanji: {order, examples: review}, state: {comeback: [old.id]}, random: seeded(1), now: t0}).round;
+  assert.ok(kanjiRound.some(q => q.id === old.id && q.comeback), "a review place's miss comes back");
+  // Two cards of one word in the comebacks: one comes back.
+  const word = n3.find(q => q.kind === "reading"), sib = n3.find(q => G.stepKey(q) === G.stepKey(word) && q.id !== word.id);
+  const both = nextRound({pool: n3, review, kanji: {order, examples: review}, state: {comeback: [word.id, sib.id]}, random: seeded(2), now: t0}).round;
+  assert.equal(both.filter(q => G.stepKey(q) === G.stepKey(word)).length, 1);
+  // A recovery round with little won: nothing from the round just played.
+  const pool = gamePool({inventory, examples}), last = pool.filter(q => q.kind === "meaning").slice(0, 10);
+  const st = {history: [{n: 10, right: 2}], seen: Object.fromEntries(last.map(q => [q.id, t0 - 60_000]))};
+  const rec = nextRound({pool, state: st, random: seeded(3), now: t0}).round;
+  assert.ok(!rec.some(q => last.some(l => G.stepKey(l) === G.stepKey(q))), "not a card of the last minute");
+  assert.equal(G.JUST_PLAYED, 180_000);
+});
+
+test("second audit, part two (29 Nov): half-turn kinds are reached, a left mini-boss ends, a beginner's recovery keeps kana", async () => {
+  const G = await import("../n2-game.js");
+  // Connectives on a half turn still come round: over many rounds they appear.
+  const pool = gamePool({inventory, examples});
+  let links = 0; for (let n = 1; n <= 40; n++) links += pickRound({pool, random: seeded(n), now: 1.8e12}).filter(q => q.kind === "link").length;
+  assert.ok(links >= 5, "links in 40 rounds: " + links);
+  // A recovery round at N5 keeps kana already met, never new ones.
+  const kana = G.kanaCards(), met = {seen: {"kn:あ": 1, "kn:い": 1}, history: [{n: 10, right: 2}]};
+  const rec = nextRound({pool, kana, state: met, random: seeded(1), now: 1.8e12}).round.filter(q => q.kind === "kana");
+  assert.ok(rec.every(q => met.seen[q.id]), rec.map(q => q.id).join(" "));
+  // A Sprint passage's miss is not kept; a flag clears the Sprint's list.
+  const sp = {id: "sp:n2-set-4#52", kind: "sprint", answer: "a", wrong: ["b", "c", "d"], target: null};
+  assert.deepEqual(rememberAnswer({}, {q: sp, outcome: "wrong", now: 1}).sprintBack || [], []);
+  assert.deepEqual(G.flagCard({sprintBack: ["or:or-1"]}, "or:or-1", 1).sprintBack, []);
+  const js = src("../n2-mock.js");
+  assert.ok(js.includes("miniRound = false; readingRound = false;"), "a normal round or Home ends a left special round");
 });

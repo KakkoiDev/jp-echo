@@ -705,6 +705,8 @@ const cardItem = q => q.target ? keyOf(q.target) : q.item || q.id;
 export const CALM_REST = 60 * 60_000;
 // The least time between two cards of the same word or pattern (one rung, then the next).
 export const STEP_REST = 10 * 60_000;
+// Cards shown this recently belong to the round just played.
+export const JUST_PLAYED = 3 * 60_000;
 // What the next rung asks, said after a right answer that climbed (owner, 28 Nov: "propose me the next level").
 export const STEP_LABEL = Object.freeze({meaning: "its meaning", reading: "its reading", listen: "hearing it", definition: "which word", homophone: "which kanji", grammar: "its meaning", gap: "the gap", affix: "its meaning", partgap: "the gap"});
 export function nextRung(state = {}, q) {
@@ -810,7 +812,11 @@ export function pickRound({pool, also = [], recall = [], seen = {}, wins = {}, l
   // Cards actually seen, least recently first; then cards never shown whose word rests (they are new, not familiar).
   // A mastered card (極) inside its three days comes last of all: only when nothing else is left.
   const mastered = q => itemLevelOf(lv[q.id]) >= ITEM_LEVEL.max && now - (seen[q.id] || 0) < restFor(lv[q.id]);
-  const seenFirst = [...recent.filter(q => seen[q.id] && !mastered(q)).sort((a, b) => seen[a.id] - seen[b.id]), ...recent.filter(q => !seen[q.id] && !mastered(q))], restingMastered = recent.filter(mastered);
+  // Nor an item from the round just played (audit, 29 Nov: a struggling player's recovery round re-asked the cards
+  // of the round before, a minute old). Older familiar cards stay: a recovery round is made of what the player knows.
+  const settled = q => now - Math.max(seen[q.id] || 0, lastOf.get(cardItem(q)) || 0) >= JUST_PLAYED;
+  const seenFirst = [...recent.filter(q => seen[q.id] && !mastered(q) && settled(q)).sort((a, b) => seen[a.id] - seen[b.id]), ...recent.filter(q => !seen[q.id] && !mastered(q) && settled(q))],
+    restingMastered = [...recent.filter(q => !mastered(q) && !settled(q)).sort((a, b) => (seen[a.id] || 0) - (seen[b.id] || 0)), ...recent.filter(mastered)];
   take(calm ? [...groups.known, ...seenFirst, ...groups.weak, ...groups.fresh, ...restingMastered] : [...groups.fresh, ...groups.weak, ...groups.known, ...seenFirst, ...restingMastered], size - out.length);
   const rest = interleave(shuffle(out.slice(backCount, size), random));
   return [...out.slice(0, backCount).map(q => ({...q, comeback: true})), ...rest].slice(0, Math.max(size, backCount));
@@ -819,12 +825,15 @@ export function pickRound({pool, also = [], recall = [], seen = {}, wins = {}, l
 // came round far more often per item than the 1,776 words.
 export const KIND_SHARE = Object.freeze({link: .5, affix: .5, partgap: .5});
 export const GRAMMAR_BLOCK_PLACES = 1;
+export const LADDER_PLACES = 3;
 // weights: kind → how many turns it takes each time round (1 where unsaid). With none the kinds take one turn
 // each, as they always did. A kind at 0.5 is taken every other time round, a kind at 2 twice.
 function byKindInTurn(list, random, weights = null) {
   const queues = new Map();
   for (const q of list) queues.set(q.kind, [...(queues.get(q.kind) || []), q]);
-  const kinds = shuffle([...queues.keys()], random), out = [], credit = new Map();
+  // A kind on less than a full turn starts with a random credit (second audit, 29 Nov): starting at 0 every round, a
+  // half-turn kind was never reached within a group's few places.
+  const kinds = shuffle([...queues.keys()], random), out = [], credit = new Map(kinds.map(k => [k, (weights?.[k] ?? 1) * (KIND_SHARE[k] ?? 1) < 1 ? random() : 0]));
   while (out.length < list.length) for (const k of kinds) {
     const queue = queues.get(k); if (!queue.length) continue;
     credit.set(k, (credit.get(k) || 0) + (weights?.[k] ?? 1) * (KIND_SHARE[k] ?? 1));
@@ -927,9 +936,10 @@ export function rememberAnswer(state = {}, {q, outcome, points = 0, fast = false
   if (now_ !== was) { lv[q.id] = now_; if (now_ > was) lvAt[q.id] = now; }
   // A Sprint card's miss waits for the next Sprint (sprintBack), never a round that cannot ask it (audit, 29 Nov:
   // they filled the round's ten comeback places and a recovery round's last two).
-  const sprintCard = LONG_KINDS.has(q.kind) || q.kind === "sprint";
+  const sprintCard = LONG_KINDS.has(q.kind) || q.kind === "sprint", asked = !String(q.id).match(/^(sp|rd):/);
   const comeback = (state.comeback || []).filter(id => id !== q.id), sprintBack = (state.sprintBack || []).filter(id => id !== q.id);
-  if (outcome !== "right") (sprintCard ? sprintBack : comeback).push(q.id); // missed again: it comes back again
+  // A passage of the Sprint or Today's reading is never asked twice, so its miss is not kept.
+  if (outcome !== "right" && asked) (sprintCard ? sprintBack : comeback).push(q.id); // missed again: it comes back again
   // A boss's miss is done once its card is answered right (bossCards).
   const bossDone = q.boss && outcome === "right" ? {key: q.boss, ids: {...(state.bossDone?.key === q.boss ? state.bossDone.ids : {}), [q.id]: 1}} : state.bossDone;
   const level = q.practice ? state.level : flowStep(state.level, outcome === "right", difficulty);
@@ -1071,7 +1081,7 @@ export const FLAG_REST_MS = 7 * 86400_000;
 export const flagRests = (state = {}, id, now = Date.now()) => now - (state.flags?.[id] || 0) < FLAG_REST_MS;
 export function flagCard(state = {}, id, now = Date.now()) {
   const flags = Object.fromEntries(Object.entries({...(state.flags || {}), [id]: now}).filter(([, at]) => now - at < FLAG_REST_MS));
-  return {...state, seen: {...(state.seen || {}), [id]: now}, comeback: (state.comeback || []).filter(x => x !== id), flags};
+  return {...state, seen: {...(state.seen || {}), [id]: now}, comeback: (state.comeback || []).filter(x => x !== id), ...(state.sprintBack ? {sprintBack: state.sprintBack.filter(x => x !== id)} : {}), flags};
 }
 
 // The boss review: every wrong or unsure answer of one sitting as a card that
@@ -1139,23 +1149,29 @@ export function nextRound({pool, review = [], kanji = null, grammarCards = null,
   if (!exams) pool = pool.filter(q => q.kind !== "exam");
   // Long cards stay out of a round (owner, 28 Nov: "long text blocks in the fast rounds slow down and only invite
   // me to memorize"): the pool still builds them for the audit and the reviewer; long: true lets them in.
-  if (!long) pool = pool.filter(q => !LONG_KINDS.has(q.kind));
+  if (!long) { pool = pool.filter(q => !LONG_KINDS.has(q.kind)); boss = boss.filter(q => !LONG_KINDS.has(q.kind)); }
   // A flagged card rests (flagCard): it is in no round until the rest is over.
   if (Object.keys(state.flags || {}).length) { const live = list => list && list.filter(q => !flagRests(state, q.id, now));
     pool = live(pool); review = live(review); boss = live(boss); grammarCards = live(grammarCards); glyphs = live(glyphs); kana = live(kana); if (kanji?.examples) kanji = {...kanji, examples: live(kanji.examples)}; }
   const slump = inSlump(state), beat = pace(state, now);
   const level = Math.min(1, Math.max(0, levelOf(state) + beat.offset));
   const share = review.length && pool.length ? REVIEW_SHARE : 0, memory = {recall, seen: state.seen || {}, wins: state.wins || {}, lv: state.lv || {}, step: state.step || {}, tried: state.tried || {}, missed: state.missed || {}, random, now};
-  const comeback = slump ? (state.comeback || []).slice(-WARM_UP.comeback) : state.comeback || [];
+  // A recovery round keeps its last two misses that can be asked (second audit: dead ids used to take both places).
+  const askable = new Set([...pool, ...review, ...glyphs, ...kana, ...(grammarCards || []), ...(kanji?.examples || [])].map(q => q.id));
+  const comeback = slump ? (state.comeback || []).filter(id => askable.has(id)).slice(-WARM_UP.comeback) : state.comeback || [];
   let picked;
   // After a hard round the recovery round comes first, at every rank: kanji-first picking waits a round.
   if (kanji?.order && !slump) {
-    const byId = new Map([...pool, ...glyphs, ...kana, ...(grammarCards || [])].map(q => [q.id, q])), places = ROUND_SIZE - share;
-    const back = shuffle(comeback.map(id => byId.get(id)).filter(Boolean), random).slice(0, places).map(q => ({...q, comeback: true}));
-    picked = [...back, ...kanjiPick({pool, examples: kanji.examples || [], order: kanji.order, state, size: places - back.length, skip: back, random, now, glyphs})];
+    // Comebacks are found wherever the missed card came from (a review place, a kanji place's example from another
+    // level), and one card per item (audit, 29 Nov: 秋's meaning and reading both came back in one round).
+    const byId = new Map([...pool, ...review, ...(kanji.examples || []), ...glyphs, ...kana, ...(grammarCards || [])].map(q => [q.id, q])), places = ROUND_SIZE - share;
+    const once = new Set(), back = shuffle(comeback.map(id => byId.get(id)).filter(Boolean), random).filter(q => !once.has(cardItem(q)) && once.add(cardItem(q))).slice(0, places).map(q => ({...q, comeback: true}));
+    // LADDER_PLACES are left to picking by card (second audit, 29 Nov): kanji places alone never asked a word's upper
+    // rungs once its kanji was known, nor a word with no kanji.
+    picked = [...back, ...kanjiPick({pool, examples: kanji.examples || [], order: kanji.order, state, size: Math.max(0, places - back.length - LADDER_PLACES), skip: back, random, now, glyphs})];
     // Kanji with nothing left to ask: the places left are picked by card, so a round is always full.
     if (picked.length < places) { const words = new Set(picked.map(cardItem)); picked.push(...pickRound({...memory, pool: pool.filter(q => !words.has(cardItem(q))), size: places - picked.length, mix: flowMix(level)})); }
-  } else picked = pickRound({...memory, pool, also: [...glyphs, ...kana, ...(grammarCards || [])], size: ROUND_SIZE - share, comeback, mix: slump ? WARM_UP.mix : flowMix(level), calm: slump, weights,
+  } else picked = pickRound({...memory, pool, also: [...review, ...glyphs, ...kana, ...(grammarCards || [])], size: ROUND_SIZE - share, comeback, mix: slump ? WARM_UP.mix : flowMix(level), calm: slump, weights,
     // The last boss's misses take the first places after the comebacks; a recovery round leaves them out.
     ...(slump ? {} : {first: boss, places: BOSS_PLACES})});
 
@@ -1168,8 +1184,8 @@ export function nextRound({pool, review = [], kanji = null, grammarCards = null,
       picked = [...keep, ...rest.slice(0, Math.max(0, room - kanjiTake.length)), ...kanjiTake]; }
   }
   // Kana places (kanaPick): given only at rank N5, while some kana are not yet learned. They take the last places.
-  if (kana.length && !slump) {
-    const byKana = kanaPick({cards: kana, state, skip: picked, now});
+  if (kana.length) {
+    const byKana = kanaPick({cards: kana, state, skip: picked, now, calm: slump});
     if (byKana.length) { const keep = picked.filter(q => q.comeback || q.boss), rest = picked.filter(q => !q.comeback && !q.boss && q.kind !== "kana");
       // Kana open the round after the comebacks: the easier step first.
       const room = Math.max(0, ROUND_SIZE - share - keep.length), kanaTake = byKana.slice(0, room);
@@ -1366,12 +1382,13 @@ export function kanaCards(words = []) {
 // them: a kana seen but not learned again (after KANA_REST), then new ones in the teaching order.
 export const KANA_LEARNED = 2, KANA_PLACES = Object.freeze({learning: 6, last: 3}), KANA_REST = 10 * 60_000;
 const kanaRight = (state, id) => (state.tried?.[id] || 0) - (state.missed?.[id] || 0);
-export function kanaPick({cards = [], state = {}, skip = [], now = Date.now()}) {
+// calm: a recovery round at N5 keeps the kana already met (a beginner's basics), never new ones (second audit, 29 Nov).
+export function kanaPick({cards = [], state = {}, skip = [], now = Date.now(), calm = false}) {
   const learning = cards.filter(q => kanaRight(state, q.id) < KANA_LEARNED);
   if (!learning.length) return [];
   const places = learning.length > cards.length / 2 ? KANA_PLACES.learning : KANA_PLACES.last, used = new Set(skip.map(q => q.id)), seen = state.seen || {};
   const again = learning.filter(q => seen[q.id] && now - seen[q.id] >= KANA_REST && !used.has(q.id)).sort((a, b) => seen[a.id] - seen[b.id]);
-  const fresh = learning.filter(q => !seen[q.id] && !used.has(q.id));
+  const fresh = calm ? [] : learning.filter(q => !seen[q.id] && !used.has(q.id));
   const out = [...again.slice(0, Math.ceil(places / 2))];
   out.push(...fresh.slice(0, places - out.length), ...again.slice(out.length));
   return out.slice(0, places);
@@ -1474,7 +1491,8 @@ export function grammarPick({pool, state, slots, skip, comeback = [], now}) {
   const returning = comeback.map(id => byId.get(id)).filter(Boolean);
   return slots.map((fallback, index) => {
     const reserved = new Set(slots.slice(index + 1).map(cardItem));
-    const available = q => !used.has(cardItem(q)) && !reserved.has(cardItem(q));
+    // A block card rests by its level like any card (second audit, 29 Nov: only the last fallback checked it).
+    const available = q => !used.has(cardItem(q)) && !reserved.has(cardItem(q)) && (!last(q) || now - last(q) >= restFor(state.lv?.[q.id]));
     const find = (group, test, sort) => {
       for (const id of groups[group]) {
         if (focused.has(id)) continue;
