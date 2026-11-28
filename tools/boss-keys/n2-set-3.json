@@ -546,9 +546,9 @@
  },
  "100": {
   "lines": [
-   "今日は僕がごちそうするよ。"
+   "これから晩ご飯、食べに行こうよ。今日は僕がごちそうするよ。"
   ],
-  "en": "He is offering to treat the other person today",
+  "en": "Before they go to eat, he offers to treat the other person",
   "wrong": [
    "He says someone treated him today",
    "He asks the other person to pay today",

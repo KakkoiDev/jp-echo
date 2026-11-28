@@ -715,6 +715,12 @@ Before considering the change complete:
   review of every paper is handed to a reviewer AI:
   `docs/PAPERS-REVIEW-HANDOFF.md`, inputs from
   `tools/paper-review/make-inputs.mjs` (not committed).
+- **An outside review of N2 sets 2–9 (28 Nov, v323).** 840 questions: no
+  wrong key, 46 unfair, 46 weak. 18 unfair applied (a rival answer was
+  natural, or the stem left a condition open), 28 rejected with a reason,
+  each in `tools/paper-review/reviews/2026-11-28/decisions.json`; the 18
+  were solved blind (choices shuffled) with no second answer. Sets 3, 5, 6,
+  7, 8 have new editions. The 46 weak findings are not yet read.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

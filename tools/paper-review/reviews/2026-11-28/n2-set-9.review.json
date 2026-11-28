@@ -1,0 +1,114 @@
+{
+  "paper": "n2-set-9",
+  "read": "all",
+  "findings": [
+    {
+      "index": 17,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "突入 fits if the intruders rushed or forced their way into the warehouse. The sentence says only that they got in and stole goods.",
+      "evidence": "夜中に何者かが倉庫に突入し、商品を盗んでいった。 Choice 1 also has a neutral entry reading, especially if they drove in.",
+      "suggestion": "Choice 1: 加入. Choice 4: 記入.",
+      "confidence": "high"
+    },
+    {
+      "index": 29,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "筆記 can refer to the act of writing and the resulting writing. A teacher's writing on a board can be described as neat, even if 板書 is the usual choice.",
+      "evidence": "先生の筆記がきれいで、黒板の字が読みやすい。",
+      "suggestion": "Choice 1: 先生の筆記がよく通るので、教室の後ろでも聞き取れる。",
+      "confidence": "medium"
+    },
+    {
+      "index": 42,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "歩いて can introduce the mode before the starting point. The rival order sounds natural with a slight pause and yields the same ★.",
+      "evidence": "Order 2–1–4–3: 会場までは歩いて駅から十分弱なので、タクシーを使う必要はありません。",
+      "suggestion": "Frame: 会場までは駅から ＿＿ ＿＿ ★ ＿＿ 、タクシーを使う必要はありません。 Tiles: [徒歩, 十分, 弱, なので]。 Order 1–2–3–4; key 3.",
+      "confidence": "medium"
+    },
+    {
+      "index": 46,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "The earlier repair leaves both polarities movable. Reversing them is grammatical and keeps 関係なく on ★.",
+      "evidence": "Order 4–2–3–1: 明日の試合は雨が降るまいと降ろうと関係なく予定どおり行われる。",
+      "suggestion": "Frame: 明日の試合は、雨が降ろうと ＿＿ ＿＿ ★ ＿＿ 。 Tiles: [降るまいと、, 中止に, なる, ことはない]。 Order 1–2–3–4; key 3.",
+      "confidence": "high"
+    },
+    {
+      "index": 54,
+      "field": "lines",
+      "severity": "weak",
+      "problem": "It showed care drops the Japanese author's tentative inference.",
+      "evidence": "慎重さの表れなのかもしれない。",
+      "suggestion": "I came to value the time it took to choose my words. My hesitation may have been a sign of care.",
+      "confidence": "high"
+    },
+    {
+      "index": 67,
+      "field": "lines",
+      "severity": "weak",
+      "problem": "The first line refers back to a trend without identifying it, so a reader cannot tell that A approves of allowing second jobs.",
+      "evidence": "私はこの流れに賛成だ。",
+      "suggestion": "Lines: [会社員の副業を認める企業が増えている。私はこの流れに賛成だ。, そうであれば、まず考えるべきは、本業の給与を十分に上げることではないか。] English: More companies are letting employees take second jobs, and I support that. — Shouldn’t the first step be to raise pay in the main job?",
+      "confidence": "high"
+    },
+    {
+      "index": 75,
+      "field": "context",
+      "severity": "weak",
+      "problem": "原稿を練習する is clipped. The student is rehearsing the presentation with the script.",
+      "evidence": "あとは原稿を練習するだけ。",
+      "suggestion": "Context: あとは原稿を見ながら発表の練習をするだけ。 Choice 3: 発表の練習をする",
+      "confidence": "medium"
+    },
+    {
+      "index": 78,
+      "field": "choices",
+      "severity": "weak",
+      "problem": "The new apartment's humidity is not stated. The man directly says he wanted the top-floor flat with good airflow after his previous flat had damp problems.",
+      "evidence": "今度は最上階で、風通しもいいんだ。",
+      "suggestion": "Choice 1: 最上階で、風通しがいいから",
+      "confidence": "high"
+    },
+    {
+      "index": 85,
+      "field": "choices",
+      "severity": "weak",
+      "problem": "子どもの絵は、評価するより関心を持って聞く leaves the object of 聞く poorly attached. The teacher asks children about their work; one does not listen to the picture itself.",
+      "evidence": "「この青、どうやって作ったの？」とか「ここに何が描いてあるの？」と聞くようにしています。",
+      "suggestion": "Choice 1: 絵の出来を評価するより、子どもが何を描いたのか、関心を持って話を聞くことが大切だ",
+      "confidence": "high"
+    },
+    {
+      "index": 92,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "The offer can be declined by saying someone already made the copies. That is a coherent reply to コピーしようか.",
+      "evidence": "うん、コピーしてもらったよ。",
+      "suggestion": "Choice 1: うん、十部コピーしてあげたんだね。",
+      "confidence": "high"
+    },
+    {
+      "index": 98,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "Asking whether it was bought recently is a plausible surprised response to another jam, especially when deciding whether it is faulty.",
+      "evidence": "プリンター、新しく買ったばかりなの？",
+      "suggestion": "Choice 3: 紙はまだ一度も詰まってないんだね。",
+      "confidence": "high"
+    },
+    {
+      "index": 101,
+      "field": "lines",
+      "severity": "weak",
+      "problem": "君の希望にしよう depends on the wife's preference, which the excerpt omits. The supplied English turns the dependent reference into a direct yes to Plan A.",
+      "evidence": "The excerpt says Ａプラン has a shuttle and contains 君の希望. Only the full script gives 妻：私は、せっかくなら露天風呂に入りたいな and maps the bath to Plan A.",
+      "suggestion": "Remove decidingLines for #101. The original script needs three separate details: Plan A has the open-air bath, the wife wants it, and the husband agrees if there is a shuttle.",
+      "confidence": "high"
+    }
+  ]
+}

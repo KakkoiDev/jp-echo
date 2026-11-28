@@ -1,0 +1,123 @@
+{
+  "paper": "n2-set-8",
+  "read": "all",
+  "findings": [
+    {
+      "index": 16,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "エチオピア生産 is a possible origin-of-production label. The stem does not contrast the variety's origin with the place where these beans were grown.",
+      "evidence": "このコーヒー豆はエチオピア生産で、香りが強いのが特徴だ。",
+      "suggestion": "Choice 2: 生産者",
+      "confidence": "high"
+    },
+    {
+      "index": 21,
+      "field": "why",
+      "severity": "weak",
+      "problem": "改めて can mean doing something afresh or on a separate occasion. A prior completed contact is not required.",
+      "evidence": "この件については、後日改めてご連絡いたします。 The follow-up can be the first detailed contact about the issue.",
+      "suggestion": "改めて here means making contact on a separate occasion, later. もう一度 is the closest choice in this context; a prior full discussion is not required.",
+      "confidence": "high"
+    },
+    {
+      "index": 26,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "A brittle branch can break into multiple pieces. The option does not restrict its shape, condition, or what the wind blows it into.",
+      "evidence": "強い風で、公園の木の枝が砕けた。 砕ける can apply to a hard wooden object that breaks apart.",
+      "suggestion": "Choice 3: 強い風で、公園の木の枝がしなって元の形に砕けた。",
+      "confidence": "medium"
+    },
+    {
+      "index": 29,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "Calling the last volume the youngest child of the series is a coherent metaphor. 〜にあたる explicitly licenses the analogy.",
+      "evidence": "このシリーズの末っ子にあたる最終巻が、ついに発売された。",
+      "suggestion": "Choice 4: このシリーズは、最終巻の末っ子に登場人物の索引が付いている。",
+      "confidence": "high"
+    },
+    {
+      "index": 38,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "について can set up the seasons as the topic before asking which the listener likes, even though the wording is less economical.",
+      "evidence": "日本の四つの季節について、どれが一番好きですか。",
+      "suggestion": "Choice 2: に加えて",
+      "confidence": "high"
+    },
+    {
+      "index": 57,
+      "field": "why",
+      "severity": "weak",
+      "problem": "The explanation and excerpt translation make categorical claims about acquiring no useful skills or credentials; the passage says the humanities do not necessarily give an immediate payoff.",
+      "evidence": "すぐに役に立つ技術が身につくわけではない。就職に有利な資格が取れるわけでもない。",
+      "suggestion": "Why: Studying the humanities does not necessarily teach immediately useful skills or lead to job credentials; the writer links this perception to the reported decline in popularity. English: Studying literature or history does not necessarily give you skills you can use right away or credentials that help you get a job.",
+      "confidence": "high"
+    },
+    {
+      "index": 60,
+      "field": "why",
+      "severity": "weak",
+      "problem": "The explanation presents scarcity and cheap processing as true of all these fish. The passage offers several possible reasons and outcomes.",
+      "evidence": "数が少ない、見た目がよくない、名前が知られていないといった理由で／捨てられたり、安く加工用に回されたり",
+      "suggestion": "They rarely reach the market. Small catches, an unappealing appearance or an unfamiliar name can make a fish difficult to sell. It may then be discarded or sold cheaply for processing.",
+      "confidence": "high"
+    },
+    {
+      "index": 71,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "Living alone does not establish that Hayashi has no primary-school child or cannot attend as a guardian. Choice 4 works for a parent who lives separately from their child.",
+      "evidence": "一人暮らし and Ｃは小学生とその保護者が2人1組で参加する講座です。",
+      "suggestion": "林さんは市外に住み、市外の会社に勤めている。今回は一人で参加する予定で、平日は18時まで仕事がある。パソコンを使ったことはない。仕事のあとか週末に受けられる講座はどれか。",
+      "confidence": "high"
+    },
+    {
+      "index": 73,
+      "field": "lines",
+      "severity": "weak",
+      "problem": "The English turns her recommendation into a direct instruction. The following Japanese acknowledgement also says only that he will contact the manager.",
+      "evidence": "メールより電話のほうが早いと思う。／印刷が終わるまで待たないで、先に連絡しますね。",
+      "suggestion": "Context: 男：わかりました。印刷が終わるまで待たないで、先に電話しますね。 Use this as the second deciding line, with English: I think a call would be faster than email. — I’ll call first, before the printing is done.",
+      "confidence": "high"
+    },
+    {
+      "index": 75,
+      "field": "context",
+      "severity": "weak",
+      "problem": "データが少し少ない is awkwardly repetitive in the teacher's assessment.",
+      "evidence": "ただ、データが少し少ないですね。アンケートが三十人分だけだと、結論を出すには足りないと思います。",
+      "suggestion": "ただ、アンケートが三十人分だけだと、結論を出すにはデータが足りないと思います。",
+      "confidence": "medium"
+    },
+    {
+      "index": 79,
+      "field": "context",
+      "severity": "weak",
+      "problem": "The script presents distance as a guarantee against an accident. The listening point only requires that space helps, and the overly absolute claim is avoidable.",
+      "evidence": "距離さえあれば、多少滑っても事故にはなりません。",
+      "suggestion": "前の車との距離に余裕があれば、車が滑ったときにも対応しやすくなります。",
+      "confidence": "high"
+    },
+    {
+      "index": 91,
+      "field": "why",
+      "severity": "weak",
+      "problem": "The explanation misidentifies the role reversal as the second reply; that is the correct one.",
+      "evidence": "Choice 1 is じゃあ、相談に乗ってもらおうかな。 Choice 2 is いいよ。今なら時間があるから。",
+      "suggestion": "Choice 2 grants the request. Choice 1 makes the manager the person seeking advice, and choice 3 treats tomorrow’s meeting as already over.",
+      "confidence": "high"
+    },
+    {
+      "index": 102,
+      "field": "lines",
+      "severity": "weak",
+      "problem": "The English makes the bus sound confirmed. The speaker thinks one should be available.",
+      "evidence": "駅から水族館まではバスがあるはずだ。",
+      "suggestion": "We could sleep on the train. There should be a bus from the station to the aquarium. — I’ll check the train times.",
+      "confidence": "high"
+    }
+  ]
+}

@@ -1,0 +1,150 @@
+{
+  "paper": "n2-set-3",
+  "read": "all",
+  "findings": [
+    {
+      "index": 11,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "Both 楽観論 and 楽観説 describe an optimistic viewpoint that someone can express in a meeting.",
+      "evidence": "彼は会議でいつも楽観説を述べ、周りを安心させる。",
+      "suggestion": "Replace choice 1 with 剤.",
+      "confidence": "high"
+    },
+    {
+      "index": 12,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "成長時 is usable for the time during which growth occurs. A formal description of children's needs can use it here.",
+      "evidence": "子どもの成長時には、十分な睡眠と栄養が欠かせない。",
+      "suggestion": "Replace choice 2 with 帯.",
+      "confidence": "medium"
+    },
+    {
+      "index": 13,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "The notice can also forbid unauthorized projection of the material, especially if the material is audiovisual or consists of slides.",
+      "evidence": "この資料は、許可なく映写することを禁止します。",
+      "suggestion": "Replace choice 2 with 実写.",
+      "confidence": "medium"
+    },
+    {
+      "index": 14,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "The proportions of colors in an outfit are a sensible thing to consider when choosing clothes. Both nouns fit.",
+      "evidence": "服を選ぶときは、色の割合を考えるようにしている。",
+      "suggestion": "Replace choice 1 with 手合い.",
+      "confidence": "high"
+    },
+    {
+      "index": 25,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "枯れる is used metaphorically for a depleted cell, particularly in technical or hobbyist speech. Color can also be described as 枯れる when it becomes subdued. The usage stem supplies no register or sense constraint.",
+      "evidence": "電池が枯れて、時計が止まってしまった。 / シャツの色が枯れてきた。",
+      "suggestion": "Choice 1: 電池を逆向きに入れたので、時計が枯れてしまった。 Choice 4: 洗濯機にシャツを枯れてから、洗剤を入れた。",
+      "confidence": "medium"
+    },
+    {
+      "index": 28,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "A teacher or school employee can go to work at a school. 弟 does not establish that the person is a pupil.",
+      "evidence": "弟は毎朝七時半に、学校に出勤している。",
+      "suggestion": "Replace choice 1 with 小学生の弟は毎朝七時半に、授業を受けるため学校に出勤している。",
+      "confidence": "high"
+    },
+    {
+      "index": 29,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "青白い can describe a pale bluish-white hue on clothing as well as a pale face.",
+      "evidence": "このセーターは、青白いしま模様がかわいい。",
+      "suggestion": "Replace choice 4 with このセーターの値段は、ほかのより青白い。",
+      "confidence": "high"
+    },
+    {
+      "index": 36,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "An organization can decide on a practice. ことにしている does not require an individual subject.",
+      "evidence": "この会社では、遅刻する場合は始業前に電話で連絡することにしている。",
+      "suggestion": "Replace choice 1 with ことにしたがって.",
+      "confidence": "high"
+    },
+    {
+      "index": 44,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "意外にも can modify the decision to consult the manager, leaving ところ on the star. The alternatives differ in what is surprising, and both are coherent.",
+      "evidence": "店長に意外にも相談したところ、入社一年目の私が新しい仕事を任されることになった。",
+      "suggestion": "Frame: 店長に ＿＿ ＿＿ ★ ＿＿ なった。 Choices: 相談したところ／新しい／仕事を／任されることに. Key: 3.",
+      "confidence": "high"
+    },
+    {
+      "index": 47,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "それで can connect the delivery arrangement to its effect on staffing. しかし presents the same event as a drawback.",
+      "evidence": "父が自分の車で行っていた。それで、焼き上がりの時間と配達の時間が重なると、店を母一人に任せることになり…",
+      "suggestion": "Replace choice 2 with なぜなら.",
+      "confidence": "medium"
+    },
+    {
+      "index": 62,
+      "field": "lines",
+      "severity": "weak",
+      "problem": "The English turns two qualified claims into firm assertions, including calling the new use the answer. The Japanese says it may be the best route to a solution.",
+      "evidence": "手入れを続ける人も増えるはずだ / 問題を解決する近道なのかもしれない",
+      "suggestion": "If bamboo earns income, more may tend it. Finding uses may help solve the problem.",
+      "confidence": "high"
+    },
+    {
+      "index": 71,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "The senior discount requires showing proof. With proof the total is ¥500, but without it the notice supports ¥800. The stem only says that he has requested delivery.",
+      "evidence": "受付時に、確認できるものをお見せください",
+      "suggestion": "北町に住む70歳の山田さんは、月曜日の午後２時に、年齢を確認できるものを受付で見せ、2,000円分の買い物の配送を頼んだ。配送料と届く時間はどうなるか。",
+      "confidence": "high"
+    },
+    {
+      "index": 71,
+      "field": "context",
+      "severity": "weak",
+      "problem": "The two time ranges both cover applications made at exactly 13:00.",
+      "evidence": "１３:００までの受付 / １３:００以降の受付",
+      "suggestion": "Replace the second schedule line in the shared notice with 　・１３:００を過ぎてからの受付　→　翌日１０:００〜１２:００",
+      "confidence": "high"
+    },
+    {
+      "index": 72,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "The revised notice fixes the frozen-food condition. It still leaves the buyer's potential pregnancy discount unstated. If applicable and shown at the counter, none of the options gives the resulting free same-day delivery of the unfrozen items.",
+      "evidence": "６５歳以上の方、妊娠中の方　→　金額にかかわらず無料",
+      "suggestion": "西町に住む40歳の男性、佐藤さんは、今日、パン屋で1,200円、八百屋で1,500円、魚屋で冷凍の魚を800円分買い、午前11時に配送を頼んだ。どうなるか。",
+      "confidence": "high"
+    },
+    {
+      "index": 96,
+      "field": "why",
+      "severity": "weak",
+      "problem": "The concessive conditional voices a prediction. It does not establish whether the speaker or another person has already asked Yamada.",
+      "evidence": "山田さんに頼んだところで、引き受けてくれっこないよ。",
+      "suggestion": "The speaker predicts that Yamada would refuse even if asked. Choice 3 challenges that prediction and suggests asking.",
+      "confidence": "high"
+    },
+    {
+      "index": 100,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "The offer can be made at the register after the meal. In that setting the thanks in choice 1 work as well as the acceptance in choice 3. The explanation assumes a time the script never gives.",
+      "evidence": "今日は僕がごちそうするよ。 → ありがとう。ごちそうさまでした。",
+      "suggestion": "これから一緒に晩ご飯を食べに行こうよ。今日は僕がごちそうするよ。",
+      "confidence": "high"
+    }
+  ]
+}

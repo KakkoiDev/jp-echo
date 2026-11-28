@@ -1,0 +1,96 @@
+{
+  "paper": "n2-set-2",
+  "read": "all",
+  "findings": [
+    {
+      "index": 10,
+      "field": "why",
+      "severity": "weak",
+      "problem": "The explanation rules out 疲れ感 as a word. It can mean a feeling of tiredness, but the stem instead calls for the productive ending meaning slightly tired.",
+      "evidence": "少し疲れ（　）なので / 疲れ感 and 疲れ状 are not used.",
+      "suggestion": "疲れ気味 means slightly tired. 疲れ感 denotes the feeling of tiredness itself, and 少し疲れ感なので does not express the intended state naturally.",
+      "confidence": "high"
+    },
+    {
+      "index": 12,
+      "field": "why",
+      "severity": "weak",
+      "problem": "The explanation overgeneralizes about the other compounds. 元年度 is used with an era name, for example 令和元年度.",
+      "evidence": "前年度 is the fixed compound ... 元年度 ... not used.",
+      "suggestion": "前年度 means the immediately preceding fiscal year. 元年度 can mean the first fiscal year of an era, as in 令和元年度, and does not mean the previous year here.",
+      "confidence": "high"
+    },
+    {
+      "index": 27,
+      "field": "why",
+      "severity": "weak",
+      "problem": "A first visit can evoke nostalgia if it resembles something familiar. It is the unsupported causal なので, rather than a first visit by itself, that makes choice 1 poor.",
+      "evidence": "初めて行く国なので、何もかもが懐かしい。",
+      "suggestion": "Choice 3 supplies a clear source of nostalgia, a return to one's old school. Choice 1 treats the fact of a first visit as the reason for nostalgia without saying what it recalls.",
+      "confidence": "high"
+    },
+    {
+      "index": 71,
+      "field": "context",
+      "severity": "weak",
+      "problem": "The shared notice has an inconsistent weekday for the second class. January 11 and 18 are both Saturdays, so January 25 must be Saturday as well.",
+      "evidence": "１月１８日（土） / １月２５日（日） / ２月１日（土）",
+      "suggestion": "日時：１月２５日（土）　１０:００〜１２:００",
+      "confidence": "high"
+    },
+    {
+      "index": 73,
+      "field": "lines",
+      "severity": "weak",
+      "problem": "The selected line relies on それ to identify the first task. The supervisor gives an explicit request that stands by itself.",
+      "evidence": "名簿ですね。じゃあ、それを作ってから和紙を数えます。",
+      "suggestion": "Japanese: それより、参加者の名簿を先に作ってくれる？ English: Could you make the list of participants first?",
+      "confidence": "high"
+    },
+    {
+      "index": 76,
+      "field": "why",
+      "severity": "weak",
+      "problem": "The budget is unknown. Crossing ¥5,000 is why she asks for approval, but it does not establish that the restaurant exceeds the budget.",
+      "evidence": "一人五千円を超えちゃうので、予約の前に部長に予算を確認しなきゃいけないんです。",
+      "suggestion": "It costs more than ¥5,000 per person, so she will confirm the budget with the department head before booking.",
+      "confidence": "high"
+    },
+    {
+      "index": 78,
+      "field": "question",
+      "severity": "weak",
+      "problem": "The woman allows that work was a contributing factor, so a general why question invites the secondary cause as well as the intended knee injury.",
+      "evidence": "それもちょっとはあるけど……実は、膝を痛めちゃって。",
+      "suggestion": "女の人がジムをやめた一番の理由は何ですか。",
+      "confidence": "high"
+    },
+    {
+      "index": 86,
+      "field": "lines",
+      "severity": "weak",
+      "problem": "Both excerpts give reasons but omit the change to the homework that the correct choice names.",
+      "evidence": "確かに、ただ手を動かすだけでは、途中から形をなぞるだけの作業になってしまいます。 / 字の形だけでなく、どんな場面で使うのかまで、一緒に覚えてほしいと考えています。",
+      "suggestion": "Japanese: そこで来月からは、一つの字を書く回数を減らし、その代わりに、その字を使った短い文を自分で作る宿題に変えます。 English: From next month, pupils will write each kanji fewer times and use it in a sentence.",
+      "confidence": "high"
+    },
+    {
+      "index": 89,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "The isolated first turn can be a polite request to leave a shared gathering ahead of the other person, in which case どうぞ、お先に is a defensible permission response.",
+      "evidence": "じゃあ、お先に失礼します。 → どうぞ、お先に。",
+      "suggestion": "Replace choice 3 with お待たせしました。",
+      "confidence": "medium"
+    },
+    {
+      "index": 101,
+      "field": "lines",
+      "severity": "weak",
+      "problem": "The English says he explicitly says he will take the fourth course, overstating the Japanese tentative choice. His later explanation makes the actual decision clear.",
+      "evidence": "四つ目にしようかな。 / だから、僕が習って教えるよ。",
+      "suggestion": "English: The fourth course is Easy Computing. He's thinking of taking that one.",
+      "confidence": "high"
+    }
+  ]
+}

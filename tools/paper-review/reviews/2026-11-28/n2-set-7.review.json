@@ -1,0 +1,114 @@
+{
+  "paper": "n2-set-7",
+  "read": "all",
+  "findings": [
+    {
+      "index": 19,
+      "field": "question",
+      "severity": "weak",
+      "problem": "The service request uses a clumsy honorific form. The concise request is ご案内ください.",
+      "evidence": "二階の応接室にご案内してください。",
+      "suggestion": "お客様がいらっしゃったら、二階の（　）室にご案内ください。",
+      "confidence": "high"
+    },
+    {
+      "index": 25,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "Choice 2 uses 羨む in its ordinary meaning if the teacher envies the student's capacity for sustained effort. The teacher giving a high mark is unusual as a consequence, but does not make the word mean anything else.",
+      "evidence": "先生は生徒の努力を羨んで、高い点数をつけた。",
+      "suggestion": "Choice 2: 先生は生徒に努力するよう羨んだ。",
+      "confidence": "medium"
+    },
+    {
+      "index": 29,
+      "field": "why",
+      "severity": "weak",
+      "problem": "The exam contrast is 帰国 for returning to one's own country. The explanation overstates it as a nationality restriction.",
+      "evidence": "A person of Japanese nationality who is based abroad could still be reported as 来日 in a story written from Japan's perspective.",
+      "suggestion": "来日 means coming to Japan, typically from the Japanese host's perspective. Choice 3 is a standard use for a visiting performer. A Japanese speaker describing a return to their home country would ordinarily say 帰国する.",
+      "confidence": "high"
+    },
+    {
+      "index": 30,
+      "field": "why",
+      "severity": "weak",
+      "problem": "The claim that まさか requires a negative ending is false.",
+      "evidence": "まさかこんなところで会うとは。／まさか本人が来るなんて。",
+      "suggestion": "おそらく…だろう gives an ordinary prediction. まさか expresses disbelief or surprise; the plain predictive ending here does not support that reading.",
+      "confidence": "high"
+    },
+    {
+      "index": 36,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "Choice 1 naturally acknowledges the result and adds the importance of finishing. Nothing in the stem says to disregard the result.",
+      "evidence": "結果はもちろん、最後まであきらめずに走りきったことが大切だ。",
+      "suggestion": "Choice 1: となれば",
+      "confidence": "high"
+    },
+    {
+      "index": 41,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "だけあって is a natural alternative if the high salary reflects bad working conditions.",
+      "evidence": "この仕事は給料が高いだけあって、休みが少なくて体力的にきつい。 This reads as 「高い給料にはそれだけの理由がある」.",
+      "suggestion": "Choice 1: にあたって",
+      "confidence": "high"
+    },
+    {
+      "index": 42,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "小さな can describe the household instead of the child, changing the ★ tile.",
+      "evidence": "Order 4–3–2–1: 防災訓練には、子どものいる小さな家庭にも参加してほしい。",
+      "suggestion": "Frame: 防災訓練には、小さな子どもが ＿＿ ＿＿ ★ ＿＿ ほしい。 Tiles: [いる, 家庭にも, 参加, して]。 Order 1–2–3–4; key 3.",
+      "confidence": "high"
+    },
+    {
+      "index": 43,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "The earlier repair leaves 自宅から available to modify 見ながら. This produces a different natural order with the same ★, and a different route interpretation.",
+      "evidence": "Order 4–3–1–2: 地図を自宅から見ながら避難所までの道を確認しておくことが大切だ。",
+      "suggestion": "Frame: 地図で自宅から ＿＿ ＿＿ ★ ＿＿ 確認しておくことが大切だ。 Tiles: [避難所, までの, 経路, を]。 Order 1–2–3–4; key 3.",
+      "confidence": "high"
+    },
+    {
+      "index": 53,
+      "field": "choices",
+      "severity": "weak",
+      "problem": "The first choice turns a request to close the windows when possible into a blanket instruction.",
+      "evidence": "窓はなるべく閉めておいてください。",
+      "suggestion": "Choice 1: 工事期間中は洗濯物を外に干さず、窓はなるべく閉めておくこと",
+      "confidence": "high"
+    },
+    {
+      "index": 60,
+      "field": "choices",
+      "severity": "weak",
+      "problem": "町が豊かになった代わりなので is stiff and obscures what was accepted as a trade-off.",
+      "evidence": "工場のおかげで町が豊かになったのだから仕方がないと考えていたようだ。",
+      "suggestion": "Choice 1: 工場のおかげで町が豊かになったのだから、川が汚れても仕方がない",
+      "confidence": "high"
+    },
+    {
+      "index": 85,
+      "field": "lines",
+      "severity": "weak",
+      "problem": "The extracted sentence does not say what remained or what was repaired. Its referent is essential to the answer, which is about an old temple.",
+      "evidence": "それでも今まで残っているのは、そのたびに地域の人々が修理を重ねてきたからです。",
+      "suggestion": "Lines: [今日は、中世に建てられたお寺の建物についてお話しします。, それでも今まで残っているのは、そのたびに地域の人々が修理を重ねてきたからです。] English: Today I’ll talk about a temple building dating to the Middle Ages. It has survived because local people repaired it each time.",
+      "confidence": "high"
+    },
+    {
+      "index": 99,
+      "field": "choices",
+      "severity": "weak",
+      "problem": "お通ししてください is awkward as the model workplace request. Use the regular honorific request form.",
+      "evidence": "わかりました。応接室にお通ししてください。",
+      "suggestion": "Choice 1: わかりました。応接室にお通しください。",
+      "confidence": "high"
+    }
+  ]
+}

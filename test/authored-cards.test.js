@@ -86,13 +86,13 @@ test("the papers' sentences have their English, shown in the review of a paper's
 });
 
 test("a paper revised on its own has its own edition; the others keep theirs and their sittings", () => {
-  assert.equal(editionOf("n2-set-6"), SETS_EDITION); assert.equal(realisticPaperId("n2-set-6"), "n2-set-6@" + SETS_EDITION, "Mock 06 sittings stay attached to their lines");
-  assert.deepEqual(Object.keys(SET_EDITIONS).sort(), ["n2-set-10", "n2-set-14", "n2-set-15", "n2-set-2", "n2-set-20", "n2-set-3", "n2-set-4", "n2-set-5", "n2-set-7", "n2-set-8", "n2-set-9"]);
-  assert.equal(realisticPaperId("n2-set-8"), "n2-set-8@2026.11-r4");
+  assert.equal(editionOf("n2-set-11"), SETS_EDITION); assert.equal(realisticPaperId("n2-set-11"), "n2-set-11@" + SETS_EDITION, "Mock 11 sittings stay attached to their lines");
+  assert.deepEqual(Object.keys(SET_EDITIONS).sort(), ["n2-set-10", "n2-set-14", "n2-set-15", "n2-set-2", "n2-set-20", "n2-set-3", "n2-set-4", "n2-set-5", "n2-set-6", "n2-set-7", "n2-set-8", "n2-set-9"]);
+  assert.equal(realisticPaperId("n2-set-8"), "n2-set-8@2026.11-r5");
   const q = (n, i) => read("../n2-sets/n2-set-" + n + ".json").questions[i];
   // A second natural answer is gone from each of the eight.
   assert.ok(!q(4, 33).choices.includes("ものの")); assert.ok(!q(10, 19).choices.includes("交換")); assert.ok(!q(14, 39).choices.includes("に先立って")); assert.ok(!q(20, 36).choices.includes("を通して"));
-  for (const [n, i, lead] of [[5, 46, "母が"], [8, 42, "ここ十年で"], [8, 45, "ついでにこの手紙を"], [9, 45, "今日は"], [7, 43, "道を確認"], [9, 46, "明日の試合は雨が"]]) {
+  for (const [n, i, lead] of [[5, 46, "母が"], [8, 42, "ここ十年で"], [8, 45, "ついでにこの手紙を"], [9, 45, "今日は"], [7, 43, "地図で自宅から"], [9, 46, "明日の試合は雨が"]]) {
     const x = q(n, i); assert.ok(x.prompt.includes(lead), n + "#" + i + ": the movable phrase is fixed in the frame"); assert.equal(new Set(x.choices).size, 4);
     assert.ok(x.why.includes(x.choices[x.key - 1]) && /★ = /.test(x.why), n + "#" + i);
     assert.ok(!x.choices.includes("ここ十年で") && !x.choices.includes("今日は") && !x.choices.includes("田舎から"));
@@ -264,7 +264,21 @@ test("the last open findings on the N2 papers are fixed, each paper in a new edi
   assert.ok(q(3, 72).context.includes("冷凍食品はお預かりできません（配送料の計算にも含みません）。"), "frozen goods do not count toward the total");
   assert.ok(q(9, 46).prompt.startsWith("明日の試合は雨が"), "雨が in the frame: 予定どおり cannot lead, so only 関係なく is on ★");
   assert.equal(q(15, 64).choices[3], "線路が止まると代わりの手段がすぐに見つからないこと");
-  for (const n of [2, 3, 7, 9, 15]) assert.equal(editionOf("n2-set-" + n), "2026.11-r5");
+  for (const n of [2, 9, 15]) assert.equal(editionOf("n2-set-" + n), "2026.11-r5");
   const brief = src("../docs/PAPERS-REVIEW-HANDOFF.md"), maker = src("../tools/paper-review/make-inputs.mjs");
   assert.ok(brief.includes("tools/paper-review/input/<paper>.json") && brief.includes("<paper>.review.json") && maker.includes("sets/<level>/"));
+});
+
+test("the outside review of sets 2–9: 18 of 46 unfair findings applied, each decision recorded (28 Nov)", () => {
+  const d = read("../tools/paper-review/reviews/2026-11-28/decisions.json"), q = (n, i) => read("../n2-sets/n2-set-" + n + ".json").questions[i];
+  assert.equal(d.unfair.length, 46); assert.ok(d.unfair.every(x => ["applied", "rejected", "deferred"].includes(x.decision) && x.reason));
+  assert.equal(d.unfair.filter(x => x.decision === "applied").length, 18);
+  assert.ok(q(3, 71).prompt.includes("年齢がわかる保険証を見せて") && q(3, 72).prompt.includes("40歳の男性"), "the conditions the notice asks are in the stem");
+  assert.ok(q(3, 100).context.startsWith("男：これから晩ご飯、食べに行こうよ。"), "the offer comes before the meal");
+  assert.ok(q(5, 55).context.includes("当日受付でお支払いください") && q(8, 71).prompt.includes("今回は一人で参加する予定"));
+  for (const [n, i, gone] of [[3, 14, "割合"], [3, 36, "ことにしている"], [3, 47, "それで"], [5, 32, "何かにつけ"], [5, 38, "かならず"], [6, 35, "いけない"], [7, 36, "はもちろん"], [7, 36, "に限らず"], [7, 41, "だけあって"], [8, 38, "について"]])
+    assert.ok(!q(n, i).choices.includes(gone), n + "#" + i + ": " + gone);
+  assert.deepEqual([q(7, 43).choices[q(7, 43).key - 1], q(7, 43).prompt.startsWith("地図で自宅から")], ["経路", true]);
+  for (const [n, r] of [[3, "r6"], [5, "r5"], [6, "r4"], [7, "r6"], [8, "r5"]]) assert.equal(editionOf("n2-set-" + n), "2026.11-" + r);
+  assert.equal(read("../n2-sets/keys.json").keys["n2-set-3#100"].lines[0], "これから晩ご飯、食べに行こうよ。今日は僕がごちそうするよ。");
 });

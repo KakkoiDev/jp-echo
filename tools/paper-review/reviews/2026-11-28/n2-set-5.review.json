@@ -1,0 +1,114 @@
+{
+  "paper": "n2-set-5",
+  "read": "all",
+  "findings": [
+    {
+      "index": 17,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "Either the orientation or the angle of a camera can change how a photo comes across.",
+      "evidence": "カメラの方角を少し変えるだけで、印象がずいぶん変わる。 For example, the photographer turns from the sunlit side toward the shaded side.",
+      "suggestion": "Choice 1: 順序",
+      "confidence": "high"
+    },
+    {
+      "index": 25,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "Choice 1 uses 恨み correctly. The fact that a resentful gift is unusual does not make that usage wrong.",
+      "evidence": "先生への恨みを込めて、卒業式で花束を渡した。 The recipient is the person resented.",
+      "suggestion": "Choice 1: 先生への恨みを晴らすために、先生に心から感謝した。",
+      "confidence": "high"
+    },
+    {
+      "index": 27,
+      "field": "why",
+      "severity": "weak",
+      "problem": "The explanation excludes medicines from 薬品. 薬品 can denote drugs, though 薬 is the ordinary word in choice 1.",
+      "evidence": "薬品 includes pharmaceutical substances; this sentence is about an everyday remedy for a cold.",
+      "suggestion": "薬品 can refer to medicines or chemical substances. 実験で使う薬品 is a standard collocation; in everyday speech, taking cold medication is 風邪薬を飲む.",
+      "confidence": "high"
+    },
+    {
+      "index": 32,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "何かにつけ is natural for a friend who helped repeatedly with various aspects of the move.",
+      "evidence": "引っ越しのときは、友人に何かにつけ手伝ってもらって、本当に助かった。",
+      "suggestion": "Choice 4: 何はともあれ",
+      "confidence": "high"
+    },
+    {
+      "index": 38,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "The speaker can ask whether success is certain, with かならず.",
+      "evidence": "新しい計画は、かならずうまくいくのだろうか。",
+      "suggestion": "Choice 2: あいにく",
+      "confidence": "high"
+    },
+    {
+      "index": 39,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "With a scholarship for students who need support, the sentence could naturally even include outstanding students. The stem supplies no eligibility conditions to rule this out.",
+      "evidence": "この奨学金には、成績が優秀な学生までが申し込める。 学生さえが is also interpretable, though marked.",
+      "suggestion": "Question: 応募資格は成績上位10％である。この奨学金には、成績が優秀な学生（　）が申し込める。",
+      "confidence": "medium"
+    },
+    {
+      "index": 40,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "に限っては gives a natural personal exception. The prompt lacks context to rule it out.",
+      "evidence": "私に限っては、この案には賛成できません。",
+      "suggestion": "Choice 3: に限りなく",
+      "confidence": "high"
+    },
+    {
+      "index": 45,
+      "field": "question",
+      "severity": "weak",
+      "problem": "The item frames someone studying Japanese literature as surprising just because they are foreign. That distracts from the concessive register being tested.",
+      "evidence": "外国人でありながら、誰よりも熱心に日本の古典文学を研究している。",
+      "suggestion": "Choice 2: 初学者",
+      "confidence": "medium"
+    },
+    {
+      "index": 46,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "The comma allows an asyndetic sequence of two finite clauses. The rival order puts tile 4 on ★.",
+      "evidence": "Order 3–2–4–1: 母が新鮮な野菜を田舎から送ってくれた、家族みんなで食べた。",
+      "suggestion": "Frame: 母が田舎から ＿＿ ＿＿ ★ ＿＿ 。 Tiles: [送って, くれた新鮮な, 野菜を, 家族みんなで食べた]。 Order 1–2–3–4; key 3.",
+      "confidence": "high"
+    },
+    {
+      "index": 55,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "The notice quotes a fee but never says attendees must bring it. Someone who pays when booking can also choose 4.",
+      "evidence": "参加費は親子1組1,500円で、秋には、とれたお米を2キロお送りします。",
+      "suggestion": "Replace that sentence with: 参加費は親子1組1,500円です。当日、受付で現金でお支払いください。秋には、とれたお米を2キロお送りします。",
+      "confidence": "high"
+    },
+    {
+      "index": 94,
+      "field": "why",
+      "severity": "weak",
+      "problem": "The blanket gloss of past よろしかった as a polite present-tense check misses the form's use to reconfirm a prior choice.",
+      "evidence": "こちらのお席でよろしかったでしょうか。 No prior choice or agreement is given.",
+      "suggestion": "Context: 女：お客様、こちらのお席でよろしいでしょうか。 Why: The speaker asks whether the proposed seat is acceptable, so the guest can agree with ここで大丈夫です。",
+      "confidence": "high"
+    },
+    {
+      "index": 98,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "The listener can respond with their own first-visit experience. Japanese does not require 私も for that reading.",
+      "evidence": "初めて伺ったときは、緊張しましたね。 This is the responder recalling their own visit, consistent with the speaker's first visit still being ahead.",
+      "suggestion": "Choice 2: 部長のお宅には何度も伺ったことがあるんですね。",
+      "confidence": "medium"
+    }
+  ]
+}

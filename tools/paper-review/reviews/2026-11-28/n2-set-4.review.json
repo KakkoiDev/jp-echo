@@ -1,0 +1,60 @@
+{
+  "paper": "n2-set-4",
+  "read": "all",
+  "findings": [
+    {
+      "index": 1,
+      "field": "why",
+      "severity": "weak",
+      "problem": "The spelling does not result from rendaku. The historical kana convention preserves ぢ in this repeated-sound word.",
+      "evidence": "ちぢむ, with ぢ by rendaku",
+      "suggestion": "縮む is spelled ちぢむ. This word uses ぢ under the kana rule for certain repeated-sound forms, as in ちぢむ and つづく.",
+      "confidence": "high"
+    },
+    {
+      "index": 15,
+      "field": "answer",
+      "severity": "unfair",
+      "problem": "The customers could also enter confidently or boldly. The stem gives no crowd pattern that requires one after another.",
+      "evidence": "開店の時間になると、客が堂々と店に入ってきた。",
+      "suggestion": "Replace choice 2 with 悠々自適.",
+      "confidence": "high"
+    },
+    {
+      "index": 29,
+      "field": "choices",
+      "severity": "weak",
+      "problem": "Bare 受取 for a receipt is possible but dated or clipped. It is a poor model for how to ask for a receipt in ordinary modern Japanese.",
+      "evidence": "代金を払ったら、必ず受取をもらっておいてください。",
+      "suggestion": "Use the target 受取証 and choice 4 代金を払ったら、必ず受取証をもらっておいてください。 Replace 受取 with 受取証 in choices 1–3 as well.",
+      "confidence": "high"
+    },
+    {
+      "index": 34,
+      "field": "why",
+      "severity": "weak",
+      "problem": "にかけて can have an implicit start, so から is not obligatory. Here the difference is that 3年 is a duration rather than a time endpoint.",
+      "evidence": "にかけて needs から.",
+      "suggestion": "期間＋にわたって covers the whole duration. にかけて usually takes a time or place endpoint, as in 来週にかけて, and does not express a three-year duration here.",
+      "confidence": "high"
+    },
+    {
+      "index": 87,
+      "field": "lines",
+      "severity": "weak",
+      "problem": "三十分以上 includes exactly thirty minutes. Over 30 excludes that boundary.",
+      "evidence": "三十分以上眠ってしまうと",
+      "suggestion": "Nap for 15 to 20 minutes. Sleeping for 30 minutes or more can leave you groggy.",
+      "confidence": "high"
+    },
+    {
+      "index": 96,
+      "field": "context",
+      "severity": "weak",
+      "problem": "ただいまお取り寄せになります is awkward retail phrasing and can sound as though the seller is currently placing the order. The intended offer is to order an unavailable item in.",
+      "evidence": "こちらの商品は、ただいまお取り寄せになりますが、よろしいでしょうか。",
+      "suggestion": "こちらの商品は店頭に在庫がないため、お取り寄せでのご用意となりますが、よろしいでしょうか。",
+      "confidence": "high"
+    }
+  ]
+}
