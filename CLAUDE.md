@@ -839,6 +839,10 @@ Before considering the change complete:
   rung, skipping kinds it lacks (`ladderGate`). An item answered before the
   ladder starts one rung past the highest kind answered right. A recovery
   round asks at the rung last won. This replaces v325's reading-first rule.
+- **A bedtime after midnight (v337).** `atBedtime` treats a bedtime before 05:00
+  (02:30) as the stretch from then until 05:00; one after (23:30) runs over
+  midnight to 05:00. It used to read "after bedtime or before 5 am", which at
+  02:30 made every round end of the day point to sleep (owner's report).
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

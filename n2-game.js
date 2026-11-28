@@ -1633,8 +1633,10 @@ export function bonusPoints({points, bonus = false, streak = 0, factor = 1, choi
 export const BEDTIME = "23:30";
 export function atBedtime(now = new Date(), bedtime = BEDTIME) {
   const [h, m] = (/^\d{1,2}:\d{2}$/.test(bedtime || "") ? bedtime : BEDTIME).split(":").map(Number);
-  const minutes = now.getHours() * 60 + now.getMinutes();
-  return minutes >= h * 60 + m || minutes < 5 * 60;
+  const minutes = now.getHours() * 60 + now.getMinutes(), bed = h * 60 + m, end = 5 * 60;
+  // A bedtime after midnight (02:30) is the stretch from then until 5 am, not the whole day after it (owner's
+  // report, 28 Nov: at 02:30 every round end of the day pointed to sleep). One before (23:30) runs over midnight.
+  return bed < end ? minutes >= bed && minutes < end : minutes >= bed || minutes < end;
 }
 
 // ---- The boss, every 1,000 questions ----

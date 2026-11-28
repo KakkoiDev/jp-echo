@@ -1357,3 +1357,10 @@ test("each word and grammar point climbs its own ladder: up a rung when right, b
   assert.deepEqual(gp.filter(ladderGate(pool, {})).map(q => q.kind), ["grammar"]);
   if (gp.some(q => q.kind === "gap")) assert.deepEqual(gp.filter(ladderGate(pool, {[gk]: 1})).map(q => q.kind), ["gap"]);
 });
+
+test("a bedtime after midnight is the stretch until 5 am, not the whole day (owner's report, 28 Nov)", () => {
+  const at = (h, m = 0) => new Date(2026, 10, 28, h, m);
+  for (const [h, m, late] of [[1, 0, false], [2, 30, true], [4, 59, true], [5, 0, false], [12, 0, false], [23, 0, false]]) assert.equal(atBedtime(at(h, m), "02:30"), late, h + ":" + m);
+  for (const [h, late] of [[23, false], [0, true], [3, true], [5, false], [14, false]]) assert.equal(atBedtime(at(h, h === 23 ? 0 : 0), "23:30"), late, "23:30 at " + h);
+  assert.equal(atBedtime(at(23, 45), "23:30"), true);
+});
