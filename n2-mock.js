@@ -9,7 +9,7 @@ import {recognitionFactory} from "./speech.js";
 import {speakOnce,speakAndWait,japaneseVoices,RadioPlayer,NoiseBed} from "./speech.js";
 import {RADIO_DEFAULTS,RADIO_PHASE_COPY,clockAt,radioPhase,radioPlan,radioSteps} from "./radio.js";
 import {readNights, nightComparison, comparisonLine, eveningRecall, EVENING_SOURCE, nightPlan, nightRecord, keepNight, NIGHT_KEY} from "./n2-night.js";
-import {MINI, miniDue, miniDone, speedSeconds, bossWritten, kanaCards, kanjiCards, askableKanji, SPRINT, sprintCards, sprintRound, kanjiOrderOf, skillWeights, kindWeights, flagCard, endRest, bossCards, bossQueue, bossReview, partRows, cutUnderline, provedBy, PROVED_MS, heardGap, grammarBlockCard, grammarCoverage, kanjiCoverage, levelCoverage, isCovered, aheadLevel, applyBoss, verdictLine, rankOf, setRank, rankLevels, hasBoss, RANKS, inSlump, itemLevel, levelAfter, ITEM_LEVEL, gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, patternVoice, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
+import {READING, readingBlock, readingDue, readingDone, MINI, miniDue, miniDone, miniBonus, speedSeconds, bossWritten, kanaCards, kanjiCards, askableKanji, SPRINT, sprintCards, sprintRound, kanjiOrderOf, skillWeights, kindWeights, flagCard, endRest, bossCards, bossQueue, bossReview, partRows, cutUnderline, provedBy, PROVED_MS, heardGap, grammarBlockCard, grammarCoverage, kanjiCoverage, levelCoverage, isCovered, aheadLevel, applyBoss, verdictLine, rankOf, setRank, rankLevels, hasBoss, RANKS, inSlump, itemLevel, levelAfter, ITEM_LEVEL, gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, patternVoice, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
 import {createLevels} from "./jlpt-levels.js";
 import {createSets, levelRows, SET_LEVELS, setLevel, heldOut} from "./jlpt-sets.js";
 import {spokenWord,radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
@@ -1100,7 +1100,8 @@ const ALOUD = Object.fromEntries(["reading", "meaning", "definition", "listen", 
 const BEATS = {hook: ["始", "Welcome back", "An easy start", "right"], first: ["始", "First round", "An easy start", "right"], breather: ["息", "Breather", "", "track"],
   peak: ["峰", "Peak round · bonuses ×2", "The hardest of the wave. Go fast.", "gold"], stretch: ["鬼", "Final stretch", "Bonuses ×2 until the boss opens", "seal"],
   warm: ["復", "Recovery round: things you know", "After a hard round", "right"], jackpot: ["五", "Jackpot", "Five in a row.", "gold"],
-  mini: ["鬼", "Mini-boss", "×1.5 points · counts toward the boss", "seal"]};
+  mini: ["鬼", "Mini-boss", "×2 points · 7 right clears it: +1,000", "seal"],
+  reading: ["読", "Today’s reading", "One passage at the exam’s pace", "seal"]};
 // Game sounds and haptics (docs/design/game, Motion board), made on the
 // device: WebAudio, no files, offline. One Sound switch silences them, the
 // spoken answer and the vibration.
@@ -1567,7 +1568,7 @@ async function game() {
     mode("play");
     ask();
   }
-  let listenFails = 0, voiceWait = false, ups = [], miniRound = false;
+  let listenFails = 0, voiceWait = false, ups = [], miniRound = false, readingRound = false;
   const hears = () => sound() && japaneseVoices("ja").length > 0 && listenFails < 2;
   // The round in progress, kept on this device so a closed app or a trip Home
   // doesn't lose it. Dropped after 30 minutes, at the round's end, or if a
@@ -1602,7 +1603,7 @@ async function game() {
     q.choices = choices; q.key = key;
     const card = $("game-card");
     card.dataset.bonus = String(!!q.bonus); card.dataset.state = ""; card.style.animation = "none"; void card.offsetWidth; card.style.animation = "";
-    $("game-kind").textContent = q.kind === "exam" ? "Exam · 問題" + q.mondai : q.kind === "connective" ? "Connective" : KIND_LABEL[q.kind];
+    $("game-kind").textContent = q.label || (q.kind === "exam" ? "Exam · 問題" + q.mondai : q.kind === "connective" ? "Connective" : KIND_LABEL[q.kind]);
     const most = q.bonus ? bonusPoints({points: scoreAnswer({outcome: "right", ms: 0, seconds: q.seconds, streak}).points, bonus: true, streak: streak + 1, factor: DIFFICULTY[difficulty()].points, choices: choices.length}).points : 0;
     const tag = q.bonus ? ["Bonus ×3 · up to " + most.toLocaleString(), "goldfill"] : q.practice ? [(q.review ? q.level + " review" : q.level ? q.level + " practice" : "Practice") + " · not scored", "practice"] : q.kind === "exam" ? ["Mock " + String(bookIds.indexOf(String(q.solution?.source || "").split("#")[0]) + 1).padStart(2, "0"), ""] : null;
     $("game-tag").hidden = !tag; if (tag) { $("game-tag").textContent = tag[0]; $("game-tag").dataset.tone = tag[1]; }
@@ -1904,11 +1905,14 @@ async function game() {
     const scoredN = round.length - flagged - practiced;
     state = rememberRound(readGame(), {score, questions: round, misses: scoredN - rights, scored: scoredN});
     // A mini-boss played resets its count; one not yet played stays due (miniDue) and leads every round end.
-    if (miniRound) { state = miniDone(state); miniRound = false; }
+    // A mini-boss cleared (MINI.clear right) pays its bonus, with the jackpot's sound and the line saying so.
+    let cleared = 0;
+    if (miniRound) { const won = miniBonus(miniDone(state), {right: rights}); state = won.state; cleared = won.bonus; score += cleared; miniRound = false; }
+    if (readingRound) { state = readingDone(state, localDay()); readingRound = false; }
     writeGame(state);
     clearRound();
     const best = score > before && score > 0;
-    if (sound()) { best ? sfx.best() : sfx.round(); buzz(best ? [30, 50, 30] : 20); }
+    if (sound()) { cleared ? sfx.jackpot10() : best ? sfx.best() : sfx.round(); buzz(cleared ? [30, 40, 30, 40, 60] : best ? [30, 50, 30] : 20); }
     mode("done");
     $("game-sub").textContent = "";
     const late = atBedtime(new Date(), settings.gameBedtime), warm = inSlumpNext(), crown = best && !late;
@@ -1920,7 +1924,7 @@ async function game() {
     $("game-done-best").hidden = !crown; $("game-done-was").hidden = !(crown && before > 0); $("game-done-was").textContent = "was " + num(before) + " · +" + (score - before).toLocaleString();
     pips($("game-done-pips"));
     const back = Math.max(0, round.length - rights - flagged - practiced);
-    $("game-done-line").textContent = late ? rights + " of " + round.length + (back ? " · " + back + " saved for tonight" : "")
+    $("game-done-line").textContent = cleared ? "Mini-boss cleared · " + rights + " of " + round.length + " · +" + cleared.toLocaleString() + " bonus" : late ? rights + " of " + round.length + (back ? " · " + back + " saved for tonight" : "")
       : rights + " of " + round.length + (warm ? " · part of the game" : (bestCombo > 1 ? " · best combo " + bestCombo : "") + (back ? " · " + back + " come back next" : "")) + (flagged ? " · " + flagged + " flagged" : "");
     const b = bossProgress(state), boss = bossNow();
     $("game-boss-strip").hidden = !boss || b.open || late || warm; $("game-boss").hidden = !(boss && b.open);
@@ -1934,11 +1938,12 @@ async function game() {
     $("game-lvstrip").hidden = late || warm || !ups.length;
     $("game-lvups").replaceChildren(...ups.slice(0, 3).map(u => el("span", {lang: "ja", text: u.word + " " + u.from + "→" + u.to})));
     $("game-warm-line").textContent = "Next: a recovery round of things you know, with " + Math.min(2, back) + " of these " + back + " back.";
-    const mini = !late && miniDue(state);
-    $("game-mini").hidden = !mini;
-    $("game-again").className = late || mini ? "qr-lnk" : "qr-btn";
+    // Today's reading leads the first round end of the day; the mini-boss leads when it is due and the reading is done.
+    const reading = !late && readingDue(state, localDay()), mini = !late && !reading && miniDue(state);
+    $("game-reading").hidden = !reading; $("game-mini").hidden = !mini;
+    $("game-again").className = late || mini || reading ? "qr-lnk" : "qr-btn";
     $("game-again-label").textContent = late ? "One more round" : warm ? "Recovery round" : "Next round";
-    $("game-again").querySelector("svg").style.display = late || mini ? "none" : "";
+    $("game-again").querySelector("svg").style.display = late || mini || reading ? "none" : "";
     $("game-home-btn").hidden = late;
     if (late) deckExamples().then(examples => {
       const left = eveningRecall({inventory, recall: data.recall, evidence: scored(data), events: data.events, examples}).length;
@@ -2027,6 +2032,20 @@ async function game() {
   $("game-home-play3").onclick = start;
   // The mini-boss: the Sprint (three short passages from papers not sat, 90 seconds each, among seven long cards),
   // offered at a round's end every MINI.every rounds and through the round's own screens.
+  // Today's reading: one mid or long passage of a paper not sat, all its questions, at the exam's pace.
+  $("game-reading").onclick = async () => {
+    sfx.unlock();
+    const unsat = bookIds.filter(realistic).filter(id => !sat.has(id) && !HELD_OUT.includes(id));
+    const loaded = (await Promise.all(unsat.map(id => json(setFile(id)).catch(() => null)))).filter(Boolean);
+    const cards = readingBlock({sets: loaded, sat, keys: bossKeys, seen: readGame().seen || {}}).map(q => ({...q, seconds: speedSeconds(q.seconds, difficulty())}));
+    if (!cards.length) { toast("No unsat paper left to read", "reading"); return; }
+    clearRound(); state = readGame();
+    $("game-back").href = "?view=game"; $("game-back").setAttribute("aria-label", "Back to home"); $("game-back").dataset.end = "false";
+    $("game-back").onclick = e => { e.preventDefault(); clearTimeout(timer); home(); };
+    round = cards; roundLevel = levelOf(state); warmUp = false; beat = {name: "reading"}; readingRound = true; miniRound = false; rights = 0; flagged = 0; practiced = 0; bestCombo = 0;
+    index = 0; score = 0; streak = 0; misses = []; marks = []; ups = []; roundFlags = [];
+    mode("play"); ask();
+  };
   $("game-mini").onclick = async () => {
     sfx.unlock();
     const unsat = bookIds.filter(realistic).filter(id => !sat.has(id) && !HELD_OUT.includes(id));

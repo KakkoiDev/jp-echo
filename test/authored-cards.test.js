@@ -322,16 +322,35 @@ test("the Sprint holds the long cards: its passages among seven long cards, a lo
   assert.equal(sprintRound({passages, pool, state: st, random: seeded(5), now: 1e12 + 60_000})[0].id, q.id);
 });
 
-test("the mini-boss: due every ten rounds, leading the round end until played, ×1.5 points (owner, 28 Nov)", async () => {
+test("the mini-boss: due every ten rounds, leading the round end until played, ×2 points and a clear bonus (owner, 28 Nov)", async () => {
   const {MINI, miniDue, miniDone} = await import("../n2-game.js");
-  assert.deepEqual(MINI, {every: 10, points: 1.5});
+  assert.deepEqual(MINI, {every: 10, points: 2, clear: 7, bonus: 1000});
   assert.equal(miniDue({rounds: 9}), false); assert.equal(miniDue({rounds: 10}), true);
   assert.equal(miniDue({rounds: 14, miniAt: 0}), true, "skipped, it stays due");
   const played = miniDone({rounds: 14}); assert.equal(played.miniAt, 14); assert.equal(miniDue({...played, rounds: 23}), false); assert.equal(miniDue({...played, rounds: 24}), true);
   const js = src("../n2-mock.js"), html = src("../n2-mock.html");
   assert.ok(html.includes('class="qr-btn" id="game-mini" type="button" hidden>'), "the seal start: something scored");
-  assert.ok(js.includes("const mini = !late && miniDue(state);") && js.includes('$("game-again").className = late || mini ? "qr-lnk" : "qr-btn";'), "Next round becomes the link under it");
-  assert.ok(js.includes("if (miniRound) { state = miniDone(state); miniRound = false; }"));
+  assert.ok(js.includes("mini = !late && !reading && miniDue(state);") && js.includes('$("game-again").className = late || mini || reading ? "qr-lnk" : "qr-btn";'), "Next round becomes the link under it");
+  assert.ok(js.includes("if (miniRound) { const won = miniBonus(miniDone(state), {right: rights}); state = won.state; cleared = won.bonus; score += cleared; miniRound = false; }"));
   assert.ok(js.includes('beat = {name: "mini"}; miniRound = true;'));
-  assert.ok(js.includes('mini: ["鬼", "Mini-boss", "×1.5 points · counts toward the boss", "seal"]'));
+  assert.ok(js.includes('mini: ["鬼", "Mini-boss", "×2 points · 7 right clears it: +1,000", "seal"]'));
+});
+
+test("a cleared mini-boss pays its bonus into the total and the day; Today's reading is one passage a day at exam pace", async () => {
+  const {miniBonus, MINI, readingBlock, readingDue, readingDone, READING} = await import("../n2-game.js");
+  const now = Date.parse("2026-11-28T10:00:00Z"), won = miniBonus({total: 100, days: {}}, {right: 7, now});
+  assert.equal(won.bonus, MINI.bonus); assert.equal(won.state.total, 1100); assert.equal(Object.values(won.state.days)[0].points, 1000); assert.equal(won.state.miniCleared, 1);
+  assert.equal(miniBonus({total: 100}, {right: 6, now}).bonus, 0, "six right is not a clear");
+  // The reading block: one passage of a paper not sat, all its questions, 問題11–13, the exam's seconds.
+  const ids = Object.keys(read("../n2-sets/index.json")), sets = ids.map(id => read("../n2-sets/" + id + ".json")), keys = read("../n2-sets/keys.json").keys;
+  const block = readingBlock({sets, sat: new Set(["n2-set-2"]), keys});
+  assert.ok(block.length >= 2 && new Set(block.map(q => q.sentence)).size === 1, "one passage, all its questions");
+  for (const q of block) { const [set, i] = q.id.slice(3).split("#"), src = read("../n2-sets/" + set + ".json").questions[i];
+    assert.ok(set !== "n2-set-2" && !["n2-set-19", "n2-set-20"].includes(set)); assert.ok(READING.mondai.includes(src.mondai)); assert.equal(q.seconds, READING.seconds[src.mondai]); assert.match(q.label, /^Reading · 問題1[123]$/); }
+  const next = readingBlock({sets, sat: new Set(["n2-set-2"]), keys, seen: Object.fromEntries(block.map(q => [q.id, now]))});
+  assert.notEqual(next[0].id, block[0].id, "the next day, another passage");
+  assert.equal(readingDue({}, "2026-11-28"), true); assert.equal(readingDue(readingDone({}, "2026-11-28"), "2026-11-28"), false); assert.equal(readingDue(readingDone({}, "2026-11-28"), "2026-11-29"), true);
+  const js = src("../n2-mock.js"), html = src("../n2-mock.html");
+  assert.ok(html.includes('class="qr-btn" id="game-reading" type="button" hidden>') && js.includes('$("game-reading").onclick = async () => {'));
+  assert.ok(js.includes("const reading = !late && readingDue(state, localDay())"), "it leads the first round end of the day");
 });

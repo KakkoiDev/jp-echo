@@ -413,7 +413,7 @@ test("audit P0: a flag earns nothing, ends the combo, and the round's right coun
   assert.match(flag, /flagged\+\+; streak = 0; marks\[index\] = "fl"; head\(\);/);
   assert.doesNotMatch(flag, /recallRecord|rights\+\+|score \+=/);
   assert.match(mock, /misses: scoredN - rights, scored: scoredN\}/, "flags and practice are out of the accuracy");
-  assert.match(mock, /\$\("game-done-line"\)\.textContent = late \? rights \+ " of " \+ round\.length/);
+  assert.match(mock, /\$\("game-done-line"\)\.textContent = cleared \? [^\n]*: late \? rights \+ " of " \+ round\.length/);
   assert.match(mock, /choicesFor\(q, Math\.random, roundLevel\)/, "the round's level picks the choices");
 });
 
@@ -723,7 +723,7 @@ test("a round survives a closed app or a trip Home for 30 minutes; a recovery ro
   assert.match(mock, /const ROUND_KEY = "echo-n2-round", ROUND_KEEP_MS = 30 \* 60_000;/);
   assert.match(mock, /if \(!s \|\| Date\.now\(\) - s\.at > ROUND_KEEP_MS \|\| !\(s\.index >= 1 && s\.index < s\.items\.length\)\)/, "1 to 9 answers, under 30 minutes");
   assert.match(mock, /kept \? "Resume round" : "Play"/); assert.match(html, /id="game-play-pips" hidden>/, "board 12 · B: the pips sit inside Play");
-  assert.match(mock, /state = rememberRound\([\s\S]{0,300}?\n    clearRound\(\);/, "the round's end drops it");
+  assert.match(mock, /state = rememberRound\([\s\S]{0,900}?\n    clearRound\(\);/, "the round's end drops it");
   assert.equal(inSlump({history: [{score: -800, right: 6, n: 10}]}), false, "a score below zero alone is not a slump");
   assert.equal(inSlump({history: [{score: 300, right: 4, n: 10}]}), true);
   assert.equal(inSlump({history: [{score: 0, right: 0, n: 0}]}), false, "a round with nothing scored is not a slump");

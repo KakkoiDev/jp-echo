@@ -522,12 +522,46 @@ export function sprintRound({passages = [], pool = [], state = {}, recall = [], 
   return out;
 }
 
+// Today's reading (owner's audit, 28 Nov: reading 7 of 21 on the boss, "I ran out of time"): once a day, one mid or
+// long passage (問題11–13) of a paper not sat, all its questions, at the exam's own pace (READING.seconds a question,
+// scaled by the difficulty). The least recently read passage first; the review shows each deciding line.
+export const READING = Object.freeze({mondai: [11, 12, 13], seconds: {11: 150, 12: 180, 13: 180}});
+export function readingBlock({sets = [], sat = new Set(), keys = {}, seen = {}} = {}) {
+  const groups = [];
+  for (const set of sets) {
+    if (!set?.id || sat.has(set.id) || HELD_OUT.includes(set.id)) continue;
+    const byPassage = new Map();
+    for (const [i, q] of (set.questions || []).entries()) {
+      if (q.skill !== "Reading" || !READING.mondai.includes(q.mondai) || !q.context || !Array.isArray(q.choices) || q.choices.length !== 4 || !q.key) continue;
+      const source = set.id + "#" + i, key = keys[source], k = q.mondai + "|" + q.context;
+      if (!byPassage.has(k)) byPassage.set(k, []);
+      byPassage.get(k).push({id: "rd:" + source, kind: "sprint", label: "Reading · 問題" + q.mondai, target: null, dimension: null, prompt: q.prompt, sentence: plain(q.context), needle: "",
+        answer: q.choices[q.key - 1], wrong: q.choices.filter((_, j) => j !== q.key - 1), fixed: q.choices, seconds: READING.seconds[q.mondai],
+        solution: {word: q.choices[q.key - 1], meaning: "", ja: key ? key.lines.join("") : "", en: key?.en || "", why: q.why || "", source}});
+    }
+    groups.push(...byPassage.values());
+  }
+  // The passage read least recently (never read: first), in the papers' order.
+  const last = g => Math.max(...g.map(q => seen[q.id] || 0));
+  return groups.map((g, i) => [g, i]).sort((a, b) => last(a[0]) - last(b[0]) || a[1] - b[1])[0]?.[0] || [];
+}
+export const readingDue = (state = {}, day = "") => !!day && state.readDay !== day;
+export const readingDone = (state = {}, day = "") => ({...state, readDay: day});
+
 // The mini-boss (owner, 28 Nov: "I never want it … I need to be forced into doing it"): every MINI.every rounds the
 // Sprint is due. The round end leads with it; it can be skipped, but it stays due until played. It pays MINI.points
 // times the points, and its answers count toward the day and the 1,000 before the boss like any round's.
-export const MINI = Object.freeze({every: 10, points: 1.5});
+// More rewarding (owner, 28 Nov): ×2 points, and a clear (MINI.clear of ten right) pays MINI.bonus more.
+export const MINI = Object.freeze({every: 10, points: 2, clear: 7, bonus: 1000});
 export const miniDue = (state = {}) => (state.rounds || 0) - (state.miniAt || 0) >= MINI.every;
 export const miniDone = (state = {}) => ({...state, miniAt: state.rounds || 0});
+// A cleared mini-boss: its bonus joins the total and the day's points.
+export function miniBonus(state = {}, {right = 0, now = Date.now()} = {}) {
+  if (right < MINI.clear) return {state, bonus: 0};
+  const day = localDay(new Date(now)), days = {...(state.days || {})}, d = days[day] || {answered: 0, right: 0, points: 0, rounds: 0, best: 0};
+  days[day] = {...d, points: (d.points || 0) + MINI.bonus};
+  return {state: {...state, total: (state.total || 0) + MINI.bonus, days, miniCleared: (state.miniCleared || 0) + 1}, bonus: MINI.bonus};
+}
 
 // ---- The connective on its own ----
 // One word, large, nothing to read: とはいえ → "that said, even so". At N2 a

@@ -814,6 +814,16 @@ Before considering the change complete:
   length (`readingSeconds`, 3 to 6 s), and after the answer and in the review
   the reading is taken apart with its rule (`readingRule`: がく + かい → がっかい:
   く → っ before か). N2 reading cards: 909 → 1,103.
+- **Today's reading, and a richer mini-boss (owner's audit, 28 Nov, v334).**
+  Reading scored 7 of 21 on the boss ("I ran out of time"). Once a day the
+  first round end leads with "読 Today's reading" (`readingDue`, `readDay`):
+  one mid or long passage (問題11–13) of a paper not sat, all its questions, at
+  the exam's pace (`READING.seconds`: 150 / 180 / 180 s, scaled by the
+  difficulty), the least recently read passage first (`readingBlock`; 85
+  passages), the deciding lines in the review. It leads before the mini-boss.
+  The mini-boss now pays ×2 (`MINI.points`), and seven right of ten clears it
+  for +1,000 (`miniBonus`: into the total and the day, `miniCleared`), with the
+  jackpot's sound and "Mini-boss cleared" on the round end.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 
