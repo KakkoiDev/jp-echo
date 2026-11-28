@@ -34,10 +34,10 @@ export const GAME_SOURCE = "game";
 // as it is given, so closing the page mid-round loses nothing.
 // Blitz chess, not shogi (owner, 26 Nov): seconds, not minutes, per question.
 export const ROUND_SIZE = 10, REVIEW_SECONDS = 5, DAILY_GOAL = 1000, RECENT_MS = 4 * 3600_000;
-export const SECONDS = Object.freeze({kanji: 3, reading: 3, meaning: 3, meaningInSentence: 4, definition: 4, listen: 5, homophone: 5, grammar: 6, affix: 5, gap: 8, partgap: 6, link: 3, linkBuilt: 5, para: 8, pair: 6, order: 8, connective: 7, exam: {1: 4, 2: 5, 3: 5, 4: 7, 5: 6, 7: 8}});
+export const SECONDS = Object.freeze({kana: 3, kanji: 3, reading: 3, meaning: 3, meaningInSentence: 4, definition: 4, listen: 5, homophone: 5, grammar: 6, affix: 5, gap: 8, partgap: 6, link: 3, linkBuilt: 5, para: 8, pair: 6, order: 8, connective: 7, exam: {1: 4, 2: 5, 3: 5, 4: 7, 5: 6, 7: 8}});
 // The pause after an answer before the next question, in milliseconds.
 export const PAUSE = Object.freeze({right: 250, miss: 800});
-export const KIND_LABEL = Object.freeze({kanji: "Kanji", reading: "Reading", meaning: "Meaning", definition: "Which word", listen: "Listen", connective: "Connective · 問題9", homophone: "Which kanji", grammar: "Grammar", block: "Grammar piece", build: "Grammar parts", infer: "New grammar", exam: "Exam question", affix: "Word part", link: "Connective", gap: "Grammar · fill the gap", partgap: "Word part · fill the gap",
+export const KIND_LABEL = Object.freeze({kana: "Kana", kanji: "Kanji", reading: "Reading", meaning: "Meaning", definition: "Which word", listen: "Listen", connective: "Connective · 問題9", homophone: "Which kanji", grammar: "Grammar", block: "Grammar piece", build: "Grammar parts", infer: "New grammar", exam: "Exam question", affix: "Word part", link: "Connective", gap: "Grammar · fill the gap", partgap: "Word part · fill the gap",
   para: "Same meaning", pair: "Connective · fill the gap", order: "Sentence order · ★", sprint: "Reading sprint"});
 const EXAM_MONDAI = new Set([1, 2, 3, 4, 5, 7]), WRITTEN = new Set(["Vocabulary", "Grammar"]);
 const KANJI = /[一-鿿々]/g;
@@ -853,7 +853,7 @@ export const SKILL_WEIGHT = Object.freeze({min: .5, max: 2});
 export const SKILLS_OF_PAPER = Object.freeze(["vocabulary", "grammar", "reading", "listening"]);
 const SKILL_NAMES = {Vocabulary: 0, Grammar: 1, Reading: 2, Listening: 3};
 // What each kind of card trains. A connective is a reading tool: it says where the writer's point is.
-export const KIND_SKILL = Object.freeze({kanji: "vocabulary", reading: "vocabulary", meaning: "vocabulary", definition: "vocabulary", homophone: "vocabulary", affix: "vocabulary", partgap: "vocabulary",
+export const KIND_SKILL = Object.freeze({kana: "vocabulary", kanji: "vocabulary", reading: "vocabulary", meaning: "vocabulary", definition: "vocabulary", homophone: "vocabulary", affix: "vocabulary", partgap: "vocabulary",
   grammar: "grammar", gap: "grammar", block: "grammar", build: "grammar", infer: "grammar", order: "grammar",
   link: "reading", connective: "reading", para: "reading", sprint: "reading", pair: "reading", listen: "listening"});
 export function skillWeights({paper, attempt} = {}) {
@@ -937,7 +937,7 @@ export function kanjiOrderOf(pool = []) {
 }
 // Kinds whose card is a block of text (Same meaning: a sentence and four sentence-long choices).
 export const LONG_KINDS = new Set(["para"]);
-export function nextRound({pool, review = [], kanji = null, grammarCards = null, boss = [], recall = [], state = {}, difficulty = "normal", random = Math.random, now = Date.now(), exams = true, long = false, weights = null, kanjiOrder = "", glyphs = []}) {
+export function nextRound({pool, review = [], kanji = null, grammarCards = null, boss = [], recall = [], state = {}, difficulty = "normal", random = Math.random, now = Date.now(), exams = true, long = false, weights = null, kanjiOrder = "", glyphs = [], kana = []}) {
   // exams: false leaves a paper's own questions (the `e:` cards) out of the round.
   if (!exams) pool = pool.filter(q => q.kind !== "exam");
   // Long cards stay out of a round (owner, 28 Nov: "long text blocks in the fast rounds slow down and only invite
@@ -953,12 +953,12 @@ export function nextRound({pool, review = [], kanji = null, grammarCards = null,
   let picked;
   // After a hard round the recovery round comes first, at every rank: kanji-first picking waits a round.
   if (kanji?.order && !slump) {
-    const byId = new Map([...pool, ...glyphs].map(q => [q.id, q])), places = ROUND_SIZE - share;
+    const byId = new Map([...pool, ...glyphs, ...kana].map(q => [q.id, q])), places = ROUND_SIZE - share;
     const back = shuffle(comeback.map(id => byId.get(id)).filter(Boolean), random).slice(0, places).map(q => ({...q, comeback: true}));
     picked = [...back, ...kanjiPick({pool, examples: kanji.examples || [], order: kanji.order, state, size: places - back.length, skip: back, random, now, glyphs})];
     // Kanji with nothing left to ask: the places left are picked by card, so a round is always full.
     if (picked.length < places) { const words = new Set(picked.map(q => q.item)); picked.push(...pickRound({...memory, pool: pool.filter(q => !words.has(q.item)), size: places - picked.length, mix: flowMix(level)})); }
-  } else picked = pickRound({...memory, pool, also: glyphs, size: ROUND_SIZE - share, comeback, mix: slump ? WARM_UP.mix : flowMix(level), calm: slump, weights,
+  } else picked = pickRound({...memory, pool, also: [...glyphs, ...kana], size: ROUND_SIZE - share, comeback, mix: slump ? WARM_UP.mix : flowMix(level), calm: slump, weights,
     // The last boss's misses take the first places after the comebacks; a recovery round leaves them out.
     ...(slump ? {} : {first: boss, places: BOSS_PLACES})});
 
@@ -967,6 +967,13 @@ export function nextRound({pool, review = [], kanji = null, grammarCards = null,
     const byKanji = kanjiPick({pool, order: kanjiOrder, state, size: KANJI_PLACES, skip: picked, random, now, glyphs});
     if (byKanji.length) { const keep = picked.filter(q => q.comeback || q.boss), rest = picked.filter(q => !q.comeback && !q.boss);
       picked = [...keep, ...rest.slice(0, Math.max(0, rest.length - byKanji.length)), ...byKanji]; }
+  }
+  // Kana places (kanaPick): given only at rank N5, while some kana are not yet learned. They take the last places.
+  if (kana.length) {
+    const byKana = kanaPick({cards: kana, state, skip: picked, now});
+    if (byKana.length) { const keep = picked.filter(q => q.comeback || q.boss), rest = picked.filter(q => !q.comeback && !q.boss && q.kind !== "kana");
+      // Kana open the round after the comebacks: the easier step first.
+      picked = [...keep, ...byKana, ...rest.slice(0, Math.max(0, ROUND_SIZE - share - keep.length - byKana.length))]; }
   }
   if (grammarCards && !slump) {
     const slots = picked.filter(q => q.kind === "grammar" && !q.comeback && !q.boss);
@@ -1110,6 +1117,55 @@ export function kanjiCards(readings = {}, order = "", words = []) {
     return {id: "kj:" + k, kind: "kanji", item: "kj:" + k, prompt: k, answer, wrong, kanji: [k], target: null, seconds: SECONDS.kanji,
       solution: {word: k, reading, meaning: r.en.join(", "), why: carry.length ? "In " + carry.map(w => w.word + (w.reading ? "（" + w.reading + "）" : "")).join(" · ") : ""}};
   });
+}
+
+// ---- Kana ----
+// Hiragana, then katakana (owner, 28 Nov: "so that the user gets to learn too"): the base sounds row by row, then
+// ゛ and ゜, then the small-kana sounds (きゃ, ひょ). The kana large, its romaji (Hepburn) to pick; wrong choices are
+// look-alikes first (さ/ち, シ/ツ, ソ/ン), then other sounds, never one written the same in romaji (じ/ぢ).
+const KANA_ROWS = ["あいうえお", "かきくけこ", "さしすせそ", "たちつてと", "なにぬねの", "はひふへほ", "まみむめも", "やゆよ", "らりるれろ", "わをん",
+  "がぎぐげご", "ざじずぜぞ", "だぢづでど", "ばびぶべぼ", "ぱぴぷぺぽ"];
+const KANA_ROMAJI = Object.freeze({あ: "a", い: "i", う: "u", え: "e", お: "o", か: "ka", き: "ki", く: "ku", け: "ke", こ: "ko", さ: "sa", し: "shi", す: "su", せ: "se", そ: "so",
+  た: "ta", ち: "chi", つ: "tsu", て: "te", と: "to", な: "na", に: "ni", ぬ: "nu", ね: "ne", の: "no", は: "ha", ひ: "hi", ふ: "fu", へ: "he", ほ: "ho",
+  ま: "ma", み: "mi", む: "mu", め: "me", も: "mo", や: "ya", ゆ: "yu", よ: "yo", ら: "ra", り: "ri", る: "ru", れ: "re", ろ: "ro", わ: "wa", を: "wo", ん: "n",
+  が: "ga", ぎ: "gi", ぐ: "gu", げ: "ge", ご: "go", ざ: "za", じ: "ji", ず: "zu", ぜ: "ze", ぞ: "zo", だ: "da", ぢ: "ji", づ: "zu", で: "de", ど: "do",
+  ば: "ba", び: "bi", ぶ: "bu", べ: "be", ぼ: "bo", ぱ: "pa", ぴ: "pi", ぷ: "pu", ぺ: "pe", ぽ: "po"});
+// The small-kana sounds: an い-column kana and a small ゃ, ゅ or ょ.
+const YOON = ["き", "し", "ち", "に", "ひ", "み", "り", "ぎ", "じ", "び", "ぴ"];
+const yoonRomaji = (k, y) => { const base = KANA_ROMAJI[k], v = {ゃ: "a", ゅ: "u", ょ: "o"}[y]; return /^(shi|chi|ji)$/.test(base) ? base.slice(0, -1) + v : base.slice(0, -1) + "y" + v; };
+// Pairs that are told apart by a stroke: each is a wrong choice for the other.
+export const KANA_LOOKALIKE = Object.freeze(["あお", "いり", "さち", "きさ", "ぬめ", "ねれわ", "はほ", "るろ", "まも", "こに", "うら", "くへ", "しつ", "ソン", "シツ", "クケタ", "ウワフ", "ヌス", "チテ", "コユ", "アマ", "ノメ", "ナメ", "ラヲ", "セヤ", "ルレ"]);
+const toKatakana = text => text.replace(/[ぁ-ゖ]/g, c => String.fromCharCode(c.charCodeAt(0) + 0x60));
+export const KANA_WRONG = 8;
+// words: [{word, reading}] whose reading begins with the kana, quoted in its review.
+export function kanaCards(words = []) {
+  const hira = [...KANA_ROWS.flatMap(row => [...row].map(k => [k, KANA_ROMAJI[k]])), ...YOON.flatMap(k => ["ゃ", "ゅ", "ょ"].map(y => [k + y, yoonRomaji(k, y)]))];
+  const all = [...hira, ...hira.map(([k, r]) => [toKatakana(k), r])];
+  const romajiOf = new Map(all), look = new Map();
+  for (const group of KANA_LOOKALIKE) for (const k of group) look.set(k, [...(look.get(k) || []), ...[...group].filter(o => o !== k)]);
+  return all.map(([k, r], i) => {
+    const katakana = i >= hira.length, near = [...new Set((look.get(k) || []).map(o => romajiOf.get(o)).filter(x => x && x !== r))];
+    // Other sounds of the same script and size, nearest in the teaching order first.
+    const same = all.map((e, j) => [e, j]).filter(([[o], j]) => (j >= hira.length) === katakana && o.length === k.length && o !== k).sort((a, b) => Math.abs(a[1] - i) - Math.abs(b[1] - i)).map(([[, x]]) => x);
+    const wrong = [...new Set([...near, ...same.filter(x => x !== r)])].slice(0, KANA_WRONG);
+    const reading = katakana ? k : k, carry = words.filter(w => w.reading && (katakana ? toKatakana(w.reading) : w.reading).startsWith(k) && w.word !== w.reading).slice(0, 2);
+    return {id: "kn:" + k, kind: "kana", item: "kn:" + k, prompt: k, answer: r, wrong, near, target: null, seconds: SECONDS.kana, say: k, order: i, script: katakana ? "katakana" : "hiragana",
+      solution: {word: k, reading: "", meaning: r, why: carry.length ? "In " + carry.map(w => w.word + "（" + w.reading + "）").join(" · ") : ""}};
+  });
+}
+// A kana is learned after KANA_LEARNED right answers. While some are not, a round at rank N5 gives KANA_PLACES to
+// them: a kana seen but not learned again (after KANA_REST), then new ones in the teaching order.
+export const KANA_LEARNED = 2, KANA_PLACES = Object.freeze({learning: 6, last: 3}), KANA_REST = 10 * 60_000;
+const kanaRight = (state, id) => (state.tried?.[id] || 0) - (state.missed?.[id] || 0);
+export function kanaPick({cards = [], state = {}, skip = [], now = Date.now()}) {
+  const learning = cards.filter(q => kanaRight(state, q.id) < KANA_LEARNED);
+  if (!learning.length) return [];
+  const places = learning.length > cards.length / 2 ? KANA_PLACES.learning : KANA_PLACES.last, used = new Set(skip.map(q => q.id)), seen = state.seen || {};
+  const again = learning.filter(q => seen[q.id] && now - seen[q.id] >= KANA_REST && !used.has(q.id)).sort((a, b) => seen[a.id] - seen[b.id]);
+  const fresh = learning.filter(q => !seen[q.id] && !used.has(q.id));
+  const out = [...again.slice(0, Math.ceil(places / 2))];
+  out.push(...fresh.slice(0, places - out.length), ...again.slice(out.length));
+  return out.slice(0, places);
 }
 
 // ---- Grammar from its parts on the screen (board 13) ----

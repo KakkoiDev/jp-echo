@@ -9,7 +9,7 @@ import {recognitionFactory} from "./speech.js";
 import {speakOnce,speakAndWait,japaneseVoices,RadioPlayer,NoiseBed} from "./speech.js";
 import {RADIO_DEFAULTS,RADIO_PHASE_COPY,clockAt,radioPhase,radioPlan,radioSteps} from "./radio.js";
 import {readNights, nightComparison, comparisonLine, eveningRecall, EVENING_SOURCE, nightPlan, nightRecord, keepNight, NIGHT_KEY} from "./n2-night.js";
-import {kanjiCards, askableKanji, SPRINT, sprintCards, kanjiOrderOf, skillWeights, kindWeights, flagCard, endRest, bossCards, bossQueue, bossReview, partRows, cutUnderline, provedBy, PROVED_MS, heardGap, grammarBlockCard, grammarCoverage, kanjiCoverage, levelCoverage, isCovered, aheadLevel, applyBoss, verdictLine, rankOf, setRank, rankLevels, hasBoss, RANKS, inSlump, itemLevel, levelAfter, ITEM_LEVEL, gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, patternVoice, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
+import {kanaCards, kanjiCards, askableKanji, SPRINT, sprintCards, kanjiOrderOf, skillWeights, kindWeights, flagCard, endRest, bossCards, bossQueue, bossReview, partRows, cutUnderline, provedBy, PROVED_MS, heardGap, grammarBlockCard, grammarCoverage, kanjiCoverage, levelCoverage, isCovered, aheadLevel, applyBoss, verdictLine, rankOf, setRank, rankLevels, hasBoss, RANKS, inSlump, itemLevel, levelAfter, ITEM_LEVEL, gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, patternVoice, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
 import {createLevels} from "./jlpt-levels.js";
 import {createSets, levelRows, SET_LEVELS, setLevel, heldOut} from "./jlpt-sets.js";
 import {spokenWord,radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
@@ -1091,7 +1091,7 @@ async function openEvidence(item, why = "") {
 // miss, then the next round opens with those misses. It opens straight on a
 // question, and every answer is saved as it is given.
 const ALOUD = {reading: "Say the sentence out loud", meaning: "Say the word out loud", definition: "Say your pick out loud",
-  listen: "Say it back as you hear it", homophone: "Say the sentence out loud", grammar: "Say the sentence out loud", exam: "Read it out loud", connective: "Read it out loud"};
+  listen: "Say it back as you hear it", kana: "Say it out loud", homophone: "Say the sentence out loud", grammar: "Say the sentence out loud", exam: "Read it out loud", connective: "Read it out loud"};
 // The beat ribbons (board 4): glyph, title, sub-line and colour per beat.
 const BEATS = {hook: ["始", "Welcome back", "An easy start", "right"], first: ["始", "First round", "An easy start", "right"], breather: ["息", "Breather", "", "track"],
   peak: ["峰", "Peak round · bonuses ×2", "The hardest of the wave. Go fast.", "gold"], stretch: ["鬼", "Final stretch", "Bonuses ×2 until the boss opens", "seal"],
@@ -1185,7 +1185,7 @@ async function game() {
   const bossAll = bossPaper ? bossCards({set: bossPaper, pool: n2Pool, keys: bossKeys,
     missed: bossPaper.questions.map((q, i) => lastBoss.answers?.[i] !== q.key || lastBoss.guesses?.[i] ? i : -1).filter(i => i >= 0)}) : [];
   // kanjiFirst: the rank's kanji in order and, as examples, the cards of the other levels at hand.
-  let pool = n2Pool, lower = [], missing = [], kanjiFirst = null, rankKanji = "", bossIds = [], bossLevels = ["N2"], glyphs = [];
+  let pool = n2Pool, lower = [], missing = [], kanjiFirst = null, rankKanji = "", bossIds = [], bossLevels = ["N2"], glyphs = [], kana = [];
   // Kanji by meaning (kanjiCards): every kanji the levels bring, KANJIDIC's English, loaded with the game.
   const kanjiTable = (await import("./kanji-readings.js").catch(() => null))?.READINGS || {};
   async function loadRank() {
@@ -1209,6 +1209,8 @@ async function game() {
     // A card for each kanji of the levels, quoting words that carry it from the pools at hand, simplest level first.
     const quoted = [...lower, ...pool, ...n2Pool].filter(q => q.kind === "reading" || q.kind === "meaning").map(q => ({word: String(q.solution?.word || ""), reading: q.solution?.reading || ""})).filter(w => w.word);
     glyphs = kanjiCards(kanjiTable, Object.values((await gameLevels.ready())?.kanji || {}).join("") + n2KanjiOrder, [...new Map(quoted.map(w => [w.word, w])).values()]);
+    // Kana (kanaCards) for a player at N5: the rank that assumes nothing, so it is where reading kana is learned.
+    kana = level === "N5" ? kanaCards([...new Map(quoted.map(w => [w.word, w])).values()]) : [];
     // The rank's words nearly all met: the level above joins the review places as a preview.
     const ahead = aheadLevel(level);
     if (pools[0] && ahead && isCovered(levelCoverage(pool, readGame()))) {
@@ -1548,7 +1550,7 @@ async function game() {
     // phone has no Japanese voice, or the voice failed twice this session.
     const playable = hears() ? pool : pool.filter(q => q.kind !== "listen");
     const review = hears() ? lower : lower.filter(q => q.kind !== "listen");
-    const next = nextRound({pool: playable, review, glyphs, kanji: kanjiFirst && {...kanjiFirst, examples: hears() ? kanjiFirst.examples : kanjiFirst.examples.filter(q => q.kind !== "listen")}, recall: data.recall, state, difficulty: difficulty(), weights: pool === n2Pool ? mixWeights : null, kanjiOrder: pool === n2Pool ? n2KanjiOrder : "", grammarCards: pool === n2Pool && grammarCards.length ? grammarCards : null,
+    const next = nextRound({pool: playable, review, glyphs, kana, kanji: kanjiFirst && {...kanjiFirst, examples: hears() ? kanjiFirst.examples : kanjiFirst.examples.filter(q => q.kind !== "listen")}, recall: data.recall, state, difficulty: difficulty(), weights: pool === n2Pool ? mixWeights : null, kanjiOrder: pool === n2Pool ? n2KanjiOrder : "", grammarCards: pool === n2Pool && grammarCards.length ? grammarCards : null,
       boss: pool === n2Pool ? bossQueue({cards: bossAll, state, key: lastBoss?.id || ""}).filter(q => hears() || q.kind !== "listen") : []});
     round = next.round; roundLevel = next.level; warmUp = next.warmUp; beat = next.beat || null; rights = 0; flagged = 0; practiced = 0; bestCombo = 0;
     index = 0; score = 0; streak = 0; misses = []; marks = []; ups = []; roundFlags = [];

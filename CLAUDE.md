@@ -751,6 +751,17 @@ Before considering the change complete:
   is its kanji card; once met, its reading is proved in words. A missed one
   comes back (`glyphs` / `also`). Its review shows readings, meanings and
   up to three words that carry it, and is silent. No recall record.
+- **Kana are learned at N5 (owner, 28 Nov, v327: "so that the user gets to
+  learn too").** `kanaCards` (n2-game.js): kind `kana`, id `kn:<kana>`, 208
+  cards (hiragana then katakana: the base sounds by row, ゛ and ゜, the 33
+  small-kana sounds such as ひょ), the kana large and its Hepburn romaji to
+  pick; wrong choices are look-alikes first (`KANA_LOOKALIKE`: さ/ち, シ/ツ,
+  ソ/ン), then the nearest sounds in the teaching order, never one written the
+  same (じ/ぢ). Only a player at rank N5 gets them (`kana`, n2-mock.js):
+  `kanaPick` opens each round with up to six (three once half are learned),
+  a kana seen again after `KANA_REST` until `KANA_LEARNED` right answers,
+  then new ones in order. Its review says the kana and quotes words that begin
+  with it. A missed one comes back.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
-import {kanjiCards, readFirst, payoutCap, sameSense, answerSpeech, runClock, RUN_CLOCK, DIFFICULTY, difficultyOf, pace, WAVE, HOOK, STRETCH, bossProgress, takeBoss, resting, runTable, BOSS_EVERY, EXAM_POINT, atBedtime, BEDTIME, FLOW, BONUS, flowStep, flowMix, flowSeconds, levelOf, bonusPoints, SECONDS, PAUSE, REVIEW_SECONDS, inSlump, nextRound, WARM_UP, gamePool, choicesFor, pickRound, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, nearMisses, gloss, today, lastDays, ranking, bossSet,
+import {kanaCards, kanaPick, KANA_LEARNED, KANA_PLACES, kanjiCards, readFirst, payoutCap, sameSense, answerSpeech, runClock, RUN_CLOCK, DIFFICULTY, difficultyOf, pace, WAVE, HOOK, STRETCH, bossProgress, takeBoss, resting, runTable, BOSS_EVERY, EXAM_POINT, atBedtime, BEDTIME, FLOW, BONUS, flowStep, flowMix, flowSeconds, levelOf, bonusPoints, SECONDS, PAUSE, REVIEW_SECONDS, inSlump, nextRound, WARM_UP, gamePool, choicesFor, pickRound, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, nearMisses, gloss, today, lastDays, ranking, bossSet,
   ROUND_SIZE, DAILY_GOAL, RANKS, DEFAULT_RANK, REVIEW_SHARE, rankOf, setRank, rankLevels, hasBoss, levelOfCard,
   itemRecord, itemLevel, ITEM_LEVEL, levelCoverage, KNOWN_LEVEL, COVERED, isCovered, aheadLevel, EXAM_PASS, RANK_RULES, bossVerdict, applyBoss, verdictLine,
   heardGap, piecesNeedle, KANJI_KNOWN, KANJI_MIX, newWord, kanjiAfter, kanjiStates, kanjiCoverage, kanjiPick} from "../n2-game.js";
@@ -869,7 +869,7 @@ test("the game screen settles bosses on Home, shows coverage where there is no b
   assert.match(js, /applyBoss\(st, \{key: run\.at, rank: run\.rank, total: exam\.total, sectionsOk: exam\.sections\.every\(x => x\.ok\), levels: bossLevels\}\)/);
   assert.match(js, /const byKanji = !boss && !missing\.includes\(rankOf\(st\)\) && rankKanji \? kanjiCoverage\(rankKanji, st\) : null;/, "with no boss to open, Home counts kanji, not words");
   assert.match(js, /kanjiFirst = pools\[0\] && level !== "N2" && rankKanji \? \{order: rankKanji, examples: \[\.\.\.lower, \.\.\.n2Pool\.filter\(q => q\.kanji\)\]\} : null;/, "N2 is picked as it always was");
-  assert.match(js, /nextRound\(\{pool: playable, review, glyphs, kanji: kanjiFirst && /);
+  assert.match(js, /nextRound\(\{pool: playable, review, glyphs, kana, kanji: kanjiFirst && /);
   assert.match(js, /if \(pools\[0\] && ahead && isCovered\(levelCoverage\(pool, readGame\(\)\)\)\)/);
   assert.match(js, /const lvFrom = q\.practice && !q\.record \? 0 : itemLevel/);
 });
@@ -1261,3 +1261,26 @@ test("a kanji is met first as itself: the kanji, its meaning among other kanji's
   assert.ok(src("../n2-mock.js").includes('const voiced = q.kind === "kanji" ? "" :'));
 });
 const n2PoolForKanji = () => gamePool({inventory});
+
+test("kana are learned at N5: each kana large, its romaji among look-alikes, in the teaching order (owner, 28 Nov)", () => {
+  const cards = kanaCards([{word: "朝", reading: "あさ"}]), card = k => cards.find(q => q.prompt === k);
+  assert.equal(cards.length, 208, "71 base, ゛ and ゜ sounds and 33 small-kana sounds, in hiragana and katakana");
+  assert.deepEqual([card("ひょ").answer, card("ジョ").answer, card("ぢ").answer, card("を").answer, card("シ").answer], ["hyo", "jo", "ji", "wo", "shi"]);
+  assert.ok(card("さ").wrong.includes("chi") && card("シ").wrong.includes("tsu") && card("ソ").wrong.includes("n"), "look-alikes stand against each other");
+  assert.ok(card("ひょ").wrong.slice(0, 3).every(w => /y[aou]$/.test(w)), "a small-kana sound against small-kana sounds");
+  for (const q of cards) { assert.ok(q.wrong.length >= 3 && !q.wrong.includes(q.answer), q.prompt); assert.equal(q.say, q.prompt, "its review says it"); }
+  assert.ok(!card("ぢ").wrong.includes("ji"), "never a wrong choice written the same (じ/ぢ)");
+  assert.equal(card("あ").solution.why, "In 朝（あさ）");
+  // The first round of a new player: the first kana, in order.
+  assert.deepEqual(nextRound({pool: [], kana: cards, state: {}, now: 1e12}).round.map(q => q.prompt), ["あ", "い", "う", "え", "お", "か"].slice(0, KANA_PLACES.learning));
+  // Seen once and right: seen again after a short rest, until learned; then never again.
+  let st = {}; for (const q of cards.slice(0, 6)) st = rememberAnswer(st, {q, outcome: "right", now: 1e12});
+  const later = kanaPick({cards, state: st, now: 1e12 + 11 * 60_000});
+  assert.ok(later.some(q => q.prompt === "あ") && later.some(q => q.prompt === "き"), "again, then new");
+  for (let n = 0; n < KANA_LEARNED; n++) for (const q of cards) st = rememberAnswer(st, {q, outcome: "right", now: 1e12});
+  assert.deepEqual(kanaPick({cards, state: st, now: 2e12}), [], "all learned: no kana places");
+  // A missed kana comes back next round, and only N5 gets kana places.
+  const missed = rememberAnswer({}, {q: card("ぬ"), outcome: "wrong", now: 1e12});
+  assert.equal(nextRound({pool: [], kana: cards, state: missed, now: 1e12 + 60_000}).round[0].id, "kn:ぬ");
+  assert.ok(src("../n2-mock.js").includes('kana = level === "N5" ? kanaCards('));
+});
