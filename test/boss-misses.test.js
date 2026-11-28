@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
-import {gamePool, bossCards, bossQueue, bossReview, BOSS_REVIEW, resting, endRest, REST_ENDS, nextRound, rememberAnswer, BOSS_PLACES, BOSS_WORDS, ROUND_SIZE, KIND_LABEL as KIND_LABEL_OF} from "../n2-game.js";
+import {stepKey, gamePool, bossCards, bossQueue, bossReview, BOSS_REVIEW, resting, endRest, REST_ENDS, nextRound, rememberAnswer, BOSS_PLACES, BOSS_WORDS, ROUND_SIZE, KIND_LABEL as KIND_LABEL_OF} from "../n2-game.js";
 import {examplesFromDecks} from "../day-radio.js";
 import {mergeGame} from "../sync.js";
 import {checkKey, LIMITS} from "../tools/n2-build-keys.mjs";
@@ -424,7 +424,9 @@ test("the mix follows the last boss: a section missed more takes more turns, wit
   assert.equal(k.listen, .5); assert.equal(k.grammar, 1.14); assert.equal(k.gap, 1.14); assert.equal(k.link, 2); assert.equal(k.meaning, .57); assert.equal(k.partgap, .57);
   for (const kind of new Set(pool.map(q => q.kind))) if (kind !== "exam") assert.ok(KIND_SKILL[kind], kind + " belongs to a section");
   // Over many rounds a weak listener hears more, a strong one less; with no weights the round is picked as before.
-  const count = weights => { let n = 0; for (let s = 1; s <= 40; s++) n += pickRound({pool, random: seeded(s), weights}).filter(q => q.kind === "listen").length; return n; };
+  // Listen cards are the ladder's third rung: here every word stands on it, so the weights alone decide.
+  const atListen = Object.fromEntries(pool.filter(q => q.kind === "listen").map(q => [stepKey(q), 2]));
+  const count = weights => { let n = 0; for (let s = 1; s <= 40; s++) n += pickRound({pool, random: seeded(s), weights, step: atListen}).filter(q => q.kind === "listen").length; return n; };
   const even = count(null);
   assert.ok(count({listen: 2}) > even && count({listen: .5}) < even, [count({listen: .5}), even, count({listen: 2})].join(" "));
   assert.deepEqual(pickRound({pool, random: seeded(4)}).map(q => q.id), pickRound({pool, random: seeded(4), weights: null}).map(q => q.id));

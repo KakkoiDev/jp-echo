@@ -924,7 +924,7 @@ test("a round at rank N3 is N3 cards with a share of N4 and N5 review, one card 
     assert.ok(old.every(q => ["N5", "N4"].includes(q.level)) && round.filter(q => !q.review).every(q => q.level === "N3"));
     assert.equal(new Set(round.map(q => q.item)).size, ROUND_SIZE, "no word twice in a round");
     assert.ok(round.every(q => !q.practice), "every card of the round is scored");
-    for (let i = 1; i < round.length; i++) assert.notEqual(round[i].kind, round[i - 1].kind, "no two of a kind in a row");
+    // A new player's words all start at the ladder's first rung (meaning), so a first round may repeat a kind (28 Nov).
   }
   // Review cards rotate: the ones just seen give way to others.
   const first = nextRound({pool, review, state: {}, random: seeded(9), now: 1e12}).round.filter(q => q.review);
@@ -1229,7 +1229,8 @@ test("the algorithm helps learning: reading first, the rest is the word's, and n
   const unread = readFirst(pool, {});
   assert.ok(cards.filter(q => q.kind !== "reading").every(unread) && !unread(cards.find(q => q.kind === "reading")));
   assert.ok(!readFirst(pool, {["r:" + word]: 1})(cards.find(q => q.kind === "meaning")), "once read, the other cards may come");
-  for (let n = 1; n <= 8; n++) assert.ok(!pickRound({pool, random: seeded(n), now: 1e12}).some(q => q.item === item && q.kind !== "reading"));
+  // Since the ladder (28 Nov) a new word is met in its sentence first: never its reading, listen or which-word card.
+  for (let n = 1; n <= 8; n++) assert.ok(!pickRound({pool, random: seeded(n), now: 1e12}).some(q => q.item === item && q.kind !== "meaning"));
   // The rest is the word's: a word shown an hour ago, by any card, waits, unless it is a comeback.
   const shown = {["r:" + word]: 1e12 - 3600_000};
   for (let n = 1; n <= 8; n++) assert.ok(!pickRound({pool, seen: shown, random: seeded(n), now: 1e12}).some(q => q.item === item));
@@ -1328,4 +1329,31 @@ test("reading cards are fair: the exam's traps only, time by length, the rule af
   assert.equal(readingRule("学会", "がっかい", "がく|かい").literal, "がく + かい → がっかい: く → っ before か");
   assert.equal(r("r:学会").solution.why, "がく + かい → がっかい: く → っ before か", "the review says it too");
   assert.ok(src("../n2-mock.js").includes('if (q.kind === "reading" && q.rule && !q.pieces)'), "after the answer, in the line's slot");
+});
+
+test("each word and grammar point climbs its own ladder: up a rung when right, back one when not (owner, 28 Nov)", async () => {
+  const {LADDERS, ladderGate, stepAfter, stepKey} = await import("../n2-game.js");
+  assert.deepEqual(LADDERS, {word: ["meaning", "reading", "listen", "definition", "homophone"], grammar: ["grammar", "gap"], affix: ["affix", "partgap"]});
+  const pool = gamePool({inventory, examples, parts: n2Parts}), cards = pool.filter(q => stepKey(q) === stepKey(pool.find(c => c.id === "r:就任")));
+  const kinds = new Set(cards.map(q => q.kind)), at = step => cards.filter(ladderGate(pool, step)).map(q => q.kind);
+  const key = stepKey(cards[0]);
+  assert.deepEqual(at({}), ["meaning"], "met in its sentence first");
+  assert.deepEqual(at({[key]: 1}), ["reading"]); assert.deepEqual(at({[key]: 2}), kinds.has("listen") ? ["listen"] : ["definition"]);
+  assert.deepEqual(at({[key]: 9}), [[...LADDERS.word].reverse().find(k => kinds.has(k))], "past the top: its last rung");
+  // A missing rung is skipped: the next kind the word has.
+  const meaning = cards.find(q => q.kind === "meaning"), reading = cards.find(q => q.kind === "reading");
+  assert.equal(stepAfter({}, meaning, true)[key], 1); assert.equal(stepAfter({step: {[key]: 3}}, reading, false)[key], 0, "a miss on the reading goes back to the sentence");
+  // Answers move it; the step travels with the game state and merges like item levels.
+  let st = rememberAnswer({}, {q: meaning, outcome: "right", now: 1}); assert.equal(st.step[key], 1);
+  st = rememberAnswer(st, {q: reading, outcome: "wrong", now: 2}); assert.equal(st.step[key], 0);
+  const {mergeGame} = await import("../sync.js");
+  assert.equal(mergeGame({step: {[key]: 1}, updatedAt: "2026-11-28T01:00:00Z"}, {step: {[key]: 3}, updatedAt: "2026-11-28T02:00:00Z"}).step[key], 3);
+  // Answered before the ladder: one rung past the highest kind it was answered right on.
+  assert.deepEqual(cards.filter(ladderGate(pool, {}, {history: {tried: {[reading.id]: 2}, missed: {}, wins: {}}})).map(q => q.kind), kinds.has("listen") ? ["listen"] : ["definition"]);
+  // A recovery round asks an item at the rung it last won.
+  assert.deepEqual(cards.filter(ladderGate(pool, {[key]: 2}, {calm: true})).map(q => q.kind), ["reading"]);
+  // Grammar: its sentence, then the gap.
+  const g = pool.find(q => q.kind === "grammar"), gk = stepKey(g), gp = pool.filter(q => stepKey(q) === gk);
+  assert.deepEqual(gp.filter(ladderGate(pool, {})).map(q => q.kind), ["grammar"]);
+  if (gp.some(q => q.kind === "gap")) assert.deepEqual(gp.filter(ladderGate(pool, {[gk]: 1})).map(q => q.kind), ["gap"]);
 });

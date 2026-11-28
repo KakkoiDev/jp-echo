@@ -677,14 +677,51 @@ function wordSeen(pool, seen) {
   for (const q of pool) { const t = seen[q.id]; if (!t) continue; const w = cardItem(q); if (t > (last.get(w) || 0)) last.set(w, t); }
   return last;
 }
-// The reading-first rule: a meaning, definition or listen card whose word has a reading card never answered.
+// The ladder (owner, 28 Nov: "progress back and forth on what kind of question we ask for that particular word"):
+// each word or grammar point climbs its own steps, one kind of question at a time. A word is met in its sentence
+// (meaning), then read (reading), heard (listen), told from look-alikes (which word, which kanji). A grammar point is
+// met in its sentence, then put in a gap; a word part likewise. A right answer moves the item up a step, a miss back
+// one (`stepAfter`); the picker asks only an item's current step (the first kind it has at or after that step).
+export const LADDERS = Object.freeze({
+  word: ["meaning", "reading", "listen", "definition", "homophone"],
+  grammar: ["grammar", "gap"],
+  affix: ["affix", "partgap"]});
+const LADDER_OF = new Map(Object.values(LADDERS).flatMap(l => l.map(k => [k, l])));
+export const ladderOf = kind => LADDER_OF.get(kind) || null;
+export const stepKey = q => cardItem(q);
+// The step an answer leaves: up from the card's own rung when right, down one when not.
+export function stepAfter(state = {}, q, right) {
+  const ladder = ladderOf(q.kind); if (!ladder) return state.step || {};
+  const at = ladder.indexOf(q.kind), key = stepKey(q);
+  return {...(state.step || {}), [key]: right ? at + 1 : Math.max(0, at - 1)};
+}
+// The ladder's gate over a pool: true for a card whose kind is its item's current rung.
+// calm: a recovery round asks each item at the rung it last won (one below its step): things the player knows.
+// history: {tried, missed, wins} of the game state. An item with no step yet (answered before the ladder, 28 Nov)
+// starts one rung past the highest kind it was ever answered right on, so what the player knows is not asked again.
+export function ladderGate(pool, step = {}, {calm = false, history = null} = {}) {
+  const kinds = new Map(), known = new Map();
+  for (const q of pool) if (ladderOf(q.kind)) {
+    const k = stepKey(q); if (!kinds.has(k)) kinds.set(k, new Set()); kinds.get(k).add(q.kind);
+    const right = history && ((history.wins?.[q.id] || 0) > 0 || (history.tried?.[q.id] || 0) > (history.missed?.[q.id] || 0));
+    if (right) known.set(k, Math.max(known.get(k) || 0, ladderOf(q.kind).indexOf(q.kind) + 1));
+  }
+  step = {...Object.fromEntries(known), ...step};
+  return q => {
+    const ladder = ladderOf(q.kind); if (!ladder) return true;
+    const have = kinds.get(stepKey(q)) || new Set(), at = Math.min(Math.max(0, (step[stepKey(q)] || 0) - (calm ? 1 : 0)), ladder.length - 1);
+    const rung = ladder.slice(at).find(k => have.has(k)) || [...ladder.slice(0, at)].reverse().find(k => have.has(k));
+    return q.kind === rung;
+  };
+}
+// The reading-first rule (v325, kept for kinds outside the ladders): a card whose word has a reading never answered.
 const ASKED_AFTER_READING = new Set(["meaning", "definition", "listen"]);
 export function readFirst(pool, seen = {}) {
   const reading = new Map();
   for (const q of pool) if (q.kind === "reading") reading.set(cardItem(q), q.id);
   return q => ASKED_AFTER_READING.has(q.kind) && reading.has(cardItem(q)) && !seen[reading.get(cardItem(q))];
 }
-export function pickRound({pool, also = [], recall = [], seen = {}, wins = {}, lv = {}, size = ROUND_SIZE, random = Math.random, mix = {weak: 4, fresh: 4, known: 2}, comeback = [], now = Date.now(), calm = false, first = [], places = 0, weights = null}) {
+export function pickRound({pool, also = [], recall = [], seen = {}, wins = {}, lv = {}, step = {}, tried = {}, missed = {}, size = ROUND_SIZE, random = Math.random, mix = {weak: 4, fresh: 4, known: 2}, comeback = [], now = Date.now(), calm = false, first = [], places = 0, weights = null}) {
 
   const last = new Map();
   for (const r of recall) last.set(r.dimension + keyOf(r.target), r.last);
@@ -700,12 +737,12 @@ export function pickRound({pool, also = [], recall = [], seen = {}, wins = {}, l
   // definition, listen and reading cards in turn, each resting on its own clock).
   const lastOf = wordSeen(pool, seen);
   const resting = q => now - Math.max(seen[q.id] || 0, lastOf.get(cardItem(q)) || 0) < restFor(lv[q.id]);
-  // A word with a reading card is read before it is asked any other way: its kanji are what is learned.
-  const unread = readFirst(pool, seen);
+  // Each item is asked at its own rung of its ladder (ladderGate), never another kind of it.
+  const onRung = ladderGate(pool, step, {calm, history: {tried, missed, wins}});
   // A recovery round takes won cards after a short rest only (owner, 28 Nov: 結果, それなら, 一旦 came back in nearly
   // every recovery round, a kind with few won cards taking its turn each time); a mastered card (極) keeps its days.
   const calmResting = q => now - Math.max(seen[q.id] || 0, lastOf.get(cardItem(q)) || 0) < (itemLevelOf(lv[q.id]) >= ITEM_LEVEL.max ? restFor(lv[q.id]) : CALM_REST);
-  for (const q of shuffle(pool, random)) { const s = state(q); if (unread(q)) continue; (calm && s === "known" ? (calmResting(q) ? recent : groups.known) : resting(q) ? recent : groups[s]).push(q); }
+  for (const q of shuffle(pool, random)) { const s = state(q); if (!onRung(q)) continue; (calm && s === "known" ? (calmResting(q) ? recent : groups.known) : resting(q) ? recent : groups[s]).push(q); }
   // Least recently seen first, then the kinds taken in turn, so grammar,
   // readings and exam questions are not drowned by the many word questions.
   for (const [name, g] of Object.entries(groups)) groups[name] = byKindInTurn(g.sort((a, b) => (seen[a.id] || 0) - (seen[b.id] || 0)), random, weights);
@@ -722,8 +759,8 @@ export function pickRound({pool, also = [], recall = [], seen = {}, wins = {}, l
   // Cards actually seen, least recently first; then cards never shown whose word rests (they are new, not familiar).
   // A mastered card (極) inside its three days comes last of all: only when nothing else is left.
   const mastered = q => itemLevelOf(lv[q.id]) >= ITEM_LEVEL.max && now - (seen[q.id] || 0) < restFor(lv[q.id]);
-  const seenFirst = [...recent.filter(q => seen[q.id] && !mastered(q)).sort((a, b) => seen[a.id] - seen[b.id]), ...recent.filter(q => !seen[q.id]), ...recent.filter(mastered)];
-  take(calm ? [...groups.known, ...seenFirst, ...groups.weak, ...groups.fresh] : [...groups.fresh, ...groups.weak, ...groups.known, ...seenFirst], size - out.length);
+  const seenFirst = [...recent.filter(q => seen[q.id] && !mastered(q)).sort((a, b) => seen[a.id] - seen[b.id]), ...recent.filter(q => !seen[q.id] && !mastered(q))], restingMastered = recent.filter(mastered);
+  take(calm ? [...groups.known, ...seenFirst, ...groups.weak, ...groups.fresh, ...restingMastered] : [...groups.fresh, ...groups.weak, ...groups.known, ...seenFirst, ...restingMastered], size - out.length);
   const rest = interleave(shuffle(out.slice(backCount, size), random));
   return [...out.slice(0, backCount).map(q => ({...q, comeback: true})), ...rest].slice(0, Math.max(size, backCount));
 }
@@ -842,7 +879,9 @@ export function rememberAnswer(state = {}, {q, outcome, points = 0, fast = false
   const total = (state.total || 0) + points, day = localDay(new Date(now));
   const days = {...(state.days || {})}, d = days[day] || {answered: 0, right: 0, points: 0, rounds: 0, best: 0};
   days[day] = {...d, answered: d.answered + 1, right: d.right + (outcome === "right" ? 1 : 0), points: d.points + points};
-  return {...state, seen, tried, missed, kj, ...(gb ? {gb} : {}), wins, lv, lvAt, ...(level === undefined ? {} : {level}), ...(q.practice ? {practiced: (state.practiced || 0) + 1} : {}), runStart, comeback: comeback.slice(-ROUND_SIZE), ...(bossDone ? {bossDone} : {}), total, answered: (state.answered || 0) + 1, days};
+  // The ladder: up a rung when right, down one when not (practice cards move it too: they are answers).
+  const step = stepAfter(state, q, outcome === "right");
+  return {...state, seen, tried, missed, kj, ...(gb ? {gb} : {}), wins, lv, lvAt, ...(Object.keys(step).length ? {step} : {}), ...(level === undefined ? {} : {level}), ...(q.practice ? {practiced: (state.practiced || 0) + 1} : {}), runStart, comeback: comeback.slice(-ROUND_SIZE), ...(bossDone ? {bossDone} : {}), total, answered: (state.answered || 0) + 1, days};
 }
 export function rememberRound(state = {}, {score, questions = [], misses, scored, now = Date.now()}) {
   const seen = {...(state.seen || {})};
@@ -1047,7 +1086,7 @@ export function nextRound({pool, review = [], kanji = null, grammarCards = null,
     pool = live(pool); review = live(review); boss = live(boss); grammarCards = live(grammarCards); if (kanji?.examples) kanji = {...kanji, examples: live(kanji.examples)}; }
   const slump = inSlump(state), beat = pace(state, now);
   const level = Math.min(1, Math.max(0, levelOf(state) + beat.offset));
-  const share = review.length && pool.length ? REVIEW_SHARE : 0, memory = {recall, seen: state.seen || {}, wins: state.wins || {}, lv: state.lv || {}, random, now};
+  const share = review.length && pool.length ? REVIEW_SHARE : 0, memory = {recall, seen: state.seen || {}, wins: state.wins || {}, lv: state.lv || {}, step: state.step || {}, tried: state.tried || {}, missed: state.missed || {}, random, now};
   const comeback = slump ? (state.comeback || []).slice(-WARM_UP.comeback) : state.comeback || [];
   let picked;
   // After a hard round the recovery round comes first, at every rank: kanji-first picking waits a round.

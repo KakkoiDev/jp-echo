@@ -120,6 +120,8 @@ export function mergeGame(a, b) {
   const runStart = sameRun && starts.length ? starts[0] : newer.runStart;
   // Item levels: the newer save's word on an item it knows, the other's on the rest.
   const lv = {...(older.lv || {}), ...(newer.lv || {})}, lvAt = maxMap(a.lvAt, b.lvAt);
+  // Ladder steps (n2-game.js LADDERS): like item levels, the newer save's word on an item it knows.
+  const step = {...(older.step || {}), ...(newer.step || {})};
   // The rank (n2-game.js): the one set last wins, whichever save is newer, so a
   // save made on a device that never chose a rank cannot take it away.
   const ranked = [a, b].filter(g => g.rank).sort((p, q) => time(q.rankAt) - time(p.rankAt))[0];
@@ -140,7 +142,7 @@ export function mergeGame(a, b) {
   // The boss's misses already answered right: both devices' while it is the same boss, else the newer boss's.
   const flags = maxMap(a.flags, b.flags);
   const bossDone = a.bossDone?.key && a.bossDone.key === b.bossDone?.key ? {key: a.bossDone.key, ids: {...a.bossDone.ids, ...b.bossDone.ids}} : newer.bossDone || older.bossDone;
-  return {...newer, ...(Object.keys(kj).length ? {kj} : {}), ...(Object.keys(gb).length ? {gb} : {}), ...(Object.keys(tried).length ? {tried, missed} : {}), ...(bossLog.length ? {bossLog} : {}), ...(bossDone ? {bossDone} : {}), ...(Object.keys(flags).length ? {flags} : {}), ...(ranked ? {rank: ranked.rank, rankAt: ranked.rankAt} : {}), ...(runStart === undefined ? {} : {runStart}), ...(Object.keys(lv).length ? {lv, lvAt} : {}), seen: maxMap(a.seen, b.seen), wins: maxMap(a.wins, b.wins), days, history,
+  return {...newer, ...(Object.keys(kj).length ? {kj} : {}), ...(Object.keys(gb).length ? {gb} : {}), ...(Object.keys(tried).length ? {tried, missed} : {}), ...(bossLog.length ? {bossLog} : {}), ...(bossDone ? {bossDone} : {}), ...(Object.keys(flags).length ? {flags} : {}), ...(ranked ? {rank: ranked.rank, rankAt: ranked.rankAt} : {}), ...(runStart === undefined ? {} : {runStart}), ...(Object.keys(lv).length ? {lv, lvAt} : {}), ...(Object.keys(step).length ? {step} : {}), seen: maxMap(a.seen, b.seen), wins: maxMap(a.wins, b.wins), days, history,
     runs: unionBy(a.runs, b.runs, r => r.at).slice(-200), best: Math.max(a.best || 0, b.best || 0),
     rounds: Math.max(a.rounds || 0, b.rounds || 0, history.length), answered: Math.max(a.answered || 0, b.answered || 0), total: Math.max(a.total || 0, b.total || 0)};
 }

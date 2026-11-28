@@ -830,6 +830,15 @@ Before considering the change complete:
   strips, Face the boss, the final-stretch ribbon, the boss exam's intro) is
   城; the mini-boss button and ribbon are 砦. Earlier lines here that say 鬼
   mean 城.
+- **Each item climbs a ladder (owner, 28 Nov, v336).** `LADDERS` (n2-game.js):
+  a word is met in its sentence (meaning), then read (reading), heard
+  (listen), told from look-alikes (which word, which kanji); a grammar point
+  is met in its sentence, then put in a gap; a word part likewise. `step` in
+  the game state (synced like `lv`) is each item's rung: right moves it up,
+  a miss back one (`stepAfter`), and the picker asks only an item's current
+  rung, skipping kinds it lacks (`ladderGate`). An item answered before the
+  ladder starts one rung past the highest kind answered right. A recovery
+  round asks at the rung last won. This replaces v325's reading-first rule.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 
