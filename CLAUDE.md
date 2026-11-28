@@ -861,6 +861,20 @@ Before considering the change complete:
   (`miniDone`) and past Today's reading until tomorrow: this replaces v332's
   "stays due until played". A finished mini-boss counts `MINI.credit` (10)
   more answers toward the boss (`miniPlayed`): 20 in all.
+- **The picker after its audit (29 Nov, v340).** A replay of the owner's state
+  over 300 rounds and an independent review found and fixed: kanji places now
+  take a word at its ladder rung and rest by level (`kanjiPick` uses
+  `ladderGate`, `restFor`, `STEP_REST`); a round is never longer than ten
+  (kanji and kana places fit the room left; kana not in recovery rounds); the
+  mix shares the places left; a Sprint card's miss goes to `sprintBack`, not
+  the round's comebacks; a mini-boss or Today's reading never makes the next
+  round a recovery round (`special` in the history); a boss miss coming back
+  keeps its boss key; a right answer never lowers a step (`stepAfter`); grammar
+  pieces take at most `GRAMMAR_BLOCK_PLACES` (1) slot so patterns climb their
+  ladder; the grammar fallback rests by level; flags apply to the Sprint,
+  kanji cards and kana. Kanji cards only for the rank's level and above;
+  connectives and word parts take half a turn (`KIND_SHARE`). The review's
+  breakdown says the reading rule once (no line at the bottom).
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

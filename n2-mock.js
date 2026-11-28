@@ -1215,7 +1215,9 @@ async function game() {
     kanjiFirst = pools[0] && level !== "N2" && rankKanji ? {order: rankKanji, examples: [...lower, ...n2Pool.filter(q => q.kanji)]} : null;
     // A card for each kanji of the levels, quoting words that carry it from the pools at hand, simplest level first.
     const quoted = [...lower, ...pool, ...n2Pool].filter(q => q.kind === "reading" || q.kind === "meaning").map(q => ({word: String(q.solution?.word || ""), reading: q.solution?.reading || ""})).filter(w => w.word);
-    glyphs = kanjiCards(kanjiTable, Object.values((await gameLevels.ready())?.kanji || {}).join("") + n2KanjiOrder, [...new Map(quoted.map(w => [w.word, w])).values()]);
+    // Kanji cards for the kanji the rank brings and the levels above it (audit, 29 Nov): an N2 player is not asked 日 or 人.
+    const levelKanji = (await gameLevels.ready())?.kanji || {}, from = ["N5", "N4", "N3", "N2", "N1"].indexOf(level);
+    glyphs = kanjiCards(kanjiTable, ["N5", "N4", "N3", "N2", "N1"].slice(Math.max(0, from)).map(l => levelKanji[l] || "").join(""), [...new Map(quoted.map(w => [w.word, w])).values()]);
     // Kana (kanaCards) for a player at N5: the rank that assumes nothing, so it is where reading kana is learned.
     kana = level === "N5" ? kanaCards([...new Map(quoted.map(w => [w.word, w])).values()]) : [];
     // The rank's words nearly all met: the level above joins the review places as a preview.
@@ -1878,7 +1880,10 @@ async function game() {
     $("game-review-sentence").hidden = !sol.ja && !q.paperLine;
     if (q.paperLine) { $("game-review-ja").replaceChildren(...paperText(q.paperLine, q.answer)); $("game-review-en").textContent = sol.en || ""; }
     if (sol.ja) { $("game-review-ja").replaceChildren(...exampleNodes(sol.ja, [q.kind === "homophone" || q.kind === "connective" ? word : q.needle || "", word.replace(/[〜～]/g, "").replace(/（[^）]*）/g, "")].filter(Boolean))); $("game-review-en").textContent = sol.en || ""; }
-    $("game-review-why").hidden = !sol.why; $("game-review-why").textContent = sol.why || "";
+    // Said once (owner's screenshot, 29 Nov: がく + じゅつ → がくじゅつ twice): the why is left out when it is the line the
+    // breakdown already shows.
+    const why = sol.why && sol.why !== literal ? sol.why : "";
+    $("game-review-why").hidden = !why; $("game-review-why").textContent = why;
     // Same-sound words sit inside the example card, as its third line (review C15).
     const same = !sol.why && sol.others?.length ? sol.others : null;
     $("game-review-same").hidden = !same; $("game-review-same").replaceChildren(...(same ? ["Same sound: ", el("span", {lang: "ja", text: same.join(" · ")})] : []));
@@ -1908,7 +1913,7 @@ async function game() {
     const before = readGame().best || 0;
     // Accuracy over scored answers only: flags and practice are not evidence.
     const scoredN = round.length - flagged - practiced;
-    state = rememberRound(readGame(), {score, questions: round, misses: scoredN - rights, scored: scoredN});
+    state = rememberRound(readGame(), {score, questions: round, misses: scoredN - rights, scored: scoredN, special: miniRound || readingRound});
     // A mini-boss played resets its count; one not yet played stays due (miniDue) and leads every round end.
     // A mini-boss cleared (MINI.clear right) pays its bonus, with the jackpot's sound and the line saying so.
     let cleared = 0;

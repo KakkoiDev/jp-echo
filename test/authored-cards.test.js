@@ -59,8 +59,8 @@ test("paraphrase: one sentence, the choice that says the same", () => {
 test("authored cards are answers like any other: scored, counted, and a miss comes back", () => {
   const q = pool.find(c => c.kind === "order");
   const st = rememberAnswer({}, {q, outcome: "wrong", points: -200});
-  assert.equal(st.total, -200); assert.equal(st.answered, 1); assert.deepEqual(st.comeback, [q.id]);
-  assert.ok(nextRound({pool, state: st, random: seeded(1), long: true}).round[0].id === q.id, "with long cards allowed, the miss leads");
+  // A long card's miss waits for the next Sprint (sprintBack), not a round that cannot ask it (audit, 29 Nov).
+  assert.equal(st.total, -200); assert.equal(st.answered, 1); assert.deepEqual(st.comeback, []); assert.deepEqual(st.sprintBack, [q.id]);
   // Without the files the pool is what it was.
   assert.equal(gamePool({inventory}).filter(c => ["para", "pair", "order"].includes(c.kind)).length, 0);
   assert.ok(src("../n2-mock.js").includes('["./n2-paraphrase.json", "./n2-pairs.json", "./n2-ordering.json", "./n2-sets/en.json", "./n2-word-pieces.json", "./n2-gap-wrong.json"]'));
