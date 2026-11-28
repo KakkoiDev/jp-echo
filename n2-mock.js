@@ -1870,8 +1870,9 @@ async function game() {
     // with the whole read back together (そろ + ばん → そろばん; がく + かい → がっかい: く → っ before か).
     const apart = q.pieces || q.compound || (q.kind === "link" && q.parts ? {parts: q.parts, literal: q.literal || ""} : null);
     if (apart) { $("game-review-parts").hidden = false; $("game-review-partlist").replaceChildren(...partList(apart.parts)); }
+    // The rows are the breakdown (owner, 29 Nov): no "piece by piece" line under them, on any card.
     const literal = apart?.literal || q.literal || "";
-    $("game-review-literal").hidden = !literal; $("game-review-literal").replaceChildren(...(literal ? [el("small", {text: "piece by piece"}), literal] : []));
+    $("game-review-literal").hidden = true; $("game-review-literal").replaceChildren();
     $("game-next").textContent = n === misses.length - 1 ? (paperReview ? "Done" : "Round end") : "Next";
     // A boss review card (bossReview): the question, the right choice, the pick; then the deciding lines and the why.
     const ask = $("game-review-ask"); ask.hidden = !q.ask; ask.replaceChildren(...(q.ask ? paperText(q.ask, q.answer) : []));

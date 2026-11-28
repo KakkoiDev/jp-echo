@@ -877,6 +877,8 @@ Before considering the change complete:
   breakdown says the reading rule once (no line at the bottom). Since v341 a
   kanji breakdown has a "piece by piece" line only for a sound change (学会:
   く → っ before か): a plain join (がく + じゅつ) is what the rows already say.
+  Since v342 the review shows no "piece by piece" line on any card (owner):
+  the rows are the breakdown. The line after an answer in play stays.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 

@@ -1383,6 +1383,7 @@ test("every card of a word with kanji is taken apart in the review; grammar by i
   assert.ok(pool.filter(q => q.kind === "grammar" && q.pieces).length >= 150, "grammar patterns with glossed blocks");
   const js = src("../n2-mock.js");
   assert.ok(js.includes("const apart = q.pieces || q.compound ||") && js.includes('const literal = apart?.literal || q.literal || "";'));
+  assert.ok(js.includes('$("game-review-literal").hidden = true; $("game-review-literal").replaceChildren();'), "no piece-by-piece line in the review, on any card (owner, 29 Nov)");
 });
 
 test("the next rung comes after ten minutes, not four hours, and a right answer says what it will ask (owner, 28 Nov: 未～)", async () => {
