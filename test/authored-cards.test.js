@@ -181,7 +181,7 @@ test("the reading sprint: short passages from papers not sat, ninety seconds, ne
   const js = src("../n2-mock.js"), html = src("../n2-mock.html");
   assert.ok(html.includes('id="game-sprint"') && js.includes('$("game-sprint").onclick = async () => {'));
   assert.ok(js.includes("const passages = sprintCards({sets: loaded, sat, keys: bossKeys, seen: readGame().seen || {}}).slice(0, SPRINT.size);"));
-  assert.ok(js.includes("const cards = sprintRound({passages, pool: n2Pool, state: readGame(), recall: data.recall});"));
+  assert.ok(js.includes("const cards = sprintRound({passages, pool: n2Pool, state: readGame(), recall: data.recall}).map(q => ({...q, seconds: speedSeconds(q.seconds, difficulty())}));"));
   assert.equal(KIND_LABEL.sprint, "Reading sprint"); assert.equal(KIND_SKILL.sprint, "reading");
 });
 

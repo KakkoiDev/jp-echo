@@ -974,7 +974,7 @@ export function nextRound({pool, review = [], kanji = null, grammarCards = null,
   if (Object.keys(state.flags || {}).length) { const live = list => list && list.filter(q => !flagRests(state, q.id, now));
     pool = live(pool); review = live(review); boss = live(boss); grammarCards = live(grammarCards); if (kanji?.examples) kanji = {...kanji, examples: live(kanji.examples)}; }
   const slump = inSlump(state), beat = pace(state, now);
-  const level = Math.min(1, Math.max(0, levelOf(state) + beat.offset + (DIFFICULTY[difficulty] || DIFFICULTY.normal).offset));
+  const level = Math.min(1, Math.max(0, levelOf(state) + beat.offset));
   const share = review.length && pool.length ? REVIEW_SHARE : 0, memory = {recall, seen: state.seen || {}, wins: state.wins || {}, lv: state.lv || {}, random, now};
   const comeback = slump ? (state.comeback || []).slice(-WARM_UP.comeback) : state.comeback || [];
   let picked;
@@ -1015,7 +1015,7 @@ export function nextRound({pool, review = [], kanji = null, grammarCards = null,
     const back = picked.filter(q => q.comeback), old = pickRound({...memory, pool: review.filter(q => !words.has(q.item)), size: Math.max(0, ROUND_SIZE - picked.length), mix: slump ? {weak: 0, fresh: 0, known: share} : {weak: share, fresh: share, known: share}, calm: slump}).map(q => ({...q, review: true}));
     picked = [...back, ...interleave(shuffle([...picked.filter(q => !q.comeback), ...old], random))];
   }
-  const round = picked.map(q => ({...q, seconds: flowSeconds(q.seconds, level), bonus: !q.comeback && !q.practice && random() < BONUS.chance * beat.bonus}));
+  const round = picked.map(q => ({...q, seconds: speedSeconds(flowSeconds(q.seconds, level), difficulty), bonus: !q.comeback && !q.practice && random() < BONUS.chance * beat.bonus}));
   // The round is only called a recovery round when it is one: at least half of
   // it is things already won or seen. A new player has nothing to recover with.
   const familiar = round.filter(q => !q.comeback && (state.wins?.[q.id] || state.seen?.[q.id])).length;
@@ -1467,19 +1467,24 @@ export function pace(state = {}, now = Date.now()) {
 // where a game feels hard but winnable. The level is never shown.
 export const FLOW = Object.freeze({start: .5, up: .02, down: .08});
 export const levelOf = state => typeof state?.level === "number" ? state.level : FLOW.start;
+// The hidden level is the same for every setting (owner, 28 Nov): about 80% right. The setting changes the clock only.
+export const FLOW_STEP = Object.freeze({up: .02, down: .08});
 export function flowStep(level = FLOW.start, right, difficulty = "normal") {
-  const l = typeof level === "number" ? level : FLOW.start, d = DIFFICULTY[difficulty] || DIFFICULTY.normal;
+  const l = typeof level === "number" ? level : FLOW.start, d = FLOW_STEP;
   return Math.round(Math.min(1, Math.max(0, l + (right ? d.up : -d.down))) * 1000) / 1000;
 }
-// The learner's difficulty (Settings). Normal is the adaptive zone at 80%
-// right. Easy aims at 90% right and starts every round lower; Hard aims at
-// 65% and starts higher. Points follow: Easy pays ×0.75, Hard ×1.25, so
-// runs on different settings rank fairly.
+// The learner's difficulty (Settings) changes only the speed (owner, 28 Nov: "it could just change the speed of the
+// questions and exams"): every question's clock (speed, never under 2 s) and the boss's written clock (boss, a share
+// of the paper's own minutes). The cards, their mix and their wrong choices are the same for all. Points follow, so a
+// faster setting pays more and runs rank fairly: Easy ×0.75, Hard ×1.25.
 export const DIFFICULTY = Object.freeze({
-  easy: {label: "Easy", up: .01, down: .09, offset: -.2, points: .75},
-  normal: {label: "Normal", up: .02, down: .08, offset: 0, points: 1},
-  hard: {label: "Hard", up: .035, down: .065, offset: .2, points: 1.25},
+  easy: {label: "Easy", speed: 1.5, boss: 1, points: .75},
+  normal: {label: "Normal", speed: 1, boss: .5, points: 1},
+  hard: {label: "Hard", speed: .7, boss: 1 / 3, points: 1.25},
 });
+export const speedSeconds = (seconds, difficulty = "normal") => Math.max(2, Math.round(seconds * (DIFFICULTY[difficulty] || DIFFICULTY.normal).speed * 2) / 2);
+// The boss's written clock: the paper's own written minutes × the setting's share (Normal: half, as it always was).
+export const bossWritten = (paperMinutes, difficulty = "normal") => Math.ceil(paperMinutes * (DIFFICULTY[difficulty] || DIFFICULTY.normal).boss);
 export const difficultyOf = name => DIFFICULTY[name] ? name : "normal";
 // What the level changes: the mix (easy: mostly known; hard: weak and new)…
 export function flowMix(level = FLOW.start) {

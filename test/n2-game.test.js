@@ -260,7 +260,7 @@ test("the boss comes every 1,000 questions, closes a run, and after it the game 
 test("the boss is the real paper at half the time and never counts as a standard sitting", () => {
   const mock = src("../n2-mock.js"), study = src("../n2-study.js");
   assert.match(mock, /if \(state\.phase === "ready" && params\.get\("boss"\) === "1" && \(realistic\(year\) \|\| levelSet\)\) state\.boss = true;/);
-  assert.match(mock, /const half = \(m, phase\) => state\.boss && phase === "written" \? Math\.ceil\(m \/ 2\) : m;/, "only the written clock halves; audio can't");
+  assert.match(mock, /const half = \(m, phase\) => state\.boss && phase === "written" \? bossWritten\(m, state\.bossDifficulty \|\| "normal"\) : m;/, "only the written clock changes; audio can't");
   assert.match(mock, /const minutes = phase => half\(/);
   assert.match(mock, /location\.href = "\?book=" \+ boss\.id \+ "&boss=1";/);
   assert.match(study, /eligibleBooks\.includes\(a\.book\) && !a\.boss && !first\.has\(a\.book\)/, "not checkpoint evidence");
@@ -297,18 +297,23 @@ test("the run clock: beat the boss within 24 h for ×1.5, within 48 h for ×1.2,
   assert.ok(RUN_CLOCK[0].times > RUN_CLOCK[1].times);
 });
 
-test("difficulty: Normal is the 80% zone, Easy aims higher and pays less, Hard aims lower and pays more", () => {
-  const settle = d => { const c = DIFFICULTY[d]; return c.down / (c.up + c.down); };
-  assert.ok(Math.abs(settle("normal") - .8) < 1e-9);
-  assert.ok(Math.abs(settle("easy") - .9) < 1e-9);
-  assert.ok(Math.abs(settle("hard") - .65) < 1e-9);
-  assert.ok(DIFFICULTY.easy.offset < 0 && DIFFICULTY.hard.offset > 0);
-  assert.deepEqual([DIFFICULTY.easy.points, DIFFICULTY.normal.points, DIFFICULTY.hard.points], [.75, 1, 1.25]);
+test("difficulty changes the speed only: the clock and the boss's written time; the cards are the same (owner, 28 Nov)", async () => {
+  const {speedSeconds, bossWritten, FLOW_STEP} = await import("../n2-game.js");
+  assert.deepEqual(Object.fromEntries(Object.entries(DIFFICULTY).map(([k, d]) => [k, [d.speed, d.boss, d.points]])), {easy: [1.5, 1, .75], normal: [1, .5, 1], hard: [.7, 1 / 3, 1.25]});
   assert.equal(difficultyOf("silly"), "normal");
-  assert.equal(flowStep(.5, true, "hard"), .535); assert.equal(flowStep(.5, false, "easy"), .41);
+  // One hidden level for every setting, settling at 80% right.
+  assert.ok(Math.abs(FLOW_STEP.down / (FLOW_STEP.up + FLOW_STEP.down) - .8) < 1e-9);
+  assert.equal(flowStep(.5, true, "hard"), flowStep(.5, true, "easy")); assert.equal(flowStep(.5, false, "easy"), .42);
+  // The same round, with only the clocks scaled (never under 2 s).
+  const pool = gamePool({inventory, examples}), at = d => nextRound({pool, state: {}, difficulty: d, random: seeded(3), now: 1.8e12}).round;
+  const easy = at("easy"), normal = at("normal"), hard = at("hard");
+  assert.deepEqual(easy.map(q => q.id), normal.map(q => q.id)); assert.deepEqual(hard.map(q => q.id), normal.map(q => q.id));
+  normal.forEach((q, i) => { assert.equal(easy[i].seconds, speedSeconds(q.seconds, "easy")); assert.ok(hard[i].seconds <= q.seconds && hard[i].seconds >= 2); });
+  assert.deepEqual([bossWritten(105, "easy"), bossWritten(105, "normal"), bossWritten(105, "hard")], [105, 53, 35], "N2's 105 written minutes");
   const index = src("../index.html"), mock = src("../n2-mock.js");
   assert.match(index, /id="settings-game-difficulty"><option value="easy">/);
   assert.match(mock, /factor: DIFFICULTY\[difficulty\(\)\]\.points, choices: q\.choices\.length/);
+  assert.match(mock, /state\.bossDifficulty = difficultyOf\(settings\.gameDifficulty\);/, "a boss keeps the setting it began with");
 });
 
 test("connectives are 問題9 文章の文法: a passage excerpt, one blank, four connectives, wrong ones from jobs that cannot stand in", async () => {

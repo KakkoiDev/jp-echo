@@ -9,7 +9,7 @@ import {recognitionFactory} from "./speech.js";
 import {speakOnce,speakAndWait,japaneseVoices,RadioPlayer,NoiseBed} from "./speech.js";
 import {RADIO_DEFAULTS,RADIO_PHASE_COPY,clockAt,radioPhase,radioPlan,radioSteps} from "./radio.js";
 import {readNights, nightComparison, comparisonLine, eveningRecall, EVENING_SOURCE, nightPlan, nightRecord, keepNight, NIGHT_KEY} from "./n2-night.js";
-import {kanaCards, kanjiCards, askableKanji, SPRINT, sprintCards, sprintRound, kanjiOrderOf, skillWeights, kindWeights, flagCard, endRest, bossCards, bossQueue, bossReview, partRows, cutUnderline, provedBy, PROVED_MS, heardGap, grammarBlockCard, grammarCoverage, kanjiCoverage, levelCoverage, isCovered, aheadLevel, applyBoss, verdictLine, rankOf, setRank, rankLevels, hasBoss, RANKS, inSlump, itemLevel, levelAfter, ITEM_LEVEL, gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, patternVoice, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
+import {speedSeconds, bossWritten, kanaCards, kanjiCards, askableKanji, SPRINT, sprintCards, sprintRound, kanjiOrderOf, skillWeights, kindWeights, flagCard, endRest, bossCards, bossQueue, bossReview, partRows, cutUnderline, provedBy, PROVED_MS, heardGap, grammarBlockCard, grammarCoverage, kanjiCoverage, levelCoverage, isCovered, aheadLevel, applyBoss, verdictLine, rankOf, setRank, rankLevels, hasBoss, RANKS, inSlump, itemLevel, levelAfter, ITEM_LEVEL, gamePool, choicesFor, pickRound, nextRound, levelOf, bonusPoints, atBedtime, bossProgress, takeBoss, resting, runTable, runClock, answerSpeech, patternVoice, BOSS_MINUTES, DIFFICULTY, difficultyOf, BOSS_EVERY, scoreAnswer, recallsMiss, rememberAnswer, rememberRound, today as gameToday, lastDays, ranking, bossSet, GAME_KEY, GAME_SOURCE, KIND_LABEL, REVIEW_SECONDS, DAILY_GOAL, PAUSE} from "./n2-game.js";
 import {createLevels} from "./jlpt-levels.js";
 import {createSets, levelRows, SET_LEVELS, setLevel, heldOut} from "./jlpt-sets.js";
 import {spokenWord,radioItems,examplesFromDecks,examplesFromSets,dayQueue,daySteps,chooseExample,radioEvent,DayPlayer,RECALL_PAUSES} from "./day-radio.js";
@@ -1330,7 +1330,8 @@ async function game() {
   const bossNow = () => hasBoss(bossRank()) && bossIds.length ? bossSet({sets: bossIds, attempts: data.attempts, ...(bossRank() === "N2" ? {} : {held: heldOut(bossRank()), prefix: bossRank().toLowerCase() + "-set-"})}) : null;
   // The boss's name and clocks: N2's as they were; another level's from its own paper.
   const mockName = boss => bossRank() === "N2" ? "Mock " + String(bookIds.indexOf(boss.id) + 1).padStart(2, "0") : bossRank() + " paper " + String(bossIds.indexOf(boss.id) + 1).padStart(2, "0");
-  const bossClock = () => bossRank() === "N2" ? BOSS_MINUTES : {written: Math.ceil(LEVEL_EXAM[bossRank()].minutes.written / 2), listening: LEVEL_EXAM[bossRank()].minutes.listening};
+  // The boss's written clock follows the setting (Easy the full paper, Normal half, Hard a third); listening is the paper's own.
+  const bossClock = () => ({written: bossWritten(LEVEL_EXAM[bossRank()].minutes.written, difficulty()), listening: LEVEL_EXAM[bossRank()].minutes.listening});
   // The run closes when the boss sitting actually starts (exam(), with its attempt id), not on this tap.
   const fightBoss = (e, boss) => { e.preventDefault(); location.href = "?book=" + boss.id + "&boss=1"; };
   // Numbers below zero carry a true minus (U+2212), never a hyphen (board 12 · E–F).
@@ -2022,7 +2023,7 @@ async function game() {
     const loaded = (await Promise.all(unsat.map(id => json(setFile(id)).catch(() => null)))).filter(Boolean);
     const passages = sprintCards({sets: loaded, sat, keys: bossKeys, seen: readGame().seen || {}}).slice(0, SPRINT.size);
     // The long cards a round no longer asks (LONG_KINDS: ★ order, clause pairs, Same meaning, the paper's questions).
-    const cards = sprintRound({passages, pool: n2Pool, state: readGame(), recall: data.recall});
+    const cards = sprintRound({passages, pool: n2Pool, state: readGame(), recall: data.recall}).map(q => ({...q, seconds: speedSeconds(q.seconds, difficulty())}));
     if (!cards.length) { toast("Nothing left for a sprint", "reading"); return; }
     clearRound(); state = readGame();
     $("game-back").href = "?view=game"; $("game-back").setAttribute("aria-label", "Back to home"); $("game-back").dataset.end = "false";
@@ -2399,6 +2400,8 @@ async function exam() {
   // The boss (Quick round): the real paper at half the time. It stays a boss
   // once started, and never counts as a standard sitting (checkpoint, chart).
   if (state.phase === "ready" && params.get("boss") === "1" && (realistic(year) || levelSet)) state.boss = true;
+  // The setting of the day the boss began sets its written clock for the whole sitting (owner, 28 Nov: speed only).
+  if (state.boss && !state.bossDifficulty) state.bossDifficulty = difficultyOf(settings.gameDifficulty);
   // A boss wears the game's look (owner's backlog, 27 Nov): one skin over the same screens and logic, as Day Radio has
   // (body[data-from=game]); every way out leads back to Quick round.
   if (state.boss) {
@@ -2408,8 +2411,9 @@ async function exam() {
     $("result-next").href = "?view=game"; $("result-next").textContent = "Back to Quick round";
     for (const a of document.querySelectorAll('#rest a.button.quiet')) { a.href = "?view=game"; a.textContent = "Later · back to Quick round"; }
   }
-  // Only the written clock halves: listening audio can't play faster.
-  const half = (m, phase) => state.boss && phase === "written" ? Math.ceil(m / 2) : m;
+  // Only the written clock changes (Easy the full paper, Normal half, Hard a third): listening audio can't play faster.
+  const half = (m, phase) => state.boss && phase === "written" ? bossWritten(m, state.bossDifficulty || "normal") : m;
+  const bossShare = () => ({easy: "full time", normal: "half time", hard: "a third of the time"})[state.bossDifficulty || "normal"];
 
   const minutes = phase => half(paper.minutes ? (typeof paper.minutes === "object" ? paper.minutes[phase] || 5 : paper.minutes) : adaptive ? Math.ceil((phase === "written" ? written : questions.length - written) * 1.5) : (phase === "written" ? 105 : 50), phase);
   function persist() {
@@ -2760,8 +2764,8 @@ async function exam() {
       : paper.drill ? (paper.drill.section === "listening" ? "One section, timed. Play each script once, as the hall does. Mark a question unsure with the flag; read why each answer is right at the end." : "One section, timed: about the pace the real paper leaves for reading. Mark a question unsure with the flag; read why each answer is right at the end.")
       : adaptive ? "Questions written for your weak points. Topics come from your saved evidence." : native ? "One sitting, timed like the real paper, with a break before listening. Mark a question unsure with the flag." : "The publisher's booklet opens beside the answer sheet. Its audio needs internet.";
     $("start").textContent = "Start · " + minutes(firstPhase) + " min";
-    if (state.boss) { $("intro-title").textContent = "The boss · half-time written"; }
-    $("intro-note").textContent = (state.boss ? "The real paper with the written section at half time: " + minutes("written") + " min written, then listening at its own length (" + minutes("listening") + " min). It counts for your run, not for the checkpoint. " : "") + "Leaving keeps your answers. The timer keeps running, as it would in the hall, unless you pause it.";
+    if (state.boss) { $("intro-title").textContent = "The boss · written at " + bossShare(); }
+    $("intro-note").textContent = (state.boss ? "The real paper with the written section at " + bossShare() + ": " + minutes("written") + " min written, then listening at its own length (" + minutes("listening") + " min). It counts for your run, not for the checkpoint. " : "") + "Leaving keeps your answers. The timer keeps running, as it would in the hall, unless you pause it.";
   }
 
   $("start").onclick = () => start(firstPhase);

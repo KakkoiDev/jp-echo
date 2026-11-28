@@ -788,6 +788,14 @@ Before considering the change complete:
   same ones filled every recovery round: 〜の結果 was asked 19 times, a 極 card.
   Now a won card rests `CALM_REST` (an hour) in a recovery round and a 極 card
   keeps its three days; the familiar fallback lists cards actually seen first.
+- **Difficulty is speed only (owner, 28 Nov, v331).** `DIFFICULTY` (n2-game.js)
+  gives each setting a question-clock factor (`speedSeconds`: Easy ×1.5,
+  Normal ×1, Hard ×0.7, never under 2 s), a share of the paper's written
+  minutes for the boss (`bossWritten`: full, half, a third; a boss keeps the
+  setting it began with, `state.bossDifficulty`) and its points (×0.75, ×1,
+  ×1.25). The hidden level (`FLOW_STEP`, about 80% right), the mix and the
+  wrong choices are the same for every setting. This replaces "Easy 90% right
+  ×0.75, Normal the adaptive 80%, Hard 65% ×1.25" above.
 - Bump `CACHE` in `sw.js` (and the `styles.css?v=` query) with any shipped
   change to precached files; `test/pwa.test.js` follows the current name.
 
